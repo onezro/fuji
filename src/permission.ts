@@ -77,7 +77,7 @@ router.beforeEach(async (to, from, next) => {
       const redirect = decodeURIComponent(redirectPath as string)
       const nextData = to.path === redirect ? { ...to, replace: true } : { path: redirect }
       permissionStore.setIsAddRouters(true)
-      console.log(111);
+      console.log(from);
 
       next(nextData)
       // next({ ...to, replace: true });
@@ -86,6 +86,7 @@ router.beforeEach(async (to, from, next) => {
     if (NO_REDIRECT_WHITE_LIST.indexOf(to.path) !== -1) {
       next()
     } else {
+      // console.log(to.path);
       next(`/login?redirect=${to.path}`) // 否则全部重定向到登录页
     }
   }

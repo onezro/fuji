@@ -1,17 +1,24 @@
 <script setup lang="ts">
+import { onMounted } from 'vue';
 import { Error } from '@/components/Error'
-import { usePermissionStore } from '@/stores/modules/permission'
+import { usePermissionStoreWithOut } from '@/stores/modules/permission'
 import { useRouter } from 'vue-router'
 
 const { push } = useRouter()
 
-const permissionStore = usePermissionStore()
+const permissionStore = usePermissionStoreWithOut()
 
+onMounted(()=>{
+  errorClick()
+})
 const errorClick = () => {
-  push(permissionStore.addRouters[0]?.path as string)
+  push('/')
+  // console.log(permissionStore.addRouters)
+  // push(permissionStore.addRouters[0]?.path as string)
 }
 </script>
 
 <template>
+  <div>11111</div>
   <Error @error-click="errorClick" />
 </template>

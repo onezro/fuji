@@ -27,8 +27,8 @@ import AppView from "./components/AppView.vue";
   overflow-x:hidden;
 }
 /* 解决自定义滚动条 x 轴显示问题 */
-.el-scrollbar__wrap
-{
-  overflow-x: hidden;
-}
+// .el-scrollbar__wrap
+// {
+//   overflow-x: hidden;
+// }
 </style>

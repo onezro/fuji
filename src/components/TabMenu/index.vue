@@ -132,6 +132,7 @@ const clickOut = () => {
   showMenu.value = false;
 };
 const isOnlyChildren = (item: any) => {
+  // console.log(item)
   if (item.children.length && item.children.length > 1) {
     return item;
   } else {

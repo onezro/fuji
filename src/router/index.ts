@@ -86,20 +86,18 @@ export const constantRouterMap = [
           title: '员工管理',
           icon: 'User'
         }
-
       },
     ]
   },
-  // {
-  //   path: '/404',
-  //   component: () => import('@/views/Error/404.vue'),
-  //   name: 'NoFind',
-  //   meta: {
-
-  //     title: '404',
-
-  //   }
-  // }
+  {
+    path: '/404',
+    component: () => import('@/views/Error/404.vue'),
+    name: 'NoFind',
+    meta: {
+      hidden: true,
+      title: '404',
+    }
+  }
 ]
 
 export const asyncRouterMap = [
