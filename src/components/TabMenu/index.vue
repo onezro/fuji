@@ -17,6 +17,18 @@
             {{ isOnlyChildren(item).meta?.title || "" }}
           </p>
         </div>
+         <!-- <div
+          class="text-center text-xs cursor-pointer pt-3 pb-3 hover:bg-[#005A79]"
+          :class="{ isActive: isActive(item.path) }"
+          @click="tabClick(item)"
+        >
+          <el-icon :size="24" color="#ffffff">
+            <component :is="item.meta?.icon" />
+          </el-icon>
+          <p class="text-[#ffffff] mt-5px px-2px">
+            {{ item.meta?.title || "" }}
+          </p> 
+        </div> -->
       </div>
     </el-scrollbar>
     <div class="h-[120px] flex flex-col-reverse items-center">
@@ -26,9 +38,9 @@
             <el-avatar :size="35" icon="Avatar" />
           </div>
           <p
-            class="w-[80px] p-2 text-white text-center break-words text-pretty"
+            class="w-[80px] p-1 font-bold text-base text-white text-center break-words text-pretty"
           >
-            Admin
+            {{ loginName }}
           </p>
         </div>
         <template #dropdown>
@@ -55,6 +67,7 @@ import { computed, ref, unref, onMounted, watch } from "vue";
 import { useRouter } from "vue-router";
 import Menu from "@/components/menu/index.vue";
 import { pathResolve } from "@/utils/routerHelper";
+import { getToken} from "@/utils/auth";
 import {
   filterMenusPath,
   initTabMap,
@@ -71,7 +84,7 @@ const routers = computed(() => permissionStore.getRouters);
 const tabRouters = computed(() =>
   unref(routers).filter((v: any) => !v?.meta?.hidden)
 );
-
+const loginName=getToken()
 watch(
   () => routers.value,
   (routers: AppRouteRecordRaw[]) => {
@@ -133,8 +146,13 @@ const clickOut = () => {
 };
 const isOnlyChildren = (item: any) => {
   // console.log(item)
-  if (item.children.length && item.children.length > 1) {
+  // if (item.children.length && item.children.length > 1)
+  
+  
+  if (item.path!=='/dashboard'){
+    // console.log(item.children)
     return item;
+
   } else {
     return {
       ...(item.children && item.children[0]),

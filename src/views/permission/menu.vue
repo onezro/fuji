@@ -16,12 +16,15 @@
         >
           <!-- <el-table-column label="序号" width="60px" type="index" align="center" /> -->
           <el-table-column prop="title" label="菜单名称"> </el-table-column>
-          <el-table-column prop="icon" label="图标" align="center">
+          <el-table-column prop="icon" label="图标">
+            <template #default="scope">
+              <el-icon :size="20" v-if="scope.row.icon" >
+                <component :is="scope.row.icon" />
+              </el-icon>
+            </template>
           </el-table-column>
-          <el-table-column prop="component" label="组件路径" align="center">
-          </el-table-column>
-          <el-table-column prop="path" label="链接路径" align="center">
-          </el-table-column>
+          <el-table-column prop="component" label="组件路径"> </el-table-column>
+          <el-table-column prop="path" label="链接路径"> </el-table-column>
           <el-table-column
             fixed="right"
             label="操作"
@@ -29,7 +32,14 @@
             align="center"
           >
             <template #default="scope">
-              <el-tooltip content="编辑" placement="top">
+              <el-tooltip
+                content="编辑"
+                placement="top"
+                v-if="
+                  scope.row.MenuName !== 'Portal' &&
+                  scope.row.MenuName !== 'PDA'
+                "
+              >
                 <el-button
                   type="primary"
                   icon="EditPen"
@@ -38,7 +48,14 @@
                 ></el-button>
               </el-tooltip>
 
-              <el-tooltip content="删除" placement="top">
+              <el-tooltip
+                content="删除"
+                placement="top"
+                v-if="
+                  scope.row.MenuName !== 'Portal' &&
+                  scope.row.MenuName !== 'PDA'
+                "
+              >
                 <el-button
                   type="danger"
                   icon="Delete"
@@ -130,6 +147,13 @@
             v-model="form.component"
             placeholder="请输入"
         /></el-form-item>
+        <el-form-item label="组件路径" prop=""
+          ><el-input-number
+            :min="0"
+            controls-position="right"
+            v-model="form.sortId"
+            placeholder="请输入"
+        /></el-form-item>
       </el-form>
 
       <template #footer>
@@ -146,8 +170,8 @@
       v-model="editVisible"
       width="50%"
     >
-      <el-form :model="editForm"  label-width="auto">
-        <!-- <el-form-item label="父级菜单">
+      <el-form :model="editForm" label-width="auto">
+        <el-form-item label="父级菜单">
           <el-select
             ref="selectUpResId"
             v-model="editPName"
@@ -171,8 +195,7 @@
               </el-tree
             ></el-option>
           </el-select>
-        
-        </el-form-item> -->
+        </el-form-item>
         <el-form-item label="路径">
           <el-input v-model="editForm.path" placeholder="路径"></el-input>
         </el-form-item>
@@ -195,6 +218,13 @@
         <el-form-item label="图标">
           <el-input v-model="editForm.icon" placeholder="图标"></el-input>
         </el-form-item>
+        <el-form-item label="排序" prop=""
+          ><el-input-number
+            :min="0"
+            controls-position="right"
+            v-model="editForm.sortId"
+            placeholder="请输入"
+        /></el-form-item>
       </el-form>
       <template #footer>
         <span slot="footer" class="dialog-footer">
@@ -207,6 +237,7 @@
 
 <script setup lang="ts">
 import { ElMessage, ElMessageBox, ElTree } from "element-plus";
+import { getToken } from "@/utils/auth";
 import { getFirstMeun, addMeun, deleteMeun, updateMeun } from "@/api/permiss";
 import {
   ref,
@@ -239,6 +270,12 @@ const form = reactive({
   MenuFID: "",
   redirect: "",
   sonNum: 0,
+  sortId: 0,
+  IsDelete: "",
+  CreateBy: getToken(),
+  CreateDate: "",
+  UpdateBy: "",
+  UpdateDate: "",
 });
 let editForm = reactive({
   path: "",
@@ -248,9 +285,15 @@ let editForm = reactive({
   icon: "",
   MenuFID: "",
   MenuLevel: "",
-  id:''
+  id: "",
+  sortId: 0,
+  IsDelete: "",
+  CreateBy: "",
+  CreateDate: "",
+  UpdateBy: getToken(),
+  UpdateDate: "",
 });
-const editPName = ref();
+const editPName = ref("");
 const editid = ref();
 const arrID = ref([] as any[]);
 onBeforeMount(() => {
@@ -269,7 +312,7 @@ watch(
   (newValue) => {
     if (newValue == "目录") {
       fmeun.value = false;
-      form.MenuLevel = 1;
+      form.MenuLevel = 0;
       // form.component = "Layout";
     } else {
       fmeun.value = false;
@@ -303,34 +346,34 @@ const onSubmit = () => {
 };
 const handleEdit = (row: any) => {
   // console.log(row);
-  const data = row;
-  delete data.childMenu;
+  // const data = row;
+  // delete data.childMenu;
   // console.log(data)
-  editForm.MenuFID=row.MenuFID
-  editForm.MenuLevel=row.MenuLevel
-  editForm.MenuName=row.MenuName
-  editForm.component=row.component
-  editForm.icon=row.icon
-  editForm.path=row.path
-  editForm.title=row.title
-  editForm.id=row.id
+  editForm.MenuFID = row.MenuFID;
+  editForm.MenuLevel = row.MenuLevel;
+  editForm.MenuName = row.MenuName;
+  editForm.component = row.component;
+  editForm.icon = row.icon;
+  editForm.path = row.path;
+  editForm.title = row.title;
+  editForm.id = row.id;
+  editForm.sortId = row.sortId;
 
   editVisible.value = true;
   if (row.MenuFID != null) {
-    // console.log(row.MenuFID)
-    editid.value = row.MenuFID;
-    editPName.value = findNameById(row.MenuFID, tableData.value);
-    // console.log( editPName.value)
+    // editid.value = row.MenuFID;
+    // editForm.MenuFID = row.MenuFID;
+    // editPName.value = findNameById(row.MenuFID, tableData.value);
   }
 };
 const handleENodeClick = (data: any) => {
+  // console.log(data)
   editPName.value = data.title;
   editForm.MenuFID = data.id;
   editForm.MenuLevel = data.MenuLevel;
   selectUpResId.value.blur();
 };
 const handleDelete = (row: any) => {
-  
   ElMessageBox.confirm("确定删除", "确认操作", {
     confirmButtonText: "确定",
     cancelButtonText: "取消",
@@ -385,7 +428,6 @@ const findNameById = (id: any, data: any) => {
 const dataDispose = (row: any) => {
   // console.log(row.sonNum)
   if (row.sonNum != null) {
-    
     row.childMenu.forEach((item: any) => {
       arrID.value.unshift(row.id);
       if (item.sonNum != 0) {

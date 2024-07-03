@@ -123,6 +123,7 @@
 </template>
 
 <script lang="ts" setup>
+import { getToken } from "@/utils/auth";
 import {
   getAllRole,
   addRole,
@@ -146,12 +147,22 @@ import {
 interface Form {
   MenuId: string[];
   RoleName: string;
+  IsDelete: string;
+  CreateBy: string;
+  CreateDate: string;
+  UpdateBy: string;
+  UpdateDate: string;
 }
 interface EditForm {
   Add: string[];
   Deletes: string[];
   id: string;
   RoleName: string;
+  IsDelete: string;
+  CreateBy: string;
+  CreateDate: string;
+  UpdateBy: string;
+  UpdateDate: string;
 }
 
 const tableData = ref<any>([]);
@@ -163,12 +174,22 @@ const editVisible = ref(false);
 const form = reactive<Form>({
   MenuId: [],
   RoleName: "",
+  IsDelete: "",
+  CreateBy: getToken()||'',
+  CreateDate: "",
+  UpdateBy: "",
+  UpdateDate: "",
 });
 const editForm = reactive<EditForm>({
   Add: [],
   Deletes: [],
   id: "",
   RoleName: "",
+  IsDelete: "",
+  CreateBy: "",
+  CreateDate: "",
+  UpdateBy: getToken()||'',
+  UpdateDate: "",
 });
 const formRef = ref();
 const treeData = ref([]);

@@ -7,7 +7,7 @@ import Layout from '../layout/index.vue'
 export const constantRouterMap = [
   {
     path: '/',
-    component: Layout,
+    // component: Layout,
     redirect: '/dashboard',
     name: 'Root',
     meta: {
@@ -28,7 +28,7 @@ export const constantRouterMap = [
   {
     path: '/dashboard',
     component: Layout,
-    redirect: '/dashboard/analysis',
+    // redirect: '/dashboard/analysis',
     name: 'Dashboard',
     meta: {
       title: '首页',

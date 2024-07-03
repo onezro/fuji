@@ -63,8 +63,8 @@ onBeforeMount(() => {
 
 <template>
   <div class="flex items-center h-full">
-    <div class="">
-            <img src="../../assets/logo.png" width="200" alt="">
+    <div class="ml-[10px]">
+            <img src="../../assets/logo-white.svg" width="140px" alt="">
         </div>
     <el-breadcrumb separator="/" class="flex items-center h-full  ">
       <el-icon size="20" color="#fff" class="mr-2 ml-2"><Place /></el-icon>
@@ -72,7 +72,6 @@ onBeforeMount(() => {
         appear
         enter-active-class="animate__animated animate__fadeInRight"
       >
-        <!-- <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item> -->
         <el-breadcrumb-item
           v-for="item in treeToList(unref(levelList))"
           :key="item.name"

@@ -1,8 +1,21 @@
 <template>
-  <div class="p-[10px]">
-    <el-card shadow="always" :body-style="{ padding: '10px' }">
+  <div class="p-[10px] flex gap-[15px]">
+    <el-card shadow="always" :body-style="{ padding: '10px' }" class="w-[250px]">
+      <template #header>
+      <div class="card-header">
+        <span>部门</span>
+      </div>
+    </template>
+     
+      <!-- card body -->
+    </el-card>
+    
+    <el-card shadow="always" :body-style="{ padding: '10px' }" class="flex-1">
       <div class="mb-[10px]">
-        <el-button type="primary" @click="openAdd()">新增</el-button>
+        <el-button type="primary" @click="syncPeople">同步人员</el-button>
+        <el-button type="primary" @click="syncOrganizate"
+          >同步组织架构</el-button
+        >
       </div>
       <el-table
         :data="
@@ -37,14 +50,14 @@
                 @click="handleEdit(scope.row)"
               />
             </el-tooltip>
-            <el-tooltip content="编辑" placement="top">
+            <!-- <el-tooltip content="删除" placement="top">
               <el-button
                 type="danger"
                 icon="Delete"
                 size="small"
                 @click="handleDelete(scope.row)"
               />
-            </el-tooltip>
+            </el-tooltip> -->
           </template>
         </el-table-column>
       </el-table>
@@ -150,6 +163,7 @@
 </template>
 
 <script setup lang="ts">
+import { getToken } from "@/utils/auth";
 import {
   getAllRole,
   getEmployee,
@@ -193,6 +207,11 @@ interface EditForm {
   CanLogin: number;
   FullName: string;
   DocManagerUser: string;
+  IsDelete: string;
+  CreateBy: string;
+  CreateDate: string;
+  UpdateBy: string;
+  UpdateDate: string;
 }
 
 const tableData = ref<Table[]>([]);
@@ -202,7 +221,16 @@ const tableHeight = ref(0);
 const addVisible = ref(false);
 const editVisible = ref(false);
 const formRef = ref();
-const form = ref({ employeeId: "", id: 0, roleId: "" });
+const form = ref({
+  employeeId: "",
+  id: 0,
+  roleId: "",
+  IsDelete: "",
+  CreateBy: getToken(),
+  CreateDate: "",
+  UpdateBy: "",
+  UpdateDate: "",
+});
 const hasRole = ref<Tag[]>([]);
 const roleName = ref("");
 const optionArr = ref<Optiotpe[]>([]);
@@ -212,6 +240,11 @@ const editForm = reactive<EditForm>({
   CanLogin: 1,
   FullName: "",
   DocManagerUser: "",
+  IsDelete: "",
+  CreateBy: "",
+  CreateDate: "",
+  UpdateBy: getToken() || "",
+  UpdateDate: "",
 });
 const editRef = ref();
 
@@ -264,7 +297,7 @@ const editCancel = () => {
 const editSubmit = () => {
   addEmployee(editForm).then((data: any) => {
     if (data.code == 100200) {
-      getData()
+      getData();
       editVisible.value = false;
       ElNotification({
         title: "添加成功",
@@ -289,10 +322,12 @@ const getHasRole = () => {
   });
 };
 const openAdd = () => {
-  editVisible.value=true
+  editVisible.value = true;
 };
+const syncPeople = () => {};
+const syncOrganizate = () => {};
 const dataPrecc = (data: any) => {
-  // console.log(data)
+  console.log(data);
   let beforeData = data; //将dataArr赋值给beforeData  也可直接操作dataArr
   let tempArr = [];
   let afterData = []; //新数组
@@ -378,7 +413,7 @@ const handleClose = (tag: any) => {
         EmpId: form.value.employeeId,
         RoleId: tag.Id,
       }).then((data: any) => {
-        // console.log(res);
+        // console.log(data);
         if ((data.code = 100200)) {
           getHasRole();
           getData();
@@ -416,8 +451,10 @@ const handleDelete = (row: any) => {
     type: "warning",
   })
     .then(() => {
-      deleteEmployee(row.employeeId).then(({ data }) => {
+      deleteEmployee(row.employeeId).then((data: any) => {
         if (data.code == 100200) {
+          // console.log()
+          // getHasRole();
           getData();
           //  console.log(data);
           ElNotification({
@@ -467,5 +504,3 @@ const getScreenHeight = () => {
   margin-left: 10px;
 }
 </style>
-{ EmployeeId: "", EmployeeName: "", CanLogin: 0, FullName: "", DocManagerUser:
-"" }

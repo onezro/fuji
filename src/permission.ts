@@ -33,13 +33,17 @@ router.beforeEach(async (to, from, next) => {
       // console.log(employeeId)
       if (roleRouters.length == 0) {
         if (employeeId) {
-          await   getRoleMenuse(employeeId).then((data: any) => {
+          await   getRoleMenuse(employeeId).then(async (data: any) => {
             // console.log(data)
             if (data.code == 100200) {
               const routerArr = JSON.parse(data.content) || []
-              userStore.setRoleRouters(routerArr)
-              // console.log(routerArr)
-              permissionStore.generateRoutes('server', routerArr)
+              const systemRouter=routerArr.filter((v:any)=>v.MenuName=='Portal')
+              console.log(systemRouter)
+              userStore.setRoleRouters(systemRouter[0].childMenu)
+              permissionStore.generateRoutes('server', systemRouter[0].childMenu)
+            }
+            else{
+              await permissionStore.generateRoutes('static')
             }
             permissionStore.getAddRouters.forEach((route: any) => {
               // console.log(route)
@@ -47,11 +51,10 @@ router.beforeEach(async (to, from, next) => {
             })
           })
 
-        } else {
+        } else  {
           // console.log(222);
           await permissionStore.generateRoutes('static')
           permissionStore.getAddRouters.forEach((route: any) => {
-            // console.log(route)
             router.addRoute(route as unknown as RouteRecordRaw) // 动态添加可访问路由表
           })
         }

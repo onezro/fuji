@@ -16,6 +16,9 @@
     </template>
     <el-sub-menu v-else :index="pathResolve(props.basePath, item.path)">
       <template #title>
+        <el-icon v-if="item.meta.icon">
+          <component :is="item.meta.icon"
+        /></el-icon>
         <span>{{ item.meta.title }}</span>
       </template>
       <smenuItem
