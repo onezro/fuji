@@ -7,7 +7,8 @@ export const useTitle = (newTitle?: string) => {
   const appStore = useAppStoreWithOut()
 
   const title = ref(
-    newTitle ? `${newTitle as string} - ${appStore.getTitle}` : appStore.getTitle
+    // newTitle ? `${newTitle as string} - ${appStore.getTitle}` : appStore.getTitle
+    newTitle ?appStore.getTitle: appStore.getTitle
   )
 
   watch(

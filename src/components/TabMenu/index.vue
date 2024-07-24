@@ -84,7 +84,7 @@ const routers = computed(() => permissionStore.getRouters);
 const tabRouters = computed(() =>
   unref(routers).filter((v: any) => !v?.meta?.hidden)
 );
-const loginName=getToken()
+const loginName=userStore.getUserInfo
 watch(
   () => routers.value,
   (routers: AppRouteRecordRaw[]) => {

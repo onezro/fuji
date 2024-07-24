@@ -90,7 +90,7 @@ export const useUserStore = defineStore('user', {
       this.setRoleRouters([])
       router.replace('/login')
       location.reload();
-      console.log(1111);
+      // console.log(1111);
       
     },
     logout() {

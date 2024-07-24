@@ -1,5 +1,7 @@
 import axios from "axios";
 import { ElMessageBox, ElMessage, ElLoading } from "element-plus";
+import { getToken } from "@/utils/auth";
+
 // import store from '@/store'
 // import { getToken } from '@/utils/auth'
 let loadingRequestCount = 0;
@@ -26,17 +28,19 @@ const hideLoading = () => {
     loadingInstance.close();
   }
 };
-
 // 基地址
 const service = axios.create({
-  baseURL: "/all",
+  baseURL: '/all',
   // 5秒超时
   timeout: 5000 * 2,
 });
-let source = axios.CancelToken.source();
+// let source = axios.CancelToken.source();
 // console.log(source);
 service.interceptors.request.use(
   (config) => {
+    const token = getToken() || '' //getToken是在另一个JS文件中封装好的方法
+    token && (config.headers['authorization'] = token)
+    // return config
     // config.cancelToken = source.token; // 取消请求
     // if (config.cancelToken && config.cancelObj && config.cancelObj.cancel) {
     //   config.cancelObj.cancel("中断请求");
@@ -54,13 +58,6 @@ service.interceptors.request.use(
         }
       )
     }
-
-    // 请求拦截进来调用显示loading效果
-
-
-    // 配置了store持久化的就不需要取localstorage的了
-    // const token = store.state.token || localStorage.getItem("token");
-    // token && (config.headers.token = token);
     return config;
   },
 
@@ -73,7 +70,7 @@ service.interceptors.response.use(
     }, 500)
     //关闭加载窗口
     //建议打印一下 有些后台返回回来的数据格式不同  可根据自己的数据格式进行调整
-
+    // console.log(response)
     //错误提示
     if (response.status === 500) {
       ElMessage({
@@ -95,9 +92,12 @@ service.interceptors.response.use(
 
     //成功的返回
     if (response.status === 200) {
-      if (response.data.code == 100200) {
+      if (response.data.code == 100200 || !response.data.code) {
         return response.data;
-      } else {
+      } else if (response.data.code == 100300) {
+        return response.data;
+      }
+      else {
         ElMessageBox.alert(response.data.msg, "提示信息", {
           confirmButtonText: "确定",
         });

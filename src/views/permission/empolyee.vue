@@ -1,35 +1,50 @@
 <template>
   <div class="p-[10px] flex gap-[15px]">
-    <el-card shadow="always" :body-style="{ padding: '10px' }" class="w-[250px]">
+    <el-card
+      shadow="always"
+      :body-style="{ padding: '10px' }"
+      class="w-[250px]"
+    >
       <template #header>
-      <div class="card-header">
-        <span>部门</span>
-      </div>
-    </template>
-     
+        <div class="card-header">
+          <span>BICV-组织</span>
+        </div>
+      </template>
+
       <!-- card body -->
     </el-card>
-    
+
     <el-card shadow="always" :body-style="{ padding: '10px' }" class="flex-1">
-      <div class="mb-[10px]">
-        <el-button type="primary" @click="syncPeople">同步人员</el-button>
-        <el-button type="primary" @click="syncOrganizate"
-          >同步组织架构</el-button
-        >
+      <div class="mb-[10px] flex justify-between">
+        <div>
+          <!-- <el-button type="primary" @click="syncPeople">同步人员</el-button>
+          <el-button type="primary" @click="syncOrganizate"
+            >同步组织架构</el-button
+          > -->
+        </div>
+        <div>
+          <el-input v-model="searchName" placeholder="请输入">
+            <template #append>
+              <el-button type="primary" icon="Search"></el-button> </template
+          ></el-input>
+        </div>
       </div>
+
       <el-table
         :data="
-          tableData.slice((currentPage - 1) * pageSize, currentPage * pageSize)
+          tableData1.slice((currentPage - 1) * pageSize, currentPage * pageSize)
         "
         border
         :height="tableHeight"
         stripe
       >
-        <el-table-column label="序号" type="index" width="60"></el-table-column>
-        <el-table-column label="账号" prop="employeeName"> </el-table-column>
-        <el-table-column label="员工" prop="fullName"> </el-table-column>
+        <el-table-column label="序号" type="index" width="60" align="center"></el-table-column>
+        <el-table-column label="工号" prop="employeeName"> </el-table-column>
+        <el-table-column label="员工姓名" prop="fullName"> </el-table-column>
+        <el-table-column label="组织" prop="OrganizationName">
+        </el-table-column>
 
-        <el-table-column label="角色" prop="RoleName">
+        <!-- <el-table-column label="角色" prop="RoleName">
           <template #default="scope">
             <el-tag
               v-for="item in scope.row.RoleName"
@@ -39,7 +54,7 @@
               {{ item }}
             </el-tag>
           </template>
-        </el-table-column>
+        </el-table-column> -->
         <el-table-column fixed="right" label="操作" width="120" align="center">
           <template #default="scope">
             <el-tooltip content="编辑" placement="top">
@@ -79,7 +94,7 @@
     <el-dialog
       :append-to-body="true"
       :close-on-click-modal="false"
-      title="角色添加"
+      title="用户角色"
       v-model="addVisible"
       width="30%"
       @close="addCancel()"
@@ -117,6 +132,7 @@
       </el-form>
       <template #footer>
         <span class="dialog-footer">
+          <el-button @click="addCancel()">取消</el-button>
           <el-button type="primary" @click="onSubmit()">确定</el-button>
         </span>
       </template>
@@ -155,6 +171,7 @@
 
       <template #footer>
         <span class="dialog-footer">
+          <el-button @click="editCancel()">取消</el-button>
           <el-button type="primary" @click="editSubmit()">确定</el-button>
         </span>
       </template>
@@ -164,6 +181,7 @@
 
 <script setup lang="ts">
 import { getToken } from "@/utils/auth";
+import { useUserStoreWithOut } from "@/stores/modules/user";
 import {
   getAllRole,
   getEmployee,
@@ -213,7 +231,7 @@ interface EditForm {
   UpdateBy: string;
   UpdateDate: string;
 }
-
+const userStore = useUserStoreWithOut();
 const tableData = ref<Table[]>([]);
 const pageSize = ref(10);
 const currentPage = ref(1);
@@ -226,7 +244,7 @@ const form = ref({
   id: 0,
   roleId: "",
   IsDelete: "",
-  CreateBy: getToken(),
+  CreateBy: userStore.getUserInfo,
   CreateDate: "",
   UpdateBy: "",
   UpdateDate: "",
@@ -243,11 +261,12 @@ const editForm = reactive<EditForm>({
   IsDelete: "",
   CreateBy: "",
   CreateDate: "",
-  UpdateBy: getToken() || "",
+  UpdateBy: userStore.getUserInfo || "",
   UpdateDate: "",
 });
 const editRef = ref();
-
+const searchName = ref("");
+const tableData1 = ref<Table[]>([]);
 onBeforeMount(() => {
   getScreenHeight();
 });
@@ -259,6 +278,25 @@ onMounted(() => {
 onBeforeUnmount(() => {
   window.addEventListener("resize", getScreenHeight);
 });
+
+watch(
+  () => searchName.value,
+  (newdata) => {
+    // console.log(newdata);
+    if (newdata == "") {
+      tableData1.value = tableData.value;
+    } else {
+      tableData1.value = table1();
+    }
+  }
+);
+const table1 = () => {
+  return tableData.value.filter((v: any) => {
+    return Object.keys(v).some((key) => {
+      return String(v[key]).toLowerCase().indexOf(searchName.value) > -1;
+    });
+  });
+};
 
 const noRole = computed(() => {
   // console.log( hasRole.value)
@@ -327,7 +365,7 @@ const openAdd = () => {
 const syncPeople = () => {};
 const syncOrganizate = () => {};
 const dataPrecc = (data: any) => {
-  console.log(data);
+  // console.log(data);
   let beforeData = data; //将dataArr赋值给beforeData  也可直接操作dataArr
   let tempArr = [];
   let afterData = []; //新数组
@@ -338,6 +376,7 @@ const dataPrecc = (data: any) => {
         employeeId: beforeData[i].EmployeeId,
         employeeName: beforeData[i].EmployeeName,
         fullName: beforeData[i].FullName,
+        OrganizationName: beforeData[i].OrganizationName,
         RoleName:
           beforeData[i].RoleName == null ? [] : [beforeData[i].RoleName],
       });
@@ -345,7 +384,10 @@ const dataPrecc = (data: any) => {
     } else {
       // console.log(1)
       for (let j = 0; j < afterData.length; j++) {
-        if (afterData[j].employeeId == beforeData[i].EmployeeId) {
+        if (
+          afterData[j].employeeId == beforeData[i].EmployeeId &&
+          beforeData[i].RoleName !== null
+        ) {
           afterData[j].RoleName.push(beforeData[i].RoleName);
           break;
         }
@@ -353,6 +395,7 @@ const dataPrecc = (data: any) => {
     }
   }
   tableData.value = afterData;
+  tableData1.value = tableData.value;
 };
 
 const handleEdit = (row: any) => {
@@ -362,21 +405,11 @@ const handleEdit = (row: any) => {
   // form.value.roleId = row.RoleId;
   form.value.employeeId = row.employeeId;
   findEmployeeRoles(row.employeeId).then((data: any) => {
-    if (data.code == 100200) {
-      //  console.log(data);
-      const dataText = JSON.parse(data.content);
-
-      hasRole.value = dataText;
-      // console.log(dataText)
-      // addVisible.value = true;
-      // roleName.value = row.fullName;
-      // // form.value.roleId = row.RoleId;
-      // form.value.employeeId = row.employeeId;
+    if (data.content == null || data.content == undefined) {
+      hasRole.value = [];
     } else {
-      // this.$message({
-      //   type: "error",
-      //   message: data.msg,
-      // });
+      const dataText = JSON.parse(data.content);
+      hasRole.value = dataText;
     }
   });
 };
@@ -411,7 +444,7 @@ const handleClose = (tag: any) => {
     .then(() => {
       deletefirstRole({
         EmpId: form.value.employeeId,
-        RoleId: tag.Id,
+        RoleId: tag.RoleID,
       }).then((data: any) => {
         // console.log(data);
         if ((data.code = 100200)) {
@@ -499,7 +532,9 @@ const getScreenHeight = () => {
 <style scoped>
 .el-pagination {
   justify-content: center;
+  
 }
+
 .el-tag + .el-tag {
   margin-left: 10px;
 }

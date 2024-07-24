@@ -4,17 +4,11 @@
       <div class="mb-[10px]">
         <el-button type="primary" @click="openAdd">添加</el-button>
       </div>
-      <el-table
-        :data="
-          tableData.slice((currentPage - 1) * pageSize, currentPage * pageSize)
-        "
-        border
-        :height="tableHeight"
-        stripe
-      >
-        <el-table-column label="序号" type="index" width="60"></el-table-column>
+      <el-table :data="tableData.slice((currentPage - 1) * pageSize, currentPage * pageSize)
+        " border :height="tableHeight" stripe>
+        <el-table-column label="序号" type="index" width="60" align="center"></el-table-column>
         <el-table-column label="角色名称" prop="RoleName"> </el-table-column>
-        <el-table-column label="描述" prop="description"> </el-table-column>
+        <el-table-column label="描述" prop="RoleDesc"> </el-table-column>
         <el-table-column fixed="right" label="操作" width="120">
           <template #default="scope">
             <!-- <el-button
@@ -26,95 +20,62 @@
             > -->
 
             <el-tooltip content="编辑" placement="top">
-              <el-button
-                type="primary"
-                icon="EditPen"
-                size="small"
-                @click.prevent="handleAssigned(scope.row)"
-              />
+              <el-button type="primary" icon="EditPen" size="small" @click.prevent="handleAssigned(scope.row)" />
             </el-tooltip>
             <el-tooltip content="删除" placement="top">
-              <el-button
-                type="danger"
-                icon="Delete"
-                size="small"
-                @click.prevent="handleDelete(scope.row)"
-              ></el-button>
+              <el-button type="danger" icon="Delete" size="small" @click.prevent="handleDelete(scope.row)"></el-button>
             </el-tooltip>
           </template>
         </el-table-column>
       </el-table>
       <div class="mt-3">
-        <el-pagination
-          size="large"
-          background
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-          :current-page="currentPage"
-          :page-size="pageSize"
-          :page-sizes="[5, 10, 20, 50, 100]"
-          layout="total,sizes, prev, pager, next, jumper"
-          :total="tableData.length"
-        >
+        <el-pagination size="large" background @size-change="handleSizeChange" @current-change="handleCurrentChange"
+          :current-page="currentPage" :page-size="pageSize" :page-sizes="[5, 10, 20, 50, 100]"
+          layout="total,sizes, prev, pager, next, jumper" :total="tableData.length">
         </el-pagination>
       </div>
     </el-card>
-    <el-dialog
-      :append-to-body="true"
-      :close-on-click-modal="false"
-      title="新增"
-      v-model="addVisible"
-      width="30%"
-      @close="addCancel()"
-    >
-      <el-form :model="form" ref="formRef" label-width="auto">
+    <el-dialog :append-to-body="true" :close-on-click-modal="false" title="新增" v-model="addVisible" width="30%"
+      @close="addCancel()">
+      <el-form :model="form" ref="formRef" :rules="rules" label-width="auto">
         <el-form-item label="角色名称" prop="RoleName">
           <el-input v-model="form.RoleName"></el-input>
         </el-form-item>
+        <el-form-item label="描述" prop="RoleDesc">
+          <el-input v-model="form.RoleDesc"></el-input>
+        </el-form-item>
         <el-form-item label="菜单分配" prop="MenuId">
-          <el-tree
-            :data="treeData"
-            show-checkbox
-            node-key="id"
-            :props="defaultProps"
-            ref="tree"
-          >
+          <el-tree :data="treeData" show-checkbox node-key="id" :props="defaultProps" ref="tree">
           </el-tree>
         </el-form-item>
       </el-form>
       <template #footer>
         <span class="dialog-footer">
+          <el-button @click="addCancel()">取消</el-button>
           <el-button type="primary" @click="onSubmit()">确定</el-button>
         </span>
       </template>
     </el-dialog>
 
-    <el-dialog
-      :append-to-body="true"
-      :close-on-click-modal="false"
-      title="编辑"
-      v-model="editVisible"
-      width="30%"
-      @close="editCancel()"
-    >
-      <el-form :model="editForm" ref="editRef" label-width="auto">
-        <el-form-item label="角色名称">
+    <el-dialog :append-to-body="true" :close-on-click-modal="false" title="编辑" v-model="editVisible" width="30%"
+      @close="editCancel()">
+      <el-form :model="editForm" :rules="rules" ref="editRef" label-width="auto">
+        <el-form-item label="角色名称" prop="RoleName">
           <el-input v-model="editForm.RoleName"></el-input>
         </el-form-item>
+        <el-form-item label="描述" prop="RoleDesc">
+          <el-input v-model="editForm.RoleDesc"></el-input>
+        </el-form-item>
         <el-form-item label="菜单">
-          <el-tree
-            :data="treeData"
-            show-checkbox
-            node-key="id"
-            :props="{ label: 'title', children: 'childMenu' }"
-            ref="tree1"
-          >
+          <el-tree :data="treeData" show-checkbox node-key="id" :props="{ label: 'title', children: 'childMenu' }"
+            ref="tree1">
           </el-tree>
         </el-form-item>
       </el-form>
 
       <template #footer>
         <span class="dialog-footer">
+          <el-button @click="editCancel()">取消</el-button>
           <el-button type="primary" @click="editSubmit()">确定</el-button>
         </span>
       </template>
@@ -123,7 +84,8 @@
 </template>
 
 <script lang="ts" setup>
-import { getToken } from "@/utils/auth";
+// import { getToken } from "@/utils/auth";
+
 import {
   getAllRole,
   addRole,
@@ -133,6 +95,7 @@ import {
   deleteRole,
 } from "@/api/permiss";
 import { ElMessage, ElMessageBox, ElTree, ElNotification } from "element-plus";
+import { useUserStoreWithOut } from '@/stores/modules/user'
 import {
   ref,
   unref,
@@ -147,7 +110,7 @@ import {
 interface Form {
   MenuId: string[];
   RoleName: string;
-  IsDelete: string;
+  RoleDesc: string;
   CreateBy: string;
   CreateDate: string;
   UpdateBy: string;
@@ -158,13 +121,13 @@ interface EditForm {
   Deletes: string[];
   id: string;
   RoleName: string;
-  IsDelete: string;
+  RoleDesc: string;
   CreateBy: string;
   CreateDate: string;
   UpdateBy: string;
   UpdateDate: string;
 }
-
+const userStore = useUserStoreWithOut()
 const tableData = ref<any>([]);
 const pageSize = ref(10);
 const currentPage = ref(1);
@@ -174,8 +137,8 @@ const editVisible = ref(false);
 const form = reactive<Form>({
   MenuId: [],
   RoleName: "",
-  IsDelete: "",
-  CreateBy: getToken()||'',
+  RoleDesc: "",
+  CreateBy: userStore.getUserInfo || '',
   CreateDate: "",
   UpdateBy: "",
   UpdateDate: "",
@@ -185,13 +148,15 @@ const editForm = reactive<EditForm>({
   Deletes: [],
   id: "",
   RoleName: "",
-  IsDelete: "",
+  RoleDesc: "",
   CreateBy: "",
   CreateDate: "",
-  UpdateBy: getToken()||'',
+  UpdateBy: userStore.getUserInfo || '',
   UpdateDate: "",
 });
+
 const formRef = ref();
+const editRef = ref()
 const treeData = ref([]);
 const defaultProps = ref({ label: "title", children: "childMenu" });
 // const tree = ref(null||'');
@@ -199,6 +164,11 @@ const tree = ref<InstanceType<typeof ElTree>>();
 const tree1 = ref<InstanceType<typeof ElTree>>();
 const roleAllMeun = ref<string[]>([]);
 const roleData = ref<string[]>([]);
+const rules = reactive({
+  RoleName: [
+    { required: true, message: '请输入角色名称', trigger: 'blur' },
+  ],
+})
 
 onBeforeMount(() => {
   getScreenHeight();
@@ -219,11 +189,8 @@ const getData = () => {
 };
 
 const getMeun = () => {
-  // this.dialogVisible = true;
-
   getFirstMeun().then((data: any) => {
     treeData.value = JSON.parse(data.content);
-    // console.log(data);
   });
 };
 const openAdd = () => {
@@ -234,16 +201,38 @@ const addCancel = () => {
   formRef.value.resetFields();
 };
 const onSubmit = () => {
-  form.MenuId = tree.value.getCheckedKeys();
-  const prarentTree = tree.value.getHalfCheckedKeys();
-  form.MenuId.push(...prarentTree);
-  form.MenuId = Array.from(new Set(form.MenuId));
   // console.log(form.MenuId)
-  addRole(form).then(() => {
-    // console.log(data);
-    getData();
-    addVisible.value = false;
-  });
+  formRef.value.validate((valid: any) => {
+    if (valid) {
+      form.MenuId = tree.value.getCheckedKeys();
+      const prarentTree = tree.value.getHalfCheckedKeys();
+      form.MenuId.push(...prarentTree);
+      form.MenuId = Array.from(new Set(form.MenuId));
+      addRole(form).then((data: any) => {
+        // console.log(data);
+        if ((data.code = 100200)) {
+          getData();
+          roleData.value = [];
+          ElNotification({
+            title: "添加成功",
+            // message: "取消操作",
+            type: "success",
+          });
+        } else {
+          ElNotification({
+            title: "添加失败",
+            message: data.msg,
+            type: "error",
+          });
+        }
+
+        addVisible.value = false;
+      });
+    } else {
+      console.log("error submit!!");
+      return false;
+    }
+  })
 };
 const editCancel = () => {
   editVisible.value = false;
@@ -252,32 +241,39 @@ const editCancel = () => {
 const handleAssigned = (row: any) => {
   editForm.id = row.id;
   editForm.RoleName = row.RoleName;
-
+  editForm.RoleDesc=row.RoleDesc
   editVisible.value = true;
   // console.log(editVisible.value);
   getMeunRole(row.id).then((data: any) => {
-    const dataText = JSON.parse(data.content);
-    // console.log(dataText);
-    dataText.forEach((item: any) => {
-      if (item.childMenu!==null) {
-        item.childMenu.forEach((i: any) => {
-          // console.log(i.childMenu)
-          if (i.childMenu == null) {
-            roleData.value.push(i.id);
-          } else {
-            i.childMenu.forEach((v:any)=>{
-               roleData.value.push(v.id)
-            })
-           
-            // console.log(i.childMenu);
-          }
-        });
-      } else {
-        // console.log(1111)
-        roleData.value.push(item.id);
-      }
-    });
-    // console.log(roleData.value);
+    if (data.content == null || data.content == undefined) {
+      roleData.value = []
+      // return
+    } else {
+      const dataText = JSON.parse(data.content);
+      // console.log(dataText);
+      dataText.forEach((item: any) => {
+        if (item.childMenu !== null) {
+          item.childMenu.forEach((i: any) => {
+            // console.log(i)
+            if (i.childMenu == null) {
+              roleData.value.push(i.id);
+            } else {
+              i.childMenu.forEach((v: any) => {
+                if (v.childMenu !== null) {
+                  v.childMenu.forEach((c: any) => {
+                    roleData.value.push(c.id);
+                  })
+                } else {
+                  roleData.value.push(v.id)
+                }
+              })
+            }
+          });
+        } else {
+          roleData.value.push(item.id);
+        }
+      });
+    }
     tree1.value.setCheckedKeys(roleData.value);
     roleAllMeun.value = [
       ...tree1.value.getCheckedKeys(),
@@ -291,28 +287,35 @@ const editSubmit = () => {
     ...tree1.value.getCheckedKeys(),
     ...tree1.value.getHalfCheckedKeys(),
   ];
-  console.log(meun);
-
   comparefunction(roleAllMeun.value, meun);
-  // console.log(editForm);
-  updateRoleMeun(editForm).then((data: any) => {
-    if ((data.code = 100200)) {
-      getData();
-      roleData.value = [];
-      ElNotification({
-        title: "修改成功",
-        // message: "取消操作",
-        type: "success",
+  editRef.value.validate((valid: any) => {
+    if (valid) {
+      updateRoleMeun(editForm).then((data: any) => {
+        if ((data.code = 100200)) {
+          getData();
+          roleData.value = [];
+          ElNotification({
+            title: "修改成功",
+            // message: "取消操作",
+            type: "success",
+          });
+        } else {
+          ElNotification({
+            title: "修改失败",
+            message: data.msg,
+            type: "error",
+          });
+        }
+        editVisible.value = false;
       });
+      // console.log(111);
+
     } else {
-      ElNotification({
-        title: "修改失败",
-        message: "data.msg",
-        type: "error",
-      });
+      console.log("error submit!!");
+      return false;
     }
-    editVisible.value = false;
-  });
+  })
+
 };
 const comparefunction = (arr1: any, arr2: any) => {
   editForm.Add = [];

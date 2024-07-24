@@ -54,6 +54,7 @@ const hasOneShowingChild = (
   children: RouteRecordRaw[] = [],
   parent: RouteRecordRaw
 ) => {
+  // console.log(children,parent)
   // 子路由集合
   const showingChildren = children.filter((route: RouteRecordRaw) => {
     if (route.meta?.hidden) {
@@ -62,15 +63,18 @@ const hasOneShowingChild = (
     } else {
       route.meta!.hidden = false;
       // 临时变量（多个子路由 onlyOneChild 变量是用不上的）
+      // console.log(route)
       onlyOneChild.value = route;
       return true;
     }
   });
 
   // 如果只有一个子路由, 返回 true
-  if (showingChildren.length === 1) {
-    return true;
-  }
+  // if (showingChildren.length === 1) {
+  //   console.log(1111)
+  //   return true;
+  // }
+  
 
   // 如果没有子路由，显示父级路由
   if (!showingChildren.length) {

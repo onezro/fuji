@@ -14,7 +14,7 @@
           row-key="id"
           :tree-props="{ children: 'childMenu' }"
         >
-          <!-- <el-table-column label="序号" width="60px" type="index" align="center" /> -->
+        
           <el-table-column prop="title" label="菜单名称"> </el-table-column>
           <el-table-column prop="icon" label="图标">
             <template #default="scope">
@@ -23,8 +23,9 @@
               </el-icon>
             </template>
           </el-table-column>
-          <el-table-column prop="component" label="组件路径"> </el-table-column>
-          <el-table-column prop="path" label="链接路径"> </el-table-column>
+          <el-table-column prop="path" label="PATH路径"> </el-table-column>
+          <el-table-column prop="component" label="组件"> </el-table-column>
+         
           <el-table-column
             fixed="right"
             label="操作"
@@ -88,6 +89,7 @@
       v-model="addVisible"
       title="新增"
       width="30%"
+      @close="addCancel"
     >
       <el-form
         ref="formRef"
@@ -101,7 +103,7 @@
             <el-radio-button value="菜单">菜单</el-radio-button>
           </el-radio-group></el-form-item
         >
-        <el-form-item label="父级菜单" prop="">
+        <el-form-item label="父级菜单" prop="chooseName">
           <el-select
             ref="selectUpResId"
             v-model="chooseName"
@@ -126,28 +128,28 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="菜单名称" prop="type"
+        <el-form-item label="菜单名称" prop="title"
           ><el-input v-model="form.title" placeholder="请输入"
         /></el-form-item>
-        <el-form-item label="图标" prop="time"
+        <el-form-item label="图标" prop="icon"
           ><el-input v-model="form.icon" placeholder="请输入"
         /></el-form-item>
-        <el-form-item label="链接路径" prop=""
+        <el-form-item label="PATH路径" prop="path"
           ><el-input v-model="form.path" placeholder="请输入"
         /></el-form-item>
-        <el-form-item label="路由名称" prop=""
+        <el-form-item label="路由名称" prop="MenuName"
           ><el-input v-model="form.MenuName" placeholder="请输入"
         /></el-form-item>
-        <el-form-item label="重定向" prop=""
+        <el-form-item label="重定向" prop="redirect"
           ><el-input v-model="form.redirect" placeholder="请输入"
         /></el-form-item>
-        <el-form-item label="组件路径" prop=""
+        <el-form-item label="组件" prop="component"
           ><el-input
             :disabled="fmeun"
             v-model="form.component"
             placeholder="请输入"
         /></el-form-item>
-        <el-form-item label="组件路径" prop=""
+        <el-form-item label="排序" prop="sortId"
           ><el-input-number
             :min="0"
             controls-position="right"
@@ -158,6 +160,7 @@
 
       <template #footer>
         <span class="dialog-footer">
+          <el-button  @click="addCancel()">取消</el-button>
           <el-button type="primary" @click="onSubmit"> 确定 </el-button>
         </span>
       </template>
@@ -196,29 +199,32 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="路径">
+        <el-form-item label="PATH路径" prop="path">
           <el-input v-model="editForm.path" placeholder="路径"></el-input>
         </el-form-item>
-        <el-form-item label="菜单名称">
+        <el-form-item label="菜单名称" prop="title">
           <el-input v-model="editForm.title" placeholder="菜单名称"></el-input>
         </el-form-item>
-        <el-form-item label="组件">
+        <el-form-item label="组件" prop="component">
           <el-input
             :disabled="fmeun"
             v-model="editForm.component"
             placeholder="组件"
           ></el-input>
         </el-form-item>
-        <el-form-item label="组件名称">
+        <el-form-item label="组件名称" prop="MenuName">
           <el-input
             v-model="editForm.MenuName"
             placeholder="组件名称"
           ></el-input>
         </el-form-item>
-        <el-form-item label="图标">
+        <el-form-item label="图标" prop="icon">
           <el-input v-model="editForm.icon" placeholder="图标"></el-input>
         </el-form-item>
-        <el-form-item label="排序" prop=""
+        <el-form-item label="重定向" prop="redirect"
+          ><el-input v-model="editForm.redirect" placeholder="请输入"
+        /></el-form-item>
+        <el-form-item label="排序" prop="sortId"
           ><el-input-number
             :min="0"
             controls-position="right"
@@ -238,6 +244,7 @@
 <script setup lang="ts">
 import { ElMessage, ElMessageBox, ElTree } from "element-plus";
 import { getToken } from "@/utils/auth";
+import { useUserStoreWithOut } from '@/stores/modules/user'
 import { getFirstMeun, addMeun, deleteMeun, updateMeun } from "@/api/permiss";
 import {
   ref,
@@ -249,6 +256,7 @@ import {
   onMounted,
   onBeforeUnmount,
 } from "vue";
+const userStore = useUserStoreWithOut()
 const tableData = ref([]);
 const pageSize = ref(10);
 const currentPage = ref(1);
@@ -272,7 +280,7 @@ const form = reactive({
   sonNum: 0,
   sortId: 0,
   IsDelete: "",
-  CreateBy: getToken(),
+  CreateBy: userStore.getUserInfo,
   CreateDate: "",
   UpdateBy: "",
   UpdateDate: "",
@@ -285,16 +293,18 @@ let editForm = reactive({
   icon: "",
   MenuFID: "",
   MenuLevel: "",
+  redirect: "",
   id: "",
   sortId: 0,
   IsDelete: "",
   CreateBy: "",
   CreateDate: "",
-  UpdateBy: getToken(),
+  UpdateBy: userStore.getUserInfo,
   UpdateDate: "",
 });
 const editPName = ref("");
 const editid = ref();
+const formRef=ref()
 const arrID = ref([] as any[]);
 onBeforeMount(() => {
   getScreenHeight();
@@ -328,8 +338,13 @@ const getData = () => {
   });
 };
 const openAdd = () => {
-  addVisible.value = !unref(addVisible);
+  addVisible.value = true;
 };
+const  addCancel=()=>{
+  addVisible.value=false
+  chooseName.value=''
+  formRef.value.resetFields();
+}
 const handleNodeClick = (data: any) => {
   chooseName.value = data.title;
   form.MenuFID = data.id;
@@ -345,10 +360,6 @@ const onSubmit = () => {
   });
 };
 const handleEdit = (row: any) => {
-  // console.log(row);
-  // const data = row;
-  // delete data.childMenu;
-  // console.log(data)
   editForm.MenuFID = row.MenuFID;
   editForm.MenuLevel = row.MenuLevel;
   editForm.MenuName = row.MenuName;
@@ -356,6 +367,7 @@ const handleEdit = (row: any) => {
   editForm.icon = row.icon;
   editForm.path = row.path;
   editForm.title = row.title;
+  editForm.redirect = row.redirect;
   editForm.id = row.id;
   editForm.sortId = row.sortId;
 

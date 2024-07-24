@@ -18,6 +18,20 @@ export function getEmpoyeeInfo(data: any) {
         }
     });
 }
+export function getInfo() {
+    return request({
+        url: "/api/employee/findUserInfoBytoken",
+        method: "post",
+    });
+}
+
+export function getMenu() {
+    return request({
+        url: "/api/employee/findMenuBytoken",
+        method: "post",
+    });
+}
+
 
 //获取全部菜单
 export function getFirstMeun() {
@@ -160,6 +174,46 @@ export function deleteEmployee(data: any) {
 export function addEmployee(data: any) {
     return request({
         url: "/api/employee/add",
+        method: "post",
+        data,
+    });
+}
+
+export function InsertInspect(data: any){
+    return request({
+        url: "/api/firstinspect/Insert_Inspect_Info",
+        method: "post",
+        data,
+    });
+}
+
+export function GetInspectData(data: any){
+    return request({
+        url: "/api/firstinspect/Query_Inspect_Info",
+        method: "post",
+        data,
+    });
+}
+///api/firstinspect/Update_Inspect_Info
+export function UpdateInspectData(data: any){
+    return request({
+        url: "/api/firstinspect/Update_Inspect_Info",
+        method: "post",
+        data,
+    });
+}
+
+export function DeleteInspectData(data: any){
+    return request({
+        url: "/api/firstinspect/Delete_Inspect_Info",
+        method: "post",
+        data,
+    });
+}
+
+export function getCheckResults(data: any){
+    return request({
+        url: "/api/firstinspect/Quert_Inspect_History_Info",
         method: "post",
         data,
     });

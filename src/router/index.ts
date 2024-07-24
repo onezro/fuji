@@ -28,12 +28,11 @@ export const constantRouterMap = [
   {
     path: '/dashboard',
     component: Layout,
-    // redirect: '/dashboard/analysis',
+    redirect: '/dashboard/analysis',
     name: 'Dashboard',
     meta: {
       title: '首页',
       icon: 'House',
-
     },
     children: [
       {
@@ -49,46 +48,46 @@ export const constantRouterMap = [
 
     ]
   },
-  {
-    path: '/permission',
-    component: Layout,
-    redirect: '/permission/role',
-    name: 'Permission',
-    meta: {
-      title: '系统管理',
-      icon: 'Monitor',
-    },
-    children: [
-      {
-        path: 'role',
-        component: () => import('@/views/permission/role.vue'),
-        name: 'Role',
-        meta: {
-          title: '角色管理',
-          icon: 'Avatar'
-        }
-      },
-      {
-        path: 'menu',
-        component: () => import('@/views/permission/menu.vue'),
-        name: 'Menu',
-        meta: {
-          title: '菜单管理',
-          icon: 'Tickets'
-        }
+  // {
+  //   path: '/permission',
+  //   component: Layout,
+  //   redirect: '/permission/role',
+  //   name: 'Permission',
+  //   meta: {
+  //     title: '系统管理',
+  //     icon: 'Monitor',
+  //   },
+  //   children: [
+  //     {
+  //       path: 'role',
+  //       component: () => import('@/views/permission/role.vue'),
+  //       name: 'Role',
+  //       meta: {
+  //         title: '角色管理',
+  //         icon: 'Avatar'
+  //       }
+  //     },
+  //     {
+  //       path: 'menu',
+  //       component: () => import('@/views/permission/menu.vue'),
+  //       name: 'Menu',
+  //       meta: {
+  //         title: '菜单管理',
+  //         icon: 'Tickets'
+  //       }
 
-      },
-      {
-        path: 'empolyee',
-        component: () => import('@/views/permission/empolyee.vue'),
-        name: 'Empolyee',
-        meta: {
-          title: '员工管理',
-          icon: 'User'
-        }
-      },
-    ]
-  },
+  //     },
+  //     {
+  //       path: 'empolyee',
+  //       component: () => import('@/views/permission/empolyee.vue'),
+  //       name: 'Empolyee',
+  //       meta: {
+  //         title: '员工管理',
+  //         icon: 'User'
+  //       }
+  //     },
+  //   ]
+  // },
   {
     path: '/404',
     component: () => import('@/views/Error/404.vue'),
@@ -122,7 +121,7 @@ export const asyncRouterMap = [
   // {
   //   path: '/level',
   //   component: Layout,
-  //   // redirect: '/level/menu1/menu1-1-1',
+  //   redirect: '/level/menu1/menu1-1-1',
   //   name: 'Level',
   //   meta: {
   //     title: '多级菜单',
@@ -132,8 +131,8 @@ export const asyncRouterMap = [
   //     {
   //       path: 'menu1',
   //       name: 'Menu1',
-  //       // redirect: '/level/menu1/menu1-1-1',
-  //       // component: () => import('@/views/Level/index1.vue'),
+  //       redirect: '/level/menu1/menu1-1-1',
+  //       component: () => import('@/views/Level/index1.vue'),
   //       meta: {
   //         title: '菜单1'
   //       },
@@ -165,7 +164,7 @@ export const asyncRouterMap = [
   //       }
   //     }
   //   ]
-  // },
+  // }
 ]
 
 const router = createRouter({

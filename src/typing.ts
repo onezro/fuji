@@ -4,7 +4,7 @@ export interface FistTableData {
     InspectContent: string,
     Step1: number,
     SubItem1: number,
-    stepItemList: Array<StepItem>
+    StepItemList: Array<StepItem>
 }
 
 export interface StepItem {
@@ -19,11 +19,30 @@ export interface StepItem {
     SubItemMethod: String,
     SubItemBasic: String,
     SubItemSolution: String,
-    SubItemType:string
+    SubItemType: string
 }
 
-export interface AllInspection{
-    product: string,
-    inspectType: string,
-    stepList:Array<FistTableData>
+export interface AllInspection {
+    Product: string,
+    InspectType: string,
+    WorkSection: string,
+    StepList: Array<FistTableData>,
+    StepItemList: Array<FistTableData>
 }
+
+export interface InspectionResult {
+    InspectOrder: string,
+    step1: string,
+    stepItemList: Array<ResultItem>
+}
+
+export interface ResultItem {
+    Name: string,
+    InspectContent: string,
+    Step: number,
+    Status: number,
+    Remark: string,
+    Attachment: Array<string>,
+    step1: string,
+}
+

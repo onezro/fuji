@@ -7,8 +7,8 @@ import { useNProgress } from '@/hooks/useNProgress'
 import { usePermissionStoreWithOut } from '@/stores/modules/permission'
 import { NO_REDIRECT_WHITE_LIST } from '@/constants'
 import { useUserStoreWithOut } from '@/stores/modules/user'
-import { getRoleMenuse } from '@/api/permiss'
-import { asyncRouterMap, constantRouterMap } from '@/router'
+import { getMenu, getInfo } from '@/api/permiss'
+// import { asyncRouterMap, constantRouterMap } from '@/router'
 
 const { start, done } = useNProgress()
 
@@ -22,45 +22,49 @@ router.beforeEach(async (to, from, next) => {
     if (to.path === '/login') {
       next({ path: '/' })
     } else {
-      const employeeId = localStorage.getItem("OPCENTER_ROLE");
+      // const employeeId = localStorage.getItem("OPCENTER_ROLE");
+      const roleRouters = userStore.getRoleRouters || []
+      // console.log(roleRouters);
+
       if (permissionStore.getIsAddRouters) {
         next()
         return
       }
-
-      // 开发者可根据实际情况进行修改
-      const roleRouters = userStore.getRoleRouters || []
-      // console.log(employeeId)
-      if (roleRouters.length == 0) {
-        if (employeeId) {
-          await   getRoleMenuse(employeeId).then(async (data: any) => {
-            // console.log(data)
-            if (data.code == 100200) {
-              const routerArr = JSON.parse(data.content) || []
-              const systemRouter=routerArr.filter((v:any)=>v.MenuName=='Portal')
-              console.log(systemRouter)
-              userStore.setRoleRouters(systemRouter[0].childMenu)
-              permissionStore.generateRoutes('server', systemRouter[0].childMenu)
-            }
-            else{
-              await permissionStore.generateRoutes('static')
-            }
-            permissionStore.getAddRouters.forEach((route: any) => {
-              // console.log(route)
-              router.addRoute(route as unknown as RouteRecordRaw) // 动态添加可访问路由表
+      await getInfo().then(async (data: any) => {
+        userStore.setUserInfo(data.content);
+        if (data.code == 100200) {
+          if (roleRouters.length == 0) {
+            await getMenu().then(async (data: any) => {
+              if (data.code == 100200) {
+                const routerArr = JSON.parse(data.content) || []
+                const systemRouter = routerArr.filter((v: any) => v.MenuName == "Portal")
+                // console.log(systemRouter);
+                if(systemRouter.length==0){
+                  await permissionStore.generateRoutes('static')
+                }else{
+                  userStore.setRoleRouters(systemRouter[0].childMenu)
+                  await permissionStore.generateRoutes('server', systemRouter[0].childMenu)
+                }
+              }
+              else {
+                await permissionStore.generateRoutes('static')
+              }
+              permissionStore.getAddRouters.forEach((route: any) => {
+                // console.log(route);
+                router.addRoute(route as unknown as RouteRecordRaw) // 动态添加可访问路由表
+              })
+              // console.log(router.getRoutes())
             })
-          })
-
-        } else  {
-          // console.log(222);
-          await permissionStore.generateRoutes('static')
+          }
+        } else {
+          permissionStore.generateRoutes('static')
           permissionStore.getAddRouters.forEach((route: any) => {
             router.addRoute(route as unknown as RouteRecordRaw) // 动态添加可访问路由表
           })
         }
 
+      })
 
-      }
       //是否使用动态路由
       // if (appStore.getDynamicRouter) {
       //   appStore.serverDynamicRouter
@@ -80,10 +84,8 @@ router.beforeEach(async (to, from, next) => {
       const redirect = decodeURIComponent(redirectPath as string)
       const nextData = to.path === redirect ? { ...to, replace: true } : { path: redirect }
       permissionStore.setIsAddRouters(true)
-      console.log(from);
-
       next(nextData)
-      // next({ ...to, replace: true });
+
     }
   } else {
     if (NO_REDIRECT_WHITE_LIST.indexOf(to.path) !== -1) {

@@ -42,6 +42,7 @@ const getBreadcrumb = () => {
   levelList.value = filter(unref(menuRouters), (node: AppRouteRecordRaw) => {
     return node.path === currentPath;
   });
+  // console.log(menuRouters.value)
 };
 
 // function isDashboard(route: RouteLocationMatched) {

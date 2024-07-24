@@ -36,7 +36,7 @@ const addTags = () => {
 }
 //关闭tag
 const closeSelectedTag = (view: any) => {
-    console.log(view)
+    // console.log(view)
     tagsViewStore.delView(view)
     // closeCurrent(view, () => {
 
@@ -55,11 +55,11 @@ const isActive = (route: RouteLocationNormalizedLoaded): boolean => {
 const toLastView = () => {
     const visitedViews = tagsViewStore.getVisitedViews
     const latestView = visitedViews.slice(-1)[0]
-    console.log(visitedViews,latestView)
+    // console.log(visitedViews,latestView)
     if (latestView) {
         push(latestView)
     } else {
-        console.log( unref(currentRoute).path)
+        console.log(unref(currentRoute).path)
         if (
             unref(currentRoute).path === permissionStore.getAddRouters[0].path ||
             unref(currentRoute).path === permissionStore.getAddRouters[0].redirect
@@ -82,8 +82,8 @@ onMounted(() => {
     initTags()
     addTags()
 })
-onActivated(()=>{
-    console.log(111)
+onActivated(() => {
+    // console.log(111)
     initTags()
 })
 // const bbb = () => {
@@ -94,11 +94,11 @@ onActivated(()=>{
     <div class="bood  h-[35px] flex w-full relative bg-[#fff]">
         <div class="overflow-hidden flex-1">
             <el-scrollbar class="h-full">
-                <div class="flex h-full items-center ">
+                <div class="flex h-full items-center">
                     <div v-for="item in visitedViews" :key="item.fullPath" class="tag_item " :class="[item.meta.affix ? `affix` : '', {
                         'is-active': isActive(item)
                     }]">
-                        <router-link :to="{ ...item }" custom v-slot="{ navigate }">
+                        <router-link :to="{ ...item }" custom v-slot="{ navigate }"  >
                             <div @click="navigate"
                                 class="flex  whitespace-nowrap  justify-center items-center  pl-[15px]">
 
@@ -141,6 +141,7 @@ onActivated(()=>{
     border: 1px solid #d9d9d9;
     border-radius: 2px;
 
+    
     .qx {
         position: absolute;
         top: 55%;
