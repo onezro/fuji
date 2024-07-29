@@ -68,40 +68,41 @@
       title="添加"
       width="50%"
     >
-      <el-form :model="addFrom"   ref="addformRef" label-width="auto">
-        <el-form-item label="产品编号" prop="product">
-          <el-input v-model="addFrom.product" placeholder="产品编号"></el-input>
-        </el-form-item>
-      </el-form>
+    
       <el-form
         ref="formRef"
         :model="form"
         label-position="left"
         label-width="auto"
-      >
+      > <el-form-item label="工段" prop="WorkSection">
+          <el-input v-model="addFrom.WorkSection" placeholder="工段"></el-input>
+        </el-form-item>
+        <el-form-item label="产品编号" prop="Product">
+          <el-input v-model="addFrom.Product" placeholder="产品编号"></el-input>
+        </el-form-item>
         <el-row :gutter="50">
           <el-col :span="12">
             <el-form-item label="检验工序" prop="step">
-              <el-input v-model="form.step" placeholder="工序" clearable />
+              <el-input v-model="form.Step" placeholder="工序" clearable />
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="检验设备" prop="name">
-              <el-input v-model="form.name" placeholder="检验设备"></el-input>
+              <el-input v-model="form.Name" placeholder="检验设备"></el-input>
             </el-form-item>
           </el-col>
         </el-row>
         <el-form-item label="内容" prop="inspectContent">
           <el-input
             type="textarea"
-            v-model="form.inspectContent"
+            v-model="form.InspectContent"
             placeholder="内容"
           ></el-input>
         </el-form-item>
 
         <!-- <el-form ref="formRef2" :model="formItem" label-position="left" label-width="auto"> -->
 
-        <div v-for="(item, index) in form.stepItemList" :key="index">
+        <div v-for="(item, index) in form.StepItemList" :key="index">
           <el-divider>检验子项{{ index + 1 }}</el-divider>
           <el-row :gutter="50">
             <el-col :span="12">
@@ -110,7 +111,7 @@
                 :prop="'stepItemList.' + index + '.subItem'"
               >
                 <el-input
-                  v-model.number="item.subItem"
+                  v-model.number="item.SubItem"
                   placeholder="子项编号"
                 ></el-input>
               </el-form-item>
@@ -121,7 +122,7 @@
                 :prop="'stepItemList.' + index + '.subItemName'"
               >
                 <el-input
-                  v-model="item.subItemName"
+                  v-model="item.SubItemName"
                   placeholder="子项名称"
                 ></el-input>
               </el-form-item>
@@ -136,7 +137,7 @@
               >
                 <el-input
                   type="textarea"
-                  v-model="item.subItemAim"
+                  v-model="item.SubItemAim"
                   placeholder="子项检查目标"
                 ></el-input> </el-form-item
             ></el-col>
@@ -147,7 +148,7 @@
               >
                 <el-input
                   type="textarea"
-                  v-model="item.subItemMethod"
+                  v-model="item.SubItemMethod"
                   placeholder="子项检验方法"
                 ></el-input> </el-form-item
             ></el-col>
@@ -160,7 +161,7 @@
               >
                 <el-input
                   type="textarea"
-                  v-model="item.subItemBasic"
+                  v-model="item.SubItemBasic"
                   placeholder="检查标准"
                 ></el-input> </el-form-item
             ></el-col>
@@ -171,7 +172,7 @@
               >
                 <el-input
                   type="textarea"
-                  v-model="item.subItemSolution"
+                  v-model="item.SubItemSolution"
                   placeholder="子项检查解决办法"
                 ></el-input> </el-form-item
             ></el-col>
@@ -197,21 +198,19 @@
       @close="eidtCancel()"
       title="添加"
       width="50%"
-    > <el-form  :model="changeForm" label-width="100px">
-        <el-form-item label="产品编号" prop="product">
-          <el-input
-            disabled
-            v-model="changeForm.product"
-            placeholder="产品编号"
-          ></el-input>
-        </el-form-item>
-      </el-form>
+    >  
       <el-form ref="eidtRef" :model="editForm" label-width="100px">
+        <el-form-item label="工段" prop="WorkSection">
+          <el-input v-model="editHear.WorkSection" placeholder="工段"></el-input>
+        </el-form-item>
+        <el-form-item label="产品编号" prop="Product">
+          <el-input v-model="editHear.Product" placeholder="产品编号"></el-input>
+        </el-form-item>
         <el-row>
           <el-col :span="12">
             <el-form-item label="检验工序" prop="step">
               <el-input
-                v-model.number="editForm.step"
+                v-model.number="editForm.Step"
                 placeholder="检验工序"
               ></el-input>
             </el-form-item>
@@ -219,7 +218,7 @@
           <el-col :span="12">
             <el-form-item label="检验设备" prop="name">
               <el-input
-                v-model="editForm.name"
+                v-model="editForm.Name"
                 placeholder="检验设备"
               ></el-input>
             </el-form-item>
@@ -229,7 +228,7 @@
         <el-form-item label="内容" prop="inspectContent">
           <el-input
             type="textarea"
-            v-model="editForm.inspectContent"
+            v-model="editForm.InspectContent"
             placeholder="内容"
           ></el-input>
         </el-form-item>
@@ -238,7 +237,7 @@
           <el-col :span="12">
             <el-form-item label="编号">
               <el-input
-                v-model.number="editForm.stepItemList[0].subItem"
+                v-model.number="editForm.StepItemList[0].SubItem"
                 placeholder="子项编号"
               ></el-input>
             </el-form-item>
@@ -246,7 +245,7 @@
           <el-col :span="12">
             <el-form-item label="名称">
               <el-input
-                v-model="editForm.stepItemList[0].subItemName"
+                v-model="editForm.StepItemList[0].SubItemName"
                 placeholder="子项名称"
               ></el-input>
             </el-form-item>
@@ -258,7 +257,7 @@
             <el-form-item label="检查目标">
               <el-input
                 type="textarea"
-                v-model="editForm.stepItemList[0].subItemAim"
+                v-model="editForm.StepItemList[0].SubItemAim"
                 placeholder="子项检查目标"
               ></el-input> </el-form-item
           ></el-col>
@@ -266,7 +265,7 @@
             ><el-form-item label="检验方法">
               <el-input
                 type="textarea"
-                v-model="editForm.stepItemList[0].subItemMethod"
+                v-model="editForm.StepItemList[0].SubItemMethod"
                 placeholder="子项检验方法"
               ></el-input> </el-form-item
           ></el-col>
@@ -276,7 +275,7 @@
             <el-form-item label="检查标准">
               <el-input
                 type="textarea"
-                v-model="editForm.stepItemList[0].subItemBasic"
+                v-model="editForm.StepItemList[0].SubItemBasic"
                 placeholder="检查标准"
               ></el-input> </el-form-item
           ></el-col>
@@ -284,7 +283,7 @@
             <el-form-item label="解决办法">
               <el-input
                 type="textarea"
-                v-model="editForm.stepItemList[0].subItemSolution"
+                v-model="editForm.StepItemList[0].SubItemSolution"
                 placeholder="子项检查解决办法"
               ></el-input> </el-form-item
           ></el-col>
@@ -307,7 +306,12 @@
 <script setup lang="ts">
 import type { FistTableData, AllInspection } from "@/typing";
 import { ElMessage, ElNotification, ElMessageBox } from "element-plus";
-
+import {
+  InsertInspect,
+  GetInspectData,
+  UpdateInspectData,
+  DeleteInspectData,
+} from "@/api/permiss";
 import {
   ref,
   unref,
@@ -318,6 +322,7 @@ import {
   onMounted,
   onBeforeUnmount,
 } from "vue";
+
 const tableData = ref<InstanceType<typeof FistTableData>[]>([]);
 const pageSize = ref(10);
 const currentPage = ref(1);
@@ -325,53 +330,79 @@ const tableHeight = ref(0);
 const addVisible = ref(false);
 const editVisible = ref(false);
 const formRef = ref();
-const addFrom = reactive<InstanceType<typeof AllInspection>>({
-  product: "",
-  inspectType: "FI",
-  stepList: [],
-});
-const changeForm= reactive<InstanceType<typeof AllInspection>>({
-  product: "",
-  inspectType: "FI",
-  stepList: [],
+const getForm = reactive({
+  Product: "*",
+  WorkSection: "",
+  InspectType: "4I",
+  StepList: [
+    {
+      Step: 0,
+      Status: "I",
+      Name: "",
+      InspectContent: "",
+      StepItemList: [
+        {
+          SubItemName: "",
+          SubItem: 0,
+          SubItemMethod: "",
+          SubItemBasic: "",
+          SubItemSolution: "",
+          SubItemAim: "",
+          SubItemType: "",
+        },
+      ],
+    },
+  ],
 });
 const form = reactive({
-  step: "",
-  status: "I",
-  name: "",
-  inspectContent: "",
-  stepItemList: [
+  Step: "",
+  Status: "I",
+  Name: "",
+  InspectContent: "",
+  StepItemList: [
     {
-      subItemName: "",
-      subItem: "",
-      subItemMethod: "",
-      subItemBasic: "",
-      subItemSolution: "",
-      subItemAim: "",
-      subItemType: "",
+      SubItemName: "",
+      SubItem: "",
+      SubItemMethod: "",
+      SubItemBasic: "",
+      SubItemSolution: "",
+      SubItemAim: "",
+      SubItemType: "",
     },
   ],
 });
 const editForm = reactive({
-  step: "",
-  status: "I",
-  name: "",
-  inspectContent: "",
-  stepItemList: [
+  Step: "",
+  Status: "U",
+  Name: "",
+  InspectContent: "",
+  StepItemList: [
     {
-      subItemName: "",
-      subItem: "",
-      subItemMethod: "",
-      subItemBasic: "",
-      subItemSolution: "",
-      subItemAim: "",
-      subItemType: "",
+      SubItemName: "",
+      SubItem: "",
+      SubItemMethod: "",
+      SubItemBasic: "",
+      SubItemSolution: "",
+      SubItemAim: "",
+      SubItemType: "",
     },
   ],
 });
+const editHear = reactive<InstanceType<typeof AllInspection>>({
+  Product: "",
+  WorkSection: "",
+  InspectType: "4I",
+  StepList: [],
+});
+const addFrom = reactive<InstanceType<typeof AllInspection>>({
+  Product: "",
+  WorkSection: "",
+  InspectType: "4I",
+  StepList: [],
+});
 const deleteForm = reactive<InstanceType<typeof AllInspection>>({
   product: "",
-  inspectType: "WI",
+  inspectType: "4I",
   stepList: [],
 });
 
@@ -387,24 +418,31 @@ onBeforeUnmount(() => {
 });
 
 //获取基础数据
-const getData = () => {};
+const getData = () => {
+  GetInspectData(getForm).then((res:any)=>{
+    // console.log(res);
+    if(res.code==100200){
+      dispose(res.content)
+    }
+  })
+ };
 
 const openAdd = () => {
   addVisible.value = true;
 };
 const addSon = () => {
-  form.stepItemList.push({
-    subItemName: "",
-    subItem: "",
-    subItemMethod: "",
-    subItemBasic: "",
-    subItemSolution: "",
-    subItemAim: "",
-    subItemType: "",
+  form.StepItemList.push({
+    SubItemName: "",
+    SubItem: "",
+    SubItemMethod: "",
+    SubItemBasic: "",
+    SubItemSolution: "",
+    SubItemAim: "",
+    SubItemType: "",
   });
 };
 const deleteSon = (index: any) => {
-  form.stepItemList = form.stepItemList.filter((v: any, i) => i !== index);
+  form.StepItemList = form.StepItemList.filter((v: any, i) => i !== index);
 };
 
 const addCancel = () => {
@@ -413,8 +451,23 @@ const addCancel = () => {
 };
 //添加确定
 const addSubmit = () => {
-  addFrom.stepList.push(form)
-  console.log(addFrom);
+  addFrom.StepList.push(form);
+  InsertInspect(addFrom).then((res: any) => {
+    // console.log(res);
+    if (res.code == 100200) {
+      ElNotification({
+        title: "添加成功",
+        // message: "取消操作",
+        type: "success",
+      });
+      getData()
+      addVisible.value = false;
+
+    }
+    resetForm();
+    addFrom.stepList = [];
+  });
+  // console.log(form);
 };
 
 //编辑
@@ -423,58 +476,71 @@ const handleEdit = (row: any) => {
   editVisible.value = true;
 };
 const eidtCancel = () => {
+  editHear.stepList = [];
   editVisible.value = false;
 };
 const editSubmit = () => {
-  changeForm.stepList.push(editForm);
-  console.log(editForm);
+  editHear.StepList.push(editForm);
+  // console.log(JSON.stringify(editHear));
+  UpdateInspectData(editHear).then((res:any)=>{
+    if (res.code == 100200) {
+      ElNotification({
+        title: "修改成功",
+        // message: "取消操作",
+        type: "success",
+      });
+      getData()
+      editVisible.value = false;
+
+    }
+    editHear.stepList = [];
+  })
 };
 
 const eidtData = (row: any) => {
-  editForm.status = row.Status;
-  editForm.step = row.Step;
-  editForm.name = row.Name;
-  editForm.inspectContent = row.InspectContent;
-  editForm.stepItemList[0].subItem = row.SubItem;
-  editForm.stepItemList[0].subItemAim = row.SubItemAim;
-  editForm.stepItemList[0].subItemBasic = row.SubItemBasic;
-  editForm.stepItemList[0].subItemMethod = row.SubItemMethod;
-  editForm.stepItemList[0].subItemName = row.SubItemName;
-  editForm.stepItemList[0].subItemSolution = row.SubItemSolution;
-  editForm.stepItemList[0].subItemType = row.SubItemType;
+  editHear.Product=row.ProductName
+  editHear.WorkSection=row.WorkSection
+  editForm.Status = row.Status;
+  editForm.Step = row.Step;
+  editForm.Name = row.StepName;
+  editForm.InspectContent = row.InspectContent;
+  editForm.StepItemList[0].SubItem = row.SubItem;
+  editForm.StepItemList[0].SubItemAim = row.SubItemAim;
+  editForm.StepItemList[0].SubItemBasic = row.SubItemBasic;
+  editForm.StepItemList[0].SubItemMethod = row.SubItemMethod;
+  editForm.StepItemList[0].SubItemName = row.SubItemName;
+  editForm.StepItemList[0].SubItemSolution = row.SubItemSolution;
+  editForm.StepItemList[0].SubItemType = row.SubItemType;
 };
 //删除
 const handleDelete = (row: any) => {
   eidtData(row);
-
-  deleteForm.stepList.push(editForm);
+  editHear.StepList.push(editForm);
+  // deleteForm.stepList.push(editForm);
   ElMessageBox.confirm("确定删除", "确认操作", {
     confirmButtonText: "确定",
     cancelButtonText: "取消",
     type: "warning",
   })
     .then(() => {
-      // deleteRole(row.id).then((data: any) => {
-      //   // console.log(res);
-      //   if ((data.code = 100200)) {
-      //     getData();
-      //     ElNotification({
-      //       title: "删除成功",
-      //       // message: "取消操作",
-      //       type: "success",
-      //     });
-      //   } else {
-      //     ElNotification({
-      //       title: "删除失败",
-      //       // message: "取消操作",
-      //       type: "error",
-      //     });
-      //     // this.$message({
-      //     //   type: "error",
-      //     //   message: data.msg,
-      //     // });
-      //   }
-      // });
+      DeleteInspectData(editHear).then((data: any) => {
+        // console.log(res);
+        if ((data.code = 100200)) {
+          getData();
+          ElNotification({
+            title: "删除成功",
+            // message: "取消操作",
+            type: "success",
+          });
+        } else {
+          ElNotification({
+            title: "删除失败",
+            // message: "取消操作",
+            type: "error",
+          });
+
+        }
+      });
     })
     .catch(() => {
       // ElMessage({
@@ -570,21 +636,21 @@ const getScreenHeight = () => {
   });
 };
 const resetForm = () => {
-  form.step = "";
-  form.status = "I";
-  form.name = "";
-  form.inspectContent = "";
+  form.Step = "";
+  form.Status = "I";
+  form.Name = "";
+  form.InspectContent = "";
 
-  form.stepItemList = form.stepItemList.filter((v: any, i) => i == 0);
+  form.StepItemList = form.StepItemList.filter((v: any, i) => i == 0);
   // 重置 stepItemList，这里假设我们只重置第一个对象，或者你可以遍历它们
-  form.stepItemList.forEach((item) => {
-    item.subItemName = "";
-    item.subItem = "";
-    item.subItemMethod = "";
-    item.subItemBasic = "";
-    item.subItemSolution = "";
-    item.subItemAim = "";
-    item.subItemType = "";
+  form.StepItemList.forEach((item) => {
+    item.SubItemName = "";
+    item.SubItem = "";
+    item.SubItemMethod = "";
+    item.SubItemBasic = "";
+    item.SubItemSolution = "";
+    item.SubItemAim = "";
+    item.SubItemType = "";
   });
 };
 </script>

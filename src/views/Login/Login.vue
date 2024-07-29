@@ -15,8 +15,8 @@ import { ref, watch } from "vue";
 const userStore = useUserStoreWithOut();
 const { currentRoute, addRoute, push } = useRouter();
 const form = ref({
-  EmployeeName: "",
-  DocManagerUser: "",
+  EmployeeName: "CamstarAdmin",
+  DocManagerUser: "123456",
   EmployeeId: "",
   CanLogin: 0,
   FullName: "",
@@ -125,6 +125,13 @@ const loginClick = () => {
               type="primary"
               >登录</el-button
             >
+            <!-- <el-button
+              @click="loginClick"
+              size="large"
+              class="w-[90px]"
+             
+              >切换系统</el-button
+            > -->
           </el-form-item>
         </el-form>
       </div>

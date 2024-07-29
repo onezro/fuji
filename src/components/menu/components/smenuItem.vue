@@ -19,7 +19,7 @@
         <el-icon v-if="item.meta.icon">
           <component :is="item.meta.icon"
         /></el-icon>
-        <span>{{ item.meta.title }}</span>
+        <span>{{ item.meta.title }}1</span>
       </template>
       <smenuItem
         v-for="v in item.children"
@@ -87,6 +87,8 @@ const hasOneShowingChild = (
 <style lang="scss" scoped>
 .el-menu-item {
   height: 40px;
+  line-height: 40px ;
+  // background-color: #ffcd50;
 }
 .el-menu-item:hover {
   outline: 0 !important;
@@ -98,7 +100,10 @@ const hasOneShowingChild = (
   background-color: #000000 !important;
 }
 
-.el-menu-horizontal .el-menu .el-sub-menu__title {
-  background-color: #000000 !important;
+
+::v-deep .el-sub-menu .el-sub-menu__title {
+  height: 45px;
+  line-height: 45px ;
 }
+
 </style>

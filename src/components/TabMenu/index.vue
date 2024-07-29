@@ -5,11 +5,8 @@
       <!-- {{  routes}} -->
 
       <div class="w-[80px]" v-for="item in tabRouters">
-        <div
-          class="text-center text-xs cursor-pointer pt-3 pb-3 hover:bg-[#005A79]"
-          :class="{ isActive: isActive(item.path) }"
-          @click="tabClick(isOnlyChildren(item))"
-        >
+        <div class="text-center text-xs cursor-pointer pt-3 pb-3 hover:bg-[#005A79]"
+          :class="{ isActive: isActive(item.path) }" @click="tabClick(isOnlyChildren(item))">
           <el-icon :size="24" color="#ffffff">
             <component :is="isOnlyChildren(item).meta?.icon" />
           </el-icon>
@@ -17,7 +14,7 @@
             {{ isOnlyChildren(item).meta?.title || "" }}
           </p>
         </div>
-         <!-- <div
+        <!-- <div
           class="text-center text-xs cursor-pointer pt-3 pb-3 hover:bg-[#005A79]"
           :class="{ isActive: isActive(item.path) }"
           @click="tabClick(item)"
@@ -37,54 +34,101 @@
           <div class="block">
             <el-avatar :size="35" icon="Avatar" />
           </div>
-          <p
-            class="w-[80px] p-1 font-bold text-base text-white text-center break-words text-pretty"
-          >
+          <p class="w-[80px] p-1 font-bold text-base text-white text-center break-words text-pretty">
             {{ loginName }}
           </p>
         </div>
         <template #dropdown>
           <el-dropdown-menu>
+            <el-dropdown-item @click.native="openUpdatePwd">修改密码</el-dropdown-item>
             <el-dropdown-item @click.native="logoutsys">退出登录</el-dropdown-item>
-            <!-- <el-dropdown-item>Action 2</el-dropdown-item>
-            <el-dropdown-item>Action 3</el-dropdown-item> -->
           </el-dropdown-menu>
         </template>
       </el-dropdown>
     </div>
-    <Menu
-      class="absolute top-0 z-[3000] h-[100%] left-[80px] bg-[#003750]"
-      :class="{ 'w-[200px]': showMenu, 'w-0': !showMenu }"
-      style="transition: width 0.2s, left 0.2s"
-      :base-path="'/'"
-      @refresh="clickOut"
-    ></Menu>
+    <Menu class="absolute top-0 z-[3000] h-[100%] left-[80px] bg-[#003750]"
+      :class="{ 'w-[200px]': showMenu, 'w-0': !showMenu }" style="transition: width 0.2s, left 0.2s" :base-path="'/'"
+      @refresh="clickOut"></Menu>
+
+    <el-dialog :append-to-body="true" :close-on-click-modal="false" title="修改密码" v-model="upPwVisible" width="30%"
+      @close="upDateCancel()">
+      <el-form :model="upPwForm" ref="upPwFormRef" :rules="rules" label-width="auto">
+        <el-form-item label="新密码" prop="pwd">
+          <el-input v-model="upPwForm.pwd" placeholder="请输入新密码" show-password clearable></el-input>
+        </el-form-item>
+        <el-form-item label="确认密码" prop="confirmPwd">
+          <el-input v-model="upPwForm.confirmPwd" placeholder="再次输入新密码" show-password clearable></el-input>
+        </el-form-item>
+      </el-form>
+
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="upDateCancel()">取消</el-button>
+          <el-button type="primary" @click="upDateSubmit()">确定</el-button>
+        </span>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, unref, onMounted, watch } from "vue";
+import { computed, ref, reactive, unref, onMounted, watch } from "vue";
 import { useRouter } from "vue-router";
 import Menu from "@/components/menu/index.vue";
 import { pathResolve } from "@/utils/routerHelper";
-import { getToken} from "@/utils/auth";
+import { getToken } from "@/utils/auth";
+import { updatePassword } from "@/api/permiss"
+import { ElNotification, ElMessage, ElMessageBox } from "element-plus";
 import {
   filterMenusPath,
   initTabMap,
   tabPathMap,
 } from "@/components/TabMenu/helper";
 import { usePermissionStoreWithOut } from "@/stores/modules/permission";
-import {useUserStoreWithOut} from '@/stores/modules/user'
+import { useUserStoreWithOut } from '@/stores/modules/user'
 import { cloneDeep } from "lodash-es";
 const { currentRoute, push } = useRouter();
 const permissionStore = usePermissionStoreWithOut();
-const userStore=useUserStoreWithOut()
+const userStore = useUserStoreWithOut()
+
+const loginName = userStore.getUserInfo
+const showMenu = ref(false); //展示子菜单
+const upPwVisible = ref(false)
+const upPwForm = reactive({
+  employeeName: '',
+  pwd: '',
+  confirmPwd: ''
+})
+
+const upPwFormRef = ref()
+const tabActive = ref("");
+
+const equalToPassword = (rule: any, value: any, callback: any) => {
+  if (upPwForm.pwd !== value) {
+    // console.log('两次输入的密码不一致');
+    // upPwForm.confirmPwd=''
+    callback(new Error("两次输入的密码不一致"));
+  } else {
+    callback();
+  }
+}
+const rules = reactive<any>({
+  pwd: [
+    { required: true, message: '请输入新密码', trigger: 'blur' },
+  ],
+  confirmPwd: [
+    { required: true, trigger: "blur", message: "请再次输入您的密码" },
+    { required: true, validator: equalToPassword, trigger: "blur" }
+  ],
+
+})
+
 
 const routers = computed(() => permissionStore.getRouters);
 const tabRouters = computed(() =>
   unref(routers).filter((v: any) => !v?.meta?.hidden)
 );
-const loginName=userStore.getUserInfo
+
 watch(
   () => routers.value,
   (routers: AppRouteRecordRaw[]) => {
@@ -96,8 +140,7 @@ watch(
     deep: true,
   }
 );
-const showMenu = ref(false); //展示子菜单
-const tabActive = ref("");
+
 onMounted(() => {
   // console.log( permissionStore.getRouters)
 });
@@ -111,7 +154,58 @@ const isActive = (currentPath: string) => {
   return false;
 };
 
-const logoutsys=()=>{
+const openUpdatePwd = () => {
+  // upPwForm.employeeName = userStore.getUserInfo
+  upPwVisible.value = true
+}
+
+const upDateCancel = () => {
+  upPwVisible.value = false
+  upPwFormRef.value.resetFields();
+}
+const upDateSubmit = () => {
+  upPwFormRef.value.validate((valid: any) => {
+    if (valid) {
+      let data = {
+        employeeName: userStore.getUserInfo,
+        pwd: upPwForm.pwd
+      }
+      updatePassword(data).then((res: any) => {
+        // console.log(data)
+        if (res.code == 100200) {
+          ElNotification({
+            title: "修改成功",
+            // message: "取消操作",
+            type: "success",
+          });
+          ElMessageBox.confirm("密码修改成功即将退出登录", "提示", {
+            confirmButtonText: "确定",
+            type: "warning",
+          })
+            .then(() => {
+              logoutsys()
+            })
+            .catch(() => {
+              logoutsys()
+            });
+        } else {
+          ElNotification({
+            title: "修改失败",
+            message: res.msg,
+            type: "error",
+          });
+        }
+        upPwVisible.value = false
+      })
+
+    } else {
+      console.log("error submit!!");
+      return false;
+    }
+  })
+}
+
+const logoutsys = () => {
   // console.log(1111)
   userStore.logout()
   // push('/login');
@@ -147,9 +241,9 @@ const clickOut = () => {
 const isOnlyChildren = (item: any) => {
   // console.log(item)
   // if (item.children.length && item.children.length > 1)
-  
-  
-  if (item.path!=='/dashboard'){
+
+
+  if (item.path !== '/dashboard') {
     // console.log(item.children)
     return item;
 

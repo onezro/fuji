@@ -101,7 +101,7 @@ service.interceptors.response.use(
         ElMessageBox.alert(response.data.msg, "提示信息", {
           confirmButtonText: "确定",
         });
-        return response.data;
+        // return response.data;
       }
       // if (response.data.Status == "OK") {
       // return response.data;

@@ -19,7 +19,7 @@
             </el-input>
           </el-form-item>
           <el-form-item v-show="inquire != 'order'">
-            <el-date-picker v-model="value1" format="yyyy-MM-dd" value-format="yyyy-MM-dd" type="daterange"
+            <el-date-picker v-model="value1" format="YYYY-MM-DD" value-format="YYYY-MM-DD" type="daterange"
               range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期">
             </el-date-picker>
           </el-form-item>
@@ -128,9 +128,10 @@ const inquireList = ref([
 ])
 const value1 = ref([])
 
-watch(() => value1.value, (value) => {
-  getDataText.dateStart = value[0];
-  getDataText.dateEnd = value[1];
+watch(() => value1.value, (data) => {
+  console.log(data)
+  getDataText.dateStart = data[0];
+  getDataText.dateEnd = data[1];
 })
 
 watch(() => inquire.value, (newData, oldData) => {

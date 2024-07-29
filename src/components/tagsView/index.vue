@@ -134,7 +134,7 @@ onActivated(() => {
     position: relative;
     top: 2px;
     height: calc(100% - 6px);
-    padding: 5px 25px 5px 0;
+    padding: 5px 15px 5px 0;
     margin-left: 4px;
     font-size: 12px;
     cursor: pointer;
@@ -144,8 +144,8 @@ onActivated(() => {
     
     .qx {
         position: absolute;
-        top: 55%;
-        right: 5px;
+        top: 28%;
+        right: 1px;
         display: none;
         transform: translate(0, -50%);
     }

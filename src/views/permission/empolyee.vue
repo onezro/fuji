@@ -1,16 +1,28 @@
 <template>
-  <div class="p-[10px] flex gap-[15px]">
-    <el-card
-      shadow="always"
-      :body-style="{ padding: '10px' }"
-      class="w-[250px]"
-    >
+  <div class="p-[10px] flex gap-[10px]">
+    <el-card shadow="always" :body-style="{ padding: '10px' }" class="w-[250px] h-[calc(100vh-105px)]">
       <template #header>
-        <div class="card-header">
-          <span>BICV-组织</span>
+        <div class="card-header flex justify-between items-center">
+          <div class="flex gap-[5px] items-center">
+            <img style="width: 24px; height: 24px" src="../../assets/svgs/or.svg" alt="">
+            <div class="h-[24px] box-border pt-[3px]"> BICV-组织</div>
+          </div>
+
+          <el-tooltip content="重置" placement="right">
+            <el-icon size="24" :class="isLoding" color="#006487" @click="refreshData">
+
+              <RefreshRight />
+
+            </el-icon>
+          </el-tooltip>
         </div>
       </template>
-
+      <el-scrollbar class="h-[calc(100vh-175px)]">
+        <el-tree style="max-width: 600px" :data="organTree" :expand-on-click-node="false" :props="{
+          children: 'children',
+          label: 'OrganizationName',
+        }" @node-click="handleNodeClick" />
+      </el-scrollbar>
       <!-- card body -->
     </el-card>
 
@@ -25,23 +37,17 @@
         <div>
           <el-input v-model="searchName" placeholder="请输入">
             <template #append>
-              <el-button type="primary" icon="Search"></el-button> </template
-          ></el-input>
+              <el-button type="primary" icon="Search"></el-button> </template></el-input>
         </div>
       </div>
 
-      <el-table
-        :data="
-          tableData1.slice((currentPage - 1) * pageSize, currentPage * pageSize)
-        "
-        border
-        :height="tableHeight"
-        stripe
-      >
+      <el-table :data="tableData1.slice((currentPage - 1) * pageSize, currentPage * pageSize)
+        " border :height="tableHeight" stripe>
         <el-table-column label="序号" type="index" width="60" align="center"></el-table-column>
-        <el-table-column label="工号" prop="employeeName"> </el-table-column>
-        <el-table-column label="员工姓名" prop="fullName"> </el-table-column>
-        <el-table-column label="组织" prop="OrganizationName">
+        <el-table-column label="工号" prop="employeeName" min-width="100"> </el-table-column>
+        <el-table-column label="员工姓名" prop="fullName" min-width="200"> </el-table-column>
+        <el-table-column label="职称" prop="title" min-width="260"> </el-table-column>
+        <el-table-column label="组织" prop="OrganizationName" min-width="200">
         </el-table-column>
 
         <!-- <el-table-column label="角色" prop="RoleName">
@@ -58,12 +64,7 @@
         <el-table-column fixed="right" label="操作" width="120" align="center">
           <template #default="scope">
             <el-tooltip content="编辑" placement="top">
-              <el-button
-                type="primary"
-                icon="EditPen"
-                size="small"
-                @click="handleEdit(scope.row)"
-              />
+              <el-button type="primary" icon="EditPen" size="small" @click="handleEdit(scope.row)" />
             </el-tooltip>
             <!-- <el-tooltip content="删除" placement="top">
               <el-button
@@ -77,55 +78,26 @@
         </el-table-column>
       </el-table>
       <div class="mt-3">
-        <el-pagination
-          size="large"
-          background
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-          :current-page="currentPage"
-          :page-size="pageSize"
-          :page-sizes="[5, 10, 20, 50, 100]"
-          layout="total,sizes, prev, pager, next, jumper"
-          :total="tableData.length"
-        >
+        <el-pagination size="large" background @size-change="handleSizeChange" @current-change="handleCurrentChange"
+          :current-page="currentPage" :page-size="pageSize" :page-sizes="[5, 10, 20, 50, 100]"
+          layout="total,sizes, prev, pager, next, jumper" :total="tableData1.length">
         </el-pagination>
       </div>
     </el-card>
-    <el-dialog
-      :append-to-body="true"
-      :close-on-click-modal="false"
-      title="用户角色"
-      v-model="addVisible"
-      width="30%"
-      @close="addCancel()"
-    >
+    <el-dialog :append-to-body="true" :close-on-click-modal="false" title="用户角色" v-model="addVisible" width="30%"
+      @close="addCancel()">
       <el-form :model="form" ref="formRef" label-width="auto">
         <el-form-item label="员工" prop="roleName">
           <el-input v-model="roleName" disabled></el-input>
         </el-form-item>
         <el-form-item label="当前角色" prop="role">
-          <el-tag
-            :key="tag.Id"
-            v-for="tag in hasRole"
-            closable
-            :disable-transitions="false"
-            @close="handleClose(tag)"
-          >
+          <el-tag :key="tag.Id" v-for="tag in hasRole" closable :disable-transitions="false" @close="handleClose(tag)">
             {{ tag.RoleName }}
           </el-tag>
         </el-form-item>
         <el-form-item label="角色" prop="roleId">
-          <el-select
-            v-model="form.roleId"
-            placeholder="请选择角色"
-            clearable=""
-          >
-            <el-option
-              v-for="item in noRole"
-              :key="item.value"
-              :label="item.lable"
-              :value="item.value"
-            >
+          <el-select v-model="form.roleId" placeholder="请选择角色" clearable="">
+            <el-option v-for="item in noRole" :key="item.value" :label="item.lable" :value="item.value">
             </el-option>
           </el-select>
         </el-form-item>
@@ -137,35 +109,17 @@
         </span>
       </template>
     </el-dialog>
-    <el-dialog
-      :append-to-body="true"
-      :close-on-click-modal="false"
-      title="编辑"
-      v-model="editVisible"
-      width="30%"
-      @close="editCancel()"
-    >
+    <el-dialog :append-to-body="true" :close-on-click-modal="false" title="编辑" v-model="editVisible" width="30%"
+      @close="editCancel()">
       <el-form :model="editForm" ref="editRef" label-width="auto">
         <el-form-item label="员工名" prop="FullName">
-          <el-input
-            v-model="editForm.FullName"
-            placeholder="请输入员工名"
-            clearable
-          ></el-input>
+          <el-input v-model="editForm.FullName" placeholder="请输入员工名" clearable></el-input>
         </el-form-item>
         <el-form-item label="账号" prop="EmployeeName">
-          <el-input
-            v-model="editForm.EmployeeName"
-            placeholder="请输入账号"
-            clearable
-          ></el-input>
+          <el-input v-model="editForm.EmployeeName" placeholder="请输入账号" clearable></el-input>
         </el-form-item>
         <el-form-item label="密码" prop="DocManagerUser">
-          <el-input
-            v-model="editForm.DocManagerUser"
-            placeholder="请输入密码"
-            clearable
-          ></el-input>
+          <el-input v-model="editForm.DocManagerUser" placeholder="请输入密码" clearable></el-input>
         </el-form-item>
       </el-form>
 
@@ -180,7 +134,7 @@
 </template>
 
 <script setup lang="ts">
-import { getToken } from "@/utils/auth";
+// import { getToken } from "@/utils/auth";
 import { useUserStoreWithOut } from "@/stores/modules/user";
 import {
   getAllRole,
@@ -190,6 +144,7 @@ import {
   deletefirstRole,
   deleteEmployee,
   addEmployee,
+  getOrganization,
 } from "@/api/permiss";
 import { ElMessage, ElMessageBox, ElNotification } from "element-plus";
 import {
@@ -231,9 +186,19 @@ interface EditForm {
   UpdateBy: string;
   UpdateDate: string;
 }
+
+
+interface OrganTree {
+  Notes: string;
+  OrganizationId: string;
+  OrganizationName: string;
+  OrganizationNumber: string;
+  ParentOrganizationId: string;
+  children: OrganTree[]
+}
 const userStore = useUserStoreWithOut();
 const tableData = ref<Table[]>([]);
-const pageSize = ref(10);
+const pageSize = ref(50);
 const currentPage = ref(1);
 const tableHeight = ref(0);
 const addVisible = ref(false);
@@ -267,12 +232,15 @@ const editForm = reactive<EditForm>({
 const editRef = ref();
 const searchName = ref("");
 const tableData1 = ref<Table[]>([]);
+const organTree = ref<OrganTree[]>([]);
+const isLoding = ref('')
 onBeforeMount(() => {
   getScreenHeight();
 });
 onMounted(() => {
   window.addEventListener("resize", getScreenHeight);
   getData();
+  getOrgan();
   getRoleMeun();
 });
 onBeforeUnmount(() => {
@@ -286,14 +254,15 @@ watch(
     if (newdata == "") {
       tableData1.value = tableData.value;
     } else {
-      tableData1.value = table1();
+      tableData1.value = table1(newdata);
     }
   }
 );
-const table1 = () => {
+const table1 = (newdata: any) => {
+  let searchName = newdata.toLowerCase()
   return tableData.value.filter((v: any) => {
     return Object.keys(v).some((key) => {
-      return String(v[key]).toLowerCase().indexOf(searchName.value) > -1;
+      return String(v[key]).toLowerCase().indexOf(searchName) > -1;
     });
   });
 };
@@ -311,9 +280,53 @@ const getData = () => {
   getEmployee().then((data: any) => {
     // this.tableData = data;
     dataPrecc(JSON.parse(data.content));
+    // console.log(JSON.parse(data.content))
     // })
   });
 };
+
+const getOrgan = () => {
+  getOrganization().then((data: any) => {
+    if (data.code == 100200) {
+      const dataText = JSON.parse(data.content);
+      organTree.value = OrganData(dataText)
+      // console.log(organTree.value);
+    }
+  });
+};
+
+const OrganData = (organizations: any) => {
+  const organizationMap = new Map();
+  organizations.forEach((org: any) => {
+    organizationMap.set(org.OrganizationId, { ...org, children: [] });
+  });
+  organizations.forEach((org: any) => {
+    if (org.ParentOrganizationId !== null) {
+      const parentOrg = organizationMap.get(org.ParentOrganizationId);
+      if (parentOrg) {
+        parentOrg.children.push(organizationMap.get(org.OrganizationId));
+      }
+    }
+  });
+  return Array.from(organizationMap.values()).filter(org => org.ParentOrganizationId === null);
+}
+
+const handleNodeClick = (data: any) => {
+  // console.log(data)
+  tableData1.value = table1(data.OrganizationId)
+
+}
+const refreshData = () => {
+  isLoding.value = 'is-loading'
+  currentPage.value=1
+  // tableData1.value = tableData.value
+  getData();
+  // getOrgan();
+  let timer = setTimeout(() => {
+    isLoding.value = ''
+    clearTimeout(timer)
+  }, 2000)
+}
 
 const getRoleMeun = () => {
   getAllRole().then((data: any) => {
@@ -362,8 +375,8 @@ const getHasRole = () => {
 const openAdd = () => {
   editVisible.value = true;
 };
-const syncPeople = () => {};
-const syncOrganizate = () => {};
+const syncPeople = () => { };
+const syncOrganizate = () => { };
 const dataPrecc = (data: any) => {
   // console.log(data);
   let beforeData = data; //将dataArr赋值给beforeData  也可直接操作dataArr
@@ -376,7 +389,9 @@ const dataPrecc = (data: any) => {
         employeeId: beforeData[i].EmployeeId,
         employeeName: beforeData[i].EmployeeName,
         fullName: beforeData[i].FullName,
+        title: beforeData[i].title,
         OrganizationName: beforeData[i].OrganizationName,
+        OrganizationID:beforeData[i].OrganizationID,
         RoleName:
           beforeData[i].RoleName == null ? [] : [beforeData[i].RoleName],
       });
@@ -394,6 +409,11 @@ const dataPrecc = (data: any) => {
       }
     }
   }
+  // console.log(afterData);
+  afterData.sort((a, b) => {
+    return a.employeeName - b.employeeName;
+  });
+// console.log(afterData);
   tableData.value = afterData;
   tableData1.value = tableData.value;
 };
@@ -532,10 +552,14 @@ const getScreenHeight = () => {
 <style scoped>
 .el-pagination {
   justify-content: center;
-  
 }
 
-.el-tag + .el-tag {
+.el-tag+.el-tag {
   margin-left: 10px;
+}
+
+.el-card ::v-deep .el-card__header {
+  /* background-color: lightblue; */
+  padding: calc(20px - 5px) 20px;
 }
 </style>

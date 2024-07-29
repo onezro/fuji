@@ -1,5 +1,5 @@
 <template>
-  <div class="flex w-[100vw] h-[100vh]">
+  <div class="flex w-[100vw] h-[100vh] min-w-[780px]">
     <TabMenu></TabMenu>
     <div class="flex-1 relative">
       <div class="absolute w-full">
@@ -8,7 +8,7 @@
           <TagsView></TagsView>
         </div>
         <!-- <el-scrollbar class=" h-[calc(100vh-85px)] p-[10px]"> -->
-        <AppView class="sol h-[calc(100vh-85px)] overflow-auto"></AppView>
+        <AppView class="sol  h-[calc(100vh-85px)] overflow-auto"></AppView>
         <!-- </el-scrollbar> -->
       </div>
     </div>

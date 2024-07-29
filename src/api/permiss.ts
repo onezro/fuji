@@ -178,6 +178,13 @@ export function addEmployee(data: any) {
         data,
     });
 }
+export function updatePassword(data: any) {
+    return request({
+        url: "/api/employee/UpdateEmpPwd",
+        method: "post",
+        params: data
+    });
+}
 
 export function InsertInspect(data: any){
     return request({
@@ -216,5 +223,12 @@ export function getCheckResults(data: any){
         url: "/api/firstinspect/Quert_Inspect_History_Info",
         method: "post",
         data,
+    });
+}
+
+export function getOrganization(){
+    return request({
+        url: "/api/employee/findOrganization",
+        method: "post",
     });
 }
