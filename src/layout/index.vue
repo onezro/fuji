@@ -1,6 +1,6 @@
 <template>
   <div class="flex w-[100vw] h-[100vh] min-w-[780px]">
-    <TabMenu></TabMenu>
+    <TabMenu v-if="!appStore.getSystemType"></TabMenu>
     <div class="flex-1 relative">
       <div class="absolute w-full">
         <div>
@@ -20,6 +20,8 @@ import TabMenu from "../components/TabMenu/index.vue";
 import TagsView from "../components/tagsView/index.vue";
 import ToolHeader from "./components/ToolHeader.vue";
 import AppView from "./components/AppView.vue";
+import {useAppStore } from '@/stores/modules/app'
+const appStore=useAppStore()
 </script>
 
 <style lang="scss" scoped>

@@ -1,15 +1,23 @@
 <script lang="ts" setup>
-import { computed, onMounted, unref, ref, watch, onActivated } from 'vue'
+import { computed, onMounted, unref, ref, watch, onActivated, onBeforeMount, reactive } from 'vue'
 import { useTagsViewStore } from '@/stores/modules/tagsView'
 import { usePermissionStoreWithOut } from '@/stores/modules/permission'
 import { useRouter, type RouteLocationNormalizedLoaded } from 'vue-router'
 import { filterAffixTags } from './helper'
 import { cloneDeep } from 'lodash-es'
+import { useAppStore } from '@/stores/modules/app'
+const appStore = useAppStore()
 const tagsViewStore = useTagsViewStore()
 const permissionStore = usePermissionStoreWithOut()
 const { currentRoute, push } = useRouter()
 import { useTagsView } from '@/hooks/useTagsView'
 const { closeAll, closeLeft, closeRight, closeOther, closeCurrent, refreshPage } = useTagsView()
+import { useUserStoreWithOut } from '@/stores/modules/user'
+const userStore = useUserStoreWithOut()
+const loginName = userStore.getUserInfo
+import { filterBreadcrumb } from "@/components/bread/helper";
+import { filter, treeToList } from "@/utils/tree";
+
 
 const visitedViews = computed(() => tagsViewStore.getVisitedViews)
 const routers = computed(() => permissionStore.getRouters)
@@ -86,19 +94,134 @@ onActivated(() => {
     // console.log(111)
     initTags()
 })
-// const bbb = () => {
-//     console.log(tagsViewStore.getVisitedViews)
-// }
+
+const textArr = reactive(['车间：', '产线：', '工位：'])
+const logoutsys = () => {
+    // console.log(1111)
+    userStore.logout()
+    // push('/login');
+}
+const tabActive = ref("");
+const addVisible = ref(false)
+const form = ref({
+    work: '',
+    line: '',
+    station: ''
+})
+const rules = reactive({
+    work: [
+        { required: true, message: '请选择车间', trigger: 'change' },
+    ],
+    line: [
+        { required: true, message: '请选择产线', trigger: 'change' },
+    ],
+    station: [
+        { required: true, message: '请选择工位', trigger: 'change' },
+    ],
+})
+
+const tabRouters = computed(() => {
+    let data = unref(routers).filter((v: any) => !v?.meta?.hidden)
+    data = data.filter((v: any) => v.path !== '/dashboard')
+    return data
+}
+);
+const formRef = ref()
+const options2 = ref()
+const options3 = ref()
+const openAdd = () => {
+    addVisible.value = true
+}
+
+const addCancel = () => {
+    addVisible.value = false
+    formRef.value.resetFields();
+}
+
+const onSubmit = () => {
+    formRef.value.validate((valid: any) => {
+        if (valid) {
+            let str = form.
+                value.work + '/' + form.value.line + '/' + form.value.station
+            localStorage.setItem('OPUI', str)
+            push(str)
+            formRef.value.resetFields();
+            addVisible.value = false
+
+        } else {
+            console.log("error submit!!");
+            return false;
+        }
+    })
+
+}
+const meunItem = (value: any) => {
+    let data = tabRouters.value.filter((v: any) => v.path === value)
+    let data1 = cloneDeep(data)
+    options2.value = data1[0].children
+    options3.value = []
+    form.value.line=''
+    form.value.station=''
+}
+const meunItem2 = (value: any) => {
+    let data = options2.value.filter((v: any) => v.path === value)
+    let data1 = cloneDeep(data)
+    options3.value = data1[0].children
+}
+const menuRouters = computed(() => {
+    const routers = permissionStore.getRouters;
+    return filterBreadcrumb(routers);
+});
+
+// const breadcrumbs = ref<Array<RouteLocationMatched>>([]);
+const levelList = ref([]);
+const treeLength = ref(0)
+watch(
+    () => currentRoute.value,
+    (route: RouteLocationNormalizedLoaded) => {
+        if (route.path.startsWith("/redirect/")) {
+            return;
+        }
+        getBreadcrumb();
+    }
+);
+const getBreadcrumb = () => {
+    const currentPath = currentRoute.value.matched.slice(-1)[0].path;
+    levelList.value = filter(unref(menuRouters), (node: AppRouteRecordRaw) => {
+        return node.path === currentPath;
+    });
+    levelList.value = levelList.value.filter((v: any) => v.path !== '/dashboard/index')
+    let data = treeToList(unref(levelList))
+    treeLength.value = data.length
+    // console.log(treeLength.value)
+};
+onBeforeMount(() => {
+    getBreadcrumb();
+    // console.log(treeToList(unref(levelList)));
+});
+// 全屏方法
+const fullScreen = () => {
+    // 是否全屏，否为null
+    let full = document.fullscreenElement
+    console.log(full)
+    if (!full) {
+        // document自带的全屏方法
+        document.documentElement.requestFullscreen()
+    } else {
+        // document自带的推出全屏方法
+        document.exitFullscreen()
+    }
+}
 </script>
 <template>
     <div class="bood  h-[35px] flex w-full relative bg-[#fff]">
         <div class="overflow-hidden flex-1">
             <el-scrollbar class="h-full">
-                <div class="flex h-full items-center">
+                <div class="flex h-full items-center" v-if="!appStore.getSystemType">
                     <div v-for="item in visitedViews" :key="item.fullPath" class="tag_item " :class="[item.meta.affix ? `affix` : '', {
                         'is-active': isActive(item)
                     }]">
-                        <router-link :to="{ ...item }" custom v-slot="{ navigate }"  >
+                        <router-link :to="{ ...item }" custom v-slot="{ navigate }">
                             <div @click="navigate"
                                 class="flex  whitespace-nowrap  justify-center items-center  pl-[15px]">
 
@@ -120,8 +243,85 @@ onActivated(() => {
                         </router-link>
                     </div>
                 </div>
+                <div v-else>
+                    <div class="h-[34px] pr-[10px] pl-[10px] flex justify-between items-center">
+                        <div class="flex items-center gap-3">
+                            <el-tooltip content="工位设置" placement="top">
+                                <el-icon size="24" @click="openAdd">
+                                    <Setting />
+                                </el-icon>
+                            </el-tooltip>
+                            <div v-for="(v, i) in treeToList(unref(levelList))" :key="v.name">{{
+                                textArr[i]
+                            }}<span class="text-[1.1rem] text-[#006487] underline">&nbsp;{{ v.meta.title
+                                    }}&nbsp;</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3">
+
+                            <div class="flex items-center">
+                                <el-tooltip content="全屏/正常" placement="top">
+                                    <el-icon size="24" color="#777777" @click="fullScreen()">
+                                        <FullScreen />
+                                    </el-icon>
+                                </el-tooltip>
+                            </div>
+
+                            <el-dropdown trigger="click" placement="bottom">
+                                <div class="flex items-center">
+                                    <div class="block mr-2">
+                                        <el-avatar :size="30" icon="Avatar" />
+                                    </div>
+                                    <p class="font-bold text-base  text-center break-words text-pretty">
+                                        {{ loginName }}
+                                    </p>
+                                </div>
+                                <template #dropdown>
+                                    <el-dropdown-menu>
+                                        <!-- <el-dropdown-item @click.native="openUpdatePwd">修改密码</el-dropdown-item> -->
+                                        <el-dropdown-item @click.native="logoutsys">退出登录</el-dropdown-item>
+                                    </el-dropdown-menu>
+                                </template>
+                            </el-dropdown>
+                        </div>
+                    </div>
+                </div>
             </el-scrollbar>
         </div>
+        <el-dialog :append-to-body="true" :close-on-click-modal="false" v-model="addVisible" title="设置" width="30%"
+            @close="addCancel">
+            <div class="w-full flex justify-center">
+                <el-form ref="formRef" :rules="rules" style="width:70%" :model="form" label-position="left"
+                    label-width="auto">
+                    <el-form-item label="车间" prop="work">
+                        <el-select v-model="form.work" placeholder="选择车间" size="large" style="width:100%;"
+                            @change="meunItem">
+                            <el-option v-for="item in tabRouters" :key="item.MenuName" :label="item.meta.title"
+                                :value="item.path" :disabled="item.children == null" />
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="产线" prop="line">
+                        <el-select v-model="form.line" placeholder="选择产线" size="large" style="width:100%;"
+                            @change="meunItem2">
+                            <el-option v-for="item in options2" :key="item.MenuName" :label="item.meta.title"
+                                :value="item.path" :disabled="item.children == null" />
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="工位" prop="station">
+                        <el-select v-model="form.station" placeholder="选择工位" size="large" style="width:100%;">
+                            <el-option v-for="item in options3" :key="item.MenuName" :label="item.meta.title"
+                                :value="item.path" />
+                        </el-select>
+                    </el-form-item>
+                </el-form>
+            </div>
+            <template #footer>
+                <span class="dialog-footer">
+                    <el-button @click="addCancel()">取消</el-button>
+                    <el-button type="primary" @click="onSubmit"> 确定 </el-button>
+                </span>
+            </template>
+        </el-dialog>
     </div>
 </template>
 <style lang="scss" scoped>
@@ -141,7 +341,7 @@ onActivated(() => {
     border: 1px solid #d9d9d9;
     border-radius: 2px;
 
-    
+
     .qx {
         position: absolute;
         top: 28%;

@@ -32,6 +32,14 @@ export function getMenu() {
     });
 }
 
+export function getMenuOPUI() {
+    return request({
+        url: "/api/employee/findMenuListByOPUI",
+        method: "post",
+    });
+}
+
+
 
 //获取全部菜单
 export function getFirstMeun() {

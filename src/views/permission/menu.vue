@@ -7,7 +7,7 @@
       <div class="w-full">
         <el-table :data="tableData" stripe border fit :height="tableHeight" row-key="id"
           :tree-props="{ children: 'childMenu' }">
-          <el-table-column prop="sortId" label="序号" width="120"> </el-table-column>
+
           <el-table-column prop="title" label="菜单名称"> </el-table-column>
           <el-table-column prop="icon" label="图标">
             <template #default="scope">
@@ -18,12 +18,12 @@
           </el-table-column>
           <el-table-column prop="path" label="PATH路径"> </el-table-column>
           <el-table-column prop="component" label="组件"> </el-table-column>
-
+          <el-table-column prop="sortId" label="排序" width="60" align="center"> </el-table-column>
           <el-table-column fixed="right" label="操作" width="120" align="center">
             <template #default="scope">
               <el-tooltip content="编辑" placement="top" v-if="
                 scope.row.MenuName !== 'Portal' &&
-                scope.row.MenuName !== 'PDA'&&
+                scope.row.MenuName !== 'PDA' &&
                 scope.row.MenuName !== 'OPUI'
               ">
                 <el-button type="primary" icon="EditPen" size="small"
@@ -65,6 +65,9 @@
               </el-tree></el-option>
           </el-select>
         </el-form-item>
+        <el-form-item label="类型" prop="MenuType">
+          <el-input v-model="form.MenuType" placeholder="类型"></el-input>
+        </el-form-item>
         <el-form-item label="菜单名称" prop="title"><el-input v-model="form.title" placeholder="请输入" /></el-form-item>
         <el-form-item label="图标" prop="icon"><el-input v-model="form.icon" placeholder="请输入" /></el-form-item>
         <el-form-item label="PATH路径" prop="path"><el-input v-model="form.path" placeholder="请输入" /></el-form-item>
@@ -93,6 +96,9 @@
                 node-key="id" :expand-on-click-node="false" :check-on-click-node="true" @node-click="handleENodeClick">
               </el-tree></el-option>
           </el-select>
+        </el-form-item>
+        <el-form-item label="类型" prop="MenuType">
+          <el-input v-model="editForm.MenuType" placeholder="类型"></el-input>
         </el-form-item>
         <el-form-item label="PATH路径" prop="path">
           <el-input v-model="editForm.path" placeholder="路径"></el-input>
@@ -157,6 +163,7 @@ const form = reactive({
   MenuName: "",
   component: "",
   MenuLevel: 0,
+  MenuType: '',
   MenuFID: "",
   redirect: "",
   sonNum: 0,
@@ -175,6 +182,7 @@ let editForm = reactive({
   icon: "",
   MenuFID: "",
   MenuLevel: "",
+  MenuType: '',
   redirect: "",
   id: "",
   sortId: 0,
@@ -241,7 +249,7 @@ const onSubmit = () => {
     addVisible.value = false;
   });
 };
-const handleEdit = (row: any) => {
+const handleEdit = async (row: any) => {
   editForm.MenuFID = row.MenuFID;
   editForm.MenuLevel = row.MenuLevel;
   editForm.MenuName = row.MenuName;
@@ -252,12 +260,14 @@ const handleEdit = (row: any) => {
   editForm.redirect = row.redirect;
   editForm.id = row.id;
   editForm.sortId = row.sortId;
-
+  editForm.MenuType = row.MenuType
   editVisible.value = true;
   if (row.MenuFID != null) {
     // editid.value = row.MenuFID;
     // editForm.MenuFID = row.MenuFID;
-    // editPName.value = findNameById(row.MenuFID, tableData.value);
+  findNameById(row.MenuFID, tableData.value);
+    // editPName.value =void findNameById(row.MenuFID, tableData.value);
+    // console.log(editPName.value);
   }
 };
 const handleENodeClick = (data: any) => {
@@ -307,14 +317,15 @@ const editSubmit = () => {
   });
 };
 const findNameById = (id: any, data: any) => {
-  data.forEach((x: any, i: any) => {
+   data.forEach((x: any, i: any) => {
     if (data[i].id == id) {
-      console.log(data[i].title);
-      return data[i].title; //名称
+      editPName.value =data[i].title
+      return //名称
     } else if (data[i].childMenu) {
-      const resultData = void findNameById(id, data[i].childMenu);
+      const resultData =void findNameById(id, data[i].childMenu);
       if (resultData) {
-        return resultData;
+        editPName.value =resultData
+        return 
       }
     }
   });

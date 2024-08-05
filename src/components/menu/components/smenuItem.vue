@@ -19,7 +19,7 @@
         <el-icon v-if="item.meta.icon">
           <component :is="item.meta.icon"
         /></el-icon>
-        <span>{{ item.meta.title }}1</span>
+        <span>{{ item.meta.title }}</span>
       </template>
       <smenuItem
         v-for="v in item.children"

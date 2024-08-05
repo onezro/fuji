@@ -1,5 +1,5 @@
 <template>
-  <div class="w-20 bg-[#006487]" v-click-outside="clickOut">
+  <div class="w-20  bg-[#006487]" v-click-outside="clickOut">
     <!-- <div class="h-[50px]"></div> -->
     <el-scrollbar class="h-[calc(100%-120px)]">
       <!-- {{  routes}} -->

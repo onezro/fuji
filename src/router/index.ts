@@ -28,7 +28,7 @@ export const constantRouterMap = [
   {
     path: '/dashboard',
     component: Layout,
-    redirect: '/dashboard/analysis',
+    redirect: '/dashboard/index',
     name: 'Dashboard',
     meta: {
       title: '首页',
@@ -36,9 +36,9 @@ export const constantRouterMap = [
     },
     children: [
       {
-        path: 'analysis',
+        path: 'index',
         component: () => import('@/views/Dashboard/Analysis.vue'),
-        name: 'Analysis',
+        name: 'Index',
         meta: {
           title: '首页',
           icon: 'House',

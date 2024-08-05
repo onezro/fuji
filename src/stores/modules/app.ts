@@ -33,6 +33,7 @@ interface AppState {
   footer: boolean
   theme: ThemeTypes
   fixedMenu: boolean
+  systemType:any
 }
 
 export const useAppStore = defineStore('app', {
@@ -59,7 +60,7 @@ export const useAppStore = defineStore('app', {
       dynamicRouter: true, // 是否动态路由
       serverDynamicRouter: true, // 是否服务端渲染动态路由
       fixedMenu: false, // 是否固定菜单
-
+      systemType:localStorage.getItem('SYSTEM_TYPE')&&localStorage.getItem('SYSTEM_TYPE')==='true'||false,
       layout: 'classic', // layout布局
       isDark: false, // 是否是暗黑模式
       currentSize: 'default', // 组件尺寸
@@ -170,9 +171,16 @@ export const useAppStore = defineStore('app', {
     },
     getFooter(): boolean {
       return this.footer
+    },
+    getSystemType():any{
+      // console.log(localStorage.getItem('SYSTEM_TYPE'));
+      return this.systemType
     }
   },
   actions: {
+    setSystemType(systemType:boolean){
+      this.systemType=systemType
+    },
     setBreadcrumb(breadcrumb: boolean) {
       this.breadcrumb = breadcrumb
     },
