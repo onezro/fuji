@@ -11,7 +11,7 @@
                     </div>
                     <div class="p-[10px]">
                         <el-form class="inbound" ref="formRef" :model="form" label-width="auto">
-                            <el-form-item size="large" v-for="f in formHeader" :key="f.value" :label="f.lable">
+                            <el-form-item size="large" v-for="f in formHeader" :key="f.value" :label="f.label">
                                 <span class="font-bold text-[18px] leading-[30px]"> {{ formText(f.value) }}</span>
                             </el-form-item>
                         </el-form>
@@ -25,9 +25,11 @@
                             <span class="ml-5"> 扫描条码</span>
                         </div>
                         <div class="h-[120px] p-5">
-                            <el-form class="inbound" ref="formRef" :model="form" label-width="auto">
+                            <el-form class="inbound" ref="formRef" :model="form" label-width="auto"
+                                @submit.native.prevent>
                                 <el-form-item label="扫描条码">
-                                    <el-input v-model="barCode" style="width: 500px;" placeholder="请扫描条码" />
+                                    <el-input v-model="barCode" style="width: 500px;" placeholder="请扫描条码"
+                                        @change="openDialog" />
                                 </el-form-item>
                             </el-form>
                             <div class="text-xl  font-bold text-[#00B400]">请扫描物料批次条码</div>
@@ -38,20 +40,20 @@
                             <span class="ml-5">物料检验记录</span>
                         </div>
                         <div class="flex-1" ref="tablebox">
-                            <table-tem :showIndex="showIndex" :tableData="tableData" :tableHeight="tableHeight" :columnData="columnData"
-                                :pageObj="pageObj" @handleSizeChange="handleSizeChange"
+                            <table-tem :showIndex="showIndex" :tableData="tableData" :tableHeight="tableHeight"
+                                :columnData="columnData" :pageObj="pageObj" @handleSizeChange="handleSizeChange"
                                 @handleCurrentChange="handleCurrentChange"></table-tem>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-     
     </div>
 </template>
 
 <script lang="ts" setup>
 import tableTem from '@/components/tableTem/index.vue'
+// import formTemple from '@/components/formTem/form.vue'
 interface Form {
     order: string,
     models: string,
@@ -60,10 +62,12 @@ interface Form {
     orderNum: string
 }
 interface FormHeader {
-    lable: string,
-    value: string
+    label: string,
+    value: string,
+    disabled: boolean;
+    type:string
 }
-import { ref, reactive,onMounted,nextTick,onBeforeMount,onBeforeUnmount } from 'vue'
+import { ref, reactive, onMounted, nextTick, onBeforeMount, onBeforeUnmount } from 'vue'
 const barCode = ref('')
 const activeName = ref('first')
 
@@ -76,24 +80,34 @@ const form = reactive<Form>({
 })
 const formHeader = reactive<FormHeader[]>([
     {
-        lable: '工单号',
-        value: 'order'
+        label: '工单号',
+        value: 'order',
+        disabled: true,
+        type:'input'
     },
     {
-        lable: '机型',
-        value: 'models'
+        label: '机型',
+        value: 'models',
+        disabled: true,
+        type:'input'
     },
     {
-        lable: '产品编码',
-        value: 'productCode'
+        label: '产品编码',
+        value: 'productCode',
+        disabled: true,
+        type:'input'
     },
     {
-        lable: '产品描述',
-        value: 'productDes'
+        label: '产品描述',
+        value: 'productDes',
+        disabled: true,
+        type:'textarea'
     },
     {
-        lable: '工单数量',
-        value: 'orderNum'
+        label: '工单数量',
+        value: 'orderNum',
+        disabled: true,
+        type:'input'
     },
 ])
 const tableData = ref([]);
@@ -153,25 +167,30 @@ const columnData = reactive([
 
 
 ])
-const tablebox=ref()
+const tablebox = ref()
 const pageObj = ref({
     pageSize: 10,
     currentPage: 1
 })
-
 onBeforeMount(() => {
-  getScreenHeight();
+    getScreenHeight();
 });
 onMounted(() => {
-  window.addEventListener("resize", getScreenHeight);
+    window.addEventListener("resize", getScreenHeight);
 });
 onBeforeUnmount(() => {
-  window.addEventListener("resize", getScreenHeight);
+    window.addEventListener("resize", getScreenHeight);
 });
 const formText = (data: string) => {
     let key = data as keyof typeof form
     return form[key]
 }
+
+const openDialog = () => {
+   console.log(barCode.value);
+}
+
+
 const handleSizeChange = (val: any) => {
     pageObj.value.currentPage = 1;
     pageObj.value.pageSize = val;
@@ -180,21 +199,21 @@ const handleCurrentChange = (val: any) => {
     pageObj.value.currentPage = val;
 };
 const getScreenHeight = () => {
-  nextTick(() => {
-    tableHeight.value = window.innerHeight -365;
-  });
+    nextTick(() => {
+        tableHeight.value = window.innerHeight - 365;
+    });
 };
 </script>
 
-<style lang="scss" >
+<style lang="scss">
 .inbound .el-form-item__label {
     font-size: 16px;
 
 }
 
-.setwidth{
+.setwidth {
     flex: 0 0 320px;
-   
+
 }
 
 .box {
