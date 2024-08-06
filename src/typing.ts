@@ -46,3 +46,18 @@ export interface ResultItem {
     step1: string,
 }
 
+export interface Formspan {
+    order: string,
+    models: string,
+    productCode: string,
+    productDes: string,
+    orderNum: string,
+    passNum: string
+}
+export interface FormHeader {
+    label: string,
+    value: string,
+    disabled: boolean;
+    type: string
+}
+

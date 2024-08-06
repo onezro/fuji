@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { store } from '../index'
 // import { setCssVar, humpToUnderline } from '@/utils'
 // import { colorIsDark, hexToRGB, lighten, mix } from '@/utils/color'
-import { ElMessage} from 'element-plus'
+import { ElMessage } from 'element-plus'
 // import { useCssVar } from '@vueuse/core'
 // import { unref } from 'vue'
 // import { useDark } from '@vueuse/core'
@@ -33,7 +33,8 @@ interface AppState {
   footer: boolean
   theme: ThemeTypes
   fixedMenu: boolean
-  systemType:any
+  systemType: any,
+  OPUIDATA:any
 }
 
 export const useAppStore = defineStore('app', {
@@ -60,7 +61,8 @@ export const useAppStore = defineStore('app', {
       dynamicRouter: true, // 是否动态路由
       serverDynamicRouter: true, // 是否服务端渲染动态路由
       fixedMenu: false, // 是否固定菜单
-      systemType:localStorage.getItem('SYSTEM_TYPE')&&localStorage.getItem('SYSTEM_TYPE')==='true'||false,
+      systemType: localStorage.getItem('SYSTEM_TYPE') && localStorage.getItem('SYSTEM_TYPE') === 'true' || false,
+      OPUIDATA:localStorage.getItem('OPUIData')?JSON.parse(localStorage.getItem('OPUIData')||''):{},
       layout: 'classic', // layout布局
       isDark: false, // 是否是暗黑模式
       currentSize: 'default', // 组件尺寸
@@ -172,14 +174,16 @@ export const useAppStore = defineStore('app', {
     getFooter(): boolean {
       return this.footer
     },
-    getSystemType():any{
-      // console.log(localStorage.getItem('SYSTEM_TYPE'));
+    getSystemType(): any {
       return this.systemType
+    },
+    getOpuiData(): any {
+      return this.OPUIDATA
     }
   },
   actions: {
-    setSystemType(systemType:boolean){
-      this.systemType=systemType
+    setSystemType(systemType: boolean) {
+      this.systemType = systemType
     },
     setBreadcrumb(breadcrumb: boolean) {
       this.breadcrumb = breadcrumb

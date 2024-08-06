@@ -14,6 +14,7 @@ import { useTagsView } from '@/hooks/useTagsView'
 const { closeAll, closeLeft, closeRight, closeOther, closeCurrent, refreshPage } = useTagsView()
 import { useUserStoreWithOut } from '@/stores/modules/user'
 const userStore = useUserStoreWithOut()
+const routeData = userStore.getRoleRouters
 const loginName = userStore.getUserInfo
 import { filterBreadcrumb } from "@/components/bread/helper";
 import { filter, treeToList } from "@/utils/tree";
@@ -108,6 +109,19 @@ const form = ref({
     line: '',
     station: ''
 })
+const OPUIData = ref(
+    {
+        workShop: '',
+        workShopDec: '',
+        line: '',
+        lineDec: '',
+        station: '',
+        stationDec: '',
+        equipment: '',
+        equipmentDesc: '',
+        path: ''
+    }
+)
 const rules = reactive({
     work: [
         { required: true, message: '请选择车间', trigger: 'change' },
@@ -136,6 +150,7 @@ const openAdd = () => {
 const addCancel = () => {
     addVisible.value = false
     formRef.value.resetFields();
+    cleanOPUIData()
 }
 
 const onSubmit = () => {
@@ -143,11 +158,14 @@ const onSubmit = () => {
         if (valid) {
             let str = form.
                 value.work + '/' + form.value.line + '/' + form.value.station
+            OPUIData.value.path = str
             localStorage.setItem('OPUI', str)
+            localStorage.setItem('OPUIData', JSON.stringify(OPUIData.value))
             push(str)
             formRef.value.resetFields();
             addVisible.value = false
-
+            cleanOPUIData()
+            // console.log(OPUIData.value)
         } else {
             console.log("error submit!!");
             return false;
@@ -155,18 +173,42 @@ const onSubmit = () => {
     })
 
 }
+const cleanOPUIData = () => {
+    OPUIData.value.workShop = ''
+    OPUIData.value.workShopDec = ''
+    OPUIData.value.line = ''
+    OPUIData.value.lineDec = ''
+    OPUIData.value.station = ''
+    OPUIData.value.stationDec = ''
+    OPUIData.value.equipment = ''
+    OPUIData.value.equipmentDesc = ''
+    OPUIData.value.path = ''
+
+}
 const meunItem = (value: any) => {
-    let data = tabRouters.value.filter((v: any) => v.path === value)
+    let data = routeData.filter((v: any) => v.path === value)
     let data1 = cloneDeep(data)
-    options2.value = data1[0].children
+    OPUIData.value.workShop = data1[0].MenuName
+    OPUIData.value.workShopDec = data1[0].title
+    options2.value = data1[0].childMenu
     options3.value = []
-    form.value.line=''
-    form.value.station=''
+    form.value.line = ''
+    form.value.station = ''
 }
 const meunItem2 = (value: any) => {
     let data = options2.value.filter((v: any) => v.path === value)
     let data1 = cloneDeep(data)
-    options3.value = data1[0].children
+    OPUIData.value.line = data1[0].MenuName
+    OPUIData.value.lineDec = data1[0].title
+    options3.value = data1[0].childMenu
+}
+const meunItem3 = (value: any) => {
+    let data = options3.value.filter((v: any) => v.path === value)
+    let data1 = cloneDeep(data)
+    OPUIData.value.station = data1[0].MenuName
+    OPUIData.value.stationDec = data1[0].title
+    OPUIData.value.equipment = data1[0].EquipmentName
+    OPUIData.value.equipmentDesc = data1[0].EquipmentDesc
 }
 const menuRouters = computed(() => {
     const routers = permissionStore.getRouters;
@@ -296,20 +338,21 @@ const fullScreen = () => {
                     <el-form-item label="车间" prop="work">
                         <el-select v-model="form.work" placeholder="选择车间" size="large" style="width:100%;"
                             @change="meunItem">
-                            <el-option v-for="item in tabRouters" :key="item.MenuName" :label="item.meta.title"
-                                :value="item.path" :disabled="item.children == null" />
+                            <el-option v-for="item in routeData" :key="item.MenuName" :label="item.title"
+                                :value="item.path" :disabled="item.childMenu.length == 0" />
                         </el-select>
                     </el-form-item>
                     <el-form-item label="产线" prop="line">
                         <el-select v-model="form.line" placeholder="选择产线" size="large" style="width:100%;"
                             @change="meunItem2">
-                            <el-option v-for="item in options2" :key="item.MenuName" :label="item.meta.title"
-                                :value="item.path" :disabled="item.children == null" />
+                            <el-option v-for="item in options2" :key="item.MenuName" :label="item.title"
+                                :value="item.path" :disabled="item.childMenu.length == 0" />
                         </el-select>
                     </el-form-item>
                     <el-form-item label="工位" prop="station">
-                        <el-select v-model="form.station" placeholder="选择工位" size="large" style="width:100%;">
-                            <el-option v-for="item in options3" :key="item.MenuName" :label="item.meta.title"
+                        <el-select v-model="form.station" @change="meunItem3" placeholder="选择工位" size="large"
+                            style="width:100%;">
+                            <el-option v-for="item in options3" :key="item.MenuName" :label="item.title"
                                 :value="item.path" />
                         </el-select>
                     </el-form-item>

@@ -39,7 +39,12 @@ export function getMenuOPUI() {
     });
 }
 
-
+export function getWorksMenuOPUI() {
+    return request({
+        url: "/api/employee/findWorkstationListByOPUI",
+        method: "post",
+    });
+}
 
 //获取全部菜单
 export function getFirstMeun() {
