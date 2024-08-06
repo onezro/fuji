@@ -49,43 +49,40 @@ export const constantRouterMap = [
     ]
   },
   // {
-  //   path: '/permission',
+  //   path: '/dipWork',
   //   component: Layout,
-  //   redirect: '/permission/role',
-  //   name: 'Permission',
+  //   name: 'DipWork',
   //   meta: {
-  //     title: '系统管理',
-  //     icon: 'Monitor',
+  //     title: 'DIP',
   //   },
   //   children: [
   //     {
-  //       path: 'role',
-  //       component: () => import('@/views/permission/role.vue'),
-  //       name: 'Role',
+  //       path: 'pcbSplit',
+  //       component: () => import('@/views/dipWork/PCBSplit.vue'),
+  //       name: 'PCBSplit',
   //       meta: {
-  //         title: '角色管理',
-  //         icon: 'Avatar'
+  //         title: '分板',
   //       }
   //     },
-  //     {
-  //       path: 'menu',
-  //       component: () => import('@/views/permission/menu.vue'),
-  //       name: 'Menu',
-  //       meta: {
-  //         title: '菜单管理',
-  //         icon: 'Tickets'
-  //       }
+  //     // {
+  //     //   path: 'menu',
+  //     //   component: () => import('@/views/permission/menu.vue'),
+  //     //   name: 'Menu',
+  //     //   meta: {
+  //     //     title: '菜单管理',
+  //     //     icon: 'Tickets'
+  //     //   }
 
-  //     },
-  //     {
-  //       path: 'empolyee',
-  //       component: () => import('@/views/permission/empolyee.vue'),
-  //       name: 'Empolyee',
-  //       meta: {
-  //         title: '员工管理',
-  //         icon: 'User'
-  //       }
-  //     },
+  //     // },
+  //     // {
+  //     //   path: 'empolyee',
+  //     //   component: () => import('@/views/permission/empolyee.vue'),
+  //     //   name: 'Empolyee',
+  //     //   meta: {
+  //     //     title: '员工管理',
+  //     //     icon: 'User'
+  //     //   }
+  //     // },
   //   ]
   // },
   {

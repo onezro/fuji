@@ -17,7 +17,7 @@ export default defineConfig({
   plugins: [
     vue(),
     vueJsx(),
-    
+
   ],
   resolve: {
     alias: {
@@ -29,7 +29,12 @@ export default defineConfig({
       '/all': {
         target: 'http://192.168.9.50:12024',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/all/, '') 
+        rewrite: (path) => path.replace(/^\/all/, '')
+      },
+      '/cm':{
+        target: 'http://192.168.9.52:8520',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/cm/, '')
       }
     }
   }
