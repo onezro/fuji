@@ -84,7 +84,7 @@ router.beforeEach(async (to, from, next) => {
       const redirect = decodeURIComponent(redirectPath as string)
       const nextData = to.path === redirect ? { ...to, replace: true } : { path: redirect }
       permissionStore.setIsAddRouters(true)
-      // console.log(to.path,to.path,query)
+      console.log(to.path,to.path)
       next(nextData)
     }
   } else {
