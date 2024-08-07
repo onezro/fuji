@@ -70,7 +70,7 @@
       </template>
     </el-dialog>
     <el-dialog v-model="solow" title="版本" width="30%"  @close="solwCanel()">
-   <div>V1.1</div>
+   <div>V1.0</div>
   </el-dialog>
   </div>
 </template>
