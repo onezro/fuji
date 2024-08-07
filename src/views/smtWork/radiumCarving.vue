@@ -103,7 +103,10 @@
         <!-- 在标题右侧插入一个按钮 -->  
          <div class="ml-3 flex items-center">
             <div>工单搜索：</div>
-            <el-input v-model="workOrderInput" style="width: 240px;" placeholder="请输入" />
+          <el-input v-model="workOrderInput" placeholder="请输入">
+            <template #append>
+              <el-button type="primary" icon="Search"></el-button> </template></el-input>
+            <!-- <el-input v-model="workOrderInput" style="width: 240px;" placeholder="请输入" /> -->
          </div>
       </div>  
     </template>  
@@ -121,6 +124,7 @@
         />
       </el-table> -->
       <el-table
+        class="table_wrapper"
         ref="taskTableRef"
         :data="workOrderList1"
         style="width: 100%"
@@ -458,4 +462,10 @@ const sureClick = () => {
 :deep(.el-table th.el-table__cell:nth-child(1) .cell) {
   visibility: hidden;
 }
+
+// .table_wrapper {
+//     .disabledCheck .cell {
+//       visibility: hidden;
+//     }
+//   }
 </style>
