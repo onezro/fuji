@@ -182,6 +182,10 @@ export const useAppStore = defineStore('app', {
     }
   },
   actions: {
+    getOPUIReal(): any {
+      this.OPUIDATA=localStorage.getItem('OPUIData')?JSON.parse(localStorage.getItem('OPUIData')||''):{}
+      return this.OPUIDATA
+    },
     setSystemType(systemType: boolean) {
       this.systemType = systemType
     },

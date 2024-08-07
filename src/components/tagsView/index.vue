@@ -45,15 +45,10 @@ const addTags = () => {
 }
 //关闭tag
 const closeSelectedTag = (view: any) => {
-    // console.log(view)
     tagsViewStore.delView(view)
-    // closeCurrent(view, () => {
-
-
     if (isActive(view)) {
         toLastView()
     }
-    // })
 }
 
 
@@ -159,7 +154,7 @@ const onSubmit = () => {
             let str = form.
                 value.work + '/' + form.value.line + '/' + form.value.station
             OPUIData.value.path = str
-            localStorage.setItem('OPUI', str)
+            // localStorage.setItem('OPUI', str)
             localStorage.setItem('OPUIData', JSON.stringify(OPUIData.value))
             push(str)
             formRef.value.resetFields();

@@ -10,9 +10,7 @@
 
           <el-tooltip content="重置" placement="right">
             <el-icon size="24" :class="isLoding" color="#006487" @click="refreshData">
-
               <RefreshRight />
-
             </el-icon>
           </el-tooltip>
         </div>
@@ -29,10 +27,6 @@
     <el-card shadow="always" :body-style="{ padding: '10px' }" class="flex-1">
       <div class="mb-[10px] flex justify-between">
         <div>
-          <!-- <el-button type="primary" @click="syncPeople">同步人员</el-button>
-          <el-button type="primary" @click="syncOrganizate"
-            >同步组织架构</el-button
-          > -->
         </div>
         <div>
           <el-input v-model="searchName" placeholder="请输入">
@@ -66,14 +60,14 @@
             <el-tooltip content="编辑" placement="top">
               <el-button type="primary" icon="EditPen" size="small" @click="handleEdit(scope.row)" />
             </el-tooltip>
-            <!-- <el-tooltip content="删除" placement="top">
+            <el-tooltip content="密码重置" placement="top">
               <el-button
                 type="danger"
-                icon="Delete"
+                icon="RefreshLeft"
                 size="small"
-                @click="handleDelete(scope.row)"
+                @click="handleRest(scope.row)"
               />
-            </el-tooltip> -->
+            </el-tooltip>
           </template>
         </el-table-column>
       </el-table>
@@ -130,6 +124,27 @@
         </span>
       </template>
     </el-dialog>
+    <el-dialog :append-to-body="true" :close-on-click-modal="false" title="重置密码" v-model="restVisible" width="30%"
+      @close="upDateCancel()">
+      <el-form :model="rePwForm" ref="reFormRef" :rules="rules" label-width="auto">
+        <el-form-item label="账号" prop="employeeName">
+          <el-input v-model="rePwForm.employeeName" disabled></el-input>
+        </el-form-item>
+        <el-form-item label="新密码" prop="pwd">
+          <el-input v-model="rePwForm.pwd" placeholder="请输入新密码" show-password clearable></el-input>
+        </el-form-item>
+        <el-form-item label="确认密码" prop="confirmPwd">
+          <el-input v-model="rePwForm.confirmPwd" placeholder="再次输入新密码" show-password clearable></el-input>
+        </el-form-item>
+      </el-form>
+
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="upDateCancel()">取消</el-button>
+          <el-button type="primary" @click="upDateSubmit()">确定</el-button>
+        </span>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -145,6 +160,7 @@ import {
   deleteEmployee,
   addEmployee,
   getOrganization,
+  ResetPwd
 } from "@/api/permiss";
 import { ElMessage, ElMessageBox, ElNotification } from "element-plus";
 import {
@@ -234,6 +250,32 @@ const searchName = ref("");
 const tableData1 = ref<Table[]>([]);
 const organTree = ref<OrganTree[]>([]);
 const isLoding = ref('')
+const restVisible=ref(false)
+const reFormRef=ref()
+const rePwForm=ref({
+  employeeName: '',
+  pwd: '',
+  confirmPwd: ''
+})
+const equalToPassword = (rule: any, value: any, callback: any) => {
+  if (rePwForm.value.pwd !== value) {
+    // console.log('两次输入的密码不一致');
+    // upPwForm.confirmPwd=''
+    callback(new Error("两次输入的密码不一致"));
+  } else {
+    callback();
+  }
+}
+const rules = reactive<any>({
+  pwd: [
+    { required: true, message: '请输入新密码', trigger: 'blur' },
+  ],
+  confirmPwd: [
+    { required: true, trigger: "blur", message: "请再次输入您的密码" },
+    { required: true, validator: equalToPassword, trigger: "blur" }
+  ],
+
+})
 onBeforeMount(() => {
   getScreenHeight();
 });
@@ -268,11 +310,9 @@ const table1 = (newdata: any) => {
 };
 
 const noRole = computed(() => {
-  // console.log( hasRole.value)
   const data = optionArr.value.filter(
     (item: any) => !hasRole.value.some((ele) => ele.Id == item.value)
   );
-  // console.log(data, hasRole.value);
   return data;
 });
 
@@ -318,7 +358,7 @@ const handleNodeClick = (data: any) => {
 }
 const refreshData = () => {
   isLoding.value = 'is-loading'
-  currentPage.value=1
+  currentPage.value = 1
   // tableData1.value = tableData.value
   getData();
   // getOrgan();
@@ -375,8 +415,6 @@ const getHasRole = () => {
 const openAdd = () => {
   editVisible.value = true;
 };
-const syncPeople = () => { };
-const syncOrganizate = () => { };
 const dataPrecc = (data: any) => {
   // console.log(data);
   let beforeData = data; //将dataArr赋值给beforeData  也可直接操作dataArr
@@ -391,7 +429,7 @@ const dataPrecc = (data: any) => {
         fullName: beforeData[i].FullName,
         title: beforeData[i].title,
         OrganizationName: beforeData[i].OrganizationName,
-        OrganizationID:beforeData[i].OrganizationID,
+        OrganizationID: beforeData[i].OrganizationID,
         RoleName:
           beforeData[i].RoleName == null ? [] : [beforeData[i].RoleName],
       });
@@ -413,7 +451,7 @@ const dataPrecc = (data: any) => {
   afterData.sort((a, b) => {
     return a.employeeName - b.employeeName;
   });
-// console.log(afterData);
+  // console.log(afterData);
   tableData.value = afterData;
   tableData1.value = tableData.value;
 };
@@ -497,6 +535,46 @@ const handleClose = (tag: any) => {
     });
 };
 
+const  handleRest=(row:any)=>{
+// console.log(row);
+rePwForm.value.employeeName=row.employeeName
+restVisible.value=true
+}
+const upDateCancel = () => {
+  restVisible.value = false
+  reFormRef.value.resetFields();
+}
+const upDateSubmit = () => {
+  reFormRef.value.validate((valid: any) => {
+    if (valid) {
+      let data = {
+        employeeName: rePwForm.value.employeeName,
+        pwd: rePwForm.value.pwd
+      }
+      ResetPwd(data).then((res: any) => {
+        // console.log(data)
+        if (res.code == 100200) {
+          ElNotification({
+            title: "重置成功",
+            // message: "取消操作",
+            type: "success",
+          });
+        } else {
+          ElNotification({
+            title: "重置失败",
+            message: res.msg,
+            type: "error",
+          });
+        }
+        restVisible.value = false
+      })
+
+    } else {
+      console.log("error submit!!");
+      return false;
+    }
+  })
+}
 const handleDelete = (row: any) => {
   ElMessageBox.confirm("确定删除", "确认操作", {
     confirmButtonText: "确定",
