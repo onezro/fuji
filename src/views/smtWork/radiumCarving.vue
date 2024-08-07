@@ -3,7 +3,7 @@
     <div
       class="h-[40px] min-h-[40px] pl-2 pr-2 flex justify-between items-center"
     >
-      <span class="text-[#006487]">{{ appStore.getOpuiData.stationDec }}</span>
+      <span class="text-[#006487]">{{ title.stationDec }}</span>
       <div>
         <el-button type="primary" @click="dialogVisible = true"
           >工单开工</el-button
@@ -211,6 +211,8 @@ const barCode = ref("");
 const activeName = ref("first");
 const dialogVisible = ref(false);
 const choiceRow = ref<any>();
+const title = appStore.getOPUIReal();
+
 
 const workOrderList = ref<OrderList[]>([]);
 const workOrderList1 = ref<OrderList[]>([]);
