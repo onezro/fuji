@@ -47,7 +47,7 @@
         </template>
       </el-dropdown>
     </div>
-    <Menu class="absolute top-0 z-[3000] h-[100%] left-[80px] bg-[#003750]"
+    <Menu class="absolute top-0 z-[99] h-[100%] left-[80px] bg-[#003750]"
       :class="{ 'w-[200px]': showMenu, 'w-0': !showMenu }" style="transition: width 0.2s, left 0.2s" :base-path="'/'"
       @refresh="clickOut"></Menu>
 

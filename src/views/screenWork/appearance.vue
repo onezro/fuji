@@ -1,7 +1,7 @@
 <template>
     <div class="flex flex-col w-full h-full">
         <div class="h-[40px] min-h-[40px] pl-2 pr-2 flex justify-between items-center">
-            <span class="  text-[#006487]">物料检验-外观</span>
+            <span class="text-[#006487]"> {{ title.stationDec }} </span>
         </div>
         <div class="w-full flex-1 flex">
             <div class="setwidth w-[320px] ">
@@ -59,6 +59,7 @@
 
 <script lang="ts" setup>
 import tableTem from '@/components/tableTem/index.vue'
+import { useAppStoreWithOut } from '@/stores/modules/app'
 // import formTemple from '@/components/formTem/form.vue'
 interface Form {
     order: string,
@@ -74,6 +75,8 @@ interface FormHeader {
     type:string
 }
 import { ref, reactive, onMounted, nextTick, onBeforeMount, onBeforeUnmount } from 'vue'
+const appStore = useAppStoreWithOut()
+const title=appStore.getOPUIReal()
 const barCode = ref('')
 const activeName = ref('first')
 

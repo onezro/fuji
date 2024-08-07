@@ -64,55 +64,10 @@
                         </el-tabs>
                     </div>
                 </div>
-            </div>
+            </div> 
         </div>
         <badInfoTem :visible="editVisible" :list="list" :formHeader="formHeader1" :form="form" :badForm="badForm" :tableData="BadtableData"
             @cancel="editCancel" @submit="editSubmit" @deleteBad="deleteBad" @addBadData="addBadData"  @openAddBad="openAddBad"/>
-           
-        <!-- <el-dialog :append-to-body="true" :close-on-press-escape="false" align-center  :close-on-click-modal="false" title="不良品登记" v-model="editVisible" width="80%"
-            @close="editCancel">
-            <div>
-                <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
-                    <span class="ml-5">基本信息</span>
-                </div>
-                <el-form class="pt-2" ref="formRef" :inline="true" :model="badForm" label-width="auto">
-                    <el-form-item label="MES屏条码" prop="name"><el-input disabled v-model="badForm.barCode"
-                            style="width: 150px" /></el-form-item>
-                    <el-form-item label="工单号" prop="name"><el-input disabled v-model="badForm.barCode"
-                            style="width: 150px" /></el-form-item>
-                    <el-form-item label="机型" prop="name"><el-input disabled v-model="badForm.barCode"
-                            style="width: 150px" /></el-form-item>
-                    <el-form-item label="产品编码" prop="name"><el-input disabled v-model="badForm.barCode"
-                            style="width: 150px" /></el-form-item>
-                    <el-form-item label="产品描述" prop="name"><el-input disabled v-model="badForm.barCode"
-                            style="width: 240px" /></el-form-item>
-                    <el-form-item label="不良工位" prop="name"><el-input disabled v-model="badForm.barCode"
-                            style="width: 150px" /></el-form-item>
-                </el-form>
-            </div>
-            <div>
-                <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
-                    <span class="ml-5">不良品信息</span>
-                </div>
-                <div class="pt-2">
-                    <div class="mb-2"><el-button type="primary">增加</el-button><el-button type="danger">删除</el-button>
-                    </div>
-                    <el-table :data="BadtableData" stripe border fit :style="{ width: '100%' }" :height="250">
-                        <el-table-column type="index" align="center" label="序号" width="60"/>
-                        <el-table-column prop="badCode" label="不良代码" />
-                        <el-table-column prop="badCodeDec" label="不良代码描述" />
-                        <el-table-column prop="backProcess" label="快修返回工序" />
-                        <el-table-column prop="remark" label="备注" />
-                    </el-table>
-                </div>
-            </div>
-            <template #footer>
-                <span class="dialog-footer">
-                    <el-button @click="editCancel">取消</el-button>
-                    <el-button type="primary" @click="editSubmit">确定</el-button>
-                </span>
-            </template>
-</el-dialog> -->
     </div>
 </template>
 
