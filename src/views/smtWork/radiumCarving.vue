@@ -1,40 +1,23 @@
 <template>
   <div class="flex flex-col w-full h-full">
-    <div
-      class="h-[40px] min-h-[40px] pl-2 pr-2 flex justify-between items-center"
-    >
+    <div class="h-[40px] min-h-[40px] pl-2 pr-2 flex justify-between items-center">
       <span class="text-[#006487]">{{ title.stationDec }}</span>
       <div>
-        <el-button type="primary" @click="dialogVisible = true"
-          >工单开工</el-button
-        >
+        <el-button type="primary" @click="dialogVisible = true">工单开工</el-button>
         <el-button type="primary">条码转工单</el-button>
       </div>
     </div>
     <div class="w-full flex-1 flex">
       <div class="setwidth w-[320px]">
         <div class="w-full h-full box">
-          <div
-            class="h-[35px] flex items-center text-xl text-[#fff] bg-[#006487]"
-          >
+          <div class="h-[35px] flex items-center text-xl text-[#fff] bg-[#006487]">
             <span class="ml-5">基本信息</span>
           </div>
           <div class="p-[10px]">
-            <el-form
-              class="inbound"
-              ref="formRef"
-              :model="form"
-              label-width="auto"
-            >
-              <el-form-item
-                size="default"
-                v-for="f in formHeader"
-                :key="f.value"
-                :label="f.lable"
-              >
+            <el-form class="inbound" ref="formRef" :model="form" label-width="auto">
+              <el-form-item size="default" v-for="f in formHeader" :key="f.value" :label="f.lable">
                 <span class="font-bold text-[18px] leading-[30px]">
-                  {{ formText(f.value) }}</span
-                >
+                  {{ formText(f.value) }}</span>
               </el-form-item>
             </el-form>
           </div>
@@ -43,26 +26,13 @@
       <div class="w-[calc(100%-320px)]">
         <div class="w-full h-full flex flex-col">
           <div>
-            <div
-              class="h-[35px] flex items-center text-xl text-[#fff] bg-[#006487]"
-            >
+            <div class="h-[35px] flex items-center text-xl text-[#fff] bg-[#006487]">
               <span class="ml-5"> 扫描条码</span>
             </div>
             <div class="h-[120px] p-5">
-              <el-form
-                class="inbound"
-                ref="formRef"
-                :model="form"
-                label-width="auto"
-                @submit.native.prevent
-              >
+              <el-form class="inbound" ref="formRef" :model="form" label-width="auto" @submit.native.prevent>
                 <el-form-item label="扫描条码">
-                  <el-input
-                    v-model="barCode"
-                    style="width: 500px"
-                    placeholder="请扫描条码"
-                    @keyup.enter="choiceOrder()"
-                  />
+                  <el-input v-model="barCode" style="width: 500px" placeholder="请扫描条码" @keyup.enter="choiceOrder()" />
                 </el-form-item>
               </el-form>
               <div class="text-xl font-bold text-[#00B400]">
@@ -71,42 +41,28 @@
             </div>
           </div>
           <div class="flex flex-col flex-1">
-            <div
-              class="h-[35px] flex items-center text-xl text-[#fff] bg-[#006487]"
-            >
+            <div class="h-[35px] flex items-center text-xl text-[#fff] bg-[#006487]">
               <span class="ml-5">物料检验记录</span>
             </div>
             <div class="h-full">
-              <table-tem
-                :showIndex="showIndex"
-                :tableData="tableData"
-                :tableHeight="tableHeight"
-                :columnData="columnData"
-                :pageObj="pageObj"
-                @handleSizeChange="handleSizeChange"
-                @handleCurrentChange="handleCurrentChange"
-              ></table-tem>
+              <table-tem :showIndex="true" :tableData="tableData" :tableHeight="tableHeight" :columnData="columnData"
+                :pageObj="pageObj" @handleSizeChange="handleSizeChange"
+                @handleCurrentChange="handleCurrentChange"></table-tem>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <el-dialog
-      v-model="dialogVisible"
-      title="工单开工"
-      width="70%"
-      align-center
-    >
-    <template #header>  
-      <div class="custom-dialog-title flex items-center">  
-        <div>工单列表</div>  
-        <!-- 在标题右侧插入一个按钮 -->  
-         <div class="ml-3 flex items-center">
-            <div>工单搜索：</div>
-            <el-input v-model="workOrderInput" style="width: 240px;" placeholder="请输入" />
-         </div>
-      </div>  
-    </template>  
+    <el-dialog v-model="dialogVisible" title="工单开工" width="90%" align-center>
+      <template #header>
+        <div class="custom-dialog-title flex items-center justify-between">
+          <div>工单列表</div>
+          <!-- 在标题右侧插入一个按钮 -->
+          <el-input v-model="workOrderInput" style="width: 400px;" placeholder="请输入">
+            <template #append>
+              <el-button type="primary" icon="Search"></el-button> </template></el-input>
+        </div>
+      </template>
       <!-- <el-table
         ref="taskTableRef"
         :data="workOrderList"
@@ -120,40 +76,22 @@
           :label="item.lable"
         />
       </el-table> -->
-      <el-table
-        ref="taskTableRef"
-        :data="workOrderList1"
-        style="width: 100%"
-        :height="'50vh'"
-        @select="selectClick"
-      >
+      <el-table ref="taskTableRef" class="test" stripe border :data="workOrderList1" style="width: 100%" :height="'50vh'" @select="selectClick">
         <el-table-column type="selection" width="55" />
-        <el-table-column
-          v-for="item in formHeader"
-          :prop="item.value"
-          :label="item.lable"
-        />
+        <el-table-column v-for="item in formHeader" :prop="item.value" :label="item.lable" />
       </el-table>
       <div class="w-full mt-3 flex justify-around">
-        <el-pagination
-          size="large"
-          background
-          @size-change="handleSizeChange1"
-          @current-change="handleCurrentChange1"
-          :current-page="pageObj.currentPage"
-          :page-size="pageObj1.pageSize"
-          :page-sizes="[5, 10, 20, 50, 100]"
-          layout="total,sizes, prev, pager, next, jumper"
-          :total="workOrderList.length"
-        >
+        <el-pagination size="large" background @size-change="handleSizeChange1" @current-change="handleCurrentChange1"
+          :current-page="pageObj.currentPage" :page-size="pageObj1.pageSize" :page-sizes="[5, 10, 20, 50, 100]"
+          layout="total,sizes, prev, pager, next, jumper" :total="workOrderList.length">
         </el-pagination>
       </div>
       <template #footer>
-      <div class="dialog-footer">
-        <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="sureClick">确 定</el-button>
-      </div>
-    </template>
+        <div class="dialog-footer">
+          <el-button @click="dialogVisible = false">取 消</el-button>
+          <el-button type="primary" @click="sureClick">确 定</el-button>
+        </div>
+      </template>
     </el-dialog>
   </div>
 </template>
@@ -455,7 +393,8 @@ const sureClick = () => {
   border-right: 2px solid #dadbde;
 }
 
-:deep(.el-table th.el-table__cell:nth-child(1) .cell) {
-  visibility: hidden;
+
+:deep(.el-table th.el-table__cell .el-checkbox) {
+  display:none
 }
 </style>
