@@ -49,7 +49,7 @@
         </div>
       </div>
     </el-card>
-    <el-dialog :append-to-body="true" :close-on-click-modal="false" v-model="addVisible" title="新增" width="30%"
+    <el-dialog :append-to-body="true" :close-on-click-modal="false" v-model="addVisible" align-center title="新增" width="40%"
       @close="addCancel">
       <el-form ref="formRef" :model="form" label-position="left" label-width="auto">
         <el-form-item label="类型" prop="type">
@@ -66,15 +66,18 @@
           </el-select>
         </el-form-item>
         <el-form-item label="类型" prop="MenuType">
-          <el-input v-model="form.MenuType" placeholder="类型"></el-input>
+          <el-select v-model="form.MenuType" placeholder="选择类型" style="width: 240px">
+            <el-option v-for="item in list" :key="item.value" :label="item.label" :value="item.value" />
+          </el-select>
+          <!-- <el-input v-model="form.MenuType" placeholder="类型"></el-input> -->
         </el-form-item>
         <el-form-item label="菜单名称" prop="title"><el-input v-model="form.title" placeholder="请输入" /></el-form-item>
-        <el-form-item label="图标" prop="icon"><el-input v-model="form.icon" placeholder="请输入" /></el-form-item>
-        <el-form-item label="PATH路径" prop="path"><el-input v-model="form.path" placeholder="请输入" /></el-form-item>
-        <el-form-item label="路由名称" prop="MenuName"><el-input v-model="form.MenuName" placeholder="请输入" /></el-form-item>
-        <el-form-item label="重定向" prop="redirect"><el-input v-model="form.redirect" placeholder="请输入" /></el-form-item>
+        <el-form-item label="图标" prop="icon"><el-input v-model="form.icon" placeholder="请输入图标" /></el-form-item>
+        <el-form-item label="PATH路径" prop="path"><el-input v-model="form.path" placeholder="请输入PATH路径" /></el-form-item>
+        <el-form-item label="路由名称" prop="MenuName"><el-input v-model="form.MenuName" placeholder="请输入路由名称name" /></el-form-item>
+        <el-form-item label="重定向" prop="redirect"><el-input v-model="form.redirect" placeholder="请输入重定向" /></el-form-item>
         <el-form-item label="组件" prop="component"><el-input :disabled="fmeun" v-model="form.component"
-            placeholder="请输入" /></el-form-item>
+            placeholder="请输入物理路径" /></el-form-item>
         <el-form-item label="排序" prop="sortId"><el-input-number :min="0" controls-position="right" v-model="form.sortId"
             placeholder="请输入" /></el-form-item>
       </el-form>
@@ -98,7 +101,10 @@
           </el-select>
         </el-form-item>
         <el-form-item label="类型" prop="MenuType">
-          <el-input v-model="editForm.MenuType" placeholder="类型"></el-input>
+          <!-- <el-input v-model="editForm.MenuType" placeholder="类型"></el-input> -->
+          <el-select v-model="editForm.MenuType" placeholder="选择类型" style="width: 240px">
+            <el-option v-for="item in list" :key="item.value" :label="item.label" :value="item.value" />
+          </el-select>
         </el-form-item>
         <el-form-item label="PATH路径" prop="path">
           <el-input v-model="editForm.path" placeholder="路径"></el-input>
@@ -174,7 +180,7 @@ const form = reactive({
   UpdateBy: "",
   UpdateDate: "",
 });
-let editForm = reactive({
+const editForm = reactive({
   path: "",
   title: "",
   component: "",
@@ -196,6 +202,16 @@ const editPName = ref("");
 const editid = ref();
 const formRef = ref()
 const arrID = ref([] as any[]);
+const list = reactive([{
+  value: 'Portal',
+  label: 'Portal'
+}, {
+  value: 'PDA',
+  label: 'PDA'
+}, {
+  value: 'OPUI',
+  label: 'OPUI'
+}])
 onBeforeMount(() => {
   getScreenHeight();
 });
@@ -265,7 +281,7 @@ const handleEdit = async (row: any) => {
   if (row.MenuFID != null) {
     // editid.value = row.MenuFID;
     // editForm.MenuFID = row.MenuFID;
-  findNameById(row.MenuFID, tableData.value);
+    findNameById(row.MenuFID, tableData.value);
     // editPName.value =void findNameById(row.MenuFID, tableData.value);
     // console.log(editPName.value);
   }
@@ -317,15 +333,15 @@ const editSubmit = () => {
   });
 };
 const findNameById = (id: any, data: any) => {
-   data.forEach((x: any, i: any) => {
+  data.forEach((x: any, i: any) => {
     if (data[i].id == id) {
-      editPName.value =data[i].title
+      editPName.value = data[i].title
       return //名称
     } else if (data[i].childMenu) {
-      const resultData =void findNameById(id, data[i].childMenu);
+      const resultData = void findNameById(id, data[i].childMenu);
       if (resultData) {
-        editPName.value =resultData
-        return 
+        editPName.value = resultData
+        return
       }
     }
   });
