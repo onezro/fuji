@@ -198,6 +198,14 @@ export function updatePassword(data: any) {
         params: data
     });
 }
+//重置密码
+export function ResetPwd(data: any) {
+    return request({
+        url: "/api/employee/ResetPwd",
+        method: "post",
+        params: data
+    });
+}
 
 export function InsertInspect(data: any){
     return request({

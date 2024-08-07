@@ -66,10 +66,9 @@
                 </div>
             </div>
         </div>
-        <badInfoTem :visible="editVisible" :list="list" :formHeader="formHeader1" :form="editForm" :badForm="badForm"
-            :tableData="BadtableData" @cancel="editCancel" @submit="editSubmit" @deleteBad="deleteBad"
-            @addBadData="addBadData" @openAddBad="openAddBad" />
-
+        <badInfoTem :visible="editVisible" :list="list" :formHeader="formHeader1" :form="form" :badForm="badForm" :tableData="BadtableData"
+            @cancel="editCancel" @submit="editSubmit" @deleteBad="deleteBad" @addBadData="addBadData"  @openAddBad="openAddBad"/>
+           
         <!-- <el-dialog :append-to-body="true" :close-on-press-escape="false" align-center  :close-on-click-modal="false" title="不良品登记" v-model="editVisible" width="80%"
             @close="editCancel">
             <div>
@@ -120,11 +119,11 @@
 <script lang="ts" setup>
 import tableTem from '@/components/tableTem/index.vue'
 import badInfoTem from '@/components/badInfoTem/index.vue'
-import { useAppStore } from '@/stores/modules/app'
+import { useAppStoreWithOut } from '@/stores/modules/app'
 import type { Formspan, FormHeader } from "@/typing";
 import { ref, reactive, onMounted, nextTick, onBeforeMount, onBeforeUnmount } from 'vue'
-const appStore = useAppStore()
-const title = appStore.getOPUIReal()
+const appStore = useAppStoreWithOut()
+const title=appStore.getOPUIReal()
 const barCode = ref('')
 const tabsValue = ref('history')
 const editVisible = ref(false)
@@ -136,13 +135,6 @@ const form = reactive<InstanceType<typeof Formspan>>({
     productDes: '0402封装贴片电容 100pF ±5% 50V MURATA GRM1555C1H101JA01D',
     orderNum: '100',
     passNum: '83'
-})
-const editForm=ref({
-    order: '1213434',
-    models: '3A4621-01C',
-    productCode: '24010606000131',
-    productDes: '0402封装贴片电容 100pF ±5% 50V MURATA GRM1555C1H101JA01D',
-    // orderNum: '100',
 })
 const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
     {
@@ -217,13 +209,13 @@ const formHeader1 = reactive<InstanceType<typeof FormHeader>[]>([
         type: 'textarea',
         width: 300
     },
-    // {
-    //     label: '工单数量',
-    //     value: 'orderNum',
-    //     disabled: true,
-    //     type: 'input',
-    //     width: ''
-    // },
+    {
+        label: '工单数量',
+        value: 'orderNum',
+        disabled: true,
+        type: 'input',
+        width: ''
+    },
 
 ])
 const columnData1 = reactive([
@@ -293,14 +285,14 @@ const BadtableData = ref([
         remark: '测试'
     }
 ])
-const list = ref([
+const list=ref([
     {
-        key: '切料刀缺口',
-        value: 'E208711',
+        key:'切料刀缺口',
+        value:'E208711',
     },
     {
-        key: '划痕',
-        value: 'E208715',
+        key:'划痕',
+        value:'E208715',
     },
 ])
 
@@ -310,6 +302,7 @@ onBeforeMount(() => {
 });
 onMounted(() => {
     window.addEventListener("resize", getScreenHeight);
+    // console.log(appStore.getOpuiData.stationDec);
 });
 onBeforeUnmount(() => {
     window.addEventListener("resize", getScreenHeight);
@@ -327,19 +320,19 @@ const openDialog = () => {
 
 //关闭不良登记
 const editCancel = () => {
-    BadtableData.value = []
+    BadtableData.value=[]
     // console.log(BadtableData.value);
     editVisible.value = false
 }
 //提交不良信息
 const editSubmit = () => {
-    console.log(BadtableData.value);
+    console.log( BadtableData.value);
     editVisible.value = false
 }
 //删除不良信息
 const deleteBad = (data: any) => {
-    BadtableData.value = BadtableData.value.filter((v: any) => {
-        return data[0].badCode != v.badCode
+    BadtableData.value=BadtableData.value.filter((v:any)=>{
+        return data[0].badCode!=v.badCode
     })
 }
 //打开不良登记
@@ -347,7 +340,7 @@ const openAddBad = () => {
     badVisible.value = true
 }
 //增加不良信息
-const addBadData = (data: any) => {
+const addBadData=(data:any)=>{
     BadtableData.value.push(data)
     // console.log(data);
 }

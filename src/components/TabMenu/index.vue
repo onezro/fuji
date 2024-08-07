@@ -40,6 +40,7 @@
         </div>
         <template #dropdown>
           <el-dropdown-menu>
+            <el-dropdown-item @click.native="getSolw">版本-V1.0</el-dropdown-item>
             <el-dropdown-item @click.native="openUpdatePwd">修改密码</el-dropdown-item>
             <el-dropdown-item @click.native="logoutsys">退出登录</el-dropdown-item>
           </el-dropdown-menu>
@@ -68,6 +69,9 @@
         </span>
       </template>
     </el-dialog>
+    <el-dialog v-model="solow" title="版本" width="30%"  @close="solwCanel()">
+   <div>V1.1</div>
+  </el-dialog>
   </div>
 </template>
 
@@ -102,11 +106,10 @@ const upPwForm = reactive({
 
 const upPwFormRef = ref()
 const tabActive = ref("");
+const solow=ref(false)
 
 const equalToPassword = (rule: any, value: any, callback: any) => {
   if (upPwForm.pwd !== value) {
-    // console.log('两次输入的密码不一致');
-    // upPwForm.confirmPwd=''
     callback(new Error("两次输入的密码不一致"));
   } else {
     callback();
@@ -146,7 +149,6 @@ onMounted(() => {
 });
 //Tab高亮
 const isActive = (currentPath: string) => {
-  // console.log(tabPathMap)
   const { path } = unref(currentRoute);
   if (unref(tabPathMap[currentPath]).includes(path)) {
     return true;
@@ -155,7 +157,6 @@ const isActive = (currentPath: string) => {
 };
 
 const openUpdatePwd = () => {
-  // upPwForm.employeeName = userStore.getUserInfo
   upPwVisible.value = true
 }
 
@@ -171,11 +172,9 @@ const upDateSubmit = () => {
         pwd: upPwForm.pwd
       }
       updatePassword(data).then((res: any) => {
-        // console.log(data)
         if (res.code == 100200) {
           ElNotification({
             title: "修改成功",
-            // message: "取消操作",
             type: "success",
           });
           ElMessageBox.confirm("密码修改成功即将退出登录", "提示", {
@@ -204,11 +203,15 @@ const upDateSubmit = () => {
     }
   })
 }
+const getSolw=()=>{
+  solow.value=true
+}
+const solwCanel=()=>{
+  solow.value=false
+}
 
 const logoutsys = () => {
-  // console.log(1111)
   userStore.logout()
-  // push('/login');
 }
 const tabClick = (item: any) => {
   const newPath = item.children ? item.path : item.path.split("/")[0];
@@ -225,7 +228,6 @@ const tabClick = (item: any) => {
           return v;
         })
       );
-      // console.log(permissionStore.getMenuTabRouters)
     }
   } else {
     push(item.path);

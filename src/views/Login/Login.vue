@@ -40,71 +40,32 @@ const loginClick = () => {
     if (data.code == 100200) {
       localStorage.setItem("OPCENTER_ROLE", form.value.EmployeeName);
       setToken(dataText.Token);
-      if (appStore.getSystemType && localStorage.getItem('OPUI')) {
-        let routestr = localStorage.getItem('OPUI') || '/'
-        push({ path: routestr })
+      // if (appStore.getSystemType && localStorage.getItem('OPUI')) {
+      //   let routestr = localStorage.getItem('OPUI') || '/'
+      //   push({ path: routestr })
 
+      // } else {
+      //   push({ path: redirect.value });
+      // }
+      if (appStore.getSystemType && localStorage.getItem('OPUIData')) {
+        let routestr = appStore.getOpuiData.path || '/'
+        push({ path: routestr })
       } else {
         push({ path: redirect.value });
       }
-
-
-      // setToken(form.value.EmployeeName);
-      // getInfo(form.value.EmployeeName);
     }
   });
-
-  // console.log(form.value, currentRoute.value)
 };
-
-// const getInfo = (id: any) => {
-//   getEmpoyeeInfo(id).then((data: any) => {
-//     if (data.code == 100200) {
-//       const useID = JSON.parse(data.content);
-//       // console.log(useID)
-//       getUserRole(useID[0].EmployeeId);
-//     }
-//   });
-// };
-
-// const getUserRole = (id: any) => {
-//   findEmployeeRoles(id).then((data: any) => {
-//     // console.log(data);
-//     if (data.code == 100200) {
-//       const roleData = JSON.parse(data.content) || "";
-//       const roleArr: any[] = [];
-//       roleData.forEach((v: any) => {
-//         roleArr.push(v.Id);
-//       });
-//       const roleStr = roleArr.join(",");
-//       localStorage.setItem("OPCENTER_ROLE", roleStr);
-//     }
-//     else {
-//       localStorage.setItem("OPCENTER_ROLE", '');
-//     }
-
-//     push({ path: redirect.value });
-//   });
-// };
 const switchSystems = () => {
   localStorage.setItem("SYSTEM_TYPE", JSON.stringify(!appStore.getSystemType));
   appStore.setSystemType(!appStore.getSystemType)
-  if (appStore.getSystemType && localStorage.getItem('OPUI')) {
-    let routestr = localStorage.getItem('OPUI') || '/'
+  if (appStore.getSystemType && localStorage.getItem('OPUIData')) {
+     let routestr = appStore.getOpuiData.path || '/'
     push(routestr)
   } else {
     push({ path: '/login', query: { redirect: '/dashboard/index' } })
-    // console.log(1111);
   }
-  // if (appStore.getSystemType) {
-  //   if (localStorage.getItem('OPUI')) {
-  //     let routestr = localStorage.getItem('OPUI') || '/'
-  //     // console.log(routestr);
-  //     push({ path: routestr })
-  //   }
-  // } else {
-  //   push({ path: '/' });
-  // }
+
 }
 </script>
 
