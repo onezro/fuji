@@ -89,16 +89,16 @@ service.interceptors.response.use(
       });
       return Promise.reject();
     }
-
+    
     //成功的返回
     if (response.status === 200) {
-      if (response.data.code == 100200 || !response.data.code) {
+      if (response.data.Code == 100200 || !response.data.Code) {
         return response.data;
-      } else if (response.data.code == 100300) {
+      } else if (response.data.Code == 100300) {
         return response.data;
       }
       else {
-        ElMessageBox.alert(response.data.msg, "提示信息", {
+        ElMessageBox.alert(response.data.ErrorMessage, "提示信息", {
           confirmButtonText: "确定",
         });
         // return response.data;

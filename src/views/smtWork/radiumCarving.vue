@@ -3,7 +3,7 @@
     <div
       class="h-[40px] min-h-[40px] pl-2 pr-2 flex justify-between items-center"
     >
-      <span class="text-2xl font-bold text-[#006487]">物料检验-外观</span>
+      <span class="text-[#006487]">{{ appStore.getOpuiData.stationDec }}</span>
       <div>
         <el-button type="primary" @click="dialogVisible = true"
           >工单开工</el-button
@@ -54,12 +54,14 @@
                 ref="formRef"
                 :model="form"
                 label-width="auto"
+                @submit.native.prevent
               >
                 <el-form-item label="扫描条码">
                   <el-input
                     v-model="barCode"
                     style="width: 500px"
                     placeholder="请扫描条码"
+                    @keyup.enter="choiceOrder()"
                   />
                 </el-form-item>
               </el-form>
@@ -95,20 +97,44 @@
       width="70%"
       align-center
     >
-      <el-table
+    <template #header>  
+      <div class="custom-dialog-title flex items-center">  
+        <div>工单列表</div>  
+        <!-- 在标题右侧插入一个按钮 -->  
+         <div class="ml-3 flex items-center">
+            <div>工单搜索：</div>
+            <el-input v-model="workOrderInput" style="width: 240px;" placeholder="请输入" />
+         </div>
+      </div>  
+    </template>  
+      <!-- <el-table
         ref="taskTableRef"
         :data="workOrderList"
         style="width: 100%"
         :height="'50vh'"
-        @row-click="selectClick"
+        @row-click="rowClick"
       >
         <el-table-column
           v-for="item in formHeader"
           :prop="item.value"
           :label="item.lable"
         />
+      </el-table> -->
+      <el-table
+        ref="taskTableRef"
+        :data="workOrderList1"
+        style="width: 100%"
+        :height="'50vh'"
+        @select="selectClick"
+      >
+        <el-table-column type="selection" width="55" />
+        <el-table-column
+          v-for="item in formHeader"
+          :prop="item.value"
+          :label="item.lable"
+        />
       </el-table>
-      <div class="w-full flex justify-around">
+      <div class="w-full mt-3 flex justify-around">
         <el-pagination
           size="large"
           background
@@ -122,13 +148,23 @@
         >
         </el-pagination>
       </div>
+      <template #footer>
+      <div class="dialog-footer">
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="sureClick">确 定</el-button>
+      </div>
+    </template>
     </el-dialog>
   </div>
 </template>
 
 <script lang="ts" setup>
+import { ElMessage } from "element-plus";
 import tableTem from "@/components/tableTem/index.vue";
 import { getLaserWorkOrder } from "@/api/smt1";
+import { getMaterialInformation } from "@/api/smt2";
+import { useAppStore } from '@/stores/modules/app'
+import { watch } from "vue";
 interface Form {
   MfgOrderName: string;
   BD_ProductModel: string;
@@ -137,7 +173,7 @@ interface Form {
   MfgLineDesc: string;
   OrderStatusDesc: string;
   PlannedStartDate: string;
-  PlannedCompletionDate:string;
+  PlannedCompletionDate: string;
   Qty: number | string;
   RMANumber: string;
 }
@@ -169,25 +205,27 @@ import {
   onBeforeMount,
   onBeforeUnmount,
 } from "vue";
+const appStore = useAppStore()
 const taskTableRef = ref(); // 表格ref
 const barCode = ref("");
 const activeName = ref("first");
 const dialogVisible = ref(false);
-const workOrder = ref("");
-const choiceRow = ref<any>()
+const choiceRow = ref<any>();
 
 const workOrderList = ref<OrderList[]>([]);
+const workOrderList1 = ref<OrderList[]>([]);
+const workOrderInput = ref<string>('')
 const form = reactive<Form>({
-  MfgOrderName: '',
-  PlannedStartDate: '',
-  PlannedCompletionDate: '',
-  RMANumber: '',
-  Qty: '',
-  ProductName: '',
-  BD_ProductModel: '',
-  ProductDesc: '',
-  OrderStatusDesc: '',
-  MfgLineDesc: ''
+  MfgOrderName: "",
+  PlannedStartDate: "",
+  PlannedCompletionDate: "",
+  RMANumber: "",
+  Qty: "",
+  ProductName: "",
+  BD_ProductModel: "",
+  ProductDesc: "",
+  OrderStatusDesc: "",
+  MfgLineDesc: "",
 });
 const formHeader = reactive<FormHeader[]>([
   {
@@ -223,7 +261,7 @@ const formHeader = reactive<FormHeader[]>([
     value: "PlannedCompletionDate",
   },
   {
-    lable: "板面",
+    lable: "面号",
     value: "RMANumber",
   },
   {
@@ -237,21 +275,21 @@ const tableHeight = ref(0);
 const columnData = reactive([
   {
     text: true,
-    prop: "eqty",
+    prop: "SN",
     label: "PCB条码",
     width: "",
     align: "1",
   },
   {
     text: true,
-    prop: "eqName",
+    prop: "MaterialNo",
     label: "物料包装条码",
     width: "",
     align: "1",
   },
   {
     text: true,
-    prop: "zcnumber",
+    prop: "ReleasedDate",
     label: "拆包时间",
     width: "",
     align: "1",
@@ -280,6 +318,23 @@ const pageObj1 = ref({
   pageSize: 10,
   currentPage: 1,
 });
+
+watch(
+  () => workOrderInput.value,
+  (newdata) => {
+    if (newdata == "") {
+      workOrderList1.value = workOrderList.value;
+    } else {
+      workOrderList1.value = table1(newdata);
+    }
+  }
+);
+const table1 = (newdata: any) => {
+  let searchName = newdata.toLowerCase()
+  return workOrderList.value.filter((v: any) => {
+    return v['MfgOrderName'].indexOf(searchName) > -1;
+  });
+};
 
 onBeforeMount(() => {
   getScreenHeight();
@@ -316,25 +371,73 @@ const getScreenHeight = () => {
 };
 const getOrderList = () => {
   getLaserWorkOrder({ orderID: "" }).then((data: any) => {
-    const dataText = JSON.parse(data.content);
-    workOrderList.value = dataText
+    const dataText = JSON.parse(data.data);
+    // workOrderList.value = [...dataText,{},{}];
+    workOrderList.value = dataText;
+    workOrderList1.value = dataText;
   });
 };
 const choiceOrder = () => {
-  console.log(choiceRow.value);
+  getMaterialInformation({
+    OrderID: form.MfgOrderName,
+    Barcode: barCode.value,
+    Mcid: "LASER-01",
+  }).then((data: any) => {
+    if (!data.success) {
+      ElMessage.error(data.ErrorMessage)
+      return;
+    }
+    console.log(data);
+    // const dataText = JSON.parse(data.data);
+    // tableData.value = dataText;
+  });
 };
-const selectClick = (row: any, column: any, event: Event) => {
-    form.MfgOrderName = row.MfgOrderName;
-    form.BD_ProductModel = row.BD_ProductModel;
-    form.ProductName = row.ProductName;
-    form.ProductDesc = row.ProductDesc;
-    form.MfgLineDesc = row.MfgLineDesc;
-    form.OrderStatusDesc = row.OrderStatusDesc;
-    form.PlannedStartDate = row.PlannedStartDate;
-    form.PlannedCompletionDate = row.PlannedCompletionDate;
-    form.Qty = row.Qty;
-    form.RMANumber = row.RMANumber;
-}
+// const rowClick = (row: any, column: any, event: Event) => {
+//   form.MfgOrderName = row.MfgOrderName;
+//   form.BD_ProductModel = row.BD_ProductModel;
+//   form.ProductName = row.ProductName;
+//   form.ProductDesc = row.ProductDesc;
+//   form.MfgLineDesc = row.MfgLineDesc;
+//   form.OrderStatusDesc = row.OrderStatusDesc;
+//   form.PlannedStartDate = row.PlannedStartDate;
+//   form.PlannedCompletionDate = row.PlannedCompletionDate;
+//   form.Qty = row.Qty;
+//   form.RMANumber = row.RMANumber;
+//   dialogVisible.value = false;
+// };
+
+const selectClick = (selection: any, row: any) => {
+  if (selection.length > 1) {
+    let del_row = selection.shift();
+    taskTableRef.value.toggleRowSelection(del_row, false); // 用于多选表格，切换某一行的选中状态，如果使用了第二个参数，则是设置这一行选中与否（selected 为 true 则选中）；第二个参数为true时又变成了多选
+    // console.log(selection[0]);
+    choiceRow.value = selection[0];
+  } else {
+    // console.log(selection[0]);
+    choiceRow.value = selection[0];
+  }
+};
+
+const sureClick = () => {
+  if (!choiceRow.value || !choiceRow.value.MfgOrderName) {
+    ElMessage({
+      message: "请选择工单",
+      type: "warning",
+    });
+    return;
+  }
+  form.MfgOrderName = choiceRow.value.MfgOrderName;
+  form.BD_ProductModel = choiceRow.value.BD_ProductModel;
+  form.ProductName = choiceRow.value.ProductName;
+  form.ProductDesc = choiceRow.value.ProductDesc;
+  form.MfgLineDesc = choiceRow.value.MfgLineDesc;
+  form.OrderStatusDesc = choiceRow.value.OrderStatusDesc;
+  form.PlannedStartDate = choiceRow.value.PlannedStartDate;
+  form.PlannedCompletionDate = choiceRow.value.PlannedCompletionDate;
+  form.Qty = choiceRow.value.Qty;
+  form.RMANumber = choiceRow.value.RMANumber;
+  dialogVisible.value = false;
+};
 </script>
 
 <style lang="scss" scoped>
@@ -350,7 +453,7 @@ const selectClick = (row: any, column: any, event: Event) => {
   border-right: 2px solid #dadbde;
 }
 
-// :deep(.el-table th.el-table__cell:nth-child(1) .cell) {
-//     visibility: hidden;
-// }
+:deep(.el-table th.el-table__cell:nth-child(1) .cell) {
+  visibility: hidden;
+}
 </style>
