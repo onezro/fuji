@@ -1,4 +1,4 @@
-import request from "@/utils/request4";
+import request from "@/utils/request2";
 
 //镭雕
 export function getMaterialInformation(data: any) {

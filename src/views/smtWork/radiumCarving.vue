@@ -78,7 +78,9 @@
               class="h-[35px] flex items-center text-xl justify-between text-[#fff] bg-[#006487]"
             >
               <span class="ml-5"> PCB条码列表</span>
-              <el-icon @click="refreshClick()" class="mr-4"><RefreshRight /></el-icon>
+              <el-icon @click="refreshClick()" class="mr-4"
+                ><RefreshRight
+              /></el-icon>
             </div>
             <div class="h-full">
               <table-tem
@@ -146,7 +148,7 @@
           :label="item.lable"
         />
       </el-table>
-      <div class="w-full mt-3 flex justify-around">
+      <div class="mt-3">
         <el-pagination
           size="large"
           background
@@ -280,7 +282,7 @@ const formHeader = reactive<FormHeader[]>([
   {
     lable: "工单数量",
     value: "Qty",
-  }
+  },
 ]);
 const tableData = ref([]);
 const showIndex = ref(true);
@@ -312,37 +314,30 @@ const columnData = reactive([
     text: true,
     prop: "ReleasedDate",
     label: "拆包时间",
-    width: "",
+    width: "250px",
     align: "1",
   },
   {
     text: true,
-    prop: "Sequence",
+    prop: "VendorLotNumber",
     label: "包装批次",
     width: "",
     align: "1",
   },
   {
     text: true,
-    prop: 'IsResponse',
+    prop: "IsResponse",
     label: "状态",
-    width: "",
+    width: "100px",
     align: "1",
   },
   {
     text: true,
-    prop: 'LastResponseDate',
+    prop: "LastResponseDate",
     label: "完成时间",
-    width: "",
+    width: "250px",
     align: "1",
-  }
-  // {
-  //   text: true,
-  //   prop: "",
-  //   label: "",
-  //   width: "",
-  //   align: "1",
-  // },
+  },
 ]);
 
 const pageObj = ref({
@@ -407,19 +402,19 @@ const getScreenHeight = () => {
 };
 const getOrderList = () => {
   getLaserWorkOrder({ orderID: "" }).then((data: any) => {
-    const dataText = JSON.parse(data.data);
+    const dataText = JSON.parse(data.content);
     // workOrderList.value = [...dataText,{},{}];
     workOrderList.value = dataText;
     workOrderList1.value = dataText;
   });
 };
 const choiceOrder = () => {
-  if (form.MfgOrderName === '') {
+  if (form.MfgOrderName === "") {
     ElMessage({
       message: "请选择工单",
       type: "warning",
     });
-    barCode.value = '';
+    barCode.value = "";
     return;
   }
   getMaterialInformation({
@@ -427,7 +422,9 @@ const choiceOrder = () => {
     Barcode: barCode.value,
     Mcid: "LASER-01",
   }).then((data: any) => {
-    barCode.value = '';
+    console.log(data);
+
+    barCode.value = "";
     if (!data) {
       return;
     }
@@ -470,12 +467,12 @@ const sureClick = () => {
     return;
   }
   OrderSNQuery({
-    OrderID: choiceRow.value.MfgOrderName
+    OrderID: choiceRow.value.MfgOrderName,
   }).then((data: any) => {
     const dataText = JSON.parse(data.content);
     tableData.value = dataText;
     console.log(dataText);
-  })
+  });
   form.MfgOrderName = choiceRow.value.MfgOrderName;
   form.BD_ProductModel = choiceRow.value.BD_ProductModel;
   form.ProductName = choiceRow.value.ProductName;
@@ -491,24 +488,19 @@ const sureClick = () => {
 
 const refreshClick = () => {
   OrderSNQuery({
-    OrderID: form.MfgOrderName
+    OrderID: form.MfgOrderName,
   }).then((data: any) => {
     const dataText = JSON.parse(data.content);
     tableData.value = dataText;
     console.log(dataText);
-  })
-}
+  });
+};
 
-
-const cellClass = (row:any) =>{
- 
- if(row.columnIndex === 0){
-
-   return 'addAllSelectClass'
- }
- 
-
-}
+const cellClass = (row: any) => {
+  if (row.columnIndex === 0) {
+    return "addAllSelectClass";
+  }
+};
 </script>
 
 <style lang="scss" scoped>
@@ -528,28 +520,24 @@ const cellClass = (row:any) =>{
 //   display: none;
 // }
 
-
 //去除复选框头部
-::v-deep .el-table__header-wrapper{
-  .el-checkbox__inner{
-      display: none;
+::v-deep .el-table__header-wrapper {
+  .el-checkbox__inner {
+    display: none;
   }
-  }
- 
- 
+}
+
 //添加全选样式
-::v-deep .el-table .addAllSelectClass .cell::before{
-  content: '选择';
+::v-deep .el-table .addAllSelectClass .cell::before {
+  content: "选择";
   text-align: center;
-//   margin-left: 5px;
-//   /** 文本1 */
-// font-size: 16px;
-// font-weight: 400;
-// letter-spacing: 0px;
-// line-height: 23.17px;
-// color: rgba(128, 128, 128, 1);
- 
- 
+  //   margin-left: 5px;
+  //   /** 文本1 */
+  // font-size: 16px;
+  // font-weight: 400;
+  // letter-spacing: 0px;
+  // line-height: 23.17px;
+  // color: rgba(128, 128, 128, 1);
 }
 
 // .table_wrapper {
@@ -565,5 +553,11 @@ const cellClass = (row:any) =>{
   &::-webkit-scrollbar {
     display: none; /* Chrome, Safari, Opera */
   }
+}
+</style>
+
+<style scoped>
+.el-pagination {
+  justify-content: center;
 }
 </style>
