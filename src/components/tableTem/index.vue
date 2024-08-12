@@ -13,6 +13,7 @@
                         placement="top">
                         <el-button :icon="o.icon" size="small" :type="o.type" @click="o.buttonClick(scope.row)" />
                     </el-tooltip>
+                    <!-- <span v-if="c.IsReleased">{{ c.IsReleased === 0 ? '未释放':'已释放'}}</span> -->
                 </template>
             </el-table-column>
         </el-table>

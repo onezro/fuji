@@ -94,7 +94,7 @@ service.interceptors.response.use(
     if (response.status === 200) {
       if (response.data.Code == 100200 || !response.data.Code) {
         return response.data;
-      } else if (response.data.Code == 100300) {
+      } else if (response.data.Code == 100300 || response.data.Code == 1) {
         return response.data;
       }
       else {

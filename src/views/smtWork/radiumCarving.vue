@@ -176,7 +176,7 @@
 import { ElMessage } from "element-plus";
 import tableTem from "@/components/tableTem/index.vue";
 import { getLaserWorkOrder } from "@/api/smt1";
-// import { getMaterialInformation, OrderSNQuery } from "@/api/smt2";
+import { getMaterialInformation, OrderSNQuery } from "@/api/smt2";
 import { useAppStore } from "@/stores/modules/app";
 import { watch } from "vue";
 interface Form {
@@ -314,7 +314,7 @@ const columnData = reactive([
     text: true,
     prop: "ReleasedDate",
     label: "拆包时间",
-    width: "",
+    width: "250px",
     align: "1",
   },
   {
@@ -328,14 +328,14 @@ const columnData = reactive([
     text: true,
     prop: "IsResponse",
     label: "状态",
-    width: "",
+    width: "100px",
     align: "1",
   },
   {
     text: true,
     prop: "LastResponseDate",
     label: "完成时间",
-    width: "",
+    width: "250px",
     align: "1",
   },
 ]);
