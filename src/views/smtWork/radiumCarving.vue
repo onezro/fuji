@@ -1,23 +1,43 @@
 <template>
   <div class="flex flex-col w-full h-full">
-    <div class="h-[40px] min-h-[40px] pl-2 pr-2 flex justify-between items-center">
-      <span class="text-[#006487]">{{ title.stationDec }}</span>
+    <div
+      class="h-[40px] min-h-[40px] pl-2 pr-2 flex justify-between items-center"
+    >
+      <span class="text-[1.2rem]">{{ title.stationDec }}</span>
       <div>
-        <el-button type="primary" @click="dialogVisible = true">工单开工</el-button>
-        <el-button type="primary">条码转工单</el-button>
+        <el-button type="primary" @click="dialogVisible = true"
+          >工单开工</el-button
+        >
+        <!-- <el-button type="primary">条码转工单</el-button> -->
       </div>
     </div>
     <div class="w-full flex-1 flex">
       <div class="setwidth w-[320px]">
         <div class="w-full h-full box">
-          <div class="h-[35px] flex items-center text-xl text-[#fff] bg-[#006487]">
+          <div
+            class="h-[35px] flex items-center text-xl text-[#fff] bg-[#006487]"
+          >
             <span class="ml-5">基本信息</span>
           </div>
-          <div class="p-[10px]">
-            <el-form class="inbound" ref="formRef" :model="form" label-width="auto">
-              <el-form-item size="default" v-for="f in formHeader" :key="f.value" :label="f.lable">
+          <div
+            class="p-[10px] overflow-auto custom-scrollbar-hidden"
+            :style="{ height: formHeight + 'px' }"
+          >
+            <el-form
+              class="inbound"
+              ref="formRef"
+              :model="form"
+              label-width="auto"
+            >
+              <el-form-item
+                size="default"
+                v-for="f in formHeader"
+                :key="f.value"
+                :label="f.lable"
+              >
                 <span class="font-bold text-[18px] leading-[30px]">
-                  {{ formText(f.value) }}</span>
+                  {{ formText(f.value) }}</span
+                >
               </el-form-item>
             </el-form>
           </div>
@@ -26,41 +46,73 @@
       <div class="w-[calc(100%-320px)]">
         <div class="w-full h-full flex flex-col">
           <div>
-            <div class="h-[35px] flex items-center text-xl text-[#fff] bg-[#006487]">
+            <div
+              class="h-[35px] flex items-center text-xl text-[#fff] bg-[#006487]"
+            >
               <span class="ml-5"> 扫描条码</span>
             </div>
             <div class="h-[120px] p-5">
-              <el-form class="inbound" ref="formRef" :model="form" label-width="auto" @submit.native.prevent>
+              <el-form
+                class="inbound"
+                ref="formRef"
+                :model="form"
+                label-width="auto"
+                @submit.native.prevent
+              >
                 <el-form-item label="扫描条码">
-                  <el-input v-model="barCode" style="width: 500px" placeholder="请扫描条码" @keyup.enter="choiceOrder()" />
+                  <el-input
+                    v-model="barCode"
+                    style="width: 500px"
+                    placeholder="请扫描条码"
+                    @keyup.enter="choiceOrder()"
+                  />
                 </el-form-item>
               </el-form>
               <div class="text-xl font-bold text-[#00B400]">
-                请扫描物料批次条码
+                请扫描包装批次条码
               </div>
             </div>
           </div>
           <div class="flex flex-col flex-1">
-            <div class="h-[35px] flex items-center text-xl text-[#fff] bg-[#006487]">
-              <span class="ml-5">物料检验记录</span>
+            <div
+              class="h-[35px] flex items-center text-xl justify-between text-[#fff] bg-[#006487]"
+            >
+              <span class="ml-5"> PCB条码列表</span>
+              <el-icon @click="refreshClick()" class="mr-4"><RefreshRight /></el-icon>
             </div>
             <div class="h-full">
-              <table-tem :showIndex="true" :tableData="tableData" :tableHeight="tableHeight" :columnData="columnData"
-                :pageObj="pageObj" @handleSizeChange="handleSizeChange"
-                @handleCurrentChange="handleCurrentChange"></table-tem>
+              <table-tem
+                :showIndex="true"
+                :tableData="tableData"
+                :tableHeight="tableHeight"
+                :columnData="columnData"
+                :pageObj="pageObj"
+                @handleSizeChange="handleSizeChange"
+                @handleCurrentChange="handleCurrentChange"
+              ></table-tem>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <el-dialog v-model="dialogVisible" title="工单开工" width="90%" align-center>
+    <el-dialog
+      v-model="dialogVisible"
+      title="工单开工"
+      width="90%"
+      align-center
+    >
       <template #header>
         <div class="custom-dialog-title flex items-center justify-between">
           <div>工单列表</div>
           <!-- 在标题右侧插入一个按钮 -->
-          <el-input v-model="workOrderInput" style="width: 400px;" placeholder="请输入">
+          <el-input
+            v-model="workOrderInput"
+            style="width: 400px"
+            placeholder="请输入"
+          >
             <template #append>
-              <el-button type="primary" icon="Search"></el-button> </template></el-input>
+              <el-button type="primary" icon="Search"></el-button> </template
+          ></el-input>
         </div>
       </template>
       <!-- <el-table
@@ -76,14 +128,36 @@
           :label="item.lable"
         />
       </el-table> -->
-      <el-table ref="taskTableRef" class="test" stripe border :data="workOrderList1" style="width: 100%" :height="'50vh'" @select="selectClick">
+      <el-table
+        ref="taskTableRef"
+        class="test"
+        :header-cell-class-name="cellClass"
+        stripe
+        border
+        :data="workOrderList1"
+        style="width: 100%"
+        :height="'50vh'"
+        @select="selectClick"
+      >
         <el-table-column type="selection" width="55" />
-        <el-table-column v-for="item in formHeader" :prop="item.value" :label="item.lable" />
+        <el-table-column
+          v-for="item in formHeader"
+          :prop="item.value"
+          :label="item.lable"
+        />
       </el-table>
       <div class="w-full mt-3 flex justify-around">
-        <el-pagination size="large" background @size-change="handleSizeChange1" @current-change="handleCurrentChange1"
-          :current-page="pageObj.currentPage" :page-size="pageObj1.pageSize" :page-sizes="[5, 10, 20, 50, 100]"
-          layout="total,sizes, prev, pager, next, jumper" :total="workOrderList.length">
+        <el-pagination
+          size="large"
+          background
+          @size-change="handleSizeChange1"
+          @current-change="handleCurrentChange1"
+          :current-page="pageObj.currentPage"
+          :page-size="pageObj1.pageSize"
+          :page-sizes="[5, 10, 20, 50, 100]"
+          layout="total,sizes, prev, pager, next, jumper"
+          :total="workOrderList.length"
+        >
         </el-pagination>
       </div>
       <template #footer>
@@ -100,8 +174,8 @@
 import { ElMessage } from "element-plus";
 import tableTem from "@/components/tableTem/index.vue";
 import { getLaserWorkOrder } from "@/api/smt1";
-import { getMaterialInformation } from "@/api/smt2";
-import { useAppStore } from '@/stores/modules/app'
+import { getMaterialInformation, OrderSNQuery } from "@/api/smt2";
+import { useAppStore } from "@/stores/modules/app";
 import { watch } from "vue";
 interface Form {
   MfgOrderName: string;
@@ -143,7 +217,7 @@ import {
   onBeforeMount,
   onBeforeUnmount,
 } from "vue";
-const appStore = useAppStore()
+const appStore = useAppStore();
 const taskTableRef = ref(); // 表格ref
 const barCode = ref("");
 const activeName = ref("first");
@@ -151,10 +225,9 @@ const dialogVisible = ref(false);
 const choiceRow = ref<any>();
 const title = appStore.getOPUIReal();
 
-
 const workOrderList = ref<OrderList[]>([]);
 const workOrderList1 = ref<OrderList[]>([]);
-const workOrderInput = ref<string>('')
+const workOrderInput = ref<string>("");
 const form = reactive<Form>({
   MfgOrderName: "",
   PlannedStartDate: "",
@@ -172,10 +245,10 @@ const formHeader = reactive<FormHeader[]>([
     lable: "工单号",
     value: "MfgOrderName",
   },
-  {
-    lable: "机型",
-    value: "BD_ProductModel",
-  },
+  // {
+  //   lable: "机型",
+  //   value: "BD_ProductModel",
+  // },
   {
     lable: "产品编码",
     value: "ProductName",
@@ -207,11 +280,12 @@ const formHeader = reactive<FormHeader[]>([
   {
     lable: "工单数量",
     value: "Qty",
-  },
+  }
 ]);
 const tableData = ref([]);
 const showIndex = ref(true);
 const tableHeight = ref(0);
+const formHeight = ref(0);
 const columnData = reactive([
   {
     text: true,
@@ -220,9 +294,16 @@ const columnData = reactive([
     width: "",
     align: "1",
   },
+  // {
+  //   text: true,
+  //   prop: "OrderNumber",
+  //   label: "工单",
+  //   width: "",
+  //   align: "1",
+  // },
   {
     text: true,
-    prop: "MaterialNo",
+    prop: "MaterialBatchNo",
     label: "物料包装条码",
     width: "",
     align: "1",
@@ -236,18 +317,32 @@ const columnData = reactive([
   },
   {
     text: true,
-    prop: "level",
+    prop: "Sequence",
     label: "包装批次",
     width: "",
     align: "1",
   },
   {
     text: true,
-    prop: "",
-    label: "",
+    prop: 'IsResponse',
+    label: "状态",
     width: "",
     align: "1",
   },
+  {
+    text: true,
+    prop: 'LastResponseDate',
+    label: "完成时间",
+    width: "",
+    align: "1",
+  }
+  // {
+  //   text: true,
+  //   prop: "",
+  //   label: "",
+  //   width: "",
+  //   align: "1",
+  // },
 ]);
 
 const pageObj = ref({
@@ -270,9 +365,9 @@ watch(
   }
 );
 const table1 = (newdata: any) => {
-  let searchName = newdata.toLowerCase()
+  let searchName = newdata.toLowerCase();
   return workOrderList.value.filter((v: any) => {
-    return v['MfgOrderName'].indexOf(searchName) > -1;
+    return v["MfgOrderName"].indexOf(searchName) > -1;
   });
 };
 
@@ -307,6 +402,7 @@ const handleCurrentChange1 = (val: any) => {
 const getScreenHeight = () => {
   nextTick(() => {
     tableHeight.value = window.innerHeight - 365;
+    formHeight.value = window.innerHeight - 165;
   });
 };
 const getOrderList = () => {
@@ -318,18 +414,25 @@ const getOrderList = () => {
   });
 };
 const choiceOrder = () => {
+  if (form.MfgOrderName === '') {
+    ElMessage({
+      message: "请选择工单",
+      type: "warning",
+    });
+    barCode.value = '';
+    return;
+  }
   getMaterialInformation({
     OrderID: form.MfgOrderName,
     Barcode: barCode.value,
     Mcid: "LASER-01",
   }).then((data: any) => {
-    if (!data.success) {
-      ElMessage.error(data.ErrorMessage)
+    barCode.value = '';
+    if (!data) {
       return;
     }
-    console.log(data);
-    // const dataText = JSON.parse(data.data);
-    // tableData.value = dataText;
+    const dataText = JSON.parse(data.content);
+    tableData.value = dataText;
   });
 };
 // const rowClick = (row: any, column: any, event: Event) => {
@@ -366,6 +469,13 @@ const sureClick = () => {
     });
     return;
   }
+  OrderSNQuery({
+    OrderID: choiceRow.value.MfgOrderName
+  }).then((data: any) => {
+    const dataText = JSON.parse(data.content);
+    tableData.value = dataText;
+    console.log(dataText);
+  })
   form.MfgOrderName = choiceRow.value.MfgOrderName;
   form.BD_ProductModel = choiceRow.value.BD_ProductModel;
   form.ProductName = choiceRow.value.ProductName;
@@ -378,6 +488,27 @@ const sureClick = () => {
   form.RMANumber = choiceRow.value.RMANumber;
   dialogVisible.value = false;
 };
+
+const refreshClick = () => {
+  OrderSNQuery({
+    OrderID: form.MfgOrderName
+  }).then((data: any) => {
+    const dataText = JSON.parse(data.content);
+    tableData.value = dataText;
+    console.log(dataText);
+  })
+}
+
+
+const cellClass = (row:any) =>{
+ 
+ if(row.columnIndex === 0){
+
+   return 'addAllSelectClass'
+ }
+ 
+
+}
 </script>
 
 <style lang="scss" scoped>
@@ -393,9 +524,32 @@ const sureClick = () => {
   border-right: 2px solid #dadbde;
 }
 
+// :deep(.el-table th.el-table__cell .el-checkbox) {
+//   display: none;
+// }
 
-:deep(.el-table th.el-table__cell .el-checkbox) {
-  display:none
+
+//去除复选框头部
+::v-deep .el-table__header-wrapper{
+  .el-checkbox__inner{
+      display: none;
+  }
+  }
+ 
+ 
+//添加全选样式
+::v-deep .el-table .addAllSelectClass .cell::before{
+  content: '选择';
+  text-align: center;
+//   margin-left: 5px;
+//   /** 文本1 */
+// font-size: 16px;
+// font-weight: 400;
+// letter-spacing: 0px;
+// line-height: 23.17px;
+// color: rgba(128, 128, 128, 1);
+ 
+ 
 }
 
 // .table_wrapper {
@@ -403,4 +557,13 @@ const sureClick = () => {
 //       visibility: hidden;
 //     }
 //   }
+
+/* 如果你只想隐藏特定元素的滚动条，可以这样做 */
+.custom-scrollbar-hidden {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE 和 Edge */
+  &::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+  }
+}
 </style>
