@@ -32,6 +32,9 @@ importers:
       '@vueuse/core':
         specifier: ^10.11.0
         version: 10.11.0(vue@3.4.27(typescript@5.4.5))
+      '@wocwin/t-ui-plus':
+        specifier: ^1.4.10
+        version: 1.4.10
       af-table-column:
         specifier: ^1.0.3
         version: 1.0.3
@@ -702,6 +705,9 @@ packages:
 
   '@vueuse/shared@9.13.0':
     resolution: {integrity: sha512-UrnhU+Cnufu4S6JLCPZnkWh0WwZGUp72ktOF2DFptMlOs3TOdVv8xJN53zhHGARmVOsz5KqOls09+J1NR6sBKw==}
+
+  '@wocwin/t-ui-plus@1.4.10':
+    resolution: {integrity: sha512-Z0vitoXjBM/CE6ynlhoA3k+hqISeGXTP0iSrIQXp91UEaLwJskWp9+QBKOkFBArTfEp54BUqNzyeQYao1O9V8Q==}
 
   af-table-column@1.0.3:
     resolution: {integrity: sha512-zdI7MsmppAZemofr4zM7Kae7CGQGlyfnbTj6l0DgNDfRtzJs7ryiX7fbAq96MCRtt4EVcrZ+fX+rnpznrpB34Q==}
@@ -2097,6 +2103,8 @@ snapshots:
     transitivePeerDependencies:
       - '@vue/composition-api'
       - vue
+
+  '@wocwin/t-ui-plus@1.4.10': {}
 
   af-table-column@1.0.3:
     dependencies:

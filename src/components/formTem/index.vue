@@ -1,6 +1,6 @@
 <template>
     <el-dialog :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false"
-        v-model="dialogVisible" :title="title" :width="width" @close="addCancel">
+        v-model="dialogVisible" :title="title" :width="width" @close="formCancel">
         <el-form ref="formRef" :model="form" label-position="left" :rules="rules" label-width="auto">
             <el-form-item v-for="f in formHeader" :key="f.value" :label="f.label" :prop="f.value">
                 <el-input v-if="f.type == 'input' || f.type === 'password'" v-model="form[f.value]" :type="f.type"
@@ -19,7 +19,7 @@
         </el-form>
         <template #footer>
             <span class="dialog-footer">
-                <el-button @click="addCancel">取消</el-button>
+                <el-button @click="formCancel">取消</el-button>
                 <el-button type="primary" @click="onSubmit"> 确定 </el-button>
             </span>
         </template>
@@ -27,10 +27,10 @@
 </template>
 
 <script lang="ts" setup>
-import { defineProps, defineExpose, defineEmits, toRefs, computed, ref } from "vue"
+import {  defineExpose, toRefs, computed, ref } from "vue"
 const props = defineProps(['visible', 'width', 'title', 'formRef', 'form', 'formHeader', 'rules'])
 const { visible, width, title, form, formHeader, rules } = toRefs(props)
-const emit = defineEmits(['addCancel', 'onSubmit','selectData'])
+const emit = defineEmits(['formCancel', 'onSubmit','selectData'])
 const formRef = ref()
 const dialogVisible = computed({
     get() {
@@ -41,8 +41,8 @@ const dialogVisible = computed({
     }
 })
 
-const addCancel = () => {
-    emit('addCancel')
+const formCancel = () => {
+    emit('formCancel')
 }
 const onSubmit = () => {
     emit('onSubmit')

@@ -47,11 +47,13 @@ export interface ResultItem {
 }
 
 export interface Formspan {
-    order: string,
-    models: string,
-    productCode: string,
-    productDes: string,
-    orderNum: string,
+    MfgOrderName: string,
+    // models: "",
+    ProductName: string,
+    ProductDesc: string,
+    Qty: number,
+    PlannedStartDate:string,
+    PlannedCompletionDate:string,
     passNum: string
 }
 export interface FormHeader {

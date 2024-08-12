@@ -1,7 +1,7 @@
 <template>
     <div class="flex flex-col w-full h-full">
         <div class="h-[40px] min-h-[40px] pl-2 pr-2 flex justify-between items-center">
-            <span class="text-[#006487]"> {{ title.stationDec }} </span>
+            <span class="text-[1.2rem]"> {{ opui.stationDec }} </span>
             <el-button type="primary" @click="openDialog">不良品登记</el-button>
         </div>
         <div class="w-full flex-1 flex">
@@ -27,16 +27,18 @@
                         <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
                             <span class="ml-5"> 扫描条码</span>
                         </div>
-                        <div class="h-[120px] p-5">
+                        <div class="h-[120px] p-3">
                             <el-form class="inbound" ref="formRef" :inline="true" :model="form" label-width="auto"
                                 @submit.native.prevent>
                                 <el-form-item label="扫描条码">
-                                    <el-input v-model="barCode" style="width: 500px;" placeholder="请扫描条码" />
+                                    <el-input ref="inputRef" v-model="barCode" style="width: 500px;" placeholder="请扫描条码"
+                                        @change="getChange" />
                                 </el-form-item>
-                                <el-form-item>
-                                    <div class="">
-                                        ok
-                                    </div>
+                                <el-form-item :class="[stopsForm.result == 'OK' ? 'switchok' : 'switchng']">
+                                    <el-switch v-model="stopsForm.result" size="large"
+                                        style="zoom: 1.2;--el-switch-on-color:#ff4949 ; --el-switch-off-color: #13ce66"
+                                        :active-value="'NG'" :inactive-value="'OK'" active-text="NG"
+                                        inactive-text="OK" />
                                 </el-form-item>
                             </el-form>
                             <div class="text-xl  font-bold text-[#00B400]">请扫描物料批次条码</div>
@@ -64,25 +66,38 @@
                         </el-tabs>
                     </div>
                 </div>
-            </div> 
+            </div>
         </div>
-        <badInfoTem :visible="editVisible" :list="list" :formHeader="formHeader1" :form="form" :badForm="badForm" :tableData="BadtableData"
-            @cancel="editCancel" @submit="editSubmit" @deleteBad="deleteBad" @addBadData="addBadData"  @openAddBad="openAddBad"/>
+        <badInfoTem :visible="editVisible" :list="list" :formHeader="formHeader1" :form="form" :badForm="badForm"
+            :tableData="BadtableData" @cancel="editCancel" @submit="editSubmit" @deleteBad="deleteBad"
+            @addBadData="addBadData" @openAddBad="openAddBad" />
     </div>
 </template>
 
 <script lang="ts" setup>
 import tableTem from '@/components/tableTem/index.vue'
 import badInfoTem from '@/components/badInfoTem/index.vue'
+import { checkStringType } from '@/utils/barcodeFormat'
 import { useAppStoreWithOut } from '@/stores/modules/app'
+import { useUserStoreWithOut } from "@/stores/modules/user";
 import type { Formspan, FormHeader } from "@/typing";
+import { ElMessage, ElMessageBox, ElNotification } from "element-plus";
 import { ref, reactive, onMounted, nextTick, onBeforeMount, onBeforeUnmount } from 'vue'
 const appStore = useAppStoreWithOut()
-const title=appStore.getOPUIReal()
+const userStore = useUserStoreWithOut();
+const opui = appStore.getOPUIReal()
 const barCode = ref('')
 const tabsValue = ref('history')
 const editVisible = ref(false)
 const badVisible = ref(false)
+const inputRef = ref()
+const stopsForm = ref({
+    ContainerName: '',//PCB
+    result: 'OK',//工装治具
+    WorkStationName: opui.station,//工位
+    ResourceName: opui.equipment !== null ? opui.equipment : '',//设备
+    EmployeeName: userStore.getUserInfo//用户
+})
 const form = reactive<InstanceType<typeof Formspan>>({
     order: '1213434',
     models: '3A4621-01C',
@@ -240,14 +255,14 @@ const BadtableData = ref([
         remark: '测试'
     }
 ])
-const list=ref([
+const list = ref([
     {
-        key:'切料刀缺口',
-        value:'E208711',
+        key: '切料刀缺口',
+        value: 'E208711',
     },
     {
-        key:'划痕',
-        value:'E208715',
+        key: '划痕',
+        value: 'E208715',
     },
 ])
 
@@ -267,6 +282,32 @@ const formText = (data: string) => {
     let key = data as keyof typeof form
     return form[key]
 }
+const getChange = (val: any) => {
+    // console.log(val);
+    if (checkStringType(val) == 'result') {
+        console.log('result', val);
+        stopsForm.value.result = val
+    } else if (checkStringType(val) == 'pcb') {
+        console.log('pcb', val);
+        stopsForm.value.ContainerName = val
+    } else if (checkStringType(val) == 'tool') {
+        console.log('tool', val);
+        // stopsForm.value.ToolName = val
+    } else {
+        ElNotification({
+            title: "错误",
+            message: '扫描条码有误',
+            type: "error",
+        });
+        // console.log('扫描条码有误');
+    }
+    barCode.value = ''
+    inputRef.value.focus()
+    if (stopsForm.value.ContainerName && stopsForm.value.result) {
+        console.log(stopsForm.value)
+    }
+
+}
 
 //打开不良登记
 const openDialog = () => {
@@ -275,19 +316,19 @@ const openDialog = () => {
 
 //关闭不良登记
 const editCancel = () => {
-    BadtableData.value=[]
+    BadtableData.value = []
     // console.log(BadtableData.value);
     editVisible.value = false
 }
 //提交不良信息
 const editSubmit = () => {
-    console.log( BadtableData.value);
+    console.log(BadtableData.value);
     editVisible.value = false
 }
 //删除不良信息
 const deleteBad = (data: any) => {
-    BadtableData.value=BadtableData.value.filter((v:any)=>{
-        return data[0].badCode!=v.badCode
+    BadtableData.value = BadtableData.value.filter((v: any) => {
+        return data[0].badCode != v.badCode
     })
 }
 //打开不良登记
@@ -295,7 +336,7 @@ const openAddBad = () => {
     badVisible.value = true
 }
 //增加不良信息
-const addBadData=(data:any)=>{
+const addBadData = (data: any) => {
     BadtableData.value.push(data)
     // console.log(data);
 }
@@ -361,5 +402,20 @@ const getScreenHeight = () => {
 .tabs-css .el-tabs--border-card>.el-tabs__header .el-tabs__item:not(.is-disabled):hover {
     // color: #fff;
     background-color: #fff;
+}
+
+// .switchbox .el-switch__label--right{
+//   color: #13ce66;
+// }
+
+// .switchbox .el-switch__label--left {
+//   color: #ff4949;
+// }
+.switchok .el-switch__label.is-active {
+    color: #13ce66;
+}
+
+.switchng .el-switch__label.is-active {
+    color: #ff4949;
 }
 </style>

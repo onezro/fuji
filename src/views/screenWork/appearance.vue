@@ -1,7 +1,7 @@
 <template>
     <div class="flex flex-col w-full h-full">
         <div class="h-[40px] min-h-[40px] pl-2 pr-2 flex justify-between items-center">
-            <span class="text-[#006487]"> {{ title.stationDec }} </span>
+            <span class="text-[1.2rem]"> {{ title.stationDec }} </span>
         </div>
         <div class="w-full flex-1 flex">
             <div class="setwidth w-[320px] ">
