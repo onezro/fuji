@@ -42,7 +42,7 @@ export default defineConfig({
         rewrite: (path) => path.replace(/^\/smtapi2/, '') 
       },
       '/dipApi': {
-        target: 'http://192.168.14.5:8087',
+        target: 'http://192.168.14.5:8087',//http://192.168.9.50:12022
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/dipApi/, '') 
       }

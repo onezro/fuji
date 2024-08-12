@@ -14,8 +14,8 @@ import ElementPlus from 'element-plus'
 import zhCN from "element-plus/dist/locale/zh-cn.mjs" //引入中文
 // import { ClickOutside } from 'element-plus'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
-import TuiPlus from '@wocwin/t-ui-plus'
-import '@wocwin/t-ui-plus/lib/style.css'
+// import TuiPlus from '@wocwin/t-ui-plus'
+// import '@wocwin/t-ui-plus/lib/style.css'
 import './permission'
 // import AFTableColumn from 'af-table-column'
 
@@ -27,7 +27,7 @@ const app = createApp(App)
 // app.directive(ClickOutside)
 // app.use(AFTableColumn)
 app.use(ElementPlus, {locale:zhCN,size: ''})
-app.use(TuiPlus)
+// app.use(TuiPlus)
 app.use(createPinia())
 app.use(router)
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
