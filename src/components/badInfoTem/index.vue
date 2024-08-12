@@ -1,8 +1,8 @@
 <template>
     <el-dialog :close-on-press-escape="false" align-center :close-on-click-modal="false" title="不良品登记"
         v-model="dialogVisible" width="80%" @close="cancel">
-        <formTemple ref="badFormRef" :visible="badVisible" :width="'30%'" :title="'添加不良信息'" :formHeader="formHeader1" :form="form1"
-            @addCancel="addCancel" @onSubmit="onSubmit" @selectData="selectData"/>
+        <formTemple ref="badFormRef" :visible="badVisible" :width="'30%'" :title="'添加不良信息'" :formHeader="formHeader1"
+            :form="form1" @addCancel="addCancel" @onSubmit="onSubmit" @selectData="selectData" />
         <div>
             <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
                 <span class="ml-5">基本信息</span>
@@ -17,7 +17,29 @@
             </el-form>
         </div>
         <div>
-            <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
+            <el-tabs v-model="tabsValue" type="border-card" class="demo-tabs">
+                <el-tab-pane label="不良信息" name="bl" :stretch="true">
+                    <div class="mb-2">
+                        <el-button type="primary" @click="openAddBad">增加</el-button>
+                        <el-button type="danger" :disabled="multipleSelection.length == 0"
+                            @click="deleteBad">删除</el-button>
+                    </div>
+                    <el-table :data="tableData" stripe border fit :style="{ width: '100%' }" :height="260"
+                        @selection-change="handleSelectionChange">
+                        <el-table-column type="selection" width="55" />
+                        <el-table-column type="index" align="center" label="序号" width="60" />
+                        <el-table-column prop="badCode" label="不良代码" />
+                        <el-table-column prop="badCodeDec" label="不良代码描述" />
+                        <el-table-column prop="backProcess" label="快修返回工序" />
+                        <el-table-column prop="remark" label="备注" />
+                    </el-table>
+                </el-tab-pane>
+                <el-tab-pane label="登记记录" name="history">
+                    <div style="height: 250px;"></div>
+                     登记记录
+                    </el-tab-pane>
+            </el-tabs>
+            <!-- <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
                 <span class="ml-5">不良品信息</span>
             </div>
             <div class="pt-2">
@@ -34,7 +56,7 @@
                     <el-table-column prop="backProcess" label="快修返回工序" />
                     <el-table-column prop="remark" label="备注" />
                 </el-table>
-            </div>
+            </div> -->
         </div>
 
         <template #footer>
@@ -56,12 +78,12 @@ interface User {
 import formTemple from '@/components/formTem/index.vue'
 import { cloneDeep } from 'lodash-es'
 import { defineProps, defineExpose, defineEmits, toRefs, computed, ref, reactive } from "vue"
-const props = defineProps(['visible', 'badForm', 'form', 'formHeader', 'tableData','list'])
-const { visible, form, formHeader, tableData,badForm ,list} = toRefs(props)
-const emit = defineEmits(['cancel', 'submit', 'deleteBad', 'addBadData','openAddBad'])
+const props = defineProps(['visible', 'badForm', 'form', 'formHeader', 'tableData', 'list'])
+const { visible, form, formHeader, tableData, badForm, list } = toRefs(props)
+const emit = defineEmits(['cancel', 'submit', 'deleteBad', 'addBadData', 'openAddBad'])
 const formRef = ref()
 const badFormRef = ref()
-
+const tabsValue = ref('bl')
 const dialogVisible = computed({
     get() {
         return visible?.value
@@ -87,7 +109,7 @@ const formHeader1 = reactive([
         disabled: false,
         type: 'select',
         width: '',
-        list:list
+        list: list
     },
     {
         label: '快速返修',
@@ -114,9 +136,9 @@ const addCancel = () => {
     badVisible.value = false
 }
 //增加不良信息
-const onSubmit=()=>{
+const onSubmit = () => {
     let data = cloneDeep(form1.value)
-    emit('addBadData',data)
+    emit('addBadData', data)
     badVisible.value = false
     badFormRef.value.cleanForm()
 
@@ -127,10 +149,10 @@ const cancel = () => {
 const submit = () => {
     emit('submit')
 }
-const selectData=(data:any)=>{
-let findList=list?.value.find((x: any) => x.key === data)
-// console.log(findList);
-form1.value.badCode=findList.value
+const selectData = (data: any) => {
+    let findList = list?.value.find((x: any) => x.key === data)
+    // console.log(findList);
+    form1.value.badCode = findList.value
 }
 const openAddBad = () => {
     badVisible.value = true
@@ -161,3 +183,35 @@ defineExpose({
 })
 
 </script>
+<style lang="scss">
+ .el-tabs--border-card {
+    border-top: 1px solid #006487;
+}
+
+.demo-tabs .el-tabs__header {
+    background-color: #006487 !important;
+}
+
+.demo-tabs.el-tabs__content {
+    padding: 5px 0px;
+}
+
+.demo-tabs .el-tabs__item {
+    font-size: 1.1rem;
+}
+
+.demo-tabs.el-tabs--border-card>.el-tabs__header .el-tabs__item {
+    color: #fff;
+    // padding: 0 !important;
+}
+
+.demo-tabs .el-tabs__item.is-active {
+    // color: #fff;
+    color: #006487 !important;
+    // font-weight: bold;
+}
+ .el-tabs--border-card > .el-tabs__header .el-tabs__item:not(.is-disabled):hover {
+    color: #006487 !important;
+    background-color: rgba($color: #fff, $alpha: .8);
+}
+</style>

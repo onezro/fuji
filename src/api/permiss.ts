@@ -179,7 +179,7 @@ export function deleteEmployee(data: any) {
         method: "post",
         params: {
             empid: data,
-        },
+        }
     });
 }
 

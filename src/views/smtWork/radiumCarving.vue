@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col w-full h-full">
     <div class="h-[40px] min-h-[40px] pl-2 pr-2 flex justify-between items-center">
-      <span class="text-[#006487]">{{ title.stationDec }}</span>
+      <span class="text-[1.2rem]">{{ title.stationDec }}</span>
       <div>
         <el-button type="primary" @click="dialogVisible = true">工单开工</el-button>
         <el-button type="primary">条码转工单</el-button>
@@ -57,25 +57,11 @@
       <template #header>
         <div class="custom-dialog-title flex items-center justify-between">
           <div>工单列表</div>
-          <!-- 在标题右侧插入一个按钮 -->
           <el-input v-model="workOrderInput" style="width: 400px;" placeholder="请输入">
             <template #append>
               <el-button type="primary" icon="Search"></el-button> </template></el-input>
         </div>
       </template>
-      <!-- <el-table
-        ref="taskTableRef"
-        :data="workOrderList"
-        style="width: 100%"
-        :height="'50vh'"
-        @row-click="rowClick"
-      >
-        <el-table-column
-          v-for="item in formHeader"
-          :prop="item.value"
-          :label="item.lable"
-        />
-      </el-table> -->
       <el-table ref="taskTableRef" class="test" stripe border :data="workOrderList1" style="width: 100%" :height="'50vh'" @select="selectClick">
         <el-table-column type="selection" width="55" />
         <el-table-column v-for="item in formHeader" :prop="item.value" :label="item.lable" />
