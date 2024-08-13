@@ -68,8 +68,11 @@
                   />
                 </el-form-item>
               </el-form>
-              <div class="text-xl font-bold text-[#00B400]">
-                请扫描包装批次条码
+              <div class="text-xl font-bold text-[#00B400]" v-show="msgTitle === '成功' || msgTitle === ''">
+                {{ msgTitle === "" ? "请扫描批次条码" : msgTitle }}
+              </div>
+              <div class="text-xl font-bold text-[red]" v-show="msgTitle !== '成功' && msgTitle !== ''">
+                {{ msgTitle === "" ? "请扫描批次条码" : msgTitle }}
               </div>
             </div>
           </div>
@@ -78,14 +81,21 @@
               class="h-[35px] flex items-center text-xl justify-between text-[#fff] bg-[#006487]"
             >
               <span class="ml-5"> PCB条码列表</span>
-              <el-icon @click="refreshClick()" class="mr-4"
-                ><RefreshRight
-              /></el-icon>
+              <div class="h-full flex items-center">
+                <el-checkbox-group v-model="checkList" class="laser-table-filter">
+                  <el-checkbox label="已完成"  value="已完成" />
+                  <el-checkbox label="待镭雕" value="待镭雕" />
+                  <el-checkbox label="未释放" value="未释放" />
+                </el-checkbox-group>
+                <el-icon @click="refreshClick()" class="mx-4"
+                  ><RefreshRight
+                /></el-icon>
+              </div>
             </div>
             <div class="h-full">
               <table-tem
                 :showIndex="true"
-                :tableData="tableData"
+                :tableData="filteredData"
                 :tableHeight="tableHeight"
                 :columnData="columnData"
                 :pageObj="pageObj"
@@ -175,10 +185,10 @@
 <script lang="ts" setup>
 import { ElMessage } from "element-plus";
 import tableTem from "@/components/tableTem/index.vue";
-import { getLaserWorkOrder } from "@/api/smt1";
-import { getMaterialInformation, OrderSNQuery } from "@/api/smt2";
+// import {  } from "@/api/smt1";
+import { getMaterialInformation, OrderSNQuery, getLaserWorkOrder } from "@/api/smtApi";
 import { useAppStore } from "@/stores/modules/app";
-import { watch } from "vue";
+import { watch, computed } from "vue";
 interface Form {
   MfgOrderName: string;
   BD_ProductModel: string;
@@ -226,6 +236,7 @@ const activeName = ref("first");
 const dialogVisible = ref(false);
 const choiceRow = ref<any>();
 const title = appStore.getOPUIReal();
+const checkList = ref(["待镭雕", "未释放"]);
 
 const workOrderList = ref<OrderList[]>([]);
 const workOrderList1 = ref<OrderList[]>([]);
@@ -284,10 +295,12 @@ const formHeader = reactive<FormHeader[]>([
     value: "Qty",
   },
 ]);
-const tableData = ref([]);
+const tableData = ref<any[]>([]);
+// const filteredData = ref<never[]>([]);
 const showIndex = ref(true);
 const tableHeight = ref(0);
 const formHeight = ref(0);
+const msgTitle = ref("");
 const columnData = reactive([
   {
     text: true,
@@ -359,6 +372,16 @@ watch(
     }
   }
 );
+
+const filteredData = computed(() => {  
+  if (checkList.value.length === 0) {  
+    // 如果没有选中的分类，则返回全部数据  
+    return tableData.value;  
+  }  
+  // 如果有选中的分类，则返回匹配的数据  
+  return tableData.value.filter(item => checkList.value.includes(item.IsResponse));  
+});
+
 const table1 = (newdata: any) => {
   let searchName = newdata.toLowerCase();
   return workOrderList.value.filter((v: any) => {
@@ -420,16 +443,18 @@ const choiceOrder = () => {
   getMaterialInformation({
     OrderID: form.MfgOrderName,
     Barcode: barCode.value,
-    Mcid: "LASER-01",
+    Mcid: title.equipment,
   }).then((data: any) => {
     console.log(data);
-
     barCode.value = "";
-    if (!data) {
+    msgTitle.value = data.msg;
+    if (!data.success) {
+      msgTitle.value = data.msg;
       return;
+    } else {
+      msgTitle.value = "成功";
+      refreshClick();
     }
-    const dataText = JSON.parse(data.content);
-    tableData.value = dataText;
   });
 };
 // const rowClick = (row: any, column: any, event: Event) => {
@@ -471,7 +496,6 @@ const sureClick = () => {
   }).then((data: any) => {
     const dataText = JSON.parse(data.content);
     tableData.value = dataText;
-    console.log(dataText);
   });
   form.MfgOrderName = choiceRow.value.MfgOrderName;
   form.BD_ProductModel = choiceRow.value.BD_ProductModel;
@@ -492,7 +516,7 @@ const refreshClick = () => {
   }).then((data: any) => {
     const dataText = JSON.parse(data.content);
     tableData.value = dataText;
-    console.log(dataText);
+    checkList.value = ['待镭雕','未释放']
   });
 };
 
@@ -553,6 +577,16 @@ const cellClass = (row: any) => {
   &::-webkit-scrollbar {
     display: none; /* Chrome, Safari, Opera */
   }
+}
+
+::v-deep .laser-table-filter .el-checkbox__inner {  
+  /* 你的样式 */  
+  background-color: #409EFF !important; /* 使用 !important，但请谨慎 */
+  color:white !important;  
+}  
+::v-deep .laser-table-filter .el-checkbox__label {  
+  /* 你的样式 */  
+  color:white !important;  
 }
 </style>
 

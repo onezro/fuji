@@ -173,8 +173,8 @@
   <script lang="ts" setup>
   import { ElMessage } from "element-plus";
   import tableTem from "@/components/tableTem/index.vue";
-  import { getLaserWorkOrder } from "@/api/smt1";
-  import { getMaterialInformation, OrderSNQuery } from "@/api/smt2";
+  // import { getLaserWorkOrder } from "@/api/smt1";
+  import { getMaterialInformation, OrderSNQuery, getLaserWorkOrder } from "@/api/smtApi";
   import { useAppStore } from "@/stores/modules/app";
   import { watch } from "vue";
   interface Form {
