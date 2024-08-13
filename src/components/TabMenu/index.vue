@@ -1,10 +1,10 @@
 <template>
-  <div class="w-20  bg-[#006487]" v-click-outside="clickOut">
+  <div class="w-[4.8rem]  bg-[#006487]" v-click-outside="clickOut">
     <!-- <div class="h-[50px]"></div> -->
     <el-scrollbar class="h-[calc(100%-120px)]">
       <!-- {{  routes}} -->
 
-      <div class="w-[80px]" v-for="item in tabRouters">
+      <div class="w-[4.8rem]" v-for="item in tabRouters">
         <div class="text-center text-xs cursor-pointer pt-3 pb-3 hover:bg-[#005A79]"
           :class="{ isActive: isActive(item.path) }" @click="tabClick(isOnlyChildren(item))">
           <el-icon :size="24" color="#ffffff">
@@ -47,7 +47,7 @@
         </template>
       </el-dropdown>
     </div>
-    <Menu class="absolute top-0 z-[99] h-[100%] left-[80px] bg-[#003750]"
+    <Menu class="absolute top-0 z-[99] h-[100%] left-[4.8rem] bg-[#003750]"
       :class="{ 'w-[200px]': showMenu, 'w-0': !showMenu }" style="transition: width 0.2s, left 0.2s" :base-path="'/'"
       @refresh="clickOut"></Menu>
 

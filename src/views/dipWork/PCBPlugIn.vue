@@ -77,17 +77,17 @@
         <badInfoTem :visible="editVisible" :list="list" :formHeader="formHeader1" :form="editForm" :badForm="badForm"
             :tableData="BadtableData" @cancel="editCancel" @submit="editSubmit" @deleteBad="deleteBad"
             @addBadData="addBadData" @openAddBad="openAddBad" />
-
+<!-- 
         <el-dialog v-model="overVisible" :close-on-click-modal="false" :close-on-press-escape="false" align-center
             width="90%" title="过序设置"> 
             <div class="mb-2">
                 <el-button type="primary" @click="overAddVisible = true">添加</el-button>
-            </div>
-            <formTem ref="addOverRef" :width="'30%'" :visible="overAddVisible" :title="'过序添加'" :form="overAddForm"
+            </div> -->
+            <formTem ref="addOverRef" :width="'30%'" :visible="overAddVisible" :title="'过序设置'" :form="overAddForm"
                 :formHeader="overHeader" @formCancel="addOverCancel" @onSubmit="addOveronSubmit"></formTem>
-            <formTem ref="editOverRef" :width="'30%'" :visible="overEditVisible" :title="'过序修改'" :form="overEditForm"
-                :formHeader="overHeader" @formCancel="editOverCancel" @onSubmit="editOveronSubmit"></formTem>
-            <table-tem :showIndex="false" :tableData="overTableData" :tableHeight="'60vh'" :columnData="overColumnData"
+            <!-- <formTem ref="editOverRef" :width="'30%'" :visible="overEditVisible" :title="'过序修改'" :form="overEditForm"
+                :formHeader="overHeader" @formCancel="editOverCancel" @onSubmit="editOveronSubmit"></formTem> -->
+            <!-- <table-tem :showIndex="false" :tableData="overTableData" :tableHeight="'60vh'" :columnData="overColumnData"
                 :pageObj="pageObj" @handleSizeChange="handleSizeChange"
                 @handleCurrentChange="handleCurrentChange"></table-tem>
             <template #footer>
@@ -96,7 +96,7 @@
                     
                 </span>
             </template>
-        </el-dialog>
+        </el-dialog> -->
     </div>
 </template>
 
@@ -432,12 +432,13 @@ const overEditForm = ref({
 //获取过序
 const getOverData = () => {
     FindAllDevice().then((res: any) => {
-        overTableData.value = JSON.parse(res.content);
+        // overTableData.value = JSON.parse(res.content);
+
     });
 };
 
 const openOver = () => {
-    overVisible.value = true;
+    overAddVisible.value = true;
     getOverData();
 };
 //取消添加
@@ -449,14 +450,14 @@ const addOverCancel = () => {
 const addOveronSubmit = () => {
     overAddVisible.value = false;
     // console.log(overAddForm.value);
-    AddDevice(overAddForm.value).then((res: any) => {
-        getOverData();
-        ElNotification({
-            title: "添加成功",
-            // message: "取消操作",
-            type: "success",
-        });
-    });
+    // AddDevice(overAddForm.value).then((res: any) => {
+    //     getOverData();
+    //     ElNotification({
+    //         title: "添加成功",
+    //         // message: "取消操作",
+    //         type: "success",
+    //     });
+    // });
 };
 const editOverCancel = () => {
     overEditVisible.value = false;

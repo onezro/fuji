@@ -3,7 +3,7 @@ import breadcrumb from '@/components/bread/bread.vue'
 </script>
 
 <template>
-    <div class="h-[50px] flex items-center justify-between">
+    <div class="h-[45px] flex items-center justify-between">
         <!-- <div class="h-full flex items-center">
             
        </div> -->

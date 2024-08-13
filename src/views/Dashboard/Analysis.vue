@@ -19,7 +19,7 @@ const dataimg=ref(['https://www.bicv.com/skin/default/images/homeabout.jpg','	ht
 
 <style scoped lang="scss">
 .bgimg{
-  height: calc(100vh - 85px);
+  height: calc(100vh - 80px);
   background-repeat: no-repeat;
   background-size: cover;
   background-image: url('../../assets/pic09.png');

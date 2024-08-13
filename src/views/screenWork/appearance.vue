@@ -28,8 +28,8 @@
                             <el-form class="inbound" ref="formRef" :inline="true" :model="form" label-width="auto"
                                 @submit.native.prevent>
                                 <el-form-item label="扫描条码">
-                                    <el-input v-model="barCode" style="width: 500px;" placeholder="请扫描条码"
-                                        @change="openDialog" />
+                                    <el-input v-model="barCode" ref="inputRef" style="width: 500px;" placeholder="请扫描条码"
+                                        @change="getChange" />
                                 </el-form-item>
                                 <el-form-item :class="[stopsForm.result == 'OK' ? 'switchok' : 'switchng']">
                                     <el-switch v-model="stopsForm.result" size="large"
@@ -62,6 +62,8 @@
 import tableTem from '@/components/tableTem/index.vue'
 import { useAppStoreWithOut } from '@/stores/modules/app'
 import { useUserStoreWithOut } from "@/stores/modules/user";
+import { checkStringType } from '@/utils/barcodeFormat'
+import { ElMessage, ElMessageBox, ElNotification } from "element-plus";
 // import formTemple from '@/components/formTem/form.vue'
 interface Form {
     order: string,
@@ -82,6 +84,7 @@ const userStore = useUserStoreWithOut();
 const opui = appStore.getOPUIReal()
 // const title=appStore.getOPUIReal()
 const barCode = ref('')
+const inputRef = ref()
 const activeName = ref('first')
 const stopsForm = ref({
     ContainerName: '',//PCB
@@ -205,6 +208,32 @@ const formText = (data: string) => {
     return form[key]
 }
 
+const getChange = (val: any) => {
+    // console.log(val);
+    if (checkStringType(val) == 'result') {
+        console.log('result', val);
+        stopsForm.value.result = val
+    } else if (checkStringType(val) == 'pcb') {
+        console.log('pcb', val);
+        stopsForm.value.ContainerName = val
+    } else if (checkStringType(val) == 'tool') {
+        console.log('tool', val);
+        // stopsForm.value.ToolName = val
+    } else {
+        ElNotification({
+            title: "错误",
+            message: '扫描条码有误',
+            type: "error",
+        });
+        // console.log('扫描条码有误');
+    }
+    barCode.value = ''
+    inputRef.value.focus()
+    if (stopsForm.value.ContainerName && stopsForm.value.result) {
+        console.log(stopsForm.value)
+    }
+
+}
 const openDialog = () => {
    console.log(barCode.value);
 }
