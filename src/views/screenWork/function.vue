@@ -51,12 +51,12 @@
                                     :columnData="columnData1" :pageObj="pageObj" @handleSizeChange="handleSizeChange"
                                     @handleCurrentChange="handleCurrentChange"></table-tem>
                             </el-tab-pane>
-                            <el-tab-pane label="SOP" name="sop">
+                            <!-- <el-tab-pane label="SOP" name="sop">
                                 sop
-                                <!-- <table-tem :showIndex="true" :tableData="tableData1" :tableHeight="tableHeight"
+                                <table-tem :showIndex="true" :tableData="tableData1" :tableHeight="tableHeight"
                                     :columnData="columnData1" :pageObj="pageObj" @handleSizeChange="handleSizeChange"
-                                    @handleCurrentChange="handleCurrentChange"></table-tem> -->
-                            </el-tab-pane>
+                                    @handleCurrentChange="handleCurrentChange"></table-tem>
+                            </el-tab-pane> -->
                             <el-tab-pane label="工装治具" name='fixtures'>
                                 fixtures
                                 <!-- <table-tem :showIndex="true" :tableData="tableData1" :tableHeight="tableHeight"

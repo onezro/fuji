@@ -31,10 +31,10 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/all/, '') 
       },
-      '/smtapi1': {
+      '/smtApi': {
         target: 'http://192.168.9.50:12026',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/smtapi1/, '') 
+        rewrite: (path) => path.replace(/^\/smtApi/, '') 
       },
       '/dipApi': {
         target: 'http://192.168.14.5:8087',//http://192.168.9.50:12022
