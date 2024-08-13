@@ -2,10 +2,12 @@
     <div>
         <el-table
             :data="tableData.slice((pageObj.currentPage - 1) * pageObj.pageSize, pageObj.currentPage * pageObj.pageSize)"
-            stripe border fit :height="tableHeight">
-            <el-table-column type="index" align="center" label="序号" width="60" v-if="showIndex">
+            stripe border fit :height="tableHeight" :size="size || 'default'" :tooltip-effect="'dark'"
+            style="width: 100%;">
+            <el-table-column type="index" align="center" fixed label="序号" width="60" v-if="showIndex">
             </el-table-column>
-            <el-table-column v-for="(c, i) in columnData" :key="i" :prop="c.prop" :label="c.label" :width="c.width"
+            <el-table-column v-for="(c, i) in columnData" :key="i" :prop="c.prop" :label="c.label"
+                :show-overflow-tooltip="true" :width="c.width" :min-width="c.min?flexColumnWidth(c.label, c.prop):''"
                 :fixed="c.fixed" :align="c.align || 'center'">
                 <template #default="scope">
                     <span v-if="c.text">{{ scope.row[c.prop] }}</span>
@@ -18,9 +20,10 @@
             </el-table-column>
         </el-table>
         <div class="mt-3">
-            <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange"
-                :current-page="pageObj.currentPage" :page-size="pageObj.pageSize" :page-sizes="[5, 10, 20, 50, 100]"
-                layout="total,sizes, prev, pager, next, jumper" :total="tableData.length">
+            <el-pagination :size="size || 'default'" background @size-change="handleSizeChange"
+                @current-change="handleCurrentChange" :current-page="pageObj.currentPage" :page-size="pageObj.pageSize"
+                :page-sizes="[10, 30, 50, 100, 150]" layout="total,sizes, prev, pager, next, jumper"
+                :total="tableData.length">
             </el-pagination>
         </div>
     </div>
@@ -28,8 +31,8 @@
 
 <script lang="ts" setup>
 import { defineProps, defineEmits, toRefs } from "vue"
-const props = defineProps(['tableData', 'tableHeight', 'columnData', 'pageObj','showIndex'])
-const { tableData, tableHeight, columnData, pageObj,showIndex } = toRefs(props)
+const props = defineProps(['tableData', 'tableHeight', 'columnData', 'pageObj', 'showIndex', 'size'])
+const { tableData, tableHeight, columnData, pageObj, showIndex, size } = toRefs(props)
 const emit = defineEmits(['handleSizeChange', 'handleCurrentChange'])
 
 const handleSizeChange = (e: any) => {
@@ -38,6 +41,61 @@ const handleSizeChange = (e: any) => {
 const handleCurrentChange = (e: any) => {
     emit('handleCurrentChange', e)
 }
+
+const getMaxLength = (arr: any) => {
+    return arr.reduce((acc: any, item: any) => {
+        if (item) {
+            // console.log(acc,item);
+            const calcLen = getTextWidth(item)
+            console.log(calcLen);
+            if (acc < calcLen) {
+                acc = calcLen
+            }
+        }
+        return acc
+    }, 0)
+
+}
+
+const getTextWidth = (str: string) => {
+    let width = 0;
+    const html = document.createElement('span');
+    html.innerText = str;
+    html.className = 'getTextWidth';
+    document.body?.appendChild(html);
+
+    // 使用类型断言将 Element 转换为 HTMLElement  
+    const spanElement = document.querySelector('.getTextWidth') as HTMLElement;
+    if (spanElement) {
+        width = spanElement.offsetWidth;
+        spanElement.remove();
+    }
+    // console.log(width);
+    return width;
+}
+// const getTextWidth = (str: string): number => {  
+//     let width = 0;  
+//     let canvas = document.createElement("canvas");  
+//     let context = canvas.getContext("2d");  
+
+//     // 检查 context 是否为 null  
+//     if (!context) {  
+//         throw new Error("Unable to get 2D rendering context for canvas.");  
+//     }  
+
+//     context.font = "14px Microsoft YaHei";  
+//     width = context.measureText(str).width;  
+//     console.log(width);  
+//     return width;  
+// };
+
+const flexColumnWidth = (label: any, prop: any) => {
+    const arr = tableData?.value.map((x: { [x: string]: any; }) => x[prop])
+    arr.push(label) // 把每列的表头也加进去算
+    // console.log(arr);
+    return (getMaxLength(arr) + 25) + 'px'
+}
+
 </script>
 
 <style scoped>

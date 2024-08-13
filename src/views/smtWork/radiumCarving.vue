@@ -156,6 +156,7 @@
           v-for="item in formHeader"
           :prop="item.value"
           :label="item.lable"
+          :min-width="flexColumnWidth(item.lable,item.value)"
         />
       </el-table>
       <div class="mt-3">
@@ -307,6 +308,7 @@ const columnData = reactive([
     prop: "SN",
     label: "PCB条码",
     width: "",
+    min:true,
     align: "1",
   },
   // {
@@ -321,6 +323,7 @@ const columnData = reactive([
     prop: "MaterialBatchNo",
     label: "物料包装条码",
     width: "",
+    min:true,
     align: "1",
   },
   {
@@ -328,6 +331,7 @@ const columnData = reactive([
     prop: "ReleasedDate",
     label: "拆包时间",
     width: "250px",
+    min:true,
     align: "1",
   },
   {
@@ -335,6 +339,7 @@ const columnData = reactive([
     prop: "VendorLotNumber",
     label: "包装批次",
     width: "",
+    min:true,
     align: "1",
   },
   {
@@ -342,13 +347,15 @@ const columnData = reactive([
     prop: "IsResponse",
     label: "状态",
     width: "100px",
+    min:true,
     align: "1",
   },
   {
     text: true,
     prop: "LastResponseDate",
     label: "完成时间",
-    width: "250px",
+    width: "",
+    min:true,
     align: "1",
   },
 ]);
@@ -445,7 +452,6 @@ const choiceOrder = () => {
     Barcode: barCode.value,
     Mcid: title.equipment,
   }).then((data: any) => {
-    console.log(data);
     barCode.value = "";
     msgTitle.value = data.msg;
     if (!data.success) {
@@ -525,6 +531,42 @@ const cellClass = (row: any) => {
     return "addAllSelectClass";
   }
 };
+const getMaxLength = (arr: any) => {
+    return arr.reduce((acc: any, item: any) => {
+        if (item) {
+            const calcLen = getTextWidth(item)
+            if (acc < calcLen) {
+                acc = calcLen
+            }
+        }
+        return acc
+    }, 0)
+
+}
+
+const getTextWidth = (str: string) => {
+    let width = 0;
+    const html = document.createElement('span');
+    html.innerText = str;
+    html.className = 'getTextWidth';
+    document.body?.appendChild(html);
+
+    // 使用类型断言将 Element 转换为 HTMLElement  
+    const spanElement = document.querySelector('.getTextWidth') as HTMLElement;
+    if (spanElement) {
+        width = spanElement.offsetWidth;
+        spanElement.remove();
+    }
+// console.log(width);
+    return width;
+}
+
+const flexColumnWidth = (label: any, prop: any) => {
+    const arr = tableData?.value.map((x: { [x: string]: any; }) => x[prop])
+    arr.push(label) // 把每列的表头也加进去算
+   
+    return (getMaxLength(arr) + 25) + 'px'
+}
 </script>
 
 <style lang="scss" scoped>
@@ -554,7 +596,7 @@ const cellClass = (row: any) => {
 //添加全选样式
 ::v-deep .el-table .addAllSelectClass .cell::before {
   content: "选择";
-  text-align: center;
+  // text-align: center;
   //   margin-left: 5px;
   //   /** 文本1 */
   // font-size: 16px;

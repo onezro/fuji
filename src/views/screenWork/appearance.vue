@@ -1,7 +1,7 @@
 <template>
     <div class="flex flex-col w-full h-full">
         <div class="h-[40px] min-h-[40px] pl-2 pr-2 flex justify-between items-center">
-            <span class="text-[1.2rem]"> {{ title.stationDec }} </span>
+            <span class="text-[1.2rem]"> {{ opui.stationDec }} </span>
         </div>
         <div class="w-full flex-1 flex">
             <div class="setwidth w-[320px] ">
@@ -28,13 +28,14 @@
                             <el-form class="inbound" ref="formRef" :inline="true" :model="form" label-width="auto"
                                 @submit.native.prevent>
                                 <el-form-item label="扫描条码">
-                                    <el-input v-model="barCode" style="width: 500px;" placeholder="请扫描条码"
-                                        @change="openDialog" />
+                                    <el-input v-model="barCode" ref="inputRef" style="width: 500px;" placeholder="请扫描条码"
+                                        @change="getChange" />
                                 </el-form-item>
-                                <el-form-item>
-                                    <div class="">
-                                        ok
-                                    </div>
+                                <el-form-item :class="[stopsForm.result == 'OK' ? 'switchok' : 'switchng']">
+                                    <el-switch v-model="stopsForm.result" size="large"
+                                        style="zoom: 1.2;--el-switch-on-color:#ff4949 ; --el-switch-off-color: #13ce66"
+                                        :active-value="'NG'" :inactive-value="'OK'" active-text="NG"
+                                        inactive-text="OK" />
                                 </el-form-item>
                             </el-form>
                             <div class="text-xl  font-bold text-[#00B400]">请扫描物料批次条码</div>
@@ -60,6 +61,9 @@
 <script lang="ts" setup>
 import tableTem from '@/components/tableTem/index.vue'
 import { useAppStoreWithOut } from '@/stores/modules/app'
+import { useUserStoreWithOut } from "@/stores/modules/user";
+import { checkStringType } from '@/utils/barcodeFormat'
+import { ElMessage, ElMessageBox, ElNotification } from "element-plus";
 // import formTemple from '@/components/formTem/form.vue'
 interface Form {
     order: string,
@@ -76,10 +80,19 @@ interface FormHeader {
 }
 import { ref, reactive, onMounted, nextTick, onBeforeMount, onBeforeUnmount } from 'vue'
 const appStore = useAppStoreWithOut()
-const title=appStore.getOPUIReal()
+const userStore = useUserStoreWithOut();
+const opui = appStore.getOPUIReal()
+// const title=appStore.getOPUIReal()
 const barCode = ref('')
+const inputRef = ref()
 const activeName = ref('first')
-
+const stopsForm = ref({
+    ContainerName: '',//PCB
+    result: 'OK',//工装治具
+    WorkStationName: opui.station,//工位
+    ResourceName: opui.equipment !== null ? opui.equipment : '',//设备
+    EmployeeName: userStore.getUserInfo//用户
+})
 const form = reactive<Form>({
     order: '1213434',
     models: '3A4621-01C',
@@ -195,6 +208,32 @@ const formText = (data: string) => {
     return form[key]
 }
 
+const getChange = (val: any) => {
+    // console.log(val);
+    if (checkStringType(val) == 'result') {
+        console.log('result', val);
+        stopsForm.value.result = val
+    } else if (checkStringType(val) == 'pcb') {
+        console.log('pcb', val);
+        stopsForm.value.ContainerName = val
+    } else if (checkStringType(val) == 'tool') {
+        console.log('tool', val);
+        // stopsForm.value.ToolName = val
+    } else {
+        ElNotification({
+            title: "错误",
+            message: '扫描条码有误',
+            type: "error",
+        });
+        // console.log('扫描条码有误');
+    }
+    barCode.value = ''
+    inputRef.value.focus()
+    if (stopsForm.value.ContainerName && stopsForm.value.result) {
+        console.log(stopsForm.value)
+    }
+
+}
 const openDialog = () => {
    console.log(barCode.value);
 }
