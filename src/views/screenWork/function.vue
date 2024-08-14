@@ -104,7 +104,7 @@ const form = reactive<InstanceType<typeof Formspan>>({
     productCode: '24010606000131',
     productDes: '0402封装贴片电容 100pF ±5% 50V MURATA GRM1555C1H101JA01D',
     orderNum: '100',
-    passNum: '83'
+    // passNum: '83'
 })
 const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
     {
@@ -142,13 +142,13 @@ const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
         type: 'input',
         width: ''
     },
-    {
-        label: '过站数量',
-        value: 'passNum',
-        disabled: true,
-        type: 'input',
-        width: ''
-    },
+    // {
+    //     label: '过站数量',
+    //     value: 'passNum',
+    //     disabled: true,
+    //     type: 'input',
+    //     width: ''
+    // },
 ])
 const formHeader1 = reactive<InstanceType<typeof FormHeader>[]>([
     {
