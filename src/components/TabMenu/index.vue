@@ -40,7 +40,9 @@
         </div>
         <template #dropdown>
           <el-dropdown-menu>
-            <el-dropdown-item @click.native="getSolw">版本-V1.0</el-dropdown-item>
+            <!-- <el-dropdown-item @click.native="getSolw"><el-icon>
+                <Warning />
+              </el-icon>版本</el-dropdown-item> -->
             <el-dropdown-item @click.native="openUpdatePwd">修改密码</el-dropdown-item>
             <el-dropdown-item @click.native="logoutsys">退出登录</el-dropdown-item>
           </el-dropdown-menu>
@@ -69,9 +71,15 @@
         </span>
       </template>
     </el-dialog>
-    <el-dialog v-model="solow" title="版本" width="30%"  @close="solwCanel()">
-   <div>V1.0</div>
-  </el-dialog>
+    <el-dialog v-model="solow" title="版本信息" width="700px" align-center @close="solwCanel()">
+      <el-form ref="formRef" :model="versionForm" label-width="auto">
+        <el-form-item label="版本" prop="name"><span class="ml-2">{{ versionForm.CurrentVer }}</span></el-form-item>
+        <el-form-item label="更新日志" prop="zone">
+          <!-- <pre class="text-base">{{ versionForm.UpdateLog }}</pre> -->
+          <div class="w-[600px] h-[60vh] overflow-y-auto whitespace-pre-wrap">{{ versionForm.UpdateLog }}</div>
+        </el-form-item>
+      </el-form>
+    </el-dialog>
   </div>
 </template>
 
@@ -81,7 +89,7 @@ import { useRouter } from "vue-router";
 import Menu from "@/components/menu/index.vue";
 import { pathResolve } from "@/utils/routerHelper";
 import { getToken } from "@/utils/auth";
-import { updatePassword } from "@/api/permiss"
+import { updatePassword, GetVersion } from "@/api/permiss"
 import { ElNotification, ElMessage, ElMessageBox } from "element-plus";
 import {
   filterMenusPath,
@@ -106,7 +114,11 @@ const upPwForm = reactive({
 
 const upPwFormRef = ref()
 const tabActive = ref("");
-const solow=ref(false)
+const solow = ref(false)
+const versionForm = ref({
+  CurrentVer: '',
+  UpdateLog: ''
+})
 
 const equalToPassword = (rule: any, value: any, callback: any) => {
   if (upPwForm.pwd !== value) {
@@ -146,6 +158,12 @@ watch(
 
 onMounted(() => {
   // console.log( permissionStore.getRouters)
+  // GetVersion().then((res: any) => {
+  //   versionForm.value.CurrentVer = res.content.CurrentVer
+  //   let str = res.content.UpdateLog
+  //   versionForm.value.UpdateLog = str
+  //   // console.log(versionForm.value.UpdateLog);
+  // })
 });
 //Tab高亮
 const isActive = (currentPath: string) => {
@@ -203,11 +221,12 @@ const upDateSubmit = () => {
     }
   })
 }
-const getSolw=()=>{
-  solow.value=true
+const getSolw = () => {
+  solow.value = true
+
 }
-const solwCanel=()=>{
-  solow.value=false
+const solwCanel = () => {
+  solow.value = false
 }
 
 const logoutsys = () => {
@@ -279,4 +298,6 @@ export default defineComponent({
   // color: #006487;
   background: #005a79;
 }
+
+
 </style>

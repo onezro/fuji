@@ -311,13 +311,6 @@ const columnData = reactive([
     min:true,
     align: "1",
   },
-  // {
-  //   text: true,
-  //   prop: "OrderNumber",
-  //   label: "工单",
-  //   width: "",
-  //   align: "1",
-  // },
   {
     text: true,
     prop: "MaterialBatchNo",

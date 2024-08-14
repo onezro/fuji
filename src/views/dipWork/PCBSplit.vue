@@ -3,37 +3,27 @@
         <div class="h-[40px] min-h-[40px] pl-2 pr-2 flex justify-between items-center">
             <span class="text-[1.2rem]"> {{ opui.stationDec }} </span>
             <div>
-                <el-button type="primary" @click="dialogVisible = true">工单选择</el-button>
                 <el-button type="primary" @click="openDialog">不良品登记</el-button>
             </div>
-
         </div>
         <div class="w-full flex-1 flex">
-            <div class="setwidth w-[320px] ">
+            <div class="setwidth w-[320px]">
                 <div class="w-full h-full box">
                     <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
                         <span class="ml-5">基本信息</span>
                     </div>
                     <div class="p-[10px]">
                         <el-form class="inbound" ref="formRef" :model="form" label-width="auto">
-                            <el-form-item size="large" label="工单号">
-                                <!-- <t-select-table ref="selectTable" :table="table" :columns="tableColumns"
-                                    :max-height="400"
+                            <el-form-item label="工单号">
+                                <selectTa ref="selectTable" :table="orderTable" :columns="orderColumns" :max-height="400"
                                     :keywords="{ label: 'MfgOrderName', value: 'MfgOrderName' }"
-                                    @radioChange="(...args: any) => radioChange(args, '单选')"></t-select-table> -->
-                                    <selectTa ref="selectTable" :table="table" :columns="tableColumns"
-                                    :max-height="400"
-                                    :keywords="{ label: 'MfgOrderName', value: 'MfgOrderName' }"
-                                    @radioChange="(...args: any) => radioChange(args, '单选')"><</selectTa>
-                                <!-- <el-select v-model="form.order" @change="change" filterable placeholder="点击选择">
-                                    <el-option v-for="item in workOrderList" :key="item.workOrder"
-                                        :label="item.workOrder" :value="item.workOrder"></el-option>
-                                </el-select> -->
+                                    @radioChange="(...args: any) => radioChange(args)">
+                                </selectTa>
                             </el-form-item>
-                            <el-form-item size="large" v-for="f in formHeader" :key="f.value" :label="f.label">
-                                <span class="font-bold text-[18px] leading-[30px]"
-                                    :class="f.value == 'passNum' ? 'text-[#00B400]' : ''"> {{ formText(f.value)
-                                    }}</span>
+                            <el-form-item v-for="f in formHeader" :key="f.value" :label="f.label">
+                                <span class="font-bold text-lg leading-[30px]"
+                                    :class="f.value == 'passNum' ? 'text-[#00B400]' : ''">
+                                    {{ formText(f.value) }}</span>
                             </el-form-item>
                         </el-form>
                     </div>
@@ -49,8 +39,8 @@
                             <el-form class="inbound" ref="formRef" :inline="true" :model="form" label-width="auto"
                                 @submit.native.prevent>
                                 <el-form-item label="扫描条码">
-                                    <el-input v-model="barCode" ref="input" style="width: 500px;" placeholder="请扫描条码"
-                                        @change="getChange" />
+                                    <el-input v-model="stopsForm.containerName" clearable ref="inputRef" style="width: 500px"
+                                        placeholder="请扫描条码" @keyup.enter.native="getChange" />
                                 </el-form-item>
                                 <el-form-item>
                                     <!-- <div class="">
@@ -58,23 +48,23 @@
                                     </div> -->
                                 </el-form-item>
                             </el-form>
-                            <div class="text-xl  font-bold text-[#00B400]">请扫描物料批次条码</div>
+                            <div class="text-xl font-bold text-[#00B400]" v-show="msgTitle === '成功' || msgTitle === ''">
+                                {{ msgTitle === "" ? "请扫描批次条码" : msgTitle }}
+                            </div>
+                            <div class="text-xl font-bold text-[red]" v-show="msgTitle !== '成功' && msgTitle !== ''">
+                                {{ msgTitle === "" ? "请扫描批次条码" : msgTitle }}
+                            </div>
                         </div>
                     </div>
                     <div class="flex flex-col flex-1 tabs-css">
                         <el-tabs v-model="tabsValue" type="border-card" class="demo-tabs">
                             <el-tab-pane label="历史过站记录" name="history" :stretch="true">
-                                <table-tem :showIndex="true" :tableData="tableData1" :tableHeight="tableHeight"
-                                    :columnData="columnData1" :pageObj="pageObj" @handleSizeChange="handleSizeChange"
+                                <table-tem :showIndex="true" :tableData="tableData1" 
+                                    :tableHeight="tableHeight" :columnData="hisColumn" :pageObj="pageObj"
+                                    @handleSizeChange="handleSizeChange"
                                     @handleCurrentChange="handleCurrentChange"></table-tem>
                             </el-tab-pane>
-                            <el-tab-pane label="SOP" name="sop">
-                                sop
-                                <!-- <table-tem :showIndex="true" :tableData="tableData1" :tableHeight="tableHeight"
-                                    :columnData="columnData1" :pageObj="pageObj" @handleSizeChange="handleSizeChange"
-                                    @handleCurrentChange="handleCurrentChange"></table-tem> -->
-                            </el-tab-pane>
-                            <el-tab-pane label="工装治具" name='fixtures'>
+                            <el-tab-pane label="工装治具" name="fixtures">
                                 fixtures
                                 <!-- <table-tem :showIndex="true" :tableData="tableData1" :tableHeight="tableHeight"
                                     :columnData="columnData1" :pageObj="pageObj" @handleSizeChange="handleSizeChange"
@@ -85,182 +75,154 @@
                 </div>
             </div>
         </div>
-        <badInfoTem :visible="editVisible" :list="list" :formHeader="formHeader1" :form="editForm" :badForm="badForm"
+        <badInfoTem :visible="editVisible" :list="list" :formHeader="badFormHeader" :form="editForm" :badForm="badForm"
             :tableData="BadtableData" @cancel="editCancel" @submit="editSubmit" @deleteBad="deleteBad"
             @addBadData="addBadData" @openAddBad="openAddBad" />
-        <!-- <el-dialog v-model="dialogVisible" title="工单开工" width="90%" align-center>
-            <template #header>
-                <div class="custom-dialog-title flex items-center justify-between">
-                    <div>工单列表</div>
-                    <el-input v-model="workOrder" style="width: 400px;" placeholder="请输入">
-                        <template #append>
-                            <el-button type="primary" icon="Search"></el-button>
-                        </template>
-</el-input>
-</div>
-</template>
-<el-table ref="taskTableRef" class="test" stripe border :data="orderTableData" style="width: 100%" :height="'60vh'"
-    @selection-change="handleSelectionChange">
-    <el-table-column type="selection" width="55" />
-    <el-table-column v-for="item in tabalHeader" :prop="item.value" :key="item.value" :label="item.lable" />
-</el-table>
-<div class="w-full mt-3 flex justify-around">
-    <el-pagination size="large" background @size-change="handleSizeChange1" @current-change="handleCurrentChange1"
-        :current-page="pageObj1.currentPage" :page-size="pageObj1.pageSize" :page-sizes="[5, 10, 20, 50, 100]"
-        layout="total,sizes, prev, pager, next, jumper" :total="orderTableData.length">
-    </el-pagination>
-</div>
-<template #footer>
-                <div class="dialog-footer">
-                    <el-button @click="dialogVisible = false">取 消</el-button>
-                    <el-button type="primary" @click="sureClick">确 定</el-button>
-                </div>
-            </template>
-</el-dialog> -->
     </div>
 </template>
 
 <script lang="ts" setup>
-import tableTem from '@/components/tableTem/index.vue'
-import badInfoTem from '@/components/badInfoTem/index.vue'
-import selectTa from '@/components/selectTable/index.vue'
-import { checkStringType } from '@/utils/barcodeFormat'
-import { useAppStore } from '@/stores/modules/app'
+import tableTem from "@/components/tableTem/index.vue";
+import badInfoTem from "@/components/badInfoTem/index.vue";
+import selectTa from "@/components/selectTable/index.vue";
+import { useAppStore } from "@/stores/modules/app";
 import { useUserStoreWithOut } from "@/stores/modules/user";
-import type { Formspan, FormHeader } from "@/typing";
-import { ref, reactive, onMounted, nextTick, onBeforeMount, onBeforeUnmount } from 'vue'
+import type { Formspan, FormHeader,OrderData } from "@/typing";
+import {
+    ref,
+    reactive,
+    onMounted,
+    nextTick,
+    onBeforeMount,
+    onBeforeUnmount,
+} from "vue";
 import { ElMessage, ElMessageBox, ElNotification } from "element-plus";
-const appStore = useAppStore()
+import { SplitStationMoveOut,QueryWorkOrderInfo } from "@/api/dipApi";
+const appStore = useAppStore();
 const userStore = useUserStoreWithOut();
-const opui = appStore.getOPUIReal()
-const barCode = ref('')
-const tabsValue = ref('history')
-const editVisible = ref(false)
-const badVisible = ref(false)
-const dialogVisible = ref(false)
-const workOrderList = ref([{
-    workOrder: '12345677'
-}])
-
-const workOrder = ref('')
-const orderTableData = ref([])
-const pageObj1 = ref({
-    pageSize: 10,
-    currentPage: 1
-})
-const tabalHeader = reactive([
+const opui = appStore.getOPUIReal();
+const barCode = ref("");
+const tabsValue = ref("history");
+const editVisible = ref(false);
+const badVisible = ref(false);
+const inputRef = ref();
+const msgTitle = ref("");
+const dialogVisible = ref(false);
+const workOrderList = ref([
     {
-        value: 'order',
-        lable: '工单'
-    }
-])
-const input = ref()
+        workOrder: "12345677",
+    },
+]);
+
+const workOrder = ref("");
+const orderTableData = ref([]);
+const pageObj1 = ref({
+    pageSize: 50,
+    currentPage: 1,
+});
+
 //过站扫描
 const stopsForm = ref({
-    ContainerName: '',//PCB
-    ToolName: '',//工装治具
-    WorkStationName: opui.station,//工位
-    ResourceName: opui.equipment !== null ? opui.equipment : '',//设备
-    EmployeeName: userStore.getUserInfo//用户
-})
+    containerName: "",
+    resource: "",
+    userAccount: "",
+    txnDate: "",
+    workstationName: "",
+    // ContainerName: '',//PCB
+    // ToolName: '',//工装治具
+    // WorkStationName: opui.station,//工位
+    // ResourceName: opui.equipment !== null ? opui.equipment : '',//设备
+    // EmployeeName: userStore.getUserInfo//用户
+});
 const form = reactive<InstanceType<typeof Formspan>>({
-    order: '',
-    models: '3A4621-01C',
-    productCode: '24010606000131',
-    productDes: '0402封装贴片电容 100pF ±5% 50V MURATA GRM1555C1H101JA01D',
-    orderNum: '100',
-    passNum: '83'
-})
+    MfgOrderName: "",
+    ProductName: "",
+    ProductDesc: "",
+    Qty: "",
+    PlannedStartDate: "",
+    PlannedCompletionDate: "",
+});
 const editForm = ref({
-    order: '1213434',
-    models: '3A4621-01C',
-    productCode: '24010606000131',
-    productDes: '0402封装贴片电容 100pF ±5% 50V MURATA GRM1555C1H101JA01D',
+    order: "1213434",
+    models: "3A4621-01C",
+    productCode: "24010606000131",
+    productDes: "0402封装贴片电容 100pF ±5% 50V MURATA GRM1555C1H101JA01D",
     // orderNum: '100',
-})
+});
 const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
     {
-        label: '机型',
-        value: 'models',
+        label: "产品编码",
+        value: "ProductName",
         disabled: true,
-        type: 'input',
-        width: ''
+        type: "input",
+        width: "",
     },
     {
-        label: '产品编码',
-        value: 'productCode',
+        label: "产品描述",
+        value: "ProductDesc",
         disabled: true,
-        type: 'input',
-        width: ''
+        type: "textarea",
+        width: 300,
     },
     {
-        label: '产品描述',
-        value: 'productDes',
+        label: "计划开始",
+        value: "PlannedStartDate",
         disabled: true,
-        type: 'textarea',
-        width: 300
+        type: "input",
+        width: "",
     },
     {
-        label: '工单数量',
-        value: 'orderNum',
+        label: "计划完成",
+        value: "PlannedCompletionDate",
         disabled: true,
-        type: 'input',
-        width: ''
+        type: "input",
+        width: "",
     },
     {
-        label: '过站数量',
-        value: 'passNum',
+        label: "工单数量",
+        value: "Qty",
         disabled: true,
-        type: 'input',
-        width: ''
+        type: "input",
+        width: "",
     },
-])
-const formHeader1 = reactive<InstanceType<typeof FormHeader>[]>([
+]);
+const badFormHeader = reactive<InstanceType<typeof FormHeader>[]>([
     {
-        label: '工单号',
-        value: 'order',
+        label: "工单号",
+        value: "order",
         disabled: true,
-        type: 'input',
-        width: ''
-    },
-    {
-        label: '机型',
-        value: 'models',
-        disabled: true,
-        type: 'input',
-        width: ''
+        type: "input",
+        width: "",
     },
     {
-        label: '产品编码',
-        value: 'productCode',
+        label: "机型",
+        value: "models",
         disabled: true,
-        type: 'input',
-        width: ''
+        type: "input",
+        width: "",
     },
     {
-        label: '产品描述',
-        value: 'productDes',
+        label: "产品编码",
+        value: "productCode",
         disabled: true,
-        type: 'textarea',
-        width: 300
+        type: "input",
+        width: "",
     },
-    // {
-    //     label: '工单数量',
-    //     value: 'orderNum',
-    //     disabled: true,
-    //     type: 'input',
-    //     width: ''
-    // },
-
-])
-const columnData1 = reactive([
+    {
+        label: "产品描述",
+        value: "productDes",
+        disabled: true,
+        type: "textarea",
+        width: 300,
+    },
+]);
+const hisColumn = reactive([
     {
         text: true,
         prop: "eqty",
         label: "MES屏条码",
         width: "",
         align: "1",
-
     },
     {
         text: true,
@@ -289,161 +251,145 @@ const columnData1 = reactive([
         label: "扫描人",
         width: "",
         align: "1",
-    }
-
-
-])
+    },
+]);
 const tableData1 = ref([]);
 const tableHeight = ref(0);
 const pageObj = ref({
     pageSize: 10,
-    currentPage: 1
-})
+    currentPage: 1,
+});
 const badForm = ref({
-    badCode: '',
-    badCodeDec: '',
-    backProcess: '',
-    remark: ''
-})
+    badCode: "",
+    badCodeDec: "",
+    backProcess: "",
+    remark: "",
+});
 //不良信息table
 const BadtableData = ref([
     {
-        badCode: 'E208711',
-        badCodeDec: '切料刀缺口',
-        backProcess: '总成外观',
-        remark: 'Test'
+        badCode: "E208711",
+        badCodeDec: "切料刀缺口",
+        backProcess: "总成外观",
+        remark: "Test",
     },
     {
-        badCode: 'E208711',
-        badCodeDec: '切料刀缺口',
-        backProcess: '总成外观',
-        remark: '测试'
-    }
-])
+        badCode: "E208711",
+        badCodeDec: "切料刀缺口",
+        backProcess: "总成外观",
+        remark: "测试",
+    },
+]);
 const list = ref([
     {
-        key: '切料刀缺口',
-        value: 'E208711',
+        key: "切料刀缺口",
+        value: "E208711",
     },
     {
-        key: '划痕',
-        value: 'E208715',
+        key: "划痕",
+        value: "E208715",
     },
-])
-
+]);
+const orderTable = ref<InstanceType<typeof OrderData>>({
+    data: [],
+});
+const orderColumns = ref([
+    { label: "工单号", width: "", prop: "MfgOrderName" },
+    { label: "产品编码", width: "", prop: "ProductName" },
+    { label: "产线", width: "", prop: "MfgLineDesc" },
+    { label: "状态", width: "", prop: "OrderStatusDesc" },
+    { label: "计划开始", width: "", prop: "PlannedStartDate" },
+    { label: "计划完成", width: "", prop: "PlannedCompletionDate" },
+]);
 
 onBeforeMount(() => {
     getScreenHeight();
 });
 onMounted(() => {
     window.addEventListener("resize", getScreenHeight);
-    input.value.focus()
+    // inputRef.value.focus();
+    getOrderData()
 });
 onBeforeUnmount(() => {
     window.addEventListener("resize", getScreenHeight);
 });
 
+const getOrderData = () => {
+    QueryWorkOrderInfo().then((res: any) => {
+        let data = JSON.parse(res.content);
+        orderTable.value.data[0] = data[0];
+    });
+}
+
 const formText = (data: string) => {
-    let key = data as keyof typeof form
-    return form[key]
-}
+    let key = data as keyof typeof form;
+    return form[key];
+};
 const getChange = (val: any) => {
-    // console.log(val);
-    if (checkStringType(val) == 'result') {
-        console.log('result', val);
-    } else if (checkStringType(val) == 'pcb') {
-        console.log('pcb', val);
-        stopsForm.value.ContainerName = val
-    } else if (checkStringType(val) == 'tool') {
-        console.log('tool', val);
-        stopsForm.value.ToolName = val
-    } else {
-        ElNotification({
-            title: "错误",
-            message: '扫描条码有误',
-            type: "error",
-        });
-        // console.log('扫描条码有误');
-    }
-    barCode.value = ''
-    input.value.focus()
-    if (stopsForm.value.ContainerName && stopsForm.value.ToolName) {
-        console.log(stopsForm.value)
-    }
+    SplitStationMoveOut(stopsForm.value).then((res:any)=>{
+        if (res.succes) {
+            msgTitle.value = "成功";
+            stopsForm.value.containerName = "";
+            inputRef.value.focus();
+        } else {
+            inputRef.value.select()
+            // stopsForm.value.Barcode = stopsForm.value.Barcode.filter((b: any) => b.Barcode != barCode.value)
+            msgTitle.value = res.msg;
+            // console.log(stopsForm.value)
+        }
+    })
+};
+const selectTable = ref();
 
-}
-const handleSelectionChange = () => {
-
-}
-const sureClick = () => {
-
-}
-const change = (val: any) => {
-    console.log(val);
-}
-// const radioChange = (args: any) => {
-//     console.log(args)
-// }
-const selectTable = ref()
-const table = ref({
-    data: [
-        { MfgOrderName: '24072681', ProductName: "2330201001988", spec: "物料规格1", UOMName: "PCS" },
-        { MfgOrderName: '123242442', ProductName: "2024093452", spec: "物料规格2", UOMName: "PCS" },
-        { MfgOrderName: '123242443', ProductName: "2024093453", spec: "物料规格3", UOMName: "PCS" },
-        { MfgOrderName: '123242444', ProductName: "2024093454", spec: "物料规格4", UOMName: "PCS" },
-        { MfgOrderName: '123242445', ProductName: "2024093455", spec: "物料规格5", UOMName: "PCS" },
-        { MfgOrderName: '123242446', ProductName: "2024093456", spec: "物料规格6", UOMName: "PCS" },
-        { MfgOrderName: '123242447', ProductName: "2024093457", spec: "物料规格7", UOMName: "PCS" },
-        { MfgOrderName: '123242448', ProductName: "2024093458", spec: "物料规格8", UOMName: "PCS" },
-        { MfgOrderName: '123242449', ProductName: "2024093459", spec: "物料规格9", UOMName: "PCS" }
-    ]
-})
-const tableColumns = ref([
-    { label: "工单号", width: "100px", prop: "MfgOrderName" },
-    { label: "产品编码", width: "100px", prop: "ProductName" },
-    { label: "规格", width: "149px", prop: "spec" },
-    { label: "单位", width: "110px", prop: "UOMName" }
-])
-const radioChange = (args: any, type: any) => {
-    console.log("单选--传给后台的值", args, type)
-}
+const radioChange = (args: any) => {
+    orderTable.value.data.forEach((v: any) => {
+        if (v.MfgOrderName == args[1]) {
+            form.MfgOrderName = v.MfgOrderName;
+            form.ProductName = v.ProductName;
+            form.ProductDesc = v.ProductDesc;
+            form.PlannedStartDate = v.PlannedStartDate;
+            form.PlannedCompletionDate = v.PlannedCompletionDate;
+            form.Qty = v.Qty;
+        }
+    });
+    inputRef.value.focus();
+};
 const clear = () => {
-    console.log("selectTable.value", selectTable.value)
-    selectTable.value.clear()
-}
+    console.log("selectTable.value", selectTable.value);
+    selectTable.value.clear();
+};
 
 //打开不良登记
 const openDialog = () => {
-    editVisible.value = true
-}
+    editVisible.value = true;
+};
 
 //关闭不良登记
 const editCancel = () => {
-    BadtableData.value = []
+    BadtableData.value = [];
     // console.log(BadtableData.value);
-    editVisible.value = false
-}
+    editVisible.value = false;
+};
 //提交不良信息
 const editSubmit = () => {
     console.log(BadtableData.value);
-    editVisible.value = false
-}
+    editVisible.value = false;
+};
 //删除不良信息
 const deleteBad = (data: any) => {
     BadtableData.value = BadtableData.value.filter((v: any) => {
-        return data[0].badCode != v.badCode
-    })
-}
+        return data[0].badCode != v.badCode;
+    });
+};
 //打开不良登记
 const openAddBad = () => {
-    badVisible.value = true
-}
+    badVisible.value = true;
+};
 //增加不良信息
 const addBadData = (data: any) => {
-    BadtableData.value.push(data)
+    BadtableData.value.push(data);
     // console.log(data);
-}
-
+};
 
 //分页
 const handleSizeChange = (val: any) => {
@@ -463,7 +409,7 @@ const handleCurrentChange1 = (val: any) => {
 
 const getScreenHeight = () => {
     nextTick(() => {
-        tableHeight.value = window.innerHeight - 374;
+        tableHeight.value = window.innerHeight - 369.5;
     });
 };
 </script>
@@ -479,7 +425,6 @@ const getScreenHeight = () => {
 
 .box {
     border-right: 2px solid #cbcbcb;
-
 }
 
 .tabs-css .el-tabs--border-card {
@@ -507,7 +452,6 @@ const getScreenHeight = () => {
     // color: #fff;
     color: #006487 !important;
     // font-weight: bold;
-
 }
 
 .tabs-css .el-tabs--border-card>.el-tabs__header .el-tabs__item:not(.is-disabled):hover {
@@ -516,6 +460,6 @@ const getScreenHeight = () => {
 }
 
 .el-table th.el-table__cell .el-checkbox {
-    display: none
+    display: none;
 }
 </style>

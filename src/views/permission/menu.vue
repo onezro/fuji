@@ -18,9 +18,17 @@
           </el-table-column>
           <el-table-column prop="path" label="PATH路径"> </el-table-column>
           <el-table-column prop="component" label="组件"> </el-table-column>
-          <el-table-column prop="sortId" label="排序" width="60" align="center"> </el-table-column>
-          <el-table-column fixed="right" label="操作" width="120" align="center">
+          <el-table-column prop="sortId" label="排序" width="65" align="center"> </el-table-column>
+          <el-table-column fixed="right" label="操作" width="180" align="center">
             <template #default="scope">
+              <el-tooltip content="复制" placement="top" v-if="
+                scope.row.MenuName !== 'Portal' &&
+                scope.row.MenuName !== 'PDA' &&
+                scope.row.MenuName !== 'OPUI'
+              ">
+                <el-button type="warning" icon="CopyDocument" size="small"
+                  @click.prevent="handleCopy(scope.row)"></el-button>
+              </el-tooltip>
               <el-tooltip content="编辑" placement="top" v-if="
                 scope.row.MenuName !== 'Portal' &&
                 scope.row.MenuName !== 'PDA' &&
@@ -43,14 +51,14 @@
         </el-table>
         <div class="mt-3">
           <el-pagination size="large" background @size-change="handleSizeChange" @current-change="handleCurrentChange"
-            :current-page="currentPage" :page-size="pageSize" :page-sizes="[5, 10, 20, 50, 100]"
+            :current-page="currentPage" :page-size="pageSize" :page-sizes="[10, 20, 50, 100]"
             layout="total,sizes, prev, pager, next, jumper" :total="tableData.length">
           </el-pagination>
         </div>
       </div>
     </el-card>
-    <el-dialog :append-to-body="true" :close-on-click-modal="false" v-model="addVisible" align-center title="新增" width="40%"
-      @close="addCancel">
+    <el-dialog :append-to-body="true" :close-on-click-modal="false" v-model="addVisible" align-center title="新增"
+      width="40%" @close="addCancel">
       <el-form ref="formRef" :model="form" label-position="left" label-width="auto">
         <el-form-item label="类型" prop="type">
           <el-radio-group v-model="tabPosition" aria-label="label position">
@@ -74,8 +82,10 @@
         <el-form-item label="菜单名称" prop="title"><el-input v-model="form.title" placeholder="请输入" /></el-form-item>
         <el-form-item label="图标" prop="icon"><el-input v-model="form.icon" placeholder="请输入图标" /></el-form-item>
         <el-form-item label="PATH路径" prop="path"><el-input v-model="form.path" placeholder="请输入PATH路径" /></el-form-item>
-        <el-form-item label="路由名称" prop="MenuName"><el-input v-model="form.MenuName" placeholder="请输入路由名称name" /></el-form-item>
-        <el-form-item label="重定向" prop="redirect"><el-input v-model="form.redirect" placeholder="请输入重定向" /></el-form-item>
+        <el-form-item label="路由名称" prop="MenuName"><el-input v-model="form.MenuName"
+            placeholder="请输入路由名称name" /></el-form-item>
+        <el-form-item label="重定向" prop="redirect"><el-input v-model="form.redirect"
+            placeholder="请输入重定向" /></el-form-item>
         <el-form-item label="组件" prop="component"><el-input :disabled="fmeun" v-model="form.component"
             placeholder="请输入物理路径" /></el-form-item>
         <el-form-item label="排序" prop="sortId"><el-input-number :min="0" controls-position="right" v-model="form.sortId"
@@ -132,6 +142,50 @@
         </span>
       </template>
     </el-dialog>
+    <el-dialog title="复制" :append-to-body="true" :close-on-click-modal="false" @close="copyCancel()"
+      v-model="copyVisible" width="50%">
+      <el-form :model="copyform" label-width="auto" ref="copyRef">
+        <el-form-item label="父级菜单">
+          <el-select ref="selectUpResId" v-model="editPName" placeholder="请选择" clearable>
+            <el-option :value="editPName" disabled style="overflow: auto; height: 100%">
+              <el-tree style="min-height: 150px; max-height: 300px" :props="defaultProps" :data="tableData"
+                node-key="id" :expand-on-click-node="false" :check-on-click-node="true" @node-click="handleCNodeClick">
+              </el-tree></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="类型" prop="MenuType">
+          <!-- <el-input v-model="editForm.MenuType" placeholder="类型"></el-input> -->
+          <el-select v-model="copyform.MenuType" placeholder="选择类型" style="width: 240px">
+            <el-option v-for="item in list" :key="item.value" :label="item.label" :value="item.value" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="PATH路径" prop="path">
+          <el-input v-model="copyform.path" placeholder="路径"></el-input>
+        </el-form-item>
+        <el-form-item label="菜单名称" prop="title">
+          <el-input v-model="copyform.title" placeholder="菜单名称"></el-input>
+        </el-form-item>
+        <el-form-item label="组件" prop="component">
+          <el-input :disabled="fmeun" v-model="copyform.component" placeholder="组件"></el-input>
+        </el-form-item>
+        <el-form-item label="组件名称" prop="MenuName">
+          <el-input v-model="copyform.MenuName" placeholder="组件名称"></el-input>
+        </el-form-item>
+        <el-form-item label="图标" prop="icon">
+          <el-input v-model="copyform.icon" placeholder="图标"></el-input>
+        </el-form-item>
+        <el-form-item label="重定向" prop="redirect"><el-input v-model="copyform.redirect"
+            placeholder="请输入" /></el-form-item>
+        <el-form-item label="排序" prop="sortId"><el-input-number :min="0" controls-position="right"
+            v-model="copyform.sortId" placeholder="请输入" /></el-form-item>
+      </el-form>
+      <template #footer>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="copyCancel()">取消</el-button>
+          <el-button type="primary" @click="copySubmit()">确 定</el-button>
+        </span>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -157,12 +211,32 @@ const currentPage = ref(1);
 const tableHeight = ref(0);
 const addVisible = ref(false);
 const editVisible = ref(false);
+const copyVisible = ref(false)
+const copyRef = ref()
 const tabPosition = ref("菜单");
 const chooseName = ref("");
 const fmeun = ref(false);
 const selectUpResId = ref<any>(null);
 const defaultProps = reactive({ label: "title", children: "childMenu" });
-const form = reactive({
+const form = ref({
+  title: "",
+  icon: "",
+  path: "",
+  MenuName: "",
+  component: "",
+  MenuLevel: 0,
+  MenuType: '',
+  MenuFID: "",
+  redirect: "",
+  sonNum: 0,
+  sortId: 0,
+  IsDelete: "",
+  CreateBy: userStore.getUserInfo,
+  CreateDate: "",
+  UpdateBy: "",
+  UpdateDate: "",
+});
+const copyform = ref({
   title: "",
   icon: "",
   path: "",
@@ -228,11 +302,11 @@ watch(
   (newValue) => {
     if (newValue == "目录") {
       fmeun.value = false;
-      form.MenuLevel = 0;
+      form.value.MenuLevel = 0;
       // form.component = "Layout";
     } else {
       fmeun.value = false;
-      form.component = "";
+      form.value.component = "";
     }
   }
 );
@@ -253,18 +327,47 @@ const addCancel = () => {
 }
 const handleNodeClick = (data: any) => {
   chooseName.value = data.title;
-  form.MenuFID = data.id;
-  form.MenuLevel = data.MenuLevel + 1;
+  form.value.MenuFID = data.id;
+  form.value.MenuLevel = data.MenuLevel + 1;
   selectUpResId.value.blur();
 };
 const onSubmit = () => {
   // console.log(form);
-  addMeun(form).then((res) => {
+  addMeun(form.value).then((res) => {
     // console.log(res.data);
     getData();
     addVisible.value = false;
   });
 };
+const handleCopy = (row: any) => {
+  // console.log(row);
+  copyform.value = { ...row }
+  if (row.MenuFID != null) {
+    findNameById(row.MenuFID, tableData.value);
+  }
+  // console.log(copyform.value);
+  // form.value = { ...row }
+  copyVisible.value = true;
+}
+const copyCancel = () => {
+  copyVisible.value = false
+  copyRef.value.resetFields();
+}
+const copySubmit = () => {
+  // console.log(copyform.value);
+  addMeun(copyform.value).then((res) => {
+    // console.log(res.data);
+    getData();
+    copyVisible.value = false;
+  });
+}
+
+const handleCNodeClick = (data:any) => {
+  editPName.value = data.title;
+  copyform.value.MenuFID = data.id;
+  copyform.value.MenuLevel = data.MenuLevel;
+  selectUpResId.value.blur();
+}
 const handleEdit = async (row: any) => {
   editForm.MenuFID = row.MenuFID;
   editForm.MenuLevel = row.MenuLevel;
@@ -279,11 +382,7 @@ const handleEdit = async (row: any) => {
   editForm.MenuType = row.MenuType
   editVisible.value = true;
   if (row.MenuFID != null) {
-    // editid.value = row.MenuFID;
-    // editForm.MenuFID = row.MenuFID;
     findNameById(row.MenuFID, tableData.value);
-    // editPName.value =void findNameById(row.MenuFID, tableData.value);
-    // console.log(editPName.value);
   }
 };
 const handleENodeClick = (data: any) => {
@@ -368,7 +467,7 @@ const handleCurrentChange = (val: any) => {
 };
 const getScreenHeight = () => {
   nextTick(() => {
-    tableHeight.value = window.innerHeight - 220;
+    tableHeight.value = window.innerHeight - 210;
     //后面的50：根据需求空出的高度，自行调整
   });
 };

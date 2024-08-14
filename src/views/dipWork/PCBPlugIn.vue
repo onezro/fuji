@@ -14,23 +14,15 @@
                         <span class="ml-5">基本信息</span>
                     </div>
                     <div class="p-[10px]">
-                        <el-form class="inbound" ref="formRef" :model="form" label-width="auto">
-                            <el-form-item label="工单" size="large">
-                                <!-- <el-select v-model="form.order" size="large" @change="change" filterable
-                                    placeholder="点击选择">
-                                    <el-option v-for="item in orderTable" :key="item.MfgOrderName"
-                                        :label="item.MfgOrderName" :value="item.MfgOrderName"></el-option>
-                                </el-select> -->
+                        <el-form class="inbound" size="default" ref="formRef" :model="form" label-width="auto">
+                            <el-form-item label="工单">
                                 <selectTa ref="selectTable" :table="orderTable" :columns="orderColumns"
-                                    :max-height="400"
-                                    :tableWidth="700"
+                                    :max-height="400" :tableWidth="700"
                                     :keywords="{ label: 'MfgOrderName', value: 'MfgOrderName' }"
-                                    @radioChange="(...args: any) => radioChange(args)"><</selectTa>
-                                <!-- <t-select-table ref="selectTable" :table="orderData" :columns="orderColumns"
-                                    :max-height="400" :keywords="{ label: 'MfgOrderName', value: 'MfgOrderName' }"
-                                    @radioChange="(...args: any) => radioChange(args)"></t-select-table> -->
+                                    @radioChange="(...args: any) => radioChange(args)">
+                                </selectTa>
                             </el-form-item>
-                            <el-form-item size="large" v-for="f in formHeader" :key="f.value" :label="f.label">
+                            <el-form-item v-for="f in formHeader" :key="f.value" :label="f.label">
                                 <span class="font-bold text-[18px] leading-[30px]"
                                     :class="f.value == 'passNum' ? 'text-[#00B400]' : ''">
                                     {{ formText(f.value) }}</span>
@@ -49,12 +41,15 @@
                             <el-form class="inbound" ref="formRef" :inline="true" :model="form" label-width="auto"
                                 @submit.native.prevent>
                                 <el-form-item label="扫描条码">
-                                    <el-input v-model="barCode" ref="inputRef" style="width: 500px" placeholder="请扫描条码"
-                                        @change="getChange" />
+                                    <el-input v-model="barCode" clearable ref="inputRef" style="width: 500px"
+                                        placeholder="请扫描条码" @keyup.enter.native="getChange" />
                                 </el-form-item>
                             </el-form>
-                            <div class="text-xl font-bold text-[#00B400]">
-                                请扫描物料批次条码
+                            <div class="text-xl font-bold text-[#00B400]" v-show="msgTitle === '成功' || msgTitle === ''">
+                                {{ msgTitle === "" ? "请扫描批次条码" : msgTitle }}
+                            </div>
+                            <div class="text-xl font-bold text-[red]" v-show="msgTitle !== '成功' && msgTitle !== ''">
+                                {{ msgTitle === "" ? "请扫描批次条码" : msgTitle }}
                             </div>
                         </div>
                     </div>
@@ -65,7 +60,7 @@
                                     :columnData="columnData1" :pageObj="pageObj" @handleSizeChange="handleSizeChange"
                                     @handleCurrentChange="handleCurrentChange"></table-tem>
                             </el-tab-pane>
-                            <el-tab-pane label="SOP" name="sop"> sop </el-tab-pane>
+                            <!-- <el-tab-pane label="SOP" name="sop"> sop </el-tab-pane> -->
                             <el-tab-pane label="工装治具" name="fixtures">
                                 fixtures
                             </el-tab-pane>
@@ -77,17 +72,17 @@
         <badInfoTem :visible="editVisible" :list="list" :formHeader="formHeader1" :form="editForm" :badForm="badForm"
             :tableData="BadtableData" @cancel="editCancel" @submit="editSubmit" @deleteBad="deleteBad"
             @addBadData="addBadData" @openAddBad="openAddBad" />
-<!-- 
+        <!-- 
         <el-dialog v-model="overVisible" :close-on-click-modal="false" :close-on-press-escape="false" align-center
             width="90%" title="过序设置"> 
             <div class="mb-2">
                 <el-button type="primary" @click="overAddVisible = true">添加</el-button>
             </div> -->
-            <formTem ref="addOverRef" :width="'30%'" :visible="overAddVisible" :title="'过序设置'" :form="overAddForm"
-                :formHeader="overHeader" @formCancel="addOverCancel" @onSubmit="addOveronSubmit"></formTem>
-            <!-- <formTem ref="editOverRef" :width="'30%'" :visible="overEditVisible" :title="'过序修改'" :form="overEditForm"
+        <formTem ref="addOverRef" :width="'30%'" :visible="overAddVisible" :title="'过序设置'" :form="overAddForm"
+            :formHeader="overHeader" @formCancel="addOverCancel" @onSubmit="addOveronSubmit"></formTem>
+        <!-- <formTem ref="editOverRef" :width="'30%'" :visible="overEditVisible" :title="'过序修改'" :form="overEditForm"
                 :formHeader="overHeader" @formCancel="editOverCancel" @onSubmit="editOveronSubmit"></formTem> -->
-            <!-- <table-tem :showIndex="false" :tableData="overTableData" :tableHeight="'60vh'" :columnData="overColumnData"
+        <!-- <table-tem :showIndex="false" :tableData="overTableData" :tableHeight="'60vh'" :columnData="overColumnData"
                 :pageObj="pageObj" @handleSizeChange="handleSizeChange"
                 @handleCurrentChange="handleCurrentChange"></table-tem>
             <template #footer>
@@ -96,7 +91,7 @@
                     
                 </span>
             </template>
-        </el-dialog> -->
+</el-dialog> -->
     </div>
 </template>
 
@@ -104,16 +99,15 @@
 import tableTem from "@/components/tableTem/index.vue";
 import badInfoTem from "@/components/badInfoTem/index.vue";
 import formTem from "@/components/formTem/index.vue";
-import selectTa from '@/components/selectTable/index.vue'
+import selectTa from "@/components/selectTable/index.vue";
 import { useAppStore } from "@/stores/modules/app";
 import { useUserStoreWithOut } from "@/stores/modules/user";
 import type { Formspan, FormHeader } from "@/typing";
-import { ElMessage, ElNotification } from "element-plus";
+import { ElMessage, ElNotification, ElMessageBox } from "element-plus";
 import {
     QueryWorkOrderInfo,
     DIPStationMoveOut,
     FindAllDevice,
-    AddDevice,
     UpdateDevice,
 } from "@/api/dipApi";
 import {
@@ -125,35 +119,33 @@ import {
     onBeforeUnmount,
 } from "vue";
 interface StopsForm {
-    Barcode: Array<Barcode>,
-    WorkStationName: string,
-    ResourceName: string,
-    EmployeeName: string,
+    Barcode: Array<Barcode>;
+    WorkStationName: string;
+    ResourceName: string;
+    EmployeeName: string;
 }
 interface Barcode {
-    Barcode: string,
-    Status: string
+    Barcode: string;
+    Status: string;
 }
 interface orderArr {
-    MfgOrderName: string,
-    PlannedStartDate: string,
-    PlannedCompletionDate: string,
-    Qty: number,
-    ProductName: string,
-    BD_ProjectNo: string,
-    BD_ProductModel: string,
-    ProductDesc: string,
-    UOMName: string,
-    OrderStatusName: string,
-    OrderStatusDesc: string,
-    MfgLineName: string,
-    MfgLineDesc: string
+    MfgOrderName: string;
+    PlannedStartDate: string;
+    PlannedCompletionDate: string;
+    Qty: number;
+    ProductName: string;
+    BD_ProjectNo: string;
+    BD_ProductModel: string;
+    ProductDesc: string;
+    UOMName: string;
+    OrderStatusName: string;
+    OrderStatusDesc: string;
+    MfgLineName: string;
+    MfgLineDesc: string;
 }
-interface Columns {
-    label: string, width: string, prop: string
-}
+
 interface OrderData {
-    data: Array<orderArr>
+    data: Array<orderArr>;
 }
 const appStore = useAppStore();
 const userStore = useUserStoreWithOut();
@@ -163,7 +155,7 @@ const inputRef = ref();
 const stopsForm = ref<StopsForm>({
     Barcode: [],
     WorkStationName: opui.station,
-    ResourceName: opui.equipment !== null ? opui.equipment : '',
+    ResourceName: opui.equipment !== null ? opui.equipment : "",
     EmployeeName: userStore.getUserInfo || "",
 });
 const tabsValue = ref("history");
@@ -173,10 +165,10 @@ const form = reactive<InstanceType<typeof Formspan>>({
     MfgOrderName: "",
     ProductName: "",
     ProductDesc: "",
-    Qty: '',
-    PlannedStartDate:'',
-    PlannedCompletionDate:'',
-    passNum: "",
+    Qty: "",
+    PlannedStartDate: "",
+    PlannedCompletionDate: "",
+ 
 });
 const editForm = ref({
     order: "1213434",
@@ -186,13 +178,6 @@ const editForm = ref({
     // orderNum: '100',
 });
 const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
-    // {
-    //     label: "机型",
-    //     value: "models",
-    //     disabled: true,
-    //     type: "input",
-    //     width: "",
-    // },
     {
         label: "产品编码",
         value: "ProductName",
@@ -207,14 +192,8 @@ const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
         type: "textarea",
         width: 300,
     },
-    {
-        label: "工单数量",
-        value: "Qty",
-        disabled: true,
-        type: "input",
-        width: "",
-    },
-   
+
+
     {
         label: "计划开始",
         value: "PlannedStartDate",
@@ -230,12 +209,12 @@ const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
         width: "",
     },
     {
-        label: "过站数量",
-        value: "passNum",
+        label: "工单数量",
+        value: "Qty",
         disabled: true,
         type: "input",
         width: "",
-    }
+    },
 ]);
 const formHeader1 = reactive<InstanceType<typeof FormHeader>[]>([
     {
@@ -341,24 +320,25 @@ const list = ref([
         value: "E208715",
     },
 ]);
+const msgTitle = ref("");
 //过序设置
 const overVisible = ref(false);
 //过序table
-const overTableData = ref([]);
+// const overTableData = ref([]);
 //
 const addOverRef = ref();
-const editOverRef = ref();
+// const editOverRef = ref();
 //过序添加
 const overAddVisible = ref(false);
 //过序编辑
-const overEditVisible = ref(false);
+// const overEditVisible = ref(false);
 //过序添加form
 const overAddForm = ref({
     ID: "",
     Line: opui.line,
     WorkStation: opui.station,
-    LineDec:opui.lineDec,
-    WorkStationDec:opui.stationDec,
+    LineDec: opui.lineDec,
+    WorkStationDec: opui.stationDec,
     NextWorkStation: "",
     NextDevice: "",
     InDeviceLength: 0,
@@ -414,33 +394,42 @@ const overHeader = reactive([
     },
 ]);
 //过序添加form
-const overEditForm = ref({
-    ID: "",
-    Line: opui.line,
-    WorkStation: opui.station,
-    LineDec:opui.lineDec,
-    WorkStationDec:opui.stationDec,
-    NextWorkStation: "",
-    NextDevice: "",
-    InDeviceLength: 0,
-    InDeviceSpeed: 0,
-    OutDeviceLength: 0,
-    OutDeviceSpeed: 0,
-    UpdataDate: "2024-08-09T02:15:38.582Z",
-    UpdateBy: userStore.getUserInfo || "",
-});
-//获取过序
-const getOverData = () => {
-    FindAllDevice().then((res: any) => {
-        // overTableData.value = JSON.parse(res.content);
-
-    });
-};
-
+// const overEditForm = ref({
+//     ID: "",
+//     Line: opui.line,
+//     WorkStation: opui.station,
+//     LineDec: opui.lineDec,
+//     WorkStationDec: opui.stationDec,
+//     NextWorkStation: "",
+//     NextDevice: "",
+//     InDeviceLength: 0,
+//     InDeviceSpeed: 0,
+//     OutDeviceLength: 0,
+//     OutDeviceSpeed: 0,
+//     UpdataDate: "2024-08-09T02:15:38.582Z",
+//     UpdateBy: userStore.getUserInfo || "",
+// });
 const openOver = () => {
     overAddVisible.value = true;
     getOverData();
 };
+//获取过序
+const getOverData = () => {
+    FindAllDevice({ WorkStation: opui.station }).then((res: any) => {
+        if (res.success) {
+            overAddForm.value.InDeviceLength = res.InDeviceLength;
+            overAddForm.value.InDeviceSpeed = res.InDeviceSpeed;
+            overAddForm.value.OutDeviceLength = res.OutDeviceLength;
+            overAddForm.value.OutDeviceSpeed = res.OutDeviceSpeed;
+        } else {
+            ElNotification({
+                title: res.msg,
+                type: "error",
+            });
+        }
+    });
+};
+
 //取消添加
 const addOverCancel = () => {
     overAddVisible.value = false;
@@ -448,118 +437,123 @@ const addOverCancel = () => {
 };
 //确定添加
 const addOveronSubmit = () => {
-    overAddVisible.value = false;
-    // console.log(overAddForm.value);
-    // AddDevice(overAddForm.value).then((res: any) => {
-    //     getOverData();
-    //     ElNotification({
-    //         title: "添加成功",
-    //         // message: "取消操作",
-    //         type: "success",
-    //     });
-    // });
-};
-const editOverCancel = () => {
-    overEditVisible.value = false;
-    editOverRef.value.cleanForm();
-};
-//确定编辑
-const editOveronSubmit = () => {
-    // console.log(data);
-    UpdateDevice(overEditForm.value).then(() => {
-        getOverData();
+    UpdateDevice(overAddForm.value).then((res: any) => {
+        if (res.success) {
+            getOverData();
+            ElNotification({
+                title: "更新成功",
+                type: "success",
+            });
+            overAddVisible.value = false;
+        } else {
+            ElNotification({
+                title: res.msg,
+                type: "error",
+            });
+        }
+
     });
-    overEditVisible.value = false;
-    // console.log(overEditForm.value);
 };
+// const editOverCancel = () => {
+//     overEditVisible.value = false;
+//     editOverRef.value.cleanForm();
+// };
+//确定编辑
+// const editOveronSubmit = () => {
+//     // console.log(data);
+//     UpdateDevice(overEditForm.value).then(() => {
+//         getOverData();
+//     });
+//     overEditVisible.value = false;
+// };
 
 //过序添加打开
-const openOverAdd = () => { };
-//过序编辑
-const handleEdit = (data: any) => {
-    overEditForm.value.ID = data.ID;
-    overEditForm.value.Line = data.Line;
-    overEditForm.value.WorkStation = data.WorkStation;
-    overEditForm.value.NextWorkStation = data.NextWorkStation;
-    overEditForm.value.NextDevice = data.NextDevice;
-    overEditForm.value.InDeviceLength = data.InDeviceLength;
-    overEditForm.value.InDeviceSpeed = data.InDeviceSpeed;
-    overEditForm.value.OutDeviceLength = data.OutDeviceLength;
-    overEditForm.value.OutDeviceSpeed = data.OutDeviceSpeed;
-    overEditVisible.value = true;
-};
+// const openOverAdd = () => { };
+// //过序编辑
+// const handleEdit = (data: any) => {
+//     overEditForm.value.ID = data.ID;
+//     overEditForm.value.Line = data.Line;
+//     overEditForm.value.WorkStation = data.WorkStation;
+//     overEditForm.value.NextWorkStation = data.NextWorkStation;
+//     overEditForm.value.NextDevice = data.NextDevice;
+//     overEditForm.value.InDeviceLength = data.InDeviceLength;
+//     overEditForm.value.InDeviceSpeed = data.InDeviceSpeed;
+//     overEditForm.value.OutDeviceLength = data.OutDeviceLength;
+//     overEditForm.value.OutDeviceSpeed = data.OutDeviceSpeed;
+//     overEditVisible.value = true;
+// };
 //过序table overColumnData
-const overColumnData = ref([
-    {
-        text: true,
-        prop: "Line",
-        label: "产线",
-        width: "",
-        align: "1",
-    },
-    {
-        text: true,
-        prop: "WorkStation",
-        label: "工位",
-        width: "",
-        align: "1",
-    },
-    {
-        text: true,
-        prop: "InDeviceLength",
-        label: "进炉距离(cm)",
-        width: "",
-        align: "1",
-    },
-    {
-        text: true,
-        prop: "InDeviceSpeed",
-        label: "进炉轨道速度(s/cm)",
-        width: "",
-        align: "1",
-    },
-    {
-        text: true,
-        prop: "OutDeviceLength",
-        label: "炉子宽度(cm)",
-        width: "",
-        align: "1",
-    },
-    {
-        text: true,
-        prop: "OutDeviceSpeed",
-        label: "炉子轨道速度(s/cm)",
-        width: "",
-        align: "1",
-    },
-    {
-        isOperation: true,
-        label: "操作",
-        width: "120",
-        align: "center",
-        fixed: "right",
-        operation: [
-            {
-                type: "primary",
-                label: "编辑",
-                icon: "EditPen",
-                buttonClick: handleEdit,
-            },
-        ],
-    },
-]);
+// const overColumnData = ref([
+//     {
+//         text: true,
+//         prop: "Line",
+//         label: "产线",
+//         width: "",
+//         align: "1",
+//     },
+//     {
+//         text: true,
+//         prop: "WorkStation",
+//         label: "工位",
+//         width: "",
+//         align: "1",
+//     },
+//     {
+//         text: true,
+//         prop: "InDeviceLength",
+//         label: "进炉距离(cm)",
+//         width: "",
+//         align: "1",
+//     },
+//     {
+//         text: true,
+//         prop: "InDeviceSpeed",
+//         label: "进炉轨道速度(s/cm)",
+//         width: "",
+//         align: "1",
+//     },
+//     {
+//         text: true,
+//         prop: "OutDeviceLength",
+//         label: "炉子宽度(cm)",
+//         width: "",
+//         align: "1",
+//     },
+//     {
+//         text: true,
+//         prop: "OutDeviceSpeed",
+//         label: "炉子轨道速度(s/cm)",
+//         width: "",
+//         align: "1",
+//     },
+//     {
+//         isOperation: true,
+//         label: "操作",
+//         width: "120",
+//         align: "center",
+//         fixed: "right",
+//         operation: [
+//             {
+//                 type: "primary",
+//                 label: "编辑",
+//                 icon: "EditPen",
+//                 buttonClick: handleEdit,
+//             },
+//         ],
+//     },
+// ]);
 const selectTable = ref();
 interface Order {
     MfgOrderName: string;
 }
 const orderTable = ref<OrderData>({
-    data:[]
+    data: [],
 });
 
 const orderColumns = ref([
     { label: "工单号", width: "", prop: "MfgOrderName" },
     { label: "产品编码", width: "", prop: "ProductName" },
-     { label: "产线", width: "", prop: "MfgLineDesc" },
+    { label: "产线", width: "", prop: "MfgLineDesc" },
     { label: "状态", width: "", prop: "OrderStatusDesc" },
     { label: "计划开始", width: "", prop: "PlannedStartDate" },
     { label: "计划完成", width: "", prop: "PlannedCompletionDate" },
@@ -569,14 +563,14 @@ const orderColumns = ref([
 
 const radioChange = (args: any) => {
     // console.log(args);
-      orderTable.value.data.forEach((v: any) => {
+    orderTable.value.data.forEach((v: any) => {
         if (v.MfgOrderName == args[1]) {
-           form.MfgOrderName=v.MfgOrderName
-           form.ProductName=v.ProductName
-           form.ProductDesc=v.ProductDesc
-           form.PlannedStartDate=v.PlannedStartDate
-           form.PlannedCompletionDate=v.PlannedCompletionDate
-           form.Qty=v.Qty
+            form.MfgOrderName = v.MfgOrderName;
+            form.ProductName = v.ProductName;
+            form.ProductDesc = v.ProductDesc;
+            form.PlannedStartDate = v.PlannedStartDate;
+            form.PlannedCompletionDate = v.PlannedCompletionDate;
+            form.Qty = v.Qty;
         }
     });
     inputRef.value.focus();
@@ -601,16 +595,17 @@ onBeforeMount(() => {
 });
 onMounted(() => {
     window.addEventListener("resize", getScreenHeight);
-    QueryWorkOrderInfo().then((res: any) => {
-        let data=JSON.parse(res.content)
-        orderTable.value.data[0]=data[0]
-        // orderTable.value = JSON.parse(res.content);
-        // console.log( orderTable.value)
-    });
+    getOrderData()
 });
 onBeforeUnmount(() => {
     window.addEventListener("resize", getScreenHeight);
 });
+const getOrderData = () => {
+    QueryWorkOrderInfo().then((res: any) => {
+        let data = JSON.parse(res.content);
+        orderTable.value.data[0] = data[0];
+    });
+}
 
 const formText = (data: string) => {
     let key = data as keyof typeof form;
@@ -630,7 +625,7 @@ const editCancel = () => {
 };
 //提交不良信息
 const editSubmit = () => {
-    console.log(BadtableData.value);
+    // console.log(BadtableData.value);
     editVisible.value = false;
 };
 //删除不良信息
@@ -656,22 +651,27 @@ const overCancel = () => {
 //过站
 const getChange = (val: any) => {
     let data = {
-        Barcode: val,
-        Status: 'false'
-    }
-    stopsForm.value.Barcode.push(data)
-
+        Barcode: barCode.value,
+        Status: "0",
+    };
+    stopsForm.value.Barcode.push(data);
     DIPStationMoveOut(stopsForm.value).then((res: any) => {
-        console.log(res);
-        barCode.value = "";
-        inputRef.value.focus();
-        if (stopsForm.value.Barcode.length == 2) {
-            stopsForm.value.Barcode = []
+        if (res.succes) {
+            msgTitle.value = "成功";
+            barCode.value = "";
+            inputRef.value.focus();
+            if (stopsForm.value.Barcode.length == 2) {
+                stopsForm.value.Barcode = [];
+                msgTitle.value = "";
+            }
+        } else {
+            inputRef.value.select()
+            stopsForm.value.Barcode = stopsForm.value.Barcode.filter((b: any) => b.Barcode != barCode.value)
+            msgTitle.value = res.msg;
+            // console.log(stopsForm.value)
         }
-    })
-    if (stopsForm.value.Barcode.length == 2) {
-        stopsForm.value.Barcode = []
-    }
+
+    });
 };
 
 //分页
@@ -685,7 +685,7 @@ const handleCurrentChange = (val: any) => {
 
 const getScreenHeight = () => {
     nextTick(() => {
-        tableHeight.value = window.innerHeight - 374;
+        tableHeight.value = window.innerHeight - 369.5;
     });
 };
 </script>
@@ -733,6 +733,6 @@ const getScreenHeight = () => {
 .tabs-css .el-tabs--border-card>.el-tabs__header .el-tabs__item:not(.is-disabled):hover {
     // color: #fff;
     // background-color: #fff;
-    background-color: rgba($color: #fff, $alpha: .8);
+    background-color: rgba($color: #fff, $alpha: 0.8);
 }
 </style>

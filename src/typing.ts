@@ -63,3 +63,22 @@ export interface FormHeader {
     type: string
 }
 
+interface orderArr {
+    MfgOrderName: string;
+    PlannedStartDate: string;
+    PlannedCompletionDate: string;
+    Qty: number;
+    ProductName: string;
+    BD_ProjectNo: string;
+    BD_ProductModel: string;
+    ProductDesc: string;
+    UOMName: string;
+    OrderStatusName: string;
+    OrderStatusDesc: string;
+    MfgLineName: string;
+    MfgLineDesc: string;
+}
+
+interface OrderData {
+    data: Array<orderArr>;
+}

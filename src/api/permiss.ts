@@ -253,3 +253,11 @@ export function getOrganization(){
         method: "post",
     });
 }
+
+//获取版本信息
+export function GetVersion(){
+    return request({
+        url: "/api/system/GetVersion",
+        method: "post",
+    });
+}

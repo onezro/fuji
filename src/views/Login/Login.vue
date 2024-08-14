@@ -4,6 +4,7 @@ import {
   empolyeeLogin,
   getEmpoyeeInfo,
   findEmployeeRoles,
+  GetVersion
 } from "@/api/permiss";
 import { useUserStoreWithOut } from "@/stores/modules/user";
 import { getToken, setToken, removeToken } from "@/utils/auth";
@@ -12,10 +13,11 @@ import { useRouter } from "vue-router";
 import { ElNotification } from "element-plus";
 import { useAppStore } from '@/stores/modules/app'
 import { ref, watch } from "vue";
+
 const userStore = useUserStoreWithOut();
 const { currentRoute, addRoute, push } = useRouter();
 const appStore = useAppStore()
-
+const version = ref('')
 const form = ref({
   EmployeeName: "CamstarAdmin",
   DocManagerUser: "123456",
@@ -34,6 +36,11 @@ watch(
     immediate: true,
   }
 );
+onMounted(() => {
+  GetVersion().then((res: any) => {
+    version.value = res.content.CurrentVer
+  })
+})
 const loginClick = () => {
   empolyeeLogin(form.value).then((data: any) => {
     const dataText = JSON.parse(data.content);
@@ -60,11 +67,16 @@ const switchSystems = () => {
   localStorage.setItem("SYSTEM_TYPE", JSON.stringify(!appStore.getSystemType));
   appStore.setSystemType(!appStore.getSystemType)
   if (appStore.getSystemType && localStorage.getItem('OPUIData')) {
-     let routestr = appStore.getOpuiData.path || '/'
+    let routestr = appStore.getOpuiData.path || '/'
     push(routestr)
   } else {
     push({ path: '/login', query: { redirect: '/dashboard/index' } })
   }
+  ElNotification({
+    title: "系统已切换",
+    message: appStore.getSystemType?'当前为操作端':'当前为系统端',
+    type: "warning",
+  });
 
 }
 </script>
@@ -90,6 +102,7 @@ const switchSystems = () => {
             <el-button @click="switchSystems" size="large" class="w-[440px]">切换系统</el-button>
           </el-form-item>
         </el-form>
+        <div class="text-center">{{ version }}</div>
       </div>
     </div>
   </div>
