@@ -448,9 +448,9 @@ const choiceOrder = () => {
     return;
   }
   getMaterialInformation({
-    OrderID: form.MfgOrderName,
-    Barcode: barCode.value,
-    Mcid: title.equipment,
+    OrderNumber: form.MfgOrderName,
+    MaterialBatchNo: barCode.value,
+    ResourceNo: title.equipment,
   }).then((data: any) => {
     barCode.value = "";
     msgTitle.value = data.msg;
