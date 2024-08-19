@@ -112,8 +112,8 @@ const OPUIData = ref(
         lineDec: '',
         station: '',
         stationDec: '',
-        equipment: '',
-        equipmentDesc: '',
+        // equipment: '',
+        // equipmentDesc: '',
         path: ''
     }
 )
@@ -175,8 +175,8 @@ const cleanOPUIData = () => {
     OPUIData.value.lineDec = ''
     OPUIData.value.station = ''
     OPUIData.value.stationDec = ''
-    OPUIData.value.equipment = ''
-    OPUIData.value.equipmentDesc = ''
+    // OPUIData.value.equipment = ''
+    // OPUIData.value.equipmentDesc = ''
     OPUIData.value.path = ''
 
 }
@@ -204,8 +204,8 @@ const meunItem3 = (value: any) => {
     let data1 = cloneDeep(data)
     OPUIData.value.station = data1[0].MenuName
     OPUIData.value.stationDec = data1[0].title
-    OPUIData.value.equipment = data1[0].EquipmentName
-    OPUIData.value.equipmentDesc = data1[0].EquipmentDesc
+    // OPUIData.value.equipment = data1[0].EquipmentName
+    // OPUIData.value.equipmentDesc = data1[0].EquipmentDesc
 }
 const menuRouters = computed(() => {
     const routers = permissionStore.getRouters;
