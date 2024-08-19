@@ -3,7 +3,6 @@
         <div class="h-[40px] min-h-[40px] pl-2 pr-2 flex justify-between items-center">
             <span class="text-[1.2rem]"> {{ opui.stationDec }} </span>
             <div>
-                <el-button type="primary" @click="openOver">过序设置</el-button>
                 <el-button type="primary" @click="openDialog">不良品登记</el-button>
             </div>
         </div>
@@ -42,7 +41,10 @@
                                 @submit.native.prevent>
                                 <el-form-item label="扫描条码">
                                     <el-input v-model="barCode" clearable ref="inputRef" style="width: 500px"
-                                        placeholder="请扫描条码" @keyup.enter.native="getChange" />
+                                        placeholder="请扫描条码" @change="handleInput" />
+                                </el-form-item>
+                                <el-form-item >
+                                   <el-button type="primary" @click="getChange">完成</el-button>
                                 </el-form-item>
                             </el-form>
                             <div class="text-xl font-bold text-[#00B400]" v-show="msgTitle === '成功' || msgTitle === ''">
@@ -55,7 +57,7 @@
                     </div>
                     <div class="flex flex-col flex-1 tabs-css">
                         <el-tabs v-model="tabsValue" type="border-card" class="demo-tabs">
-                            <el-tab-pane label="历史过站记录" name="history" :stretch="true">
+                            <el-tab-pane label="扫描记录" name="history" :stretch="true">
                                 <table-tem :showIndex="true" :tableData="tableData1" :tableHeight="tableHeight"
                                     :columnData="columnData1" :pageObj="pageObj" @handleSizeChange="handleSizeChange"
                                     @handleCurrentChange="handleCurrentChange"></table-tem>
@@ -72,26 +74,7 @@
         <badInfoTem :visible="editVisible" :list="list" :formHeader="formHeader1" :form="editForm" :badForm="badForm"
             :tableData="BadtableData" @cancel="editCancel" @submit="editSubmit" @deleteBad="deleteBad"
             @addBadData="addBadData" @openAddBad="openAddBad" />
-        <!-- 
-        <el-dialog v-model="overVisible" :close-on-click-modal="false" :close-on-press-escape="false" align-center
-            width="90%" title="过序设置"> 
-            <div class="mb-2">
-                <el-button type="primary" @click="overAddVisible = true">添加</el-button>
-            </div> -->
-        <formTem ref="addOverRef" :width="'30%'" :visible="overAddVisible" :title="'波峰焊过序设置'" :form="overAddForm"
-            :formHeader="overHeader" @formCancel="addOverCancel" @onSubmit="addOveronSubmit"></formTem>
-        <!-- <formTem ref="editOverRef" :width="'30%'" :visible="overEditVisible" :title="'过序修改'" :form="overEditForm"
-                :formHeader="overHeader" @formCancel="editOverCancel" @onSubmit="editOveronSubmit"></formTem> -->
-        <!-- <table-tem :showIndex="false" :tableData="overTableData" :tableHeight="'60vh'" :columnData="overColumnData"
-                :pageObj="pageObj" @handleSizeChange="handleSizeChange"
-                @handleCurrentChange="handleCurrentChange"></table-tem>
-            <template #footer>
-                <span class="dialog-footer">
-                    <el-button @click="overCancel">关闭</el-button>
-                    
-                </span>
-            </template>
-</el-dialog> -->
+
     </div>
 </template>
 
@@ -264,6 +247,7 @@ const columnData1 = reactive([
 ]);
 const tableData1 = ref([]);
 const tableHeight = ref(0);
+
 const pageObj = ref({
     pageSize: 10,
     currentPage: 1,
@@ -300,228 +284,7 @@ const list = ref([
     },
 ]);
 const msgTitle = ref("");
-//过序设置
-const overVisible = ref(false);
-//过序table
-// const overTableData = ref([]);
-//
-const addOverRef = ref();
-// const editOverRef = ref();
-//过序添加
-const overAddVisible = ref(false);
-//过序编辑
-// const overEditVisible = ref(false);
-//过序添加form
-const overAddForm = ref({
-    ID: "",
-    Line: opui.line,
-    WorkStation: opui.station,
-    LineDec: opui.lineDec,
-    WorkStationDec: opui.stationDec,
-    NextWorkStation: "",
-    NextDevice: "",
-    InDeviceLength: 0,
-    InDeviceSpeed: 0,
-    OutDeviceLength: 0,
-    OutDeviceSpeed: 0,
-    UpdataDate: "2024-08-09T02:15:38.582Z",
-    UpdateBy: userStore.getUserInfo || "",
-});
-//过序formHeader
-const overHeader = reactive([
-    {
-        label: "产线",
-        value: "LineDec",
-        disabled: true,
-        type: "input",
-        width: "",
-    },
-    {
-        label: "工位",
-        value: "WorkStationDec",
-        disabled: true,
-        type: "input",
-        width: "",
-    },
-    {
-        label: "进炉距离(cm)",
-        value: "InDeviceLength",
-        disabled: false,
-        type: "inputNumber",
-        width: "",
-    },
-    {
-        label: "进炉轨道速度(s/cm)",
-        value: "InDeviceSpeed",
-        disabled: false,
-        type: "inputNumber",
-        width: "",
-    },
-    {
-        label: "炉子宽度(cm)",
-        value: "OutDeviceLength",
-        disabled: false,
-        type: "inputNumber",
-        width: "",
-    },
-    {
-        label: "炉子轨道速度(s/cm)",
-        value: "OutDeviceSpeed",
-        disabled: false,
-        type: "inputNumber",
-        width: "",
-    }
-]);
-//过序添加form
-// const overEditForm = ref({
-//     ID: "",
-//     Line: opui.line,
-//     WorkStation: opui.station,
-//     LineDec: opui.lineDec,
-//     WorkStationDec: opui.stationDec,
-//     NextWorkStation: "",
-//     NextDevice: "",
-//     InDeviceLength: 0,
-//     InDeviceSpeed: 0,
-//     OutDeviceLength: 0,
-//     OutDeviceSpeed: 0,
-//     UpdataDate: "2024-08-09T02:15:38.582Z",
-//     UpdateBy: userStore.getUserInfo || "",
-// });
-const openOver = () => {
-    overAddVisible.value = true;
-    getOverData();
-};
-//获取过序
-const getOverData = () => {
-    FindAllDevice({ WorkStation: opui.station }).then((res: any) => {
-        if (res.success) {
-            let data = JSON.parse(res.content)
-            overAddForm.value.InDeviceLength = data[0].InDeviceLength;
-            overAddForm.value.InDeviceSpeed = data[0].InDeviceSpeed;
-            overAddForm.value.OutDeviceLength = data[0].OutDeviceLength;
-            overAddForm.value.OutDeviceSpeed = data[0].OutDeviceSpeed;
-        } else {
-            ElNotification({
-                title: res.msg,
-                type: "error",
-            });
-        }
-    });
-};
 
-//取消添加
-const addOverCancel = () => {
-    overAddVisible.value = false;
-    addOverRef.value.cleanForm();
-};
-//确定添加
-const addOveronSubmit = () => {
-    UpdateDevice(overAddForm.value).then((res: any) => {
-        if (res.success) {
-            getOverData();
-            ElNotification({
-                title: "更新成功",
-                type: "success",
-            });
-            overAddVisible.value = false;
-        } else {
-            ElNotification({
-                title: res.msg,
-                type: "error",
-            });
-        }
-
-    });
-};
-// const editOverCancel = () => {
-//     overEditVisible.value = false;
-//     editOverRef.value.cleanForm();
-// };
-//确定编辑
-// const editOveronSubmit = () => {
-//     // console.log(data);
-//     UpdateDevice(overEditForm.value).then(() => {
-//         getOverData();
-//     });
-//     overEditVisible.value = false;
-// };
-
-//过序添加打开
-// const openOverAdd = () => { };
-// //过序编辑
-// const handleEdit = (data: any) => {
-//     overEditForm.value.ID = data.ID;
-//     overEditForm.value.Line = data.Line;
-//     overEditForm.value.WorkStation = data.WorkStation;
-//     overEditForm.value.NextWorkStation = data.NextWorkStation;
-//     overEditForm.value.NextDevice = data.NextDevice;
-//     overEditForm.value.InDeviceLength = data.InDeviceLength;
-//     overEditForm.value.InDeviceSpeed = data.InDeviceSpeed;
-//     overEditForm.value.OutDeviceLength = data.OutDeviceLength;
-//     overEditForm.value.OutDeviceSpeed = data.OutDeviceSpeed;
-//     overEditVisible.value = true;
-// };
-//过序table overColumnData
-// const overColumnData = ref([
-//     {
-//         text: true,
-//         prop: "Line",
-//         label: "产线",
-//         width: "",
-//         align: "1",
-//     },
-//     {
-//         text: true,
-//         prop: "WorkStation",
-//         label: "工位",
-//         width: "",
-//         align: "1",
-//     },
-//     {
-//         text: true,
-//         prop: "InDeviceLength",
-//         label: "进炉距离(cm)",
-//         width: "",
-//         align: "1",
-//     },
-//     {
-//         text: true,
-//         prop: "InDeviceSpeed",
-//         label: "进炉轨道速度(s/cm)",
-//         width: "",
-//         align: "1",
-//     },
-//     {
-//         text: true,
-//         prop: "OutDeviceLength",
-//         label: "炉子宽度(cm)",
-//         width: "",
-//         align: "1",
-//     },
-//     {
-//         text: true,
-//         prop: "OutDeviceSpeed",
-//         label: "炉子轨道速度(s/cm)",
-//         width: "",
-//         align: "1",
-//     },
-//     {
-//         isOperation: true,
-//         label: "操作",
-//         width: "120",
-//         align: "center",
-//         fixed: "right",
-//         operation: [
-//             {
-//                 type: "primary",
-//                 label: "编辑",
-//                 icon: "EditPen",
-//                 buttonClick: handleEdit,
-//             },
-//         ],
-//     },
-// ]);
 const selectTable = ref();
 const orderTable = ref<InstanceType<typeof OrderData>>({
     data: [],
@@ -537,6 +300,7 @@ const orderColumns = ref([
     // { label: "工单号", width: "", prop: "MfgOrderName" },
     // { label: "产品编码", width: "", prop: "ProductName" }
 ]);
+const timeout = ref()
 
 const radioChange = (args: any) => {
     // console.log(args);
@@ -621,12 +385,8 @@ const addBadData = (data: any) => {
     // console.log(data);
 };
 
-//关闭过序
-const overCancel = () => {
-    overVisible.value = false;
-};
-//过站
-const getChange = (val: any) => {
+//连续扫描
+const handleInput = () => {
     if (form.MfgOrderName.trim() == '') {
         ElNotification({
             title: '请选择工单',
@@ -635,28 +395,44 @@ const getChange = (val: any) => {
         barCode.value = ''
         return
     }
-    let data = {
-        Barcode: barCode.value,
-        Status: "0",
-    };
-    stopsForm.value.Barcode.push(data);
-    DIPStationMoveOut(stopsForm.value).then((res: any) => {
-        if (res.succes) {
-            msgTitle.value = "成功";
-            barCode.value = "";
-            inputRef.value.focus();
-            if (stopsForm.value.Barcode.length == 2) {
-                stopsForm.value.Barcode = [];
-                msgTitle.value = "";
-            }
-        } else {
-            inputRef.value.select()
-            stopsForm.value.Barcode = stopsForm.value.Barcode.filter((b: any) => b.Barcode != barCode.value)
-            msgTitle.value = res.msg;
-            // console.log(stopsForm.value)
+    // if (timeout.value) {
+    //     clearTimeout(timeout.value);
+    // }
+    // timeout.value = setTimeout(() => {
+        if (barCode.value.length && !barCode.value.endsWith(',')) {
+            // 如果条码非空且未以逗号结尾，则添加逗号  
+            barCode.value += ',';
         }
+    // }, 500);
+     
+}
+//过站
+const getChange = (val: any) => {
+    let barCodeArr=barCode.value.trim().split(',')
+    barCodeArr=barCodeArr.filter((v:any)=>v!=='')
+    console.log(barCodeArr)
+    // let data = {
+    //     Barcode: barCode.value,
+    //     Status: "0",
+    // };
+    // stopsForm.value.Barcode.push(data);
+    // DIPStationMoveOut(stopsForm.value).then((res: any) => {
+    //     if (res.succes) {
+    //         msgTitle.value = "成功";
+    //         barCode.value = "";
+    //         inputRef.value.focus();
+    //         if (stopsForm.value.Barcode.length == 2) {
+    //             stopsForm.value.Barcode = [];
+    //             msgTitle.value = "";
+    //         }
+    //     } else {
+    //         inputRef.value.select()
+    //         stopsForm.value.Barcode = stopsForm.value.Barcode.filter((b: any) => b.Barcode != barCode.value)
+    //         msgTitle.value = res.msg;
+    //         // console.log(stopsForm.value)
+    //     }
 
-    });
+    // });
 };
 
 //分页

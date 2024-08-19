@@ -26,10 +26,10 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      '/all': {
+      '/controlApi': {
         target: 'http://192.168.9.50:12024',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/all/, '') 
+        rewrite: (path) => path.replace(/^\/controlApi/, '') 
       },
       '/smtApi': {
         target: 'http://192.168.9.50:12026',

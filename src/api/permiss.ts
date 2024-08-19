@@ -261,3 +261,26 @@ export function GetVersion(){
         method: "post",
     });
 }
+
+//设备台账  获取设备类型
+export function GetEquipmentTypeList(){
+    return request({
+        url: "/api/resource/GetEquipmentTypeList",
+        method: "post",
+    });
+}
+//获取设备台账  
+export function GetEquipmentList(data:any){
+    return request({
+        url: "/api/resource/GetEquipmentList",
+        method: "post",
+        data
+    });
+}
+//台账获取 车间 产线
+export function GetFactoryModelList(){
+    return request({
+        url: "/api/system/GetFactoryModelList",
+        method: "post",
+    });
+}

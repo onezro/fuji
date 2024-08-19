@@ -341,7 +341,7 @@ const columnData = reactive([
     label: "状态",
     width: "100px",
     min:true,
-    align: "1",
+    align: "center",
   },
   {
     text: true,

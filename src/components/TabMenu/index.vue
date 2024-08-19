@@ -40,11 +40,16 @@
         </div>
         <template #dropdown>
           <el-dropdown-menu>
-            <!-- <el-dropdown-item @click.native="getSolw"><el-icon>
+            <el-dropdown-item @click.native="getSolw"><el-icon>
                 <Warning />
-              </el-icon>版本</el-dropdown-item> -->
-            <el-dropdown-item @click.native="openUpdatePwd">修改密码</el-dropdown-item>
-            <el-dropdown-item @click.native="logoutsys">退出登录</el-dropdown-item>
+              </el-icon>系统版本</el-dropdown-item>
+              
+            <el-dropdown-item @click.native="openUpdatePwd"><el-icon>
+                <Key />
+              </el-icon>修改密码</el-dropdown-item>
+            <el-dropdown-item @click.native="logoutsys"><el-icon>
+                <Promotion />
+              </el-icon>退出登录</el-dropdown-item>
           </el-dropdown-menu>
         </template>
       </el-dropdown>
@@ -158,12 +163,10 @@ watch(
 
 onMounted(() => {
   // console.log( permissionStore.getRouters)
-  // GetVersion().then((res: any) => {
-  //   versionForm.value.CurrentVer = res.content.CurrentVer
-  //   let str = res.content.UpdateLog
-  //   versionForm.value.UpdateLog = str
-  //   // console.log(versionForm.value.UpdateLog);
-  // })
+  GetVersion().then((res: any) => {
+    versionForm.value ={...res.content}
+    // console.log(versionForm.value.UpdateLog);
+  })
 });
 //Tab高亮
 const isActive = (currentPath: string) => {

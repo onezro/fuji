@@ -36,10 +36,13 @@ watch(
     immediate: true,
   }
 );
-onMounted(() => {
+onBeforeMount(()=>{
   GetVersion().then((res: any) => {
     version.value = res.content.CurrentVer
   })
+})
+onMounted(() => {
+ 
 })
 const loginClick = () => {
   empolyeeLogin(form.value).then((data: any) => {
@@ -102,7 +105,7 @@ const switchSystems = () => {
             <el-button @click="switchSystems" size="large" class="w-[440px]">切换系统</el-button>
           </el-form-item>
         </el-form>
-        <div class="text-center">{{ version }}</div>
+        <div class="flex flex-row-reverse"><span class="text-[#7c7c7c]">{{ version }}</span></div>
       </div>
     </div>
   </div>
