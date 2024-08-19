@@ -119,7 +119,7 @@ const inputRef = ref();
 const stopsForm = ref<StopsForm>({
     Barcode: [],
     WorkStationName: opui.station,
-    ResourceName: opui.equipment !== null ? opui.equipment : "",
+    ResourceName: opui.station !== null ? opui.station : "",
     EmployeeName: userStore.getUserInfo || "",
 });
 const tabsValue = ref("history");
