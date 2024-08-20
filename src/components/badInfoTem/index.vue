@@ -77,7 +77,7 @@ interface User {
 }
 import formTemple from '@/components/formTem/index.vue'
 import { cloneDeep } from 'lodash-es'
-import { defineProps, defineExpose, defineEmits, toRefs, computed, ref, reactive } from "vue"
+import { defineExpose,toRefs, computed, ref, reactive } from "vue"
 const props = defineProps(['visible', 'badForm', 'form', 'formHeader', 'tableData', 'list'])
 const { visible, form, formHeader, tableData, badForm, list } = toRefs(props)
 const emit = defineEmits(['cancel', 'submit', 'deleteBad', 'addBadData', 'openAddBad'])

@@ -19,7 +19,7 @@
                 </template>
             </el-table-column>
         </el-table>
-        <div class="mt-3">
+        <div class="mt-3 bg-white">
             <el-pagination :size="size || 'default'" background @size-change="handleSizeChange"
                 @current-change="handleCurrentChange" :current-page="pageObj.currentPage" :page-size="pageObj.pageSize"
                 :page-sizes="[10, 30, 50, 100, 150]" layout="total,sizes, prev, pager, next, jumper"
@@ -30,7 +30,7 @@
 </template>
 
 <script lang="ts" setup>
-import { defineProps, defineEmits, toRefs } from "vue"
+import { toRefs } from "vue"
 const props = defineProps(['tableData', 'tableHeight', 'columnData', 'pageObj', 'showIndex', 'size'])
 const { tableData, tableHeight, columnData, pageObj, showIndex, size } = toRefs(props)
 const emit = defineEmits(['handleSizeChange', 'handleCurrentChange'])
@@ -47,7 +47,7 @@ const getMaxLength = (arr: any) => {
         if (item) {
             // console.log(acc,item);
             const calcLen = getTextWidth(item)
-            console.log(calcLen);
+      
             if (acc < calcLen) {
                 acc = calcLen
             }

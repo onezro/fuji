@@ -187,7 +187,8 @@
 
       <template #footer>
         <span class="dialog-footer">
-          <el-button type="info" @click="addSon"> 增加子项</el-button>
+          <!-- <el-button type="info" @click="addSon"> 增加子项</el-button> -->
+          <el-button @click="addCancel"> 取消 </el-button>
           <el-button type="primary" @click="addSubmit"> 确定 </el-button>
         </span>
       </template>
@@ -291,6 +292,7 @@
 
       <template #footer>
         <span class="dialog-footer">
+          <el-button @click="eidtCancel"> 取消 </el-button>
           <el-button type="primary" @click="editSubmit()">确 定</el-button>
         </span>
       </template>
@@ -440,6 +442,7 @@ const deleteSon = (index: any) => {
 };
 
 const addCancel = () => {
+  addVisible.value = false
   resetForm();
   // formRef.value.resetFields()
 };

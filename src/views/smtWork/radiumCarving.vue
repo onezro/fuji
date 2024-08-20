@@ -327,13 +327,6 @@ const columnData = reactive([
     min: true,
     align: "1",
   },
-  // {
-  //   text: true,
-  //   prop: "OrderNumber",
-  //   label: "工单",
-  //   width: "",
-  //   align: "1",
-  // },
   {
     text: true,
     prop: "MaterialBatchNo",
@@ -526,8 +519,6 @@ const sureClick = () => {
     Completed.value = tableData.value.filter((item) => item.IsResponse === '已完成');
     awaitLaser.value = tableData.value.filter((item) => item.IsResponse === '待镭雕');
     notReleased.value = tableData.value.filter((item) => item.IsResponse === '未释放');
-    console.log(Completed.value.length);
-    
   });
   form.MfgOrderName = choiceRow.value.MfgOrderName;
   form.BD_ProductModel = choiceRow.value.BD_ProductModel;

@@ -138,7 +138,7 @@ const stopsForm = ref({
   ContainerName: "", //PCB
   result: "OK", //工装治具
   WorkStationName: opui.station, //工位
-  ResourceName: opui.equipment !== null ? opui.equipment : "", //设备
+  ResourceName: opui.station !== null ? opui.station : "", //设备
   EmployeeName: userStore.getUserInfo, //用户
 });
 const form = reactive<InstanceType<typeof Formspan>>({

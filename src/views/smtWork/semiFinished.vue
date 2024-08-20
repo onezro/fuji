@@ -10,11 +10,7 @@
                         <span class="ml-5">基本信息</span>
                     </div>
                     <div class="p-[10px]">
-                        <el-form class="inbound" ref="formRef" :model="form" label-width="auto">
-                            <el-form-item size="large" v-for="f in formHeader" :key="f.value" :label="f.label">
-                                <span class="font-bold text-[18px] leading-[30px]"> {{ formText(f.value) }}</span>
-                            </el-form-item>
-                        </el-form>
+
                     </div>
                 </div>
             </div>
@@ -54,7 +50,7 @@
                 </div>
             </div>
         </div>
-        
+
     </div>
 </template>
 
@@ -76,7 +72,7 @@ interface FormHeader {
     label: string,
     value: string,
     disabled: boolean;
-    type:string
+    type: string
 }
 import { ref, reactive, onMounted, nextTick, onBeforeMount, onBeforeUnmount } from 'vue'
 const appStore = useAppStoreWithOut()
@@ -85,6 +81,7 @@ const opui = appStore.getOPUIReal()
 // const title=appStore.getOPUIReal()
 const barCode = ref('')
 const inputRef = ref()
+const lastInputTime = ref()
 const activeName = ref('first')
 const stopsForm = ref({
     ContainerName: '',//PCB
@@ -105,31 +102,31 @@ const formHeader = reactive<FormHeader[]>([
         label: '工单号',
         value: 'order',
         disabled: true,
-        type:'input'
+        type: 'input'
     },
     {
         label: '机型',
         value: 'models',
         disabled: true,
-        type:'input'
+        type: 'input'
     },
     {
         label: '产品编码',
         value: 'productCode',
         disabled: true,
-        type:'input'
+        type: 'input'
     },
     {
         label: '产品描述',
         value: 'productDes',
         disabled: true,
-        type:'textarea'
+        type: 'textarea'
     },
     {
         label: '工单数量',
         value: 'orderNum',
         disabled: true,
-        type:'input'
+        type: 'input'
     },
 ])
 const tableData = ref([]);
@@ -199,43 +196,55 @@ onBeforeMount(() => {
 });
 onMounted(() => {
     window.addEventListener("resize", getScreenHeight);
+    document.addEventListener('keydown', handleScan);
 });
 onBeforeUnmount(() => {
     window.addEventListener("resize", getScreenHeight);
+    document.removeEventListener('keydown', handleScan); 
 });
+
+const handleScan = (event: any) => {  
+    if (!event.ctrlKey && !event.altKey && !event.metaKey && !event.shiftKey && /\d|\w|\s|[-./()]+/.test(event.key)) {
+        const now = Date.now();
+        if (now - lastInputTime.value > 100) {   
+            barCode.value += event.key;
+            lastInputTime.value = now;
+        }
+    }
+}
 const formText = (data: string) => {
     let key = data as keyof typeof form
     return form[key]
 }
 
 const getChange = (val: any) => {
-    // console.log(val);
-    if (checkStringType(val) == 'result') {
-        console.log('result', val);
-        stopsForm.value.result = val
-    } else if (checkStringType(val) == 'pcb') {
-        console.log('pcb', val);
-        stopsForm.value.ContainerName = val
-    } else if (checkStringType(val) == 'tool') {
-        console.log('tool', val);
-        // stopsForm.value.ToolName = val
-    } else {
-        ElNotification({
-            title: "错误",
-            message: '扫描条码有误',
-            type: "error",
-        });
-        // console.log('扫描条码有误');
-    }
-    barCode.value = ''
-    inputRef.value.focus()
-    if (stopsForm.value.ContainerName && stopsForm.value.result) {
-        console.log(stopsForm.value)
-    }
+    console.log(val);
+    // if (checkStringType(val) == 'result') {
+    //     console.log('result', val);
+    //     stopsForm.value.result = val
+    // } else if (checkStringType(val) == 'pcb') {
+    //     console.log('pcb', val);
+    //     stopsForm.value.ContainerName = val
+    // } else if (checkStringType(val) == 'tool') {
+    //     console.log('tool', val);
+    //     // stopsForm.value.ToolName = val
+    // } else {
+    //     ElNotification({
+    //         title: "错误",
+    //         message: '扫描条码有误',
+    //         type: "error",
+    //     });
+    //     // console.log('扫描条码有误');
+    // }
+    // barCode.value = ''
+    // inputRef.value.focus()
+    // if (stopsForm.value.ContainerName && stopsForm.value.result) {
+    //     console.log(stopsForm.value)
+    // }
 
 }
 const openDialog = () => {
-   console.log(barCode.value);
+    console.log(barCode.value);
 }
 
 

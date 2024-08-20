@@ -39,7 +39,7 @@
         </el-pagination>
       </div>
     </el-card>
-    <el-dialog :append-to-body="true" :close-on-click-modal="false" v-model="addVisible" @close="addCancel()" title="添加"
+    <el-dialog :append-to-body="true" :close-on-click-modal="false" v-model="addVisible" @close="addCancel" title="添加"
       width="50%">
       <el-form ref="formRef" :model="form" label-position="left" label-width="auto">
         <el-form-item label="工段" prop="WorkSection">
@@ -108,7 +108,8 @@
 
       <template #footer>
         <span class="dialog-footer">
-          <el-button type="info" @click="addSon"> 增加子项</el-button>
+          <!-- <el-button type="info" @click="addSon"> 增加子项</el-button> -->
+          <el-button @click="addCancel"> 取消 </el-button>
           <el-button type="primary" @click="addSubmit"> 确定 </el-button>
         </span>
       </template>
@@ -180,6 +181,7 @@
 
       <template #footer>
         <span class="dialog-footer">
+          <el-button @click="eidtCancel"> 取消 </el-button>
           <el-button type="primary" @click="editSubmit()">确 定</el-button>
         </span>
       </template>

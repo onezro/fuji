@@ -112,8 +112,8 @@ const OPUIData = ref(
         lineDec: '',
         station: '',
         stationDec: '',
-        equipment: '',
-        equipmentDesc: '',
+        // equipment: '',
+        // equipmentDesc: '',
         path: ''
     }
 )
@@ -175,8 +175,8 @@ const cleanOPUIData = () => {
     OPUIData.value.lineDec = ''
     OPUIData.value.station = ''
     OPUIData.value.stationDec = ''
-    OPUIData.value.equipment = ''
-    OPUIData.value.equipmentDesc = ''
+    // OPUIData.value.equipment = ''
+    // OPUIData.value.equipmentDesc = ''
     OPUIData.value.path = ''
 
 }
@@ -191,19 +191,21 @@ const meunItem = (value: any) => {
     form.value.station = ''
 }
 const meunItem2 = (value: any) => {
+    // options3.value = []
     let data = options2.value.filter((v: any) => v.path === value)
     let data1 = cloneDeep(data)
     OPUIData.value.line = data1[0].MenuName
     OPUIData.value.lineDec = data1[0].title
     options3.value = data1[0].childMenu
+    form.value.station = ''
 }
 const meunItem3 = (value: any) => {
     let data = options3.value.filter((v: any) => v.path === value)
     let data1 = cloneDeep(data)
     OPUIData.value.station = data1[0].MenuName
     OPUIData.value.stationDec = data1[0].title
-    OPUIData.value.equipment = data1[0].EquipmentName
-    OPUIData.value.equipmentDesc = data1[0].EquipmentDesc
+    // OPUIData.value.equipment = data1[0].EquipmentName
+    // OPUIData.value.equipmentDesc = data1[0].EquipmentDesc
 }
 const menuRouters = computed(() => {
     const routers = permissionStore.getRouters;
@@ -290,7 +292,7 @@ const fullScreen = () => {
                             </el-tooltip>
                             <div v-for="(v, i) in treeToList(unref(levelList))" :key="v.name">{{
                                 textArr[i]
-                            }}<span class="text-[1.1rem] text-[#006487] underline">&nbsp;{{ v.meta.title
+                                }}<span class="text-[1.1rem] text-[#006487] underline">&nbsp;{{ v.meta.title
                                     }}&nbsp;</span>
                             </div>
                         </div>
@@ -316,7 +318,9 @@ const fullScreen = () => {
                                 <template #dropdown>
                                     <el-dropdown-menu>
                                         <!-- <el-dropdown-item @click.native="openUpdatePwd">修改密码</el-dropdown-item> -->
-                                        <el-dropdown-item @click.native="logoutsys">退出登录</el-dropdown-item>
+                                        <el-dropdown-item @click.native="logoutsys"><el-icon>
+                                                <Promotion />
+                                            </el-icon>退出登录</el-dropdown-item>
                                     </el-dropdown-menu>
                                 </template>
                             </el-dropdown>
@@ -334,15 +338,16 @@ const fullScreen = () => {
                         <el-select v-model="form.work" placeholder="选择车间" size="large" style="width:100%;"
                             @change="meunItem">
                             <el-option v-for="item in routeData" :key="item.MenuName" :label="item.title"
-                                :value="item.path" :disabled="item.childMenu.length == 0" />
+                                :value="item.path" />
                         </el-select>
                     </el-form-item>
                     <el-form-item label="产线" prop="line">
                         <el-select v-model="form.line" placeholder="选择产线" size="large" style="width:100%;"
                             @change="meunItem2">
                             <el-option v-for="item in options2" :key="item.MenuName" :label="item.title"
-                                :value="item.path" :disabled="item.childMenu.length == 0" />
+                                :value="item.path" />
                         </el-select>
+                        <!-- :disabled="item.childMenu.length == 0" -->
                     </el-form-item>
                     <el-form-item label="工位" prop="station">
                         <el-select v-model="form.station" @change="meunItem3" placeholder="选择工位" size="large"

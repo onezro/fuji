@@ -1,5 +1,5 @@
-const regexPcb = /^P\d{8}$/; // PCB
-const regexTool = /^SA\d{8}$/; // 工装治具
+const regexPcb = /^P\d+$/; // PCB
+const regexTool = /^SA\d+$/; // 工装治具
 const regexResult = /^(OK|NG)$/i; // OK NG  
   
 
