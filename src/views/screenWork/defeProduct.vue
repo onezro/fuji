@@ -1,0 +1,323 @@
+<template>
+    <div class="flex flex-col w-full h-full">
+        <div class="h-[40px] min-h-[40px] pl-2 pr-2 flex justify-between items-center">
+            <span class="text-[1.2rem]"> {{ opui.stationDec }} </span>
+            <!-- <el-button type="primary" @click="openDialog">不良品登记</el-button> -->
+        </div>
+        <div class="w-full flex-1 flex">
+            <div class="setwidth w-[320px]">
+                <div class="w-full h-full box">
+                    <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
+                        <span class="ml-5">基本信息</span>
+                    </div>
+                    <div class="p-[10px]">
+                        <el-form ref="formRef" :model="form" label-width="auto">
+                            <el-form-item label="MES屏条码" prop="scrBarCode">
+                                <el-input v-model="form.scrBarCode" placeholder="请输入MES屏条码" />
+                            </el-form-item>
+                            <el-form-item label="工单号" prop="order">
+                                <el-input v-model="form.order" placeholder="请输入工单号" />
+                            </el-form-item>
+                            <!-- <el-form-item label="机型" prop="models">C</el-form-item> -->
+                            <el-form-item label="产品编码" prop="productCode">
+                                <el-input v-model="form.productCode" placeholder="请输入产品编码" />
+                            </el-form-item>
+                            <el-form-item label="起始时间" prop="startTime">
+                                <el-date-picker v-model="form.startTime" type="date" placeholder="选择起始时间"
+                                    format="YYYY-MM-DD" value-format="YYYY-MM-DD" />
+                            </el-form-item>
+                            <el-form-item label="结束时间" prop="endTime">
+                                <el-date-picker v-model="form.endTime" type="date" placeholder="选择结束时间"
+                                    format="YYYY-MM-DD" value-format="YYYY-MM-DD" />
+                            </el-form-item>
+                            <el-form-item label="不良工位" prop="station">
+                                <el-select v-model="form.station" placeholder="选择工位">
+                                    <el-option v-for="item in options" :key="item.value" :label="item.label"
+                                        :value="item.value" />
+                                </el-select>
+                            </el-form-item>
+
+                        </el-form>
+                        <div class="flex justify-end">
+                            <el-button type="primary" @click="onSubmit">查询</el-button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="w-[calc(100%-320px)]">
+                <div class="w-full h-full flex flex-col">
+
+                    <div class="flex flex-col flex-1">
+                        <div class="h-[35px] flex items-center text-xl justify-between text-[#fff] bg-[#006487]">
+                            <span class="ml-5"> 不良品处置列表</span>
+                        </div>
+                       
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<script lang="ts" setup>
+import tableTem from "@/components/tableTem/index.vue";
+import badInfoTem from "@/components/badInfoTem/index.vue";
+import selectTa from "@/components/selectTable/index.vue";
+import { checkStringType } from "@/utils/barcodeFormat";
+import { useAppStoreWithOut } from "@/stores/modules/app";
+import { useUserStoreWithOut } from "@/stores/modules/user";
+import type { Formspan, FormHeader } from "@/typing";
+import { ElMessage, ElMessageBox, ElNotification } from "element-plus";
+import {
+    ref,
+    reactive,
+    onMounted,
+    nextTick,
+    onBeforeMount,
+    onBeforeUnmount,
+} from "vue";
+const appStore = useAppStoreWithOut();
+const userStore = useUserStoreWithOut();
+const opui = appStore.getOPUIReal();
+const barCode = ref("");
+const tabsValue = ref("history");
+const editVisible = ref(false);
+const badVisible = ref(false);
+const inputRef = ref();
+const msgTitle = ref("");
+const stopsForm = ref({
+    ContainerName: "", //PCB
+    result: "OK", //工装治具
+    WorkStationName: opui.station, //工位
+    ResourceName: opui.station !== null ? opui.station : "", //设备
+    EmployeeName: userStore.getUserInfo, //用户
+});
+const form = ref({
+    order: "",
+    scrBarCode: '',
+    models: "",
+    productCode: "",
+    startTime: '',
+    endTime: '',
+    station: ''
+});
+
+const options = ref([
+    {
+        value: '12341234',
+        label: '贴合外观',
+    },
+    {
+        value: '123461283',
+        label: '贴合下料',
+    },
+])
+// const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
+//     {
+//         label: "机型",
+//         value: "models",
+//         disabled: true,
+//         type: "input",
+//         width: "",
+//     },
+//     {
+//         label: "产品编码",
+//         value: "productCode",
+//         disabled: true,
+//         type: "input",
+//         width: "",
+//     },
+//     {
+//         label: "产品描述",
+//         value: "productDes",
+//         disabled: true,
+//         type: "textarea",
+//         width: 300,
+//     },
+//     {
+//         label: "工单数量",
+//         value: "orderNum",
+//         disabled: true,
+//         type: "input",
+//         width: "",
+//     },
+// ]);
+const formHeader1 = reactive<InstanceType<typeof FormHeader>[]>([
+    {
+        label: "工单号",
+        value: "order",
+        disabled: true,
+        type: "input",
+        width: "",
+    },
+    {
+        label: "机型",
+        value: "models",
+        disabled: true,
+        type: "input",
+        width: "",
+    },
+    {
+        label: "产品编码",
+        value: "productCode",
+        disabled: true,
+        type: "input",
+        width: "",
+    },
+    {
+        label: "产品描述",
+        value: "productDes",
+        disabled: true,
+        type: "textarea",
+        width: 300,
+    },
+    {
+        label: "工单数量",
+        value: "orderNum",
+        disabled: true,
+        type: "input",
+        width: "",
+    },
+]);
+const columnData1 = reactive([
+    {
+        text: true,
+        prop: "eqty",
+        label: "MES屏条码",
+        width: "",
+        align: "1",
+    },
+    {
+        text: true,
+        prop: "eqName",
+        label: "CG/TP条码",
+        width: "",
+        align: "1",
+    },
+    {
+        text: true,
+        prop: "zcnumber",
+        label: "LCM条码",
+        width: "",
+        align: "1",
+    },
+    {
+        text: true,
+        prop: "level",
+        label: "扫描时间",
+        width: "",
+        align: "1",
+    },
+    {
+        text: true,
+        prop: "level",
+        label: "扫描人",
+        width: "",
+        align: "1",
+    },
+]);
+
+interface orderArr {
+    order: string;
+    models: string;
+    productCode: string;
+    productDes: string;
+    orderNum: string;
+}
+
+interface OrderData {
+    data: Array<orderArr>;
+}
+
+const tableData1 = ref([]);
+const tableHeight = ref(0);
+const pageObj = ref({
+    pageSize: 10,
+    currentPage: 1,
+});
+
+
+onBeforeMount(() => {
+    getScreenHeight();
+});
+onMounted(() => {
+    window.addEventListener("resize", getScreenHeight);
+    // console.log(appStore.getOpuiData.stationDec);
+});
+onBeforeUnmount(() => {
+    window.addEventListener("resize", getScreenHeight);
+});
+
+const onSubmit = () => {
+    console.log(form.value);
+}
+
+//分页
+const handleSizeChange = (val: any) => {
+    pageObj.value.currentPage = 1;
+    pageObj.value.pageSize = val;
+};
+const handleCurrentChange = (val: any) => {
+    pageObj.value.currentPage = val;
+};
+
+const getScreenHeight = () => {
+    nextTick(() => {
+        tableHeight.value = window.innerHeight - 210;
+    });
+};
+</script>
+
+<style lang="scss">
+.inbound .el-form-item__label {
+    font-size: 16px;
+}
+
+.setwidth {
+    flex: 0 0 320px;
+}
+
+.box {
+    border-right: 2px solid #cbcbcb;
+}
+
+.tabs-css .el-tabs--border-card {
+    border-top: 1px solid #006487;
+}
+
+.tabs-css .el-tabs__header {
+    background-color: #006487 !important;
+}
+
+.tabs-css .el-tabs__content {
+    padding: 5px 0px;
+}
+
+.tabs-css .el-tabs__item {
+    font-size: 1.1rem;
+}
+
+.tabs-css .el-tabs--border-card>.el-tabs__header .el-tabs__item {
+    color: #fff;
+    // padding: 0 !important;
+}
+
+.tabs-css .el-tabs__item.is-active {
+    // color: #fff;
+    color: #006487 !important;
+    // font-weight: bold;
+}
+
+.tabs-css .el-tabs--border-card>.el-tabs__header .el-tabs__item:not(.is-disabled):hover {
+    // color: #fff;
+    background-color: #fff;
+}
+
+.switchok .el-switch__label.is-active {
+    color: #13ce66;
+}
+
+.switchng .el-switch__label.is-active {
+    color: #ff4949;
+}
+</style>
