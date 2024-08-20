@@ -41,6 +41,7 @@ router.beforeEach(async (to, from, next) => {
                   let data = updateParentMenus([v])
                   return data
                 })
+                // console.log(routerData)
                 userStore.setRoleRouters(routerData)
                 await permissionStore.generateRoutes('server', routerData)
               })

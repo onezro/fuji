@@ -1,14 +1,16 @@
 export const setMenu=(data:any)=>{
     let menu=data.map((m:any)=>{
       // let parts = m.Component.split('/');
-      let englishOnly = m.Name.replace(/[^a-zA-Z]/g, '');  
+      // console.log(parts)
+      // let englishOnly = m.Name.replace(/[^a-zA-Z]/g, '');  
+      // console.log(englishOnly);
         return {
             ID:m.ID,
             FID:m.FID,
             MenuLevel:m.Level,
             MenuName:m.Name,
             title:m.Desc,
-            path:englishOnly,
+            path:m.Name,
             component:m.Component,
             EquipmentDesc:m.EquipmentDesc,
             EquipmentName:m.EquipmentName,

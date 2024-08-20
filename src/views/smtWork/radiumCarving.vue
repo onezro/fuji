@@ -68,10 +68,16 @@
                   />
                 </el-form-item>
               </el-form>
-              <div class="text-xl font-bold text-[#00B400]" v-show="msgTitle === '成功' || msgTitle === ''">
+              <div
+                class="text-xl font-bold text-[#00B400]"
+                v-show="msgTitle === '成功' || msgTitle === ''"
+              >
                 {{ msgTitle === "" ? "请扫描批次条码" : msgTitle }}
               </div>
-              <div class="text-xl font-bold text-[red]" v-show="msgTitle !== '成功' && msgTitle !== ''">
+              <div
+                class="text-xl font-bold text-[red]"
+                v-show="msgTitle !== '成功' && msgTitle !== ''"
+              >
                 {{ msgTitle === "" ? "请扫描批次条码" : msgTitle }}
               </div>
             </div>
@@ -82,10 +88,13 @@
             >
               <span class="ml-5"> PCB条码列表</span>
               <div class="h-full flex items-center">
-                <el-checkbox-group v-model="checkList" class="laser-table-filter">
-                  <el-checkbox label="已完成"  value="已完成" />
-                  <el-checkbox label="待镭雕" value="待镭雕" />
-                  <el-checkbox label="未释放" value="未释放" />
+                <el-checkbox-group
+                  v-model="checkList"
+                  class="laser-table-filter"
+                >
+                  <el-checkbox :label="`已完成(${Completed.length})`" value="已完成" />
+                  <el-checkbox :label="`待镭雕(${awaitLaser.length})`" value="待镭雕" />
+                  <el-checkbox :label="`未释放(${notReleased.length})`" value="未释放" />
                 </el-checkbox-group>
                 <el-icon @click="refreshClick()" class="mx-4"
                   ><RefreshRight
@@ -156,7 +165,7 @@
           v-for="item in formHeader"
           :prop="item.value"
           :label="item.lable"
-          :min-width="flexColumnWidth(item.lable,item.value)"
+          :min-width="flexColumnWidth(item.lable, item.value)"
         />
       </el-table>
       <div class="mt-3">
@@ -187,7 +196,11 @@
 import { ElMessage } from "element-plus";
 import tableTem from "@/components/tableTem/index.vue";
 // import {  } from "@/api/smt1";
-import { getMaterialInformation, OrderSNQuery, getLaserWorkOrder } from "@/api/smtApi";
+import {
+  getMaterialInformation,
+  OrderSNQuery,
+  getLaserWorkOrder,
+} from "@/api/smtApi";
 import { useAppStore } from "@/stores/modules/app";
 import { watch, computed } from "vue";
 interface Form {
@@ -302,21 +315,31 @@ const showIndex = ref(true);
 const tableHeight = ref(0);
 const formHeight = ref(0);
 const msgTitle = ref("");
+const Completed = ref<any[]>([]);
+const awaitLaser = ref<any[]>([]);
+const notReleased = ref<any[]>([]);
 const columnData = reactive([
   {
     text: true,
     prop: "SN",
     label: "PCB条码",
     width: "",
-    min:true,
+    min: true,
     align: "1",
   },
+  // {
+  //   text: true,
+  //   prop: "OrderNumber",
+  //   label: "工单",
+  //   width: "",
+  //   align: "1",
+  // },
   {
     text: true,
     prop: "MaterialBatchNo",
     label: "物料包装条码",
     width: "",
-    min:true,
+    min: true,
     align: "1",
   },
   {
@@ -324,7 +347,7 @@ const columnData = reactive([
     prop: "ReleasedDate",
     label: "拆包时间",
     width: "250px",
-    min:true,
+    min: true,
     align: "1",
   },
   {
@@ -332,7 +355,7 @@ const columnData = reactive([
     prop: "VendorLotNumber",
     label: "包装批次",
     width: "",
-    min:true,
+    min: true,
     align: "1",
   },
   {
@@ -340,15 +363,15 @@ const columnData = reactive([
     prop: "IsResponse",
     label: "状态",
     width: "100px",
-    min:true,
-    align: "center",
+    min: true,
+    align: "1",
   },
   {
     text: true,
     prop: "LastResponseDate",
     label: "完成时间",
     width: "",
-    min:true,
+    min: true,
     align: "1",
   },
 ]);
@@ -373,13 +396,15 @@ watch(
   }
 );
 
-const filteredData = computed(() => {  
-  if (checkList.value.length === 0) {  
-    // 如果没有选中的分类，则返回全部数据  
-    return tableData.value;  
-  }  
-  // 如果有选中的分类，则返回匹配的数据  
-  return tableData.value.filter(item => checkList.value.includes(item.IsResponse));  
+const filteredData = computed(() => {
+  if (checkList.value.length === 0) {
+    // 如果没有选中的分类，则返回全部数据
+    return tableData.value;
+  }
+  // 如果有选中的分类，则返回匹配的数据
+  return tableData.value.filter((item) =>
+    checkList.value.includes(item.IsResponse)
+  );
 });
 
 const table1 = (newdata: any) => {
@@ -443,7 +468,7 @@ const choiceOrder = () => {
   getMaterialInformation({
     OrderNumber: form.MfgOrderName,
     MaterialBatchNo: barCode.value,
-    ResourceNo: title.equipment,
+    ResourceNo: title.station,
   }).then((data: any) => {
     barCode.value = "";
     msgTitle.value = data.msg;
@@ -493,8 +518,16 @@ const sureClick = () => {
   OrderSNQuery({
     OrderID: choiceRow.value.MfgOrderName,
   }).then((data: any) => {
+    Completed.value = [];
+    awaitLaser.value = [];
+    notReleased.value = [];
     const dataText = JSON.parse(data.content);
     tableData.value = dataText;
+    Completed.value = tableData.value.filter((item) => item.IsResponse === '已完成');
+    awaitLaser.value = tableData.value.filter((item) => item.IsResponse === '待镭雕');
+    notReleased.value = tableData.value.filter((item) => item.IsResponse === '未释放');
+    console.log(Completed.value.length);
+    
   });
   form.MfgOrderName = choiceRow.value.MfgOrderName;
   form.BD_ProductModel = choiceRow.value.BD_ProductModel;
@@ -515,7 +548,7 @@ const refreshClick = () => {
   }).then((data: any) => {
     const dataText = JSON.parse(data.content);
     tableData.value = dataText;
-    checkList.value = ['待镭雕','未释放']
+    checkList.value = ["待镭雕", "未释放"];
   });
 };
 
@@ -525,41 +558,40 @@ const cellClass = (row: any) => {
   }
 };
 const getMaxLength = (arr: any) => {
-    return arr.reduce((acc: any, item: any) => {
-        if (item) {
-            const calcLen = getTextWidth(item)
-            if (acc < calcLen) {
-                acc = calcLen
-            }
-        }
-        return acc
-    }, 0)
-
-}
+  return arr.reduce((acc: any, item: any) => {
+    if (item) {
+      const calcLen = getTextWidth(item);
+      if (acc < calcLen) {
+        acc = calcLen;
+      }
+    }
+    return acc;
+  }, 0);
+};
 
 const getTextWidth = (str: string) => {
-    let width = 0;
-    const html = document.createElement('span');
-    html.innerText = str;
-    html.className = 'getTextWidth';
-    document.body?.appendChild(html);
+  let width = 0;
+  const html = document.createElement("span");
+  html.innerText = str;
+  html.className = "getTextWidth";
+  document.body?.appendChild(html);
 
-    // 使用类型断言将 Element 转换为 HTMLElement  
-    const spanElement = document.querySelector('.getTextWidth') as HTMLElement;
-    if (spanElement) {
-        width = spanElement.offsetWidth;
-        spanElement.remove();
-    }
-// console.log(width);
-    return width;
-}
+  // 使用类型断言将 Element 转换为 HTMLElement
+  const spanElement = document.querySelector(".getTextWidth") as HTMLElement;
+  if (spanElement) {
+    width = spanElement.offsetWidth;
+    spanElement.remove();
+  }
+  // console.log(width);
+  return width;
+};
 
 const flexColumnWidth = (label: any, prop: any) => {
-    const arr = tableData?.value.map((x: { [x: string]: any; }) => x[prop])
-    arr.push(label) // 把每列的表头也加进去算
-   
-    return (getMaxLength(arr) + 25) + 'px'
-}
+  const arr = tableData?.value.map((x: { [x: string]: any }) => x[prop]);
+  arr.push(label); // 把每列的表头也加进去算
+
+  return getMaxLength(arr) + 25 + "px";
+};
 </script>
 
 <style lang="scss" scoped>
@@ -614,14 +646,14 @@ const flexColumnWidth = (label: any, prop: any) => {
   }
 }
 
-::v-deep .laser-table-filter .el-checkbox__inner {  
-  /* 你的样式 */  
-  background-color: #409EFF !important; /* 使用 !important，但请谨慎 */
-  color:white !important;  
-}  
-::v-deep .laser-table-filter .el-checkbox__label {  
-  /* 你的样式 */  
-  color:white !important;  
+::v-deep .laser-table-filter .el-checkbox__inner {
+  /* 你的样式 */
+  background-color: #409eff !important; /* 使用 !important，但请谨慎 */
+  color: white !important;
+}
+::v-deep .laser-table-filter .el-checkbox__label {
+  /* 你的样式 */
+  color: white !important;
 }
 </style>
 
