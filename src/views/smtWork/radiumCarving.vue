@@ -3,11 +3,12 @@
     <div
       class="h-[40px] min-h-[40px] pl-2 pr-2 flex justify-between items-center"
     >
-      <span class="text-[1.2rem]">{{ title.stationDec }}</span>
+      <span class="text-[1.2rem]">{{ opui.stationDec }}</span>
       <div>
         <el-button type="primary" @click="dialogVisible = true,getOrderList()"
           >工单开工</el-button
         >
+        <el-button type="warning" @click="openFeed">物料上料</el-button>
         <!-- <el-button type="primary">条码转工单</el-button> -->
       </div>
     </div>
@@ -44,7 +45,7 @@
         </div>
       </div>
       <div class="w-[calc(100%-320px)]">
-        <div class="w-full h-full flex flex-col">
+        <div class="w-full h-full ">
           <div>
             <div
               class="h-[35px] flex items-center text-xl text-[#fff] bg-[#006487]"
@@ -92,9 +93,10 @@
                   v-model="checkList"
                   class="laser-table-filter"
                 >
-                  <el-checkbox :label="`已完成(${Completed.length})`" value="已完成" />
-                  <el-checkbox :label="`待镭雕(${awaitLaser.length})`" value="待镭雕" />
+                
                   <el-checkbox :label="`未释放(${notReleased.length})`" value="未释放" />
+                  <el-checkbox :label="`待镭雕(${awaitLaser.length})`" value="待镭雕" />
+                  <el-checkbox :label="`已完成(${Completed.length})`" value="已完成" />
                 </el-checkbox-group>
                 <el-icon @click="refreshClick()" class="mx-4"
                   ><RefreshRight
@@ -189,12 +191,32 @@
         </div>
       </template>
     </el-dialog>
+    <el-dialog
+      v-model="feedVisible"
+      title="物料上料"
+      width="90%"
+      align-center
+      class="saveAsDialog"
+      :append-to-body="true"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+    >
+      <feedTemp :form="feedForm" :form-header="FeedHeader"/>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="feedCancel">关闭</el-button>
+          <!-- <el-button type="primary" @click="show = false"> Confirm </el-button> -->
+        </span>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { ElMessage } from "element-plus";
 import tableTem from "@/components/tableTem/index.vue";
+import feedTemp from "@/components/feedTemp/index.vue";
+import { cloneDeep } from 'lodash-es'
 // import {  } from "@/api/smt1";
 import {
   getMaterialInformation,
@@ -249,7 +271,7 @@ const barCode = ref("");
 const activeName = ref("first");
 const dialogVisible = ref(false);
 const choiceRow = ref<any>();
-const title = appStore.getOPUIReal();
+const opui = appStore.getOPUIReal();
 const checkList = ref(["待镭雕", "未释放"]);
 
 const workOrderList = ref<OrderList[]>([]);
@@ -328,13 +350,6 @@ const columnData = reactive([
     min: true,
     align: "1",
   },
-  // {
-  //   text: true,
-  //   prop: "OrderNumber",
-  //   label: "工单",
-  //   width: "",
-  //   align: "1",
-  // },
   {
     text: true,
     prop: "MaterialBatchNo",
@@ -386,6 +401,45 @@ const pageObj1 = ref({
   currentPage: 1,
 });
 
+const feedVisible = ref(false);
+const feedForm=ref({
+  MfgOrderName:'208310182',
+  type:opui.station,
+  ProductName:'240106000131',
+  ProductDesc:'0402封装贴片电容100DF+5%50V MURATAGRM1555C1H101JA01D',
+  Qty:'100',
+  eqInfo:opui.stationDec
+})
+
+const FeedHeader=reactive([
+{
+        label:'机台',
+        prop:'eqInfo'
+    },
+    {
+        label:'工单号',
+        prop:'MfgOrderName'
+    },
+ 
+    {
+        label:'机型',
+        prop:'type'
+    },
+    {
+        label:'产品编码',
+        prop:'ProductName'
+    },
+    {
+        label:'产品描述',
+        prop:'ProductDesc'
+    },
+    {
+        label:'工单数量',
+        prop:'Qty'
+    },
+  
+])
+
 watch(
   () => workOrderInput.value,
   (newdata) => {
@@ -424,6 +478,30 @@ onMounted(() => {
 onBeforeUnmount(() => {
   window.addEventListener("resize", getScreenHeight);
 });
+
+
+
+//打开物料上料
+const openFeed = () => {
+  if (form.MfgOrderName === "") {
+    ElMessage({
+      message: "请选择工单",
+      type: "warning",
+    });
+    barCode.value = "";
+    return;
+  }
+  let data=cloneDeep(form)
+  
+  feedForm.value={...data}
+  feedForm.value.type=opui.station
+  feedForm.value.eqInfo=opui.stationDec
+  feedVisible.value = true;
+};
+//关闭物料上料
+const feedCancel = () => {
+  feedVisible.value = false;
+};
 const formText = (data: string) => {
   let key = data as keyof typeof form;
   return form[key];
@@ -468,7 +546,7 @@ const choiceOrder = () => {
   getMaterialInformation({
     OrderNumber: form.MfgOrderName,
     MaterialBatchNo: barCode.value,
-    ResourceNo: title.station,
+    ResourceNo: opui.station,
   }).then((data: any) => {
     barCode.value = "";
     msgTitle.value = data.msg;
@@ -664,6 +742,9 @@ const flexColumnWidth = (label: any, prop: any) => {
 ::v-deep .laser-table-filter .el-checkbox__label {
   /* 你的样式 */
   color: white !important;
+}
+.saveAsDialog {
+  min-width: 954px;
 }
 </style>
 

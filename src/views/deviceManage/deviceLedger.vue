@@ -14,12 +14,14 @@
                     </el-select>
                 </el-form-item>
                 <el-form-item label="设备类型" prop="EquipmentTypeName" class="mb-2">
-                    <el-select v-model="form.EquipmentTypeName" clearable placeholder="选择产线" style="width: 180px">
+                    <el-select v-model="form.EquipmentTypeName" clearable placeholder="选择设备类型" style="width: 180px">
                         <el-option v-for="item in option3" :key="item.EquipmentTypeName" :label="item.EquipmentTypeDesc"
                             :value="item.EquipmentTypeName" />
                     </el-select>
                 </el-form-item>
-
+                <el-form-item >
+                   
+                </el-form-item>
             </el-form>
             <div>
                 <el-button type="primary" @click="submit">
@@ -139,26 +141,11 @@ const handleDelete = (data: any) => {
         });
 };
 const columnData = reactive([
-{
-        text: true,
-        prop: "WorkCenterName",
-        label: "车间编码",
-        width: "",
-        min: true,
-        align: "center",
-    },
+
     {
         text: true,
         prop: "WorkCenterDesc",
         label: "车间名称",
-        width: "",
-        min: true,
-        align: "center",
-    },
-    {
-        text: true,
-        prop: "MfgLineName",
-        label: "产线编码",
         width: "",
         min: true,
         align: "center",
@@ -251,8 +238,13 @@ onBeforeUnmount(() => {
 
 const getData = () => {
     GetEquipmentList(form.value).then((res: any) => {
-        tableData.value = JSON.parse(res.content);
-        console.log(JSON.parse(res.content));
+        if(res.content==null){
+            tableData.value=[]
+        }else{
+            tableData.value = JSON.parse(res.content);
+        }
+        
+        // console.log(JSON.parse(res.content));
     });
 };
 

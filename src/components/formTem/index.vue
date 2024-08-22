@@ -27,7 +27,7 @@
 </template>
 
 <script lang="ts" setup>
-import {  defineExpose, toRefs, computed, ref } from "vue"
+import { toRefs, computed, ref } from "vue"
 const props = defineProps(['visible', 'width', 'title', 'formRef', 'form', 'formHeader', 'rules'])
 const { visible, width, title, form, formHeader, rules } = toRefs(props)
 const emit = defineEmits(['formCancel', 'onSubmit','selectData'])
