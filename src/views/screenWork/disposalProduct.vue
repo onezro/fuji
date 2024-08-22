@@ -51,7 +51,31 @@
                         <div class="h-[35px] flex items-center text-xl justify-between text-[#fff] bg-[#006487]">
                             <span class="ml-5"> 不良品处置列表</span>
                         </div>
-                       
+                        <div class="p-2">
+                            <el-button type="primary" @click="onSubmit">批量拆解</el-button>
+                        </div>
+                        <el-table :data="tableData" :height="tableHeight" stripe border fit
+                            @selection-change="handleSelectionChange">
+                            <el-table-column type="selection" width="55" align="center" />
+                            <el-table-column v-for="c in columnData" :key="c.prop" :label="c.label" :prop="c.prop"
+                                :width="c.width" :min-width="c.min ? flexColumnWidth(c.label, c.prop) : ''" :align="c.align">
+                                <template #default="scope">
+                                    <span v-if="c.text">{{ scope.row[c.prop] }}</span>
+                                    <el-tooltip v-if="c.isOperation" v-for="(o, oi) in c.operation" :key="oi"
+                                        :content="o.label" placement="top">
+                                        <el-button :icon="o.icon" size="small" :type="o.type"
+                                            @click="handleEdit"/>
+                                    </el-tooltip>
+                                </template>
+                            </el-table-column>
+                        </el-table>
+                        <div class="mt-3 bg-white">
+                            <el-pagination background @size-change="handleSizeChange"
+                                @current-change="handleCurrentChange" :current-page="pageObj.currentPage"
+                                :page-size="pageObj.pageSize" :page-sizes="[10, 30, 50, 100, 150]"
+                                layout="total,sizes, prev, pager, next, jumper" :total="tableData.length">
+                            </el-pagination>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -67,6 +91,7 @@ import { checkStringType } from "@/utils/barcodeFormat";
 import { useAppStoreWithOut } from "@/stores/modules/app";
 import { useUserStoreWithOut } from "@/stores/modules/user";
 import type { Formspan, FormHeader } from "@/typing";
+import { cloneDeep } from 'lodash-es'
 import { ElMessage, ElMessageBox, ElNotification } from "element-plus";
 import {
     ref,
@@ -95,7 +120,7 @@ const stopsForm = ref({
 const form = ref({
     order: "",
     scrBarCode: '',
-    models: "",
+    // models: "",
     productCode: "",
     startTime: '',
     endTime: '',
@@ -112,36 +137,23 @@ const options = ref([
         label: '贴合下料',
     },
 ])
-// const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
-//     {
-//         label: "机型",
-//         value: "models",
-//         disabled: true,
-//         type: "input",
-//         width: "",
-//     },
-//     {
-//         label: "产品编码",
-//         value: "productCode",
-//         disabled: true,
-//         type: "input",
-//         width: "",
-//     },
-//     {
-//         label: "产品描述",
-//         value: "productDes",
-//         disabled: true,
-//         type: "textarea",
-//         width: 300,
-//     },
-//     {
-//         label: "工单数量",
-//         value: "orderNum",
-//         disabled: true,
-//         type: "input",
-//         width: "",
-//     },
-// ]);
+const tableData = ref([
+    {
+        order: "1232",
+        scrBarCode: '23432',
+        productCode: "234234",
+        time: '241243',
+        station: '234234'
+    },
+    {
+        order: "1232",
+        scrBarCode: '23432',
+        productCode: "234234",
+        time: '241243',
+        station: '234234'
+    }
+])
+
 const formHeader1 = reactive<InstanceType<typeof FormHeader>[]>([
     {
         label: "工单号",
@@ -179,43 +191,63 @@ const formHeader1 = reactive<InstanceType<typeof FormHeader>[]>([
         width: "",
     },
 ]);
-const columnData1 = reactive([
+const columnData = reactive([
     {
         text: true,
-        prop: "eqty",
+        prop: "scrBarCode",
         label: "MES屏条码",
         width: "",
+        min: true,
         align: "1",
     },
     {
         text: true,
-        prop: "eqName",
-        label: "CG/TP条码",
+        prop: "order",
+        label: "工单号",
         width: "",
+        min: true,
         align: "1",
     },
     {
         text: true,
-        prop: "zcnumber",
-        label: "LCM条码",
+        prop: "productCode",
+        label: "产品编码",
         width: "",
+        min: true,
         align: "1",
     },
     {
         text: true,
-        prop: "level",
-        label: "扫描时间",
+        prop: "time",
+        label: "不良录入时间",
         width: "",
+        min: true,
         align: "1",
     },
     {
         text: true,
-        prop: "level",
-        label: "扫描人",
+        prop: "station",
+        label: "不良工位",
         width: "",
+        min: true,
         align: "1",
+    },
+    {
+        isOperation: true,
+        label: "操作",
+        width: "120",
+        align: "center",
+        fixed: "right",
+        operation: [
+            {
+                type: "primary",
+                label: "快修",
+                icon:'Position'
+            },
+        ],
     },
 ]);
+const selectTable = ref([])
 
 interface orderArr {
     order: string;
@@ -252,6 +284,15 @@ const onSubmit = () => {
     console.log(form.value);
 }
 
+const handleSelectionChange = (val: any) => {
+    let data = cloneDeep(val)
+    selectTable.value = data
+    console.log(selectTable.value);
+}
+
+const handleEdit=()=>{
+
+}
 //分页
 const handleSizeChange = (val: any) => {
     pageObj.value.currentPage = 1;
@@ -263,12 +304,51 @@ const handleCurrentChange = (val: any) => {
 
 const getScreenHeight = () => {
     nextTick(() => {
-        tableHeight.value = window.innerHeight - 210;
+        tableHeight.value = window.innerHeight - 255;
     });
 };
+const getMaxLength = (arr: any) => {
+    return arr.reduce((acc: any, item: any) => {
+        if (item) {
+            // console.log(acc,item);
+            const calcLen = getTextWidth(item)
+
+            if (acc < calcLen) {
+                acc = calcLen
+            }
+        }
+        return acc
+    }, 0)
+
+}
+
+const getTextWidth = (str: string) => {
+    let width = 0;
+    const html = document.createElement('span');
+    html.innerText = str;
+    html.className = 'getTextWidth';
+    document.body?.appendChild(html);
+
+    // 使用类型断言将 Element 转换为 HTMLElement  
+    const spanElement = document.querySelector('.getTextWidth') as HTMLElement;
+    if (spanElement) {
+        width = spanElement.offsetWidth;
+        spanElement.remove();
+    }
+    // console.log(width);
+    return width;
+}
+
+
+const flexColumnWidth = (label: any, prop: any) => {
+    const arr = tableData?.value.map((x: { [x: string]: any; }) => x[prop])
+    arr.push(label) // 把每列的表头也加进去算
+    // console.log(arr);
+    return (getMaxLength(arr) + 25) + 'px'
+}
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .inbound .el-form-item__label {
     font-size: 16px;
 }
@@ -319,5 +399,10 @@ const getScreenHeight = () => {
 
 .switchng .el-switch__label.is-active {
     color: #ff4949;
+}
+</style>
+<style scoped>
+.el-pagination {
+    justify-content: center;
 }
 </style>

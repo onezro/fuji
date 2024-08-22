@@ -4,7 +4,9 @@
       class="h-[40px] min-h-[40px] pl-2 pr-2 flex justify-between items-center"
     >
       <span class="text-[1.2rem]"> {{ opui.stationDec }} </span>
+      <el-button type="primary">物料上料</el-button>
     </div>
+    
     <div class="w-full flex-1 flex">
       <div class="setwidth w-[320px]">
         <div class="w-full h-full box">
@@ -26,7 +28,7 @@
                   :table="orderTable"
                   :columns="orderColumns"
                   :max-height="400"
-                  :tableWidth="1000"
+                  :tableWidth="700"
                   :keywords="{ label: 'order', value: 'order' }"
                   @radioChange="(...args: any) => radioChange(args)"
                   ><</selectTa
