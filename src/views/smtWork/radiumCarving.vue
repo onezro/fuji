@@ -5,7 +5,7 @@
     >
       <span class="text-[1.2rem]">{{ title.stationDec }}</span>
       <div>
-        <el-button type="primary" @click="dialogVisible = true"
+        <el-button type="primary" @click="dialogVisible = true,getOrderList()"
           >工单开工</el-button
         >
         <!-- <el-button type="primary">条码转工单</el-button> -->
@@ -70,15 +70,15 @@
               </el-form>
               <div
                 class="text-xl font-bold text-[#00B400]"
-                v-show="msgTitle === '成功' || msgTitle === ''"
+                v-show="msgType === true || msgTitle === ''"
               >
                 {{ msgTitle === "" ? "请扫描批次条码" : msgTitle }}
               </div>
               <div
                 class="text-xl font-bold text-[red]"
-                v-show="msgTitle !== '成功' && msgTitle !== ''"
+                v-show="msgType === false && msgTitle !== ''"
               >
-                {{ msgTitle === "" ? "请扫描批次条码" : msgTitle }}
+                {{ msgTitle }}
               </div>
             </div>
           </div>
@@ -315,6 +315,7 @@ const showIndex = ref(true);
 const tableHeight = ref(0);
 const formHeight = ref(0);
 const msgTitle = ref("");
+const msgType = ref(true);
 const Completed = ref<any[]>([]);
 const awaitLaser = ref<any[]>([]);
 const notReleased = ref<any[]>([]);
@@ -327,6 +328,13 @@ const columnData = reactive([
     min: true,
     align: "1",
   },
+  // {
+  //   text: true,
+  //   prop: "OrderNumber",
+  //   label: "工单",
+  //   width: "",
+  //   align: "1",
+  // },
   {
     text: true,
     prop: "MaterialBatchNo",
@@ -409,7 +417,6 @@ const table1 = (newdata: any) => {
 
 onBeforeMount(() => {
   getScreenHeight();
-  getOrderList();
 });
 onMounted(() => {
   window.addEventListener("resize", getScreenHeight);
@@ -467,9 +474,12 @@ const choiceOrder = () => {
     msgTitle.value = data.msg;
     if (!data.success) {
       msgTitle.value = data.msg;
+      msgType.value = false;
       return;
     } else {
-      msgTitle.value = "成功";
+      msgType.value = true;
+      msgTitle.value = data.msg;
+      // msgTitle.value = "成功";
       refreshClick();
     }
   });
@@ -520,6 +530,9 @@ const sureClick = () => {
     awaitLaser.value = tableData.value.filter((item) => item.IsResponse === '待镭雕');
     notReleased.value = tableData.value.filter((item) => item.IsResponse === '未释放');
   });
+  checkList.value = ["待镭雕", "未释放"];
+  msgTitle.value = ''
+  barCode.value = ''
   form.MfgOrderName = choiceRow.value.MfgOrderName;
   form.BD_ProductModel = choiceRow.value.BD_ProductModel;
   form.ProductName = choiceRow.value.ProductName;
@@ -537,9 +550,15 @@ const refreshClick = () => {
   OrderSNQuery({
     OrderID: form.MfgOrderName,
   }).then((data: any) => {
+    Completed.value = [];
+    awaitLaser.value = [];
+    notReleased.value = [];
     const dataText = JSON.parse(data.content);
     tableData.value = dataText;
     checkList.value = ["待镭雕", "未释放"];
+    Completed.value = tableData.value.filter((item) => item.IsResponse === '已完成');
+    awaitLaser.value = tableData.value.filter((item) => item.IsResponse === '待镭雕');
+    notReleased.value = tableData.value.filter((item) => item.IsResponse === '未释放');
   });
 };
 

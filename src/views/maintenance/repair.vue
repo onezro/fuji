@@ -66,7 +66,9 @@
           <el-table-column prop="Result" label="原因"> </el-table-column>
           <el-table-column prop="Remark" label="操作">
             <template #default="scope">
-              <el-button type="primary" @click="maintenance(scope.row)">维修</el-button>
+              <el-button type="primary" @click="maintenance(scope.row)"
+                >维修</el-button
+              >
             </template>
           </el-table-column>
         </el-table>
@@ -97,7 +99,6 @@
           <el-col :span="6">
             <el-form-item label="内控SN" label-width="100px" prop="InternalSN">
               <el-input
-                disabled
                 size="default"
                 v-model="maintenanceForm.InternalSN"
                 class="input-with-select"
@@ -170,18 +171,18 @@
           </el-input>
         </el-form-item>
         <el-form-item label="面别" label-width="100px">
-              <el-select
-                v-model="maintenanceForm.FaceType"
-                placeholder="Select"
-                style="width: 180px"
-              >
-                <el-option
-                  v-for="item in ['Top','Bot']"
-                  :key="item"
-                  :label="item"
-                  :value="item"
-                />
-              </el-select>
+          <el-select
+            v-model="maintenanceForm.FaceType"
+            placeholder="Select"
+            style="width: 180px"
+          >
+            <el-option
+              v-for="item in ['Top', 'Bot']"
+              :key="item"
+              :label="item"
+              :value="item"
+            />
+          </el-select>
         </el-form-item>
         <el-form-item label="订单号" label-width="100px">
           <el-input
@@ -293,17 +294,18 @@
       <template #footer>
         <div class="dialog-footer">
           <el-button @click="dialogTableVisible = false">取消</el-button>
-          <el-button
-            type="primary"
-            @click="sureMaintenance(ruleFormRef)"
-          >
+          <el-button type="primary" @click="sureMaintenance(ruleFormRef)">
             确定
           </el-button>
         </div>
       </template>
     </el-dialog>
 
-    <el-dialog v-model="historyTableVisible" title="查询返修维修记录" width="1000">
+    <el-dialog
+      v-model="historyTableVisible"
+      title="查询返修维修记录"
+      width="1000"
+    >
       <el-form :inline="true">
         <el-form-item>
           <el-input
@@ -318,9 +320,9 @@
         <el-form-item>
           <el-input
             size="default"
-            placeholder="请输入当前SN"
+            placeholder="请输入位号"
             clearable
-            v-model="getHistoryText.CurrentBarcode"
+            v-model="getHistoryText.Position"
             class="input-with-select"
           >
           </el-input>
@@ -347,6 +349,7 @@ import { getCheckResults } from "@/api/permiss";
 import type { InspectionResult } from "@/typing";
 import { ElMessageBox, ElMessage, ElLoading } from "element-plus";
 import tableTem from "@/components/tableTem/index.vue";
+import { useUserStoreWithOut } from "@/stores/modules/user";
 import { QuerySN, MaintenanceAdd, QueryMaintenance } from "@/api/smtApi";
 import {
   ref,
@@ -363,13 +366,16 @@ const pageSize = ref(10);
 const currentPage = ref(1);
 const tableHeight = ref(0);
 const ruleFormRef = ref();
+const OperationType = ref("");
+const userStore = useUserStoreWithOut();
+const loginName = userStore.getUserInfo;
 const getDataText = reactive({
   SN: "",
   OperationType: "",
 });
 const getHistoryText = reactive({
   InternalSN: "",
-  CurrentBarcode: "",
+  Position: "",
 });
 const dialogTableVisible = ref(false);
 const historyTableVisible = ref(false);
@@ -381,6 +387,10 @@ const repairList = ref([
   {
     label: "AOI",
     value: "AOI",
+  },
+  {
+    label: "AOII",
+    value: "AOII",
   },
 ]);
 
@@ -451,6 +461,9 @@ interface RuleForm {
   Repairlnformation: string;
   RepairType: string;
   RepairReason: string;
+  UpdateUser: string;
+  OperationType: string;
+  Position: string;
 }
 
 const maintenanceForm = ref<RuleForm>({
@@ -471,6 +484,9 @@ const maintenanceForm = ref<RuleForm>({
   Repairlnformation: "",
   RepairType: "",
   RepairReason: "",
+  UpdateUser: loginName,
+  OperationType: "",
+  Position: "",
 });
 
 // watch(
@@ -496,13 +512,16 @@ const getData = () => {
     return;
   }
   QuerySN(getDataText.SN, getDataText.OperationType).then((res: any) => {
+    OperationType.value = getDataText.OperationType;
     const dataText = JSON.parse(res.content);
     tableData.value = dataText;
   });
 };
 
 const maintenance = (row: any) => {
-  maintenanceForm.value.InternalSN = row.BarCode
+  // maintenanceForm.value.InternalSN = row.BarCode;
+  maintenanceForm.value.OperationType = OperationType.value;
+  maintenanceForm.value.Position = row.PadID;
   dialogTableVisible.value = true;
 };
 
@@ -511,7 +530,7 @@ const sureMaintenance = (formEl: any) => {
   formEl.validate((valid: any, fields: any) => {
     if (valid) {
       dialogTableVisible.value = false;
-      MaintenanceAdd([maintenanceForm.value]).then((res: any) => {
+      MaintenanceAdd(maintenanceForm.value).then((res: any) => {
         if (!res) {
           return;
         }
@@ -538,27 +557,35 @@ const sureMaintenance = (formEl: any) => {
           Repairlnformation: "",
           RepairType: "",
           RepairReason: "",
+          UpdateUser: loginName,
+          OperationType: "",
+          Position: "",
         };
       });
     } else {
       ElMessage({
-      message: "请输入必要信息",
-      type: "warning",
-    });
+        message: "请输入必要信息",
+        type: "warning",
+      });
       console.log("error submit!", fields);
     }
   });
 };
 
 const getHistory = () => {
-  if (getHistoryText.InternalSN === "" || getHistoryText.CurrentBarcode === "") {
+  if (
+    getHistoryText.InternalSN === ""
+  ) {
     ElMessage({
-      message: "内控SN或当前SN不能为空",
+      message: "内控SN不能为空",
       type: "warning",
     });
     return;
   }
-  QueryMaintenance(getHistoryText.InternalSN, getHistoryText.CurrentBarcode).then((res: any) => {
+  QueryMaintenance(
+    getHistoryText.InternalSN,
+    getHistoryText.Position
+  ).then((res: any) => {
     const dataText = JSON.parse(res.content);
     historyTable.value = dataText;
   });

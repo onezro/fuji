@@ -44,10 +44,10 @@ export function MaintenanceAdd(data:any) {
     });
 }
 
-export function QueryMaintenance(InternalSN: any,CurrentBarcode:any) {
+export function QueryMaintenance(InternalSN: any,Position:any) {
     return request({
         url: "/api/Maintenance/QueryMaintenance",
         method: "post",
-        params: {InternalSN,CurrentBarcode},
+        params: {InternalSN,Position},
     });
 }

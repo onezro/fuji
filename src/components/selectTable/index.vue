@@ -27,7 +27,7 @@
           </t-query-condition>
         </div>
         <slot name="toolbar"></slot>
-        <el-table ref="selectTable" size="small" :data="state.tableData" :class="{
+        <el-table ref="selectTable" size="small" :data="state.tableData" :height="'300px'"  :class="{
           radioStyle: !multiple,
           highlightCurrentRow: isRadio,
           keyUpStyle: isKeyup
