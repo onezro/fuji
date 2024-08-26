@@ -197,7 +197,7 @@ const msgType = ref(true);
 const tableData = ref([]);
 const tableHeight = ref(0);
 const columnData = reactive([
-{
+  {
     text: true,
     prop: "CarrierName",
     label: "周转箱条码",
@@ -205,6 +205,15 @@ const columnData = reactive([
     min: true,
     align: "center",
   },
+  {
+    text: true,
+    prop: "OrderNumber",
+    label: "工单号",
+    width: "",
+    min: true,
+    align: "center",
+  },
+  
   {
     text: true,
     prop: "PCBSerialNumber",
@@ -324,18 +333,16 @@ const disFullBox = (val: any) => {
         getCarrierList();
       });
     })
-    .catch(() => {
-   
-    });
+    .catch(() => {});
 };
-const getList = (val:any) => {
-  QueryPackListByCarrier({carrierName:val}).then((res:any)=>{
-    if(res.content==null){
+const getList = (val: any) => {
+  QueryPackListByCarrier({ carrierName: val }).then((res: any) => {
+    if (res.content == null) {
       tableData.value = [];
-      return
+      return;
     }
     tableData.value = res.content;
-  })
+  });
 };
 
 const getChange = () => {
