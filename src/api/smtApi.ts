@@ -75,3 +75,21 @@ export function TrunkDeal(data: any) {
         data
     });
 }
+
+//查询烧录打印数据
+export function QueryBurnPrintData(data: any) {
+    return request({
+        url: "/api/Burn/QueryBurnPrintData",
+        method: "post",
+        params: {specName:data}
+    });
+}
+
+//烧录标签打印
+export function PrintBurnModel(data: any) {
+    return request({
+        url: "/api/Burn/PrintBurnModel",
+        method: "post",
+        data
+    });
+}

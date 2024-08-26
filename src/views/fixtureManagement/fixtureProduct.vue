@@ -8,61 +8,45 @@
               <el-button class="ml-3" type="primary" @click="">查询</el-button>
           </div>
         </div>
-        <el-table
-          :data="
-            tableData.slice((currentPage - 1) * pageSize, currentPage * pageSize)
-          "
-          stripe
-          border
-          fit
-          :height="tableHeight"
-          row-key="step1"
-          :tree-props="{ children: 'stepItemList' }"
-        >
-          <!-- <el-table-column label="序号" width="60px" type="index" align="center" /> -->
-          <el-table-column prop="WorkSection" label="产品编号"> </el-table-column>
-          <el-table-column prop="ProductName" label="类型"> </el-table-column>
-          <el-table-column prop="Step" label="消耗量"> </el-table-column>
-          <el-table-column prop="StepName" label="工序"> </el-table-column>
-          <el-table-column prop="SubItem" label="面别"> </el-table-column>
-          <el-table-column prop="SubItemName" label="描述"> </el-table-column>
-          <el-table-column fixed="right" label="操作" width="120" align="center">
-            <template #default="scope">
-              <el-tooltip content="编辑" placement="top">
-                <el-button
-                  type="primary"
-                  icon="EditPen"
-                  size="small"
-                  @click.prevent=""
-                ></el-button>
-              </el-tooltip>
-  
-              <el-tooltip content="删除" placement="top">
-                <el-button
-                  type="danger"
-                  icon="Delete"
-                  size="small"
-                  @click.prevent=""
-                ></el-button>
-              </el-tooltip>
-            </template>
-          </el-table-column>
-        </el-table>
-        <div class="mt-3">
-          <el-pagination
-            size="large"
-            background
-            @size-change="handleSizeChange"
-            @current-change="handleCurrentChange"
-            :current-page="currentPage"
-            :page-size="pageSize"
-            :page-sizes="[5, 10, 20, 50, 100]"
-            layout="total,sizes, prev, pager, next, jumper"
-            :total="tableData.length"
-          >
-          </el-pagination>
-        </div>
+        <table-tem :tableData="tableData" :tableHeight="tableHeight" :columnData="columnData"
+                :pageObj="pageObj" @handleSizeChange="handleSizeChange"
+                @handleCurrentChange="handleCurrentChange"></table-tem>
       </el-card>
+      <el-dialog
+        :append-to-body="true"
+        :close-on-click-modal="false"
+        v-model="editVisible"
+        @close=""
+        title="编辑"
+        width="50%"
+      >
+        <el-form
+          ref="formRef"
+          :model="EditForm"
+          label-position="left"
+          label-width="auto"
+        >
+          <el-form-item label="类型" prop="WorkSection">
+            <el-input v-model="EditForm.type" style="width: 240px" placeholder="请输入"></el-input>
+          </el-form-item>
+          <el-form-item label="描述">
+            <el-input
+              v-model="EditForm.Des"
+              autosize
+              type="textarea"
+              placeholder=""
+            />
+          </el-form-item>
+        </el-form>
+  
+        <template #footer>
+          <span class="dialog-footer">
+            <!-- <el-button type="info" @click="addSon"> 增加子项</el-button> -->
+            <el-button @click="editVisible = false"> 取消 </el-button>
+            <el-button type="primary" @click=""> 确定 </el-button>
+          </span>
+        </template>
+      </el-dialog>
       <el-dialog
         :append-to-body="true"
         :close-on-click-modal="false"
@@ -93,7 +77,7 @@
         <template #footer>
           <span class="dialog-footer">
             <!-- <el-button type="info" @click="addSon"> 增加子项</el-button> -->
-            <el-button @click=""> 取消 </el-button>
+            <el-button @click="addVisible"> 取消 </el-button>
             <el-button type="primary" @click=""> 确定 </el-button>
           </span>
         </template>
@@ -103,12 +87,7 @@
   
   <script setup lang="ts">
   import { ElMessage, ElNotification, ElMessageBox } from "element-plus";
-  import {
-    InsertInspect,
-    GetInspectData,
-    UpdateInspectData,
-    DeleteInspectData,
-  } from "@/api/permiss";
+  import tableTem from "@/components/tableTem/index.vue";
   import {
     ref,
     unref,
@@ -124,8 +103,6 @@
     number: string;
     type: string;
     consumption: string;
-    Step1: string;
-    SubItem1: string;
     process: string;
     FaceType: string;
     Des: string;
@@ -136,18 +113,124 @@
     Des: string;
   }
   
-  const pageSize = ref(10);
+  interface EditFormTS {
+    type: string;
+    Des: string;
+  }
+  
+//   const pageSize = ref(10);
   const currentPage = ref(1);
   const tableHeight = ref(0);
   const addVisible = ref(false);
+  const editVisible = ref(false);
   const inputValue = ref();
+const pageObj = ref({
+    pageSize: 30,
+    currentPage: 1,
+});
   
-  const tableData = ref<tableDataTS[]>([]);
+  const tableData = ref([{
+    number: '1613543154',
+    type: 'GD-350',
+    consumption: '412',
+    process: '',
+    FaceType: 'TOP',
+    Des: '测试'
+  }]);
+  
   const form = ref<formTS>({
     type: "",
     Des: "",
   });
   
+  const EditForm = ref<EditFormTS>({
+    type: "",
+    Des: "",
+  });
+
+  const editSubmit = (data: any) => {
+    console.log(data);
+    EditForm.value.type = data.type;
+    EditForm.value.Des = data.Des;
+    editVisible.value = true
+  }
+
+  const deleteSubmit = () => {
+  }
+
+  
+const columnData = reactive([
+
+{
+    text: true,
+    prop: "number",
+    label: "产品编号",
+    width: "",
+    min: true,
+    align: "center",
+},{
+    text: true,
+    prop: "type",
+    label: "类型",
+    width: "",
+    min: true,
+    align: "center",
+},
+{
+    text: true,
+    prop: "consumption",
+    label: "消耗量",
+    width: "",
+    min: true,
+    align: "center",
+},
+
+{
+    text: true,
+    prop: "process",
+    label: "工序",
+    width: "",
+    min: true,
+    align: "center",
+},
+{
+    text: true,
+    prop: "FaceType",
+    label: "面别",
+    width: "",
+    min: true,
+    align: "center",
+},
+{
+    text: true,
+    prop: "Des",
+    label: "描述",
+    width: "",
+    min: true,
+    align: "center",
+},
+{
+    isOperation: true,
+    label: "操作",
+    width: "120",
+    align: "center",
+    fixed: "right",
+    operation: [
+        {
+            type: "primary",
+            label: "编辑",
+            icon: "Document",
+            buttonClick: editSubmit,
+        },{
+            type: "danger",
+            label: "删除",
+            icon: "Delete",
+            buttonClick: deleteSubmit,
+        }
+    ],
+},
+]);
+
   onBeforeMount(() => {
     getScreenHeight();
   });
@@ -157,14 +240,14 @@
   onBeforeUnmount(() => {
     window.addEventListener("resize", getScreenHeight);
   });
-  
-  const handleSizeChange = (val: any) => {
-    currentPage.value = 1;
-    pageSize.value = val;
-  };
-  const handleCurrentChange = (val: any) => {
-    currentPage.value = val;
-  };
+
+const handleSizeChange = (val: any) => {
+    pageObj.value.currentPage = 1;
+    pageObj.value.pageSize = val;
+};
+const handleCurrentChange = (val: any) => {
+    pageObj.value.currentPage = val;
+};
   const getScreenHeight = () => {
     nextTick(() => {
       tableHeight.value = window.innerHeight - 215;

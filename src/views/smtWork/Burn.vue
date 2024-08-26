@@ -90,16 +90,32 @@
           </el-form>
         </div>
         <div class="mb-2 ml-2">
-          <el-button icon="Printer" type="primary" @click="burnPrint" v-if="BurnTableData.length !== 0"
+          <el-button
+            icon="Printer"
+            type="primary"
+            @click="burnPrint"
+            v-if="BurnTableData.length !== 0"
             >打印</el-button
           >
-          <el-button icon="Printer" v-else="BurnTableData.length === 0"  disabled type="info"
+          <el-button
+            icon="Printer"
+            v-else="BurnTableData.length === 0"
+            disabled
+            type="info"
             >打印</el-button
           >
-          <el-button icon="Printer" v-if="OrderForm.MfgOrderName === ''"  disabled type="info"
+          <el-button
+            icon="Printer"
+            v-if="OrderForm.MfgOrderName === ''"
+            disabled
+            type="info"
             >原材料上料</el-button
           >
-          <el-button icon="Printer" v-else="OrderForm.MfgOrderName !== ''" type="primary" @click="RawmaterialFeeding"
+          <el-button
+            icon="Printer"
+            v-else="OrderForm.MfgOrderName !== ''"
+            type="primary"
+            @click="RawmaterialFeeding"
             >原材料上料</el-button
           >
         </div>
@@ -114,7 +130,7 @@
           @handleSizeChange="handleSizeChange"
           @handleCurrentChange="handleCurrentChange"
           showSelect="ture"
-          @handleSelectionChange="test"
+          @handleSelectionChange="getChoice"
         >
         </tableTem>
       </div>
@@ -143,18 +159,30 @@ const form = ref({
   endTime: "",
 });
 import { useAppStore } from "@/stores/modules/app";
+import { QueryBurnPrintData, PrintBurnModel } from "@/api/smtApi";
 
 const appStore = useAppStore();
 const opui = appStore.getOPUIReal();
 
 const BurnTableRef = ref();
 
-const BurnTableData = ref([])
+const BurnTableData = ref([]);
 
-const test = (e: any) => {
-  console.log(e);
-  BurnTableData.value = e
-  console.log(BurnTableData.value.length);
+const getChoice = (e: any) => {
+  BurnTableData.value = e.map((item: any) => {
+    return {
+      Barcode: item.ContainerName,
+      Itemcode: item.MaterialCode,
+      Supplier: "",
+      ManufacDate: "",
+      Itemname: item.MaterialDesc,
+      DeliveryNum: "",
+      Burdate: "",
+      Batchnum: "",
+      Number: item.Qty,
+    };
+  });
+  console.log(BurnTableData.value);
   
 };
 
@@ -247,28 +275,7 @@ const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
   },
 ]);
 
-const tableData = ref([
-  {
-    quantity: "10000",
-    rawMaterial: "A240812000083",
-    semiFinished: "A240813000024",
-    itemNumber: "2400617001074",
-    itemName:
-      "核心模块组件委外锐CS199MAP_MT8666MV_AB_V3.0_PCB45.8*45.8*4.3mm23106010001773A5321CS199MAF(C211MCArr)软件",
-    orderWork: "24072404",
-    time: "2024-08-13 07:31:46",
-  },
-  {
-    quantity: "10000",
-    rawMaterial: "A240812000083",
-    semiFinished: "A240813000024",
-    itemNumber: "2400617001074",
-    itemName:
-      "核心模块组件委外锐CS199MAP_MT8666MV_AB_V3.0_PCB45.8*45.8*4.3mm23106010001773A5321CS199MAF(C211MCArr)软件",
-    orderWork: "24072404",
-    time: "2024-08-13 07:31:46",
-  },
-]);
+const tableData = ref([]);
 
 const formText = (data: string) => {
   let key = data as keyof typeof OrderForm;
@@ -278,7 +285,7 @@ const formText = (data: string) => {
 const columnData = reactive([
   {
     text: true,
-    prop: "quantity",
+    prop: "Qty",
     label: "数量",
     width: "",
     min: true,
@@ -286,7 +293,7 @@ const columnData = reactive([
   },
   {
     text: true,
-    prop: "rawMaterial",
+    prop: "ContainerName",
     label: "原材料码",
     width: "",
     min: true,
@@ -294,7 +301,7 @@ const columnData = reactive([
   },
   {
     text: true,
-    prop: "semiFinished",
+    prop: "FromContainerName",
     label: "半成品码",
     width: "",
     min: true,
@@ -302,7 +309,7 @@ const columnData = reactive([
   },
   {
     text: true,
-    prop: "itemNumber",
+    prop: "MaterialCode",
     label: "物料编号",
     width: "",
     min: true,
@@ -310,15 +317,15 @@ const columnData = reactive([
   },
   {
     text: true,
-    prop: "itemName",
+    prop: "MaterialDesc",
     label: "物料名称",
     // width: "600",
-    // min: true,
+    min: true,
     align: "1",
   },
   {
     text: true,
-    prop: "orderWork",
+    prop: "MfgOrderName",
     label: "工单号",
     width: "",
     min: true,
@@ -326,7 +333,7 @@ const columnData = reactive([
   },
   {
     text: true,
-    prop: "time",
+    prop: "FactoryStartDate",
     label: "创建时间",
     width: "",
     min: true,
@@ -335,22 +342,30 @@ const columnData = reactive([
 ]);
 
 const burnPrint = () => {
+  BurnTableData.value;
+  PrintBurnModel(BurnTableData.value).then((data:any) => {
+    ElMessage({
+    showClose: true,
+    message: data.msg,
+    type: 'success',
+  })
+  })
   BurnTableRef.value.toggleSelection();
 };
 
 const RawmaterialFeeding = () => {
-    if (OrderForm.MfgOrderName === '') {
+  if (OrderForm.MfgOrderName === "") {
     ElMessage({
       message: `请选择工单`,
       type: "warning",
     });
     return;
-    }
-    ElMessage({
-      message: `工单:${OrderForm.MfgOrderName},设备码:${opui.station}`,
-      type: "success",
-    });
-}
+  }
+  ElMessage({
+    message: `工单:${OrderForm.MfgOrderName},设备码:${opui.station}`,
+    type: "success",
+  });
+};
 
 const tableHeight = ref(0);
 const pageObj = ref({
@@ -383,6 +398,10 @@ const radioChange = (args: any) => {
 };
 const onSubmit = () => {
   console.log(form.value);
+  QueryBurnPrintData("SMT-Laser").then((data: any) => {
+    const dataText = JSON.parse(data.content);
+    tableData.value = dataText;
+  });
 };
 
 const handleSizeChange = (val: any) => {
