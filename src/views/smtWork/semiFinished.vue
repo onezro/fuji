@@ -12,11 +12,16 @@
             class="h-[35px] flex items-center justify-between text-lg text-[#fff] bg-[#006487]"
           >
             <span class="ml-5">周转箱列表</span>
-            <el-tooltip content="刷新" placement="top" >
-            <el-icon class="mr-3" color="#fff" :class="isLoding" size="24" @click="getCarrierList"
-              ><RefreshRight
-            /></el-icon>
-          </el-tooltip>
+            <el-tooltip content="刷新" placement="top">
+              <el-icon
+                class="mr-3"
+                color="#fff"
+                :class="isLoding"
+                size="24"
+                @click="getCarrierList"
+                ><RefreshRight
+              /></el-icon>
+            </el-tooltip>
           </div>
           <div class="p-3" :style="{ height: boxHeight + 'px' }">
             <el-card
@@ -30,24 +35,34 @@
                 <el-row>
                   <el-col :span="12">
                     <el-form-item label="周转箱条码">
-                      <span>{{ t.CARRIERNAME }}</span>
+                      <span
+                        class="text-base text-[#006487] font-bold underline"
+                        @click="getList(t.CARRIERNAME)"
+                        >{{ t.CARRIERNAME }}</span
+                      >
                     </el-form-item></el-col
                   >
                   <el-col :span="12">
                     <el-form-item label="类型">
-                      <span :class="[t.LOADTYPE=='OK'?'text-[#00B400]':'text-[red]','font-bold']">{{ t.LOADTYPE }}</span>
+                      <span
+                        :class="[
+                          t.LOADTYPE == 'OK' ? 'text-[#00B400]' : 'text-[red]',
+                          'font-bold text-base',
+                        ]"
+                        >{{ t.LOADTYPE }}</span
+                      >
                     </el-form-item></el-col
                   >
                 </el-row>
                 <el-row>
                   <el-col :span="12">
                     <el-form-item label="容量">
-                      <span>{{ t.CAPACITY }}</span>
+                      <span class="text-base">{{ t.CAPACITY }}</span>
                     </el-form-item></el-col
                   >
                   <el-col :span="12">
                     <el-form-item label="装箱数量">
-                      <span>{{ t.QTY }}</span>
+                      <span class="text-base">{{ t.QTY }}</span>
                     </el-form-item></el-col
                   >
                 </el-row>
@@ -107,7 +122,7 @@
             <div
               class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]"
             >
-              <span class="ml-5">周转箱包装列表</span>
+              <span class="ml-5">周转箱装载清单</span>
             </div>
             <div class="flex-1">
               <table-tem
@@ -128,7 +143,12 @@
 </template>
 
 <script lang="ts" setup>
-import { QueryCarrierList, SubmitPcbToPacking, TrunkDeal } from "@/api/smtApi";
+import {
+  QueryCarrierList,
+  SubmitPcbToPacking,
+  TrunkDeal,
+  QueryPackListByCarrier,
+} from "@/api/smtApi";
 import tableTem from "@/components/tableTem/index.vue";
 import { useAppStoreWithOut } from "@/stores/modules/app";
 import { useUserStoreWithOut } from "@/stores/modules/user";
@@ -165,7 +185,6 @@ import {
 const appStore = useAppStoreWithOut();
 const userStore = useUserStoreWithOut();
 const opui = appStore.getOPUIReal();
-const barCode = ref("");
 const inputRef = ref();
 const form = ref({
   PcbNumber: "",
@@ -178,13 +197,21 @@ const msgType = ref(true);
 const tableData = ref([]);
 const tableHeight = ref(0);
 const columnData = reactive([
+{
+    text: true,
+    prop: "CarrierName",
+    label: "周转箱条码",
+    width: "",
+    min: true,
+    align: "center",
+  },
   {
     text: true,
     prop: "PCBSerialNumber",
     label: "小板条码",
     width: "",
     min: true,
-    align: "1",
+    align: "center",
   },
   {
     text: true,
@@ -192,7 +219,7 @@ const columnData = reactive([
     label: "大板条码",
     width: "",
     min: true,
-    align: "1",
+    align: "center",
   },
   {
     text: true,
@@ -200,7 +227,7 @@ const columnData = reactive([
     label: "产品编码",
     width: "",
     min: true,
-    align: "1",
+    align: "center",
   },
   {
     text: true,
@@ -208,7 +235,7 @@ const columnData = reactive([
     label: "产品名称",
     width: "",
     min: true,
-    align: "1",
+    align: "center",
   },
   {
     text: true,
@@ -243,7 +270,7 @@ const pageObj = ref({
 const turnData = ref<Turn[]>([]);
 const boxHeight = ref(0);
 const inputFocus = ref(true);
-const isLoding = ref('')
+const isLoding = ref("");
 
 onBeforeMount(() => {
   getScreenHeight();
@@ -257,18 +284,19 @@ onBeforeUnmount(() => {
 });
 
 const getCarrierList = () => {
-  isLoding.value = 'is-loading'
+  isLoding.value = "is-loading";
   QueryCarrierList({ workStationName: opui.station }).then((res: any) => {
+    let timer = setTimeout(() => {
+      isLoding.value = "";
+      clearTimeout(timer);
+    }, 2000);
     if (res.content == null) {
       return;
     }
-    let timer = setTimeout(() => {
-    isLoding.value = ''
-    clearTimeout(timer)
-  }, 2000)
-    let data = JSON.parse(res.content);
-    turnData.value = data;
-  
+
+    // let data = JSON.parse(res.content);
+    turnData.value = res.content;
+
     // console.log(data);
   });
 };
@@ -283,12 +311,31 @@ const disFullBox = (val: any) => {
     CurrentCapacity: val.QTY,
     OperatorID: userStore.getUserInfo,
   };
-  TrunkDeal(data).then((res: any) => {
-    // console.log(res);
-    msgTitle.value = res.msg;
-    msgType.value = res.success;
-    getCarrierList();
-  });
+  ElMessageBox.confirm("确定不满箱提交", "确认操作", {
+    confirmButtonText: "确定",
+    cancelButtonText: "取消",
+    type: "warning",
+  })
+    .then(() => {
+      TrunkDeal(data).then((res: any) => {
+        // console.log(res);
+        msgTitle.value = res.msg;
+        msgType.value = res.success;
+        getCarrierList();
+      });
+    })
+    .catch(() => {
+   
+    });
+};
+const getList = (val:any) => {
+  QueryPackListByCarrier({carrierName:val}).then((res:any)=>{
+    if(res.content==null){
+      tableData.value = [];
+      return
+    }
+    tableData.value = res.content;
+  })
 };
 
 const getChange = () => {
@@ -298,12 +345,11 @@ const getChange = () => {
     msgType.value = res.success;
     form.value.PcbNumber = "";
     if (res.success) {
-      tableData.value = JSON.parse(res.content);
+      tableData.value = res.content;
       getCarrierList();
-        // msgTitle.value=msgTitle.value+'周转箱列表已更新'
-      msgTitle.value = res.msg+'周转箱列表已更新'
+      // msgTitle.value=msgTitle.value+'周转箱列表已更新'
+      msgTitle.value = res.msg + "周转箱列表已更新";
     } else {
-     
       tableData.value = [];
     }
     inputFocus.value = true;

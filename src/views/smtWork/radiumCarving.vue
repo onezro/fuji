@@ -522,10 +522,10 @@ const getScreenHeight = () => {
 };
 const getOrderList = () => {
   getLaserWorkOrder({ orderID: "" }).then((data: any) => {
-    const dataText = JSON.parse(data.content);
+    // const dataText = JSON.parse(data.content);
     // workOrderList.value = [...dataText,{},{}];
-    workOrderList.value = dataText;
-    workOrderList1.value = dataText;
+    workOrderList.value = data.content
+    workOrderList1.value = data.content
   });
 };
 const choiceOrder = () => {
@@ -594,8 +594,8 @@ const sureClick = () => {
     Completed.value = [];
     awaitLaser.value = [];
     notReleased.value = [];
-    const dataText = JSON.parse(data.content);
-    tableData.value = dataText;
+    // const dataText = JSON.parse(data.content);
+    tableData.value = data.content
     Completed.value = tableData.value.filter((item) => item.IsResponse === '已完成');
     awaitLaser.value = tableData.value.filter((item) => item.IsResponse === '待镭雕');
     notReleased.value = tableData.value.filter((item) => item.IsResponse === '未释放');
@@ -623,8 +623,8 @@ const refreshClick = () => {
     Completed.value = [];
     awaitLaser.value = [];
     notReleased.value = [];
-    const dataText = JSON.parse(data.content);
-    tableData.value = dataText;
+    // const dataText = JSON.parse(data.content);
+    tableData.value =data.content;
     checkList.value = ["待镭雕", "未释放"];
     Completed.value = tableData.value.filter((item) => item.IsResponse === '已完成');
     awaitLaser.value = tableData.value.filter((item) => item.IsResponse === '待镭雕');
