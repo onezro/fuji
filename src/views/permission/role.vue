@@ -184,13 +184,13 @@ onBeforeUnmount(() => {
 
 const getData = () => {
   getAllRole().then((data: any) => {
-    tableData.value = JSON.parse(data.content);
+    tableData.value = data.content
   });
 };
 
 const getMeun = () => {
   getFirstMeun().then((data: any) => {
-    treeData.value = JSON.parse(data.content);
+    treeData.value = data.content
   });
 };
 const openAdd = () => {
@@ -249,7 +249,7 @@ const handleAssigned = (row: any) => {
       roleData.value = []
       // return
     } else {
-      const dataText = JSON.parse(data.content);
+      const dataText = data.content
       // console.log(dataText);
       dataText.forEach((item: any) => {
         if (item.childMenu !== null) {

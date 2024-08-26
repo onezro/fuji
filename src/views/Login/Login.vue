@@ -46,7 +46,7 @@ onMounted(() => {
 })
 const loginClick = () => {
   empolyeeLogin(form.value).then((data: any) => {
-    const dataText = JSON.parse(data.content);
+    const dataText = data.content
     if (data.code == 100200) {
       localStorage.setItem("OPCENTER_ROLE", form.value.EmployeeName);
       setToken(dataText.Token);

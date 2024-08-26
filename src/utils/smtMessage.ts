@@ -92,37 +92,15 @@ service.interceptors.response.use(
 
     //成功的返回
     if (response.status === 200) {
-      if (response.data.code == 100200 || !response.data.code) {
+      if (response.data.success) {
         return response.data;
-      } else if (response.data.code == 100300 || response.data.Code == 1) {
-        return response.data;
-      }
+      } 
       else {
         ElMessageBox.alert(response.data.msg, "提示信息", {
           confirmButtonText: "确定",
         });
-        // return response.data;
+        // return Promise.reject(response.data);
       }
-      // if (response.data.Status == "OK") {
-      // return response.data;
-      // } else {
-      //   if (typeof response.data == "string") {
-      //     let a = response.data;
-      //     a = a.replace(/[\r|\n|\t]/g, "");
-      //     a = JSON.parse(a);
-      //     // console.log(a);
-      //     MessageBox.alert(a.Message, "提示信息", {
-      //       confirmButtonText: "确定",
-      //     });
-      //   } else {
-      //     MessageBox.alert(response.data.Message, "提示信息", {
-      //       confirmButtonText: "确定",
-      //     });
-      //   }
-      //   return Promise.reject(response.data);
-      // }
-      //状态码
-      //将data中需要的数据返回  可根据自己项目中的数据格式进行调整
     }
   },
   (error) => {

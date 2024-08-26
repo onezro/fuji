@@ -35,13 +35,12 @@ router.beforeEach(async (to, from, next) => {
           if (roleRouters.length == 0) {
             if (appStore.getSystemType) {
               await getWorksMenuOPUI().then(async (data: any) => {
-                const routerArr = JSON.parse(data.content) || []
+                const routerArr = data.content|| []
                 const routerData1 = setMenu(routerArr)
                 let routerData = routerData1.map((v: any) => {
                   let data = updateParentMenus([v])
                   return data
                 })
-                // console.log(routerData)
                 userStore.setRoleRouters(routerData)
                 await permissionStore.generateRoutes('server', routerData)
               })
@@ -51,7 +50,7 @@ router.beforeEach(async (to, from, next) => {
             } else {
               await getMenu().then(async (data: any) => {
                 if (data.code == 100200) {
-                  const routerArr = JSON.parse(data.content) || []
+                  const routerArr = data.content || []
                   const systemRouter = routerArr.filter((v: any) => v.MenuName == 'Portal')
                   if (systemRouter.length == 0) {
                     await permissionStore.generateRoutes('static')

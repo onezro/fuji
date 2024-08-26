@@ -314,7 +314,7 @@ watch(
 const getData = () => {
   getFirstMeun().then((data: any) => {
     // console.log(JSON.parse(data.content));
-    tableData.value = JSON.parse(data.content);
+    tableData.value = data.content
   });
 };
 const openAdd = () => {

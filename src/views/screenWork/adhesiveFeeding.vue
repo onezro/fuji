@@ -407,10 +407,10 @@
   };
   const getOrderList = () => {
     getLaserWorkOrder({ orderID: "" }).then((data: any) => {
-      const dataText = JSON.parse(data.data);
+      // const dataText = JSON.parse(data.data);
       // workOrderList.value = [...dataText,{},{}];
-      workOrderList.value = dataText;
-      workOrderList1.value = dataText;
+      workOrderList.value = data.data;
+      workOrderList1.value = data.data;
     });
   };
   const choiceOrder = () => {
@@ -431,8 +431,8 @@
       if (!data) {
         return;
       }
-      const dataText = JSON.parse(data.content);
-      tableData.value = dataText;
+      // const dataText = JSON.parse(data.content);
+      tableData.value = data.content;
     });
   };
   // const rowClick = (row: any, column: any, event: Event) => {
@@ -472,9 +472,9 @@
     OrderSNQuery({
       OrderID: choiceRow.value.MfgOrderName
     }).then((data: any) => {
-      const dataText = JSON.parse(data.content);
-      tableData.value = dataText;
-      console.log(dataText);
+      // const dataText = JSON.parse(data.content);
+      tableData.value = data.content;
+      // console.log(dataText);
     })
     form.MfgOrderName = choiceRow.value.MfgOrderName;
     form.BD_ProductModel = choiceRow.value.BD_ProductModel;
@@ -493,9 +493,9 @@
     OrderSNQuery({
       OrderID: form.MfgOrderName
     }).then((data: any) => {
-      const dataText = JSON.parse(data.content);
-      tableData.value = dataText;
-      console.log(dataText);
+      // const dataText = JSON.parse(data.content);
+      tableData.value = data.content;
+      // console.log(dataText);
     })
   }
   

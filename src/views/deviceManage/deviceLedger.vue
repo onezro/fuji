@@ -241,7 +241,7 @@ const getData = () => {
         if(res.content==null){
             tableData.value=[]
         }else{
-            tableData.value = JSON.parse(res.content);
+            tableData.value = res.content
         }
         
         // console.log(JSON.parse(res.content));
@@ -250,14 +250,14 @@ const getData = () => {
 
 const getModeList = () => {
     GetFactoryModelList().then((res: any) => {
-        let data = JSON.parse(res.content);
-        option1.value = OrganData(data);
+        // let data = JSON.parse(res.content);
+        option1.value = OrganData(res.content);
     });
 };
 const getTypeList = () => {
     GetEquipmentTypeList().then((res: any) => {
-        let data = JSON.parse(res.content);
-        option3.value = data
+        // let data = JSON.parse(res.content);
+        option3.value = res.content
     });
 };
 const meunItem = (value: any) => {
