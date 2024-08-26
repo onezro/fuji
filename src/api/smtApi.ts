@@ -75,3 +75,11 @@ export function TrunkDeal(data: any) {
         data
     });
 }
+//获取装箱信息
+export function QueryPackListByCarrier(data: any) {
+    return requestNoMessage({
+        url: "/api/packing/QueryPackingListByCarrierName",
+        method: "post",
+        params: data,
+    });
+}
