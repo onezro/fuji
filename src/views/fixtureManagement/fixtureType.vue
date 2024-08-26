@@ -8,8 +8,8 @@
               <el-button class="ml-3" type="primary" @click="">查询</el-button>
           </div>
         </div>
-        <table-tem :show-index="true" :tableData="tableData" :tableHeight="tableHeight" :columnData="columnData"
-                :pageObj="currentPage" @handleSizeChange="handleSizeChange"
+        <table-tem :tableData="tableData" :tableHeight="tableHeight" :columnData="columnData"
+                :pageObj="pageObj" @handleSizeChange="handleSizeChange"
                 @handleCurrentChange="handleCurrentChange"></table-tem>
       </el-card>
       <el-dialog
@@ -17,7 +17,7 @@
         :close-on-click-modal="false"
         v-model="editVisible"
         @close=""
-        title="添加"
+        title="编辑"
         width="50%"
       >
         <el-form
@@ -42,7 +42,7 @@
         <template #footer>
           <span class="dialog-footer">
             <!-- <el-button type="info" @click="addSon"> 增加子项</el-button> -->
-            <el-button @click=""> 取消 </el-button>
+            <el-button @click="editVisible = false"> 取消 </el-button>
             <el-button type="primary" @click=""> 确定 </el-button>
           </span>
         </template>
@@ -77,7 +77,7 @@
         <template #footer>
           <span class="dialog-footer">
             <!-- <el-button type="info" @click="addSon"> 增加子项</el-button> -->
-            <el-button @click=""> 取消 </el-button>
+            <el-button @click="addVisible"> 取消 </el-button>
             <el-button type="primary" @click=""> 确定 </el-button>
           </span>
         </template>
@@ -118,20 +118,24 @@
     Des: string;
   }
   
-  const pageSize = ref(10);
+//   const pageSize = ref(10);
   const currentPage = ref(1);
   const tableHeight = ref(0);
   const addVisible = ref(false);
   const editVisible = ref(false);
   const inputValue = ref();
+const pageObj = ref({
+    pageSize: 30,
+    currentPage: 1,
+});
   
   const tableData = ref([{
-    number: 'string',
-    type: 'string',
-    consumption: 'string',
-    process: 'string',
-    FaceType: 'string',
-    Des: 'string'
+    number: '1613543154',
+    type: 'GD-350',
+    consumption: '412',
+    process: '',
+    FaceType: 'TOP',
+    Des: '测试'
   }]);
   
   const form = ref<formTS>({
@@ -144,7 +148,10 @@
     Des: "",
   });
 
-  const editSubmit = () => {
+  const editSubmit = (data: any) => {
+    console.log(data);
+    EditForm.value.type = data.type;
+    EditForm.value.Des = data.Des;
     editVisible.value = true
   }
 
@@ -158,6 +165,13 @@ const columnData = reactive([
     text: true,
     prop: "number",
     label: "产品编号",
+    width: "",
+    min: true,
+    align: "center",
+},{
+    text: true,
+    prop: "type",
+    label: "类型",
     width: "",
     min: true,
     align: "center",
@@ -210,7 +224,7 @@ const columnData = reactive([
         },{
             type: "danger",
             label: "删除",
-            icon: "Document",
+            icon: "Delete",
             buttonClick: deleteSubmit,
         }
     ],
@@ -226,14 +240,14 @@ const columnData = reactive([
   onBeforeUnmount(() => {
     window.addEventListener("resize", getScreenHeight);
   });
-  
-  const handleSizeChange = (val: any) => {
-    currentPage.value = 1;
-    pageSize.value = val;
-  };
-  const handleCurrentChange = (val: any) => {
-    currentPage.value = val;
-  };
+
+const handleSizeChange = (val: any) => {
+    pageObj.value.currentPage = 1;
+    pageObj.value.pageSize = val;
+};
+const handleCurrentChange = (val: any) => {
+    pageObj.value.currentPage = val;
+};
   const getScreenHeight = () => {
     nextTick(() => {
       tableHeight.value = window.innerHeight - 215;
