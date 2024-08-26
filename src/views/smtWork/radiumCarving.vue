@@ -294,10 +294,6 @@ const formHeader = reactive<FormHeader[]>([
     lable: "工单号",
     value: "MfgOrderName",
   },
-  // {
-  //   lable: "机型",
-  //   value: "BD_ProductModel",
-  // },
   {
     lable: "产品编码",
     value: "ProductName",
@@ -332,8 +328,6 @@ const formHeader = reactive<FormHeader[]>([
   },
 ]);
 const tableData = ref<any[]>([]);
-// const filteredData = ref<never[]>([]);
-const showIndex = ref(true);
 const tableHeight = ref(0);
 const formHeight = ref(0);
 const msgTitle = ref("");
@@ -551,12 +545,10 @@ const choiceOrder = () => {
     barCode.value = "";
     msgTitle.value = data.msg;
     if (!data.success) {
-      msgTitle.value = data.msg;
       msgType.value = false;
       return;
     } else {
       msgType.value = true;
-      msgTitle.value = data.msg;
       // msgTitle.value = "成功";
       refreshClick();
     }

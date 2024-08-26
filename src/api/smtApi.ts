@@ -28,26 +28,50 @@ export function getMaterialInformation(data: any) {
 }
 
 //返修
-export function QuerySN(SN: any,OperationType:any) {
+export function QuerySN(SN: any, OperationType: any) {
     return request({
         url: "/api/Maintenance/QuerySN",
         method: "post",
-        params: {SN,OperationType},
+        params: { SN, OperationType },
     });
 }
-
-export function MaintenanceAdd(data:any) {
+//
+export function MaintenanceAdd(data: any) {
     return request({
         url: "/api/Maintenance/Add",
         method: "post",
         data
     });
 }
-
-export function QueryMaintenance(InternalSN: any,Position:any) {
+//
+export function QueryMaintenance(InternalSN: any, Position: any) {
     return request({
         url: "/api/Maintenance/QueryMaintenance",
         method: "post",
-        params: {InternalSN,Position},
+        params: { InternalSN, Position },
+    });
+}
+//查询周转箱列表
+export function QueryCarrierList(data: any) {
+    return request({
+        url: "/api/packing/QueryCarrierList",
+        method: "post",
+        params: data,
+    });
+}
+//扫描装箱
+export function SubmitPcbToPacking(data: any) {
+    return requestNoMessage({
+        url: "/api/packing/SubmitPcbToPacking",
+        method: "post",
+        data
+    });
+}
+//不满箱提交
+export function TrunkDeal(data: any) {
+    return request({
+        url: "/api/packing/TrunkDeal",
+        method: "post",
+        data
     });
 }
