@@ -266,8 +266,8 @@ const getCarrierList = () => {
     isLoding.value = ''
     clearTimeout(timer)
   }, 2000)
-    let data = JSON.parse(res.content);
-    turnData.value = data;
+    // let data = JSON.parse(res.content);
+    turnData.value = res.content
   
     // console.log(data);
   });
@@ -298,7 +298,7 @@ const getChange = () => {
     msgType.value = res.success;
     form.value.PcbNumber = "";
     if (res.success) {
-      tableData.value = JSON.parse(res.content);
+      tableData.value = res.content
       getCarrierList();
         // msgTitle.value=msgTitle.value+'周转箱列表已更新'
       msgTitle.value = res.msg+'周转箱列表已更新'

@@ -468,7 +468,7 @@ const openOver = () => {
 const getOverData = () => {
   FindAllDevice({ WorkStation: opui.station }).then((res: any) => {
     if (res.success) {
-      let data = JSON.parse(res.content);
+      let data = res.content
       overAddForm.value.InDeviceLength = data[0].InDeviceLength;
       overAddForm.value.InDeviceSpeed = data[0].InDeviceSpeed;
       overAddForm.value.OutDeviceLength = data[0].OutDeviceLength;

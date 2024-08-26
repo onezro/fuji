@@ -316,7 +316,7 @@ onBeforeUnmount(() => {
 
 const getOrderData = () => {
     QueryWorkOrderInfo().then((res: any) => {
-        let data = JSON.parse(res.content);
+        let data = res.content
         orderTable.value.data[0] = data[0];
     });
 }

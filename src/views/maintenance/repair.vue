@@ -513,8 +513,8 @@ const getData = () => {
   }
   QuerySN(getDataText.SN, getDataText.OperationType).then((res: any) => {
     OperationType.value = getDataText.OperationType;
-    const dataText = JSON.parse(res.content);
-    tableData.value = dataText;
+    // const dataText = JSON.parse(res.content);
+    tableData.value = res.content;
   });
 };
 
@@ -586,8 +586,8 @@ const getHistory = () => {
     getHistoryText.InternalSN,
     getHistoryText.Position
   ).then((res: any) => {
-    const dataText = JSON.parse(res.content);
-    historyTable.value = dataText;
+    // const dataText = JSON.parse(res.content);
+    historyTable.value = res.content;
   });
 };
 
