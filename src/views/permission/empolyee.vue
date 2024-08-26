@@ -318,18 +318,15 @@ const noRole = computed(() => {
 
 const getData = () => {
   getEmployee().then((data: any) => {
-    // this.tableData = data;
-    dataPrecc(JSON.parse(data.content));
-    // console.log(JSON.parse(data.content))
-    // })
+    dataPrecc(data.content);
   });
 };
 
 const getOrgan = () => {
   getOrganization().then((data: any) => {
     if (data.code == 100200) {
-      const dataText = JSON.parse(data.content);
-      organTree.value = OrganData(dataText)
+      // const dataText = JSON.parse(data.content);
+      organTree.value = OrganData(data.content)
       // console.log(organTree.value);
     }
   });
@@ -370,8 +367,8 @@ const refreshData = () => {
 
 const getRoleMeun = () => {
   getAllRole().then((data: any) => {
-    const dataText = JSON.parse(data.content);
-    optionArr.value = dataText.map((item: any) => {
+    // const dataText = JSON.parse(data.content);
+    optionArr.value = data.content.map((item: any) => {
       return {
         value: item.id,
         lable: item.RoleName,
@@ -403,7 +400,7 @@ const getHasRole = () => {
   findEmployeeRoles(form.value.employeeId).then((data: any) => {
     if (data.code == 100200) {
       //  console.log(data);
-      hasRole.value = JSON.parse(data.content);
+      hasRole.value = data.content
     } else {
       ElMessage({
         type: "error",
@@ -466,8 +463,8 @@ const handleEdit = (row: any) => {
     if (data.content == null || data.content == undefined) {
       hasRole.value = [];
     } else {
-      const dataText = JSON.parse(data.content);
-      hasRole.value = dataText;
+      // const dataText = JSON.parse(data.content);
+      hasRole.value = data.content
     }
   });
 };
