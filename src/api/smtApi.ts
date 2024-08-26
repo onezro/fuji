@@ -75,8 +75,6 @@ export function TrunkDeal(data: any) {
         data
     });
 }
-<<<<<<< HEAD
-
 //查询烧录打印数据
 export function QueryBurnPrintData(data: any) {
     return request({
@@ -91,14 +89,15 @@ export function PrintBurnModel(data: any) {
     return request({
         url: "/api/Burn/PrintBurnModel",
         method: "post",
-        data
-=======
+        data})
+    }
+
+
 //获取装箱信息
 export function QueryPackListByCarrier(data: any) {
     return requestNoMessage({
         url: "/api/packing/QueryPackingListByCarrierName",
         method: "post",
         params: data,
->>>>>>> 0e0eaf7e1d65412198c5789e66ef31c247737c49
     });
 }
