@@ -216,7 +216,7 @@
 import { ElMessage } from "element-plus";
 import tableTem from "@/components/tableTem/index.vue";
 import feedTemp from "@/components/feedTemp/index.vue";
-import { cloneDeep } from 'lodash-es'
+import { cloneDeep } from 'lodash-es';
 // import {  } from "@/api/smt1";
 import {
   getMaterialInformation,
