@@ -343,8 +343,8 @@ onBeforeUnmount(() => {
 });
 const getOrderData = () => {
     QueryWorkOrderInfo().then((res: any) => {
-        let data = JSON.parse(res.content);
-        orderTable.value.data[0] = data[0];
+        // let data = JSON.parse(res.content);
+        orderTable.value.data[0] = res.content
     });
 }
 
