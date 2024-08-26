@@ -14,7 +14,8 @@
       :size="size || 'default'"
       :tooltip-effect="'dark'"
       style="width: 100%"
-       @selection-change="handleSelectionChange"
+      @selection-change="handleSelectionChange"
+      ref="multipleTableRef"
     >
       <el-table-column
         type="selection"
@@ -63,7 +64,7 @@
               text
               class="underline font-bold text-[#006487]"
               @click="o.buttonClick(scope.row)"
-              >{{ scope.row[o.prop]||o.label }}</span
+              >{{ scope.row[o.prop] || o.label }}</span
             >
           </el-tooltip>
           <!-- <span v-if="c.IsReleased">{{ c.IsReleased === 0 ? '未释放':'已释放'}}</span> -->
@@ -88,7 +89,7 @@
 </template>
 
 <script lang="ts" setup>
-import { toRefs } from "vue";
+import { toRefs, ref } from "vue";
 const props = defineProps([
   "tableData",
   "tableHeight",
@@ -107,14 +108,21 @@ const {
   showSelect,
   size,
 } = toRefs(props);
-const emit = defineEmits(["handleSizeChange", "handleCurrentChange","handleSelectionChange"]);
+
+const multipleTableRef = ref();
+
+const emit = defineEmits([
+  "handleSizeChange",
+  "handleCurrentChange",
+  "handleSelectionChange",
+]);
 
 const handleSizeChange = (e: any) => {
   emit("handleSizeChange", e);
 };
-const handleSelectionChange=(e:any)=>{
-    emit("handleSelectionChange", e);
-}
+const handleSelectionChange = (e: any) => {
+  emit("handleSelectionChange", e);
+};
 const handleCurrentChange = (e: any) => {
   emit("handleCurrentChange", e);
 };
@@ -131,6 +139,16 @@ const getMaxLength = (arr: any) => {
     }
     return acc;
   }, 0);
+};
+
+const toggleSelection = (rows?: any) => {
+  if (rows) {
+    rows.forEach((row: any,index:any) => {
+      multipleTableRef.value!.toggleRowSelection(row, undefined);
+    });
+  } else {
+    multipleTableRef.value!.clearSelection();
+  }
 };
 
 const getTextWidth = (str: string) => {
@@ -171,6 +189,10 @@ const flexColumnWidth = (label: any, prop: any) => {
   // console.log(arr);
   return getMaxLength(arr) + 25 + "px";
 };
+
+defineExpose({
+  toggleSelection,
+});
 </script>
 
 <style scoped>

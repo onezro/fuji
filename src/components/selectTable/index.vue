@@ -241,7 +241,7 @@ const props = defineProps({
 })
 const selectAttr = computed(() => {
   return {
-    clearable: true,
+    clearable: false,
     ...useAttrs()
   }
 })
