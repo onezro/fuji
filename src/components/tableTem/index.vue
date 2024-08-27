@@ -1,6 +1,5 @@
 <template>
   <div>
-
     <el-table
       :data="
         tableData.slice(
@@ -32,27 +31,74 @@
         width="60"
         v-if="showIndex"
       >
-
       </el-table-column>
-      <el-table-column v-for="(c, i) in columnData" :key="i" :prop="c.prop" :label="c.label"
-        :show-overflow-tooltip="true" :width="c.width" :min-width="c.min ? flexColumnWidth(c.label, c.prop) : ''"
-        :fixed="c.fixed" :align="c.align || 'center'">
+      <el-table-column
+        v-for="(c, i) in columnData"
+        :key="i"
+        :prop="c.prop"
+        :label="c.label"
+        :show-overflow-tooltip="true"
+        :width="c.width"
+        :min-width="c.min ? flexColumnWidth(c.label, c.prop) : ''"
+        :fixed="c.fixed"
+        :align="c.align || 'center'"
+      >
         <template #default="scope">
           <span v-if="c.text">{{ scope.row[c.prop] }}</span>
-          <el-tooltip v-if="c.isOperation" v-for="(o, oi) in c.operation" :key="oi" :content="o.label" placement="top">
-            <el-button v-if="o.icon" :icon="o.icon" size="small" :type="o.type" @click="o.buttonClick(scope.row)" />
-            <span v-if="!o.icon" text class="underline font-bold text-[#006487]" @click="o.buttonClick(scope.row)">{{
-              scope.row[o.prop] ||o.label }}</span>
-
+          <div v-if="c.tag === true">
+            <el-tag
+              v-if="c.tagType === 'string'"
+              :type="c.tagItem[scope.row[c.prop]]"
+              effect="plain"
+            >
+              {{ scope.row[c.prop] }}
+            </el-tag>
+            <el-tag
+              v-if="c.tagType === 'bolean'"
+              :type="scope.row[c.prop] ? c.tagItem[0].type:c.tagItem[1].type"
+              effect="plain"
+            >
+              {{ scope.row[c.prop] ? c.tagItem[0].text:c.tagItem[1].text }}
+            </el-tag>
+          </div>
+          <el-tooltip
+            v-if="c.isOperation"
+            v-for="(o, oi) in c.operation"
+            :key="oi"
+            :content="o.label"
+            placement="top"
+          >
+            <el-button
+              v-if="o.icon"
+              :icon="o.icon"
+              size="small"
+              :type="o.type"
+              @click="o.buttonClick(scope.row)"
+            />
+            <span
+              v-if="!o.icon"
+              class="underline font-bold text-[#006487]"
+              @click="o.buttonClick(scope.row)"
+              >{{ scope.row[o.prop] || o.label }}</span
+            >
           </el-tooltip>
           <!-- <span v-if="c.IsReleased">{{ c.IsReleased === 0 ? '未释放':'已释放'}}</span> -->
         </template>
       </el-table-column>
     </el-table>
     <div class="mt-2 mb-2">
-      <el-pagination :size="size || 'default'" background @size-change="handleSizeChange"
-        @current-change="handleCurrentChange" :pager-count="5"  :current-page="pageObj.currentPage" :page-size="pageObj.pageSize"
-        :page-sizes="[10, 30, 50, 100, 150]" layout="total,sizes, prev, pager, next" :total="tableData.length">
+      <el-pagination
+        :size="size || 'default'"
+        background
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :pager-count="5"
+        :current-page="pageObj.currentPage"
+        :page-size="pageObj.pageSize"
+        :page-sizes="[10, 30, 50, 100, 150]"
+        layout="total,sizes, prev, pager, next"
+        :total="tableData.length"
+      >
       </el-pagination>
     </div>
   </div>
@@ -79,7 +125,6 @@ const {
   size,
 } = toRefs(props);
 
-
 const multipleTableRef = ref();
 
 const emit = defineEmits([
@@ -88,13 +133,11 @@ const emit = defineEmits([
   "handleSelectionChange",
 ]);
 
-
 const handleSizeChange = (e: any) => {
   emit("handleSizeChange", e);
 };
 const handleSelectionChange = (e: any) => {
   emit("handleSelectionChange", e);
-
 };
 
 const handleCurrentChange = (e: any) => {
@@ -117,7 +160,7 @@ const getMaxLength = (arr: any) => {
 
 const toggleSelection = (rows?: any) => {
   if (rows) {
-    rows.forEach((row: any,index:any) => {
+    rows.forEach((row: any, index: any) => {
       multipleTableRef.value!.toggleRowSelection(row, undefined);
     });
   } else {

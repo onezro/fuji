@@ -80,7 +80,7 @@ export function QueryBurnPrintData(data: any) {
     return request({
         url: "/api/Burn/QueryBurnPrintData",
         method: "post",
-        params: {specName:data}
+        data
     });
 }
 

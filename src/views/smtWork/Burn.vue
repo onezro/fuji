@@ -47,7 +47,7 @@
           >
             <el-form-item label="创建时间" prop="startTime">
               <el-date-picker
-                v-model="form.startTime"
+                v-model="form.date"
                 type="daterange"
                 range-separator="~"
                 start-placeholder="开始时间"
@@ -73,7 +73,7 @@
             <el-form-item label="工单号" prop="workOrder"
               ><el-input
                 style="width: 200px"
-                v-model="form.workOrder"
+                v-model="form.OrderNum"
                 placeholder="请输入工单号"
             /></el-form-item>
             <el-form-item label="条码" prop="barCode"
@@ -152,11 +152,10 @@ import type { Formspan, FormHeader, OrderData } from "@/typing";
 import selectTa from "@/components/selectTable/index.vue";
 import tableTem from "@/components/tableTem/index.vue";
 const form = ref({
-  line: "",
-  workOrder: "",
+  date: [],
+  SpecName: "SMT-Laser",
   barCode: "",
-  startTime: "",
-  endTime: "",
+  OrderNum: "",
 });
 import { useAppStore } from "@/stores/modules/app";
 import { QueryBurnPrintData, PrintBurnModel } from "@/api/smtApi";
@@ -173,6 +172,7 @@ const getChoice = (e: any) => {
     return {
       Barcode: item.ContainerName,
       Itemcode: item.MaterialCode,
+      OrderNum: item.MfgOrderName,
       Supplier: "",
       ManufacDate: "",
       Itemname: item.MaterialDesc,
@@ -183,7 +183,6 @@ const getChoice = (e: any) => {
     };
   });
   console.log(BurnTableData.value);
-  
 };
 
 const lineOption = ref([
@@ -333,7 +332,7 @@ const columnData = reactive([
   },
   {
     text: true,
-    prop: "FactoryStartDate",
+    prop: "TxnDate",
     label: "创建时间",
     width: "",
     min: true,
@@ -343,13 +342,13 @@ const columnData = reactive([
 
 const burnPrint = () => {
   BurnTableData.value;
-  PrintBurnModel(BurnTableData.value).then((data:any) => {
+  PrintBurnModel(BurnTableData.value).then((data: any) => {
     ElMessage({
-    showClose: true,
-    message: data.msg,
-    type: 'success',
-  })
-  })
+      showClose: true,
+      message: data.msg,
+      type: "success",
+    });
+  });
   BurnTableRef.value.toggleSelection();
 };
 
@@ -398,9 +397,24 @@ const radioChange = (args: any) => {
 };
 const onSubmit = () => {
   console.log(form.value);
-  QueryBurnPrintData("SMT-Laser").then((data: any) => {
+  QueryBurnPrintData({
+    SpecName: form.value.SpecName,
+    StartTime: form.value.date[0] ? form.value.date[0]:'',
+    EndTime: form.value.date[1] ? form.value.date[1]:'',
+    OrderNum: form.value.OrderNum,
+    BarCode: form.value.barCode,
+  }).then((data: any) => {
+    if (!data) {
+      return;
+    }
     const dataText = JSON.parse(data.content);
     tableData.value = dataText;
+    form.value = {
+      date: [],
+      SpecName: "SMT-Laser",
+      barCode: "",
+      OrderNum: ""
+    };
   });
 };
 

@@ -130,11 +130,11 @@ const pageObj = ref({
 });
   
   const tableData = ref([{
-    number: '1613543154',
+    // number: '1613543154',
     type: 'GD-350',
-    consumption: '412',
-    process: '',
-    FaceType: 'TOP',
+    // consumption: '412',
+    // process: '',
+    // FaceType: 'TOP',
     Des: '测试'
   }]);
   
@@ -161,14 +161,15 @@ const pageObj = ref({
   
 const columnData = reactive([
 
+// {
+//     text: true,
+//     prop: "number",
+//     label: "产品编号",
+//     width: "",
+//     min: true,
+//     align: "center",
+// },
 {
-    text: true,
-    prop: "number",
-    label: "产品编号",
-    width: "",
-    min: true,
-    align: "center",
-},{
     text: true,
     prop: "type",
     label: "类型",
@@ -176,31 +177,31 @@ const columnData = reactive([
     min: true,
     align: "center",
 },
-{
-    text: true,
-    prop: "consumption",
-    label: "消耗量",
-    width: "",
-    min: true,
-    align: "center",
-},
+// {
+//     text: true,
+//     prop: "consumption",
+//     label: "消耗量",
+//     width: "",
+//     min: true,
+//     align: "center",
+// },
 
-{
-    text: true,
-    prop: "process",
-    label: "工序",
-    width: "",
-    min: true,
-    align: "center",
-},
-{
-    text: true,
-    prop: "FaceType",
-    label: "面别",
-    width: "",
-    min: true,
-    align: "center",
-},
+// {
+//     text: true,
+//     prop: "process",
+//     label: "工序",
+//     width: "",
+//     min: true,
+//     align: "center",
+// },
+// {
+//     text: true,
+//     prop: "FaceType",
+//     label: "面别",
+//     width: "",
+//     min: true,
+//     align: "center",
+// },
 {
     text: true,
     prop: "Des",
