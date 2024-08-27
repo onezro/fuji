@@ -5,14 +5,17 @@
         <span class="ml-5">基本信息</span>
       </div>
       <el-form ref="formRef" :model="form" label-width="auto" class="p-2">
-       
         <div v-for="f in formHeader" :key="f.prop">
-          <el-form-item :label="f.label" :prop="f.prop" :class="[f.prop=='eqInfo'?'mb-2':'']">
+          <el-form-item
+            :label="f.label"
+            :prop="f.prop"
+            :class="[f.prop == 'eqInfo' ? 'mb-2' : '']"
+          >
             <span class="font-bold text-[1rem] text-wrap break-all">{{
               form[f.prop]
             }}</span>
           </el-form-item>
-          <el-divider class="mb-2 mt-2 "  v-if="f.prop=='eqInfo'"/>
+          <el-divider class="mb-2 mt-2" v-if="f.prop == 'eqInfo'" />
         </div>
       </el-form>
     </div>
@@ -29,14 +32,13 @@
               class="inbound"
               ref="formRef"
               :inline="true"
-              :model="form"
+              :model="formData"
               label-width="auto"
               @submit.native.prevent
             >
               <el-form-item label="扫描条码">
                 <el-input
-                  v-model="barCode"
-                  clearable
+                  v-model="formData.Container"
                   ref="inputRef"
                   style="width: 500px"
                   placeholder="请扫描条码"
@@ -46,15 +48,15 @@
             </el-form>
             <div
               class="text-xl font-bold text-[#00B400]"
-              v-show="msgTitle === '成功' || msgTitle === ''"
+              v-show="msgType === true || msgTitle === ''"
             >
-              {{ msgTitle === "" ? "请扫描物料批次条码" : msgTitle }}
+              {{ msgTitle === "" ? "请扫描PCB条码" : msgTitle }}
             </div>
             <div
               class="text-xl font-bold text-[red]"
-              v-show="msgTitle !== '成功' && msgTitle !== ''"
+              v-show="msgType === false && msgTitle !== ''"
             >
-              {{ msgTitle === "" ? "请扫描物料批次条码" : msgTitle }}
+              {{ msgTitle }}
             </div>
           </div>
         </div>
@@ -125,11 +127,17 @@
             <span class="ml-5">物料批次明细</span>
           </div>
           <div class="m-2">
-            <el-button type="primary" @click="">批量下料</el-button>
+            <el-button
+              type="primary"
+              :disabled="BlankList.length == 0"
+              @click="batchBlank"
+              >批量下料</el-button
+            >
           </div>
           <table-tem
             :showIndex="false"
             :showSelect="true"
+            ref="feedRef"
             :tableData="detailtableData"
             :tableHeight="300"
             :columnData="detailcolumnData"
@@ -150,12 +158,44 @@
 </template>
 
 <script setup lang="ts">
+import {
+  LoadMaterialQueue,
+  UnLoadMaterialQueue,
+  QueryMaterialQueueDetails,
+} from "@/api/smtApi";
 import tableTem from "@/components/tableTem/index.vue";
-import { defineExpose, toRefs, computed, ref, reactive } from "vue";
-const props = defineProps(["form", "formHeader"]);
-const { form, formHeader } = toRefs(props);
+import {  toRefs, computed, ref, reactive } from "vue";
+import { useAppStore } from "@/stores/modules/app";
+import { useUserStoreWithOut } from "@/stores/modules/user";
+import { cloneDeep } from "lodash-es";
+const appStore = useAppStore();
+const userStore = useUserStoreWithOut();
+const opui = appStore.getOPUIReal();
+const props = defineProps(["form", "formHeader", "specName"]);
+const { form, formHeader, specName } = toRefs(props);
+const formData = ref({
+  type: "",
+  MfgOrder: form?.value.MfgOrderName,
+  Container: "",
+  SpecName: specName?.value || "",
+  workstationName: opui.station,
+  userAccount: userStore.getUserInfo,
+});
+const unformData = ref({
+  type: "",
+  MfgOrder: form?.value.MfgOrderName,
+  Container: "",
+  SpecName: specName?.value || "",
+  workstationName: opui.station,
+  userAccount: userStore.getUserInfo,
+});
+
+const BlankList = ref([]);
 const barCode = ref("");
 const msgTitle = ref("");
+const msgType = ref(true);
+const feedRef = ref();
+const inputFocus = ref(true);
 const detailVisible = ref(false);
 const tableData = ref([
   {
@@ -261,6 +301,10 @@ const detailtableData = ref([
 ]);
 const handleDelet = (row: any) => {
   console.log(row);
+  unformData.value.Container=row.barCode
+    UnLoadMaterialQueue(unformData.value).then((res:any)=>{
+    BlankList.value=[]
+  })
 };
 const detailcolumnData = ref([
   {
@@ -325,10 +369,25 @@ const detailpageObj = ref({
   pageSize: 10,
   currentPage: 1,
 });
-const getChange = () => {};
+const getChange = () => {
+  LoadMaterialQueue(formData.value).then((res: any) => {
+    msgTitle.value = res.msg;
+    msgType.value = res.success;
+    formData.value.Container = "";
+  });
+};
 
+const batchBlank = () => {
+  let data = "";
+  feedRef.value.toggleSelection();
+  BlankList.value = [];
+  // UnLoadMaterialQueue(data).then((res:any)=>{
+  //   BlankList.value=[]
+  // })
+};
 const handleSelectionChange = (val: any) => {
-  console.log(val);
+  let data = cloneDeep(val);
+  BlankList.value = data;
 };
 const handleSizeChange = (val: any) => {
   pageObj.value.currentPage = 1;
