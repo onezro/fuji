@@ -8,7 +8,7 @@
         <el-button type="primary" @click="dialogVisible = true,getOrderList()"
           >工单开工</el-button
         >
-        <el-button type="warning" @click="openFeed">物料上料</el-button>
+        <!-- <el-button type="warning" @click="openFeed">物料上料</el-button> -->
         <!-- <el-button type="primary">条码转工单</el-button> -->
       </div>
     </div>

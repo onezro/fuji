@@ -1,36 +1,13 @@
 <template>
   <div>
-    <el-table
-      :data="
-        tableData.slice(
-          (pageObj.currentPage - 1) * pageObj.pageSize,
-          pageObj.currentPage * pageObj.pageSize
-        )
-      "
-      stripe
-      border
-      fit
-      :height="tableHeight"
-      :size="size || 'default'"
-      :tooltip-effect="'dark'"
-      style="width: 100%"
-      @selection-change="handleSelectionChange"
-      ref="multipleTableRef"
-    >
-      <el-table-column
-        type="selection"
-        width="55"
-        align="center"
-        v-if="showSelect"
-      />
-      <el-table-column
-        type="index"
-        align="center"
-        fixed
-        label="序号"
-        width="60"
-        v-if="showIndex"
-      >
+    <el-table :data="tableData.slice(
+      (pageObj.currentPage - 1) * pageObj.pageSize,
+      pageObj.currentPage * pageObj.pageSize
+    )
+      " stripe border fit :height="tableHeight" :size="size || 'default'" :tooltip-effect="'dark'" style="width: 100%"
+      @selection-change="handleSelectionChange" ref="multipleTableRef">
+      <el-table-column type="selection" width="55" align="center" v-if="showSelect" />
+      <el-table-column type="index" align="center" fixed label="序号" width="60" v-if="showIndex">
       </el-table-column>
       <el-table-column
         v-for="(c, i) in columnData"
@@ -61,44 +38,19 @@
               {{ scope.row[c.prop] ? c.tagItem[0].text:c.tagItem[1].text }}
             </el-tag>
           </div>
-          <el-tooltip
-            v-if="c.isOperation"
-            v-for="(o, oi) in c.operation"
-            :key="oi"
-            :content="o.label"
-            placement="top"
-          >
-            <el-button
-              v-if="o.icon"
-              :icon="o.icon"
-              size="small"
-              :type="o.type"
-              @click="o.buttonClick(scope.row)"
-            />
-            <span
-              v-if="!o.icon"
-              class="underline font-bold text-[#006487]"
-              @click="o.buttonClick(scope.row)"
-              >{{ scope.row[o.prop] || o.label }}</span
-            >
+          <el-tooltip v-if="c.isOperation" v-for="(o, oi) in c.operation" :key="oi" :content="o.label" placement="top">
+            <el-button v-if="o.icon" :icon="o.icon" size="small" :type="o.type" @click="o.buttonClick(scope.row)" />
+            <span v-if="!o.icon" text class="underline font-bold text-[#006487]" @click="o.buttonClick(scope.row)">{{
+              scope.row[o.prop] || o.label }}</span>
           </el-tooltip>
-          <!-- <span v-if="c.IsReleased">{{ c.IsReleased === 0 ? '未释放':'已释放'}}</span> -->
         </template>
       </el-table-column>
     </el-table>
     <div class="mt-2 mb-2">
-      <el-pagination
-        :size="size || 'default'"
-        background
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-        :pager-count="5"
-        :current-page="pageObj.currentPage"
-        :page-size="pageObj.pageSize"
-        :page-sizes="[10, 30, 50, 100, 150]"
-        layout="total,sizes, prev, pager, next"
-        :total="tableData.length"
-      >
+      <el-pagination :size="size || 'default'" background @size-change="handleSizeChange"
+        @current-change="handleCurrentChange" :pager-count="5" :current-page="pageObj.currentPage"
+        :page-size="pageObj.pageSize" :page-sizes="[10, 30, 50, 100, 150]" layout="total,sizes, prev, pager, next"
+        :total="tableData.length">
       </el-pagination>
     </div>
   </div>

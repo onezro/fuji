@@ -75,12 +75,14 @@
                 style="width: 200px"
                 v-model="form.OrderNum"
                 placeholder="请输入工单号"
+                clearable
             /></el-form-item>
             <el-form-item label="条码" prop="barCode"
               ><el-input
                 style="width: 150px"
                 v-model="form.barCode"
                 placeholder="请输入条码"
+                clearable
             /></el-form-item>
             <el-form-item>
               <el-button type="primary" icon="Search" @click="onSubmit"
@@ -94,30 +96,18 @@
             icon="Printer"
             type="primary"
             @click="burnPrint"
-            v-if="BurnTableData.length !== 0"
+            :disabled="BurnTableData.length == 0"
             >打印</el-button
           >
+
           <el-button
             icon="Printer"
-            v-else="BurnTableData.length === 0"
-            disabled
-            type="info"
-            >打印</el-button
-          >
-          <el-button
-            icon="Printer"
-            v-if="OrderForm.MfgOrderName === ''"
-            disabled
-            type="info"
-            >原材料上料</el-button
-          >
-          <el-button
-            icon="Printer"
-            v-else="OrderForm.MfgOrderName !== ''"
+            :disabled="OrderForm.MfgOrderName == ''"
             type="primary"
             @click="RawmaterialFeeding"
             >原材料上料</el-button
           >
+          <el-button type="warning" @click="openFeed">物料上料</el-button>
         </div>
         <tableTem
           ref="BurnTableRef"
@@ -135,6 +125,23 @@
         </tableTem>
       </div>
     </div>
+    <el-dialog
+      v-model="feedVisible"
+      title="物料上料"
+      width="90%"
+      align-center
+      class="saveAsDialog"
+      :append-to-body="true"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+    >
+      <feedTemp :form="feedForm" :form-header="FeedHeader" />
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="feedCancel">关闭</el-button>
+        </span>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -151,6 +158,8 @@ import {
 import type { Formspan, FormHeader, OrderData } from "@/typing";
 import selectTa from "@/components/selectTable/index.vue";
 import tableTem from "@/components/tableTem/index.vue";
+import feedTemp from "@/components/feedTemp/index.vue";
+import { cloneDeep } from "lodash-es";
 const form = ref({
   date: [],
   SpecName: "SMT-Laser",
@@ -182,7 +191,6 @@ const getChoice = (e: any) => {
       Number: item.Qty,
     };
   });
-  console.log(BurnTableData.value);
 };
 
 const lineOption = ref([
@@ -341,7 +349,14 @@ const columnData = reactive([
 ]);
 
 const burnPrint = () => {
-  BurnTableData.value;
+  // if (!hasDuplicateValue(BurnTableData.value,'OrderNum')) {
+  //   ElMessage({
+  //     showClose: true,
+  //     message: '不可选重复工单打印',
+  //     type: "warning",
+  //   });
+  //   return;
+  // }
   PrintBurnModel(BurnTableData.value).then((data: any) => {
     ElMessage({
       showClose: true,
@@ -353,17 +368,18 @@ const burnPrint = () => {
 };
 
 const RawmaterialFeeding = () => {
-  if (OrderForm.MfgOrderName === "") {
-    ElMessage({
-      message: `请选择工单`,
-      type: "warning",
-    });
-    return;
-  }
-  ElMessage({
-    message: `工单:${OrderForm.MfgOrderName},设备码:${opui.station}`,
-    type: "success",
-  });
+  console.log(OrderForm.MfgOrderName);
+  // if (OrderForm.MfgOrderName === "") {
+  //   ElMessage({
+  //     message: `请选择工单`,
+  //     type: "warning",
+  //   });
+  //   return;
+  // }
+  // ElMessage({
+  //   message: `工单:${OrderForm.MfgOrderName},设备码:${opui.station}`,
+  //   type: "success",
+  // });
 };
 
 const tableHeight = ref(0);
@@ -371,6 +387,67 @@ const pageObj = ref({
   pageSize: 50,
   currentPage: 1,
 });
+
+const feedVisible = ref(false);
+const feedForm = ref({
+  MfgOrderName: "208310182",
+  type: opui.station,
+  ProductName: "240106000131",
+  ProductDesc: "0402封装贴片电容100DF+5%50V MURATAGRM1555C1H101JA01D",
+  Qty: "100",
+  eqInfo: opui.stationDec,
+});
+
+const FeedHeader = reactive([
+  {
+    label: "机台",
+    prop: "eqInfo",
+  },
+  {
+    label: "工单号",
+    prop: "MfgOrderName",
+  },
+
+  {
+    label: "机型",
+    prop: "type",
+  },
+  {
+    label: "产品编码",
+    prop: "ProductName",
+  },
+  {
+    label: "产品描述",
+    prop: "ProductDesc",
+  },
+  {
+    label: "工单数量",
+    prop: "Qty",
+  },
+]);
+
+//关闭物料上料
+const feedCancel = () => {
+  feedVisible.value = false;
+};
+
+//打开物料上料
+const openFeed = () => {
+  if (OrderForm.MfgOrderName === "") {
+    ElMessage({
+      message: "请选择工单",
+      type: "warning",
+    });
+    // barCode.value = "";
+    return;
+  }
+  let data = cloneDeep(OrderForm);
+
+  feedForm.value = { ...data };
+  feedForm.value.type = opui.station;
+  feedForm.value.eqInfo = opui.stationDec;
+  feedVisible.value = true;
+};
 onBeforeMount(() => {
   getScreenHeight();
 });
@@ -383,16 +460,26 @@ onBeforeUnmount(() => {
 
 const radioChange = (args: any) => {
   console.log(args[1]);
-  orderTable.value.data.forEach((v: any) => {
-    if (v.MfgOrderName == args[1]) {
-      OrderForm.MfgOrderName = v.MfgOrderName;
-      OrderForm.ProductName = v.ProductName;
-      OrderForm.ProductDesc = v.ProductDesc;
-      OrderForm.PlannedStartDate = v.PlannedStartDate;
-      OrderForm.PlannedCompletionDate = v.PlannedCompletionDate;
-      OrderForm.Qty = v.Qty;
-    }
-  });
+  if (args[1] == null) {
+    OrderForm.MfgOrderName = "";
+    OrderForm.ProductName = "";
+    OrderForm.ProductDesc = "";
+    OrderForm.PlannedStartDate = "";
+    OrderForm.PlannedCompletionDate = "";
+    OrderForm.Qty = "";
+  } else {
+    orderTable.value.data.forEach((v: any) => {
+      if (v.MfgOrderName == args[1]) {
+        OrderForm.MfgOrderName = v.MfgOrderName;
+        OrderForm.ProductName = v.ProductName;
+        OrderForm.ProductDesc = v.ProductDesc;
+        OrderForm.PlannedStartDate = v.PlannedStartDate;
+        OrderForm.PlannedCompletionDate = v.PlannedCompletionDate;
+        OrderForm.Qty = v.Qty;
+      }
+    });
+  }
+
   //   inputRef.value.focus();
 };
 const onSubmit = () => {
@@ -418,6 +505,25 @@ const onSubmit = () => {
   });
 };
 
+const hasDuplicateValue = (array:any, propertyName:any) => {
+      // 创建一个新的Set，用于存储已经遍历过的属性值  
+      const valuesSet = new Set();  
+  
+  // 使用reduce遍历数组  
+  // 如果在遍历过程中发现某个属性值已经在valuesSet中存在，则返回true  
+  // 否则，遍历完成后返回false  
+  return array.reduce((hasDuplicate:any, item:any) => {  
+    if (valuesSet.has(item[propertyName])) {  
+      // 如果属性值已经存在于Set中，则存在重复  
+      return true;  
+    }  
+    // 将当前属性值添加到Set中  
+    valuesSet.add(item[propertyName]);  
+    // 如果没有找到重复，继续遍历  
+    return hasDuplicate;  
+  }, false);  
+}
+
 const handleSizeChange = (val: any) => {
   pageObj.value.currentPage = 1;
   pageObj.value.pageSize = val;
@@ -432,4 +538,8 @@ const getScreenHeight = () => {
 };
 </script>
 
-<style scoped></style>
+<style scoped lang="scss">
+.saveAsDialog {
+  min-width: 954px;
+}
+</style>
