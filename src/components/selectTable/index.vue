@@ -565,6 +565,7 @@ const radioChangeHandle = (event: { preventDefault: () => void }, row: any, inde
   event.preventDefault()
   isDefaultSelectVal.value = false
   radioClick(row, index)
+  // console.log(row);
 }
 // forbidden取值
 const isForbidden = () => {
@@ -580,6 +581,14 @@ const radioClick = (row: { [x: string]: any }, index: string) => {
     radioVal.value = ""
     isForbidden()
     resetState()
+    selectTable.value.setCurrentRow(-1)
+    nowIndex.value = -1
+    radioVal.value = ""
+    isDefaultSelectVal.value = true
+    state.defaultSelectValue = []
+    forbidden.value = false
+    selectDefaultLabel.value = null
+    state.defaultValue = null
     emits("radioChange", {}, null)
   } else {
     updateState(row, index)

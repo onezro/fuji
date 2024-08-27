@@ -80,7 +80,7 @@ export function QueryBurnPrintData(data: any) {
     return request({
         url: "/api/Burn/QueryBurnPrintData",
         method: "post",
-        params: {specName:data}
+        params: { specName: data }
     });
 }
 
@@ -89,8 +89,9 @@ export function PrintBurnModel(data: any) {
     return request({
         url: "/api/Burn/PrintBurnModel",
         method: "post",
-        data})
-    }
+        data
+    })
+}
 
 
 //获取装箱信息
@@ -100,4 +101,29 @@ export function QueryPackListByCarrier(data: any) {
         method: "post",
         params: data,
     });
+}
+
+//物料上料
+export function LoadMaterialQueue(data: any) {
+    return requestNoMessage({
+        url: "/api/Burn/LoadMaterialQueue",
+        method: "post",
+        data
+    })
+}
+//物料下料
+export function UnLoadMaterialQueue(data: any) {
+    return request({
+        url: "/api/Burn/UnLoadMaterialQueue",
+        method: "post",
+        data
+    })
+}
+//物料明细
+export function QueryMaterialQueueDetails(data: any) {
+    return requestNoMessage({
+        url: "/api/workstation/QueryMaterialQueueDetails",
+        method: "post",
+        data
+    })
 }

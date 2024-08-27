@@ -69,7 +69,6 @@ const handleSizeChange = (e: any) => {
 };
 const handleSelectionChange = (e: any) => {
   emit("handleSelectionChange", e);
-
 };
 
 const handleCurrentChange = (e: any) => {

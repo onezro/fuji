@@ -52,6 +52,7 @@
                 range-separator="~"
                 start-placeholder="开始时间"
                 format="YYYY-MM-DD"
+                :clearable="false"
                 value-format="YYYY-MM-DD"
                 end-placeholder="结束时间"
               />
@@ -72,20 +73,20 @@
             </el-form-item> -->
             <el-form-item label="工单号" prop="workOrder"
               ><el-input
-                style="width: 200px"
+                style="width: 180px"
                 v-model="form.workOrder"
+                clearable
                 placeholder="请输入工单号"
             /></el-form-item>
             <el-form-item label="条码" prop="barCode"
               ><el-input
-                style="width: 150px"
+                style="width: 180px"
+                clearable
                 v-model="form.barCode"
                 placeholder="请输入条码"
             /></el-form-item>
             <el-form-item>
-              <el-button type="primary" icon="Search" @click="onSubmit"
-                >查询</el-button
-              >
+              <el-button type="primary" @click="onSubmit">查询</el-button>
             </el-form-item>
           </el-form>
         </div>
@@ -99,13 +100,11 @@
           >
 
           <el-button
-            icon="Printer"
             :disabled="OrderForm.MfgOrderName == ''"
-            type="primary"
+            type="warning"
             @click="RawmaterialFeeding"
             >原材料上料</el-button
           >
-          <el-button type="warning" @click="openFeed">物料上料</el-button>
         </div>
         <tableTem
           ref="BurnTableRef"
@@ -133,7 +132,11 @@
       :close-on-click-modal="false"
       :close-on-press-escape="false"
     >
-      <feedTemp :form="feedForm" :form-header="FeedHeader" />
+      <feedTemp
+        :form="feedForm"
+        :form-header="FeedHeader"
+        :specName="'SMT-Burn'"
+      />
       <template #footer>
         <span class="dialog-footer">
           <el-button @click="feedCancel">关闭</el-button>
@@ -359,19 +362,22 @@ const burnPrint = () => {
   BurnTableRef.value.toggleSelection();
 };
 
+//打开物料上料
 const RawmaterialFeeding = () => {
-  console.log(OrderForm.MfgOrderName);
-  // if (OrderForm.MfgOrderName === "") {
-  //   ElMessage({
-  //     message: `请选择工单`,
-  //     type: "warning",
-  //   });
-  //   return;
-  // }
-  // ElMessage({
-  //   message: `工单:${OrderForm.MfgOrderName},设备码:${opui.station}`,
-  //   type: "success",
-  // });
+  // console.log(OrderForm.MfgOrderName);
+  if (OrderForm.MfgOrderName === "") {
+    ElMessage({
+      message: `请选择工单`,
+      type: "warning",
+    });
+    return;
+  }
+  let data = cloneDeep(OrderForm);
+
+  feedForm.value = { ...data };
+  feedForm.value.type = opui.station;
+  feedForm.value.eqInfo = opui.stationDec;
+  feedVisible.value = true;
 };
 
 const tableHeight = ref(0);
@@ -382,11 +388,11 @@ const pageObj = ref({
 
 const feedVisible = ref(false);
 const feedForm = ref({
-  MfgOrderName: "208310182",
+  MfgOrderName: "",
   type: opui.station,
-  ProductName: "240106000131",
-  ProductDesc: "0402封装贴片电容100DF+5%50V MURATAGRM1555C1H101JA01D",
-  Qty: "100",
+  ProductName: "",
+  ProductDesc: "",
+  Qty: "",
   eqInfo: opui.stationDec,
 });
 
@@ -423,23 +429,6 @@ const feedCancel = () => {
   feedVisible.value = false;
 };
 
-//打开物料上料
-const openFeed = () => {
-  if (OrderForm.MfgOrderName === "") {
-    ElMessage({
-      message: "请选择工单",
-      type: "warning",
-    });
-    // barCode.value = "";
-    return;
-  }
-  let data = cloneDeep(OrderForm);
-
-  feedForm.value = { ...data };
-  feedForm.value.type = opui.station;
-  feedForm.value.eqInfo = opui.stationDec;
-  feedVisible.value = true;
-};
 onBeforeMount(() => {
   getScreenHeight();
 });
@@ -451,7 +440,7 @@ onBeforeUnmount(() => {
 });
 
 const radioChange = (args: any) => {
-  console.log(args[1]);
+  // console.log(args[1]);
   if (args[1] == null) {
     OrderForm.MfgOrderName = "";
     OrderForm.ProductName = "";
@@ -496,7 +485,7 @@ const getScreenHeight = () => {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
 .saveAsDialog {
   min-width: 954px;
 }
