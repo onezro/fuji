@@ -284,3 +284,12 @@ export function GetFactoryModelList(){
         method: "post",
     });
 }
+
+//根据治具类型操作
+export function ToolsType(data: any) {
+    return request({
+        url: "/api/Tools/ToolsType",
+        method: "post",
+        data
+    })
+}
