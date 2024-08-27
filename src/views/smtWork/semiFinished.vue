@@ -32,18 +32,9 @@
               :key="t.CARRIERNAME"
             >
               <el-form ref="formRef" :model="t" label-width="auto">
-                <el-row>
+                <el-row :gutter="20">
                   <el-col :span="12">
-                    <el-form-item label="周转箱条码">
-                      <span
-                        class="text-base text-[#006487] font-bold underline"
-                        @click="getList(t.CARRIERNAME)"
-                        >{{ t.CARRIERNAME }}</span
-                      >
-                    </el-form-item></el-col
-                  >
-                  <el-col :span="12">
-                    <el-form-item label="类型">
+                    <el-form-item label="周转箱类型">
                       <span
                         :class="[
                           t.LOADTYPE == 'OK' ? 'text-[#00B400]' : 'text-[red]',
@@ -51,15 +42,24 @@
                         ]"
                         >{{ t.LOADTYPE }}</span
                       >
-                    </el-form-item></el-col
-                  >
-                </el-row>
-                <el-row>
+                    </el-form-item>
+                  </el-col>
                   <el-col :span="12">
                     <el-form-item label="容量">
                       <span class="text-base">{{ t.CAPACITY }}</span>
-                    </el-form-item></el-col
-                  >
+                    </el-form-item>
+                  </el-col>
+                </el-row>
+                <el-row :gutter="20">
+                  <el-col :span="12">
+                    <el-form-item label="周转箱条码">
+                      <span
+                        class="text-base text-[#006487] font-bold underline cursor-pointer"
+                        @click="getList(t.CARRIERNAME)"
+                        >{{ t.CARRIERNAME }}</span
+                      >
+                    </el-form-item>
+                  </el-col>
                   <el-col :span="12">
                     <el-form-item label="装箱数量">
                       <span class="text-base">{{ t.QTY }}</span>
@@ -152,22 +152,7 @@ import {
 import tableTem from "@/components/tableTem/index.vue";
 import { useAppStoreWithOut } from "@/stores/modules/app";
 import { useUserStoreWithOut } from "@/stores/modules/user";
-import { checkStringType } from "@/utils/barcodeFormat";
 import { ElMessage, ElMessageBox, ElNotification } from "element-plus";
-// import formTemple from '@/components/formTem/form.vue'
-interface Form {
-  order: string;
-  models: string;
-  productCode: string;
-  productDes: string;
-  orderNum: string;
-}
-interface FormHeader {
-  label: string;
-  value: string;
-  disabled: boolean;
-  type: string;
-}
 interface Turn {
   CARRIERNAME: string;
   LOADTYPE: string;
@@ -213,7 +198,7 @@ const columnData = reactive([
     min: true,
     align: "center",
   },
-  
+
   {
     text: true,
     prop: "PCBSerialNumber",
@@ -273,7 +258,7 @@ const columnData = reactive([
   },
 ]);
 const pageObj = ref({
-  pageSize: 10,
+  pageSize: 50,
   currentPage: 1,
 });
 const turnData = ref<Turn[]>([]);

@@ -49,12 +49,7 @@
             </template>
           </el-table-column>
         </el-table>
-        <div class="mt-3">
-          <el-pagination size="large" background @size-change="handleSizeChange" @current-change="handleCurrentChange"
-            :current-page="currentPage" :page-size="pageSize" :page-sizes="[10, 20, 50, 100]"
-            layout="total,sizes, prev, pager, next, jumper" :total="tableData.length">
-          </el-pagination>
-        </div>
+     
       </div>
     </el-card>
     <el-dialog :append-to-body="true" :close-on-click-modal="false" v-model="addVisible" align-center title="新增"
@@ -467,7 +462,7 @@ const handleCurrentChange = (val: any) => {
 };
 const getScreenHeight = () => {
   nextTick(() => {
-    tableHeight.value = window.innerHeight - 210;
+    tableHeight.value = window.innerHeight - 170;
     //后面的50：根据需求空出的高度，自行调整
   });
 };
