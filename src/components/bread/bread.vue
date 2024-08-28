@@ -6,6 +6,7 @@ import { filterBreadcrumb } from "./helper";
 import type { RouteLocationNormalizedLoaded } from "vue-router";
 import { filter, treeToList } from "@/utils/tree";
 import { useAppStore } from '@/stores/modules/app'
+import { ArrowRight } from '@element-plus/icons-vue'
 const appStore = useAppStore()
 
 
@@ -46,12 +47,12 @@ onBeforeMount(() => {
     <div class="ml-[10px]">
       <img src="../../assets/logo-white.svg" width="140px" alt="">
     </div>
-    <el-breadcrumb separator="/" class="flex items-center h-full  " v-if="!appStore.getSystemType">
+    <el-breadcrumb :separator-icon="ArrowRight" class="flex items-center h-full  " v-if="!appStore.getSystemType">
       <el-icon size="20" color="#fff" class="mr-2 ml-2">
         <Place />
       </el-icon>
       <TransitionGroup appear enter-active-class="animate__animated animate__fadeInRight">
-        <el-breadcrumb-item v-for="item in treeToList(unref(levelList))" :key="item.name" :to="{
+        <el-breadcrumb-item  v-for="item in treeToList(unref(levelList))" :key="item.name" :to="{
           path:
             !item.redirect || item.redirect === 'noredirect' ? '' : item.path,
         }">

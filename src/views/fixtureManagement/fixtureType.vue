@@ -282,7 +282,7 @@ const columnData = reactive([
     label: "组件料号",
     width: "",
     min: true,
-    align: "center",
+    align: "1",
   },
   {
     text: true,

@@ -1,5 +1,5 @@
 <template>
-  <div class="p-[5px] flex">
+  <div class="flex">
     <div class="w-[350px] border-solid border-r-2 border-[#cbcbcb]">
       <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
         <span class="ml-5">基本信息</span>
@@ -13,16 +13,22 @@
           label-width="auto"
         >
           <el-form-item label="工单">
-            <selectTa
-              ref="selectTable"
-              :table="orderTable"
-              :columns="orderColumns"
-              :max-height="400"
-              :tableWidth="700"
-              :keywords="{ label: 'MfgOrderName', value: 'MfgOrderName' }"
-              @radioChange="(...args: any) => radioChange(args)"
-            >
-            </selectTa>
+            <div class="flex items-center">
+              <selectTa
+                ref="selectTable"
+                :table="orderTable"
+                :columns="orderColumns"
+                :selectWidth="220"
+                :max-height="400"
+                :tableWidth="700"
+                :keywords="{ label: 'MfgOrderName', value: 'MfgOrderName' }"
+                @radioChange="(...args: any) => radioChange(args)"
+              >
+              </selectTa>
+              <el-tooltip content="刷新" placement="top">
+               <el-icon class="ml-3" color="#777777"   :class="isLoding" size="24" @click="getOrderData"><RefreshRight /></el-icon>
+           </el-tooltip>
+              </div> 
           </el-form-item>
           <el-form-item v-for="f in formHeader" :key="f.value" :label="f.label">
             <span
@@ -35,7 +41,7 @@
         </el-form>
       </div>
     </div>
-    <div class="w-[calc(100%-350px)]">
+    <div class="w-[calc(100%-350px)] pt-[5px]">
       <div>
         <div class="ml-2">
           <el-form
@@ -156,19 +162,19 @@ import {
   onBeforeUnmount,
   nextTick,
 } from "vue";
-import type { Formspan, FormHeader, OrderData } from "@/typing";
+import type { Formspan, FormHeader, OrderData,BurnForm } from "@/typing";
 import selectTa from "@/components/selectTable/index.vue";
 import tableTem from "@/components/tableTem/index.vue";
 import feedTemp from "@/components/feedTemp/index.vue";
 import { cloneDeep } from "lodash-es";
-const form = ref({
+const form = ref<InstanceType<typeof BurnForm>>({
   date: [],
-  SpecName: "SMT-Laser",
+  SpecName: "SMT-Burn",
   barCode: "",
   OrderNum: "",
 });
 import { useAppStore } from "@/stores/modules/app";
-import { QueryBurnPrintData, PrintBurnModel } from "@/api/smtApi";
+import { QueryBurnPrintData, PrintBurnModel, OrderQuery } from "@/api/smtApi";
 
 const appStore = useAppStore();
 const opui = appStore.getOPUIReal();
@@ -206,10 +212,13 @@ const lineOption = ref([
 ]);
 
 const orderColumns = ref([
-  { label: "工单号", width: "", prop: "MfgOrderName" },
-  { label: "产品编码", width: "", prop: "ProductName" },
-  { label: "产线", width: "", prop: "MfgLineDesc" },
+  { label: "工单号", width: "", prop: "MfgOrderName", fixed: true },
+  { label: "产品编码", width: "", prop: "ProductName", fixed: true },
+ 
   { label: "状态", width: "", prop: "OrderStatusDesc" },
+  { label: "产品描述", width: "", prop: "ProductDesc" },
+  { label: "机型", width: "", prop: "BD_ProductModel" },
+  { label: "软件版本", width: "", prop: "BD_SoftVersion" },
   { label: "计划开始", width: "", prop: "PlannedStartDate" },
   { label: "计划完成", width: "", prop: "PlannedCompletionDate" },
   // { label: "工单号", width: "", prop: "MfgOrderName" },
@@ -218,21 +227,21 @@ const orderColumns = ref([
 
 const orderTable = ref<InstanceType<typeof OrderData>>({
   data: [
-    {
-      MfgOrderName: "2330201001988",
-      PlannedStartDate: "2024-08-07 00:00:00",
-      PlannedCompletionDate: "2024-08-0700:00:00",
-      Qty: "2000",
-      ProductName: "2330201001988",
-      BD_ProjectNo: "string",
-      BD_ProductModel: "string",
-      ProductDesc: "插件组件 3A4621-01CMB板 DIP",
-      UOMName: "string",
-      OrderStatusName: "string",
-      OrderStatusDesc: "string",
-      MfgLineName: "string",
-      MfgLineDesc: "string",
-    },
+    // {
+    //   MfgOrderName: "2330201001988",
+    //   PlannedStartDate: "2024-08-07 00:00:00",
+    //   PlannedCompletionDate: "2024-08-0700:00:00",
+    //   Qty: "2000",
+    //   ProductName: "2330201001988",
+    //   BD_ProjectNo: "string",
+    //   BD_ProductModel: "string",
+    //   ProductDesc: "插件组件 3A4621-01CMB板 DIP",
+    //   UOMName: "string",
+    //   OrderStatusName: "string",
+    //   OrderStatusDesc: "string",
+    //   MfgLineName: "string",
+    //   MfgLineDesc: "string",
+    // },
   ],
 });
 
@@ -240,6 +249,8 @@ const OrderForm = reactive<InstanceType<typeof Formspan>>({
   MfgOrderName: "",
   ProductName: "",
   ProductDesc: "",
+  BD_ProductModel: "",
+  BD_SoftVersion: "",
   Qty: "",
   PlannedStartDate: "",
   PlannedCompletionDate: "",
@@ -258,7 +269,21 @@ const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
     value: "ProductDesc",
     disabled: true,
     type: "textarea",
-    width: 300,
+    width: "",
+  },
+  {
+    label: "机型",
+    value: "BD_ProductModel",
+    disabled: true,
+    type: "input",
+    width: "",
+  },
+  {
+    label: "软件版本",
+    value: "BD_SoftVersion",
+    disabled: true,
+    type: "textarea",
+    width: "",
   },
   {
     label: "计划开始",
@@ -434,16 +459,45 @@ const FeedHeader = reactive([
 const feedCancel = () => {
   feedVisible.value = false;
 };
+const isLoding=ref('')
 
 onBeforeMount(() => {
   getScreenHeight();
+  let date:string=setDefaultDate()
+  form.value.date=[date,date]
 });
 onMounted(() => {
   window.addEventListener("resize", getScreenHeight);
+  getOrderData();
 });
 onBeforeUnmount(() => {
   window.addEventListener("resize", getScreenHeight);
 });
+
+const getOrderData = () => {
+  isLoding.value = "is-loading";
+  OrderQuery().then((res: any) => {
+    // console.log(res);
+    let timer = setTimeout(() => {
+      isLoding.value = "";
+      clearTimeout(timer);
+    }, 2000);
+    if (res.content == null) {
+      orderTable.value.data = [];
+      return;
+    }
+    orderTable.value.data = res.content;
+  });
+};
+
+const setDefaultDate = () => {
+		// 获取当前日期  
+		const now = new Date();
+		// 格式化日期为YYYY-MM-DD  
+		const formattedDate =
+			`${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+	return formattedDate
+	}
 
 const radioChange = (args: any) => {
   // console.log(args[1]);
@@ -452,6 +506,8 @@ const radioChange = (args: any) => {
     OrderForm.ProductName = "";
     OrderForm.ProductDesc = "";
     OrderForm.PlannedStartDate = "";
+    OrderForm.BD_ProductModel = "";
+    OrderForm.BD_SoftVersion = "";
     OrderForm.PlannedCompletionDate = "";
     OrderForm.Qty = "";
   } else {
@@ -460,6 +516,8 @@ const radioChange = (args: any) => {
         OrderForm.MfgOrderName = v.MfgOrderName;
         OrderForm.ProductName = v.ProductName;
         OrderForm.ProductDesc = v.ProductDesc;
+        OrderForm.BD_ProductModel = v.BD_ProductModel;
+        OrderForm.BD_SoftVersion = v.BD_SoftVersion;
         OrderForm.PlannedStartDate = v.PlannedStartDate;
         OrderForm.PlannedCompletionDate = v.PlannedCompletionDate;
         OrderForm.Qty = v.Qty;
@@ -470,11 +528,11 @@ const radioChange = (args: any) => {
   //   inputRef.value.focus();
 };
 const onSubmit = () => {
-  console.log(form.value);
+  // console.log(form.value);
   QueryBurnPrintData({
     SpecName: form.value.SpecName,
-    StartTime: form.value.date[0] ? form.value.date[0]:'',
-    EndTime: form.value.date[1] ? form.value.date[1]:'',
+    StartTime: form.value.date[0] ? form.value.date[0] : "",
+    EndTime: form.value.date[1] ? form.value.date[1] : "",
     OrderNum: form.value.OrderNum,
     BarCode: form.value.barCode,
   }).then((data: any) => {
@@ -483,33 +541,33 @@ const onSubmit = () => {
     }
     const dataText = JSON.parse(data.content);
     tableData.value = dataText;
-    form.value = {
-      date: [],
-      SpecName: "SMT-Laser",
-      barCode: "",
-      OrderNum: ""
-    };
+    // form.value = {
+    //   // date: [],
+    //   SpecName: "SMT-Laser",
+    //   barCode: "",
+    //   OrderNum: "",
+    // };
   });
 };
 
-const hasDuplicateValue = (array:any, propertyName:any) => {
-      // 创建一个新的Set，用于存储已经遍历过的属性值  
-      const valuesSet = new Set();  
-  
-  // 使用reduce遍历数组  
-  // 如果在遍历过程中发现某个属性值已经在valuesSet中存在，则返回true  
-  // 否则，遍历完成后返回false  
-  return array.reduce((hasDuplicate:any, item:any) => {  
-    if (valuesSet.has(item[propertyName])) {  
-      // 如果属性值已经存在于Set中，则存在重复  
-      return true;  
-    }  
-    // 将当前属性值添加到Set中  
-    valuesSet.add(item[propertyName]);  
-    // 如果没有找到重复，继续遍历  
-    return hasDuplicate;  
-  }, false);  
-}
+const hasDuplicateValue = (array: any, propertyName: any) => {
+  // 创建一个新的Set，用于存储已经遍历过的属性值
+  const valuesSet = new Set();
+
+  // 使用reduce遍历数组
+  // 如果在遍历过程中发现某个属性值已经在valuesSet中存在，则返回true
+  // 否则，遍历完成后返回false
+  return array.reduce((hasDuplicate: any, item: any) => {
+    if (valuesSet.has(item[propertyName])) {
+      // 如果属性值已经存在于Set中，则存在重复
+      return true;
+    }
+    // 将当前属性值添加到Set中
+    valuesSet.add(item[propertyName]);
+    // 如果没有找到重复，继续遍历
+    return hasDuplicate;
+  }, false);
+};
 
 const handleSizeChange = (val: any) => {
   pageObj.value.currentPage = 1;
@@ -520,7 +578,7 @@ const handleCurrentChange = (val: any) => {
 };
 const getScreenHeight = () => {
   nextTick(() => {
-    tableHeight.value = window.innerHeight - 230;
+    tableHeight.value = window.innerHeight - 225;
   });
 };
 </script>

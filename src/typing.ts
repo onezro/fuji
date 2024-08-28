@@ -82,3 +82,8 @@ interface orderArr {
 interface OrderData {
     data: Array<orderArr>;
 }
+
+interface BurnForm{
+    data:Array<string>,
+    
+}

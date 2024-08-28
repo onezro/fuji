@@ -92,6 +92,16 @@ export function PrintBurnModel(data: any) {
         data
     })
 }
+//烧录工单
+export function OrderQuery() {
+    return request({
+        url: "/api/Burn/OrderQuery",
+        method: "post",
+        data:{
+            orderID:''
+        }
+    })
+}
 
 
 //获取装箱信息

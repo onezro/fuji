@@ -40,14 +40,14 @@
             :close-on-press-escape="false" align-center>
             <main>
                 <el-tabs type="card" class="demo-tabs" v-model="tabValue">
-                    <el-tab-pane label="设备点检记录" name="inspection">设备点检记录</el-tab-pane>
-                    <el-tab-pane label="设备保养记录" name="maintain">设备保养记录</el-tab-pane>
-                    <el-tab-pane label="设备维修记录" name="repair">设备维修记录</el-tab-pane>
+                    <el-tab-pane label="设备点检记录" name="inspection">开发维护中~</el-tab-pane>
+                    <el-tab-pane label="设备保养记录" name="maintain">开发维护中~</el-tab-pane>
+                    <el-tab-pane label="设备维修记录" name="repair">开发维护中~</el-tab-pane>
                 </el-tabs>
             </main>
             <template #footer>
                 <span class="dialog-footer">
-                    <el-button @click="editVisible = false">关闭</el-button>
+                    <el-button @click.stop="editVisible = false">关闭</el-button>
                 </span>
             </template>
         </el-dialog>
@@ -90,10 +90,9 @@ interface Option3 {
 }
 const tableData = ref([]);
 const tableHeight = ref(0);
-const addVisible = ref(false);
+
 const editVisible = ref(false);
-const addFormRef = ref();
-const editFormRef = ref();
+
 const form = ref({
     EquipmentName: "",
     EquipmentDesc: "",
@@ -108,15 +107,7 @@ const form = ref({
     VendorAndModel: "",
     VendorSerialNumber: "",
 });
-const editForm = reactive({
-    eqty: "",
-    eqName: "",
-    zcnumber: "",
-    level: "",
-    category: "",
-    deviceStatus: "",
-    leader: "",
-});
+
 const option1 = ref<Option[]>([]);
 const option2 = ref<Option[]>([]);
 const option3 = ref<Option3[]>([]);
@@ -125,20 +116,7 @@ const formRef = ref()
 const handleEdit = (data: any) => {
     // console.log(data);
     editVisible.value = true;
-};
-const handleDelete = (data: any) => {
-    ElMessageBox.confirm("确定删除", "确认操作", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
-    })
-        .then(() => { })
-        .catch(() => {
-            ElMessage({
-                type: "info",
-                message: "取消操作",
-            });
-        });
+   
 };
 const columnData = reactive([
 
