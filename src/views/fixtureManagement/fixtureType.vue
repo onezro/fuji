@@ -2,17 +2,22 @@
   <div class="p-[10px]">
     <el-card shadow="always" :body-style="{ padding: '10px' }">
       <div class="pb-[10px] flex justify-between">
-        <el-button type="primary" @click="addVisible = true">添加</el-button>
+        <el-button type="primary" @click="(addVisible = true), clearForm()"
+          >添加</el-button
+        >
         <div class="flex">
           <el-input
             v-model="inputValue"
             style="width: 240px"
             placeholder="请输入"
           ></el-input>
-          <el-button class="ml-3" type="primary" @click="">查询</el-button>
+          <el-button class="ml-3" type="primary" @click="searchData"
+            >查询</el-button
+          >
         </div>
       </div>
       <table-tem
+        size="small"
         :tableData="tableData"
         :tableHeight="tableHeight"
         :columnData="columnData"
@@ -22,6 +27,7 @@
       ></table-tem>
     </el-card>
     <el-dialog
+      align-center
       :append-to-body="true"
       :close-on-click-modal="false"
       v-model="editVisible"
@@ -35,53 +41,124 @@
         label-position="left"
         label-width="auto"
       >
-        <el-form-item label="组件料号" prop="WorkSection">
+        <el-form-item label="类别">
           <el-input
+            disabled
+            v-model.number="EditForm.MaterialName"
+            style="width: 240px"
+            placeholder="请输入"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="工治具类型编码" prop="WorkSection">
+          <el-input
+            disabled
             v-model="EditForm.CompName"
             style="width: 240px"
-            placeholder="请输入"
-          ></el-input>
+            :rows="2"
+            type="textarea"
+          />
         </el-form-item>
-        <el-form-item label="材料类型">
-          <el-input
+        <!-- <el-form-item label="材料类型">
+          <el-select
             v-model="EditForm.MaterialType"
+            placeholder="Select"
+            size="large"
             style="width: 240px"
-            placeholder="请输入"
-          ></el-input>
-        </el-form-item>
-        <el-form-item label="组件类型">
-          <el-input
-            v-model="EditForm.CompType"
-            style="width: 240px"
-            placeholder="请输入"
-          ></el-input>
-        </el-form-item>
+          >
+            <el-option
+              v-for="item in [{ label: '钢网刮刀', value: 1 }]"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
+        </el-form-item> -->
         <el-form-item label="自定义总次数">
           <el-input
-            v-model="EditForm.TotalUses"
+            v-model.number="EditForm.TotalUses"
             style="width: 240px"
             placeholder="请输入"
           ></el-input>
         </el-form-item>
         <el-form-item label="停机扫描(生产片数)">
           <el-input
-            v-model="EditForm.UsesUntilRealidation"
+            :disabled="!editFormControl.CleanAfterUses"
+            v-model.number="EditForm.UsesUntilRevalidation"
             style="width: 240px"
             placeholder="请输入"
           ></el-input>
+          <el-checkbox
+            class="ml-3"
+            v-model="editFormControl.CleanAfterUses"
+            @change="EditForm.UsesUntilRevalidation = !editFormControl.CleanAfterUses ? 0:EditForm.UsesUntilRevalidation"
+            label="启用"
+            size="large"
+          />
         </el-form-item>
         <el-form-item label="停机扫描(暂停时间)">
           <el-input
-            v-model="EditForm.TimeUntilRevalidation"
+            :disabled="!editFormControl.CleanAfterPause"
+            v-model.number="EditForm.PauseUntilRevalidate"
             style="width: 240px"
             placeholder="请输入"
           ></el-input>
+          <el-checkbox
+            class="ml-3"
+            v-model="editFormControl.CleanAfterPause"
+            @change="EditForm.PauseUntilRevalidate = !editFormControl.CleanAfterPause ? 0:EditForm.PauseUntilRevalidate"
+            label="启用"
+            size="large"
+          />
         </el-form-item>
         <el-form-item label="停机扫描(生产时间)">
           <el-input
-            v-model="EditForm.MaterialType"
+            :disabled="!editFormControl.CleanAfterTime"
+            v-model.number="EditForm.TimeUntilRevalidation"
             style="width: 240px"
             placeholder="请输入"
+          ></el-input>
+          <el-checkbox
+            class="ml-3"
+            v-model="editFormControl.CleanAfterTime"
+            @change="EditForm.TimeUntilRevalidation = !editFormControl.CleanAfterTime ? 0:EditForm.TimeUntilRevalidation"
+            label="启用"
+            size="large"
+          />
+        </el-form-item>
+        <el-form-item label="清洗时间">
+          <el-input
+            v-model.number="EditForm.CleaningTime"
+            style="width: 240px"
+            class="no_number"
+            placeholder="请输入"
+            type="number"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="张力测试上限值">
+          <el-input
+            v-model.number="EditForm.TensionLimit"
+            style="width: 240px"
+            class="no_number"
+            placeholder="请输入"
+            type="number"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="张力测试下限值">
+          <el-input
+            v-model.number="EditForm.LowerTensionLimit"
+            style="width: 240px"
+            class="no_number"
+            placeholder="请输入"
+            type="number"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="测试点位数量">
+          <el-input
+            v-model.number="EditForm.TensionPoints"
+            style="width: 240px"
+            class="no_number"
+            placeholder="请输入"
+            type="number"
           ></el-input>
         </el-form-item>
       </el-form>
@@ -90,11 +167,12 @@
         <span class="dialog-footer">
           <!-- <el-button type="info" @click="addSon"> 增加子项</el-button> -->
           <el-button @click="editVisible = false"> 取消 </el-button>
-          <el-button type="primary" @click=""> 确定 </el-button>
+          <el-button type="primary" @click="editConfirm"> 确定 </el-button>
         </span>
       </template>
     </el-dialog>
     <el-dialog
+      align-center
       :append-to-body="true"
       :close-on-click-modal="false"
       v-model="addVisible"
@@ -108,53 +186,137 @@
         label-position="left"
         label-width="auto"
       >
-        <el-form-item label="组件料号" prop="WorkSection">
+        <el-form-item label="类别">
+          <el-select
+            v-model="form.MaterialName"
+            placeholder="请选择"
+            style="width: 240px"
+          >
+            <el-option
+              v-for="item in MaterialNameList"
+              :key="item"
+              :label="item"
+              :value="item"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="工治具类型编码" prop="WorkSection">
           <el-input
             v-model="form.CompName"
             style="width: 240px"
-            placeholder="请输入"
-          ></el-input>
+            :rows="2"
+            type="textarea"
+          />
         </el-form-item>
-        <el-form-item label="材料类型">
-          <el-input
-            v-model="form.MaterialType"
+        <!-- <el-form-item label="材料类型">
+          <el-select
+            v-model="EditForm.MaterialType"
+            placeholder="Select"
+            size="large"
             style="width: 240px"
-            placeholder="请输入"
-          ></el-input>
-        </el-form-item>
-        <el-form-item label="组件类型">
-          <el-input
-            v-model="form.CompType"
-            style="width: 240px"
-            placeholder="请输入"
-          ></el-input>
-        </el-form-item>
+          >
+            <el-option
+              v-for="item in [{ label: '钢网刮刀', value: 1 }]"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
+        </el-form-item> -->
         <el-form-item label="自定义总次数">
           <el-input
-            v-model="form.TotalUses"
+            v-model.number="form.TotalUses"
             style="width: 240px"
+            class="no_number"
             placeholder="请输入"
+            type="number"
           ></el-input>
         </el-form-item>
         <el-form-item label="停机扫描(生产片数)">
           <el-input
-            v-model="form.UsesUntilRealidation"
+            :disabled="!formControl.CleanAfterUses"
+            v-model.number="form.UsesUntilRevalidation"
             style="width: 240px"
+            class="no_number"
             placeholder="请输入"
+            type="number"
           ></el-input>
+          <el-checkbox
+            class="ml-3"
+            v-model="formControl.CleanAfterUses"
+            @change="form.UsesUntilRevalidation = !formControl.CleanAfterUses ? 0:form.UsesUntilRevalidation"
+            label="启用"
+            size="large"
+          />
         </el-form-item>
         <el-form-item label="停机扫描(暂停时间)">
           <el-input
-            v-model="form.RauseUntilRevalidate"
+            :disabled="!formControl.CleanAfterPause"
+            v-model.number="form.PauseUntilRevalidate"
             style="width: 240px"
+            class="no_number"
             placeholder="请输入"
+            type="number"
           ></el-input>
+          <el-checkbox
+            class="ml-3"
+            v-model="formControl.CleanAfterPause"
+            @change="form.PauseUntilRevalidate = !formControl.CleanAfterPause ? 0:form.PauseUntilRevalidate"
+            label="启用"
+            size="large"
+          />
         </el-form-item>
         <el-form-item label="停机扫描(生产时间)">
           <el-input
-            v-model="form.TimeUntilRevalidation"
+            :disabled="!formControl.CleanAfterTime"
+            v-model.number="form.TimeUntilRevalidation"
             style="width: 240px"
+            class="no_number"
             placeholder="请输入"
+            type="number"
+          ></el-input>
+          <el-checkbox
+            class="ml-3"
+            v-model="formControl.CleanAfterTime"
+            @change="form.TimeUntilRevalidation = !formControl.CleanAfterTime ? 0:form.TimeUntilRevalidation"
+            label="启用"
+            size="large"
+          />
+        </el-form-item>
+        <el-form-item label="清洗时间">
+          <el-input
+            v-model.number="form.CleaningTime"
+            style="width: 240px"
+            class="no_number"
+            placeholder="请输入"
+            type="number"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="张力测试上限值">
+          <el-input
+            v-model.number="form.TensionLimit"
+            style="width: 240px"
+            class="no_number"
+            placeholder="请输入"
+            type="number"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="张力测试下限值">
+          <el-input
+            v-model.number="form.LowerTensionLimit"
+            style="width: 240px"
+            class="no_number"
+            placeholder="请输入"
+            type="number"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="测试点位数量">
+          <el-input
+            v-model.number="form.TensionPoints"
+            style="width: 240px"
+            class="no_number"
+            placeholder="请输入"
+            type="number"
           ></el-input>
         </el-form-item>
       </el-form>
@@ -162,9 +324,18 @@
       <template #footer>
         <span class="dialog-footer">
           <!-- <el-button type="info" @click="addSon"> 增加子项</el-button> -->
-          <el-button @click="addVisible"> 取消 </el-button>
+          <el-button @click="addVisible = false"> 取消 </el-button>
           <el-button type="primary" @click="addSumbit"> 确定 </el-button>
         </span>
+      </template>
+    </el-dialog>
+    <el-dialog v-model="deleteVisible" title="Tips" width="500">
+      <span>删除确认</span>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button @click="deleteVisible = false">取消</el-button>
+          <el-button type="primary" @click="deleteConfirm"> 删除 </el-button>
+        </div>
       </template>
     </el-dialog>
   </div>
@@ -173,9 +344,7 @@
 <script setup lang="ts">
 import { ElMessage, ElNotification, ElMessageBox } from "element-plus";
 import tableTem from "@/components/tableTem/index.vue";
-import {
-    ToolsType
-} from "@/api/permiss";
+import { ToolsType } from "@/api/permiss";
 import {
   ref,
   unref,
@@ -183,39 +352,47 @@ import {
   reactive,
   onBeforeMount,
   watch,
+  computed,
   onMounted,
   onBeforeUnmount,
 } from "vue";
 
-interface tableDataTS {
-  number: string;
-  type: string;
-  consumption: string;
-  process: string;
-  FaceType: string;
-  Des: string;
-}
-
 interface formTS {
   operationtype: string;
   CompName: string;
-  MaterialType: string;
-  CompType: string;
-  TotalUses: string;
-  UsesUntilRealidation: string;
-  RauseUntilRevalidate: string;
-  TimeUntilRevalidation: string;
+  MaterialType: number;
+  MaterialName: string;
+  CompType: number;
+  TotalUses: number;
+  CleanAfterUses: string;
+  UsesUntilRevalidation: number;
+  CleanAfterPause: string;
+  PauseUntilRevalidate: number;
+  CleanAfterTime: string;
+  TimeUntilRevalidation: number;
+  CleaningTime: number;
+  TensionLimit: number;
+  LowerTensionLimit: number;
+  TensionPoints: number;
 }
 
 interface EditFormTS {
   operationtype: string;
   CompName: string;
-  MaterialType: string;
-  CompType: string;
-  TotalUses: string;
-  UsesUntilRealidation: string;
-  RauseUntilRevalidate: string;
-  TimeUntilRevalidation: string;
+  MaterialType: number;
+  MaterialName: string;
+  CompType: number;
+  TotalUses: number;
+  CleanAfterUses: string;
+  UsesUntilRevalidation: number;
+  CleanAfterPause: string;
+  PauseUntilRevalidate: number;
+  CleanAfterTime: string;
+  TimeUntilRevalidation: number;
+  CleaningTime: number;
+  TensionLimit: number;
+  LowerTensionLimit: number;
+  TensionPoints: number;
 }
 
 //   const pageSize = ref(10);
@@ -223,84 +400,275 @@ const currentPage = ref(1);
 const tableHeight = ref(0);
 const addVisible = ref(false);
 const editVisible = ref(false);
-const inputValue = ref();
+const inputValue = ref('');
+const deleteVisible = ref(false);
+const deleteChoice = ref("");
 const pageObj = ref({
   pageSize: 30,
   currentPage: 1,
 });
+
+const formControl = ref({
+  CleanAfterUses: false,
+  CleanAfterPause: false,
+  CleanAfterTime: false,
+});
+
+const editFormControl = ref({
+  CleanAfterUses: false,
+  CleanAfterPause: false,
+  CleanAfterTime: false,
+});
+
+// watch(formControl, (newVal, oldVal) => {  
+//   UsesUntilRevalidation = ''
+//     });  
 
 const tableData = ref([]);
 
 const form = ref<formTS>({
   operationtype: "",
   CompName: "",
-  MaterialType: "",
-  CompType: "",
-  TotalUses: "",
-  UsesUntilRealidation: "",
-  RauseUntilRevalidate: "",
-  TimeUntilRevalidation: "",
+  MaterialType: 1,
+  MaterialName: "",
+  CompType: 3,
+  TotalUses: 0,
+  CleanAfterUses: "N",
+  UsesUntilRevalidation: 0,
+  CleanAfterPause: "N",
+  PauseUntilRevalidate: 0,
+  CleanAfterTime: "N",
+  TimeUntilRevalidation: 0,
+  CleaningTime: 0,
+  TensionLimit: 0,
+  LowerTensionLimit: 0,
+  TensionPoints: 0,
 });
 
 const EditForm = ref<EditFormTS>({
   operationtype: "",
   CompName: "",
-  MaterialType: "",
-  CompType: "",
-  TotalUses: "",
-  UsesUntilRealidation: "",
-  RauseUntilRevalidate: "",
-  TimeUntilRevalidation: "",
+  MaterialType: 1,
+  MaterialName: "",
+  CompType: 3,
+  TotalUses: 0,
+  CleanAfterUses: "N",
+  UsesUntilRevalidation: 0,
+  CleanAfterPause: "N",
+  PauseUntilRevalidate: 0,
+  CleanAfterTime: "N",
+  TimeUntilRevalidation: 0,
+  CleaningTime: 0,
+  TensionLimit: 0,
+  LowerTensionLimit: 0,
+  TensionPoints: 0,
 });
 
 const editSubmit = (data: any) => {
-  console.log(data);
-  // EditForm.value.type = data.type;
-  // EditForm.value.Des = data.Des;
+  EditForm.value.operationtype = data.operationtype;
+  EditForm.value.CompName = data.CompName;
+  EditForm.value.MaterialType = data.MaterialType;
+  EditForm.value.MaterialName = data.MaterialName;
+  EditForm.value.CompType = data.CompType;
+  EditForm.value.TotalUses = data.TotalUses;
+  EditForm.value.UsesUntilRevalidation = data.UsesUntilRevalidation;
+  EditForm.value.PauseUntilRevalidate = data.PauseUntilRevalidate;
+  EditForm.value.TimeUntilRevalidation = data.TimeUntilRevalidation;
+  editFormControl.value.CleanAfterUses = data.CleanAfterUses === "Y";
+  editFormControl.value.CleanAfterPause = data.CleanAfterPause === "Y";
+  editFormControl.value.CleanAfterTime = data.CleanAfterTime === "Y";
   editVisible.value = true;
 };
 
-const deleteSubmit = () => {};
+const MaterialNameList = reactive([
+  "SMT烧录座",
+  "烧录治具",
+  "ICT治具",
+  "炉温测试板",
+  "过炉载具",
+  "FCT治具",
+  "分板治具",
+  "打钉治具",
+  "EOL治具",
+  "测试治具",
+  "点胶治具",
+  "扣屏蔽罩治具",
+  "外设治具",
+  "标定治具",
+  "钢网",
+  "刮刀",
+  "顶PIN板",
+  "顶PIN治具",
+]);
+
+const editConfirm = () => {
+  ToolsType({
+    ...EditForm.value,
+    CleanAfterUses: `${editFormControl.value.CleanAfterUses ? "Y" : "N"}`,
+    CleanAfterPause: `${editFormControl.value.CleanAfterPause ? "Y" : "N"}`,
+    CleanAfterTime: `${editFormControl.value.CleanAfterTime ? "Y" : "N"}`,
+    operationtype: "UPD",
+  }).then((data: any) => {
+    if (!data) {
+      return;
+    }
+    clearEditForm();
+    ElMessage({
+      message: data.msg,
+      type: "success",
+    });
+    getData();
+    editVisible.value = false;
+  });
+};
+
+const deleteSubmit = (data: any) => {
+  deleteVisible.value = true;
+  deleteChoice.value = data.CompName;
+};
+
+const deleteConfirm = () => {
+  ToolsType({ CompName: deleteChoice.value, operationtype: "DEL" }).then(
+    (data: any) => {
+      if (!data) {
+        return;
+      }
+      ElMessage({
+        message: data.msg,
+        type: "success",
+      });
+      getData();
+    }
+  );
+  deleteVisible.value = false;
+};
+
+const clearForm = () => {
+  form.value = {
+    operationtype: "",
+    CompName: "",
+    MaterialType: 1,
+    MaterialName: "",
+    CompType: 3,
+    TotalUses: 0,
+    CleanAfterUses: "N",
+    UsesUntilRevalidation: 0,
+    CleanAfterPause: "N",
+    PauseUntilRevalidate: 0,
+    CleanAfterTime: "N",
+    TimeUntilRevalidation: 0,
+    CleaningTime: 0,
+    TensionLimit: 0,
+    LowerTensionLimit: 0,
+    TensionPoints: 0,
+  };
+
+  formControl.value = {
+    CleanAfterUses: false,
+    CleanAfterPause: false,
+    CleanAfterTime: false,
+  };
+};
+
+const clearEditForm = () => {
+  EditForm.value = {
+    operationtype: "",
+    CompName: "",
+    MaterialType: 1,
+    MaterialName: "",
+    CompType: 3,
+    TotalUses: 0,
+    CleanAfterUses: "N",
+    UsesUntilRevalidation: 0,
+    CleanAfterPause: "N",
+    PauseUntilRevalidate: 0,
+    CleanAfterTime: "N",
+    TimeUntilRevalidation: 0,
+    CleaningTime: 0,
+    TensionLimit: 0,
+    LowerTensionLimit: 0,
+    TensionPoints: 0,
+  };
+};
 
 const addSumbit = () => {
-    ToolsType({...form.value,operationtype:'ADD'}).then((data:any) => {
-        console.log(data);
-    })
-}
+  ToolsType({
+    ...form.value,
+    CleanAfterUses: `${formControl.value.CleanAfterUses ? "Y" : "N"}`,
+    CleanAfterPause: `${formControl.value.CleanAfterPause ? "Y" : "N"}`,
+    CleanAfterTime: `${formControl.value.CleanAfterTime ? "Y" : "N"}`,
+    operationtype: "ADD",
+  }).then((data: any) => {
+    if (!data) {
+      return;
+    }
+    clearForm();
+    ElMessage({
+      message: data.msg,
+      type: "success",
+    });
+    getData();
+    addVisible.value = false;
+  });
+};
+
+const searchData = () => {
+  if (inputValue.value === '') {
+    getData();
+    return;
+  }
+  ToolsType({ CompName: inputValue.value, operationtype: "QUE" }).then(
+    (data: any) => {
+      if (!data) {
+        return;
+      }
+      if (!data.content) {
+        tableData.value = [];
+        return;
+      }
+      const dataText = data.content;
+      tableData.value = dataText;
+    }
+  );
+  inputValue.value = "";
+};
 
 const getData = () => {
-    ToolsType({operationtype:'QAL'}).then((data:any) => {
+  ToolsType({ operationtype: "QAL" }).then((data: any) => {
     const dataText = data.content;
     tableData.value = dataText;
-    })
-}
+  });
+};
 
 const columnData = reactive([
   {
     text: true,
+    prop: "MaterialName",
+    label: "类别",
+    width: "",
+    min: true,
+    align: "1",
+  },
+  {
+    text: true,
     prop: "CompName",
-    label: "组件料号",
+    label: "工治具类型编码",
     width: "",
     min: true,
-    align: "center",
+    align: "1",
   },
-  {
-    text: true,
-    prop: "MaterialType",
-    label: "材料类型",
-    width: "",
-    min: true,
-    align: "center",
-  },
-  {
-    text: true,
-    prop: "CompType",
-    label: "组件类型",
-    width: "",
-    min: true,
-    align: "center",
-  },
-
+  // {
+  //   text: false,
+  //   tag: true,
+  //   tagType: "number",
+  //   tagItem: [{ text: "钢网刮刀", type: "primary", number: 1 },{ text: "smt", type: "primary", number: 0 },{ text: "锡膏", type: "primary", number: 2 }],
+  //   // tagItem:{'已发料':'primary'},
+  //   prop: "MaterialType",
+  //   label: "材料类型",
+  //   width: "",
+  //   min: true,
+  //   align: "center",
+  // },
   {
     text: true,
     prop: "TotalUses",
@@ -329,6 +697,38 @@ const columnData = reactive([
     text: true,
     prop: "TimeUntilRevalidation",
     label: "停机扫描(生产时间)",
+    width: "",
+    min: true,
+    align: "center",
+  },
+  {
+    text: true,
+    prop: "CleaningTime",
+    label: "清洗时间",
+    width: "",
+    min: true,
+    align: "center",
+  },
+  {
+    text: true,
+    prop: "TensionLimit",
+    label: "张力测试上限值",
+    width: "",
+    min: true,
+    align: "center",
+  },
+  {
+    text: true,
+    prop: "LowerTensionLimit",
+    label: "张力测试下限值",
+    width: "",
+    min: true,
+    align: "center",
+  },
+  {
+    text: true,
+    prop: "TensionPoints",
+    label: "测试点位数量",
     width: "",
     min: true,
     align: "center",
@@ -384,5 +784,13 @@ const getScreenHeight = () => {
 <style scoped>
 .el-pagination {
   justify-content: center;
+}
+
+::v-deep .no_number input::-webkit-inner-spin-button,
+::v-deep .no_number input::-webkit-outer-spin-button {
+  -webkit-appearance: none !important;
+}
+::v-deep .no_number input[type="number"] {
+  appearance: textfield;
 }
 </style>
