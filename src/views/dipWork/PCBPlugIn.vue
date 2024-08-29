@@ -5,9 +5,9 @@
     >
       <span class="text-[1.2rem]"> {{ opui.stationDec }} </span>
       <div>
-        <el-button type="primary" @click="openFeed">物料上料</el-button>
-        <el-button type="primary" @click="openOver">过序设置</el-button>
-          <el-button type="primary" @click="openDialog">不良品登记</el-button>
+       
+        <el-button type="primary" @click="openOver">波峰焊设置</el-button>
+        
       </div>
     </div>
     <div class="w-full flex-1 flex">
@@ -150,7 +150,7 @@
     />
     <formTem
       ref="addOverRef"
-      :width="'30%'"
+      :width="'400px'"
       :visible="overAddVisible"
       :title="'波峰焊过序设置'"
       :form="overAddForm"

@@ -15,7 +15,7 @@
         row-key="Step1"
         :tree-props="{ children: 'stepItemList' }"
       >
-        <el-table-column prop="Product" label="产品编号"> </el-table-column>
+        <el-table-column prop="Product" label="产品编码"> </el-table-column>
         <el-table-column prop="Step" label="检验工序"> </el-table-column>
         <el-table-column prop="Name" label="检验设备"> </el-table-column>
         <el-table-column prop="SubItem" label="检验子项"> </el-table-column>
@@ -77,8 +77,8 @@
       > <el-form-item label="工段" prop="WorkSection">
           <el-input v-model="addFrom.WorkSection" placeholder="工段"></el-input>
         </el-form-item>
-        <el-form-item label="产品编号" prop="Product">
-          <el-input v-model="addFrom.Product" placeholder="产品编号"></el-input>
+        <el-form-item label="产品编码" prop="Product">
+          <el-input v-model="addFrom.Product" placeholder="产品编码"></el-input>
         </el-form-item>
         <el-row :gutter="50">
           <el-col :span="12">
@@ -204,8 +204,8 @@
         <el-form-item label="工段" prop="WorkSection">
           <el-input v-model="editHear.WorkSection" placeholder="工段"></el-input>
         </el-form-item>
-        <el-form-item label="产品编号" prop="Product">
-          <el-input v-model="editHear.Product" placeholder="产品编号"></el-input>
+        <el-form-item label="产品编码" prop="Product">
+          <el-input v-model="editHear.Product" placeholder="产品编码"></el-input>
         </el-form-item>
         <el-row>
           <el-col :span="12">

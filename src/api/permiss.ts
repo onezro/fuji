@@ -293,3 +293,26 @@ export function ToolsType(data: any) {
         data
     })
 }
+//获取物料树
+export function findAllMaterialTree() {
+    return request({
+        url: "/api/product/findAll",
+        method: "post",
+    })
+}
+//获取物料详细
+export function findProductMaterial(data: any) {
+    return request({
+        url: "/api/product/findProductMaterial",
+        method: "post",
+        data
+    })
+}
+//修改物料
+export function UpdateProductMaterial(data: any) {
+    return request({
+        url: "/api/product/UpdateProductMaterial",
+        method: "post",
+        data
+    })
+}

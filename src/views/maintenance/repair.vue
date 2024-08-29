@@ -208,7 +208,7 @@
           >
           </el-input>
         </el-form-item>
-        <el-form-item label="产品名称" label-width="100px">
+        <el-form-item label="产品描述" label-width="100px">
           <el-input
             size="default"
             v-model="maintenanceForm.ProductName"
@@ -279,7 +279,7 @@
         <!-- <el-form-item label="订单号"> </el-form-item>
         <el-form-item label="计划编号"> </el-form-item>
         <el-form-item label="客户名称"> </el-form-item>
-        <el-form-item label="产品名称"> </el-form-item>
+        <el-form-item label="产品描述"> </el-form-item>
         <el-form-item label="工序名称"> </el-form-item>
         <el-form-item label="工序编号"> </el-form-item>
         <el-form-item label="拉线名称"> </el-form-item>

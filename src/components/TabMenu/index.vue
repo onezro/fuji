@@ -58,7 +58,7 @@
       :class="{ 'w-[200px]': showMenu, 'w-0': !showMenu }" style="transition: width 0.2s, left 0.2s" :base-path="'/'"
       @refresh="clickOut"></Menu>
 
-    <el-dialog :append-to-body="true" :close-on-click-modal="false" title="修改密码" v-model="upPwVisible" width="30%"
+    <el-dialog :append-to-body="true" :close-on-click-modal="false" title="修改密码" v-model="upPwVisible" width="400px"
       @close="upDateCancel()">
       <el-form :model="upPwForm" ref="upPwFormRef" :rules="rules" label-width="auto">
         <el-form-item label="新密码" prop="pwd">

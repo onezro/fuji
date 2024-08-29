@@ -226,7 +226,7 @@ const columnData = reactive([
   {
     text: true,
     prop: "ProductDescription",
-    label: "产品名称",
+    label: "产品描述",
     width: "",
     min: true,
     align: "center",
@@ -290,7 +290,10 @@ const getCarrierList = () => {
 
     // let data = JSON.parse(res.content);
     turnData.value = res.content;
-
+    if (turnData.value.length == 1) {
+      getList(turnData.value[0].CARRIERNAME)
+      return
+    }
     // console.log(data);
   });
 };
