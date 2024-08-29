@@ -305,6 +305,7 @@
       v-model="historyTableVisible"
       title="查询返修维修记录"
       width="1000"
+      align-center
     >
       <el-form :inline="true">
         <el-form-item>
