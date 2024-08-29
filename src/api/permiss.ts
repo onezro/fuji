@@ -284,15 +284,6 @@ export function GetFactoryModelList(){
         method: "post",
     });
 }
-
-//根据治具类型操作
-export function ToolsType(data: any) {
-    return request({
-        url: "/api/Tools/ToolsType",
-        method: "post",
-        data
-    })
-}
 //获取物料树
 export function findAllMaterialTree() {
     return request({
@@ -312,6 +303,40 @@ export function findProductMaterial(data: any) {
 export function UpdateProductMaterial(data: any) {
     return request({
         url: "/api/product/UpdateProductMaterial",
+
+        method: "post",
+        data
+    })
+}
+//根据治具类型操作
+export function ToolsType(data: any) {
+    return request({
+        url: "/api/Tools/ToolsType",
+        method: "post",
+        data
+    })
+}
+//单个治具录入删除修改数据
+export function ToolsDetail(data: any) {
+    return request({
+        url: "/api/Tools/ToolsDetail",
+
+        method: "post",
+        data
+    })
+}
+//根据产品的治具用量操作
+export function ToolsSpec(data: any) {
+    return request({
+        url: "/api/Tools/ToolsSpec",
+        method: "post",
+        data
+    })
+}
+//治具上架下架
+export function ToolsMove(data: any) {
+    return request({
+        url: "/api/Tools/ToolsMove",
         method: "post",
         data
     })
