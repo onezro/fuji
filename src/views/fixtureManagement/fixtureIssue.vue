@@ -1,581 +1,635 @@
 <template>
-    <div class="p-[10px]">
-      <el-card shadow="always" :body-style="{ padding: '10px' }">
-        <div class="pb-[10px]">
-          <el-button type="primary" @click="openAdd">添加</el-button>
-        </div>
-        <el-table :data="tableData.slice((currentPage - 1) * pageSize, currentPage * pageSize)
-          " stripe border fit :height="tableHeight" row-key="step1" :tree-props="{ children: 'stepItemList' }">
-          <!-- <el-table-column label="序号" width="60px" type="index" align="center" /> -->
-          <el-table-column prop="WorkSection" label="工段"> </el-table-column>
-          <el-table-column prop="ProductName" label="产品编号"> </el-table-column>
-          <el-table-column prop="Step" label="检验项"> </el-table-column>
-          <el-table-column prop="StepName" label="检验名称"> </el-table-column>
-          <el-table-column prop="SubItem" label="检验编号"> </el-table-column>
-          <el-table-column prop="SubItemName" label="检验子项"> </el-table-column>
-          <el-table-column prop="SubItemAim" label="检验目标"> </el-table-column>
-          <el-table-column prop="SubItemMethod" label="检验方法">
+  <div class="p-[10px]">
+    <el-card shadow="always" :body-style="{ padding: '10px' }">
+      <div>
+        <el-form
+          ref="formRef"
+          class="form flex justify-between"
+          :inline="true"
+          :model="getDataText"
+        >
+          <div>
+            <!-- <el-form> -->
+            <el-form-item class="flex items-center">
+              <el-input
+                size="default"
+                placeholder="请输入板边码"
+                clearable
+                v-model="getDataText.SN"
+                class="input-with-select"
+              >
+              </el-input>
+            </el-form-item>
+            <el-form-item>
+              <el-select
+                v-model="getDataText.OperationType"
+                placeholder="操作类型"
+                style="width: 120px"
+              >
+                <el-option
+                  v-for="item in repairList"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                />
+              </el-select>
+            </el-form-item>
+            <el-form-item>
+              <el-button type="primary" @click="getData()">查询</el-button>
+            </el-form-item>
+            <!-- </el-form> -->
+          </div>
+          <el-form-item>
+            <el-button type="primary" @click="historyTableVisible = true"
+              >维修记录</el-button
+            >
+          </el-form-item>
+        </el-form>
+      </div>
+      <div class="table_container">
+        <el-table
+          :data="
+            tableData.slice(
+              (currentPage - 1) * pageSize,
+              currentPage * pageSize
+            )
+          "
+          border
+          :height="tableHeight"
+          row-key="step1"
+          style="width: 100%"
+          :tree-props="{ children: 'stepItemList' }"
+        >
+          <el-table-column prop="BarCode" label="SN条码" width="180">
           </el-table-column>
-          <el-table-column prop="SubItemBasic" label="检验标准">
-          </el-table-column>
-          <el-table-column prop="SubItemSolution" label="结果处理方式">
-          </el-table-column>
-          <el-table-column fixed="right" label="操作" width="120" align="center">
+          <el-table-column prop="PadID" label="PadID"> </el-table-column>
+          <el-table-column prop="Result" label="原因"> </el-table-column>
+          <el-table-column prop="Remark" label="操作">
             <template #default="scope">
-              <el-tooltip content="编辑" placement="top">
-                <el-button type="primary" icon="EditPen" size="small" @click.prevent="handleEdit(scope.row)"></el-button>
-              </el-tooltip>
-  
-              <el-tooltip content="删除" placement="top">
-                <el-button type="danger" icon="Delete" size="small" @click.prevent="handleDelete(scope.row)"></el-button>
-              </el-tooltip>
+              <el-button type="primary" @click="maintenance(scope.row)"
+                >维修</el-button
+              >
             </template>
           </el-table-column>
         </el-table>
-        <div class="mt-3">
-          <el-pagination size="large" background @size-change="handleSizeChange" @current-change="handleCurrentChange"
-            :current-page="currentPage" :page-size="pageSize" :page-sizes="[5, 10, 20, 50, 100]"
-            layout="total,sizes, prev, pager, next, jumper" :total="tableData.length">
+        <div class="block" style="margin-top: 15px">
+          <el-pagination
+            align="center"
+            background
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+            :current-page="currentPage"
+            :page-size="pageSize"
+            :page-sizes="[5, 10, 20, 50, 100]"
+            layout="total,sizes, prev, pager, next, jumper"
+            :total="tableData.length"
+          >
           </el-pagination>
         </div>
-      </el-card>
-      <el-dialog :append-to-body="true" :close-on-click-modal="false" v-model="addVisible" @close="addCancel" title="添加"
-        width="50%">
-        <el-form ref="formRef" :model="form" label-position="left" label-width="auto">
-          <el-form-item label="工段" prop="WorkSection">
-            <el-input v-model="addFrom.WorkSection" placeholder="工段"></el-input>
-          </el-form-item>
-          <el-form-item label="产品编号" prop="Product">
-            <el-input v-model="addFrom.Product" placeholder="产品编号"></el-input>
-          </el-form-item>
-  
-          <el-row :gutter="50">
-            <el-col :span="12">
-              <el-form-item label="检验项" prop="step">
-                <el-input v-model="form.Step" placeholder="检验项" clearable />
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item label="检验名称" prop="name">
-                <el-input v-model="form.Name" placeholder="检验名称"></el-input>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-form-item label="内容" prop="inspectContent">
-            <el-input type="textarea" v-model="form.InspectContent" placeholder="内容"></el-input>
-          </el-form-item>
-  
-          <!-- <el-form ref="formRef2" :model="formItem" label-position="left" label-width="auto"> -->
-  
-          <div v-for="(item, index) in form.StepItemList" :key="index">
-            <el-divider>检验子项{{ index + 1 }}</el-divider>
-            <el-row :gutter="50">
-              <el-col :span="12">
-                <el-form-item label="编号" :prop="'stepItemList.' + index + '.subItem'">
-                  <el-input v-model.number="item.SubItem" placeholder="子项编号"></el-input>
-                </el-form-item>
-              </el-col>
-              <el-col :span="12">
-                <el-form-item label="子项名称" :prop="'stepItemList.' + index + '.subItemName'">
-                  <el-input v-model="item.SubItemName" placeholder="子项名称"></el-input>
-                </el-form-item>
-              </el-col>
-            </el-row>
-  
-            <el-row :gutter="50">
-              <el-col :span="12">
-                <el-form-item label="检查目标" :prop="'stepItemList.' + index + '.subItemAim'">
-                  <el-input type="textarea" v-model="item.SubItemAim" placeholder="子项检查目标"></el-input>
-                </el-form-item></el-col>
-              <el-col :span="12"><el-form-item label="检验方法" :prop="'stepItemList.' + index + '.subItemMethod'">
-                  <el-input type="textarea" v-model="item.SubItemMethod" placeholder="子项检验方法"></el-input>
-                </el-form-item></el-col>
-            </el-row>
-            <el-row :gutter="50">
-              <el-col :span="12">
-                <el-form-item label="检查标准" :prop="'stepItemList.' + index + '.subItemBasic'">
-                  <el-input type="textarea" v-model="item.SubItemBasic" placeholder="检查标准"></el-input>
-                </el-form-item></el-col>
-              <el-col :span="12">
-                <el-form-item label="解决办法" :prop="'stepItemList.' + index + '.subItemSolution'">
-                  <el-input type="textarea" v-model="item.SubItemSolution" placeholder="子项检查解决办法"></el-input>
-                </el-form-item></el-col>
-            </el-row>
-            <el-button v-if="index != 0" type="danger" @click="deleteSon(index)">删除子项</el-button>
-          </div>
-        </el-form>
-        <!-- </el-form> -->
-  
-        <template #footer>
-          <span class="dialog-footer">
-            <!-- <el-button type="info" @click="addSon"> 增加子项</el-button> -->
-            <el-button @click="addCancel"> 取消 </el-button>
-            <el-button type="primary" @click="addSubmit"> 确定 </el-button>
-          </span>
-        </template>
-      </el-dialog>
-      <el-dialog :append-to-body="true" :close-on-click-modal="false" v-model="editVisible" @close="eidtCancel()"
-        title="修改" width="50%">
-        <el-form ref="eidtRef" :model="editForm" label-width="100px">
-          <el-form-item label="工段" prop="WorkSection">
-            <el-input v-model="editHear.WorkSection" placeholder="工段"></el-input>
-          </el-form-item>
-          <el-form-item label="产品编号" prop="Product">
-            <el-input v-model="editHear.Product" placeholder="产品编号"></el-input>
-          </el-form-item>
-          <el-row>
-            <el-col :span="12">
-              <el-form-item label="检验项" prop="step">
-                <el-input v-model.number="editForm.Step" placeholder="检验项"></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item label="检验名称" prop="name">
-                <el-input v-model="editForm.Name" placeholder="检验名称"></el-input>
-              </el-form-item>
-            </el-col>
-          </el-row>
-  
-          <el-form-item label="内容" prop="inspectContent">
-            <el-input type="textarea" v-model="editForm.InspectContent" placeholder="内容"></el-input>
-          </el-form-item>
-          <el-divider></el-divider>
-          <el-row>
-            <el-col :span="12">
-              <el-form-item label="编号">
-                <el-input v-model.number="editForm.StepItemList[0].SubItem" placeholder="子项编号"></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item label="名称">
-                <el-input v-model="editForm.StepItemList[0].SubItemName" placeholder="子项名称"></el-input>
-              </el-form-item>
-            </el-col>
-          </el-row>
-  
-          <el-row>
-            <el-col :span="12">
-              <el-form-item label="检查目标">
-                <el-input type="textarea" v-model="editForm.StepItemList[0].SubItemAim" placeholder="子项检查目标"></el-input>
-              </el-form-item></el-col>
-            <el-col :span="12"><el-form-item label="检验方法">
-                <el-input type="textarea" v-model="editForm.StepItemList[0].SubItemMethod"
-                  placeholder="子项检验方法"></el-input>
-              </el-form-item></el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="12">
-              <el-form-item label="检查标准">
-                <el-input type="textarea" v-model="editForm.StepItemList[0].SubItemBasic" placeholder="检查标准"></el-input>
-              </el-form-item></el-col>
-            <el-col :span="12">
-              <el-form-item label="解决办法">
-                <el-input type="textarea" v-model="editForm.StepItemList[0].SubItemSolution"
-                  placeholder="子项检查解决办法"></el-input> </el-form-item></el-col>
-          </el-row>
-        </el-form>
-  
-        <!-- <el-form ref="eidtForm2" :model="stepItemList" label-width="100px">
-         
-        </el-form> -->
-  
-        <template #footer>
-          <span class="dialog-footer">
-            <el-button @click="eidtCancel"> 取消 </el-button>
-            <el-button type="primary" @click="editSubmit()">确 定</el-button>
-          </span>
-        </template>
-      </el-dialog>
-    </div>
-  </template>
-  
-  <script setup lang="ts">
-  import type { FistTableData, AllInspection } from "@/typing";
-  import { ElMessage, ElNotification, ElMessageBox } from "element-plus";
-  import {
-    InsertInspect,
-    GetInspectData,
-    UpdateInspectData,
-    DeleteInspectData,
-  } from "@/api/permiss";
-  import {
-    ref,
-    unref,
-    nextTick,
-    reactive,
-    onBeforeMount,
-    watch,
-    onMounted,
-    onBeforeUnmount,
-  } from "vue";
-  
-  const tableData = ref<InstanceType<typeof FistTableData>[]>([]);
-  const pageSize = ref(10);
-  const currentPage = ref(1);
-  const tableHeight = ref(0);
-  const addVisible = ref(false);
-  const editVisible = ref(false);
-  const formRef = ref();
-  const getForm = reactive({
-    Product: "*",
-    WorkSection: "",
-    InspectType: "FI",
-    StepList: [
-      {
-        Step: 0,
-        Status: "I",
-        Name: "",
-        InspectContent: "",
-        StepItemList: [
-          {
-            SubItemName: "",
-            SubItem: 0,
-            SubItemMethod: "",
-            SubItemBasic: "",
-            SubItemSolution: "",
-            SubItemAim: "",
-            SubItemType: "",
-          },
-        ],
-      },
-    ],
-  });
-  const form = reactive({
-    Step: "",
-    Status: "I",
-    Name: "",
-    InspectContent: "",
-    StepItemList: [
-      {
-        SubItemName: "",
-        SubItem: "",
-        SubItemMethod: "",
-        SubItemBasic: "",
-        SubItemSolution: "",
-        SubItemAim: "",
-        SubItemType: "",
-      },
-    ],
-  });
-  const editForm = reactive({
-    Step: "",
-    Status: "U",
-    Name: "",
-    InspectContent: "",
-    StepItemList: [
-      {
-        SubItemName: "",
-        SubItem: "",
-        SubItemMethod: "",
-        SubItemBasic: "",
-        SubItemSolution: "",
-        SubItemAim: "",
-        SubItemType: "",
-      },
-    ],
-  });
-  const editHear = reactive<InstanceType<typeof AllInspection>>({
-    Product: "",
-    WorkSection: "",
-    InspectType: "FI",
-    StepList: [],
-  });
-  const addFrom = reactive<InstanceType<typeof AllInspection>>({
-    Product: "",
-    WorkSection: "",
-    InspectType: "FI",
-    StepList: [],
-  });
-  const deleteForm = reactive<InstanceType<typeof AllInspection>>({
-    product: "",
-    inspectType: "FI",
-    stepList: [],
-  });
-  
-  onBeforeMount(() => {
-    getScreenHeight();
-  });
-  onMounted(() => {
-    window.addEventListener("resize", getScreenHeight);
-    getData();
-  });
-  onBeforeUnmount(() => {
-    window.addEventListener("resize", getScreenHeight);
-  });
-  
-  //获取基础数据
-  const getData = () => {
-    GetInspectData(getForm).then((res:any)=>{
-      // console.log(res);
-      if(res.code==100200){
-        dispose(res.content)
-      }
-    })
-   };
-  
-  const openAdd = () => {
-    addVisible.value = true;
-  };
-  const addSon = () => {
-    form.StepItemList.push({
-      SubItemName: "",
-      SubItem: "",
-      SubItemMethod: "",
-      SubItemBasic: "",
-      SubItemSolution: "",
-      SubItemAim: "",
-      SubItemType: "",
-    });
-  };
-  const deleteSon = (index: any) => {
-    form.StepItemList = form.StepItemList.filter((v: any, i) => i !== index);
-  };
-  
-  const addCancel = () => {
-    resetForm();
-    // formRef.value.resetFields()
-  };
-  //添加确定
-  const addSubmit = () => {
-    addFrom.StepList.push(form);
-    InsertInspect(addFrom).then((res: any) => {
-      // console.log(res);
-      if (res.code == 100200) {
-        ElNotification({
-          title: "添加成功",
-          // message: "取消操作",
-          type: "success",
-        });
-        getData()
-        addVisible.value = false;
-  
-      }
-      resetForm();
-      addFrom.stepList = [];
-    });
-    // console.log(form);
-  };
-  
-  //编辑
-  const handleEdit = (row: any) => {
-    eidtData(row);
-    editVisible.value = true;
-  };
-  const eidtCancel = () => {
-    editHear.stepList = [];
-    editVisible.value = false;
-  };
-  const editSubmit = () => {
-    editHear.StepList.push(editForm);
-    // console.log(JSON.stringify(editHear));
-    UpdateInspectData(editHear).then((res:any)=>{
-      if (res.code == 100200) {
-        ElNotification({
-          title: "修改成功",
-          // message: "取消操作",
-          type: "success",
-        });
-        getData()
-        editVisible.value = false;
-  
-      }
-      editHear.stepList = [];
-    })
-  };
-  
-  const eidtData = (row: any) => {
-    editHear.Product=row.ProductName
-    editHear.WorkSection=row.WorkSection
-    editForm.Status = row.Status;
-    editForm.Step = row.Step;
-    editForm.Name = row.StepName;
-    editForm.InspectContent = row.InspectContent;
-    editForm.StepItemList[0].SubItem = row.SubItem;
-    editForm.StepItemList[0].SubItemAim = row.SubItemAim;
-    editForm.StepItemList[0].SubItemBasic = row.SubItemBasic;
-    editForm.StepItemList[0].SubItemMethod = row.SubItemMethod;
-    editForm.StepItemList[0].SubItemName = row.SubItemName;
-    editForm.StepItemList[0].SubItemSolution = row.SubItemSolution;
-    editForm.StepItemList[0].SubItemType = row.SubItemType;
-  };
-  //删除
-  const handleDelete = (row: any) => {
-    eidtData(row);
-    editHear.StepList.push(editForm);
-    // deleteForm.stepList.push(editForm);
-    ElMessageBox.confirm("确定删除", "确认操作", {
-      confirmButtonText: "确定",
-      cancelButtonText: "取消",
+      </div>
+    </el-card>
+    <el-dialog v-model="dialogTableVisible" title="维修" width="1000">
+      <el-form
+        :model="maintenanceForm"
+        :rules="rules"
+        :inline="true"
+        ref="ruleFormRef"
+      >
+        <el-row>
+          <el-col :span="6">
+            <el-form-item label="内控SN" label-width="100px" prop="InternalSN">
+              <el-input
+                size="default"
+                v-model="maintenanceForm.InternalSN"
+                class="input-with-select"
+              >
+              </el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
+            <el-form-item
+              label="工单号"
+              label-width="100px"
+              prop="WorkOrderNumber"
+            >
+              <el-input
+                size="default"
+                v-model="maintenanceForm.WorkOrderNumber"
+                class="input-with-select"
+              >
+              </el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
+            <el-form-item
+              label="维修类别"
+              label-width="100px"
+              prop="RepairType"
+            >
+              <el-select
+                v-model="maintenanceForm.RepairType"
+                placeholder="Select"
+                style="width: 120px"
+              >
+                <el-option
+                  v-for="item in ['测试']"
+                  :key="item"
+                  :label="item"
+                  :value="item"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
+            <el-form-item
+              label-width="100px"
+              label="不良原因"
+              prop="RepairReason"
+            >
+              <el-select
+                v-model="maintenanceForm.RepairReason"
+                placeholder="Select"
+                style="width: 120px"
+              >
+                <el-option
+                  v-for="item in ['测试']"
+                  :key="item"
+                  :label="item"
+                  :value="item"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-divider />
+        <el-form-item label="当前SN" label-width="100px">
+          <el-input
+            size="default"
+            v-model="maintenanceForm.CurrentBarcode"
+            class="input-with-select"
+          >
+          </el-input>
+        </el-form-item>
+        <el-form-item label="面别" label-width="100px">
+          <el-select
+            v-model="maintenanceForm.FaceType"
+            placeholder="Select"
+            style="width: 180px"
+          >
+            <el-option
+              v-for="item in ['Top', 'Bot']"
+              :key="item"
+              :label="item"
+              :value="item"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="订单号" label-width="100px">
+          <el-input
+            size="default"
+            v-model="maintenanceForm.OrderNo"
+            class="input-with-select"
+          >
+          </el-input>
+        </el-form-item>
+        <el-form-item label="计划编号" label-width="100px">
+          <el-input
+            size="default"
+            v-model="maintenanceForm.PlanNumber"
+            class="input-with-select"
+          >
+          </el-input>
+        </el-form-item>
+        <el-form-item label="客户名称" label-width="100px">
+          <el-input
+            size="default"
+            v-model="maintenanceForm.CustomerName"
+            class="input-with-select"
+          >
+          </el-input>
+        </el-form-item>
+        <el-form-item label="产品名称" label-width="100px">
+          <el-input
+            size="default"
+            v-model="maintenanceForm.ProductName"
+            class="input-with-select"
+          >
+          </el-input>
+        </el-form-item>
+        <el-form-item label="工序名称" label-width="100px">
+          <el-input
+            size="default"
+            v-model="maintenanceForm.Processes"
+            class="input-with-select"
+          >
+          </el-input>
+        </el-form-item>
+        <el-form-item label="工序编码" label-width="100px">
+          <el-input
+            size="default"
+            v-model="maintenanceForm.ProcessesNumber"
+            class="input-with-select"
+          >
+          </el-input>
+        </el-form-item>
+        <el-form-item label="拉线名称" label-width="100px">
+          <el-input
+            size="default"
+            v-model="maintenanceForm.StayWireName"
+            class="input-with-select"
+          >
+          </el-input>
+        </el-form-item>
+        <el-form-item label="拉线编码" label-width="100px">
+          <el-input
+            size="default"
+            v-model="maintenanceForm.StayWireNumber"
+            class="input-with-select"
+          >
+          </el-input>
+        </el-form-item>
+        <el-form-item label="返修工序" label-width="100px">
+          <el-input
+            size="default"
+            v-model="maintenanceForm.RepairProcesses"
+            class="input-with-select"
+          >
+          </el-input>
+        </el-form-item>
+        <el-form-item label="返修工序编码" label-width="100px">
+          <el-input
+            size="default"
+            v-model="maintenanceForm.RepairProcessesNumber"
+            class="input-with-select"
+          >
+          </el-input>
+        </el-form-item>
+        <el-form-item
+          label-width="100px"
+          label="维修备注"
+          style="width: calc(100% - 70px)"
+        >
+          <el-input
+            v-model="maintenanceForm.Repairlnformation"
+            :rows="2"
+            type="textarea"
+            placeholder="请输入"
+          />
+        </el-form-item>
+        <!-- <el-form-item label="订单号"> </el-form-item>
+        <el-form-item label="计划编号"> </el-form-item>
+        <el-form-item label="客户名称"> </el-form-item>
+        <el-form-item label="产品名称"> </el-form-item>
+        <el-form-item label="工序名称"> </el-form-item>
+        <el-form-item label="工序编号"> </el-form-item>
+        <el-form-item label="拉线名称"> </el-form-item>
+        <el-form-item label="拉线编码"> </el-form-item>
+        <el-form-item label="返修工序"> </el-form-item>
+        <el-form-item label="返修工序编号"> </el-form-item>
+        <el-form-item label="维修备注"> </el-form-item>
+        <el-form-item label="维修类别"> </el-form-item>
+        <el-form-item label="不良原因"> </el-form-item>
+        <el-form-item label="面别"> </el-form-item> -->
+      </el-form>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button @click="dialogTableVisible = false">取消</el-button>
+          <el-button type="primary" @click="sureMaintenance(ruleFormRef)">
+            确定
+          </el-button>
+        </div>
+      </template>
+    </el-dialog>
+
+    <el-dialog
+      v-model="historyTableVisible"
+      title="查询返修维修记录"
+      width="1000"
+    >
+      <el-form :inline="true">
+        <el-form-item>
+          <el-input
+            size="default"
+            placeholder="请输入内控SN"
+            clearable
+            v-model="getHistoryText.InternalSN"
+            class="input-with-select"
+          >
+          </el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-input
+            size="default"
+            placeholder="请输入位号"
+            clearable
+            v-model="getHistoryText.Position"
+            class="input-with-select"
+          >
+          </el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="getHistory()">查询</el-button>
+        </el-form-item>
+      </el-form>
+      <table-tem
+        :showIndex="true"
+        :tableData="historyTable"
+        :tableHeight="'60vh'"
+        :columnData="columnData"
+        :pageObj="pageObj1"
+        @handleSizeChange="handleSizeChange1"
+        @handleCurrentChange="handleCurrentChange1"
+      ></table-tem>
+    </el-dialog>
+  </div>
+</template>
+
+<script lang="ts" setup>
+import { getCheckResults } from "@/api/permiss";
+import type { InspectionResult } from "@/typing";
+import { ElMessageBox, ElMessage, ElLoading } from "element-plus";
+import tableTem from "@/components/tableTem/index.vue";
+import { useUserStoreWithOut } from "@/stores/modules/user";
+import { QuerySN, MaintenanceAdd, QueryMaintenance } from "@/api/smtApi";
+import {
+  ref,
+  reactive,
+  watch,
+  nextTick,
+  onMounted,
+  onBeforeMount,
+  onBeforeUnmount,
+} from "vue";
+const tableData = ref<any>([]);
+const historyTable = ref<any>([]);
+const pageSize = ref(10);
+const currentPage = ref(1);
+const tableHeight = ref(0);
+const ruleFormRef = ref();
+const OperationType = ref("");
+const userStore = useUserStoreWithOut();
+const loginName = userStore.getUserInfo;
+const getDataText = reactive({
+  SN: "",
+  OperationType: "",
+});
+const getHistoryText = reactive({
+  InternalSN: "",
+  Position: "",
+});
+const dialogTableVisible = ref(false);
+const historyTableVisible = ref(false);
+const repairList = ref([
+  {
+    label: "SPI",
+    value: "SPI",
+  },
+  {
+    label: "AOI",
+    value: "AOI",
+  },
+  {
+    label: "AOII",
+    value: "AOII",
+  },
+]);
+
+const columnData = reactive([
+  {
+    text: true,
+    prop: "InternalSN",
+    label: "内控SN",
+    width: "",
+    min: true,
+    align: "1",
+  },
+  {
+    text: true,
+    prop: "CurrentBarcode",
+    label: "当前SN",
+    width: "",
+    min: true,
+    align: "1",
+  },
+  {
+    text: true,
+    prop: "WorkOrderNumber",
+    label: "工单号",
+    min: true,
+    align: "1",
+  },
+  {
+    text: true,
+    prop: "RepairReason",
+    label: "不良原因",
+    width: "",
+    min: true,
+    align: "1",
+  },
+  {
+    text: true,
+    prop: "RepairType",
+    label: "维修类别",
+    min: true,
+    align: "1",
+  },
+  {
+    text: true,
+    prop: "Repairlnformation",
+    label: "维修备注",
+    width: "",
+    min: true,
+    align: "1",
+  },
+]);
+
+interface RuleForm {
+  FaceType: string;
+  InternalSN: string;
+  CurrentBarcode: string;
+  WorkOrderNumber: string;
+  OrderNo: string;
+  PlanNumber: string;
+  CustomerName: string;
+  ProductName: string;
+  Processes: string;
+  ProcessesNumber: string;
+  StayWireName: string;
+  StayWireNumber: string;
+  RepairProcesses: string;
+  RepairProcessesNumber: string;
+  Repairlnformation: string;
+  RepairType: string;
+  RepairReason: string;
+  UpdateUser: string;
+  OperationType: string;
+  Position: string;
+}
+
+const maintenanceForm = ref<RuleForm>({
+  FaceType: "",
+  InternalSN: "",
+  CurrentBarcode: "",
+  WorkOrderNumber: "",
+  OrderNo: "",
+  PlanNumber: "",
+  CustomerName: "",
+  ProductName: "",
+  Processes: "",
+  ProcessesNumber: "",
+  StayWireName: "",
+  StayWireNumber: "",
+  RepairProcesses: "",
+  RepairProcessesNumber: "",
+  Repairlnformation: "",
+  RepairType: "",
+  RepairReason: "",
+  UpdateUser: loginName,
+  OperationType: "",
+  Position: "",
+});
+
+// watch(
+
+// );
+onBeforeMount(() => {
+  getScreenHeight();
+});
+
+onMounted(() => {
+  window.addEventListener("resize", getScreenHeight);
+});
+onBeforeUnmount(() => {
+  window.addEventListener("resize", getScreenHeight);
+});
+
+const getData = () => {
+  if (getDataText.SN === "" || getDataText.OperationType === "") {
+    ElMessage({
+      message: "条码或操作类型不能为空",
       type: "warning",
-    })
-      .then(() => {
-        DeleteInspectData(editHear).then((data: any) => {
-          // console.log(res);
-          if ((data.code = 100200)) {
-            getData();
-            ElNotification({
-              title: "删除成功",
-              // message: "取消操作",
-              type: "success",
-            });
-          } else {
-            ElNotification({
-              title: "删除失败",
-              // message: "取消操作",
-              type: "error",
-            });
-  
-          }
-        });
-      })
-      .catch(() => {
-        // ElMessage({
-        //   type: "info",
-        //   message: "取消操作",
-        // });
-        ElNotification({
-          title: "取消操作",
-          // message: "取消操作",
-          type: "info",
-        });
-      });
-  };
-  
-  //基础数据处理成树形结构
-  const dispose = (data: any) => {
-    const a: InstanceType<typeof FistTableData>[] = [];
-    // data.forEach((item: any) => {
-    //   let isExist = a.findIndex((ela: any) => ela.Name == item.Name);
-    //   if (isExist != -1) {
-    //     a[isExist].stepItemList.push({
-    //       ...item,
-    //       Step1: a[isExist].Step + "-" + item.SubItem,
-    //     });
-    //     a[isExist].SubItem1++;
-    //   } else {
-    //     const obj: InstanceType<typeof FistTableData> = {
-    //       Name: item.Name,
-    //       Step: item.Step,
-    //       InspectContent: item.InspectContent,
-    //       Step1: item.Step,
-    //       stepItemList: [],
-    //     };
-    //     obj.stepItemList.push({
-    //       ...item,
-    //       Step1: item.Step + "-" + item.SubItem,
-    //     });
-    //     a.push(obj);
-    //   }
-    // });
-    // tableData.value = a;
-    // if (tableData.value.length % pageSize.value == 0 && currentPage.value > 1) {
-    //   currentPage.value--;
-    // }
-    data.forEach((item: any) => {
-      let isExist = a.findIndex((ela) => ela.ProductName == item.ProductName);
-      if (isExist != -1) {
-        let b = a[isExist].stepItemList.findIndex(
-          (t: any) => t.StepName == item.StepName
-        );
-        if (b != -1) {
-          a[isExist].stepItemList[b].stepItemList.push({
-            ...item,
-            step1:
-              item.Product +
-              "-" +
-              item.Step +
-              "-" +
-              (a[isExist].stepItemList[b].stepItemList.length + 1),
-          });
-        } else {
-          a[isExist].stepItemList.push({
-            StepName: item.StepName,
-            Step: item.Step,
-           
-            InspectContent: item.InspectContent,
-            step1: item.Product + "-" + item.Step,
-            stepItemList: [
-              {
-                ...item,
-                step1: item.Product + "-" + item.Step + "-" + (isExist + 1),
-              },
-            ],
-          });
-        }
-      } else {
-        let obj: InstanceType<typeof AllInspection> = {
-          ProductName: item.ProductName,
-          WorkSection:item.WorkSection,
-          step1: item.ProductName,
-          stepItemList: [
-            {
-              StepName: item.StepName,
-              // WorkSection:item.WorkSection,
-              InspectContent: item.InspectContent,
-              Step: item.Step,
-              step1: item.ProductName + "-" + item.Step,
-              stepItemList: [],
-            },
-          ],
-        };
-        obj.stepItemList[0].stepItemList.push({
-          ...item,
-          step1:
-            item.ProductName +
-            "-" +
-            item.Step +
-            "-" +
-            (obj.stepItemList[0].stepItemList.length + 1),
-        });
-        a.push(obj);
-      }
     });
-    tableData.value = a;
-    // console.log(tableData.value);
-    
-    tableData.value.sort((a, b) => {
-      return a.ProductName - b.ProductName;
-    });
-    if (tableData.value.length % pageSize.value == 0 && currentPage.value > 1) {
-      currentPage.value--;
-    }
-  };
-  
-  const handleSizeChange = (val: any) => {
-    currentPage.value = 1;
-    pageSize.value = val;
-  };
-  const handleCurrentChange = (val: any) => {
-    currentPage.value = val;
-  };
-  const getScreenHeight = () => {
-    nextTick(() => {
-      tableHeight.value = window.innerHeight - 215;
-    });
-  };
-  const resetForm = () => {
-    form.Step = "";
-    form.Status = "I";
-    form.Name = "";
-    form.InspectContent = "";
-  
-    form.StepItemList = form.StepItemList.filter((v: any, i) => i == 0);
-    // 重置 stepItemList，这里假设我们只重置第一个对象，或者你可以遍历它们
-    form.StepItemList.forEach((item) => {
-      item.SubItemName = "";
-      item.SubItem = "";
-      item.SubItemMethod = "";
-      item.SubItemBasic = "";
-      item.SubItemSolution = "";
-      item.SubItemAim = "";
-      item.SubItemType = "";
-    });
-  };
-  </script>
-  
-  <style scoped>
-  .el-pagination {
-    justify-content: center;
+    return;
   }
-  </style>
-  
+  QuerySN(getDataText.SN, getDataText.OperationType).then((res: any) => {
+    OperationType.value = getDataText.OperationType;
+    // const dataText = JSON.parse(res.content);
+    tableData.value = res.content;
+  });
+};
+
+const maintenance = (row: any) => {
+  // maintenanceForm.value.InternalSN = row.BarCode;
+  maintenanceForm.value.OperationType = OperationType.value;
+  maintenanceForm.value.Position = row.PadID;
+  dialogTableVisible.value = true;
+};
+
+const sureMaintenance = (formEl: any) => {
+  if (!formEl) return;
+  formEl.validate((valid: any, fields: any) => {
+    if (valid) {
+      dialogTableVisible.value = false;
+      MaintenanceAdd(maintenanceForm.value).then((res: any) => {
+        if (!res) {
+          return;
+        }
+        getData();
+        ElMessage({
+          message: res.msg,
+          type: "success",
+        });
+        maintenanceForm.value = {
+          FaceType: "",
+          InternalSN: "",
+          CurrentBarcode: "",
+          WorkOrderNumber: "",
+          OrderNo: "",
+          PlanNumber: "",
+          CustomerName: "",
+          ProductName: "",
+          Processes: "",
+          ProcessesNumber: "",
+          StayWireName: "",
+          StayWireNumber: "",
+          RepairProcesses: "",
+          RepairProcessesNumber: "",
+          Repairlnformation: "",
+          RepairType: "",
+          RepairReason: "",
+          UpdateUser: loginName,
+          OperationType: "",
+          Position: "",
+        };
+      });
+    } else {
+      ElMessage({
+        message: "请输入必要信息",
+        type: "warning",
+      });
+      console.log("error submit!", fields);
+    }
+  });
+};
+
+const getHistory = () => {
+  if (
+    getHistoryText.InternalSN === ""
+  ) {
+    ElMessage({
+      message: "内控SN不能为空",
+      type: "warning",
+    });
+    return;
+  }
+  QueryMaintenance(
+    getHistoryText.InternalSN,
+    getHistoryText.Position
+  ).then((res: any) => {
+    // const dataText = JSON.parse(res.content);
+    historyTable.value = res.content;
+  });
+};
+
+const handleSizeChange = (val: any) => {
+  currentPage.value = 1;
+  pageSize.value = val;
+};
+const handleCurrentChange = (val: any) => {
+  currentPage.value = val;
+};
+
+const pageObj1 = ref({
+  pageSize: 10,
+  currentPage: 1,
+});
+
+const handleSizeChange1 = (val: any) => {
+  pageObj1.value.currentPage = 1;
+  pageObj1.value.pageSize = val;
+};
+const handleCurrentChange1 = (val: any) => {
+  pageObj1.value.currentPage = val;
+};
+
+const getScreenHeight = () => {
+  nextTick(() => {
+    tableHeight.value = window.innerHeight - 230;
+  });
+};
+
+//表单验证
+const rules = reactive({
+  InternalSN: [{ required: true, message: "不允许为空", trigger: "blur" }],
+  WorkOrderNumber: [{ required: true, message: "不允许为空", trigger: "blur" }],
+  RepairType: [{ required: true, message: "不允许为空", trigger: "blur" }],
+  RepairReason: [{ required: true, message: "不允许为空", trigger: "change" }],
+});
+</script>
+
+<style lang="scss" scoped></style>
+<style scoped>
+.el-pagination {
+  justify-content: center;
+}
+</style>
