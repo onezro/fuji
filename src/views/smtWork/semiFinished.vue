@@ -68,7 +68,7 @@
                 </el-row>
               </el-form>
               <div class="flex justify-end">
-                <el-button type="primary" @click="disFullBox(t)"
+                <el-button type="primary" :disabled="t.QTY==0" @click="disFullBox(t)"
                   >不满箱装箱</el-button
                 >
               </div>

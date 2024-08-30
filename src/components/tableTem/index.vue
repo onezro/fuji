@@ -1,115 +1,48 @@
 <template>
   <div>
-    <el-table
-      :data="
-        tableData.slice(
-          (pageObj.currentPage - 1) * pageObj.pageSize,
-          pageObj.currentPage * pageObj.pageSize
-        )
-      "
-      stripe
-      border
-      fit
-      :height="tableHeight"
-      :size="size || 'default'"
-      :tooltip-effect="'dark'"
-      style="width: 100%"
-      @selection-change="handleSelectionChange"
-      ref="multipleTableRef"
-    >
-      <el-table-column
-        type="selection"
-        width="55"
-        align="center"
-        v-if="showSelect"
-      />
-      <el-table-column
-        type="index"
-        align="center"
-        fixed
-        label="序号"
-        width="60"
-        v-if="showIndex"
-      >
+    <el-table :data="tableData.slice(
+      (pageObj.currentPage - 1) * pageObj.pageSize,
+      pageObj.currentPage * pageObj.pageSize
+    )
+      " stripe border fit :height="tableHeight" :size="size || 'default'" :tooltip-effect="'dark'" style="width: 100%"
+      @selection-change="handleSelectionChange" ref="multipleTableRef" >
+      <el-table-column type="selection" width="55" align="center" v-if="showSelect" />
+      <el-table-column type="index" align="center" fixed label="序号" width="60" v-if="showIndex">
       </el-table-column>
-      <el-table-column
-        v-for="(c, i) in columnData"
-        :key="i"
-        :prop="c.prop"
-        :label="c.label"
-        :show-overflow-tooltip="true"
-        :width="c.width"
-        :min-width="c.min ? flexColumnWidth(c.label, c.prop) : ''"
-        :fixed="c.fixed"
-        :align="c.align || 'center'"
-      >
+      <el-table-column v-for="(c, i) in columnData" :key="i" :prop="c.prop" :label="c.label"
+        :show-overflow-tooltip="true" :width="c.width" :min-width="c.min ? flexColumnWidth(c.label, c.prop) : ''"
+        :fixed="c.fixed" :align="c.align || 'center'">
         <template #default="scope">
           <span v-if="c.text">{{ scope.row[c.prop] }}</span>
           <div v-if="c.tag === true">
-            <el-tag
-              v-if="c.tagType === 'string'"
-              :type="c.tagItem[scope.row[c.prop]]"
-              effect="plain"
-            >
+            <el-tag v-if="c.tagType === 'string'" :type="c.tagItem[scope.row[c.prop]]" effect="plain">
               {{ scope.row[c.prop] }}
             </el-tag>
-            <el-tag
-              v-if="c.tagType === 'bolean'"
-              :type="scope.row[c.prop] ? c.tagItem[0].type : c.tagItem[1].type"
-              effect="plain"
-            >
+            <el-tag v-if="c.tagType === 'bolean'" :type="scope.row[c.prop] ? c.tagItem[0].type : c.tagItem[1].type"
+              effect="plain">
               {{ scope.row[c.prop] ? c.tagItem[0].text : c.tagItem[1].text }}
             </el-tag>
             <div v-for="item in c.tagItem">
-              <el-tag
-                v-if="
-                  item.number === scope.row[c.prop] && c.tagType === 'number'
-                "
-                :type="item.type"
-                effect="plain"
-              >
+              <el-tag v-if="
+                item.number === scope.row[c.prop] && c.tagType === 'number'
+              " :type="item.type" effect="plain">
                 {{ item.text }}
               </el-tag>
             </div>
           </div>
-          <el-tooltip
-            v-if="c.isOperation"
-            v-for="(o, oi) in c.operation"
-            :key="oi"
-            :content="o.label"
-            placement="top"
-          >
-            <el-button
-              v-if="o.icon"
-              :icon="o.icon"
-              size="small"
-              :type="o.type"
-              @click="o.buttonClick(scope.row)"
-            />
-            <span
-              v-if="!o.icon"
-              text
-              class="underline font-bold text-[#006487]"
-              @click="o.buttonClick(scope.row)"
-              >{{ scope.row[o.prop] || o.label }}</span
-            >
+          <el-tooltip v-if="c.isOperation" v-for="(o, oi) in c.operation" :key="oi" :content="o.label" placement="top">
+            <el-button v-if="o.icon" :icon="o.icon" size="small" :type="o.type" @click="o.buttonClick(scope.row)" />
+            <span v-if="!o.icon" text class="underline font-bold text-[#006487]" @click="o.buttonClick(scope.row)">{{
+              scope.row[o.prop] || o.label }}</span>
           </el-tooltip>
         </template>
       </el-table-column>
     </el-table>
     <div class="mt-2 mb-2">
-      <el-pagination
-        :size="size || 'default'"
-        background
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-        :pager-count="5"
-        :current-page="pageObj.currentPage"
-        :page-size="pageObj.pageSize"
-        :page-sizes="[10, 30, 50, 100, 150]"
-        layout="total,sizes, prev, pager, next"
-        :total="tableData.length"
-      >
+      <el-pagination :size="size || 'default'" background @size-change="handleSizeChange"
+        @current-change="handleCurrentChange" :pager-count="5" :current-page="pageObj.currentPage"
+        :page-size="pageObj.pageSize" :page-sizes="[10, 30, 50, 100, 150]" layout="total,sizes, prev, pager, next"
+        :total="tableData.length">
       </el-pagination>
     </div>
   </div>
@@ -180,7 +113,7 @@ const toggleSelection = (rows?: any) => {
 };
 
 const getTextWidth = (str: string) => {
-  let fontSizeNum = size?.value == "small" ? 12 : 16;
+  let fontSizeNum = size?.value == "small" ? 13 : 16;
   let width = 0;
   const html = document.createElement("span");
   html.style.cssText = `padding: 0; margin: 0; border: 0; line-height: 1; font-size: ${fontSizeNum}px; font-family: Arial, sans-serif;`;
