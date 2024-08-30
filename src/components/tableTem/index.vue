@@ -54,7 +54,7 @@
               {{ scope.row[c.prop] }}
             </el-tag>
             <el-tag
-              v-if="c.tagType === 'bolean'"
+              v-if="c.tagType === 'boolean'"
               :type="scope.row[c.prop] ? c.tagItem[0].type : c.tagItem[1].type"
               effect="plain"
             >

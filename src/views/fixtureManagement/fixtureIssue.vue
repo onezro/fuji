@@ -489,9 +489,6 @@ const maintenanceForm = ref<RuleForm>({
   Position: "",
 });
 
-// watch(
-
-// );
 onBeforeMount(() => {
   getScreenHeight();
 });

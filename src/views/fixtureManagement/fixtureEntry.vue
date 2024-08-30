@@ -31,10 +31,17 @@
         label-width="auto"
         :inline="true"
       >
+        <el-form-item label="工治具编号" prop="compid">
+          <el-input
+          disabled
+            v-model="EditForm.compid"
+            style="width: 240px"
+          ></el-input>
+        </el-form-item>
         <el-form-item label="工治具类型" prop="compname">
           <el-select
             v-model="EditForm.compname"
-            placeholder="请选择"
+            placeholder=""
             style="width: 240px"
           >
             <el-option
@@ -45,32 +52,25 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="工治具编号" prop="compid">
-          <el-input
-          disabled
-            v-model="EditForm.compid"
-            style="width: 240px"
-          ></el-input>
-        </el-form-item>
         <el-form-item label="库位" prop="location">
           <el-input
             v-model="EditForm.location"
             style="width: 240px"
-            placeholder="请输入"
+            placeholder=""
           ></el-input>
         </el-form-item>
         <el-form-item label="代应商" prop="Supplier">
           <el-input
             v-model="EditForm.Supplier"
             style="width: 240px"
-            placeholder="请输入"
+            placeholder=""
           ></el-input>
         </el-form-item>
         <el-form-item label="批次号" prop="LotNumber">
           <el-input
             v-model="EditForm.LotNumber"
             style="width: 240px"
-            placeholder="请输入"
+            placeholder=""
           ></el-input>
         </el-form-item>
         <el-form-item label="到期日期" prop="ExpirationDate">
@@ -79,7 +79,7 @@
             v-model="EditForm.ExpirationDate"
             value-format="YYYY-MM-DD"
             type="date"
-            placeholder="选择日期"
+            placeholder=""
           />
         </el-form-item>
         <el-form-item label="供应商料号" prop="ManufacturerPartNumber">
@@ -126,10 +126,17 @@
         label-width="auto"
         :inline="true"
       >
+        <el-form-item label="工治具编号" prop="compid">
+          <el-input
+            v-model="form.compid"
+            style="width: 240px"
+            placeholder=""
+          ></el-input>
+        </el-form-item>
         <el-form-item label="工治具类型" prop="compname">
           <el-select
             v-model="form.compname"
-            placeholder="请选择"
+            placeholder=""
             style="width: 240px"
           >
             <el-option
@@ -140,32 +147,25 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="工治具编号" prop="compid">
-          <el-input
-            v-model="form.compid"
-            style="width: 240px"
-            placeholder="请输入"
-          ></el-input>
-        </el-form-item>
         <el-form-item label="库位" prop="location">
           <el-input
             v-model="form.location"
             style="width: 240px"
-            placeholder="请输入"
+            placeholder=""
           ></el-input>
         </el-form-item>
         <el-form-item label="代应商" prop="Supplier">
           <el-input
             v-model="form.Supplier"
             style="width: 240px"
-            placeholder="请输入"
+            placeholder=""
           ></el-input>
         </el-form-item>
         <el-form-item label="批次号" prop="LotNumber">
           <el-input
             v-model="form.LotNumber"
             style="width: 240px"
-            placeholder="请输入"
+            placeholder=""
           ></el-input>
         </el-form-item>
         <el-form-item label="到期日期" prop="ExpirationDate">
@@ -174,7 +174,7 @@
             v-model="form.ExpirationDate"
             value-format="YYYY-MM-DD"
             type="date"
-            placeholder="选择日期"
+            placeholder=""
           />
         </el-form-item>
         <el-form-item label="供应商料号" prop="ManufacturerPartNumber">
@@ -438,6 +438,25 @@ const columnData = reactive([
     align: "center",
   },
   {
+    text: true,
+    prop: "ExpirationDate",
+    label: "到期日期",
+    width: "",
+    min: true,
+    align: "center",
+  },
+  {
+    text: false,
+    tag: true,
+    tagType: "number",
+    tagItem: [{ text: "未清洗", type: "primary", number: 0 },{ text: "已清洗", type: "warning", number: 1 }],
+    prop: "CleanStatus",
+    label: "库位",
+    width: "",
+    min: true,
+    align: "center",
+  },
+  {
     isOperation: true,
     label: "操作",
     width: "120",
@@ -461,12 +480,12 @@ const columnData = reactive([
 ]);
 
 onBeforeMount(() => {
-  getData();
-  getCompnameList();
   getScreenHeight();
 });
 onMounted(() => {
   window.addEventListener("resize", getScreenHeight);
+  getData();
+  getCompnameList();
 });
 onBeforeUnmount(() => {
   window.addEventListener("resize", getScreenHeight);
@@ -505,7 +524,7 @@ const getScreenHeight = () => {
   justify-content: center;
 }
 /* 隐藏滚动条，但保持可滚动功能 */
-.custom-textarea ::-webkit-scrollbar {
-  display: none; /* Chrome, Safari, Opera */
-}
+/* .custom-textarea ::-webkit-scrollbar {
+  display: none; 
+} */
 </style>
