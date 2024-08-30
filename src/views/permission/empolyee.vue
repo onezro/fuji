@@ -16,12 +16,11 @@
         </div>
       </template>
       <el-scrollbar class="h-[calc(100vh-175px)]">
-        <el-tree style="max-width: 600px" :data="organTree" :expand-on-click-node="false" :props="{
+        <el-tree style="max-width: 600px"  highlight-current :data="organTree" :expand-on-click-node="false" :props="{
           children: 'children',
           label: 'OrganizationName',
         }" @node-click="handleNodeClick" />
       </el-scrollbar>
-      <!-- card body -->
     </el-card>
 
     <el-card shadow="always" :body-style="{ padding: '10px' }" class="flex-1">
@@ -43,18 +42,6 @@
         <el-table-column label="职称" prop="title" min-width="260"> </el-table-column>
         <el-table-column label="组织" prop="OrganizationName" min-width="200">
         </el-table-column>
-
-        <!-- <el-table-column label="角色" prop="RoleName">
-          <template #default="scope">
-            <el-tag
-              v-for="item in scope.row.RoleName"
-              :key="item"
-              type="primary"
-            >
-              {{ item }}
-            </el-tag>
-          </template>
-        </el-table-column> -->
         <el-table-column fixed="right" label="操作" width="120" align="center">
           <template #default="scope">
             <el-tooltip content="编辑" placement="top">
@@ -78,7 +65,7 @@
         </el-pagination>
       </div>
     </el-card>
-    <el-dialog :append-to-body="true" :close-on-click-modal="false" title="用户角色" v-model="addVisible" width="30%"
+    <el-dialog :append-to-body="true" :close-on-click-modal="false" title="用户角色" v-model="addVisible" width="400px"
       @close="addCancel()">
       <el-form :model="form" ref="formRef" label-width="auto">
         <el-form-item label="员工" prop="roleName">
@@ -103,7 +90,7 @@
         </span>
       </template>
     </el-dialog>
-    <el-dialog :append-to-body="true" :close-on-click-modal="false" title="编辑" v-model="editVisible" width="30%"
+    <el-dialog :append-to-body="true" :close-on-click-modal="false" title="编辑" v-model="editVisible" width="400px"
       @close="editCancel()">
       <el-form :model="editForm" ref="editRef" label-width="auto">
         <el-form-item label="员工名" prop="FullName">
@@ -124,7 +111,7 @@
         </span>
       </template>
     </el-dialog>
-    <el-dialog :append-to-body="true" :close-on-click-modal="false" title="重置密码" v-model="restVisible" width="30%"
+    <el-dialog :append-to-body="true" :close-on-click-modal="false" title="重置密码" v-model="restVisible" width="400px"
       @close="upDateCancel()">
       <el-form :model="rePwForm" ref="reFormRef" :rules="rules" label-width="auto">
         <el-form-item label="账号" prop="employeeName">

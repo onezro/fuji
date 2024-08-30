@@ -329,7 +329,7 @@ const fullScreen = () => {
                 </div>
             </el-scrollbar>
         </div>
-        <el-dialog :append-to-body="true" :close-on-click-modal="false" v-model="addVisible" title="设置" width="30%"
+        <el-dialog :append-to-body="true" :close-on-click-modal="false" v-model="addVisible" title="设置" width="400px"
             @close="addCancel">
             <div class="w-full flex justify-center">
                 <el-form ref="formRef" :rules="rules" style="width:70%" :model="form" label-position="left"

@@ -35,7 +35,7 @@
         </el-pagination>
       </div>
     </el-card>
-    <el-dialog :append-to-body="true" :close-on-click-modal="false" title="新增" v-model="addVisible" width="30%"
+    <el-dialog :append-to-body="true" :close-on-click-modal="false" title="新增" v-model="addVisible" width="400px"
       @close="addCancel()">
       <el-form :model="form" ref="formRef" :rules="rules" label-width="auto">
         <el-form-item label="角色名称" prop="RoleName">
@@ -57,7 +57,7 @@
       </template>
     </el-dialog>
 
-    <el-dialog :append-to-body="true" :close-on-click-modal="false" title="编辑" v-model="editVisible" width="30%"
+    <el-dialog :append-to-body="true" :close-on-click-modal="false" title="编辑" v-model="editVisible" width="400px"
       @close="editCancel()">
       <el-form :model="editForm" :rules="rules" ref="editRef" label-width="auto">
         <el-form-item label="角色名称" prop="RoleName">

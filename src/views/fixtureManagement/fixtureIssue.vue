@@ -1,4 +1,5 @@
 <template>
+
   <div class="p-[10px]">
     <el-card shadow="always" :body-style="{ padding: '10px' }">
       <div>
@@ -86,6 +87,7 @@
           >
           </el-pagination>
         </div>
+
       </div>
     </el-card>
     <el-dialog v-model="dialogTableVisible" title="维修" width="1000">
@@ -504,6 +506,7 @@ const getData = () => {
   if (getDataText.SN === "" || getDataText.OperationType === "") {
     ElMessage({
       message: "条码或操作类型不能为空",
+
       type: "warning",
     });
     return;

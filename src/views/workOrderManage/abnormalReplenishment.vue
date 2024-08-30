@@ -150,7 +150,7 @@
           <el-table-column prop="Result" label="单位"> </el-table-column>
           <el-table-column prop="Result" label="主替料组别"> </el-table-column>
           <el-table-column prop="Result" label="优先级"> </el-table-column>
-          <el-table-column prop="Result" label="物料名称"> </el-table-column>
+          <el-table-column prop="Result" label="物料描述"> </el-table-column>
           <el-table-column prop="Result" label="物料规格"> </el-table-column>
           <el-table-column prop="Result" label="指定出货批次">
           </el-table-column>

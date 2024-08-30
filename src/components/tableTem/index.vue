@@ -180,14 +180,14 @@ const toggleSelection = (rows?: any) => {
 };
 
 const getTextWidth = (str: string) => {
+  let fontSizeNum = size?.value == "small" ? 12 : 16;
   let width = 0;
   const html = document.createElement("span");
-  html.innerText = str;
-  html.className = "getTextWidth";
+  html.style.cssText = `padding: 0; margin: 0; border: 0; line-height: 1; font-size: ${fontSizeNum}px; font-family: Arial, sans-serif;`;
+  html.innerText = str; // 去除字符串前后的空白字符
   document.body?.appendChild(html);
 
-  // 使用类型断言将 Element 转换为 HTMLElement
-  const spanElement = document.querySelector(".getTextWidth") as HTMLElement;
+  const spanElement = html; // 无需再次查询，直接使用创建的元素
   if (spanElement) {
     width = spanElement.offsetWidth;
     spanElement.remove();
@@ -195,6 +195,22 @@ const getTextWidth = (str: string) => {
   // console.log(width);
   return width;
 };
+// const getTextWidth = (str: string) => {
+//   let width = 0;
+//   const html = document.createElement("span");
+//   html.innerText = str;
+//   html.className = "getTextWidth";
+//   document.body?.appendChild(html);
+
+//   // 使用类型断言将 Element 转换为 HTMLElement
+//   const spanElement = document.querySelector(".getTextWidth") as HTMLElement;
+//   if (spanElement) {
+//     width = spanElement.offsetWidth;
+//     spanElement.remove();
+//   }
+//   console.log(width);
+//   return width;
+// };
 // const getTextWidth = (str: string): number => {
 //     let width = 0;
 //     let canvas = document.createElement("canvas");
@@ -207,7 +223,7 @@ const getTextWidth = (str: string) => {
 
 //     context.font = "14px Microsoft YaHei";
 //     width = context.measureText(str).width;
-//     console.log(width);
+//     // console.log(width);
 //     return width;
 // };
 

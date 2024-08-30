@@ -26,9 +26,16 @@
               >
               </selectTa>
               <el-tooltip content="刷新" placement="top">
-               <el-icon class="ml-3" color="#777777"   :class="isLoding" size="24" @click="getOrderData"><RefreshRight /></el-icon>
-           </el-tooltip>
-              </div> 
+                <el-icon
+                  class="ml-3"
+                  color="#777777"
+                  :class="isLoding"
+                  size="24"
+                  @click="getOrderData"
+                  ><RefreshRight
+                /></el-icon>
+              </el-tooltip>
+            </div>
           </el-form-item>
           <el-form-item v-for="f in formHeader" :key="f.value" :label="f.label">
             <span
@@ -162,7 +169,7 @@ import {
   onBeforeUnmount,
   nextTick,
 } from "vue";
-import type { Formspan, FormHeader, OrderData,BurnForm } from "@/typing";
+import type { Formspan, FormHeader, OrderData, BurnForm } from "@/typing";
 import selectTa from "@/components/selectTable/index.vue";
 import tableTem from "@/components/tableTem/index.vue";
 import feedTemp from "@/components/feedTemp/index.vue";
@@ -214,7 +221,7 @@ const lineOption = ref([
 const orderColumns = ref([
   { label: "工单号", width: "", prop: "MfgOrderName", fixed: true },
   { label: "产品编码", width: "", prop: "ProductName", fixed: true },
- 
+
   { label: "状态", width: "", prop: "OrderStatusDesc" },
   { label: "产品描述", width: "", prop: "ProductDesc" },
   { label: "机型", width: "", prop: "BD_ProductModel" },
@@ -343,7 +350,7 @@ const columnData = reactive([
   {
     text: true,
     prop: "MaterialCode",
-    label: "物料编号",
+    label: "物料编码",
     width: "",
     min: true,
     align: "1",
@@ -351,7 +358,7 @@ const columnData = reactive([
   {
     text: true,
     prop: "MaterialDesc",
-    label: "物料名称",
+    label: "物料描述",
     // width: "600",
     min: true,
     align: "1",
@@ -459,12 +466,12 @@ const FeedHeader = reactive([
 const feedCancel = () => {
   feedVisible.value = false;
 };
-const isLoding=ref('')
+const isLoding = ref("");
 
 onBeforeMount(() => {
   getScreenHeight();
-  let date:string=setDefaultDate()
-  form.value.date=[date,date]
+  let date: string = setDefaultDate();
+  form.value.date = [date, date];
 });
 onMounted(() => {
   window.addEventListener("resize", getScreenHeight);
@@ -491,13 +498,14 @@ const getOrderData = () => {
 };
 
 const setDefaultDate = () => {
-		// 获取当前日期  
-		const now = new Date();
-		// 格式化日期为YYYY-MM-DD  
-		const formattedDate =
-			`${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
-	return formattedDate
-	}
+  // 获取当前日期
+  const now = new Date();
+  // 格式化日期为YYYY-MM-DD
+  const formattedDate = `${now.getFullYear()}-${String(
+    now.getMonth() + 1
+  ).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+  return formattedDate;
+};
 
 const radioChange = (args: any) => {
   // console.log(args[1]);
@@ -535,12 +543,13 @@ const onSubmit = () => {
     EndTime: form.value.date[1] ? form.value.date[1] : "",
     OrderNum: form.value.OrderNum,
     BarCode: form.value.barCode,
-  }).then((data: any) => {
-    if (!data) {
+  }).then((res: any) => {
+    if (res.content == null || res.content.length == 0) {
+      tableData.value = [];
       return;
     }
-    const dataText = JSON.parse(data.content);
-    tableData.value = dataText;
+    // const dataText = JSON.parse(data.content);
+    tableData.value = res.content;
     // form.value = {
     //   // date: [],
     //   SpecName: "SMT-Laser",

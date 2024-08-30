@@ -450,8 +450,25 @@ const deleteConfirm = () => {
 const columnData = reactive([
   {
     text: true,
-    prop: "ProductName",
+    prop: "CompID",
     label: "产品名称",
+    width: "",
+    min: true,
+    align: "left",
+  },
+  {
+    text: true,
+    prop: "CompName",
+    label: "工治具类型",
+    width: "",
+    min: true,
+    align: "left",
+  },
+  {
+    text: true,
+    prop: "Location",
+    label: "状态",
+
     width: "",
     min: true,
     align: "center",
