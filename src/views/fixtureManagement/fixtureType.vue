@@ -757,10 +757,10 @@ const columnData = reactive([
 ]);
 
 onBeforeMount(() => {
-  getData();
   getScreenHeight();
 });
 onMounted(() => {
+  getData();
   window.addEventListener("resize", getScreenHeight);
 });
 onBeforeUnmount(() => {

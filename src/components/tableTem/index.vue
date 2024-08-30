@@ -18,8 +18,12 @@
             <el-tag v-if="c.tagType === 'string'" :type="c.tagItem[scope.row[c.prop]]" effect="plain">
               {{ scope.row[c.prop] }}
             </el-tag>
-            <el-tag v-if="c.tagType === 'bolean'" :type="scope.row[c.prop] ? c.tagItem[0].type : c.tagItem[1].type"
-              effect="plain">
+
+            <el-tag
+              v-if="c.tagType === 'boolean'"
+              :type="scope.row[c.prop] ? c.tagItem[0].type : c.tagItem[1].type"
+              effect="plain"
+            >
               {{ scope.row[c.prop] ? c.tagItem[0].text : c.tagItem[1].text }}
             </el-tag>
             <div v-for="item in c.tagItem">

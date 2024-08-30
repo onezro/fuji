@@ -22,7 +22,7 @@
       v-model="editVisible"
       @close=""
       title="编辑"
-      width="50%"
+      width="55%"
     >
       <el-form
         ref="formRef"
@@ -30,8 +30,9 @@
         label-position="left"
         label-width="auto"
         :inline="true"
+        :rules="rules"
       >
-        <el-form-item label="工治具类型编码" prop="compname">
+        <el-form-item label="工治具类型" prop="compname">
           <el-select
             v-model="EditForm.compname"
             placeholder="请选择"
@@ -49,42 +50,42 @@
           <el-input
             v-model="EditForm.usage"
             style="width: 240px"
-            placeholder="请输入"
+            placeholder=""
           />
         </el-form-item>
-        <el-form-item label="状态" prop="status">
+        <!-- <el-form-item label="状态" prop="status">
           <el-input
             v-model="EditForm.status"
             style="width: 240px"
-            placeholder="请输入"
+            placeholder=""
           />
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="产品名称" prop="productname">
           <el-input
             v-model="EditForm.productname"
             style="width: 240px"
-            placeholder="请输入"
+            placeholder=""
           />
         </el-form-item>
         <el-form-item label="产品描述" prop="productdsc">
           <el-input
             v-model="EditForm.productdsc"
             style="width: 240px"
-            placeholder="请输入"
+            placeholder=""
           />
         </el-form-item>
-        <el-form-item label="程序代码" prop="procedurecode">
+        <el-form-item label="工序代码" prop="procedurecode">
           <el-input
             v-model="EditForm.procedurecode"
             style="width: 240px"
-            placeholder="请输入"
+            placeholder=""
           />
         </el-form-item>
-        <el-form-item label="程序描述" prop="proceduredsc">
+        <el-form-item label="工序描述" prop="proceduredsc">
           <el-input
             v-model="EditForm.proceduredsc"
             style="width: 240px"
-            placeholder="请输入"
+            placeholder=""
           />
         </el-form-item>
         <!-- <el-form-item label="" prop="compid">
@@ -99,7 +100,7 @@
           <el-input
             v-model="EditForm.remark"
             style="width: 240px"
-            placeholder="请输入"
+            placeholder=""
           />
         </el-form-item>
       </el-form>
@@ -119,16 +120,17 @@
       v-model="addVisible"
       @close=""
       title="添加"
-      width="50%"
+      width="55%"
     >
       <el-form
         ref="formRef"
         :model="form"
         label-position="left"
-        label-width="auto"
+        label-width="120px"
         :inline="true"
+        :rules="rules"
       >
-        <el-form-item label="工治具类型编码" prop="compname">
+        <el-form-item label="工治具类型" prop="compname">
           <el-select
             v-model="form.compname"
             placeholder="请选择"
@@ -143,60 +145,60 @@
           </el-select>
         </el-form-item>
         <el-form-item label="消耗量" prop="usage">
-          <el-input
+          <el-input-number
+          :controls="false"
             v-model="form.usage"
             style="width: 240px"
-            placeholder="请输入"
+            placeholder=""
           />
         </el-form-item>
-        <el-form-item label="状态" prop="status">
+        <!-- <el-form-item label="状态" prop="status">
           <el-input
             v-model="form.status"
             style="width: 240px"
-            placeholder="请输入"
+            placeholder=""
           />
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="产品名称" prop="productname">
           <el-input
             v-model="form.productname"
             style="width: 240px"
-            placeholder="请输入"
+            placeholder=""
           />
         </el-form-item>
         <el-form-item label="产品描述" prop="productdsc">
           <el-input
             v-model="form.productdsc"
             style="width: 240px"
-            placeholder="请输入"
+            placeholder=""
           />
         </el-form-item>
-        <el-form-item label="程序代码" prop="procedurecode">
+        <el-form-item label="工序代码" prop="procedurecode">
           <el-input
             v-model="form.procedurecode"
             style="width: 240px"
-            placeholder="请输入"
+            placeholder=""
           />
         </el-form-item>
-        <el-form-item label="程序描述" prop="proceduredsc">
+        <el-form-item label="工序描述" prop="proceduredsc">
           <el-input
             v-model="form.proceduredsc"
             style="width: 240px"
-            placeholder="请输入"
+            placeholder=""
           />
         </el-form-item>
-        <!-- <el-form-item label="" prop="compid">
+        <el-form-item label="板面" prop="side">
           <el-input
             v-model="form.side"
             style="width: 240px"
-            :rows="2"
-            type="textarea"
           />
-        </el-form-item> -->
+        </el-form-item>
         <el-form-item label="备注" prop="remark">
           <el-input
             v-model="form.remark"
             style="width: 240px"
-            placeholder="请输入"
+            placeholder=""
+            type="textarea"
           />
         </el-form-item>
       </el-form>
@@ -222,6 +224,7 @@
 
 <script setup lang="ts">
 import { ElMessage, ElNotification, ElMessageBox } from "element-plus";
+import type { ComponentSize, FormInstance, FormRules } from 'element-plus'
 import tableTem from "@/components/tableTem/index.vue";
 import { ToolsDetail, ToolsType, ToolsSpec } from "@/api/permiss";
 import { useUserStoreWithOut } from "@/stores/modules/user";
@@ -266,6 +269,28 @@ interface EditFormTS {
   user: string;
 }
 
+interface RuleForm {
+  compname: string;
+  productname: string;
+  procedurecode: string;
+  side: string;
+}
+
+const rules = reactive({
+  compname: [
+    { required: true, message: '不能为空', trigger: 'blur' },
+  ],
+  productname: [
+  { required: true, message: '不能为空', trigger: 'blur' },
+  ],
+  procedurecode: [
+  { required: true, message: '不能为空', trigger: 'blur' },
+  ],
+  side: [
+  { required: true, message: '不能为空', trigger: 'blur' },
+  ],
+})
+
 //   const pageSize = ref(10);
 const currentPage = ref(1);
 const tableHeight = ref(0);
@@ -273,7 +298,12 @@ const addVisible = ref(false);
 const editVisible = ref(false);
 const inputValue = ref();
 const deleteVisible = ref(false);
-const deleteChoice = ref("");
+const deleteChoice = ref({
+  compname:'',
+  productname:'',
+  procedurecode:'',
+  side:''
+});
 const compnameList = ref<any>([]);
 const pageObj = ref({
   pageSize: 30,
@@ -362,15 +392,15 @@ const addSumbit = () => {
 
 const editSubmit = (data: any) => {
   console.log(data);
-  // EditForm.value.compid = data.CompID;
-  // EditForm.value.compname = data.CompName;
-  // EditForm.value.location = data.Location;
-  // EditForm.value.ManufacturerPartNumber = data.CompID;
-  // EditForm.value.Manufacturer = data.ManufacturerPartNumber;
-  // EditForm.value.Supplier = data.Supplier;
-  // EditForm.value.LotNumber = data.LotNumber;
-  // EditForm.value.remark = data.Remark;
-  // EditForm.value.ExpirationDate = data.ExpirationDate;
+  EditForm.value.usage = data.Amount;
+  EditForm.value.status = data.Status;
+  EditForm.value.productname = data.ProductName;
+  EditForm.value.productdsc = data.ProductDsc;
+  EditForm.value.compname = data.ProductName;
+  EditForm.value.procedurecode = data.ProcedureCode;
+  EditForm.value.proceduredsc = data.ProcedureDsc;
+  EditForm.value.side = data.Side;
+  EditForm.value.remark = data.ExpirationDate;
   editVisible.value = true;
 };
 
@@ -394,11 +424,15 @@ const editConfirm = () => {
 
 const deleteSubmit = (data: any) => {
   deleteVisible.value = true;
-  deleteChoice.value = data.CompID;
+  deleteChoice.value.compname = data.ToolsMold;
+  deleteChoice.value.productname = data.ProductName;
+  deleteChoice.value.procedurecode = data.ProcedureCode;
+  deleteChoice.value.side = data.Side;
 };
 
 const deleteConfirm = () => {
-  ToolsDetail({ CompID: deleteChoice.value, operationtype: "DEL" }).then(
+  console.log(deleteChoice.value);
+  ToolsSpec({ ...deleteChoice.value, operationtype: "DEL" }).then(
     (data: any) => {
       if (!data) {
         return;
@@ -416,7 +450,6 @@ const deleteConfirm = () => {
 const columnData = reactive([
   {
     text: true,
-
     prop: "CompID",
     label: "产品名称",
     width: "",
@@ -442,20 +475,36 @@ const columnData = reactive([
   },
   {
     text: true,
-    prop: "Location",
-    label: "消耗量",
+    prop: "ProductDsc",
+    label: "产品描述",
     width: "",
     min: true,
     align: "center",
   },
   {
     text: true,
-    prop: "Location",
-    label: "产品描述",
+    prop: "ProcedureCode",
+    label: "工序代码",
     width: "",
     min: true,
     align: "center",
   },
+  {
+    text: true,
+    prop: "ProcedureCode",
+    label: "工序描述",
+    width: "",
+    min: true,
+    align: "center",
+  },
+  // {
+  //   text: true,
+  //   prop: "Side",
+  //   label: "产品描述",
+  //   width: "",
+  //   min: true,
+  //   align: "center",
+  // },
   {
     isOperation: true,
     label: "操作",
@@ -480,11 +529,11 @@ const columnData = reactive([
 ]);
 
 onBeforeMount(() => {
-  getData();
-  getCompnameList();
   getScreenHeight();
 });
 onMounted(() => {
+  getData();
+  getCompnameList();
   window.addEventListener("resize", getScreenHeight);
 });
 onBeforeUnmount(() => {
@@ -493,7 +542,8 @@ onBeforeUnmount(() => {
 
 const getData = () => {
   ToolsSpec({ operationtype: "QAL" }).then((data: any) => {
-    if (data.content === null) {
+    if (data.content === null || data.content.length === 0) {
+      tableData.value = [];
       return;
     }
     const dataText = data.content;
@@ -525,5 +575,13 @@ const getScreenHeight = () => {
 <style scoped>
 .el-pagination {
   justify-content: center;
+}
+
+</style>
+
+<style>
+
+.el-input-number .el-input__inner{
+  text-align: left;
 }
 </style>
