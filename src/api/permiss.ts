@@ -325,6 +325,7 @@ export function ToolsDetail(data: any) {
         data
     })
 }
+
 //根据产品的治具用量操作
 export function ToolsSpec(data: any) {
     return request({
@@ -333,11 +334,31 @@ export function ToolsSpec(data: any) {
         data
     })
 }
+
 //治具上架下架
 export function ToolsMove(data: any) {
     return request({
         url: "/api/Tools/ToolsMove",
         method: "post",
         data
+    })
+}
+
+//查询产品物料信息
+export function findPdMaterial() {
+    return request({
+        url: "/api/Tools/findProductMaterial",
+        method: "post"
+    })
+}
+
+//根据产品查询产品工序
+export function findProductSpec(data:any) {
+    return request({
+        url: "/api/Tools/findProductSpec",
+        method: "post",
+        params: {
+            productName:data
+        }
     })
 }
