@@ -513,6 +513,10 @@ const getData = () => {
     return;
   }
   QuerySN(getDataText.SN, getDataText.OperationType).then((res: any) => {
+    if (!res || res.content === null || res.content.length === 0) {
+      tableData.value = [];
+      return;
+    }
     OperationType.value = getDataText.OperationType;
     // const dataText = JSON.parse(res.content);
     tableData.value = res.content;
@@ -532,9 +536,10 @@ const sureMaintenance = (formEl: any) => {
     if (valid) {
       dialogTableVisible.value = false;
       MaintenanceAdd(maintenanceForm.value).then((res: any) => {
-        if (!res) {
-          return;
-        }
+    if (!res || res.content === null || res.content.length === 0) {
+      tableData.value = [];
+      return;
+    }
         getData();
         ElMessage({
           message: res.msg,
@@ -587,6 +592,10 @@ const getHistory = () => {
     getHistoryText.InternalSN,
     getHistoryText.Position
   ).then((res: any) => {
+    if (!res || res.content === null || res.content.length === 0) {
+      tableData.value = [];
+      return;
+    }
     // const dataText = JSON.parse(res.content);
     historyTable.value = res.content;
   });

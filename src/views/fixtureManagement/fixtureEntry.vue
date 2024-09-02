@@ -525,7 +525,7 @@ const getScreenHeight = () => {
   justify-content: center;
 }
 /* 隐藏滚动条，但保持可滚动功能 */
-/* .custom-textarea ::-webkit-scrollbar {
+.custom-textarea ::-webkit-scrollbar {
   display: none; 
-} */
+}
 </style>
