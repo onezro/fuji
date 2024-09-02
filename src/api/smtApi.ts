@@ -103,7 +103,6 @@ export function OrderQuery() {
     })
 }
 
-
 //获取装箱信息
 export function QueryPackListByCarrier(data: any) {
     return requestNoMessage({
@@ -125,6 +124,14 @@ export function LoadMaterialQueue(data: any) {
 export function UnLoadMaterialQueue(data: any) {
     return request({
         url: "/api/Burn/UnLoadMaterialQueue",
+        method: "post",
+        data
+    })
+}
+//物料需求
+export function QueryOrderMaterialRequired(data: any) {
+    return requestNoMessage({
+        url: "/api/workstation/QueryOrderMaterialRequired",
         method: "post",
         data
     })

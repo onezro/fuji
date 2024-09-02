@@ -287,7 +287,7 @@ export function GetFactoryModelList(){
 //获取物料树
 export function findAllMaterialTree() {
     return request({
-        url: "/api/product/findAll",
+        url: "/api/product/findAllProduct",
         method: "post",
     })
 }
@@ -303,7 +303,6 @@ export function findProductMaterial(data: any) {
 export function UpdateProductMaterial(data: any) {
     return request({
         url: "/api/product/UpdateProductMaterial",
-
         method: "post",
         data
     })

@@ -146,8 +146,10 @@
       :close-on-press-escape="false"
     >
       <feedTemp
+        ref="feedRef"
         :form="feedForm"
         :form-header="FeedHeader"
+        :tableData="feedTableData"
         :specName="'SMT-Burn'"
       />
       <template #footer>
@@ -174,6 +176,8 @@ import selectTa from "@/components/selectTable/index.vue";
 import tableTem from "@/components/tableTem/index.vue";
 import feedTemp from "@/components/feedTemp/index.vue";
 import { cloneDeep } from "lodash-es";
+import { useUserStoreWithOut } from "@/stores/modules/user";
+const userStore = useUserStoreWithOut();
 const form = ref<InstanceType<typeof BurnForm>>({
   date: [],
   SpecName: "SMT-Burn",
@@ -181,7 +185,12 @@ const form = ref<InstanceType<typeof BurnForm>>({
   OrderNum: "",
 });
 import { useAppStore } from "@/stores/modules/app";
-import { QueryBurnPrintData, PrintBurnModel, OrderQuery } from "@/api/smtApi";
+import {
+  QueryBurnPrintData,
+  PrintBurnModel,
+  OrderQuery,
+  QueryOrderMaterialRequired,
+} from "@/api/smtApi";
 
 const appStore = useAppStore();
 const opui = appStore.getOPUIReal();
@@ -221,35 +230,16 @@ const lineOption = ref([
 const orderColumns = ref([
   { label: "工单号", width: "", prop: "MfgOrderName", fixed: true },
   { label: "产品编码", width: "", prop: "ProductName", fixed: true },
-
   { label: "状态", width: "", prop: "OrderStatusDesc" },
   { label: "产品描述", width: "", prop: "ProductDesc" },
   { label: "机型", width: "", prop: "BD_ProductModel" },
   { label: "软件版本", width: "", prop: "BD_SoftVersion" },
   { label: "计划开始", width: "", prop: "PlannedStartDate" },
   { label: "计划完成", width: "", prop: "PlannedCompletionDate" },
-  // { label: "工单号", width: "", prop: "MfgOrderName" },
-  // { label: "产品编码", width: "", prop: "ProductName" }
 ]);
 
 const orderTable = ref<InstanceType<typeof OrderData>>({
-  data: [
-    // {
-    //   MfgOrderName: "2330201001988",
-    //   PlannedStartDate: "2024-08-07 00:00:00",
-    //   PlannedCompletionDate: "2024-08-0700:00:00",
-    //   Qty: "2000",
-    //   ProductName: "2330201001988",
-    //   BD_ProjectNo: "string",
-    //   BD_ProductModel: "string",
-    //   ProductDesc: "插件组件 3A4621-01CMB板 DIP",
-    //   UOMName: "string",
-    //   OrderStatusName: "string",
-    //   OrderStatusDesc: "string",
-    //   MfgLineName: "string",
-    //   MfgLineDesc: "string",
-    // },
-  ],
+  data: [],
 });
 
 const OrderForm = reactive<InstanceType<typeof Formspan>>({
@@ -333,7 +323,7 @@ const columnData = reactive([
   },
   {
     text: true,
-    prop: "ContainerName",
+    prop: "FromContainerName",
     label: "原材料码",
     width: "",
     min: true,
@@ -341,7 +331,7 @@ const columnData = reactive([
   },
   {
     text: true,
-    prop: "FromContainerName",
+    prop: "ContainerName",
     label: "半成品码",
     width: "",
     min: true,
@@ -400,6 +390,8 @@ const burnPrint = () => {
   BurnTableRef.value.toggleSelection();
 };
 
+const feedTableData=ref([])//上料需求清单
+const feedRef=ref()
 //打开物料上料
 const RawmaterialFeeding = () => {
   // console.log(OrderForm.MfgOrderName);
@@ -416,6 +408,23 @@ const RawmaterialFeeding = () => {
   feedForm.value.type = opui.station;
   feedForm.value.eqInfo = opui.stationDec;
   feedVisible.value = true;
+  // nextTick(()=>{
+  //  feedRef.value.getFocus()
+  // })
+  QueryOrderMaterialRequired({
+    MfgOrder: data.MfgOrderName,
+    Container: "",
+    SpecName: "SMT-Burn",
+    workstationName: opui.station,
+    userAccount: userStore.getUserInfo,
+  }).then((res: any) => {
+    // console.log(OrganData(res.content));
+    if(res.success){
+      let data=cloneDeep(OrganData(res.content))   
+      feedTableData.value=data
+      // OrganData(res.content)
+    }
+  });
 };
 
 const tableHeight = ref(0);
@@ -590,6 +599,21 @@ const getScreenHeight = () => {
     tableHeight.value = window.innerHeight - 225;
   });
 };
+const OrganData = (organizations: any) => {
+    const organizationMap = new Map();
+    organizations.forEach((org: any) => {
+      organizationMap.set(org.MaterialName, { ...org, children: [] });
+    });
+    organizations.forEach((org: any) => {
+      if (org.originalMaterialName !== org.MaterialName) {
+        const parentOrg = organizationMap.get(org.originalMaterialName);
+        if (parentOrg) {
+          parentOrg.children.push(organizationMap.get(org.MaterialName));
+        }
+      }
+    });
+    return Array.from(organizationMap.values()).filter(org => org.originalMaterialName ==org.MaterialName);
+  }
 </script>
 
 <style lang="scss">

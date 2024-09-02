@@ -438,6 +438,17 @@ const columnData = reactive([
     align: "center",
   },
   {
+    text: false,
+    tag: true,
+    tagType: "number",
+    tagItem: [{ text: "未清洗", type: "primary", number: 0 },{ text: "已清洗", type: "warning", number: 1 }],
+    prop: "CleanStatus",
+    label: "状态",
+    width: "",
+    min: true,
+    align: "center",
+  },
+  {
     text: true,
     prop: "ExpirationDate",
     label: "到期日期",
@@ -445,17 +456,7 @@ const columnData = reactive([
     min: true,
     align: "center",
   },
-  {
-    text: false,
-    tag: true,
-    tagType: "number",
-    tagItem: [{ text: "未清洗", type: "primary", number: 0 },{ text: "已清洗", type: "warning", number: 1 }],
-    prop: "CleanStatus",
-    label: "库位",
-    width: "",
-    min: true,
-    align: "center",
-  },
+
   {
     isOperation: true,
     label: "操作",
