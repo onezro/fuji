@@ -5,7 +5,7 @@
             <el-form-item v-for="f in formHeader" :key="f.value" :label="f.label" :prop="f.value">
                 <el-input v-if="f.type == 'input' || f.type === 'password'" v-model="form[f.value]" :type="f.type"
                     :disabled="f.disabled" :placeholder="'请输入' + f.label" />
-                <el-input v-if="f.type == 'textarea'" v-model="form[f.value]" :type="f.type" :disabled="f.disabled"
+                <el-input v-if="f.type == 'textarea'" :rows="f.rows"  v-model="form[f.value]" :type="f.type" :disabled="f.disabled"
                     :placeholder="'请输入' + f.label" />
                 <el-input-number v-if="f.type === 'inputNumber'" :disabled="f.disabled" v-model="form[f.value]"
                     :min="f.min" :max="f.max" />

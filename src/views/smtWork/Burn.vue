@@ -151,6 +151,7 @@
         :form-header="FeedHeader"
         :tableData="feedTableData"
         :specName="'SMT-Burn'"
+        @updateList="getFeedData"
       />
       <template #footer>
         <span class="dialog-footer">
@@ -403,7 +404,6 @@ const RawmaterialFeeding = () => {
     return;
   }
   let data = cloneDeep(OrderForm);
-
   feedForm.value = { ...data };
   feedForm.value.type = opui.station;
   feedForm.value.eqInfo = opui.stationDec;
@@ -411,8 +411,11 @@ const RawmaterialFeeding = () => {
   // nextTick(()=>{
   //  feedRef.value.getFocus()
   // })
+  getFeedData()
+};
+const getFeedData=()=>{
   QueryOrderMaterialRequired({
-    MfgOrder: data.MfgOrderName,
+    MfgOrder: feedForm.value.MfgOrderName,
     Container: "",
     SpecName: "SMT-Burn",
     workstationName: opui.station,
@@ -425,7 +428,7 @@ const RawmaterialFeeding = () => {
       // OrganData(res.content)
     }
   });
-};
+}
 
 const tableHeight = ref(0);
 const pageObj = ref({
