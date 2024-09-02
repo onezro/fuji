@@ -279,12 +279,14 @@ onBeforeUnmount(() => {
 
 const getCarrierList = () => {
   isLoding.value = "is-loading";
+  tableData.value = [];
   QueryCarrierList({ workStationName: opui.station }).then((res: any) => {
     let timer = setTimeout(() => {
       isLoding.value = "";
       clearTimeout(timer);
     }, 2000);
-    if (res.content == null) {
+    if (res.content == null||res.content.length==0) {
+      turnData.value=[]
       return;
     }
 
