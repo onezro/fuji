@@ -727,7 +727,7 @@ const columnData = reactive([
   {
     text: true,
     prop: "MaterialName",
-    label: "工治具型号",
+    label: "工治具类型",
     width: "",
     min: true,
     align: "center",
@@ -758,7 +758,7 @@ const columnData = reactive([
     ],
     prop: "Status",
     label: "状态",
-    width: "",
+    width: "100",
     min: true,
     align: "center",
   },
