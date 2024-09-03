@@ -53,7 +53,7 @@
       >
         <el-form-item label="物料编码" prop="MaterialCode" class="mb-2">
           <el-input
-            v-model="form.MaterialCode"
+            v-model="form.ProductName"
             placeholder="请输入物料编码"
             clearable
             @clear="onSubmit"
@@ -61,7 +61,7 @@
         </el-form-item>
         <el-form-item label="物料描述" prop="MaterialName" class="mb-2">
           <el-input
-            v-model="form.MaterialName"
+            v-model="form.ProductDescription"
             placeholder="请输入物料描述"
             clearable
              @clear="onSubmit"
@@ -125,9 +125,9 @@ import {
 const isLoding = ref("");
 const materialTree = ref([]);
 const form = ref({
-  ProductFamilyName: "",
-  MaterialCode: "",
-  MaterialName: "",
+  FamilyName: "",
+  ProductName: "",
+  ProductDescription: "",
 });
 const tableData = ref([]);
 const tableHeight = ref(0);
@@ -248,21 +248,25 @@ const editFormHeader = reactive([
   {
     type: "input",
     label: "机型名称",
+    placeholder:'',
     value: "BD_ProductModel",
   },
   {
     type: "input",
     label: "芯片类型",
+    placeholder:'',
     value: "BD_ChipType",
   },
   {
     type: "input",
     label: "软件版本",
+    placeholder:'',
     value: "BD_SoftVersion",
   },
   {
     type: "input",
     label: "校验和",
+    placeholder:'',
     value: "BD_CheckSum",
   },
 ]);
@@ -289,7 +293,7 @@ const getMaterialTree = () => {
 };
 const refreshData = () => {};
 const handleNodeClick = (data: any) => {
-  form.value.ProductFamilyName = data.ProductFamilyName;
+  form.value.FamilyName = data.ProductFamilyName;
   onSubmit();
   //   console.log();
 };

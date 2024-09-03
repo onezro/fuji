@@ -287,14 +287,14 @@ export function GetFactoryModelList(){
 //获取物料树
 export function findAllMaterialTree() {
     return request({
-        url: "/api/product/findAllProduct",
+        url: "/api/product/findProductFamily",
         method: "post",
     })
 }
 //获取物料详细
 export function findProductMaterial(data: any) {
     return request({
-        url: "/api/product/findProductMaterial",
+        url: "/api/product/findProduct",
         method: "post",
         data
     })
@@ -302,7 +302,7 @@ export function findProductMaterial(data: any) {
 //修改物料
 export function UpdateProductMaterial(data: any) {
     return request({
-        url: "/api/product/UpdateProductMaterial",
+        url: "/api/product/UpdateProduct",
         method: "post",
         data
     })
@@ -346,7 +346,7 @@ export function ToolsMove(data: any) {
 //查询产品物料信息
 export function findPdMaterial() {
     return request({
-        url: "/api/Tools/findProductMaterial",
+        url: "/api/Tools/findProduct",
         method: "post"
     })
 }

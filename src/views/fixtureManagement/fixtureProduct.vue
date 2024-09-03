@@ -29,7 +29,7 @@
       <el-form
         ref="EditFormRef"
         :model="EditForm"
-        label-position="left"
+        label-position="right"
         label-width="auto"
         :inline="true"
         :rules="rules"
@@ -197,7 +197,7 @@
       <el-form
         ref="formRef"
         :model="form"
-        label-position="left"
+        label-position="right"
         label-width="120px"
         :inline="true"
         :rules="rules"
