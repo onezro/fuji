@@ -346,7 +346,7 @@ export function ToolsMove(data: any) {
 //查询产品物料信息
 export function findPdMaterial() {
     return request({
-        url: "/api/Tools/findProductMaterial",
+        url: "/api/Tools/findProduct",
         method: "post"
     })
 }

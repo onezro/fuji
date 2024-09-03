@@ -49,7 +49,7 @@
             placeholder="请输入"
           ></el-input>
         </el-form-item>
-        <el-form-item label="工治具类型编码" prop="WorkSection">
+        <el-form-item label="工治具型号编码" prop="WorkSection">
           <el-input
             disabled
             v-model="EditForm.CompName"
@@ -58,7 +58,7 @@
             type="textarea"
           />
         </el-form-item>
-        <!-- <el-form-item label="材料类型">
+        <!-- <el-form-item label="材料型号">
           <el-select
             v-model="EditForm.MaterialType"
             placeholder="Select"
@@ -200,7 +200,7 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="工治具类型编码" prop="WorkSection">
+        <el-form-item label="工治具型号编码" prop="WorkSection">
           <el-input
             v-model="form.CompName"
             style="width: 240px"
@@ -208,7 +208,7 @@
             type="textarea"
           />
         </el-form-item>
-        <!-- <el-form-item label="材料类型">
+        <!-- <el-form-item label="材料型号">
           <el-select
             v-model="EditForm.MaterialType"
             placeholder="Select"
@@ -652,7 +652,7 @@ const columnData = reactive([
   {
     text: true,
     prop: "CompName",
-    label: "工治具类型编码",
+    label: "工治具型号编码",
     width: "",
     min: true,
     align: "1",
@@ -664,7 +664,7 @@ const columnData = reactive([
   //   tagItem: [{ text: "钢网刮刀", type: "primary", number: 1 },{ text: "smt", type: "primary", number: 0 },{ text: "锡膏", type: "primary", number: 2 }],
   //   // tagItem:{'已发料':'primary'},
   //   prop: "MaterialType",
-  //   label: "材料类型",
+  //   label: "材料型号",
   //   width: "",
   //   min: true,
   //   align: "center",

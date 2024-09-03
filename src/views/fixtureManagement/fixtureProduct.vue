@@ -29,7 +29,7 @@
       <el-form
         ref="EditFormRef"
         :model="EditForm"
-        label-position="left"
+        label-position="right"
         label-width="auto"
         :inline="true"
         :rules="rules"
@@ -91,7 +91,7 @@
             placeholder=""
           />
         </el-form-item>
-        <el-form-item label="工治具类型" prop="compname">
+        <el-form-item label="工治具型号" prop="compname">
           <el-select
             v-model="EditForm.compname"
             placeholder=""
@@ -197,7 +197,7 @@
       <el-form
         ref="formRef"
         :model="form"
-        label-position="left"
+        label-position="right"
         label-width="120px"
         :inline="true"
         :rules="rules"
@@ -259,7 +259,7 @@
             placeholder=""
           />
         </el-form-item>
-        <el-form-item label="工治具类型" prop="compname">
+        <el-form-item label="工治具型号" prop="compname">
           <el-select
             v-model="form.compname"
             placeholder=""
@@ -517,6 +517,8 @@ const clearEditForm = () => {
 watch(
   () => form.value.productname,
   (newVal, oldVal) => {
+    form.value.proceduredsc = "";
+    procedurecodeList.value = [];
     const item = productnameList.value.find(
       (item: any) => item.ProductName === newVal
     );
@@ -525,10 +527,14 @@ watch(
     if (item) {
       findProductSpec(newVal)
         .then((data: any) => {
-          console.log(data);
-
           if (!data) {
             return;
+          }
+          if (data.content === null || data.content.length === 0) {
+            ElMessage({
+              message: "此产品没有工序代码",
+              type: "warning",
+            });
           }
           procedurecodeList.value = data.content;
         })
@@ -540,29 +546,37 @@ watch(
   }
 );
 
-watch(
-  () => EditForm.value.productname,
-  (newVal, oldVal) => {
-    const item = productnameList.value.find(
-      (item: any) => item.ProductName === newVal
-    );
-    // 如果找到了就赋值，否则赋值为null
-    EditForm.value.productdsc = item ? item.ProductDesc : "";
-    if (item) {
-      findProductSpec(newVal)
-        .then((data: any) => {
-          if (!data) {
-            return;
-          }
-          procedurecodeList.value = data.content;
-        })
-        .catch((res) => {
-          console.log(res);
-          procedurecodeList.value = [];
-        });
-    }
-  }
-);
+// watch(
+//   () => EditForm.value.productname,
+//   (newVal, oldVal) => {
+//     EditForm.value.proceduredsc = "";
+//     procedurecodeList.value = [];
+//     const item = productnameList.value.find(
+//       (item: any) => item.ProductName === newVal
+//     );
+//     // 如果找到了就赋值，否则赋值为null
+//     EditForm.value.productdsc = item ? item.ProductDesc : "";
+//     if (item) {
+//       findProductSpec(newVal)
+//         .then((data: any) => {
+//           if (!data) {
+//             return;
+//           }
+//           if (data.content === null || data.content.length === 0) {
+//             ElMessage({
+//               message: "此产品没有工序代码",
+//               type: "warning",
+//             });
+//           }
+//           procedurecodeList.value = data.content;
+//         })
+//         .catch((res) => {
+//           console.log(res);
+//           procedurecodeList.value = [];
+//         });
+//     }
+//   }
+// );
 
 const codeChoice = (name: any) => {
   const item = procedurecodeList.value.find(
@@ -696,7 +710,7 @@ const columnData = reactive([
   },
   {
     text: true,
-    prop: "ProcedureCode",
+    prop: "ProcedureDsc",
     label: "工序描述",
     width: "",
     min: true,
@@ -713,7 +727,7 @@ const columnData = reactive([
   {
     text: true,
     prop: "MaterialName",
-    label: "工治具类型",
+    label: "工治具型号",
     width: "",
     min: true,
     align: "center",
@@ -721,7 +735,7 @@ const columnData = reactive([
   {
     text: true,
     prop: "ToolsMold",
-    label: "工治具类型编码",
+    label: "工治具型号编码",
     width: "",
     min: true,
     align: "center",

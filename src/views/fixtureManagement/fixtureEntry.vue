@@ -38,7 +38,7 @@
             style="width: 240px"
           ></el-input>
         </el-form-item>
-        <el-form-item label="工治具类型" prop="compname">
+        <el-form-item label="工治具型号" prop="compname">
           <el-select
             v-model="EditForm.compname"
             placeholder=""
@@ -133,7 +133,7 @@
             placeholder=""
           ></el-input>
         </el-form-item>
-        <el-form-item label="工治具类型" prop="compname">
+        <el-form-item label="工治具型号" prop="compname">
           <el-select
             v-model="form.compname"
             placeholder=""
@@ -424,7 +424,7 @@ const columnData = reactive([
   {
     text: true,
     prop: "CompName",
-    label: "工治具类型",
+    label: "工治具型号",
     width: "",
     min: true,
     align: "left",
