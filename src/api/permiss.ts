@@ -156,7 +156,6 @@ export function findEmployeeRoles(data: any) {
         },
     });
 }
-
 export function addEmployeeRole(data: any) {
     return request({
         url: "/api/employeerole/add",
@@ -207,6 +206,22 @@ export function ResetPwd(data: any) {
     });
 }
 
+
+export function getOrganization(){
+    return request({
+        url: "/api/employee/findOrganization",
+        method: "post",
+    });
+}
+
+//获取版本信息
+export function GetVersion(){
+    return request({
+        url: "/api/system/GetVersion",
+        method: "post",
+    });
+}
+
 export function InsertInspect(data: any){
     return request({
         url: "/api/firstinspect/Insert_Inspect_Info",
@@ -244,21 +259,6 @@ export function getCheckResults(data: any){
         url: "/api/firstinspect/Quert_Inspect_History_Info",
         method: "post",
         data,
-    });
-}
-
-export function getOrganization(){
-    return request({
-        url: "/api/employee/findOrganization",
-        method: "post",
-    });
-}
-
-//获取版本信息
-export function GetVersion(){
-    return request({
-        url: "/api/system/GetVersion",
-        method: "post",
     });
 }
 
@@ -358,6 +358,16 @@ export function findProductSpec(data:any) {
         method: "post",
         params: {
             productName:data
+        }
+    })
+}
+//查询产品BOM
+export function findProductBOM(data: any) {
+    return request({
+        url: "/api/product/findProductBOM",
+        method: "post",
+        data:{
+            ProductName:data
         }
     })
 }

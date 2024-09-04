@@ -197,7 +197,7 @@
     GetInspectData,
     UpdateInspectData,
     DeleteInspectData,
-  } from "@/api/permiss";
+  } from "@/api/operate";
   import {
     ref,
     unref,
