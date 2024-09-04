@@ -33,8 +33,8 @@
       >
         <el-form-item label="工治具编码" prop="compid">
           <el-input
-          disabled
-            v-model="EditForm.compid"
+            disabled
+            v-model.trim="EditForm.compid"
             style="width: 240px"
           ></el-input>
         </el-form-item>
@@ -59,7 +59,7 @@
             placeholder=""
           ></el-input>
         </el-form-item>
-        <el-form-item label="代应商" prop="Supplier">
+        <el-form-item label="供应商" prop="Supplier">
           <el-input
             v-model="EditForm.Supplier"
             style="width: 240px"
@@ -154,7 +154,7 @@
             placeholder=""
           ></el-input>
         </el-form-item>
-        <el-form-item label="代应商" prop="Supplier">
+        <el-form-item label="供应商" prop="Supplier">
           <el-input
             v-model="form.Supplier"
             style="width: 240px"
@@ -204,7 +204,7 @@
         </span>
       </template>
     </el-dialog>
-    <el-dialog v-model="deleteVisible" title="Tips" width="500">
+    <!-- <el-dialog v-model="deleteVisible" title="Tips" width="500">
       <span>删除确认</span>
       <template #footer>
         <div class="dialog-footer">
@@ -212,7 +212,7 @@
           <el-button type="primary" @click="deleteConfirm"> 删除 </el-button>
         </div>
       </template>
-    </el-dialog>
+    </el-dialog> -->
   </div>
 </template>
 
@@ -392,9 +392,73 @@ const editConfirm = () => {
 };
 
 const deleteSubmit = (data: any) => {
-  deleteVisible.value = true;
+  // deleteVisible.value = true;
   deleteChoice.value = data.CompID;
+  ElMessageBox.confirm("确定删除", "确认操作", {
+    confirmButtonText: "确定",
+    cancelButtonText: "取消",
+    type: "warning",
+  })
+    .then(() => {
+      ToolsDetail({ CompID: deleteChoice.value, operationtype: "DEL" }).then(
+        (data: any) => {
+          if (!data) {
+            return;
+          }
+          ElNotification({
+            message: data.msg,
+            type: "success",
+          });
+          getData();
+        }
+      );
+    })
+    .catch(() => {
+      ElNotification({
+        type: "info",
+        message: "取消操作",
+      });
+      //   ElNotification({
+      //     title: "取消操作",
+      //     // message: "取消操作",
+      //     type: "info",
+      //   });
+    });
 };
+
+const scrapSubmit = (data: any) => {
+  deleteChoice.value = data.CompID;
+  ElMessageBox.confirm("确定报废", "确认操作", {
+    confirmButtonText: "确定",
+    cancelButtonText: "取消",
+    type: "warning",
+  })
+    .then(() => {
+      ToolsDetail({ CompID: deleteChoice.value, operationtype: "SCP" }).then(
+        (data: any) => {
+          if (!data) {
+            return;
+          }
+          ElNotification({
+            message: data.msg,
+            type: "success",
+          });
+          getData();
+        }
+      );
+    })
+    .catch(() => {
+      ElNotification({
+        type: "info",
+        message: "取消操作",
+      });
+      //   ElNotification({
+      //     title: "取消操作",
+      //     // message: "取消操作",
+      //     type: "info",
+      //   });
+    });
+}
 
 const deleteConfirm = () => {
   ToolsDetail({ CompID: deleteChoice.value, operationtype: "DEL" }).then(
@@ -419,7 +483,7 @@ const columnData = reactive([
     label: "工治具编码",
     width: "",
     min: true,
-    align: "left",
+    align: "center",
   },
   {
     text: true,
@@ -427,7 +491,15 @@ const columnData = reactive([
     label: "工治具型号",
     width: "",
     min: true,
-    align: "left",
+    align: "center",
+  },
+  {
+    text: true,
+    prop: "MaterialName",
+    label: "工治具类别",
+    width: "",
+    min: true,
+    align: "center",
   },
   {
     text: true,
@@ -438,12 +510,39 @@ const columnData = reactive([
     align: "center",
   },
   {
+    text: true,
+    prop: "TotalUses",
+    label: "默认使用次数",
+    width: "",
+    min: true,
+    align: "center",
+  },
+  {
+    text: true,
+    prop: "Uses",
+    label: "已使用次数",
+    width: "",
+    min: true,
+    align: "center",
+  },
+  {
     text: false,
     tag: true,
     tagType: "number",
-    tagItem: [{ text: "未清洗", type: "primary", number: 0 },{ text: "已清洗", type: "warning", number: 1 }],
+    tagItem: [
+      { text: "初始状态", type: "primary", number: 0 },
+      { text: "入库", type: "warning", number: 1 },
+    ],
     prop: "CleanStatus",
     label: "状态",
+    width: "100px",
+    min: true,
+    align: "center",
+  },
+  {
+    text: true,
+    prop: "Supplier",
+    label: "供应商",
     width: "",
     min: true,
     align: "center",
@@ -460,14 +559,14 @@ const columnData = reactive([
   {
     isOperation: true,
     label: "操作",
-    width: "120",
+    width: "180",
     align: "center",
     fixed: "right",
     operation: [
       {
         type: "primary",
         label: "编辑",
-        icon: "Document",
+        icon: "EditPen",
         buttonClick: editSubmit,
       },
       {
@@ -476,6 +575,12 @@ const columnData = reactive([
         icon: "Delete",
         buttonClick: deleteSubmit,
       },
+      {
+        type: "warning",
+        label: "报废",
+        icon: "Failed",
+        buttonClick: scrapSubmit,
+      }
     ],
   },
 ]);
@@ -526,6 +631,6 @@ const getScreenHeight = () => {
 }
 /* 隐藏滚动条，但保持可滚动功能 */
 .custom-textarea ::-webkit-scrollbar {
-  display: none; 
+  display: none;
 }
 </style>
