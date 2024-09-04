@@ -387,3 +387,14 @@ export function QueryOrderMaterialRequired(data:any) {
         data
     })
 }
+
+//查询工单明细
+export function QueryOrderToolsData(data:any) {
+    return request({
+        url: "/api/order/QueryOrderToolsData",
+        method: "post",
+        params: {
+            orderNumber:data
+        }
+    })
+}

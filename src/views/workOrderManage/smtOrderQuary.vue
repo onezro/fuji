@@ -155,95 +155,184 @@
           <el-table-column prop="Result" label="上料总量"> </el-table-column>
         </el-table> -->
         <div class="w-full">
-          <el-tabs v-model="activeName" type="border-card" class="demo-tabs">
-            <el-tab-pane label="物料清单明细" name="物料清单明细" :stretch="true">
-          <div class="flex-1" ref="tablebox">
-            <el-table
-              :data="
-                feedTableData
-              "
-              stripe
-              border
-              fit
-              :tooltip-effect="'dark'"
-              :height="tableHeight1"
-              row-key="MaterialName"
-              :tree-props="{ children: 'children' }"
+          <el-tabs
+            v-model="activeName"
+            type="border-card"
+            class="demo-tabs"
+            @tab-change="tabChange"
+          >
+            <el-tab-pane
+              label="物料清单明细"
+              name="物料清单明细"
+              :stretch="true"
             >
-              <el-table-column
-                type="index"
-                align="center"
-                fixed
-                label="序号"
-                width="60"
-              />
-              <el-table-column
-                prop="MaterialName"
-                label="物料编码"
-                :min-width="180"
-                width="180"
-              >
-              </el-table-column>
-              <el-table-column
-                prop="MaterialDesc"
-                label="物料描述"
-                :show-overflow-tooltip="true"
-                width="200"
-              >
-              </el-table-column>
-              <el-table-column
-                prop="isMater"
-                label="主料"
-                width="160"
-                :min-width="160"
-              >
-                <template #default="scope">
-                  <span v-if="scope.row.isMater === 1">是</span>
-                  <span v-if="scope.row.isMater === 0"
-                    >否{{ `(${scope.row.originalMaterialName})` }}</span
+              <div class="flex-1" ref="tablebox">
+                <el-table
+                  :data="feedTableData"
+                  size="small"
+                  stripe
+                  border
+                  fit
+                  :tooltip-effect="'dark'"
+                  :height="tableHeight1"
+                  row-key="MaterialName"
+                  :tree-props="{ children: 'children' }"
+                >
+                  <el-table-column
+                    type="index"
+                    align="center"
+                    fixed
+                    label="序号"
+                    width="60"
+                  />
+                  <el-table-column
+                    prop="MaterialName"
+                    label="物料编码"
+                    :min-width="180"
+                    width="180"
                   >
-                </template>
-              </el-table-column>
-              <el-table-column
-                prop="QtyRequired"
-                align="center"
-                label="单件用量"
-                :min-width="flexColumnWidth('单件用量', 'QtyRequired')"
-              >
-              </el-table-column>
-              <el-table-column
-                prop="TotalQtyRequired"
-                align="center"
-                label="需求量"
-                :min-width="flexColumnWidth('需求量', 'TotalQtyRequired')"
-              >
-              </el-table-column>
-              <!-- <el-table-column
-                label="上料总量"
-                fixed="right"
-                :min-width="flexColumnWidth('上料总量', 'LoadQueueQty')"
-                align="center"
-              >
-                <template #default="scope">
-                  <el-button
-                    type="warning"
-                    text
-                    bg
-                    :disabled="scope.row.isLoadQueue!=1||scope.row.LoadQueueQty==0"
-                     @click="handleEdit(scope.row)"
+                  </el-table-column>
+                  <el-table-column
+                    prop="MaterialDesc"
+                    label="物料描述"
+                    :show-overflow-tooltip="true"
+                    width="200"
                   >
-                    {{ scope.row.LoadQueueQty==0?'':scope.row.LoadQueueQty }}
-                  </el-button>
-                </template>
-              </el-table-column> -->
-            </el-table>
-          </div>
+                  </el-table-column>
+                  <el-table-column
+                    prop="isMater"
+                    label="主料"
+                    width="160"
+                    :min-width="160"
+                  >
+                    <template #default="scope">
+                      <span v-if="scope.row.isMater === 1">是</span>
+                      <span v-if="scope.row.isMater === 0"
+                        >否{{ `(${scope.row.originalMaterialName})` }}</span
+                      >
+                    </template>
+                  </el-table-column>
+                  <el-table-column
+                    prop="QtyRequired"
+                    align="center"
+                    label="单件用量"
+                    :min-width="flexColumnWidth('单件用量', 'QtyRequired')"
+                  >
+                  </el-table-column>
+                  <el-table-column
+                    prop="TotalQtyRequired"
+                    align="center"
+                    label="需求量"
+                    :min-width="flexColumnWidth('需求量', 'TotalQtyRequired')"
+                  >
+                  </el-table-column>
+                </el-table>
+              </div>
             </el-tab-pane>
             <el-tab-pane label="工艺流程" name="工艺流程">
-              fixtures
+              <el-form ref="formRef" label-position="left" label-width="auto" size="small"
+          :inline="true">
+                <el-form-item label="工序描述" prop="compid">
+                  <el-input
+                    disabled
+                    v-model.trim="productObj.WorkflowDesc"
+                    style="width: 240px"
+                  ></el-input>
+                </el-form-item>
+                <el-form-item label="工序代码" prop="compid">
+                  <el-input
+                    disabled
+                    v-model.trim="productObj.WorkflowName"
+                    style="width: 240px"
+                  ></el-input>
+                </el-form-item>
+              </el-form>
+              <el-table
+                style="width: auto"
+                :data="productTableData"
+                size="small"
+                stripe
+                border
+                fit
+                :tooltip-effect="'dark'"
+                :height="tableHeight2"
+              >
+                <el-table-column
+                  type="index"
+                  align="center"
+                  fixed
+                  label="序号"
+                  width="60"
+                />
+                <el-table-column
+                  prop="SpecName"
+                  label="规格编码"
+                  :min-width="180"
+                  width="180"
+                >
+                </el-table-column>
+                <el-table-column
+                  prop="SpecDesc"
+                  label="规格描述"
+                  :min-width="180"
+                  width="180"
+                >
+                </el-table-column>
+              </el-table>
             </el-tab-pane>
             <el-tab-pane label="工治具明细" name="工治具明细">
-              fixtures
+                <el-table
+                  :data="toolTableData"
+                  size="small"
+                  stripe
+                  border
+                  fit
+                  :tooltip-effect="'dark'"
+                  :height="tableHeight1"
+                >
+                <el-table-column
+                  type="index"
+                  align="center"
+                  fixed
+                  label="序号"
+                  width="60"
+                />
+                <el-table-column
+                  prop="WorkStationName"
+                  label="工作站编码"
+                  :min-width="180"
+                  align="center"
+                >
+                </el-table-column>
+                <el-table-column
+                  prop="OrderNumber"
+                  label="工单"
+                  :min-width="180"
+                  align="center"
+                >
+                </el-table-column>
+                <el-table-column
+                  prop="ToolName"
+                  label="工治具编码"
+                  :min-width="180"
+                  align="center"
+                >
+                </el-table-column>
+                <el-table-column
+                  prop="Timestamp"
+                  label="创建时间"
+                  :min-width="180"
+                  align="center"
+                >
+                </el-table-column>
+                <el-table-column
+                  prop="OperatorID"
+                  label="创建人"
+                  :min-width="180"
+                  align="center"
+                >
+                </el-table-column>
+                </el-table>
             </el-tab-pane>
           </el-tabs>
         </div>
@@ -260,7 +349,14 @@ import { ElMessageBox, ElMessage, ElLoading } from "element-plus";
 import { cloneDeep } from "lodash-es";
 import tableTem from "@/components/tableTem/index.vue";
 import { useUserStoreWithOut } from "@/stores/modules/user";
-import { GetFactoryModelList, findOrderStatus, findOrder, QueryOrderMaterialRequired } from "@/api/permiss";
+import {
+  GetFactoryModelList,
+  findOrderStatus,
+  findOrder,
+  QueryOrderMaterialRequired,
+  findProductSpec,
+  QueryOrderToolsData
+} from "@/api/permiss";
 import {
   ref,
   reactive,
@@ -277,6 +373,7 @@ const currentPage = ref(1);
 const tableHeight = ref(0);
 const tableData1 = ref<any>([]);
 const tableHeight1 = ref(0);
+const tableHeight2 = ref(0);
 const userStore = useUserStoreWithOut();
 const loginName = userStore.getUserInfo;
 const addNewVisible = ref(false);
@@ -288,6 +385,20 @@ const radio = ref();
 const searchDate = ref([]);
 const activeName = ref("物料清单明细");
 const feedTableData = ref<any>([]);
+const orderChoice = ref("");
+const productChoice = ref("");
+const productTableData = ref<any>();
+const toolTableData = ref<any>();
+
+interface productObjTS {
+  WorkflowDesc: string;
+  WorkflowName: string;
+}
+
+const productObj = ref<productObjTS>({
+  WorkflowDesc: "",
+  WorkflowName: "",
+});
 
 interface wmsType {
   phase_code: string;
@@ -353,7 +464,12 @@ const searchForm = ref<searchFormTS>({
 
 watch(
   () => searchDate.value,
-  (newVal, oldVal) => {
+  (newVal: any, oldVal) => {
+    if (newVal === null) {
+      searchForm.value.PlanStartTime = "";
+      searchForm.value.PlanEndTime = "";
+      return [];
+    }
     searchForm.value.PlanStartTime = newVal[0];
     searchForm.value.PlanEndTime = newVal[1];
   }
@@ -449,30 +565,6 @@ const cuostStatus = reactive([
 const columnData = reactive([
   {
     text: true,
-    prop: "BD_ProductModel",
-    label: "机型",
-    width: "",
-    min: true,
-    align: "1",
-  },
-  {
-    text: true,
-    prop: "MfgLineDesc",
-    label: "产线",
-    width: "",
-    min: true,
-    align: "1",
-  },
-  {
-    text: true,
-    prop: "MfgLineName",
-    label: "产线编号",
-    width: "",
-    min: true,
-    align: "center",
-  },
-  {
-    text: true,
     prop: "MfgOrderName",
     label: "工单",
     width: "",
@@ -481,7 +573,55 @@ const columnData = reactive([
   },
   {
     text: true,
-    prop: "OrderStatusName",
+    prop: "BD_ProductModel",
+    label: "机型",
+    width: "",
+    min: true,
+    align: "center",
+  },
+  {
+    text: true,
+    prop: "ProductName",
+    label: "产品编码",
+    width: "",
+    min: true,
+    align: "center",
+  },
+  {
+    text: true,
+    prop: "ProductDesc",
+    label: "产品描述",
+    width: "",
+    min: true,
+    align: "center",
+  },
+  {
+    text: true,
+    prop: "Qty",
+    label: "数量",
+    width: "",
+    min: true,
+    align: "center",
+  },
+  {
+    text: true,
+    prop: "UOMName",
+    label: "单位",
+    width: "",
+    min: true,
+    align: "center",
+  },
+  {
+    text: true,
+    prop: "MfgLineDesc",
+    label: "产线",
+    width: "",
+    min: true,
+    align: "center",
+  },
+  {
+    text: true,
+    prop: "OrderStatusDesc",
     label: "状态",
     width: "",
     min: true,
@@ -499,38 +639,6 @@ const columnData = reactive([
     text: true,
     prop: "PlannedStartDate",
     label: "计划开始时间",
-    width: "",
-    min: true,
-    align: "center",
-  },
-  {
-    text: true,
-    prop: "ProductDesc",
-    label: "产品描述",
-    width: "",
-    min: true,
-    align: "center",
-  },
-  {
-    text: true,
-    prop: "ProductName",
-    label: "产品编码",
-    width: "",
-    min: true,
-    align: "center",
-  },
-  {
-    text: true,
-    prop: "Qty",
-    label: "数量",
-    width: "",
-    min: true,
-    align: "center",
-  },
-  {
-    text: true,
-    prop: "wcDescription",
-    label: "车间",
     width: "",
     min: true,
     align: "center",
@@ -593,6 +701,9 @@ const getModeList = () => {
   GetFactoryModelList().then((res: any) => {
     // let data = JSON.parse(res.content);
     // option1.value = OrganData(res.content);
+    if (!res || res.content === null) {
+      return;
+    }
     lineNameList.value = [{ Name: "" }, ...OrganData(res.content)[0].childMenu];
   });
 };
@@ -614,26 +725,93 @@ const getStatusList = () => {
 
 const getTableData = () => {
   findOrder(searchForm.value).then((res: any) => {
+    feedTableData.value = [];
+    if (!res || res.content === null) {
+      tableData.value = [];
+      return;
+    }
     console.log(res);
     tableData.value = res.content;
   });
 };
 
 const rowClick = (val: any) => {
+  if (orderChoice.value === val.MfgOrderName) {
+    return;
+  }
+  orderChoice.value = val.MfgOrderName;
+  productChoice.value = val.ProductName;
+  activeName.value = "物料清单明细";
   QueryOrderMaterialRequired({
     MfgOrder: val.MfgOrderName,
-    Container: "",
-    SpecName: "SMT-Burn",
-    workstationName: '',
-    userAccount: userStore.getUserInfo,
   }).then((res: any) => {
     // console.log(OrganData(res.content));
-    if(res.success){
-      let data=cloneDeep(OrganData(res.content))   
-      feedTableData.value=data
+    if (res.success) {
+      let data = cloneDeep(feedOrganData(res.content));
+      console.log(data);
+
+      feedTableData.value = data;
+
       // OrganData(res.content)
     }
   });
+};
+
+const feedOrganData = (organizations: any) => {
+  const organizationMap = new Map();
+  organizations.forEach((org: any) => {
+    organizationMap.set(org.MaterialName, { ...org, children: [] });
+  });
+  organizations.forEach((org: any) => {
+    if (org.originalMaterialName !== org.MaterialName) {
+      const parentOrg = organizationMap.get(org.originalMaterialName);
+      if (parentOrg) {
+        parentOrg.children.push(organizationMap.get(org.MaterialName));
+      }
+    }
+  });
+  return Array.from(organizationMap.values()).filter(
+    (org) => org.originalMaterialName == org.MaterialName
+  );
+};
+
+const tabChange = (name: any) => {
+  if (orderChoice.value === "") {
+    ElMessage({
+      message: "请选择工单",
+      type: "warning",
+    });
+    return;
+  }
+  if (name === "物料清单明细") {
+    QueryOrderMaterialRequired({
+      MfgOrder: orderChoice.value,
+    }).then((res: any) => {
+      // console.log(OrganData(res.content));
+      if (res.success) {
+        let data = cloneDeep(feedOrganData(res.content));
+        feedTableData.value = data;
+      }
+    });
+  } else if (name === "工艺流程") {
+    findProductSpec(productChoice.value).then((res: any) => {
+      if (!res || res.content.lenght === 0) {
+        return;
+      }
+      productObj.value = {
+        WorkflowDesc: res.content[0].WorkflowDesc,
+        WorkflowName: res.content[0].WorkflowName,
+      };
+      productTableData.value = res.content;
+    });
+  } else if (name === "工治具明细") {
+    QueryOrderToolsData(orderChoice.value).then((res: any) => {
+      if (!res || res.content.lenght === 0) {
+        return;
+      }
+      toolTableData.value = res.content;
+    });
+  }
 };
 
 const pageObj = ref({
@@ -695,14 +873,21 @@ const handleCurrentChange1 = (val: any) => {
 const getScreenHeight = () => {
   nextTick(() => {
     tableHeight.value =
-      (window.innerHeight - 190 - headerRef.value.clientHeight) * 0.5;
+      (window.innerHeight - 190 - headerRef.value.clientHeight) * 0.45;
     tableHeight1.value =
-      (window.innerHeight - 190 - headerRef.value.clientHeight) * 0.5 - 50;
+      (window.innerHeight - 190 - headerRef.value.clientHeight) * 0.55 - 40;
+    tableHeight2.value =
+      (window.innerHeight - 190 - headerRef.value.clientHeight) * 0.55 - 85;
   });
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.tab {
+  font-size: 10px;
+  color: aqua;
+}
+</style>
 <style lang="scss">
 .el-pagination {
   justify-content: center;
@@ -713,23 +898,25 @@ const getScreenHeight = () => {
 }
 
 .demo-tabs .el-tabs__header {
+  --el-tabs-header-height: 30px;
   background-color: #006487 !important;
 }
 
 .demo-tabs.el-tabs__content {
-  padding: 5px 0px;
+  // padding: 5px 0px;
 }
 
 .demo-tabs .el-tabs__item {
-  font-size: 1.1rem;
 }
 
 .demo-tabs.el-tabs--border-card > .el-tabs__header .el-tabs__item {
   color: #fff;
+  font-size: 0.8rem;
   // padding: 0 !important;
 }
 
 .demo-tabs .el-tabs__item.is-active {
+  font-size: 0.8rem;
   // color: #fff;
   color: #006487 !important;
   // font-weight: bold;
@@ -737,6 +924,7 @@ const getScreenHeight = () => {
 .el-tabs--border-card
   > .el-tabs__header
   .el-tabs__item:not(.is-disabled):hover {
+  font-size: 0.8rem;
   color: #006487 !important;
   background-color: rgba($color: #fff, $alpha: 0.8);
 }

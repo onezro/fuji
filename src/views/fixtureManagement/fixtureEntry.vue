@@ -31,7 +31,7 @@
         label-width="auto"
         :inline="true"
       >
-        <el-form-item label="工治具编号" prop="compid">
+        <el-form-item label="工治具编码" prop="compid">
           <el-input
             disabled
             v-model.trim="EditForm.compid"
@@ -480,7 +480,7 @@ const columnData = reactive([
   {
     text: true,
     prop: "CompID",
-    label: "工治具编号",
+    label: "工治具编码",
     width: "",
     min: true,
     align: "center",
