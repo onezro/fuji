@@ -10,7 +10,7 @@
               size="small" style="width: 200px" />
           </el-form-item>
           <el-form-item label="产线" class="mb-[5px]">
-            <el-select v-model="searchForm.lineName" clearable style="width: 150px">
+            <el-select v-model="searchForm.lineName" placeholder="" clearable style="width: 150px">
               <el-option v-for="item in lineNameList" :key="item" :label="item.Desc" :value="item.Name" />
             </el-select>
           </el-form-item>
