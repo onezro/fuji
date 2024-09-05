@@ -31,15 +31,13 @@
         label-width="auto"
         :inline="true"
       >
-        <el-form-item label="工治具编码" prop="compid">
+        <el-form-item label="工治具型号" prop="compname">
           <el-input
             disabled
-            v-model.trim="EditForm.compid"
+            v-model.trim="EditForm.compname"
             style="width: 240px"
           ></el-input>
-        </el-form-item>
-        <el-form-item label="工治具型号" prop="compname">
-          <el-select
+          <!-- <el-select
             v-model="EditForm.compname"
             placeholder=""
             style="width: 240px"
@@ -50,15 +48,22 @@
               :label="item.CompName"
               :value="item.CompName"
             />
-          </el-select>
+          </el-select> -->
         </el-form-item>
-        <el-form-item label="库位" prop="location">
+        <el-form-item label="工治具编码" prop="compid">
+          <el-input
+            disabled
+            v-model.trim="EditForm.compid"
+            style="width: 240px"
+          ></el-input>
+        </el-form-item>
+        <!-- <el-form-item label="库位" prop="location">
           <el-input
             v-model="EditForm.location"
             style="width: 240px"
             placeholder=""
           ></el-input>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="供应商" prop="Supplier">
           <el-input
             v-model="EditForm.Supplier"
@@ -126,13 +131,6 @@
         label-width="auto"
         :inline="true"
       >
-        <el-form-item label="工治具编号" prop="compid">
-          <el-input
-            v-model="form.compid"
-            style="width: 240px"
-            placeholder=""
-          ></el-input>
-        </el-form-item>
         <el-form-item label="工治具型号" prop="compname">
           <el-select
             v-model="form.compname"
@@ -147,13 +145,20 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="库位" prop="location">
+        <el-form-item label="工治具编号" prop="compid">
+          <el-input
+            v-model="form.compid"
+            style="width: 240px"
+            placeholder=""
+          ></el-input>
+        </el-form-item>
+        <!-- <el-form-item label="库位" prop="location">
           <el-input
             v-model="form.location"
             style="width: 240px"
             placeholder=""
           ></el-input>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="供应商" prop="Supplier">
           <el-input
             v-model="form.Supplier"
@@ -181,7 +186,7 @@
           <el-input
             v-model="form.ManufacturerPartNumber"
             style="width: 240px"
-            :rows="2"
+            :rows="1"
             type="textarea"
             class="custom-textarea"
           />
@@ -479,6 +484,14 @@ const deleteConfirm = () => {
 const columnData = reactive([
   {
     text: true,
+    prop: "MaterialName",
+    label: "工治具类别",
+    width: "",
+    min: true,
+    align: "center",
+  },
+  {
+    text: true,
     prop: "CompID",
     label: "工治具编码",
     width: "",
@@ -489,14 +502,6 @@ const columnData = reactive([
     text: true,
     prop: "CompName",
     label: "工治具型号",
-    width: "",
-    min: true,
-    align: "center",
-  },
-  {
-    text: true,
-    prop: "MaterialName",
-    label: "工治具类别",
     width: "",
     min: true,
     align: "center",
@@ -539,14 +544,14 @@ const columnData = reactive([
     min: true,
     align: "center",
   },
-  {
-    text: true,
-    prop: "Supplier",
-    label: "供应商",
-    width: "",
-    min: true,
-    align: "center",
-  },
+  // {
+  //   text: true,
+  //   prop: "Supplier",
+  //   label: "供应商",
+  //   width: "",
+  //   min: true,
+  //   align: "center",
+  // },
   {
     text: true,
     prop: "ExpirationDate",

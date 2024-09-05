@@ -5,28 +5,28 @@
         <el-form ref="formRef" class="form" :inline="true" size="small" label-width="auto">
           <!-- <div>
             </div> -->
-          <el-form-item label="工单号" class="mb-[5px]">
-            <el-input v-model="searchForm.orderNmae" class="input-with-select">
-            </el-input>
-          </el-form-item>
-          <el-form-item label="产品编码" class="mb-[5px]">
-            <el-input v-model="searchForm.productName" class="input-with-select">
-            </el-input>
-          </el-form-item>
-          <el-form-item label="产线" class="mb-[5px]">
-            <el-select v-model="searchForm.lineName" clearable style="width: 150px">
-              <el-option v-for="item in lineNameList" :key="item" :label="item.Desc" :value="item.Name" />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="状态" class="mb-[5px]">
-            <el-select v-model="searchForm.Status" placeholder="" style="width: 150px">
-              <el-option v-for="item in statusList" :key="item" :label="item.Description"
-                :value="item.OrderStatusName" />
-            </el-select>
-          </el-form-item>
           <el-form-item label="日期" class="mb-[5px]">
             <el-date-picker v-model="searchDate" value-format="YYYY-MM-DD" type="daterange" range-separator="-"
               size="small" style="width: 200px" />
+          </el-form-item>
+          <el-form-item label="产线" class="mb-[5px]">
+            <el-select v-model="searchForm.lineName" placeholder="" clearable style="width: 150px">
+              <el-option v-for="item in lineNameList" :key="item" :label="item.Desc" :value="item.Name" />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="产品编码" class="mb-[5px]">
+            <el-input v-model="searchForm.productName" clearable style="width: 150px" class="input-with-select">
+            </el-input>
+          </el-form-item>
+          <el-form-item label="工单号" class="mb-[5px]">
+            <el-input v-model="searchForm.orderNmae" clearable style="width: 150px" class="input-with-select">
+            </el-input>
+          </el-form-item>
+          <el-form-item label="状态" class="mb-[5px]">
+            <el-select v-model="searchForm.Status" placeholder="" clearable style="width: 150px">
+              <el-option v-for="item in statusList" :key="item" :label="item.Description"
+                :value="item.OrderStatusName" />
+            </el-select>
           </el-form-item>
           <!-- <el-form-item>
             <el-button type="primary" @click="">清空条件</el-button>
@@ -45,12 +45,19 @@
         <table-tem size="small" :tableData="tableData" :tableHeight="tableHeight" :columnData="columnData"
           :pageObj="pageObj" @handleSizeChange="handleSizeChange" @handleCurrentChange="handleCurrentChange"
           @rowClick="rowClick"></table-tem>
+      </div>
+    </el-card>
+
+
+    
+    <el-dialog v-model="dialogVisible" width="1000" center>
+      
         <div class="w-full">
           <el-tabs v-model="activeName" type="border-card" class="demo-tabs" @tab-change="tabChange">
             <el-tab-pane label="物料清单明细" name="物料清单明细" :stretch="true">
               <div class="flex-1" ref="tablebox">
                 <el-table :data="feedTableData" size="small" stripe border fit :tooltip-effect="'dark'"
-                  :height="tableHeight1" row-key="MaterialName" :tree-props="{ children: 'children' }">
+                  :height="400" row-key="MaterialName" :tree-props="{ children: 'children' }">
                   <el-table-column type="index" align="center" fixed label="序号" width="60" />
                   <el-table-column prop="MaterialName" label="物料编码" :min-width="180" width="180">
                   </el-table-column>
@@ -91,7 +98,7 @@
 
               </el-form>
               <el-table style="width: auto" :data="productTableData" size="small" stripe border fit
-                :tooltip-effect="'dark'" :height="tableHeight2">
+                :tooltip-effect="'dark'" :height="400">
                 <el-table-column type="index" align="center" fixed label="序号" width="60" />
                 <el-table-column prop="SpecName" label="工序编码" :min-width="180" width="180">
                 </el-table-column>
@@ -101,7 +108,7 @@
             </el-tab-pane>
             <el-tab-pane label="工治具明细" name="工治具明细">
               <el-table :data="toolTableData" size="small" stripe border fit :tooltip-effect="'dark'"
-                :height="tableHeight1">
+                :height="400">
                 <el-table-column type="index" align="center" fixed label="序号" width="60" />
                 <el-table-column prop="WorkStationName" label="工作站编码" :min-width="180" align="center">
                 </el-table-column>
@@ -117,8 +124,7 @@
             </el-tab-pane>
           </el-tabs>
         </div>
-      </div>
-    </el-card>
+    </el-dialog>
   </div>
 </template>
 
@@ -169,6 +175,7 @@ const orderChoice = ref("");
 const productChoice = ref("");
 const productTableData = ref<any>();
 const toolTableData = ref<any>();
+const dialogVisible = ref(false);
 
 interface productObjTS {
   WorkflowDesc: string;
@@ -497,13 +504,7 @@ const getStatusList = () => {
     if (!res || res.content.length === 0 || res.content === null) {
       return;
     }
-    statusList.value = [
-      {
-        OrderStatusName: "",
-        Description: "",
-      },
-      ...res.content,
-    ];
+    statusList.value = res.content;
   });
 };
 
@@ -520,6 +521,7 @@ const getTableData = () => {
 };
 
 const rowClick = (val: any) => {
+  dialogVisible.value = true;
   if (orderChoice.value === val.MfgOrderName) {
     return;
   }
@@ -561,10 +563,10 @@ const feedOrganData = (organizations: any) => {
 
 const tabChange = (name: any) => {
   if (orderChoice.value === "") {
-    ElMessage({
-      message: "请选择工单",
-      type: "warning",
-    });
+    // ElMessage({
+    //   message: "请选择工单",
+    //   type: "warning",
+    // });
     return;
   }
   if (name === "物料清单明细") {
@@ -657,7 +659,7 @@ const handleCurrentChange1 = (val: any) => {
 const getScreenHeight = () => {
   nextTick(() => {
     tableHeight.value =
-      (window.innerHeight - 200 - headerRef.value.clientHeight) * 0.45;
+      (window.innerHeight - 200 - headerRef.value.clientHeight);
     tableHeight1.value =
       (window.innerHeight - 200 - headerRef.value.clientHeight) * 0.55 - 40;
     tableHeight2.value =

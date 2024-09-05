@@ -335,7 +335,7 @@
         </span>
       </template>
     </el-dialog>
-    <el-dialog v-model="deleteVisible" title="Tips" width="500">
+    <!-- <el-dialog v-model="deleteVisible" title="Tips" width="500">
       <span>删除确认</span>
       <template #footer>
         <div class="dialog-footer">
@@ -343,7 +343,7 @@
           <el-button type="primary" @click="deleteConfirm"> 删除 </el-button>
         </div>
       </template>
-    </el-dialog>
+    </el-dialog> -->
   </div>
 </template>
 
@@ -663,8 +663,38 @@ const editConfirm = () => {
 };
 
 const deleteSubmit = (data: any) => {
-  deleteVisible.value = true;
+  // deleteVisible.value = true;
   deleteChoice.value = data.UsageSpecGuid;
+  ElMessageBox.confirm("确定删除", "确认操作", {
+    confirmButtonText: "确定",
+    cancelButtonText: "取消",
+    type: "warning",
+  })
+    .then(() => {
+      ToolsSpec({ CompID: deleteChoice.value, operationtype: "DEL" }).then(
+        (data: any) => {
+          if (!data) {
+            return;
+          }
+          ElMessage({
+            message: data.msg,
+            type: "success",
+          });
+          getData();
+        }
+      );
+    })
+    .catch(() => {
+      ElNotification({
+        type: "info",
+        message: "取消操作",
+      });
+      //   ElNotification({
+      //     title: "取消操作",
+      //     // message: "取消操作",
+      //     type: "info",
+      //   });
+    });
 };
 
 const deleteConfirm = () => {
