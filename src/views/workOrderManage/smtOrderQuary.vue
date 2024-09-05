@@ -123,7 +123,6 @@
 </template>
 
 <script lang="ts" setup>
-import { getCheckResults } from "@/api/permiss";
 import { OrganData } from "@/utils/dataMenu";
 import type { InspectionResult } from "@/typing";
 import { ElMessageBox, ElMessage, ElLoading } from "element-plus";
@@ -137,7 +136,7 @@ import {
   QueryOrderMaterialRequired,
   findProductSpec,
   QueryOrderToolsData
-} from "@/api/permiss";
+} from "@/api/operate";
 import {
   ref,
   reactive,

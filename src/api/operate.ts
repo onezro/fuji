@@ -148,3 +148,39 @@ export function findProductBOM(data: any) {
         }
     })
 }
+//查询工单状态
+export function findOrderStatus() {
+    return request({
+        url: "/api/order/findOrderStatus",
+        method: "post"
+    })
+}
+
+//查询工单信息
+export function findOrder(data:any) {
+    return request({
+        url: "/api/order/findOrder",
+        method: "post",
+        data
+    })
+}
+
+//查询工单明细
+export function QueryOrderMaterialRequired(data:any) {
+    return request({
+        url: "/api/order/QueryOrderMaterialRequired",
+        method: "post",
+        data
+    })
+}
+
+//查询工单明细
+export function QueryOrderToolsData(data:any) {
+    return request({
+        url: "/api/order/QueryOrderToolsData",
+        method: "post",
+        params: {
+            orderNumber:data
+        }
+    })
+}
