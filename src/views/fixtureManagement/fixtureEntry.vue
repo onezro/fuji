@@ -39,7 +39,12 @@
           ></el-input>
         </el-form-item>
         <el-form-item label="工治具型号" prop="compname">
-          <el-select
+          <el-input
+            disabled
+            v-model.trim="EditForm.compname"
+            style="width: 240px"
+          ></el-input>
+          <!-- <el-select
             v-model="EditForm.compname"
             placeholder=""
             style="width: 240px"
@@ -50,15 +55,15 @@
               :label="item.CompName"
               :value="item.CompName"
             />
-          </el-select>
+          </el-select> -->
         </el-form-item>
-        <el-form-item label="库位" prop="location">
+        <!-- <el-form-item label="库位" prop="location">
           <el-input
             v-model="EditForm.location"
             style="width: 240px"
             placeholder=""
           ></el-input>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="供应商" prop="Supplier">
           <el-input
             v-model="EditForm.Supplier"
@@ -86,7 +91,7 @@
           <el-input
             v-model="EditForm.ManufacturerPartNumber"
             style="width: 240px"
-            :rows="1"
+            :rows="2"
             type="textarea"
             class="custom-textarea"
           />
@@ -147,13 +152,13 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="库位" prop="location">
+        <!-- <el-form-item label="库位" prop="location">
           <el-input
             v-model="form.location"
             style="width: 240px"
             placeholder=""
           ></el-input>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="供应商" prop="Supplier">
           <el-input
             v-model="form.Supplier"
