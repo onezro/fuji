@@ -184,3 +184,19 @@ export function QueryOrderToolsData(data:any) {
         }
     })
 }
+//查询工治具
+export function QueryToolInfo(data: any) {
+    return request({
+        url: "/api/Tools/QueryToolInfo",
+        method: "post",
+        data,
+    });
+}
+//工治具上移
+export function SortTools(data: any) {
+    return request({
+        url: "/api/Tools/SortTools",
+        method: "post",
+        data,
+    });
+}

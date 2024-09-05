@@ -344,7 +344,7 @@
 <script setup lang="ts">
 import { ElMessage, ElNotification, ElMessageBox } from "element-plus";
 import tableTem from "@/components/tableTem/index.vue";
-import { ToolsType } from "@/api/permiss";
+import { ToolsType } from "@/api/operate";
 import {
   ref,
   unref,

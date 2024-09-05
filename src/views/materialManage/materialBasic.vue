@@ -57,6 +57,7 @@
       >
         <el-form-item label="物料编码" prop="MaterialCode" class="mb-2">
           <el-input
+          style="width: 150px"
             v-model="form.ProductName"
             placeholder="请输入物料编码"
             clearable
@@ -65,11 +66,18 @@
         </el-form-item>
         <el-form-item label="物料描述" prop="MaterialName" class="mb-2">
           <el-input
+          style="width: 150px"
             v-model="form.ProductDescription"
             placeholder="请输入物料描述"
             clearable
             @clear="onSubmit"
           />
+        </el-form-item>
+        <el-form-item label="物料类型" prop="QueryType" class="mb-2">
+          <el-select v-model="form.QueryType"  style="width: 150px" @change="onSubmit">
+              <el-option v-for="item in typeList" :key="item.value" :label="item.label"
+                :value="item.value" />
+            </el-select>
         </el-form-item>
         <el-form-item class="mb-2">
           <el-button type="primary" @click="onSubmit">查询</el-button>
@@ -165,6 +173,7 @@ const form = ref({
   FamilyName: "",
   ProductName: "",
   ProductDescription: "",
+  QueryType:'0'
 });
 const tableData = ref([]);
 const tableHeight = ref(0);
@@ -373,6 +382,20 @@ const bomcolumnData = reactive([
     align: "center",
   },
 ]);
+const typeList=ref([
+  {
+    label:'全部',
+    value:'0'
+  },
+  {
+    label:'原材料',
+    value:'1'
+  },
+  {
+    label:'半成品或成品',
+    value:'2'
+  }
+])
 
 onBeforeMount(() => {
   getScreenHeight();

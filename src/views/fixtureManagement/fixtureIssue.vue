@@ -347,7 +347,7 @@
 </template>
 
 <script lang="ts" setup>
-import { getCheckResults } from "@/api/permiss";
+import { getCheckResults } from "@/api/operate";
 import type { InspectionResult } from "@/typing";
 import { ElMessageBox, ElMessage, ElLoading } from "element-plus";
 import tableTem from "@/components/tableTem/index.vue";

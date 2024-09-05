@@ -5,56 +5,71 @@
     >
       <span class="text-[1.2rem]"> {{ opui.stationDec }} </span>
       <div>
-       
         <el-button type="primary" @click="openOver">波峰焊设置</el-button>
-        
       </div>
     </div>
     <div class="w-full flex-1 flex">
-      <div class="setwidth w-[320px]">
+      <div class="setwidth w-[350px]">
         <div class="w-full h-full box">
           <div
             class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]"
           >
-            <span class="ml-5">基本信息</span>
+            <span class="ml-5">工装治具</span>
           </div>
-          <div class="p-[10px]">
-            <el-form
-              class="inbound"
-              size="default"
-              ref="formRef"
-              :model="form"
-              label-width="auto"
+          <div class="p-3">
+            <el-card
+              shadow="always"
+              class="mb-2"
+              :body-style="{ padding: '8px' }"
+              v-for="t in toolList"
+              :key="t.ToolName"
             >
-              <el-form-item label="工单">
-                <selectTa
-                  ref="selectTable"
-                  :table="orderTable"
-                  :columns="orderColumns"
-                  :max-height="400"
-                  :tableWidth="700"
-                  :keywords="{ label: 'MfgOrderName', value: 'MfgOrderName' }"
-                  @radioChange="(...args: any) => radioChange(args)"
-                >
-                </selectTa>
-              </el-form-item>
-              <el-form-item
-                v-for="f in formHeader"
-                :key="f.value"
-                :label="f.label"
-              >
-                <span
-                  class="font-bold text-[18px] leading-[30px]"
-                  :class="f.value == 'passNum' ? 'text-[#00B400]' : ''"
-                >
-                  {{ formText(f.value) }}</span
-                >
-              </el-form-item>
-            </el-form>
+              <el-form ref="formRef" :model="t" label-width="auto">
+                <!-- <el-form-item class="mb-[5px]"> -->
+                <div class="checked">
+                  <el-checkbox v-model="checked"/>
+                </div>
+                <!-- </el-form-item> -->
+                <el-row :gutter="20">
+                  <el-col :span="12">
+                    <el-form-item label="治具编号" class="mb-[5px]">
+                      <span>{{ t.ToolName }}</span>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="12">
+                    <el-form-item label="序号" class="mb-[5px]">
+                      <span class="text-base">{{ t.sort }}</span>
+                    </el-form-item>
+                  </el-col>
+                </el-row>
+                <el-row :gutter="20">
+                  <el-col :span="12">
+                    <el-form-item label="类型名称" class="mb-[5px]">
+                      <span>{{ t.MaterialName }}</span>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="12">
+                    <el-form-item label="类型编号" class="mb-[5px]">
+                      <span class="text-base">{{ t.CompName }}</span>
+                    </el-form-item>
+                  </el-col>
+                </el-row>
+              </el-form>
+              <div class="flex justify-end">
+                <el-button
+                  icon="Top"
+                  circle
+                  :disabled="t.sort == 1"
+                  @click="moveUp(t)"
+                />
+                <!-- <el-icon :size="20" @click="moveUp(t)"><Top /></el-icon> -->
+                <!-- <el-button type="primary" :disabled="t.sort==1" @click="moveUp(t)">上移</el-button> -->
+              </div>
+            </el-card>
           </div>
         </div>
       </div>
-      <div class="w-[calc(100%-320px)]">
+      <div class="w-[calc(100%-350px)]">
         <div class="w-full h-full flex flex-col">
           <div>
             <div
@@ -62,7 +77,7 @@
             >
               <span class="ml-5"> 扫描条码</span>
             </div>
-            <div class="h-[120px] p-5">
+            <div class="h-[100px] pt-3 pr-5 pl-5">
               <el-form
                 class="inbound"
                 ref="formRef"
@@ -81,23 +96,6 @@
                     @keyup.enter.native="getChange"
                   />
                 </el-form-item>
-                <el-form-item
-                  :class="[stopsForm.result == 'OK' ? 'switchok' : 'switchng']"
-                >
-                  <el-switch
-                    v-model="stopsForm.result"
-                    size="large"
-                    style="
-                      zoom: 1.2;
-                      --el-switch-on-color: #ff4949;
-                      --el-switch-off-color: #13ce66;
-                    "
-                    :active-value="'NG'"
-                    :inactive-value="'OK'"
-                    active-text="NG"
-                    inactive-text="OK"
-                  />
-                </el-form-item>
               </el-form>
               <div
                 class="text-xl font-bold text-[#00B400]"
@@ -113,8 +111,113 @@
               </div>
             </div>
           </div>
+          <div class="p-[10px]">
+            <el-form
+              class="inbound"
+              size="default"
+              ref="formRef"
+              :model="form"
+              :inline="true"
+              label-width="auto"
+            >
+              <el-row>
+                <el-col :span="7">
+                  <el-form-item label="工单" class="mb-[5px]">
+                    <selectTa
+                      ref="selectTable"
+                      :table="orderTable"
+                      :selectWidth="180"
+                      :columns="orderColumns"
+                      :max-height="400"
+                      :tableWidth="700"
+                      :defaultSelectVal="defaultSelectVal"
+                      :keywords="{
+                        label: 'MfgOrderName',
+                        value: 'MfgOrderName',
+                      }"
+                      @radioChange="(...args: any) => radioChange(args)"
+                    >
+                    </selectTa>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="7">
+                  <el-form-item class="mb-[5px]" label="产品编码">
+                    <el-input
+                      v-model="form.ProductName"
+                      disabled
+                    /> </el-form-item
+                ></el-col>
+                <el-col :span="10">
+                  <el-form-item class="mb-[5px]" label="产品描述">
+                    <el-input
+                      v-model="form.ProductDesc"
+                      style="width: 320px"
+                      disabled
+                    />
+                  </el-form-item>
+                </el-col>
+              </el-row>
+              <el-row>
+                <el-col :span="7">
+                  <el-form-item class="mb-[5px]" label="计划开始时间">
+                    <el-input v-model="form.PlannedStartDate" disabled />
+                  </el-form-item>
+                </el-col>
+                <el-col :span="7">
+                  <el-form-item class="mb-[5px]" label="计划完成时间">
+                    <el-input v-model="form.PlannedCompletionDate" disabled />
+                  </el-form-item>
+                </el-col>
+                <el-col :span="7">
+                  <el-form-item class="mb-[5px]" label="工单数量">
+                    <el-input v-model="form.Qty" disabled />
+                  </el-form-item>
+                </el-col>
+              </el-row>
+
+              <!-- <el-form-item class="mb-[5px]" label="产品描述">
+                <el-input v-model="form.ProductDesc" disabled />
+              </el-form-item> -->
+              <!-- <el-form-item class="mb-[5px]" label="计划开始">
+                <el-input v-model="form.PlannedStartDate" disabled />
+              </el-form-item>
+              <el-form-item class="mb-[5px]" label="计划完成">
+                <el-input v-model="form.PlannedCompletionDate" disabled />
+              </el-form-item>
+              <el-form-item class="mb-[5px]" label="工单数量">
+                <el-input v-model="form.Qty" disabled />
+              </el-form-item> -->
+              <!-- <el-form-item
+                v-for="f in formHeader"
+                :key="f.value"
+                :label="f.label"
+                class="mb-[5px]"
+              >
+                <span
+                  class="font-bold text-[18px] leading-[30px]"
+                 
+                >
+                  {{ formText(f.value) }}</span
+                >
+              </el-form-item> -->
+            </el-form>
+          </div>
           <div class="flex flex-col flex-1 tabs-css">
-            <el-tabs v-model="tabsValue" type="border-card" class="demo-tabs">
+            <div
+              class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]"
+            >
+              <span class="ml-5">历史过站记录</span>
+            </div>
+            <table-tem
+              :showIndex="true"
+              :tableData="tableData1"
+              :tableHeight="tableHeight"
+              :columnData="columnData1"
+              :pageObj="pageObj"
+              @handleSizeChange="handleSizeChange"
+              @handleCurrentChange="handleCurrentChange"
+            ></table-tem>
+            <!-- <el-tabs v-model="tabsValue" type="border-card" class="demo-tabs">
               <el-tab-pane label="历史过站记录" name="history" :stretch="true">
                 <table-tem
                   :showIndex="true"
@@ -125,12 +228,12 @@
                   @handleSizeChange="handleSizeChange"
                   @handleCurrentChange="handleCurrentChange"
                 ></table-tem>
-              </el-tab-pane>
-              <!-- <el-tab-pane label="SOP" name="sop"> sop </el-tab-pane> -->
-              <el-tab-pane label="工装治具" name="fixtures">
+              </el-tab-pane> -->
+            <!-- <el-tab-pane label="SOP" name="sop"> sop </el-tab-pane> -->
+            <!-- <el-tab-pane label="工装治具" name="fixtures">
                 fixtures
-              </el-tab-pane>
-            </el-tabs>
+              </el-tab-pane> -->
+            <!-- </el-tabs> -->
           </div>
         </div>
       </div>
@@ -169,7 +272,7 @@
       :close-on-click-modal="false"
       :close-on-press-escape="false"
     >
-      <feedTemp :form="feedForm" :form-header="FeedHeader"/>
+      <feedTemp :form="feedForm" :form-header="FeedHeader" />
       <template #footer>
         <span class="dialog-footer">
           <el-button @click="feedCancel">关闭</el-button>
@@ -196,6 +299,7 @@ import {
   FindAllDevice,
   UpdateDevice,
 } from "@/api/dipApi";
+import { QueryToolInfo, SortTools } from "@/api/operate";
 import {
   ref,
   reactive,
@@ -214,6 +318,14 @@ interface StopsForm {
 interface Barcode {
   Barcode: string;
   Status: string;
+}
+interface ToolList {
+  WorkStationName: string;
+  OrderNumber: string;
+  ToolName: string;
+  sort: number;
+  MaterialName: string;
+  CompName: string;
 }
 const appStore = useAppStore();
 const userStore = useUserStoreWithOut();
@@ -316,21 +428,21 @@ const columnData1 = reactive([
   {
     text: true,
     prop: "eqty",
-    label: "MES屏条码",
+    label: "PCB条码",
     width: "",
     align: "1",
   },
-  {
-    text: true,
-    prop: "eqName",
-    label: "CG/TP条码",
-    width: "",
-    align: "1",
-  },
+  // {
+  //   text: true,
+  //   prop: "eqName",
+  //   label: "CG/TP条码",
+  //   width: "",
+  //   align: "1",
+  // },
   {
     text: true,
     prop: "zcnumber",
-    label: "LCM条码",
+    label: "载具",
     width: "",
     align: "1",
   },
@@ -459,6 +571,17 @@ const overHeader = reactive([
     width: "",
   },
 ]);
+const toolList = ref<ToolList[]>([]);
+const getToolForm = ref({
+  ToolName: "",
+  OrderNumber: "",
+  OperateType: "",
+  CompName: "",
+  workstationName: opui.station,
+  userAccount: userStore.getUserInfo,
+});
+const defaultSelectVal = ref<string[]>([]);
+const checked = ref(false);
 
 const openOver = () => {
   overAddVisible.value = true;
@@ -468,7 +591,7 @@ const openOver = () => {
 const getOverData = () => {
   FindAllDevice({ WorkStation: opui.station }).then((res: any) => {
     if (res.success) {
-      let data = res.content
+      let data = res.content;
       overAddForm.value.InDeviceLength = data[0].InDeviceLength;
       overAddForm.value.InDeviceSpeed = data[0].InDeviceSpeed;
       overAddForm.value.OutDeviceLength = data[0].OutDeviceLength;
@@ -521,41 +644,41 @@ const orderColumns = ref([
   // { label: "产品编码", width: "", prop: "ProductName" }
 ]);
 const feedVisible = ref(false);
-const feedForm=ref({
-  order:'208310182',
-  type:'3A4621-01C',
-  productCode:'240106000131',
-  productDes:'0402封装贴片电容100DF+5%50V MURATAGRM1555C1H101JA01D',
-  orderNum:'100',
-  eqInfo:'自动烧录机'
-})
+const feedForm = ref({
+  order: "208310182",
+  type: "3A4621-01C",
+  productCode: "240106000131",
+  productDes: "0402封装贴片电容100DF+5%50V MURATAGRM1555C1H101JA01D",
+  orderNum: "100",
+  eqInfo: "自动烧录机",
+});
 
-const FeedHeader=reactive([
-    {
-        label:'工单号',
-        prop:'order'
-    },
-    {
-        label:'机型',
-        prop:'type'
-    },
-    {
-        label:'产品编码',
-        prop:'productCode'
-    },
-    {
-        label:'产品描述',
-        prop:'productDes'
-    },
-    {
-        label:'工单数量',
-        prop:'orderNum'
-    },
-    {
-        label:'机台',
-        prop:'eqInfo'
-    }
-])
+const FeedHeader = reactive([
+  {
+    label: "工单号",
+    prop: "order",
+  },
+  {
+    label: "机型",
+    prop: "type",
+  },
+  {
+    label: "产品编码",
+    prop: "productCode",
+  },
+  {
+    label: "产品描述",
+    prop: "productDes",
+  },
+  {
+    label: "工单数量",
+    prop: "orderNum",
+  },
+  {
+    label: "机台",
+    prop: "eqInfo",
+  },
+]);
 
 const change = (val: any) => {
   // console.log(val);
@@ -585,8 +708,37 @@ onBeforeUnmount(() => {
 
 const getOrderData = () => {
   QueryWorkOrderInfo().then((res: any) => {
-    let data = JSON.parse(res.content);
+    let data = res.content;
     orderTable.value.data[0] = data[0];
+    if (data.length == 1) {
+      // console.log(2111);
+      let a = data[0].MfgOrderName;
+      defaultSelectVal.value[0] = a;
+    }
+  });
+};
+const moveUp = (val: any) => {
+  let data = {
+    ToolName: val.ToolName,
+    OrderNumber: "",
+    OperateType: "",
+    CompName: "",
+    workstationName: opui.station,
+    userAccount: userStore.getUserInfo,
+  };
+  // console.log(val);
+  SortTools(data).then((res: any) => {
+    // console.log(res);
+    // ElNotification({
+    //     title: res.msg,
+    //     type: "success",
+    //   });
+    getToolData();
+  });
+};
+const getToolData = () => {
+  QueryToolInfo(getToolForm.value).then((res: any) => {
+    toolList.value = res.content;
   });
 };
 
@@ -595,18 +747,41 @@ const formText = (data: string) => {
   return form[key];
 };
 const radioChange = (args: any) => {
-  // console.log(args);
-  orderTable.value.data.forEach((v: any) => {
-    if (v.MfgOrderName == args[1]) {
-      form.MfgOrderName = v.MfgOrderName;
-      form.ProductName = v.ProductName;
-      form.ProductDesc = v.ProductDesc;
-      form.PlannedStartDate = v.PlannedStartDate;
-      form.PlannedCompletionDate = v.PlannedCompletionDate;
-      form.Qty = v.Qty;
+  console.log(args);
+  if (args[1] == null) {
+    form.MfgOrderName = "";
+    form.ProductName = "";
+    form.ProductDesc = "";
+    form.PlannedStartDate = "";
+    form.BD_ProductModel = "";
+    form.BD_SoftVersion = "";
+    form.PlannedCompletionDate = "";
+    form.Qty = "";
+  } else {
+    // orderTable.value.data.forEach((v: any) => {
+    //   if (v.MfgOrderName == args[1]) {
+    form.MfgOrderName = args[0].MfgOrderName;
+    form.ProductName = args[0].ProductName;
+    form.ProductDesc = args[0].ProductDesc;
+    form.BD_ProductModel = args[0].BD_ProductModel;
+    form.BD_SoftVersion = args[0].BD_SoftVersion;
+    form.PlannedStartDate = args[0].PlannedStartDate;
+    form.PlannedCompletionDate = args[0].PlannedCompletionDate;
+    form.Qty = args[0].Qty;
+    if (getToolForm.value.OrderNumber == args[0].MfgOrderName) {
+      return;
+    } else {
+      getToolForm.value.OrderNumber = "24072350";
+      getToolData();
     }
-  });
-  inputRef.value.focus();
+    //   }
+    // });
+    //  QueryToolInfo( getToolForm.value).then((res:any)=>{
+    //       toolList.value=res.content
+    //     })
+
+    //   inputRef.value.focus();
+  }
 };
 
 //打开物料上料
@@ -700,7 +875,7 @@ const handleCurrentChange = (val: any) => {
 
 const getScreenHeight = () => {
   nextTick(() => {
-    tableHeight.value = window.innerHeight - 373.5;
+    tableHeight.value = window.innerHeight - 435;
   });
 };
 </script>
@@ -711,7 +886,7 @@ const getScreenHeight = () => {
 }
 
 .setwidth {
-  flex: 0 0 320px;
+  flex: 0 0 350px;
 }
 
 .box {
@@ -746,12 +921,13 @@ const getScreenHeight = () => {
 }
 
 .switchok .el-switch__label.is-active {
-    color: #13ce66;
+  color: #13ce66;
 }
 
 .switchng .el-switch__label.is-active {
-    color: #ff4949;
+  color: #ff4949;
 }
+
 .tabs-css
   .el-tabs--border-card
   > .el-tabs__header
@@ -760,7 +936,14 @@ const getScreenHeight = () => {
   // background-color: #fff;
   background-color: rgba($color: #fff, $alpha: 0.8);
 }
+
 .saveAsDialog {
   min-width: 954px;
+}
+// .checked{
+//   height: 14px;
+// }
+.checked .el-checkbox {
+  height: 14px;
 }
 </style>

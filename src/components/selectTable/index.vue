@@ -464,6 +464,7 @@ const handlesCurrentChange = (val: any) => {
 // 默认选中（且只能默认选中第一页的数据）
 const defaultSelect = (defaultSelectVal: any[]) => {
   if (props.multiple) {
+    console.log(defaultSelectVal);
     const multipleList = defaultSelectVal
       .map((val) =>
         state.tableData.find(
