@@ -78,7 +78,7 @@
 </template>
 
 <script lang="ts" setup>
-import { getCheckResults } from "@/api/permiss";
+import { getCheckResults } from "@/api/operate";
 import type { InspectionResult } from "@/typing";
 import { ref, reactive, watch, nextTick, onMounted, onBeforeMount, onBeforeUnmount } from 'vue'
 const tableData = ref<any>([]);
