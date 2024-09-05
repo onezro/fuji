@@ -1,37 +1,14 @@
 <template>
   <div>
-    <el-table
-      :data="
-        tableData.slice(
-          (pageObj.currentPage - 1) * pageObj.pageSize,
-          pageObj.currentPage * pageObj.pageSize
-        )
-      "
-      stripe
-      border
-      fit
-      :height="tableHeight"
-      :size="size || 'default'"
-      :tooltip-effect="'dark'"
-      style="width: 100%"
-      @selection-change="handleSelectionChange"
-      @row-click="rowClick"
-      ref="multipleTableRef"
-    >
-      <el-table-column
-        type="selection"
-        width="55"
-        align="center"
-        v-if="showSelect"
-      />
-      <el-table-column
-        type="index"
-        align="center"
-        fixed
-        label="序号"
-        width="60"
-        v-if="showIndex"
-      >
+    <el-table :data="tableData.slice(
+      (pageObj.currentPage - 1) * pageObj.pageSize,
+      pageObj.currentPage * pageObj.pageSize
+    )
+      " stripe border fit :height="tableHeight" :size="size || 'default'" :tooltip-effect="'dark'" style="width: 100%"
+      @selection-change="handleSelectionChange" @row-click="rowClick" ref="multipleTableRef">
+      <el-table-column type="selection" width="55" align="center" v-if="showSelect" />
+      <el-table-column type="index" align="center" fixed label="序号" width="60" v-if="showIndex">
+
       </el-table-column>
       <el-table-column
         v-for="(c, i) in columnData"
@@ -55,11 +32,8 @@
               {{ scope.row[c.prop] }}
             </el-tag>
 
-            <el-tag
-              v-if="c.tagType === 'boolean'"
-              :type="scope.row[c.prop] ? c.tagItem[0].type : c.tagItem[1].type"
-              effect="plain"
-            >
+            <el-tag v-if="c.tagType === 'boolean'" :type="scope.row[c.prop] ? c.tagItem[0].type : c.tagItem[1].type"
+              effect="plain">
               {{ scope.row[c.prop] ? c.tagItem[0].text : c.tagItem[1].text }}
             </el-tag>
             <div v-for="item in c.tagItem">
@@ -90,14 +64,9 @@
             />
             <!-- <span v-if="!o.icon" text class="underline font-bold text-[#006487]" @click="o.buttonClick(scope.row)">{{
               scope.row[o.prop] || o.label }}</span> -->
-            <el-button
-              v-if="!o.icon"
-              size="small"
-              :type="o.type"
-              @click="o.buttonClick(scope.row)"
-              :disabled="scope.row[o.prop] == o.disabled"
-              >{{ o.label }}</el-button
-            >
+            <el-button v-if="!o.icon" size="small" :type="o.type" @click="o.buttonClick(scope.row)"
+              :disabled="scope.row[o.prop] == o.disabled">{{ o.label }}</el-button>
+
           </el-tooltip>
         </template>
       </el-table-column>

@@ -43,7 +43,11 @@
         />
       </el-scrollbar>
     </el-card>
-    <el-card shadow="always" :body-style="{ padding: '10px 10px 5px 10px' }" class="flex-1">
+    <el-card
+      shadow="always"
+      :body-style="{ padding: '10px 10px 5px 10px' }"
+      class="flex-1"
+    >
       <el-form
         ref="formRef"
         size="small"
@@ -64,7 +68,7 @@
             v-model="form.ProductDescription"
             placeholder="请输入物料描述"
             clearable
-             @clear="onSubmit"
+            @clear="onSubmit"
           />
         </el-form-item>
         <el-form-item class="mb-2">
@@ -74,6 +78,12 @@
             @click="onEditSubmit"
             :disabled="selectData.length === 1 ? false : true"
             >修改物料属性</el-button
+          >
+          <el-button
+            type="info"
+            @click="onQuerySubmit"
+            :disabled="selectData.length === 1 ? false : true"
+            >产品BOM</el-button
           >
         </el-form-item>
       </el-form>
@@ -101,6 +111,32 @@
       @formCancel="editCancel"
       @onSubmit="editOnSubmit"
     ></formTem>
+    <!-- 物料BOM明细 -->
+    <el-dialog
+      v-model="bomVisible"
+      width="70%"
+      title="产品BOM"
+      :append-to-body="true"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      align-center
+    >
+      <tableTem
+        :showIndex="true"
+        :tableData="bomtableData"
+        :tableHeight="450"
+        :columnData="bomcolumnData"
+        :pageObj="bompageObj"
+        @handleSizeChange="handleSizeChange"
+        @handleCurrentChange="handleCurrentChange"
+      >
+      </tableTem>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="bomVisible = false">关闭</el-button>
+        </span>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -109,7 +145,8 @@ import {
   findAllMaterialTree,
   findProductMaterial,
   UpdateProductMaterial,
-} from "@/api/permiss";
+  findProductBOM,
+} from "@/api/operate";
 import tableTem from "@/components/tableTem/index.vue";
 import formTem from "@/components/formTem/index.vue";
 import { cloneDeep } from "lodash-es";
@@ -242,35 +279,100 @@ const editFormHeader = reactive([
     type: "textarea",
     label: "物料描述",
     value: "ProductDescription",
-    rows:4,
+    rows: 4,
     disabled: true,
   },
   {
     type: "input",
     label: "机型名称",
-    placeholder:'',
+    placeholder: "",
     value: "BD_ProductModel",
   },
   {
     type: "input",
     label: "芯片类型",
-    placeholder:'',
+    placeholder: "",
     value: "BD_ChipType",
   },
   {
     type: "input",
     label: "软件版本",
-    placeholder:'',
+    placeholder: "",
     value: "BD_SoftVersion",
   },
   {
     type: "input",
     label: "校验和",
-    placeholder:'',
+    placeholder: "",
     value: "BD_CheckSum",
   },
 ]);
 const editRef = ref();
+const bomVisible = ref(false); //物料BOM弹窗
+const bomtableData = ref([]);
+const bompageObj = ref({
+  pageSize: 50,
+  currentPage: 1,
+});
+const bomcolumnData = reactive([
+  {
+    text: true,
+    prop: "MaterialName",
+    label: "物料编码",
+    width: "",
+    min: true,
+    fixed: true,
+    align: "1",
+  },
+  {
+    text: true,
+    prop: "MaterialDesc",
+    label: "物料描述",
+    width: "258",
+    min: true,
+    align: "1",
+  },
+  {
+    text: true,
+    prop: "SpecName",
+    label: "工序",
+    width: "150",
+    min: true,
+    align: "1",
+  },
+  {
+    text: true,
+    prop: "SpecDesc",
+    label: "工序描述",
+    width: "",
+    min: true,
+    align: "1",
+  },
+  {
+    text: true,
+    prop: "QtyRequired",
+    label: "标准用量",
+    width: "",
+    min: true,
+    align: "center",
+  },
+  {
+    text: true,
+    prop: "UOMName",
+    label: "单位",
+    width: "",
+    min: true,
+    align: "center",
+  },
+  {
+    text: true,
+    prop: "ControlType",
+    label: "组件类型",
+    width: "",
+    min: true,
+    align: "center",
+  },
+]);
 
 onBeforeMount(() => {
   getScreenHeight();
@@ -291,7 +393,6 @@ const getMaterialTree = () => {
     materialTree.value = res.content;
   });
 };
-const refreshData = () => {};
 const handleNodeClick = (data: any) => {
   form.value.FamilyName = data.ProductFamilyName;
   onSubmit();
@@ -331,6 +432,23 @@ const editOnSubmit = () => {
     onSubmit();
     // console.log(res);
   });
+};
+const onQuerySubmit = () => {
+  let data = cloneDeep(selectData.value[0]);
+  // console.log(1010101100099);
+  findProductBOM(data.ProductName).then((res: any) => {
+    // console.log(res.content);
+    if (res.content.length == 0 || res.content == null) {
+      bomtableData.value = [];
+      // ElNotification({
+      //   title: '无数据',
+      //   type: "success",
+      // });
+      return;
+    }
+    bomtableData.value = res.content;
+  });
+  bomVisible.value = true;
 };
 
 const handleSelectionChange = (val: any) => {

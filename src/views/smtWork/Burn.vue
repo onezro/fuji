@@ -58,7 +58,7 @@
             :model="form"
             label-width="auto"
           >
-            <el-form-item label="创建时间" prop="startTime">
+            <el-form-item label="创建时间" prop="startTime" class="mb-2">
               <el-date-picker
                 v-model="form.date"
                 type="daterange"
@@ -84,21 +84,21 @@
                 />
               </el-select>
             </el-form-item> -->
-            <el-form-item label="工单号" prop="workOrder"
+            <el-form-item label="工单号" prop="workOrder" class="mb-2"
               ><el-input
                 v-model="form.OrderNum"
                 style="width: 180px"
                 placeholder="请输入工单号"
                 clearable
             /></el-form-item>
-            <el-form-item label="条码" prop="barCode"
+            <el-form-item label="条码" prop="barCode" class="mb-2"
               ><el-input
                 style="width: 180px"
                 clearable
                 v-model="form.barCode"
                 placeholder="请输入条码"
             /></el-form-item>
-            <el-form-item>
+            <el-form-item class="mb-2">
               <el-button type="primary" @click="onSubmit">查询</el-button>
             </el-form-item>
           </el-form>
@@ -541,6 +541,8 @@ const radioChange = (args: any) => {
         OrderForm.PlannedStartDate = v.PlannedStartDate;
         OrderForm.PlannedCompletionDate = v.PlannedCompletionDate;
         OrderForm.Qty = v.Qty;
+        form.value.OrderNum=v.MfgOrderName
+        onSubmit()
       }
     });
   }
@@ -599,7 +601,7 @@ const handleCurrentChange = (val: any) => {
 };
 const getScreenHeight = () => {
   nextTick(() => {
-    tableHeight.value = window.innerHeight - 225;
+    tableHeight.value = window.innerHeight - 215;
   });
 };
 const OrganData = (organizations: any) => {

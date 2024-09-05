@@ -230,7 +230,7 @@
             <el-button type="primary" :disabled="BlankList.length == 0" @click="batchBlank">批量下料</el-button>
           </div> -->
           <table-tem
-            :showIndex="false"
+            :showIndex="true"
             ref="feedTableRef"
             :tableData="detailtableData"
             :tableHeight="300"
@@ -286,7 +286,7 @@ const unformData = ref({
   userAccount: userStore.getUserInfo,
 });
 const getDetailForm = ref({
-  MfgOrder: form?.value.MfgOrderName,
+  MfgOrder: '',
   Container: "",
   MaterialName: "",
   // SpecName: specName?.value || "",
@@ -309,13 +309,11 @@ const isTree = ref({
   },
 });
 const handleEdit = (row: any) => {
-  // console.log(row);
   detailForm.value = { ...row };
+  getDetailForm.value.MfgOrder=row.MfgOrderName
   getDetailForm.value.MaterialName = row.MaterialName;
+  // console.log( getDetailForm.value)
   getData();
-  // if(row.isLoadQueue===1){
-  //   detailVisible.value = true;
-  // }
   detailVisible.value = true;
 };
 const columnData = reactive([
@@ -544,7 +542,7 @@ const getChange = () => {
 //获取物料明细
 const getData = () => {
   QueryMaterialQueueDetails(getDetailForm.value).then((res: any) => {
-    console.log(res.content);
+    // console.log(res.content);
     if (res.success) {
       detailtableData.value = res.content;
     }

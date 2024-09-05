@@ -2,36 +2,37 @@
     <div class="p-[10px]">
         <el-card shadow="always" :body-style="{ padding: '10px' }">
             <div class="flex">
-            <el-form ref="formRef" :model="form" :inline="true">
-                <el-form-item label="车间" prop="WorkCenterName" class="mb-2">
-                    <el-select v-model="form.WorkCenterName" clearable placeholder="选择车间" style="width: 180px" @change="meunItem">
-                        <el-option v-for="item in option1" :key="item.Name" :label="item.Desc" :value="item.Name" />
-                    </el-select>
-                </el-form-item>
-                <el-form-item label="产线" prop="MfgLineName" class="mb-2">
-                    <el-select v-model="form.MfgLineName" clearable placeholder="选择产线" style="width: 180px">
-                        <el-option v-for="item in option2" :key="item.Name" :label="item.Desc" :value="item.Name" />
-                    </el-select>
-                </el-form-item>
-                <el-form-item label="设备类型" prop="EquipmentTypeName" class="mb-2">
-                    <el-select v-model="form.EquipmentTypeName" clearable placeholder="选择设备类型" style="width: 180px">
-                        <el-option v-for="item in option3" :key="item.EquipmentTypeName" :label="item.EquipmentTypeDesc"
-                            :value="item.EquipmentTypeName" />
-                    </el-select>
-                </el-form-item>
-                <el-form-item >
-                   
-                </el-form-item>
-            </el-form>
-            <div>
-                <el-button type="primary" @click="submit">
-                    查询
-                </el-button>
-                <el-button @click="rest">
-                    重置
-                </el-button>
+                <el-form ref="formRef" :model="form" :inline="true">
+                    <el-form-item label="车间" prop="WorkCenterName" class="mb-2">
+                        <el-select v-model="form.WorkCenterName" clearable placeholder="选择车间" style="width: 180px"
+                            @change="meunItem">
+                            <el-option v-for="item in option1" :key="item.Name" :label="item.Desc" :value="item.Name" />
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="产线" prop="MfgLineName" class="mb-2">
+                        <el-select v-model="form.MfgLineName" clearable placeholder="选择产线" style="width: 180px">
+                            <el-option v-for="item in option2" :key="item.Name" :label="item.Desc" :value="item.Name" />
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="设备类型" prop="EquipmentTypeName" class="mb-2">
+                        <el-select v-model="form.EquipmentTypeName" clearable placeholder="选择设备类型" style="width: 180px">
+                            <el-option v-for="item in option3" :key="item.EquipmentTypeName"
+                                :label="item.EquipmentTypeDesc" :value="item.EquipmentTypeName" />
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item>
+
+                    </el-form-item>
+                </el-form>
+                <div>
+                    <el-button type="primary" @click="submit">
+                        查询
+                    </el-button>
+                    <el-button @click="rest">
+                        重置
+                    </el-button>
+                </div>
             </div>
-        </div>
             <table-tem :show-index="true" :tableData="tableData" :tableHeight="tableHeight" :columnData="columnData"
                 :pageObj="pageObj" @handleSizeChange="handleSizeChange"
                 @handleCurrentChange="handleCurrentChange"></table-tem>
@@ -74,7 +75,7 @@ import {
     GetFactoryModelList,
     GetEquipmentTypeList,
     GetEquipmentList,
-} from "@/api/permiss";
+} from "@/api/operate";
 interface Option {
     Desc: string;
     FID: string;
@@ -116,7 +117,7 @@ const formRef = ref()
 const handleEdit = (data: any) => {
     // console.log(data);
     editVisible.value = true;
-   
+
 };
 const columnData = reactive([
 
@@ -136,7 +137,7 @@ const columnData = reactive([
         min: true,
         align: "center",
     },
-    
+
     {
         text: true,
         prop: "EquipmentName",
@@ -216,12 +217,12 @@ onBeforeUnmount(() => {
 
 const getData = () => {
     GetEquipmentList(form.value).then((res: any) => {
-        if(res.content==null){
-            tableData.value=[]
-        }else{
+        if (res.content == null) {
+            tableData.value = []
+        } else {
             tableData.value = res.content
         }
-        
+
         // console.log(JSON.parse(res.content));
     });
 };

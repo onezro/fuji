@@ -260,6 +260,7 @@ const columnData = reactive([
 const pageObj = ref({
   pageSize: 50,
   currentPage: 1,
+  // isShow:-1
 });
 const turnData = ref<Turn[]>([]);
 const boxHeight = ref(0);

@@ -87,7 +87,7 @@ export function QueryBurnPrintData(data: any) {
 //烧录标签打印
 export function PrintBurnModel(data: any) {
     return request({
-        url: "/api/Burn/PrintBurnModel",
+        url: "/api/Burn/PrintBurnLabel",
         method: "post",
         data
     })
