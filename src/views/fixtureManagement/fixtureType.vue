@@ -2,7 +2,7 @@
   <div class="p-[10px]">
     <el-card shadow="always" :body-style="{ padding: '10px' }">
       <div class="pb-[10px] flex justify-between">
-        <el-button type="primary" @click="(addVisible = true), clearForm()"
+        <el-button type="primary" @click="openAdd(), clearForm()"
           >添加</el-button
         >
         <div class="flex">
@@ -194,9 +194,9 @@
           >
             <el-option
               v-for="item in MaterialNameList"
-              :key="item"
-              :label="item"
-              :value="item"
+              :key="item.Value"
+              :label="item.Text"
+              :value="item.Value"
             />
           </el-select>
         </el-form-item>
@@ -344,7 +344,7 @@
 <script setup lang="ts">
 import { ElMessage, ElNotification, ElMessageBox } from "element-plus";
 import tableTem from "@/components/tableTem/index.vue";
-import { ToolsType } from "@/api/operate";
+import { ToolsType ,GetComboBoxList} from "@/api/operate";
 import {
   ref,
   unref,
@@ -463,6 +463,13 @@ const EditForm = ref<EditFormTS>({
   LowerTensionLimit: 0,
   TensionPoints: 0,
 });
+const openAdd=()=>{
+  addVisible.value=true
+  GetComboBoxList('ToolsType').then((res:any)=>{
+    MaterialNameList.value=res.content
+    // console.log(res.content);
+  })
+}
 
 const editSubmit = (data: any) => {
   EditForm.value.operationtype = data.operationtype;
@@ -479,27 +486,12 @@ const editSubmit = (data: any) => {
   editFormControl.value.CleanAfterTime = data.CleanAfterTime === "Y";
   editVisible.value = true;
 };
+interface toolType{
+  Text:string;
+  Value:string
+}
 
-const MaterialNameList = reactive([
-  "SMT烧录座",
-  "烧录治具",
-  "ICT治具",
-  "炉温测试板",
-  "过炉载具",
-  "FCT治具",
-  "分板治具",
-  "打钉治具",
-  "EOL治具",
-  "测试治具",
-  "点胶治具",
-  "扣屏蔽罩治具",
-  "外设治具",
-  "标定治具",
-  "钢网",
-  "刮刀",
-  "顶PIN板",
-  "顶PIN治具",
-]);
+const MaterialNameList = ref<toolType[]>([]);
 
 const editConfirm = () => {
   ToolsType({

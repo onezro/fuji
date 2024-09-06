@@ -16,56 +16,68 @@
           >
             <span class="ml-5">工装治具</span>
           </div>
-          <div class="p-3">
-            <el-card
-              shadow="always"
-              class="mb-2"
-              :body-style="{ padding: '8px' }"
-              v-for="t in toolList"
-              :key="t.ToolName"
-            >
-              <el-form ref="formRef" :model="t" label-width="auto">
-                <!-- <el-form-item class="mb-[5px]"> -->
-                <div class="checked">
-                  <el-checkbox v-model="checked"/>
+          <div class="p-3 overflow-auto" :style="{ height: leftBoxH + 'px' }">
+            <el-checkbox-group v-model="checked">
+              <el-card
+                shadow="always"
+                class="mb-2"
+                :body-style="{ padding: '8px' }"
+                v-for="t in toolList"
+                :key="t.ToolName"
+              >
+                <el-form ref="formRef" :model="t" label-width="auto">
+                  <!-- <el-form-item class="mb-[5px]"> -->
+                  <div class="checked">
+                    <el-checkbox
+                      :value="t.ToolName"
+                      @change="changeCheck(t.ToolName)"
+                    />
+                  </div>
+                  <!-- </el-form-item> -->
+                  <el-row :gutter="20">
+                    <el-col :span="12">
+                      <el-form-item label="治具编号" class="mb-[5px]">
+                        <span>{{ t.ToolName }}</span>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                      <el-form-item label="序号" class="mb-[5px]">
+                        <span class="text-base">{{ t.sort }}</span>
+                      </el-form-item>
+                    </el-col>
+                  </el-row>
+                  <el-row :gutter="20">
+                    <el-col :span="12">
+                      <el-form-item label="类型名称" class="mb-[5px]">
+                        <span>{{ t.MaterialName }}</span>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                      <el-form-item label="类型编号" class="mb-[5px]">
+                        <span class="text-base">{{ t.CompName }}</span>
+                      </el-form-item>
+                    </el-col>
+                  </el-row>
+                </el-form>
+                <div class="flex justify-end">
+                  <el-tooltip
+                    effect="dark"
+                    content="上移"
+                    placement="top-start"
+                  >
+                    <el-button
+                      icon="Top"
+                      circle
+                      :disabled="t.sort == 1"
+                      @click="moveUp(t)"
+                    />
+                  </el-tooltip>
+
+                  <!-- <el-icon :size="20" @click="moveUp(t)"><Top /></el-icon> -->
+                  <!-- <el-button type="primary" :disabled="t.sort==1" @click="moveUp(t)">上移</el-button> -->
                 </div>
-                <!-- </el-form-item> -->
-                <el-row :gutter="20">
-                  <el-col :span="12">
-                    <el-form-item label="治具编号" class="mb-[5px]">
-                      <span>{{ t.ToolName }}</span>
-                    </el-form-item>
-                  </el-col>
-                  <el-col :span="12">
-                    <el-form-item label="序号" class="mb-[5px]">
-                      <span class="text-base">{{ t.sort }}</span>
-                    </el-form-item>
-                  </el-col>
-                </el-row>
-                <el-row :gutter="20">
-                  <el-col :span="12">
-                    <el-form-item label="类型名称" class="mb-[5px]">
-                      <span>{{ t.MaterialName }}</span>
-                    </el-form-item>
-                  </el-col>
-                  <el-col :span="12">
-                    <el-form-item label="类型编号" class="mb-[5px]">
-                      <span class="text-base">{{ t.CompName }}</span>
-                    </el-form-item>
-                  </el-col>
-                </el-row>
-              </el-form>
-              <div class="flex justify-end">
-                <el-button
-                  icon="Top"
-                  circle
-                  :disabled="t.sort == 1"
-                  @click="moveUp(t)"
-                />
-                <!-- <el-icon :size="20" @click="moveUp(t)"><Top /></el-icon> -->
-                <!-- <el-button type="primary" :disabled="t.sort==1" @click="moveUp(t)">上移</el-button> -->
-              </div>
-            </el-card>
+              </el-card>
+            </el-checkbox-group>
           </div>
         </div>
       </div>
@@ -88,9 +100,9 @@
               >
                 <el-form-item label="扫描条码">
                   <el-input
-                    v-model="barCode"
-                    clearable
+                    v-model="stopsForm.ContainerName"
                     ref="inputRef"
+                    :autofocus="inputFocus"
                     style="width: 500px"
                     placeholder="请扫描条码"
                     @keyup.enter.native="getChange"
@@ -99,15 +111,15 @@
               </el-form>
               <div
                 class="text-xl font-bold text-[#00B400]"
-                v-show="msgTitle === '成功' || msgTitle === ''"
+                v-show="msgType === true || msgTitle === ''"
               >
-                {{ msgTitle === "" ? "请扫描批次条码" : msgTitle }}
+                {{ msgTitle === "" ? "请扫描PCB条码" : msgTitle }}
               </div>
               <div
                 class="text-xl font-bold text-[red]"
-                v-show="msgTitle !== '成功' && msgTitle !== ''"
+                v-show="msgType === false && msgTitle !== ''"
               >
-                {{ msgTitle === "" ? "请扫描批次条码" : msgTitle }}
+                {{ msgTitle }}
               </div>
             </div>
           </div>
@@ -238,7 +250,7 @@
         </div>
       </div>
     </div>
-    <badInfoTem
+    <!-- <badInfoTem
       :visible="editVisible"
       :list="list"
       :formHeader="formHeader1"
@@ -250,7 +262,7 @@
       @deleteBad="deleteBad"
       @addBadData="addBadData"
       @openAddBad="openAddBad"
-    />
+    /> -->
     <formTem
       ref="addOverRef"
       :width="'400px'"
@@ -261,7 +273,7 @@
       @formCancel="addOverCancel"
       @onSubmit="addOveronSubmit"
     ></formTem>
-    <el-dialog
+    <!-- <el-dialog
       v-model="feedVisible"
       title="物料上料"
       width="90%"
@@ -276,10 +288,9 @@
       <template #footer>
         <span class="dialog-footer">
           <el-button @click="feedCancel">关闭</el-button>
-          <!-- <el-button type="primary" @click="show = false"> Confirm </el-button> -->
         </span>
       </template>
-    </el-dialog>
+    </el-dialog> -->
   </div>
 </template>
 
@@ -305,20 +316,18 @@ import {
   reactive,
   onMounted,
   nextTick,
+  computed,
   onBeforeMount,
   onBeforeUnmount,
 } from "vue";
 interface StopsForm {
-  Barcode: Array<Barcode>;
-  WorkStationName: string;
-  result: string;
-  ResourceName: string;
-  EmployeeName: string;
+  ToolName: string;
+  ContainerName: string;
+  OrderNumber: string;
+  workstationName: string;
+  userAccount: string;
 }
-interface Barcode {
-  Barcode: string;
-  Status: string;
-}
+
 interface ToolList {
   WorkStationName: string;
   OrderNumber: string;
@@ -330,14 +339,14 @@ interface ToolList {
 const appStore = useAppStore();
 const userStore = useUserStoreWithOut();
 const opui = appStore.getOPUIReal();
-const barCode = ref("");
 const inputRef = ref();
+const inputFocus = ref(true);
 const stopsForm = ref<StopsForm>({
-  Barcode: [],
-  result: "OK",
-  WorkStationName: opui.station,
-  ResourceName: opui.station !== null ? opui.station : "",
-  EmployeeName: userStore.getUserInfo || "",
+  ToolName: "",
+  ContainerName: "",
+  OrderNumber: "",
+  workstationName: opui.station || "",
+  userAccount: userStore.getUserInfo,
 });
 const tabsValue = ref("history");
 const editVisible = ref(false);
@@ -432,13 +441,6 @@ const columnData1 = reactive([
     width: "",
     align: "1",
   },
-  // {
-  //   text: true,
-  //   prop: "eqName",
-  //   label: "CG/TP条码",
-  //   width: "",
-  //   align: "1",
-  // },
   {
     text: true,
     prop: "zcnumber",
@@ -499,6 +501,7 @@ const list = ref([
   },
 ]);
 const msgTitle = ref("");
+const msgType = ref(true);
 //过序设置
 const overVisible = ref(false);
 //过序table
@@ -581,8 +584,20 @@ const getToolForm = ref({
   userAccount: userStore.getUserInfo,
 });
 const defaultSelectVal = ref<string[]>([]);
-const checked = ref(false);
+const checked = ref<string[]>([]);
+const leftBoxH = ref(0);
 
+const changeCheck = (val: any) => {
+  // console.log(val, checked.value);
+  if (checked.value.length == 0) {
+    checked.value = [];
+    stopsForm.value.ToolName = "";
+  } else {
+    checked.value = [];
+    checked.value[0] = val;
+    stopsForm.value.ToolName = val;
+  }
+};
 const openOver = () => {
   overAddVisible.value = true;
   getOverData();
@@ -680,21 +695,6 @@ const FeedHeader = reactive([
   },
 ]);
 
-const change = (val: any) => {
-  // console.log(val);
-  // orderTable.value.forEach((v: any) => {
-  //     if (v.MfgOrderName == val) {
-  //        form.MfgOrderName=v.MfgOrderName
-  //        form.ProductName=v.ProductName
-  //        form.ProductDesc=v.ProductDesc
-  //        form.PlannedStartDate=v.PlannedStartDate
-  //        form.PlannedCompletionDate=v.PlannedCompletionDate
-  //        form.Qty=v.Qty
-  //     }
-  // });
-  // inputRef.value.focus();
-};
-
 onBeforeMount(() => {
   getScreenHeight();
 });
@@ -717,6 +717,7 @@ const getOrderData = () => {
     }
   });
 };
+//治具上移
 const moveUp = (val: any) => {
   let data = {
     ToolName: val.ToolName,
@@ -726,20 +727,33 @@ const moveUp = (val: any) => {
     workstationName: opui.station,
     userAccount: userStore.getUserInfo,
   };
-  // console.log(val);
   SortTools(data).then((res: any) => {
-    // console.log(res);
     // ElNotification({
     //     title: res.msg,
     //     type: "success",
     //   });
+    // getFocus()
     getToolData();
   });
 };
+//获取治具
 const getToolData = () => {
   QueryToolInfo(getToolForm.value).then((res: any) => {
+    if (res.content == null || res.content.lenght == 0) {
+      toolList.value = [];
+      return;
+    }
     toolList.value = res.content;
+    stopsForm.value.ToolName = res.content[0].ToolName;
+    checked.value[0] = res.content[0].ToolName;
   });
+};
+//获取光标
+const getFocus = () => {
+  inputFocus.value = false;
+  setTimeout(() => {
+    inputFocus.value = true;
+  }, 100);
 };
 
 const formText = (data: string) => {
@@ -747,7 +761,6 @@ const formText = (data: string) => {
   return form[key];
 };
 const radioChange = (args: any) => {
-  console.log(args);
   if (args[1] == null) {
     form.MfgOrderName = "";
     form.ProductName = "";
@@ -836,31 +849,23 @@ const getChange = (val: any) => {
       title: "请选择工单",
       type: "error",
     });
-    barCode.value = "";
+    stopsForm.value.ContainerName = "";
     return;
   }
-  let data = {
-    Barcode: barCode.value,
-    Status: "0",
-  };
-  stopsForm.value.Barcode.push(data);
+  // console.log(stopsForm.value);
+  // inputFocus.value = false;
   DIPStationMoveOut(stopsForm.value).then((res: any) => {
-    if (res.succes) {
-      msgTitle.value = "成功";
-      barCode.value = "";
-      inputRef.value.focus();
-      if (stopsForm.value.Barcode.length == 2) {
-        stopsForm.value.Barcode = [];
-        msgTitle.value = "";
-      }
-    } else {
-      inputRef.value.select();
-      stopsForm.value.Barcode = stopsForm.value.Barcode.filter(
-        (b: any) => b.Barcode != barCode.value
-      );
-      msgTitle.value = res.msg;
-      // console.log(stopsForm.value)
-    }
+    msgTitle.value = res.msg;
+    msgType.value = res.success;
+    stopsForm.value.ContainerName = "";
+    getToolData();
+    getFocus();
+    // inputFocus.value = true;
+    // if (res.success) {
+
+    // } else {
+
+    // }
   });
 };
 
@@ -875,6 +880,7 @@ const handleCurrentChange = (val: any) => {
 
 const getScreenHeight = () => {
   nextTick(() => {
+    leftBoxH.value = window.innerHeight - 155;
     tableHeight.value = window.innerHeight - 435;
   });
 };
@@ -940,6 +946,7 @@ const getScreenHeight = () => {
 .saveAsDialog {
   min-width: 954px;
 }
+
 // .checked{
 //   height: 14px;
 // }

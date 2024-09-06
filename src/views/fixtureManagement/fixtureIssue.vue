@@ -1,49 +1,42 @@
 <template>
-
   <div class="p-[10px]">
     <el-card shadow="always" :body-style="{ padding: '10px' }">
       <div>
-        <el-form
-          ref="formRef"
-          class="form flex justify-between"
-          :inline="true"
-          :model="getDataText"
-        >
-          <div>
-            <!-- <el-form> -->
-            <el-form-item class="flex items-center">
-              <el-input
-                size="default"
-                placeholder="请输入板边码"
-                clearable
-                v-model="getDataText.SN"
-                class="input-with-select"
-              >
-              </el-input>
-            </el-form-item>
-            <el-form-item>
-              <el-select
-                v-model="getDataText.OperationType"
-                placeholder="操作类型"
-                style="width: 120px"
-              >
-                <el-option
-                  v-for="item in repairList"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                />
-              </el-select>
-            </el-form-item>
-            <el-form-item>
-              <el-button type="primary" @click="getData()">查询</el-button>
-            </el-form-item>
-            <!-- </el-form> -->
-          </div>
-          <el-form-item>
-            <el-button type="primary" @click="historyTableVisible = true"
-              >维修记录</el-button
+        <el-form ref="formRef" :inline="true" :model="getDataText">
+          <el-form-item label="时间区间" class="mb-2">
+            <el-date-picker
+              v-model="getDataText.date"
+              type="daterange"
+              range-separator="-"
+              start-placeholder="开始时间"
+              end-placeholder="结束时间"
+              style="width: 240px"
+              :clearable="false"
+            />
+          </el-form-item>
+          <el-form-item label="面号" class="mb-2">
+            <el-select
+              v-model="getDataText.side"
+              placeholder="请选择"
+              style="width: 180px"
             >
+              <el-option
+                v-for="s in sideList"
+                :label="s.label"
+                :value="s.value"
+              />
+            </el-select>
+          </el-form-item>
+
+          <el-form-item label="工单号" class="mb-2">
+            <el-input
+              v-model="getDataText.orderNum"
+              placeholder="请输入工单号"
+              style="width: 180px"
+            />
+          </el-form-item>
+          <el-form-item class="mb-2">
+            <el-button type="primary">查询</el-button>
           </el-form-item>
         </el-form>
       </div>
@@ -82,267 +75,13 @@
             :current-page="currentPage"
             :page-size="pageSize"
             :page-sizes="[5, 10, 20, 50, 100]"
-            layout="total,sizes, prev, pager, next, jumper"
+            layout="total,sizes, prev, pager, next"
             :total="tableData.length"
           >
           </el-pagination>
         </div>
-
       </div>
     </el-card>
-    <el-dialog v-model="dialogTableVisible" title="维修" width="1000">
-      <el-form
-        :model="maintenanceForm"
-        :rules="rules"
-        :inline="true"
-        ref="ruleFormRef"
-      >
-        <el-row>
-          <el-col :span="6">
-            <el-form-item label="内控SN" label-width="100px" prop="InternalSN">
-              <el-input
-                size="default"
-                v-model="maintenanceForm.InternalSN"
-                class="input-with-select"
-              >
-              </el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <el-form-item
-              label="工单号"
-              label-width="100px"
-              prop="WorkOrderNumber"
-            >
-              <el-input
-                size="default"
-                v-model="maintenanceForm.WorkOrderNumber"
-                class="input-with-select"
-              >
-              </el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <el-form-item
-              label="维修类别"
-              label-width="100px"
-              prop="RepairType"
-            >
-              <el-select
-                v-model="maintenanceForm.RepairType"
-                placeholder="Select"
-                style="width: 120px"
-              >
-                <el-option
-                  v-for="item in ['测试']"
-                  :key="item"
-                  :label="item"
-                  :value="item"
-                />
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <el-form-item
-              label-width="100px"
-              label="不良原因"
-              prop="RepairReason"
-            >
-              <el-select
-                v-model="maintenanceForm.RepairReason"
-                placeholder="Select"
-                style="width: 120px"
-              >
-                <el-option
-                  v-for="item in ['测试']"
-                  :key="item"
-                  :label="item"
-                  :value="item"
-                />
-              </el-select>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-divider />
-        <el-form-item label="当前SN" label-width="100px">
-          <el-input
-            size="default"
-            v-model="maintenanceForm.CurrentBarcode"
-            class="input-with-select"
-          >
-          </el-input>
-        </el-form-item>
-        <el-form-item label="面别" label-width="100px">
-          <el-select
-            v-model="maintenanceForm.FaceType"
-            placeholder="Select"
-            style="width: 180px"
-          >
-            <el-option
-              v-for="item in ['Top', 'Bot']"
-              :key="item"
-              :label="item"
-              :value="item"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="订单号" label-width="100px">
-          <el-input
-            size="default"
-            v-model="maintenanceForm.OrderNo"
-            class="input-with-select"
-          >
-          </el-input>
-        </el-form-item>
-        <el-form-item label="计划编号" label-width="100px">
-          <el-input
-            size="default"
-            v-model="maintenanceForm.PlanNumber"
-            class="input-with-select"
-          >
-          </el-input>
-        </el-form-item>
-        <el-form-item label="客户名称" label-width="100px">
-          <el-input
-            size="default"
-            v-model="maintenanceForm.CustomerName"
-            class="input-with-select"
-          >
-          </el-input>
-        </el-form-item>
-        <el-form-item label="产品名称" label-width="100px">
-          <el-input
-            size="default"
-            v-model="maintenanceForm.ProductName"
-            class="input-with-select"
-          >
-          </el-input>
-        </el-form-item>
-        <el-form-item label="工序名称" label-width="100px">
-          <el-input
-            size="default"
-            v-model="maintenanceForm.Processes"
-            class="input-with-select"
-          >
-          </el-input>
-        </el-form-item>
-        <el-form-item label="工序编码" label-width="100px">
-          <el-input
-            size="default"
-            v-model="maintenanceForm.ProcessesNumber"
-            class="input-with-select"
-          >
-          </el-input>
-        </el-form-item>
-        <el-form-item label="拉线名称" label-width="100px">
-          <el-input
-            size="default"
-            v-model="maintenanceForm.StayWireName"
-            class="input-with-select"
-          >
-          </el-input>
-        </el-form-item>
-        <el-form-item label="拉线编码" label-width="100px">
-          <el-input
-            size="default"
-            v-model="maintenanceForm.StayWireNumber"
-            class="input-with-select"
-          >
-          </el-input>
-        </el-form-item>
-        <el-form-item label="返修工序" label-width="100px">
-          <el-input
-            size="default"
-            v-model="maintenanceForm.RepairProcesses"
-            class="input-with-select"
-          >
-          </el-input>
-        </el-form-item>
-        <el-form-item label="返修工序编码" label-width="100px">
-          <el-input
-            size="default"
-            v-model="maintenanceForm.RepairProcessesNumber"
-            class="input-with-select"
-          >
-          </el-input>
-        </el-form-item>
-        <el-form-item
-          label-width="100px"
-          label="维修备注"
-          style="width: calc(100% - 70px)"
-        >
-          <el-input
-            v-model="maintenanceForm.Repairlnformation"
-            :rows="2"
-            type="textarea"
-            placeholder="请输入"
-          />
-        </el-form-item>
-        <!-- <el-form-item label="订单号"> </el-form-item>
-        <el-form-item label="计划编号"> </el-form-item>
-        <el-form-item label="客户名称"> </el-form-item>
-        <el-form-item label="产品名称"> </el-form-item>
-        <el-form-item label="工序名称"> </el-form-item>
-        <el-form-item label="工序编号"> </el-form-item>
-        <el-form-item label="拉线名称"> </el-form-item>
-        <el-form-item label="拉线编码"> </el-form-item>
-        <el-form-item label="返修工序"> </el-form-item>
-        <el-form-item label="返修工序编号"> </el-form-item>
-        <el-form-item label="维修备注"> </el-form-item>
-        <el-form-item label="维修类别"> </el-form-item>
-        <el-form-item label="不良原因"> </el-form-item>
-        <el-form-item label="面别"> </el-form-item> -->
-      </el-form>
-      <template #footer>
-        <div class="dialog-footer">
-          <el-button @click="dialogTableVisible = false">取消</el-button>
-          <el-button type="primary" @click="sureMaintenance(ruleFormRef)">
-            确定
-          </el-button>
-        </div>
-      </template>
-    </el-dialog>
-
-    <el-dialog
-      v-model="historyTableVisible"
-      title="查询返修维修记录"
-      width="1000"
-    >
-      <el-form :inline="true">
-        <el-form-item>
-          <el-input
-            size="default"
-            placeholder="请输入内控SN"
-            clearable
-            v-model="getHistoryText.InternalSN"
-            class="input-with-select"
-          >
-          </el-input>
-        </el-form-item>
-        <el-form-item>
-          <el-input
-            size="default"
-            placeholder="请输入位号"
-            clearable
-            v-model="getHistoryText.Position"
-            class="input-with-select"
-          >
-          </el-input>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="getHistory()">查询</el-button>
-        </el-form-item>
-      </el-form>
-      <table-tem
-        :showIndex="true"
-        :tableData="historyTable"
-        :tableHeight="'60vh'"
-        :columnData="columnData"
-        :pageObj="pageObj1"
-        @handleSizeChange="handleSizeChange1"
-        @handleCurrentChange="handleCurrentChange1"
-      ></table-tem>
-    </el-dialog>
   </div>
 </template>
 
@@ -371,15 +110,27 @@ const ruleFormRef = ref();
 const OperationType = ref("");
 const userStore = useUserStoreWithOut();
 const loginName = userStore.getUserInfo;
-const getDataText = reactive({
-  SN: "",
-  OperationType: "",
+const getDataText = ref({
+  orderNum: "",
+  side: "",
+  date:'',
+  // OperationType: "",
 });
 const getHistoryText = reactive({
   InternalSN: "",
   Position: "",
 });
 const dialogTableVisible = ref(false);
+const sideList = ref([
+  {
+    value: "T",
+    label: "TOP",
+  },
+  {
+    value: "B",
+    label: "BOT",
+  },
+]);
 const historyTableVisible = ref(false);
 const repairList = ref([
   {
@@ -502,21 +253,7 @@ onBeforeUnmount(() => {
   window.addEventListener("resize", getScreenHeight);
 });
 
-const getData = () => {
-  if (getDataText.SN === "" || getDataText.OperationType === "") {
-    ElMessage({
-      message: "条码或操作类型不能为空",
-
-      type: "warning",
-    });
-    return;
-  }
-  QuerySN(getDataText.SN, getDataText.OperationType).then((res: any) => {
-    OperationType.value = getDataText.OperationType;
-    // const dataText = JSON.parse(res.content);
-    tableData.value = res.content;
-  });
-};
+const getData = () => {};
 
 const maintenance = (row: any) => {
   // maintenanceForm.value.InternalSN = row.BarCode;
@@ -573,22 +310,19 @@ const sureMaintenance = (formEl: any) => {
 };
 
 const getHistory = () => {
-  if (
-    getHistoryText.InternalSN === ""
-  ) {
+  if (getHistoryText.InternalSN === "") {
     ElMessage({
       message: "内控SN不能为空",
       type: "warning",
     });
     return;
   }
-  QueryMaintenance(
-    getHistoryText.InternalSN,
-    getHistoryText.Position
-  ).then((res: any) => {
-    // const dataText = JSON.parse(res.content);
-    historyTable.value = res.content;
-  });
+  QueryMaintenance(getHistoryText.InternalSN, getHistoryText.Position).then(
+    (res: any) => {
+      // const dataText = JSON.parse(res.content);
+      historyTable.value = res.content;
+    }
+  );
 };
 
 const handleSizeChange = (val: any) => {
@@ -614,7 +348,7 @@ const handleCurrentChange1 = (val: any) => {
 
 const getScreenHeight = () => {
   nextTick(() => {
-    tableHeight.value = window.innerHeight - 230;
+    tableHeight.value = window.innerHeight - 210;
   });
 };
 

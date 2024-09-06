@@ -290,14 +290,12 @@ const getCarrierList = () => {
       turnData.value=[]
       return;
     }
-
-    // let data = JSON.parse(res.content);
     turnData.value = res.content;
     if (turnData.value.length == 1) {
       getList(turnData.value[0].CARRIERNAME)
       return
     }
-    // console.log(data);
+  
   });
 };
 
@@ -345,7 +343,6 @@ const getChange = () => {
     if (res.success) {
       tableData.value = res.content;
       getCarrierList();
-      // msgTitle.value=msgTitle.value+'周转箱列表已更新'
       msgTitle.value = res.msg + "周转箱列表已更新";
     } else {
       tableData.value = [];

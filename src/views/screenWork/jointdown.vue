@@ -4,7 +4,7 @@
       class="h-[40px] min-h-[40px] pl-2 pr-2 flex justify-between items-center"
     >
       <span class="text-[1.2rem]"> {{ opui.stationDec }} </span>
-      <el-button type="primary">物料上料</el-button>
+      <el-button type="primary" @click="materialFeeding">物料上料</el-button>
     </div>
     
     <div class="w-full flex-1 flex">
@@ -22,7 +22,7 @@
               :model="form"
               label-width="auto"
             >
-              <el-form-item size="large" label="工单">
+              <el-form-item  label="工单">
                 <selectTa
                   ref="selectTable"
                   :table="orderTable"
@@ -130,18 +130,6 @@
                   @handleCurrentChange="handleCurrentChange"
                 ></table-tem>
               </el-tab-pane>
-              <!-- <el-tab-pane label="SOP" name="sop">
-                                sop
-                                <table-tem :showIndex="true" :tableData="tableData1" :tableHeight="tableHeight"
-                                    :columnData="columnData1" :pageObj="pageObj" @handleSizeChange="handleSizeChange"
-                                    @handleCurrentChange="handleCurrentChange"></table-tem>
-                            </el-tab-pane> -->
-              <!-- <el-tab-pane label="工装治具" name='fixtures'>
-                                fixtures
-                                <table-tem :showIndex="true" :tableData="tableData1" :tableHeight="tableHeight"
-                                    :columnData="columnData1" :pageObj="pageObj" @handleSizeChange="handleSizeChange"
-                                    @handleCurrentChange="handleCurrentChange"></table-tem>
-                            </el-tab-pane> -->
             </el-tabs>
           </div>
         </div>
@@ -350,6 +338,10 @@ const formText = (data: string) => {
   let key = data as keyof typeof form;
   return form[key];
 };
+ 
+const materialFeeding=()=>{
+  
+}
 
 const keyUp = () => {
   if (checkStringType(barCode.value) == "result") {

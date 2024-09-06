@@ -48,82 +48,93 @@
       </div>
     </el-card>
 
-
-    
-    <el-dialog v-model="dialogVisible" width="1000" center>
-      
-        <div class="w-full">
-          <el-tabs v-model="activeName" type="border-card" class="demo-tabs" @tab-change="tabChange">
-            <el-tab-pane label="物料清单明细" name="物料清单明细" :stretch="true">
-              <div class="flex-1" ref="tablebox">
-                <el-table :data="feedTableData" size="small" stripe border fit :tooltip-effect="'dark'"
-                  :height="400" row-key="MaterialName" :tree-props="{ children: 'children' }">
-                  <el-table-column type="index" align="center" fixed label="序号" width="60" />
-                  <el-table-column prop="MaterialName" label="物料编码" :min-width="180" width="180">
-                  </el-table-column>
-                  <el-table-column prop="MaterialDesc" label="物料描述" :show-overflow-tooltip="true" width="200">
-                  </el-table-column>
-                 
-                  <el-table-column prop="isMater" label="主料" width="160" :min-width="160">
-                    <template #default="scope">
-                      <span v-if="scope.row.isMater === 1">是</span>
-                      <span v-if="scope.row.isMater === 0">否{{ `(${scope.row.originalMaterialName})` }}</span>
-                    </template>
-                  </el-table-column>
-                  <el-table-column prop="SpecDesc" label="使用工序" align="center"  :min-width="flexColumnWidth('使用工序', 'SpecDesc')">
-                  </el-table-column>
-                  <el-table-column prop="isLoadQueue" align="center" label="允许上料：（是否）" :min-width="flexColumnWidth('允许上料：（是否）', 'isLoadoueue')">
-                    <template #default="scope">
-                      <span v-if="scope.row.isLoadQueue === 1">是</span>
-                      <span v-if="scope.row.isLoadQueue === 0">否</span>
-                    </template>
-                  </el-table-column>
-                  <el-table-column prop="QtyRequired" align="center" label="单件用量"
-                    :min-width="flexColumnWidth('单件用量', 'QtyRequired')">
-                  </el-table-column>
-                  <el-table-column prop="TotalQtyRequired" align="center" label="需求量"
-                    :min-width="flexColumnWidth('需求量', 'TotalQtyRequired')">
-                  </el-table-column>
-                </el-table>
-              </div>
-            </el-tab-pane>
-            <el-tab-pane label="工艺流程" name="工艺流程">
-              <el-form ref="formRef" label-position="left" label-width="auto" size="small" :inline="true">
-                <el-form-item label="工艺流程名称" prop="compid" class="mb-[5px]">
-                  <el-input disabled v-model.trim="productObj.WorkflowName" style="width: 240px"></el-input>
-                </el-form-item>
-                <el-form-item label="工艺流程描述" prop="compid" class="mb-[5px]">
-                  <el-input disabled v-model.trim="productObj.WorkflowDesc" style="width: 240px"></el-input>
-                </el-form-item>
-
-              </el-form>
-              <el-table style="width: auto" :data="productTableData" size="small" stripe border fit
-                :tooltip-effect="'dark'" :height="400">
+    <el-dialog v-model="dialogVisible" width="80%"  align-center>
+      <div class="w-full">
+        <el-tabs v-model="activeName" type="border-card" class="demo-tabs" @tab-change="tabChange">
+          <el-tab-pane label="物料清单明细" name="物料清单明细" :stretch="true">
+            <div class="flex-1" ref="tablebox">
+              <el-table :data="feedTableData" size="small" stripe border fit :tooltip-effect="'dark'" :height="400"
+                row-key="MaterialName" :tree-props="{ children: 'children' }">
                 <el-table-column type="index" align="center" fixed label="序号" width="60" />
-                <el-table-column prop="SpecName" label="工序编码" :min-width="180" width="180">
+                <el-table-column prop="MaterialName" fixed label="物料编码" :min-width="150" width="150">
                 </el-table-column>
-                <el-table-column prop="SpecDesc" label="工序描述" :min-width="180" width="180">
+                <el-table-column prop="MaterialDesc" label="物料描述" :show-overflow-tooltip="true" width="200">
+                </el-table-column>
+
+                <el-table-column prop="isMater" label="主料" width="150" :min-width="150">
+                  <template #default="scope">
+                    <span v-if="scope.row.isMater === 1">是</span>
+                    <span v-if="scope.row.isMater === 0">否{{ `(${scope.row.originalMaterialName})` }}</span>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="SpecName" label="工序编码" align="center"
+                  :min-width="flexColumnWidth('使用工序', 'SpecDesc')">
+                </el-table-column>
+                <el-table-column prop="SpecDesc" label="工序名称" align="center"
+                  :min-width="flexColumnWidth('使用工序', 'SpecDesc')">
+                </el-table-column>
+
+                <el-table-column prop="isLoadQueue" align="center" label="允许上料" :min-width="flexColumnWidth('允许上料：（是否）', 'isLoadoueue')
+                  ">
+                  <template #default="scope">
+                    <span v-if="scope.row.isLoadQueue === 1">是</span>
+                    <span v-if="scope.row.isLoadQueue === 0">否</span>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="QtyRequired" align="center" label="单件用量"
+                  :min-width="flexColumnWidth('单件用量', 'QtyRequired')">
+                </el-table-column>
+                <el-table-column prop="TotalQtyRequired" align="center" label="需求量"
+                  :min-width="flexColumnWidth('需求量', 'TotalQtyRequired')">
                 </el-table-column>
               </el-table>
-            </el-tab-pane>
-            <el-tab-pane label="工治具明细" name="工治具明细">
-              <el-table :data="toolTableData" size="small" stripe border fit :tooltip-effect="'dark'"
-                :height="400">
-                <el-table-column type="index" align="center" fixed label="序号" width="60" />
-                <el-table-column prop="WorkStationName" label="工作站编码" :min-width="180" align="center">
-                </el-table-column>
-                <el-table-column prop="OrderNumber" label="工单" :min-width="180" align="center">
-                </el-table-column>
-                <el-table-column prop="ToolName" label="工治具编码" :min-width="180" align="center">
-                </el-table-column>
-                <el-table-column prop="Timestamp" label="创建时间" :min-width="180" align="center">
-                </el-table-column>
-                <el-table-column prop="OperatorID" label="创建人" :min-width="180" align="center">
-                </el-table-column>
-              </el-table>
-            </el-tab-pane>
-          </el-tabs>
+            </div>
+          </el-tab-pane>
+          <el-tab-pane label="工艺流程" name="工艺流程">
+            <el-form ref="formRef" label-position="left" label-width="auto" size="small" :inline="true">
+              <el-form-item label="工艺流程名称" prop="compid" class="mb-[5px]">
+                <el-input disabled v-model.trim="productObj.WorkflowName" style="width: 240px"></el-input>
+              </el-form-item>
+              <el-form-item label="工艺流程描述" prop="compid" class="mb-[5px]">
+                <el-input disabled v-model.trim="productObj.WorkflowDesc" style="width: 240px"></el-input>
+              </el-form-item>
+            </el-form>
+            <el-table style="width: auto" :data="productTableData" size="small" stripe border fit
+              :tooltip-effect="'dark'" :height="400">
+              <el-table-column type="index" align="center" fixed label="序号" width="60" />
+              <el-table-column prop="SpecName" label="工序编码" :min-width="180" width="180">
+              </el-table-column>
+              <el-table-column prop="SpecDesc" label="工序描述" :min-width="180" width="180">
+              </el-table-column>
+            </el-table>
+          </el-tab-pane>
+          <el-tab-pane label="工治具明细" name="工治具明细">
+            <el-table :data="toolTableData" size="small" stripe border fit :tooltip-effect="'dark'" :height="400">
+              <el-table-column type="index" align="center" fixed label="序号" width="60" />
+
+              <el-table-column prop="MfgLineName" label="产线" :min-width="180" align="center">
+              </el-table-column>
+              <el-table-column prop="WorkStationName" label="工作站" :min-width="180" align="center">
+              </el-table-column>
+              <!-- <el-table-column prop="OrderNumber" label="工单" :min-width="180" align="center">
+                </el-table-column> -->
+              <el-table-column prop="ToolName" label="工治具编码" :min-width="180" align="center">
+              </el-table-column>
+              <el-table-column prop="compName" label="工治具型号" :min-width="180" align="center">
+              </el-table-column>
+              <el-table-column prop="OperatorID" label="操作人" :min-width="180" align="center">
+              </el-table-column>
+              <el-table-column prop="Timestamp" label="操作时间" :min-width="180" align="center">
+              </el-table-column>
+            </el-table>
+          </el-tab-pane>
+        </el-tabs>
+      </div>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button @click="dialogVisible = false">关闭</el-button>
         </div>
+      </template>
     </el-dialog>
   </div>
 </template>
@@ -141,7 +152,7 @@ import {
   findOrder,
   QueryOrderMaterialRequired,
   findProductSpec,
-  QueryOrderToolsData
+  QueryOrderToolsData,
 } from "@/api/operate";
 import {
   ref,
@@ -489,12 +500,11 @@ const getModeList = () => {
     // let data = JSON.parse(res.content);
     // option1.value = OrganData(res.content);
     if (!res || res.content === null) {
-
       return;
     }
-    let data = OrganData(res.content)
-    data = data.filter((d: any) => d.Name == 'M08-SMT01')
-    lineNameList.value = data[0].childMenu
+    let data = OrganData(res.content);
+    data = data.filter((d: any) => d.Name == "M08-SMT01");
+    lineNameList.value = data[0].childMenu;
     // lineNameList.value = [{ Name: "" }, ...OrganData(res.content)[0].childMenu];
   });
 };
@@ -658,8 +668,7 @@ const handleCurrentChange1 = (val: any) => {
 
 const getScreenHeight = () => {
   nextTick(() => {
-    tableHeight.value =
-      (window.innerHeight - 200 - headerRef.value.clientHeight);
+    tableHeight.value = window.innerHeight - 200 - headerRef.value.clientHeight;
     tableHeight1.value =
       (window.innerHeight - 200 - headerRef.value.clientHeight) * 0.55 - 40;
     tableHeight2.value =

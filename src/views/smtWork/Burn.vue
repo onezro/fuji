@@ -98,12 +98,13 @@
                 v-model="form.barCode"
                 placeholder="请输入条码"
             /></el-form-item>
-            <el-form-item class="mb-2">
-              <el-button type="primary" @click="onSubmit">查询</el-button>
-            </el-form-item>
+            <!-- <el-form-item class="mb-2">
+              
+            </el-form-item> -->
           </el-form>
         </div>
         <div class="mb-2 ml-2">
+          <el-button type="primary" @click="onSubmit">查询</el-button>
           <el-button
             icon="Printer"
             type="primary"

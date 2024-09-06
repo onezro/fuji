@@ -200,3 +200,13 @@ export function SortTools(data: any) {
         data,
     });
 }
+//获取工治具型号维护类型
+export function GetComboBoxList(data: any) {
+    return request({
+        url: "/api/system/GetComboBoxList",
+        method: "post",
+        params: {
+            UserConstantName:data
+        }
+    });
+}
