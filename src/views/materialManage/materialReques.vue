@@ -489,9 +489,21 @@ const findOrderData = () => {
 const orderChange = (data: any) => {
   orderList.value.forEach((item: any) => {
     if (item.MfgOrderName === data) {
-      for (let key in form.value) {
-        form.value[key] = item[key];
-      }
+      form.value.MfgOrderName = item.MfgOrderName
+      form.value.PlannedStartDate = item.PlannedStartDate
+      form.value.PlannedCompletionDate = item.PlannedCompletionDate
+      form.value.Qty = item.Qty
+      form.value.ProductName = item.ProductName
+      form.value.BD_ProjectNo = item.BD_ProjectNo
+      form.value.BD_ProductModel = item.BD_ProductModel
+      form.value.ProductDesc = item.ProductDesc
+      form.value.UOMName = item.UOMName
+      form.value.OrderStatusName = item.OrderStatusName
+      form.value.OrderStatusDesc = item.OrderStatusDesc
+      form.value.MfgLineName = item.MfgLineName
+      form.value.MfgLineDesc = item.MfgLineDesc
+      form.value.WorkCenterName = item.WorkCenterName
+      form.value.wcDescription = item.wcDescription
       getFeedTableData(data);
     }
   });

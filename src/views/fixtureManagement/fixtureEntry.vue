@@ -258,7 +258,7 @@ interface formTS {
   LotNumber: string;
   remark: string;
   user: string;
-  ExpirationDate: string;
+  // ExpirationDate: string;
 }
 
 interface EditFormTS {
@@ -300,7 +300,7 @@ const form = ref<formTS>({
   LotNumber: "",
   remark: "",
   user: loginName,
-  ExpirationDate: null,
+  // ExpirationDate: null,
 });
 
 const EditForm = ref<EditFormTS>({
@@ -327,7 +327,7 @@ const clearForm = () => {
     LotNumber: "",
     remark: "",
     user: loginName,
-    ExpirationDate: "",
+    // ExpirationDate: "",
   };
 };
 
