@@ -9,8 +9,6 @@
           size="small"
           label-width="85px"
         >
-          <!-- <div>
-              </div> -->
           <el-form-item label="工单号">
             <el-select
               v-model="form.MfgOrderName"
@@ -26,103 +24,28 @@
               />
             </el-select>
           </el-form-item>
-          <el-form-item label="机型">
-            <el-input
-              v-model="form.BD_ProductModel"
-              class="input-with-select"
-              disabled
+          <el-form-item label="日期">
+            <el-select
+              v-model="form.MfgOrderName"
+              placeholder=""
+              style="width: 152.4px"
+              @change="orderChange"
             >
-            </el-input>
-          </el-form-item>
-          <el-form-item label="产品编码">
-            <el-input
-              v-model="form.ProductName"
-              class="input-with-select"
-              disabled
-            >
-            </el-input>
-          </el-form-item>
-          <el-form-item label="数量">
-            <el-input v-model="form.Qty" class="input-with-select" disabled>
-            </el-input>
-          </el-form-item>
-          <el-form-item label="单位">
-            <el-input v-model="form.UOMName" class="input-with-select" disabled>
-            </el-input>
-          </el-form-item>
-          <el-form-item label="产线">
-            <el-input
-              v-model="form.MfgLineDesc"
-              class="input-with-select"
-              disabled
-            >
-            </el-input>
-          </el-form-item>
-          <el-form-item label="状态">
-            <el-input
-              v-model="form.OrderStatusDesc"
-              class="input-with-select"
-              disabled
-            >
-            </el-input>
-          </el-form-item>
-          <el-form-item label="计划完成时间">
-            <el-input
-              v-model="form.PlannedCompletionDate"
-              class="input-with-select"
-              disabled
-            >
-            </el-input>
-          </el-form-item>
-          <el-form-item label="计划开始时间">
-            <el-input
-              v-model="form.PlannedCompletionDate"
-              class="input-with-select"
-              disabled
-            >
-            </el-input>
-          </el-form-item>
-          <el-form-item label="单据交易类型">
-            <el-input
-              v-model="form.PlannedStartDate"
-              class="input-with-select"
-              disabled
-            >
-            </el-input>
+              <el-option
+                v-for="item in orderList"
+                :key="item"
+                :label="item.MfgOrderName"
+                :value="item.MfgOrderName"
+              />
+            </el-select>
           </el-form-item>
           <br />
           <el-form-item label="">
-            <el-button type="primary" @click="applyFor">申请</el-button>
+            <el-button type="primary" @click="dialogVisible = true">申请</el-button>
           </el-form-item>
         </el-form>
       </div>
       <div class="table_container">
-        <!-- <el-table
-          :data="
-            tableData.slice(
-              (currentPage - 1) * pageSize,
-              currentPage * pageSize
-            )
-          "
-          border
-          size="small"
-          :height="tableHeight"
-          row-key="step1"
-          style="width: 100%"
-        >
-          <el-table-column prop="BarCode" label="ID" width="180">
-          </el-table-column>
-          <el-table-column prop="PadID" label="单据类型"> </el-table-column>
-          <el-table-column prop="Result" label="生产线"> </el-table-column>
-          <el-table-column prop="Result" label="工单合并组"> </el-table-column>
-          <el-table-column prop="Result" label="上个结存工单">
-          </el-table-column>
-          <el-table-column prop="Result" label="产品型号"> </el-table-column>
-          <el-table-column prop="Result" label="工单号"> </el-table-column>
-          <el-table-column prop="Result" label="领料单"> </el-table-column>
-          <el-table-column prop="Result" label="出库单"> </el-table-column>
-          <el-table-column prop="Result" label="状态"> </el-table-column>
-        </el-table> -->
         <el-table
           :data="feedTableData.slice(
               (currentPage - 1) * pageSize,
@@ -237,31 +160,224 @@
           >
           </el-pagination>
         </div>
-        <!-- <el-table
-            :data="tableData1"
-            border
-            size="small"
-            :height="tableHeight1"
-            row-key="step1"
-            style="width: 100%"
-          >
-            <el-table-column prop="BarCode" label="工单" width="180">
-            </el-table-column>
-            <el-table-column prop="PadID" label="领料单"> </el-table-column>
-            <el-table-column prop="Result" label="行项号"> </el-table-column>
-            <el-table-column prop="Result" label="料号"> </el-table-column>
-            <el-table-column prop="Result" label="数量"> </el-table-column>
-            <el-table-column prop="Result" label="单位"> </el-table-column>
-            <el-table-column prop="Result" label="主替料组别"> </el-table-column>
-            <el-table-column prop="Result" label="优先级"> </el-table-column>
-            <el-table-column prop="Result" label="物料描述"> </el-table-column>
-            <el-table-column prop="Result" label="物料规格"> </el-table-column>
-            <el-table-column prop="Result" label="指定出货批次">
-            </el-table-column>
-            <el-table-column prop="Result" label="指定出货"> </el-table-column>
-          </el-table> -->
       </div>
     </el-card>
+
+<el-dialog v-model="dialogVisible" width="80%"  align-center>
+  <div class="w-full">
+      <div ref="headerRef">
+        <el-form
+          ref="formRef"
+          class="form"
+          :inline="true"
+          size="small"
+          label-width="85px"
+        >
+          <!-- <div>
+              </div> -->
+          <el-form-item label="工单号">
+            <el-select
+              v-model="form.MfgOrderName"
+              placeholder=""
+              style="width: 152.4px"
+              @change="orderChange"
+            >
+              <el-option
+                v-for="item in orderList"
+                :key="item"
+                :label="item.MfgOrderName"
+                :value="item.MfgOrderName"
+              />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="机型">
+            <el-input
+              v-model="form.BD_ProductModel"
+              class="input-with-select"
+              disabled
+            >
+            </el-input>
+          </el-form-item>
+          <el-form-item label="产品编码">
+            <el-input
+              v-model="form.ProductName"
+              class="input-with-select"
+              disabled
+            >
+            </el-input>
+          </el-form-item>
+          <el-form-item label="数量">
+            <el-input v-model="form.Qty" class="input-with-select" disabled>
+            </el-input>
+          </el-form-item>
+          <el-form-item label="单位">
+            <el-input v-model="form.UOMName" class="input-with-select" disabled>
+            </el-input>
+          </el-form-item>
+          <el-form-item label="产线">
+            <el-input
+              v-model="form.MfgLineDesc"
+              class="input-with-select"
+              disabled
+            >
+            </el-input>
+          </el-form-item>
+          <el-form-item label="状态">
+            <el-input
+              v-model="form.OrderStatusDesc"
+              class="input-with-select"
+              disabled
+            >
+            </el-input>
+          </el-form-item>
+          <el-form-item label="计划完成时间">
+            <el-input
+              v-model="form.PlannedCompletionDate"
+              class="input-with-select"
+              disabled
+            >
+            </el-input>
+          </el-form-item>
+          <el-form-item label="计划开始时间">
+            <el-input
+              v-model="form.PlannedCompletionDate"
+              class="input-with-select"
+              disabled
+            >
+            </el-input>
+          </el-form-item>
+          <el-form-item label="单据交易类型">
+            <el-input
+              v-model="form.PlannedStartDate"
+              class="input-with-select"
+              disabled
+            >
+            </el-input>
+          </el-form-item>
+          <br />
+          <el-form-item label="">
+            <el-button type="primary" @click="applyFor">申请</el-button>
+          </el-form-item>
+        </el-form>
+      </div>
+      <div class="table_container">
+        <el-table
+          :data="feedTableData.slice(
+              (currentPage - 1) * pageSize,
+              currentPage * pageSize
+            )"
+          size="small"
+          stripe
+          border
+          fit
+          :tooltip-effect="'dark'"
+          :height="tableHeight"
+          row-key="MaterialName"
+          :tree-props="{ children: 'children' }"
+          @selection-change="handleSelectionChange"
+        >
+          <el-table-column type="selection" width="55" />
+          <!-- <el-table-column type="index" align="center" fixed label="序号" width="60" /> -->
+          <el-table-column
+            prop="MaterialName"
+            fixed
+            label="物料编码"
+            :min-width="150"
+            width="150"
+          >
+          </el-table-column>
+          <el-table-column
+            prop="MaterialDesc"
+            label="物料描述"
+            :show-overflow-tooltip="true"
+            width="200"
+          >
+          </el-table-column>
+
+          <el-table-column
+            prop="isMater"
+            label="主料"
+            width="150"
+            :min-width="150"
+          >
+            <template #default="scope">
+              <span v-if="scope.row.isMater === 1">是</span>
+              <span v-if="scope.row.isMater === 0"
+                >否{{ `(${scope.row.originalMaterialName})` }}</span
+              >
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="SpecName"
+            label="工序编码"
+            align="center"
+            :min-width="flexColumnWidth('使用工序', 'SpecDesc')"
+          >
+          </el-table-column>
+          <el-table-column
+            prop="SpecDesc"
+            label="工序名称"
+            align="center"
+            :min-width="flexColumnWidth('使用工序', 'SpecDesc')"
+          >
+          </el-table-column>
+
+          <el-table-column
+            prop="isLoadQueue"
+            align="center"
+            label="允许上料"
+            :min-width="flexColumnWidth('允许上料：（是否）', 'isLoadoueue')"
+          >
+            <template #default="scope">
+              <span v-if="scope.row.isLoadQueue === 1">是</span>
+              <span v-if="scope.row.isLoadQueue === 0">否</span>
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="QtyRequired"
+            align="center"
+            label="单件用量"
+            :min-width="flexColumnWidth('单件用量', 'QtyRequired')"
+          >
+          </el-table-column>
+          <el-table-column
+            prop="TotalQtyRequired"
+            align="center"
+            label="需求量"
+            :min-width="flexColumnWidth('需求量', 'TotalQtyRequired')"
+          >
+          </el-table-column>
+          <el-table-column
+            prop="RequestQty"
+            align="center"
+            label="请求数量"
+          >
+            <template #default="scope">
+            <el-input
+              v-model="scope.row.RequestQty"
+            >
+            </el-input>
+            </template>
+          </el-table-column>
+        </el-table>
+        <div class="block" style="margin: 15px 0">
+          <el-pagination
+            align="center"
+            background
+            size="small"
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+            :current-page="currentPage"
+            :page-size="pageSize"
+            :page-sizes="[5, 10, 20, 50, 100]"
+            layout="total,sizes, prev, pager, next, jumper"
+            :total="feedTableData.length"
+          >
+          </el-pagination>
+        </div>
+      </div>
+  </div>
+</el-dialog>
   </div>
 </template>
 
@@ -296,6 +412,7 @@ const headerRef = ref();
 const orderList = ref<any[]>([]);
 const feedTableData = ref<any>([]);
 const choiceList = ref<any[]>([]);
+const dialogVisible = ref(false);
 
 
 const findOrderForm = {
@@ -372,9 +489,21 @@ const findOrderData = () => {
 const orderChange = (data: any) => {
   orderList.value.forEach((item: any) => {
     if (item.MfgOrderName === data) {
-      for (let key in form.value) {
-        // form.value[key] = item[key];
-      }
+      form.value.MfgOrderName = item.MfgOrderName
+      form.value.PlannedStartDate = item.PlannedStartDate
+      form.value.PlannedCompletionDate = item.PlannedCompletionDate
+      form.value.Qty = item.Qty
+      form.value.ProductName = item.ProductName
+      form.value.BD_ProjectNo = item.BD_ProjectNo
+      form.value.BD_ProductModel = item.BD_ProductModel
+      form.value.ProductDesc = item.ProductDesc
+      form.value.UOMName = item.UOMName
+      form.value.OrderStatusName = item.OrderStatusName
+      form.value.OrderStatusDesc = item.OrderStatusDesc
+      form.value.MfgLineName = item.MfgLineName
+      form.value.MfgLineDesc = item.MfgLineDesc
+      form.value.WorkCenterName = item.WorkCenterName
+      form.value.wcDescription = item.wcDescription
       getFeedTableData(data);
     }
   });
@@ -464,7 +593,7 @@ const applyFor = () => {
     return;
   }
   SubmitMaterialRequest({
-  "RequestType": "string",
+  "RequestType": "5",
   "MfgOrderName": form.value.MfgOrderName,
   "MaterialList": choiceList.value,
   "userAccount": loginName,
