@@ -56,7 +56,9 @@
           </el-table-column>
           <el-table-column prop="Status" align="center" label="状态" :min-width="flexColumnWidth('状态', 'Status')">
             <template #default="scope">
-              <el-tag type="primary" size="small">{{ scope.row.Status }}</el-tag>
+              <el-tag type="primary" size="small" v-if="scope.row.Status=='已申请'">{{ scope.row.Status }}</el-tag>
+              <el-tag type="warning" size="small" v-if="scope.row.Status=='已接受'">{{ scope.row.Status }}</el-tag>
+              <el-tag type="success" size="small" v-if="scope.row.Status=='已完成'">{{ scope.row.Status }}</el-tag>
             </template>
           </el-table-column>
           <!-- <el-table-column prop="Quantity" label="工单数量">
