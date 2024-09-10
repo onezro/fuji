@@ -25,13 +25,28 @@
                 v-for="t in toolList"
                 :key="t.ToolName"
               >
-                <el-form ref="formRef" :model="t" label-width="auto">
+                <el-form ref="formRef" :model="t"  label-width="auto">
                   <!-- <el-form-item class="mb-[5px]"> -->
-                  <div class="checked">
-                    <el-checkbox
-                      :value="t.ToolName"
-                      @change="changeCheck(t.ToolName)"
-                    />
+                  <div class="flex justify-between items-center">
+                    <div class="checked">
+                      <el-checkbox
+                        :value="t.ToolName"
+                        @change="changeCheck(t.ToolName)"
+                      />
+                    </div>
+                    <el-tooltip
+                      effect="dark"
+                      content="上移"
+                      placement="top-start"
+                    >
+                      <el-button
+                        icon="Top"
+                        circle
+                        
+                        :disabled="t.sort == 1"
+                        @click="moveUp(t)"
+                      />
+                    </el-tooltip>
                   </div>
                   <!-- </el-form-item> -->
                   <el-row :gutter="20">
@@ -42,7 +57,9 @@
                     </el-col>
                     <el-col :span="12">
                       <el-form-item label="序号" class="mb-[5px]">
-                        <span class="text-base">{{ t.sort }}</span>
+                        <el-tag type="warning" v-if="t.sort==1">{{ t.sort }}</el-tag>
+                        <el-tag type="primary" v-if="t.sort>1">{{ t.sort }}</el-tag>
+                        <!-- <span class="text-base">{{ t.sort }}</span> -->
                       </el-form-item>
                     </el-col>
                   </el-row>
@@ -60,7 +77,7 @@
                   </el-row>
                 </el-form>
                 <div class="flex justify-end">
-                  <el-tooltip
+                  <!-- <el-tooltip
                     effect="dark"
                     content="上移"
                     placement="top-start"
@@ -71,7 +88,7 @@
                       :disabled="t.sort == 1"
                       @click="moveUp(t)"
                     />
-                  </el-tooltip>
+                  </el-tooltip> -->
 
                   <!-- <el-icon :size="20" @click="moveUp(t)"><Top /></el-icon> -->
                   <!-- <el-button type="primary" :disabled="t.sort==1" @click="moveUp(t)">上移</el-button> -->

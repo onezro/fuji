@@ -142,10 +142,14 @@
                     type="warning"
                     text
                     bg
-                    :disabled="scope.row.isLoadQueue!=1||scope.row.LoadQueueQty==0"
-                     @click="handleEdit(scope.row)"
+                    :disabled="
+                      scope.row.isLoadQueue != 1 || scope.row.LoadQueueQty == 0
+                    "
+                    @click="handleEdit(scope.row)"
                   >
-                    {{ scope.row.LoadQueueQty==0?'':scope.row.LoadQueueQty }}
+                    {{
+                      scope.row.LoadQueueQty == 0 ? "" : scope.row.LoadQueueQty
+                    }}
                   </el-button>
                 </template>
               </el-table-column>
@@ -286,7 +290,7 @@ const unformData = ref({
   userAccount: userStore.getUserInfo,
 });
 const getDetailForm = ref({
-  MfgOrder: '',
+  MfgOrder: "",
   Container: "",
   MaterialName: "",
   // SpecName: specName?.value || "",
@@ -302,15 +306,9 @@ const feedTableRef = ref();
 const inputFocus = ref(true);
 const feedInputRef = ref();
 const detailVisible = ref(false);
-const isTree = ref({
-  rowKey: "",
-  treeProps: {
-    children: "children",
-  },
-});
 const handleEdit = (row: any) => {
   detailForm.value = { ...row };
-  getDetailForm.value.MfgOrder=row.MfgOrderName
+  getDetailForm.value.MfgOrder = row.MfgOrderName;
   getDetailForm.value.MaterialName = row.MaterialName;
   // console.log( getDetailForm.value)
   getData();
@@ -427,6 +425,7 @@ const handleDelet = (row: any) => {
         UnLoadMaterialQueue(unformData.value).then((res: any) => {
           // BlankList.value = [];
           updateList();
+          // updateList();
           getData();
           ElNotification({
             title: res.msg,
@@ -527,6 +526,7 @@ const detailpageObj = ref({
 //更新需求清单
 const updateList = () => {
   emit("updateList");
+  // console.log(tableData?.value);
 };
 //上料
 const getChange = () => {
@@ -544,6 +544,7 @@ const getData = () => {
   QueryMaterialQueueDetails(getDetailForm.value).then((res: any) => {
     // console.log(res.content);
     if (res.success) {
+      detailForm.value.LoadQueueQty=res.content.reduce((sum:any, e:any) => sum + Number(e.LoadQueueQty || 0), 0)
       detailtableData.value = res.content;
     }
   });

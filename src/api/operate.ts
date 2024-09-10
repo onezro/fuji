@@ -210,3 +210,11 @@ export function GetComboBoxList(data: any) {
         }
     });
 }
+//查询工单任务详情
+export function findTaskToolsDetail(data: any) {
+    return request({
+        url: "/api/Tools/findTaskToolsDetail",
+        method: "post",
+        data,
+    });
+}

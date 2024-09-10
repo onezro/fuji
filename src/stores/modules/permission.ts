@@ -46,6 +46,7 @@ export const usePermissionStore = defineStore('permission', {
         let routerMap: AppRouteRecordRaw[] = []
         if (type === 'server') {
           // 模拟后端过滤菜单
+          // console.log(routers);
           routerMap = generateRoutesByServer1(routers as AppCustomRouteRecordRaw[])
           // console.log(routerMap)
         } else if (type === 'frontEnd') {
@@ -69,7 +70,6 @@ export const usePermissionStore = defineStore('permission', {
         ])
         // 渲染菜单的所有路由
         this.routers = cloneDeep(constantRouterMap).concat(routerMap)
-        // console.log(this.routers)
         resolve()
       })
     },
