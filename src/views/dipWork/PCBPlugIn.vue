@@ -1,8 +1,6 @@
 <template>
   <div class="flex flex-col w-full h-full">
-    <div
-      class="h-[40px] min-h-[40px] pl-2 pr-2 flex justify-between items-center"
-    >
+    <div class="h-[40px] min-h-[40px] pl-2 pr-2 flex justify-between items-center">
       <span class="text-[1.2rem]"> {{ opui.stationDec }} </span>
       <div>
         <el-button type="primary" @click="openOver">波峰焊设置</el-button>
@@ -11,41 +9,21 @@
     <div class="w-full flex-1 flex">
       <div class="setwidth w-[350px]">
         <div class="w-full h-full box">
-          <div
-            class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]"
-          >
+          <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
             <span class="ml-5">工装治具</span>
           </div>
           <div class="p-3 overflow-auto" :style="{ height: leftBoxH + 'px' }">
             <el-checkbox-group v-model="checked">
-              <el-card
-                shadow="always"
-                class="mb-2"
-                :body-style="{ padding: '8px' }"
-                v-for="t in toolList"
-                :key="t.ToolName"
-              >
-                <el-form ref="formRef" :model="t"  label-width="auto">
+              <el-card shadow="always" class="mb-2" :body-style="{ padding: '8px' }" v-for="t in toolList"
+                :key="t.ToolName">
+                <el-form ref="formRef" :model="t" label-width="auto">
                   <!-- <el-form-item class="mb-[5px]"> -->
                   <div class="flex justify-between items-center">
                     <div class="checked">
-                      <el-checkbox
-                        :value="t.ToolName"
-                        @change="changeCheck(t.ToolName)"
-                      />
+                      <el-checkbox :value="t.ToolName" @change="changeCheck(t.ToolName)" />
                     </div>
-                    <el-tooltip
-                      effect="dark"
-                      content="上移"
-                      placement="top-start"
-                    >
-                      <el-button
-                        icon="Top"
-                        circle
-                        
-                        :disabled="t.sort == 1"
-                        @click="moveUp(t)"
-                      />
+                    <el-tooltip effect="dark" content="上移" placement="top-start">
+                      <el-button icon="Top" circle :disabled="t.sort == 1" @click="moveUp(t)" />
                     </el-tooltip>
                   </div>
                   <!-- </el-form-item> -->
@@ -57,8 +35,8 @@
                     </el-col>
                     <el-col :span="12">
                       <el-form-item label="序号" class="mb-[5px]">
-                        <el-tag type="warning" v-if="t.sort==1">{{ t.sort }}</el-tag>
-                        <el-tag type="primary" v-if="t.sort>1">{{ t.sort }}</el-tag>
+                        <el-tag type="warning" effect="dark" v-if="t.sort == 1">{{ t.sort }}</el-tag>
+                        <el-tag type="primary" v-if="t.sort > 1">{{ t.sort }}</el-tag>
                         <!-- <span class="text-base">{{ t.sort }}</span> -->
                       </el-form-item>
                     </el-col>
@@ -101,88 +79,44 @@
       <div class="w-[calc(100%-350px)]">
         <div class="w-full h-full flex flex-col">
           <div>
-            <div
-              class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]"
-            >
+            <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
               <span class="ml-5"> 扫描条码</span>
             </div>
             <div class="h-[100px] pt-3 pr-5 pl-5">
-              <el-form
-                class="inbound"
-                ref="formRef"
-                :inline="true"
-                :model="form"
-                label-width="auto"
-                @submit.native.prevent
-              >
+              <el-form class="inbound" ref="formRef" :inline="true" :model="form" label-width="auto"
+                @submit.native.prevent>
                 <el-form-item label="扫描条码">
-                  <el-input
-                    v-model="stopsForm.ContainerName"
-                    ref="inputRef"
-                    :autofocus="inputFocus"
-                    style="width: 500px"
-                    placeholder="请扫描条码"
-                    @keyup.enter.native="getChange"
-                  />
+                  <el-input v-model="stopsForm.ContainerName" ref="inputRef" :autofocus="inputFocus"
+                    style="width: 500px" placeholder="请扫描条码" @keyup.enter.native="getChange" />
                 </el-form-item>
               </el-form>
-              <div
-                class="text-xl font-bold text-[#00B400]"
-                v-show="msgType === true || msgTitle === ''"
-              >
+              <div class="text-xl font-bold text-[#00B400]" v-show="msgType === true || msgTitle === ''">
                 {{ msgTitle === "" ? "请扫描PCB条码" : msgTitle }}
               </div>
-              <div
-                class="text-xl font-bold text-[red]"
-                v-show="msgType === false && msgTitle !== ''"
-              >
+              <div class="text-xl font-bold text-[red]" v-show="msgType === false && msgTitle !== ''">
                 {{ msgTitle }}
               </div>
             </div>
           </div>
           <div class="p-[10px]">
-            <el-form
-              class="inbound"
-              size="default"
-              ref="formRef"
-              :model="form"
-              :inline="true"
-              label-width="auto"
-            >
+            <el-form class="inbound" size="default" ref="formRef" :model="form" :inline="true" label-width="auto">
               <el-row>
                 <el-col :span="7">
                   <el-form-item label="工单" class="mb-[5px]">
-                    <selectTa
-                      ref="selectTable"
-                      :table="orderTable"
-                      :selectWidth="180"
-                      :columns="orderColumns"
-                      :max-height="400"
-                      :tableWidth="700"
-                      :defaultSelectVal="defaultSelectVal"
-                      :keywords="{
+                    <selectTa ref="selectTable" :table="orderTable" :selectWidth="180" :columns="orderColumns"
+                      :max-height="400" :tableWidth="700" :defaultSelectVal="defaultSelectVal" :keywords="{
                         label: 'MfgOrderName',
                         value: 'MfgOrderName',
-                      }"
-                      @radioChange="(...args: any) => radioChange(args)"
-                    >
+                      }" @radioChange="(...args: any) => radioChange(args)">
                     </selectTa>
                   </el-form-item>
                 </el-col>
                 <el-col :span="7">
                   <el-form-item class="mb-[5px]" label="产品编码">
-                    <el-input
-                      v-model="form.ProductName"
-                      disabled
-                    /> </el-form-item
-                ></el-col>
+                    <el-input v-model="form.ProductName" disabled /> </el-form-item></el-col>
                 <el-col :span="10">
                   <el-form-item class="mb-[5px]" label="产品描述">
-                    <el-input
-                      v-model="form.ProductDesc"
-                      style="width: 320px"
-                      disabled
-                    />
+                    <el-input v-model="form.ProductDesc" style="width: 320px" disabled />
                   </el-form-item>
                 </el-col>
               </el-row>
@@ -232,20 +166,12 @@
             </el-form>
           </div>
           <div class="flex flex-col flex-1 tabs-css">
-            <div
-              class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]"
-            >
+            <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
               <span class="ml-5">历史过站记录</span>
             </div>
-            <table-tem
-              :showIndex="true"
-              :tableData="tableData1"
-              :tableHeight="tableHeight"
-              :columnData="columnData1"
-              :pageObj="pageObj"
-              @handleSizeChange="handleSizeChange"
-              @handleCurrentChange="handleCurrentChange"
-            ></table-tem>
+            <table-tem :showIndex="true" :tableData="tableData1" :tableHeight="tableHeight" :columnData="columnData1"
+              :pageObj="pageObj" @handleSizeChange="handleSizeChange"
+              @handleCurrentChange="handleCurrentChange"></table-tem>
             <!-- <el-tabs v-model="tabsValue" type="border-card" class="demo-tabs">
               <el-tab-pane label="历史过站记录" name="history" :stretch="true">
                 <table-tem
@@ -280,16 +206,8 @@
       @addBadData="addBadData"
       @openAddBad="openAddBad"
     /> -->
-    <formTem
-      ref="addOverRef"
-      :width="'400px'"
-      :visible="overAddVisible"
-      :title="'波峰焊过序设置'"
-      :form="overAddForm"
-      :formHeader="overHeader"
-      @formCancel="addOverCancel"
-      @onSubmit="addOveronSubmit"
-    ></formTem>
+    <formTem ref="addOverRef" :width="'400px'" :visible="overAddVisible" :title="'波峰焊过序设置'" :form="overAddForm"
+      :formHeader="overHeader" @formCancel="addOverCancel" @onSubmit="addOveronSubmit"></formTem>
     <!-- <el-dialog
       v-model="feedVisible"
       title="物料上料"
@@ -307,7 +225,7 @@
           <el-button @click="feedCancel">关闭</el-button>
         </span>
       </template>
-    </el-dialog> -->
+</el-dialog> -->
   </div>
 </template>
 
@@ -932,7 +850,7 @@ const getScreenHeight = () => {
   font-size: 1.1rem;
 }
 
-.tabs-css .el-tabs--border-card > .el-tabs__header .el-tabs__item {
+.tabs-css .el-tabs--border-card>.el-tabs__header .el-tabs__item {
   color: #fff;
   // padding: 0 !important;
 }
@@ -951,10 +869,7 @@ const getScreenHeight = () => {
   color: #ff4949;
 }
 
-.tabs-css
-  .el-tabs--border-card
-  > .el-tabs__header
-  .el-tabs__item:not(.is-disabled):hover {
+.tabs-css .el-tabs--border-card>.el-tabs__header .el-tabs__item:not(.is-disabled):hover {
   // color: #fff;
   // background-color: #fff;
   background-color: rgba($color: #fff, $alpha: 0.8);

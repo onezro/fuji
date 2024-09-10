@@ -1,6 +1,6 @@
 <template>
-  <div class="p-[10px]">
-    <el-card shadow="always" :body-style="{ padding: '10px' }">
+  <div class="p-2">
+    <el-card shadow="always" :body-style="{ padding: '8px' }">
       <div>
         <el-form ref="formRef" :inline="true" :model="getDataText">
           <el-form-item label="时间区间" class="mb-2">
@@ -70,7 +70,7 @@
           <!-- <el-table-column prop="PadID" label="PadID"> </el-table-column>
           <el-table-column prop="Result" label="原因"> </el-table-column> -->
         </el-table>
-        <div class="block" style="margin-top: 15px">
+        <div class="block mt-2">
           <el-pagination align="center" background @size-change="handleSizeChange" @current-change="handleCurrentChange"
             :current-page="currentPage" :page-size="pageSize" :page-sizes="[5, 10, 20, 50, 100]"
             layout="total,sizes, prev, pager, next" :total="tableData.length">
@@ -232,7 +232,7 @@ const pageObj1 = ref({
 
 const getScreenHeight = () => {
   nextTick(() => {
-    tableHeight.value = window.innerHeight - 210;
+    tableHeight.value = window.innerHeight - 194;
   });
 };
 const getMaxLength = (arr: any) => {

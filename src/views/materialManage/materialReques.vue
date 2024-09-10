@@ -1,0 +1,511 @@
+<template>
+  <div class="p-[10px]">
+    <el-card shadow="always" :body-style="{ padding: '10px' }">
+      <div ref="headerRef">
+        <el-form
+          ref="formRef"
+          class="form"
+          :inline="true"
+          size="small"
+          label-width="85px"
+        >
+          <!-- <div>
+              </div> -->
+          <el-form-item label="工单号">
+            <el-select
+              v-model="form.MfgOrderName"
+              placeholder=""
+              style="width: 152.4px"
+              @change="orderChange"
+            >
+              <el-option
+                v-for="item in orderList"
+                :key="item"
+                :label="item.MfgOrderName"
+                :value="item.MfgOrderName"
+              />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="机型">
+            <el-input
+              v-model="form.BD_ProductModel"
+              class="input-with-select"
+              disabled
+            >
+            </el-input>
+          </el-form-item>
+          <el-form-item label="产品编码">
+            <el-input
+              v-model="form.ProductName"
+              class="input-with-select"
+              disabled
+            >
+            </el-input>
+          </el-form-item>
+          <el-form-item label="数量">
+            <el-input v-model="form.Qty" class="input-with-select" disabled>
+            </el-input>
+          </el-form-item>
+          <el-form-item label="单位">
+            <el-input v-model="form.UOMName" class="input-with-select" disabled>
+            </el-input>
+          </el-form-item>
+          <el-form-item label="产线">
+            <el-input
+              v-model="form.MfgLineDesc"
+              class="input-with-select"
+              disabled
+            >
+            </el-input>
+          </el-form-item>
+          <el-form-item label="状态">
+            <el-input
+              v-model="form.OrderStatusDesc"
+              class="input-with-select"
+              disabled
+            >
+            </el-input>
+          </el-form-item>
+          <el-form-item label="计划完成时间">
+            <el-input
+              v-model="form.PlannedCompletionDate"
+              class="input-with-select"
+              disabled
+            >
+            </el-input>
+          </el-form-item>
+          <el-form-item label="计划开始时间">
+            <el-input
+              v-model="form.PlannedCompletionDate"
+              class="input-with-select"
+              disabled
+            >
+            </el-input>
+          </el-form-item>
+          <el-form-item label="单据交易类型">
+            <el-input
+              v-model="form.PlannedStartDate"
+              class="input-with-select"
+              disabled
+            >
+            </el-input>
+          </el-form-item>
+          <br />
+          <el-form-item label="">
+            <el-button type="primary" @click="applyFor">申请</el-button>
+          </el-form-item>
+        </el-form>
+      </div>
+      <div class="table_container">
+        <!-- <el-table
+          :data="
+            tableData.slice(
+              (currentPage - 1) * pageSize,
+              currentPage * pageSize
+            )
+          "
+          border
+          size="small"
+          :height="tableHeight"
+          row-key="step1"
+          style="width: 100%"
+        >
+          <el-table-column prop="BarCode" label="ID" width="180">
+          </el-table-column>
+          <el-table-column prop="PadID" label="单据类型"> </el-table-column>
+          <el-table-column prop="Result" label="生产线"> </el-table-column>
+          <el-table-column prop="Result" label="工单合并组"> </el-table-column>
+          <el-table-column prop="Result" label="上个结存工单">
+          </el-table-column>
+          <el-table-column prop="Result" label="产品型号"> </el-table-column>
+          <el-table-column prop="Result" label="工单号"> </el-table-column>
+          <el-table-column prop="Result" label="领料单"> </el-table-column>
+          <el-table-column prop="Result" label="出库单"> </el-table-column>
+          <el-table-column prop="Result" label="状态"> </el-table-column>
+        </el-table> -->
+        <el-table
+          :data="feedTableData.slice(
+              (currentPage - 1) * pageSize,
+              currentPage * pageSize
+            )"
+          size="small"
+          stripe
+          border
+          fit
+          :tooltip-effect="'dark'"
+          :height="tableHeight"
+          row-key="MaterialName"
+          :tree-props="{ children: 'children' }"
+          @selection-change="handleSelectionChange"
+        >
+          <el-table-column type="selection" width="55" />
+          <!-- <el-table-column type="index" align="center" fixed label="序号" width="60" /> -->
+          <el-table-column
+            prop="MaterialName"
+            fixed
+            label="物料编码"
+            :min-width="150"
+            width="150"
+          >
+          </el-table-column>
+          <el-table-column
+            prop="MaterialDesc"
+            label="物料描述"
+            :show-overflow-tooltip="true"
+            width="200"
+          >
+          </el-table-column>
+
+          <el-table-column
+            prop="isMater"
+            label="主料"
+            width="150"
+            :min-width="150"
+          >
+            <template #default="scope">
+              <span v-if="scope.row.isMater === 1">是</span>
+              <span v-if="scope.row.isMater === 0"
+                >否{{ `(${scope.row.originalMaterialName})` }}</span
+              >
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="SpecName"
+            label="工序编码"
+            align="center"
+            :min-width="flexColumnWidth('使用工序', 'SpecDesc')"
+          >
+          </el-table-column>
+          <el-table-column
+            prop="SpecDesc"
+            label="工序名称"
+            align="center"
+            :min-width="flexColumnWidth('使用工序', 'SpecDesc')"
+          >
+          </el-table-column>
+
+          <el-table-column
+            prop="isLoadQueue"
+            align="center"
+            label="允许上料"
+            :min-width="flexColumnWidth('允许上料：（是否）', 'isLoadoueue')"
+          >
+            <template #default="scope">
+              <span v-if="scope.row.isLoadQueue === 1">是</span>
+              <span v-if="scope.row.isLoadQueue === 0">否</span>
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="QtyRequired"
+            align="center"
+            label="单件用量"
+            :min-width="flexColumnWidth('单件用量', 'QtyRequired')"
+          >
+          </el-table-column>
+          <el-table-column
+            prop="TotalQtyRequired"
+            align="center"
+            label="需求量"
+            :min-width="flexColumnWidth('需求量', 'TotalQtyRequired')"
+          >
+          </el-table-column>
+          <el-table-column
+            prop="RequestQty"
+            align="center"
+            label="请求数量"
+          >
+            <template #default="scope">
+            <el-input
+              v-model="scope.row.RequestQty"
+            >
+            </el-input>
+            </template>
+          </el-table-column>
+        </el-table>
+        <div class="block" style="margin: 15px 0">
+          <el-pagination
+            align="center"
+            background
+            size="small"
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+            :current-page="currentPage"
+            :page-size="pageSize"
+            :page-sizes="[5, 10, 20, 50, 100]"
+            layout="total,sizes, prev, pager, next, jumper"
+            :total="feedTableData.length"
+          >
+          </el-pagination>
+        </div>
+        <!-- <el-table
+            :data="tableData1"
+            border
+            size="small"
+            :height="tableHeight1"
+            row-key="step1"
+            style="width: 100%"
+          >
+            <el-table-column prop="BarCode" label="工单" width="180">
+            </el-table-column>
+            <el-table-column prop="PadID" label="领料单"> </el-table-column>
+            <el-table-column prop="Result" label="行项号"> </el-table-column>
+            <el-table-column prop="Result" label="料号"> </el-table-column>
+            <el-table-column prop="Result" label="数量"> </el-table-column>
+            <el-table-column prop="Result" label="单位"> </el-table-column>
+            <el-table-column prop="Result" label="主替料组别"> </el-table-column>
+            <el-table-column prop="Result" label="优先级"> </el-table-column>
+            <el-table-column prop="Result" label="物料描述"> </el-table-column>
+            <el-table-column prop="Result" label="物料规格"> </el-table-column>
+            <el-table-column prop="Result" label="指定出货批次">
+            </el-table-column>
+            <el-table-column prop="Result" label="指定出货"> </el-table-column>
+          </el-table> -->
+      </div>
+    </el-card>
+  </div>
+</template>
+
+<script lang="ts" setup>
+import { getCheckResults } from "@/api/operate";
+import type { InspectionResult } from "@/typing";
+import { ElMessageBox, ElMessage, ElLoading } from "element-plus";
+import tableTem from "@/components/tableTem/index.vue";
+import { useUserStoreWithOut } from "@/stores/modules/user";
+import { findOrder, QueryOrderMaterialRequired, SubmitMaterialRequest } from "@/api/operate";
+import { cloneDeep } from "lodash-es";
+import {
+  ref,
+  reactive,
+  watch,
+  nextTick,
+  onMounted,
+  onBeforeMount,
+  onBeforeUnmount,
+} from "vue";
+const tableData = ref<any>([]);
+const pageSize = ref(10);
+const currentPage = ref(1);
+const tableHeight = ref(0);
+const tableData1 = ref<any>([]);
+const tableHeight1 = ref(0);
+const userStore = useUserStoreWithOut();
+const loginName = userStore.getUserInfo;
+const addNewVisible = ref(false);
+const testValue = ref("");
+const headerRef = ref();
+const orderList = ref<any[]>([]);
+const feedTableData = ref<any>([]);
+const choiceList = ref<any[]>([]);
+
+
+const findOrderForm = {
+  workCenter: "",
+  orderNmae: "",
+  productName: "",
+  lineName: "",
+  Status: "",
+  PlanStartTime: "",
+  PlanEndTime: "",
+};
+
+interface formTS {
+  MfgOrderName: string;
+  PlannedStartDate: string;
+  PlannedCompletionDate: string;
+  Qty: number;
+  ProductName: string;
+  BD_ProjectNo: string | null;
+  BD_ProductModel: string;
+  ProductDesc: string;
+  UOMName: string;
+  OrderStatusName: string;
+  OrderStatusDesc: string;
+  MfgLineName: string;
+  MfgLineDesc: string;
+  WorkCenterName: string;
+  wcDescription: string;
+}
+
+const form = ref<formTS>({
+  MfgOrderName: "",
+  PlannedStartDate: "",
+  PlannedCompletionDate: "",
+  Qty: 0,
+  ProductName: "",
+  BD_ProjectNo: null,
+  BD_ProductModel: "",
+  ProductDesc: "",
+  UOMName: "",
+  OrderStatusName: "",
+  OrderStatusDesc: "",
+  MfgLineName: "",
+  MfgLineDesc: "",
+  WorkCenterName: "",
+  wcDescription: "",
+});
+
+// watch(
+
+// );
+onBeforeMount(() => {});
+
+onMounted(() => {
+  getScreenHeight();
+  findOrderData();
+  window.addEventListener("resize", getScreenHeight);
+  nextTick(() => {});
+});
+onBeforeUnmount(() => {
+  window.addEventListener("resize", getScreenHeight);
+});
+
+const findOrderData = () => {
+  findOrder(findOrderForm).then((res: any) => {
+    if (!res || res.content === null || res.content.length === 0) {
+      tableData.value = [];
+      return;
+    }
+    orderList.value = res.content;
+  });
+};
+
+const orderChange = (data: any) => {
+  orderList.value.forEach((item: any) => {
+    if (item.MfgOrderName === data) {
+      for (let key in form.value) {
+        // form.value[key] = item[key];
+      }
+      getFeedTableData(data);
+    }
+  });
+};
+
+const getFeedTableData = (order: any) => {
+  QueryOrderMaterialRequired({
+    MfgOrder: order,
+  }).then((res: any) => {
+    // console.log(OrganData(res.content));
+    if (res.success) {
+      let data = cloneDeep(feedOrganData(res.content));
+      // console.log(data);
+
+      feedTableData.value = data;
+
+      // OrganData(res.content)
+    }
+  });
+};
+
+const feedOrganData = (organizations: any) => {
+  const organizationMap = new Map();
+  organizations.forEach((org: any) => {
+    organizationMap.set(org.MaterialName, { ...org, children: [] });
+  });
+  organizations.forEach((org: any) => {
+    if (org.originalMaterialName !== org.MaterialName) {
+      const parentOrg = organizationMap.get(org.originalMaterialName);
+      if (parentOrg) {
+        parentOrg.children.push(organizationMap.get(org.MaterialName));
+      }
+    }
+  });
+  return Array.from(organizationMap.values()).filter(
+    (org) => org.originalMaterialName == org.MaterialName
+  );
+};
+
+const flexColumnWidth = (label: any, prop: any) => {
+  const arr = feedTableData?.value.map((x: { [x: string]: any }) => x[prop]);
+  arr.push(label); // 把每列的表头也加进去算
+  // console.log(arr);
+  return getMaxLength(arr) + 25 + "px";
+};
+
+const getMaxLength = (arr: any) => {
+  return arr.reduce((acc: any, item: any) => {
+    if (item) {
+      // console.log(acc,item);
+      const calcLen = getTextWidth(item);
+
+      if (acc < calcLen) {
+        acc = calcLen;
+      }
+    }
+    return acc;
+  }, 0);
+};
+
+const getTextWidth = (str: string) => {
+  let width = 0;
+  const html = document.createElement("span");
+  html.style.cssText = `padding: 0; margin: 0; border: 0; line-height: 1; font-size: ${16}px; font-family: Arial, sans-serif;`;
+  html.innerText = str; // 去除字符串前后的空白字符
+  document.body?.appendChild(html);
+
+  const spanElement = html; // 无需再次查询，直接使用创建的元素
+  if (spanElement) {
+    width = spanElement.offsetWidth;
+    spanElement.remove();
+  }
+  // console.log(width);
+  return width;
+};
+
+const handleSelectionChange = (data:any) => {
+  choiceList.value = data.map((item:any) => {
+    return { MaterialName:item.MaterialName, RequestQty:item.RequestQty ? item.RequestQty:'0' }
+  }); 
+  console.log(choiceList.value);
+  
+}
+
+const applyFor = () => {
+  if (form.value.MfgOrderName === '') {
+    return;
+  }
+  SubmitMaterialRequest({
+  "RequestType": "string",
+  "MfgOrderName": form.value.MfgOrderName,
+  "MaterialList": choiceList.value,
+  "userAccount": loginName,
+}).then((res:any) => {
+  console.log(res);
+})
+}
+
+const handleSizeChange = (val: any) => {
+  currentPage.value = 1;
+  pageSize.value = val;
+};
+const handleCurrentChange = (val: any) => {
+  currentPage.value = val;
+};
+
+const pageObj1 = ref({
+  pageSize: 10,
+  currentPage: 1,
+});
+
+const handleSizeChange1 = (val: any) => {
+  pageObj1.value.currentPage = 1;
+  pageObj1.value.pageSize = val;
+};
+const handleCurrentChange1 = (val: any) => {
+  pageObj1.value.currentPage = val;
+};
+
+const getScreenHeight = () => {
+  nextTick(() => {
+    tableHeight.value = window.innerHeight - 190 - headerRef.value.clientHeight;
+    tableHeight1.value =
+      (window.innerHeight - 190 - headerRef.value.clientHeight) * 0.4;
+  });
+};
+</script>
+
+<style lang="scss" scoped></style>
+<style scoped>
+.el-pagination {
+  justify-content: center;
+}
+</style>
