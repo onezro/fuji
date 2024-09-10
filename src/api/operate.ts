@@ -210,3 +210,12 @@ export function GetComboBoxList(data: any) {
         }
     });
 }
+//获取工治具型号维护类型
+export function SubmitMaterialRequest(data: any) {
+    return request({
+        url: "/api/order/SubmitMaterialRequest",
+        method: "post",
+        data
+    });
+}
+
