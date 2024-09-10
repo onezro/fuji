@@ -78,7 +78,7 @@
             placeholder=""
           ></el-input>
         </el-form-item>
-        <el-form-item label="到期日期" prop="ExpirationDate">
+        <!-- <el-form-item label="到期日期" prop="ExpirationDate">
           <el-date-picker
             style="width: 240px"
             v-model="EditForm.ExpirationDate"
@@ -86,7 +86,7 @@
             type="date"
             placeholder=""
           />
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="供应商料号" prop="ManufacturerPartNumber">
           <el-input
             v-model="EditForm.ManufacturerPartNumber"
@@ -173,7 +173,7 @@
             placeholder=""
           ></el-input>
         </el-form-item>
-        <el-form-item label="到期日期" prop="ExpirationDate">
+        <!-- <el-form-item label="到期日期" prop="ExpirationDate">
           <el-date-picker
             style="width: 240px"
             v-model="form.ExpirationDate"
@@ -181,7 +181,7 @@
             type="date"
             placeholder=""
           />
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="供应商料号" prop="ManufacturerPartNumber">
           <el-input
             v-model="form.ManufacturerPartNumber"
@@ -271,7 +271,7 @@ interface EditFormTS {
   LotNumber: string;
   remark: string;
   user: string;
-  ExpirationDate: string;
+  // ExpirationDate: string;
 }
 
 //   const pageSize = ref(10);
@@ -300,7 +300,7 @@ const form = ref<formTS>({
   LotNumber: "",
   remark: "",
   user: loginName,
-  ExpirationDate: "",
+  ExpirationDate: null,
 });
 
 const EditForm = ref<EditFormTS>({
@@ -313,7 +313,7 @@ const EditForm = ref<EditFormTS>({
   LotNumber: "",
   remark: "",
   user: loginName,
-  ExpirationDate: "",
+  // ExpirationDate: "",
 });
 
 const clearForm = () => {
@@ -342,7 +342,7 @@ const clearEditForm = () => {
     LotNumber: "",
     remark: "",
     user: loginName,
-    ExpirationDate: "",
+    // ExpirationDate: "",
   };
 };
 
@@ -374,7 +374,7 @@ const editSubmit = (data: any) => {
   EditForm.value.Supplier = data.Supplier;
   EditForm.value.LotNumber = data.LotNumber;
   EditForm.value.remark = data.Remark;
-  EditForm.value.ExpirationDate = data.ExpirationDate;
+  // EditForm.value.ExpirationDate = data.ExpirationDate;
   editVisible.value = true;
 };
 
@@ -506,14 +506,14 @@ const columnData = reactive([
     min: true,
     align: "center",
   },
-  {
-    text: true,
-    prop: "Location",
-    label: "库位",
-    width: "",
-    min: true,
-    align: "center",
-  },
+  // {
+  //   text: true,
+  //   prop: "Location",
+  //   label: "库位",
+  //   width: "",
+  //   min: true,
+  //   align: "center",
+  // },
   {
     text: true,
     prop: "TotalUses",
