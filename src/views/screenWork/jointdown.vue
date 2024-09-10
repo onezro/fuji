@@ -6,7 +6,7 @@
       <span class="text-[1.2rem]"> {{ opui.stationDec }} </span>
       <el-button type="primary" @click="materialFeeding">物料上料</el-button>
     </div>
-    
+
     <div class="w-full flex-1 flex">
       <div class="setwidth w-[320px]">
         <div class="w-full h-full box">
@@ -22,7 +22,7 @@
               :model="form"
               label-width="auto"
             >
-              <el-form-item  label="工单">
+              <el-form-item label="工单">
                 <selectTa
                   ref="selectTable"
                   :table="orderTable"
@@ -135,13 +135,45 @@
         </div>
       </div>
     </div>
+    <el-dialog
+      v-model="feedVisible"
+      title="物料上料"
+      width="90%"
+      align-center
+      class="saveAsDialog"
+      :append-to-body="true"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+    >
+      <feedTemp
+        ref="feedRef"
+        :form="feedForm"
+        :form-header="FeedHeader"
+        :tableData="feedTableData"
+        :specName="'SMT-Burn'"
+        @updateList="getFeedData"
+      />
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="feedCancel">关闭</el-button>
+        </span>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
 <script lang="ts" setup>
+import {
+  QueryBurnPrintData,
+  PrintBurnModel,
+  OrderQuery,
+  QueryOrderMaterialRequired,
+} from "@/api/smtApi";
+import { cloneDeep } from "lodash-es";
 import tableTem from "@/components/tableTem/index.vue";
-import selectTa from '@/components/selectTable/index.vue';
+import selectTa from "@/components/selectTable/index.vue";
 import badInfoTem from "@/components/badInfoTem/index.vue";
+import feedTemp from "@/components/feedTemp/index.vue";
 import { checkStringType } from "@/utils/barcodeFormat";
 import { useAppStoreWithOut } from "@/stores/modules/app";
 import { useUserStoreWithOut } from "@/stores/modules/user";
@@ -155,6 +187,17 @@ import {
   onBeforeMount,
   onBeforeUnmount,
 } from "vue";
+interface orderArr {
+  order: string;
+  models: string;
+  productCode: string;
+  productDes: string;
+  orderNum: string;
+}
+
+interface OrderData {
+  data: Array<orderArr>;
+}
 const appStore = useAppStoreWithOut();
 const userStore = useUserStoreWithOut();
 const opui = appStore.getOPUIReal();
@@ -176,16 +219,8 @@ const form = reactive<InstanceType<typeof Formspan>>({
   productCode: "",
   productDes: "",
   orderNum: "",
-  // passNum: '83'
 });
 const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
-  //   {
-  //     label: "工单号",
-  //     value: "order",
-  //     disabled: true,
-  //     type: "input",
-  //     width: "",
-  //   },
   {
     label: "机型",
     value: "models",
@@ -214,13 +249,7 @@ const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
     type: "input",
     width: "",
   },
-  // {
-  //     label: '过站数量',
-  //     value: 'passNum',
-  //     disabled: true,
-  //     type: 'input',
-  //     width: ''
-  // },
+
 ]);
 const columnData1 = reactive([
   {
@@ -260,17 +289,7 @@ const columnData1 = reactive([
   },
 ]);
 
-interface orderArr {
-  order: string;
-  models: string;
-  productCode: string;
-  productDes: string;
-  orderNum: string;
-}
 
-interface OrderData {
-  data: Array<orderArr>;
-}
 
 const orderTable = ref<OrderData>({
   data: [
@@ -323,6 +342,46 @@ const pageObj = ref({
   currentPage: 1,
 });
 
+const feedTableData=ref([])//上料需求清单
+const feedRef=ref()
+const feedVisible = ref(false);
+const feedForm = ref({
+  MfgOrderName: "",
+  type: opui.station,
+  ProductName: "",
+  ProductDesc: "",
+  Qty: "",
+  eqInfo: opui.stationDec,
+});
+
+const FeedHeader = reactive([
+  {
+    label: "机台",
+    prop: "eqInfo",
+  },
+  {
+    label: "工单号",
+    prop: "MfgOrderName",
+  },
+
+  {
+    label: "机型",
+    prop: "type",
+  },
+  {
+    label: "产品编码",
+    prop: "ProductName",
+  },
+  {
+    label: "产品描述",
+    prop: "ProductDesc",
+  },
+  {
+    label: "工单数量",
+    prop: "Qty",
+  },
+]);
+
 onBeforeMount(() => {
   getScreenHeight();
 });
@@ -333,15 +392,38 @@ onMounted(() => {
 onBeforeUnmount(() => {
   window.addEventListener("resize", getScreenHeight);
 });
+//打开物料上料
+const materialFeeding = () => {
+  feedVisible.value = true;
+};
+//关闭物料上料
+const feedCancel = () => {
+  feedVisible.value = false;
+};
+
+const getFeedData=()=>{
+  QueryOrderMaterialRequired({
+    MfgOrder: feedForm.value.MfgOrderName,
+    Container: "",
+    SpecName: "SMT-Burn",
+    workstationName: opui.station,
+    userAccount: userStore.getUserInfo,
+  }).then((res: any) => {
+    // console.log(OrganData(res.content));
+    if(res.success){
+      let data=cloneDeep(OrganData(res.content))   
+      feedTableData.value=data
+      // OrganData(res.content)
+    }
+  });
+}
 
 const formText = (data: string) => {
   let key = data as keyof typeof form;
   return form[key];
 };
- 
-const materialFeeding=()=>{
-  
-}
+
+
 
 const keyUp = () => {
   if (checkStringType(barCode.value) == "result") {
@@ -389,6 +471,21 @@ const workOrderChoice = (value: any) => {
   form.productDes = value.productDes;
   form.orderNum = value.orderNum;
 };
+const OrganData = (organizations: any) => {
+    const organizationMap = new Map();
+    organizations.forEach((org: any) => {
+      organizationMap.set(org.MaterialName, { ...org, children: [] });
+    });
+    organizations.forEach((org: any) => {
+      if (org.originalMaterialName !== org.MaterialName) {
+        const parentOrg = organizationMap.get(org.originalMaterialName);
+        if (parentOrg) {
+          parentOrg.children.push(organizationMap.get(org.MaterialName));
+        }
+      }
+    });
+    return Array.from(organizationMap.values()).filter(org => org.originalMaterialName ==org.MaterialName);
+  }
 </script>
 
 <style lang="scss">

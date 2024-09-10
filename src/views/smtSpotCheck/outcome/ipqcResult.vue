@@ -3,27 +3,27 @@
     <el-card shadow="always" :body-style="{ padding: '10px' }">
       <div>
         <el-form ref="formRef" class="form" :inline="true" :model="getDataText">
-          <el-form-item>
+          <el-form-item class="mb-2">
             <el-select size="default" style="width: 100px" v-model="inquire" placeholder="检查类型">
               <el-option v-for="item in inquireList" :key="item.value" :label="item.lable" :value="item.value">
               </el-option>
             </el-select>
           </el-form-item>
-          <el-form-item>
+          <el-form-item class="mb-2">
             <el-select size="default" style="width: 100px" v-model="getDataText.inspectType" placeholder="检查类型">
               <el-option v-for="item in typeList" :key="item.value" :label="item.lable" :value="item.value"></el-option>
             </el-select></el-form-item>
-          <el-form-item v-show="inquire == 'order'">
+          <el-form-item v-show="inquire == 'order'" class="mb-2">
             <el-input size="default" placeholder="请输入单号" clearable v-model="getDataText.inspect" class="input-with-select"
               @change="getData()">
             </el-input>
           </el-form-item>
-          <el-form-item v-show="inquire != 'order'">
+          <el-form-item v-show="inquire != 'order'" class="mb-2">
             <el-date-picker v-model="value1" format="YYYY-MM-DD" value-format="YYYY-MM-DD" type="daterange"
               range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期">
             </el-date-picker>
           </el-form-item>
-          <el-form-item>
+          <el-form-item class="mb-2">
             <el-button type="primary" @click="getData()">查询</el-button>
           </el-form-item>
         </el-form>
@@ -178,7 +178,7 @@ onBeforeUnmount(() => {
 
 const getData = () => {
   getCheckResults(getDataText).then((res: any) => {
-    console.log(res.content);
+    // console.log(res.content);
     dataProcessing(res.content)
   })
 }
@@ -249,7 +249,7 @@ const dataProcessing=(data:any)=>{
         }
       });
       tableData.value = a;
-      console.log(a);
+      // console.log(a);
 }
 
 const resultText = (data: any) => {
@@ -306,7 +306,7 @@ const handleCurrentChange = (val: any) => {
 
 const getScreenHeight = () => {
   nextTick(() => {
-    tableHeight.value = window.innerHeight - 230;
+    tableHeight.value = window.innerHeight - 210;
   });
 };
 </script>

@@ -1,11 +1,12 @@
 <template>
-  <div class="p-[10px]">
-    <el-card shadow="always" :body-style="{ padding: '10px' }">
+  <div class="p-2">
+    <el-card shadow="always" :body-style="{ padding: '8px' }">
       <div class="pb-[10px] flex justify-between">
         <el-button type="primary" @click="addVisible = true">添加</el-button>
         <div class="flex"></div>
       </div>
       <table-tem
+      :show-index="true"
         :tableData="tableData"
         :tableHeight="tableHeight"
         :columnData="columnData"
@@ -494,7 +495,7 @@ const columnData = reactive([
     text: true,
     prop: "CompID",
     label: "工治具编码",
-    width: "",
+    width: "250",
     min: true,
     align: "center",
   },
@@ -502,7 +503,7 @@ const columnData = reactive([
     text: true,
     prop: "CompName",
     label: "工治具型号",
-    width: "",
+    width: "200",
     min: true,
     align: "center",
   },
@@ -625,7 +626,7 @@ const handleCurrentChange = (val: any) => {
 };
 const getScreenHeight = () => {
   nextTick(() => {
-    tableHeight.value = window.innerHeight - 215;
+    tableHeight.value = window.innerHeight - 205;
   });
 };
 </script>

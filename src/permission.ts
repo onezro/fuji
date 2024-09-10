@@ -55,6 +55,7 @@ router.beforeEach(async (to, from, next) => {
                   if (systemRouter.length == 0) {
                     await permissionStore.generateRoutes('static')
                   } else {
+                    // console.log(systemRouter[0].childMenu);
                     userStore.setRoleRouters(systemRouter[0].childMenu)
                     await permissionStore.generateRoutes('server', systemRouter[0].childMenu)
                   }
@@ -62,6 +63,7 @@ router.beforeEach(async (to, from, next) => {
                 else {
                   await permissionStore.generateRoutes('static')
                 }
+                // console.log(permissionStore.getAddRouters);
                 permissionStore.getAddRouters.forEach((route: any) => {
                   router.addRoute(route as unknown as RouteRecordRaw) 
                 })

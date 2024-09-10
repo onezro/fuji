@@ -1,7 +1,7 @@
 <template>
-  <div class="p-[10px]">
-    <el-card shadow="always" :body-style="{ padding: '10px' }">
-      <div class="pb-[10px] flex justify-between">
+  <div class="p-2">
+    <el-card shadow="always" :body-style="{ padding: '8px' }">
+      <div class="pb-2 flex justify-between">
         <el-button type="primary" @click="openAdd(), clearForm()"
           >添加</el-button
         >
@@ -18,6 +18,7 @@
       </div>
       <table-tem
         size="small"
+        :show-index="true"
         :tableData="tableData"
         :tableHeight="tableHeight"
         :columnData="columnData"
@@ -75,6 +76,7 @@
         </el-form-item> -->
         <el-form-item label="自定义总次数">
           <el-input
+            disabled
             v-model.number="EditForm.TotalUses"
             style="width: 240px"
             placeholder="请输入"
@@ -90,7 +92,11 @@
           <el-checkbox
             class="ml-3"
             v-model="editFormControl.CleanAfterUses"
-            @change="EditForm.UsesUntilRevalidation = !editFormControl.CleanAfterUses ? 0:EditForm.UsesUntilRevalidation"
+            @change="
+              EditForm.UsesUntilRevalidation = !editFormControl.CleanAfterUses
+                ? 0
+                : EditForm.UsesUntilRevalidation
+            "
             label="启用"
             size="large"
           />
@@ -105,7 +111,11 @@
           <el-checkbox
             class="ml-3"
             v-model="editFormControl.CleanAfterPause"
-            @change="EditForm.PauseUntilRevalidate = !editFormControl.CleanAfterPause ? 0:EditForm.PauseUntilRevalidate"
+            @change="
+              EditForm.PauseUntilRevalidate = !editFormControl.CleanAfterPause
+                ? 0
+                : EditForm.PauseUntilRevalidate
+            "
             label="启用"
             size="large"
           />
@@ -120,7 +130,11 @@
           <el-checkbox
             class="ml-3"
             v-model="editFormControl.CleanAfterTime"
-            @change="EditForm.TimeUntilRevalidation = !editFormControl.CleanAfterTime ? 0:EditForm.TimeUntilRevalidation"
+            @change="
+              EditForm.TimeUntilRevalidation = !editFormControl.CleanAfterTime
+                ? 0
+                : EditForm.TimeUntilRevalidation
+            "
             label="启用"
             size="large"
           />
@@ -244,7 +258,11 @@
           <el-checkbox
             class="ml-3"
             v-model="formControl.CleanAfterUses"
-            @change="form.UsesUntilRevalidation = !formControl.CleanAfterUses ? 0:form.UsesUntilRevalidation"
+            @change="
+              form.UsesUntilRevalidation = !formControl.CleanAfterUses
+                ? 0
+                : form.UsesUntilRevalidation
+            "
             label="启用"
             size="large"
           />
@@ -261,7 +279,11 @@
           <el-checkbox
             class="ml-3"
             v-model="formControl.CleanAfterPause"
-            @change="form.PauseUntilRevalidate = !formControl.CleanAfterPause ? 0:form.PauseUntilRevalidate"
+            @change="
+              form.PauseUntilRevalidate = !formControl.CleanAfterPause
+                ? 0
+                : form.PauseUntilRevalidate
+            "
             label="启用"
             size="large"
           />
@@ -278,7 +300,11 @@
           <el-checkbox
             class="ml-3"
             v-model="formControl.CleanAfterTime"
-            @change="form.TimeUntilRevalidation = !formControl.CleanAfterTime ? 0:form.TimeUntilRevalidation"
+            @change="
+              form.TimeUntilRevalidation = !formControl.CleanAfterTime
+                ? 0
+                : form.TimeUntilRevalidation
+            "
             label="启用"
             size="large"
           />
@@ -329,22 +355,13 @@
         </span>
       </template>
     </el-dialog>
-    <el-dialog v-model="deleteVisible" title="Tips" width="500">
-      <span>删除确认</span>
-      <template #footer>
-        <div class="dialog-footer">
-          <el-button @click="deleteVisible = false">取消</el-button>
-          <el-button type="primary" @click="deleteConfirm"> 删除 </el-button>
-        </div>
-      </template>
-    </el-dialog>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ElMessage, ElNotification, ElMessageBox } from "element-plus";
 import tableTem from "@/components/tableTem/index.vue";
-import { ToolsType ,GetComboBoxList} from "@/api/operate";
+import { ToolsType, GetComboBoxList } from "@/api/operate";
 import {
   ref,
   unref,
@@ -400,7 +417,7 @@ const currentPage = ref(1);
 const tableHeight = ref(0);
 const addVisible = ref(false);
 const editVisible = ref(false);
-const inputValue = ref('');
+const inputValue = ref("");
 const deleteVisible = ref(false);
 const deleteChoice = ref("");
 const pageObj = ref({
@@ -420,9 +437,9 @@ const editFormControl = ref({
   CleanAfterTime: false,
 });
 
-// watch(formControl, (newVal, oldVal) => {  
+// watch(formControl, (newVal, oldVal) => {
 //   UsesUntilRevalidation = ''
-//     });  
+//     });
 
 const tableData = ref([]);
 
@@ -463,13 +480,13 @@ const EditForm = ref<EditFormTS>({
   LowerTensionLimit: 0,
   TensionPoints: 0,
 });
-const openAdd=()=>{
-  addVisible.value=true
-  GetComboBoxList('ToolsType').then((res:any)=>{
-    MaterialNameList.value=res.content
+const openAdd = () => {
+  addVisible.value = true;
+  GetComboBoxList("ToolsType").then((res: any) => {
+    MaterialNameList.value = res.content;
     // console.log(res.content);
-  })
-}
+  });
+};
 
 const editSubmit = (data: any) => {
   EditForm.value.operationtype = data.operationtype;
@@ -481,14 +498,15 @@ const editSubmit = (data: any) => {
   EditForm.value.UsesUntilRevalidation = data.UsesUntilRevalidation;
   EditForm.value.PauseUntilRevalidate = data.PauseUntilRevalidate;
   EditForm.value.TimeUntilRevalidation = data.TimeUntilRevalidation;
+  EditForm.value.CleaningTime = data.CleaningTime;
   editFormControl.value.CleanAfterUses = data.CleanAfterUses === "Y";
   editFormControl.value.CleanAfterPause = data.CleanAfterPause === "Y";
   editFormControl.value.CleanAfterTime = data.CleanAfterTime === "Y";
   editVisible.value = true;
 };
-interface toolType{
-  Text:string;
-  Value:string
+interface toolType {
+  Text: string;
+  Value: string;
 }
 
 const MaterialNameList = ref<toolType[]>([]);
@@ -505,34 +523,43 @@ const editConfirm = () => {
       return;
     }
     clearEditForm();
-    ElMessage({
-      message: data.msg,
-      type: "success",
-    });
+    ElNotification({
+            type: "success",
+            message: data.msg,
+          });
     getData();
     editVisible.value = false;
   });
 };
 
 const deleteSubmit = (data: any) => {
-  deleteVisible.value = true;
-  deleteChoice.value = data.CompName;
-};
-
-const deleteConfirm = () => {
-  ToolsType({ CompName: deleteChoice.value, operationtype: "DEL" }).then(
-    (data: any) => {
-      if (!data) {
-        return;
-      }
-      ElMessage({
-        message: data.msg,
-        type: "success",
+  // deleteVisible.value = true;
+  // deleteChoice.value = data.CompName;
+  ElMessageBox.confirm("确定删除", "确认操作", {
+    confirmButtonText: "确定",
+    cancelButtonText: "取消",
+    type: "warning",
+  })
+    .then(() => {
+      ToolsType({ CompName: data.CompName, operationtype: "DEL" }).then(
+        (data: any) => {
+          if (!data) {
+            return;
+          }
+          ElNotification({
+            type: "success",
+            message: data.msg,
+          });
+          getData();
+        }
+      );
+    })
+    .catch(() => {
+      ElNotification({
+        type: "info",
+        message: "取消操作",
       });
-      getData();
-    }
-  );
-  deleteVisible.value = false;
+    });
 };
 
 const clearForm = () => {
@@ -605,7 +632,7 @@ const addSumbit = () => {
 };
 
 const searchData = () => {
-  if (inputValue.value === '') {
+  if (inputValue.value === "") {
     getData();
     return;
   }
@@ -645,7 +672,7 @@ const columnData = reactive([
     text: true,
     prop: "CompName",
     label: "工治具型号编码",
-    width: "",
+    width: "200",
     min: true,
     align: "1",
   },
@@ -735,7 +762,7 @@ const columnData = reactive([
       {
         type: "primary",
         label: "编辑",
-        icon: "Document",
+        icon: "EditPen",
         buttonClick: editSubmit,
       },
       {
@@ -768,7 +795,7 @@ const handleCurrentChange = (val: any) => {
 };
 const getScreenHeight = () => {
   nextTick(() => {
-    tableHeight.value = window.innerHeight - 215;
+    tableHeight.value = window.innerHeight - 205;
   });
 };
 </script>
@@ -782,6 +809,7 @@ const getScreenHeight = () => {
 ::v-deep .no_number input::-webkit-outer-spin-button {
   -webkit-appearance: none !important;
 }
+
 ::v-deep .no_number input[type="number"] {
   appearance: textfield;
 }
