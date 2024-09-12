@@ -4,7 +4,7 @@
       <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
         <span class="ml-5">基本信息</span>
       </div>
-      <div class="p-[10px]">
+      <div class="p-2">
         <el-form
           class="inbound"
           size="default"
@@ -39,7 +39,7 @@
           </el-form-item>
           <el-form-item v-for="f in formHeader" :key="f.value" :label="f.label">
             <span
-              class="font-bold text-[18px] leading-[30px]"
+              class="font-bold text-base leading-[30px]"
               :class="f.value == 'passNum' ? 'text-[#00B400]' : ''"
             >
               {{ formText(f.value) }}</span
@@ -117,7 +117,7 @@
             :disabled="OrderForm.MfgOrderName == ''"
             type="warning"
             @click="RawmaterialFeeding"
-            >原材料上料</el-button
+            >物料上料</el-button
           >
         </div>
         <tableTem

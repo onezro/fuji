@@ -3,7 +3,7 @@
     <el-card shadow="always" :body-style="{ padding: '8px' }">
       <div>
         <el-form ref="formRef" :inline="true" :model="getDataText">
-          <el-form-item label="时间区间" class="mb-2">
+          <el-form-item label="计划开始时间" class="mb-2">
             <el-date-picker v-model="getDataText.date" format="YYYY-MM-DD" :clearable="true" value-format="YYYY-MM-DD"
               type="daterange" range-separator="-" start-placeholder="开始时间" end-placeholder="结束时间"
               style="width: 240px" />
@@ -30,25 +30,29 @@
         )
           " border :height="tableHeight" style="width: 100%" size="small">
           <el-table-column type="index" align="center" fixed label="序号" width="55" />
-          <el-table-column prop="TaskNo" label="任务单" :min-width="flexColumnWidth('任务单', 'TaskNo')">
+          <el-table-column prop="PlannedStart" label="计划开始时间" :min-width="flexColumnWidth('计划开始时间', 'PlannedStart')">
           </el-table-column>
-          <el-table-column prop="OrderNumber" label="工单号" :min-width="flexColumnWidth('工单号', 'OrderNumber')">
+          <el-table-column prop="TaskNo" label="任务单" :min-width="flexColumnWidth('任务单', 'TaskNo')">
           </el-table-column>
           <el-table-column prop="LineName" label="产线" :min-width="flexColumnWidth('产线', 'LineName')">
           </el-table-column>
+          <el-table-column prop="OrderNumber" label="工单号" :min-width="flexColumnWidth('工单号', 'OrderNumber')">
+          </el-table-column>
+          <el-table-column prop="Side" align="center" label="面号" :min-width="flexColumnWidth('面号', 'Side')">
+          </el-table-column>
+          <el-table-column prop="ProductName" label="产品编码" :min-width="flexColumnWidth('产品编号', 'ProductName')">
+          </el-table-column>
           <el-table-column prop="ProcedureDsc" label="工序" :min-width="flexColumnWidth('工序', 'ProcedureDsc')">
-          </el-table-column>
-          <el-table-column prop="ProductName" label="产品编号" :min-width="flexColumnWidth('产品编号', 'ProductName')">
-          </el-table-column>
-          <el-table-column prop="Department" align="center" label="工治具"
-            :min-width="flexColumnWidth('工治具', 'Department')">
           </el-table-column>
           <el-table-column prop="MaterialName" align="center" label="工治具类别"
             :min-width="flexColumnWidth('工治具类别', 'MaterialName')">
           </el-table-column>
-
-          <el-table-column prop="Side" align="center" label="面号" :min-width="flexColumnWidth('面号', 'Side')">
+          <el-table-column prop="ToolsMold" align="center" label="工治具型号"
+            :min-width="flexColumnWidth('工治具型号', 'ToolsMold')">
           </el-table-column>
+         
+
+          
           <el-table-column prop="Amount" align="center" label="需求数" :min-width="flexColumnWidth('需求数', 'Amount')">
           </el-table-column>
           <el-table-column prop="IssuedQuantity" align="center" label="出库数"
@@ -63,8 +67,7 @@
           </el-table-column>
           <!-- <el-table-column prop="Quantity" label="工单数量">
           </el-table-column> -->
-          <el-table-column prop="PlannedStart" label="计划开始时间" :min-width="flexColumnWidth('计划开始时间', 'PlannedStart')">
-          </el-table-column>
+         
 
           <!-- <el-table-column prop="ToolsMold" label="工治具编号">
           </el-table-column> -->
@@ -74,7 +77,7 @@
         </el-table>
         <div class="block mt-2">
           <el-pagination align="center" background @size-change="handleSizeChange" @current-change="handleCurrentChange"
-            :current-page="currentPage" :page-size="pageSize" :page-sizes="[5, 10, 20, 50, 100]"
+            :current-page="currentPage" :page-size="pageSize" :page-sizes="[ 15,30, 50, 100,150]"
             layout="total,sizes, prev, pager, next" :total="tableData.length">
           </el-pagination>
         </div>
@@ -101,7 +104,7 @@ import {
 } from "vue";
 const tableData = ref<any>([]);
 const historyTable = ref<any>([]);
-const pageSize = ref(10);
+const pageSize = ref(30);
 const currentPage = ref(1);
 const tableHeight = ref(0);
 const ruleFormRef = ref();
@@ -120,11 +123,11 @@ const getDataText = ref({
 
 const sideList = ref([
   {
-    value: "T",
+    value: "TOP",
     label: "TOP",
   },
   {
-    value: "B",
+    value: "BOT",
     label: "BOT",
   },
 ]);

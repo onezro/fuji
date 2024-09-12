@@ -5,8 +5,8 @@
       pageObj.currentPage * pageObj.pageSize
     )
       " stripe border fit :height="tableHeight" :size="size || 'default'" :tooltip-effect="'dark'" style="width: 100%"
-      @selection-change="handleSelectionChange" @row-click="rowClick" ref="multipleTableRef">
-      <el-table-column type="selection" width="55" align="center" v-if="showSelect" />
+      @selection-change="handleSelectionChange" @row-click="rowClick" ref="multipleTableRef" >
+      <el-table-column type="selection" fixed width="55" align="center" v-if="showSelect" />
       <el-table-column type="index" align="center" fixed label="序号"  :width="size=='small'?'50':'60'" v-if="showIndex">
 
       </el-table-column>
@@ -76,6 +76,7 @@ const {
 } = toRefs(props);
 
 const multipleTableRef = ref();
+const rowId=ref('')
 
 const emit = defineEmits([
   "handleSizeChange",
@@ -96,8 +97,15 @@ const handleCurrentChange = (e: any) => {
 };
 
 const rowClick = (e: any) => {
+  // console.log(e);
   emit("rowClick", cloneDeep(e));
 };
+// const rowStyle =()=>{
+//   return {
+//     'background-color': '#ffcd50',
+//       // 'color': '#fff'
+//   }
+// }
 
 const getMaxLength = (arr: any) => {
   return arr.reduce((acc: any, item: any) => {

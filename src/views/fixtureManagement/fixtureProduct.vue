@@ -2,10 +2,10 @@
   <div class="p-2">
     <el-card shadow="always" :body-style="{ padding: '8px' }">
       <div class="pb-2 flex justify-between">
-        <el-button type="primary" @click="(addVisible = true), clearForm()">添加</el-button>
+        <el-button type="primary"  @click="(addVisible = true), clearForm()">添加</el-button>
         <div class="flex"></div>
       </div>
-      <table-tem :show-index="true" :tableData="tableData" :tableHeight="tableHeight" :columnData="columnData"
+      <table-tem :show-index="true" size="small" :tableData="tableData" :tableHeight="tableHeight" :columnData="columnData"
         :pageObj="pageObj" @handleSizeChange="handleSizeChange" @handleCurrentChange="handleCurrentChange">
       </table-tem>
     </el-card>

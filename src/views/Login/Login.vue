@@ -13,6 +13,7 @@ import { useRouter } from "vue-router";
 import { ElNotification } from "element-plus";
 import { useAppStore } from "@/stores/modules/app";
 import { ref, watch } from "vue";
+import axios from "axios";
 
 const userStore = useUserStoreWithOut();
 const { currentRoute, addRoute, push } = useRouter();
@@ -37,24 +38,21 @@ watch(
   }
 );
 onBeforeMount(() => {
-  GetVersion().then((res: any) => {
+  axios.get("http://localhost:5173/getvs.json").then((data) => {
+    let res = data.data;
     version.value = res.content.CurrentVer;
   });
+  // GetVersion().then((res: any) => {
+  //   version.value = res.content.CurrentVer;
+  // });
 });
 onMounted(() => {});
 const loginClick = () => {
-  empolyeeLogin(form.value).then((data: any) => {
-    const dataText = data.content;
-    if (data.code == 100200) {
+  axios.get("http://localhost:5173/login.json").then((data) => {
+    let res = data.data;
+    if (res.code == 100200) {
       localStorage.setItem("OPCENTER_ROLE", form.value.EmployeeName);
-      setToken(dataText.Token);
-      // if (appStore.getSystemType && localStorage.getItem('OPUI')) {
-      //   let routestr = localStorage.getItem('OPUI') || '/'
-      //   push({ path: routestr })
-
-      // } else {
-      //   push({ path: redirect.value });
-      // }
+      setToken(res.content.Token);
       if (appStore.getSystemType && localStorage.getItem("OPUIData")) {
         let routestr = appStore.getOpuiData.path || "/";
         push({ path: routestr });
@@ -63,6 +61,19 @@ const loginClick = () => {
       }
     }
   });
+  // empolyeeLogin(form.value).then((data: any) => {
+  //   const dataText = data.content;
+  //   if (data.code == 100200) {
+  //     localStorage.setItem("OPCENTER_ROLE", form.value.EmployeeName);
+  //     setToken(dataText.Token);
+  //     if (appStore.getSystemType && localStorage.getItem("OPUIData")) {
+  //       let routestr = appStore.getOpuiData.path || "/";
+  //       push({ path: routestr });
+  //     } else {
+  //       push({ path: redirect.value });
+  //     }
+  //   }
+  // });
 };
 const switchSystems = () => {
   localStorage.setItem("SYSTEM_TYPE", JSON.stringify(!appStore.getSystemType));

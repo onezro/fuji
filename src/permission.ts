@@ -11,6 +11,7 @@ import { getMenu, getInfo, getMenuOPUI, getWorksMenuOPUI } from '@/api/permiss'
 // import { asyncRouterMap, constantRouterMap } from '@/router'
 import { updateParentMenus } from "@/utils/routerAata"
 import { setMenu } from "@/utils/dataMenu"
+import axios from "axios";
 
 const { start, done } = useNProgress()
 
@@ -29,12 +30,12 @@ router.beforeEach(async (to, from, next) => {
         next()
         return
       }
-      await getInfo().then(async (data: any) => {
+      await  axios.get("http://localhost:5173/token.json").then(async ({data}) => {
         userStore.setUserInfo(data.content);
         if (data.code == 100200) {
           if (roleRouters.length == 0) {
             if (appStore.getSystemType) {
-              await getWorksMenuOPUI().then(async (data: any) => {
+              await axios.get("http://localhost:5173/opuimeun.json").then(async ({data}) => {
                 const routerArr = data.content|| []
                 const routerData1 = setMenu(routerArr)
                 let routerData = routerData1.map((v: any) => {
@@ -48,7 +49,7 @@ router.beforeEach(async (to, from, next) => {
                 router.addRoute(route as unknown as RouteRecordRaw) // 动态添加可访问路由表
               })
             } else {
-              await getMenu().then(async (data: any) => {
+              await axios.get("http://localhost:5173/meun.json").then(async ({data}) => {
                 if (data.code == 100200) {
                   const routerArr = data.content || []
                   const systemRouter = routerArr.filter((v: any) => v.MenuName == 'Portal')
@@ -76,8 +77,55 @@ router.beforeEach(async (to, from, next) => {
             router.addRoute(route as unknown as RouteRecordRaw) // 动态添加可访问路由表
           })
         }
-
-      })
+      });
+      // await getInfo().then(async (data: any) => {
+      //   userStore.setUserInfo(data.content);
+      //   if (data.code == 100200) {
+      //     if (roleRouters.length == 0) {
+      //       if (appStore.getSystemType) {
+      //         await getWorksMenuOPUI().then(async (data: any) => {
+      //           const routerArr = data.content|| []
+      //           const routerData1 = setMenu(routerArr)
+      //           let routerData = routerData1.map((v: any) => {
+      //             let data = updateParentMenus([v])
+      //             return data
+      //           })
+      //           userStore.setRoleRouters(routerData)
+      //           await permissionStore.generateRoutes('server', routerData)
+      //         })
+      //         permissionStore.getAddRouters.forEach((route: any) => {
+      //           router.addRoute(route as unknown as RouteRecordRaw) // 动态添加可访问路由表
+      //         })
+      //       } else {
+      //         await getMenu().then(async (data: any) => {
+      //           if (data.code == 100200) {
+      //             const routerArr = data.content || []
+      //             const systemRouter = routerArr.filter((v: any) => v.MenuName == 'Portal')
+      //             if (systemRouter.length == 0) {
+      //               await permissionStore.generateRoutes('static')
+      //             } else {
+      //               // console.log(systemRouter[0].childMenu);
+      //               userStore.setRoleRouters(systemRouter[0].childMenu)
+      //               await permissionStore.generateRoutes('server', systemRouter[0].childMenu)
+      //             }
+      //           }
+      //           else {
+      //             await permissionStore.generateRoutes('static')
+      //           }
+      //           // console.log(permissionStore.getAddRouters);
+      //           permissionStore.getAddRouters.forEach((route: any) => {
+      //             router.addRoute(route as unknown as RouteRecordRaw) 
+      //           })
+      //         })
+      //       }
+      //     }
+      //   } else {
+      //     permissionStore.generateRoutes('static')
+      //     permissionStore.getAddRouters.forEach((route: any) => {
+      //       router.addRoute(route as unknown as RouteRecordRaw) // 动态添加可访问路由表
+      //     })
+      //   }
+      // })
       const redirectPath = appStore.getSystemType  && localStorage.getItem('OPUIData')? appStore.getOpuiData.path : from.query.redirect || to.path
       // const redirectPath = from.query.redirect || to.path
       const redirect = decodeURIComponent(redirectPath as string)

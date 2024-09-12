@@ -2,7 +2,7 @@
   <div class="p-[10px]">
     <el-card shadow="always" :body-style="{ padding: '10px' }">
       <div ref="headerRef">
-        <el-form ref="formRef" class="form" :inline="true" size="small" label-width="auto">
+        <el-form ref="formRef"  class="form" :inline="true" size="small" label-width="auto">
           <!-- <div>
             </div> -->
           <el-form-item label="日期" class="mb-[5px]">
@@ -19,7 +19,7 @@
             </el-input>
           </el-form-item>
           <el-form-item label="工单号" class="mb-[5px]">
-            <el-input v-model="searchForm.orderNmae" clearable style="width: 150px" class="input-with-select">
+            <el-input v-model="searchForm.orderName" clearable style="width: 150px" class="input-with-select">
             </el-input>
           </el-form-item>
           <el-form-item label="状态" class="mb-[5px]">
@@ -34,6 +34,9 @@
           <el-form-item class="mb-[5px]">
             <el-button type="primary" @click="getTableData">查询</el-button>
           </el-form-item>
+          <el-form-item class="mb-[5px]">
+            <el-button type="warning"  :disabled="onlineData.length === 1 ? false : true" @click="orderOnline">工单上线</el-button>
+          </el-form-item>
           <!-- <el-form-item>
             <el-button type="primary" @click="addNewVisible = true"
               >新建</el-button
@@ -42,13 +45,14 @@
         </el-form>
       </div>
       <div class="table_container">
-        <table-tem size="small" :tableData="tableData" :tableHeight="tableHeight" :columnData="columnData"
-          :pageObj="pageObj" @handleSizeChange="handleSizeChange" @handleCurrentChange="handleCurrentChange"
-          @rowClick="rowClick"></table-tem>
+        <table-tem size="small" :show-select="true" :tableData="tableData" :tableHeight="tableHeight"
+          :columnData="columnData" :pageObj="pageObj" @handleSizeChange="handleSizeChange"
+          @handleCurrentChange="handleCurrentChange" @rowClick="rowClick"
+          @handleSelectionChange="handleSelectionChange"></table-tem>
       </div>
     </el-card>
 
-    <el-dialog v-model="dialogVisible" width="80%"  align-center>
+    <el-dialog v-model="dialogVisible" width="80%" align-center>
       <div class="w-full">
         <el-tabs v-model="activeName" type="border-card" class="demo-tabs" @tab-change="tabChange">
           <el-tab-pane label="物料清单明细" name="物料清单明细" :stretch="true">
@@ -112,9 +116,11 @@
             <el-table :data="toolTableData" size="small" stripe border fit :tooltip-effect="'dark'" :height="400">
               <el-table-column type="index" align="center" fixed label="序号" width="60" />
 
-              <el-table-column prop="MfgLineName" label="产线" :min-width="180" align="center">
+              <!-- <el-table-column prop="MfgLineName" label="产线" :min-width="180" align="center">
+              </el-table-column> -->
+              <el-table-column prop="WorkStationName" label="工位" :min-width="180" align="center">
               </el-table-column>
-              <el-table-column prop="WorkStationName" label="工作站" :min-width="180" align="center">
+              <el-table-column prop="WorkStationName" label="工位名称" :min-width="180" align="center">
               </el-table-column>
               <!-- <el-table-column prop="OrderNumber" label="工单" :min-width="180" align="center">
                 </el-table-column> -->
@@ -187,6 +193,7 @@ const productChoice = ref("");
 const productTableData = ref<any>();
 const toolTableData = ref<any>();
 const dialogVisible = ref(false);
+const onlineData=ref([])
 
 interface productObjTS {
   WorkflowDesc: string;
@@ -242,7 +249,7 @@ interface RuleForm {
 
 interface searchFormTS {
   workCenter: string;
-  orderNmae: string;
+  orderName: string;
   productName: string;
   lineName: string;
   Status: string;
@@ -252,7 +259,7 @@ interface searchFormTS {
 
 const searchForm = ref<searchFormTS>({
   workCenter: "M08-SMT01",
-  orderNmae: "",
+  orderName: "",
   productName: "",
   lineName: "",
   Status: "",
@@ -389,9 +396,9 @@ const columnData = reactive([
     text: true,
     prop: "ProductDesc",
     label: "产品描述",
-    width: "",
+    width: "250",
     min: true,
-    align: "center",
+    align: "1",
   },
   {
     text: true,
@@ -486,10 +493,10 @@ onBeforeMount(() => {
 
 onMounted(() => {
   getScreenHeight();
+  window.addEventListener("resize", getScreenHeight);
   getModeList();
   getStatusList();
-  window.addEventListener("resize", getScreenHeight);
-  nextTick(() => { });
+  getTableData();
 });
 onBeforeUnmount(() => {
   window.addEventListener("resize", getScreenHeight);
@@ -525,7 +532,7 @@ const getTableData = () => {
       tableData.value = [];
       return;
     }
-    console.log(res);
+    // console.log(res);
     tableData.value = res.content;
   });
 };
@@ -622,6 +629,15 @@ const handleSizeChange = (val: any) => {
 const handleCurrentChange = (val: any) => {
   pageObj.value.currentPage = val;
 };
+//勾选上线数据
+const handleSelectionChange = (val: any) => {
+  onlineData.value=cloneDeep(val)
+  // console.log(onlineData.value);
+};
+//工单上线
+const orderOnline=()=>{
+  
+}
 
 const pageObj1 = ref({
   pageSize: 10,
@@ -668,7 +684,7 @@ const handleCurrentChange1 = (val: any) => {
 
 const getScreenHeight = () => {
   nextTick(() => {
-    tableHeight.value = window.innerHeight - 200 - headerRef.value.clientHeight;
+    tableHeight.value = window.innerHeight - 230;
     tableHeight1.value =
       (window.innerHeight - 200 - headerRef.value.clientHeight) * 0.55 - 40;
     tableHeight2.value =

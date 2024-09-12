@@ -417,7 +417,7 @@ const dialogVisible = ref(false);
 
 const findOrderForm = {
   workCenter: "",
-  orderNmae: "",
+  orderName: "",
   productName: "",
   lineName: "",
   Status: "",
