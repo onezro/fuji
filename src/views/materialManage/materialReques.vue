@@ -257,7 +257,7 @@
             </el-table-column>
             <el-table-column prop="RequestQty" align="center" label="请求数量">
               <template #default="scope">
-                <el-input v-model="scope.row.RequestQty" v-if="scope.row.isLoadQueue === 1"> </el-input>
+                <el-input v-model="scope.row.RequestQty" v-if="scope.row.isLoadQueue === 1" @input="handleInput"> </el-input>
               </template>
             </el-table-column>
           </el-table>
@@ -578,6 +578,10 @@ const rowClick = (val:any) => {
       }
       detailedTable.value = res.content
   })
+}
+
+const handleInput = (index:any) => {
+  
 }
 
 const handleSizeChange = (val: any) => {
