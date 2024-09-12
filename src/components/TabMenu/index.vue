@@ -104,6 +104,7 @@ import {
 import { usePermissionStoreWithOut } from "@/stores/modules/permission";
 import { useUserStoreWithOut } from '@/stores/modules/user'
 import { cloneDeep } from "lodash-es";
+import axios from "axios";
 const { currentRoute, push } = useRouter();
 const permissionStore = usePermissionStoreWithOut();
 const userStore = useUserStoreWithOut()
@@ -162,10 +163,12 @@ watch(
 );
 
 onMounted(() => {
-  // console.log( permissionStore.getRouters)
+  // axios.get("http://localhost:5173/getvs.json").then((data) => {
+  //   let res = data.data;
+  //   versionForm.value ={...res.content}
+  // });
   GetVersion().then((res: any) => {
     versionForm.value ={...res.content}
-    // console.log(versionForm.value.UpdateLog);
   })
 });
 //Tab高亮

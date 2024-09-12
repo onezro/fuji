@@ -1,0 +1,11 @@
+{
+    "success": true,
+    "code": 100200,
+    "msg": "查询成功",
+    "content": {
+        "Success": true,
+        "Token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJVc2VyTmFtZSI6IkNhbXN0YXJBZG1pbiIsIlJvbGVzIjpbImJjMjc3Y2RkLTZhZWQtNGM0YS04OThiLTVhNmUzNDU0MmExMSJdLCJJc0FkbWluIjp0cnVlLCJFeHBpcnlEYXRlVGltZSI6IjIwMjQtMDktMTVUMDk6MTI6NDUuMjgxNzM0NCswODowMCJ9.FxwhwNkMrHl3SNtjQ381woU7wUaIJ352bUdpLTW6L-4",
+        "Message": "OK"
+    },
+    "content2": null
+}

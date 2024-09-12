@@ -333,7 +333,7 @@ const detailedPageObj = ref({
 
 const findOrderForm = {
   workCenter: "",
-  orderNmae: "",
+  orderName: "",
   productName: "",
   lineName: "",
   Status: "",

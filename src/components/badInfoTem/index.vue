@@ -2,7 +2,7 @@
     <el-dialog :close-on-press-escape="false" align-center :close-on-click-modal="false" title="不良品登记"
         v-model="dialogVisible" width="80%" @close="cancel">
         <formTemple ref="badFormRef" :visible="badVisible" :width="'400px'" :title="'添加不良信息'" :formHeader="formHeader1"
-            :form="form1" @addCancel="addCancel" @onSubmit="onSubmit" @selectData="selectData" />
+            :form="form1" @formCancel="addCancel" @onSubmit="onSubmit" @selectData="selectData" />
         <div>
             <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
                 <span class="ml-5">基本信息</span>

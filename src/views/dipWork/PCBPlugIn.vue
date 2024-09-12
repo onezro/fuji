@@ -35,8 +35,8 @@
                     </el-col>
                     <el-col :span="12">
                       <el-form-item label="序号" class="mb-[5px]">
-                        <el-tag type="warning" effect="dark" v-if="t.sort == 1">{{ t.sort }}</el-tag>
-                        <el-tag type="primary" v-if="t.sort > 1">{{ t.sort }}</el-tag>
+                        <el-tag type="warning"  class="pl-3 pr-3 text-sm" effect="dark" v-if="t.sort == 1">{{ t.sort }}</el-tag>
+                        <el-tag type="primary" class="pl-3 pr-3" v-if="t.sort > 1">{{ t.sort }}</el-tag>
                         <!-- <span class="text-base">{{ t.sort }}</span> -->
                       </el-form-item>
                     </el-col>
