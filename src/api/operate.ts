@@ -229,3 +229,23 @@ export function SubmitMaterialRequest(data: any) {
     });
 }
 
+//查询物料申请历史记录
+export function QueryMaterialRequest(data: any) {
+    return request({
+        url: "/api/order/QueryMaterialRequest",
+        method: "post",
+        data
+    });
+}
+
+//查询物料申请历史记录明细
+export function QueryMaterialRequestDetail(data: any) {
+    return request({
+        url: "/api/order/QueryMaterialRequestDetail",
+        method: "post",
+        params: {
+            historyId:data
+        }
+    });
+}
+
