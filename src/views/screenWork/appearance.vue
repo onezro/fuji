@@ -209,29 +209,34 @@ const formText = (data: string) => {
 }
 
 const getChange = (val: any) => {
+    if( stopsForm.value.result=='OK'){
+
+    }else{
+        
+    }
     // console.log(val);
-    if (checkStringType(val) == 'result') {
-        console.log('result', val);
-        stopsForm.value.result = val
-    } else if (checkStringType(val) == 'pcb') {
-        console.log('pcb', val);
-        stopsForm.value.ContainerName = val
-    } else if (checkStringType(val) == 'tool') {
-        console.log('tool', val);
-        // stopsForm.value.ToolName = val
-    } else {
-        ElNotification({
-            title: "错误",
-            message: '扫描条码有误',
-            type: "error",
-        });
-        // console.log('扫描条码有误');
-    }
-    barCode.value = ''
-    inputRef.value.focus()
-    if (stopsForm.value.ContainerName && stopsForm.value.result) {
-        console.log(stopsForm.value)
-    }
+    // if (checkStringType(val) == 'result') {
+    //     console.log('result', val);
+    //     stopsForm.value.result = val
+    // } else if (checkStringType(val) == 'pcb') {
+    //     console.log('pcb', val);
+    //     stopsForm.value.ContainerName = val
+    // } else if (checkStringType(val) == 'tool') {
+    //     console.log('tool', val);
+    //     // stopsForm.value.ToolName = val
+    // } else {
+    //     ElNotification({
+    //         title: "错误",
+    //         message: '扫描条码有误',
+    //         type: "error",
+    //     });
+    //     // console.log('扫描条码有误');
+    // }
+    // barCode.value = ''
+    // inputRef.value.focus()
+    // if (stopsForm.value.ContainerName && stopsForm.value.result) {
+    //     console.log(stopsForm.value)
+    // }
 
 }
 const openDialog = () => {

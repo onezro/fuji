@@ -29,13 +29,14 @@
                   <!-- </el-form-item> -->
                   <el-row :gutter="20">
                     <el-col :span="12">
-                      <el-form-item label="治具编号" class="mb-[5px]">
+                      <el-form-item label="治具编码" class="mb-[5px]">
                         <span>{{ t.ToolName }}</span>
                       </el-form-item>
                     </el-col>
                     <el-col :span="12">
                       <el-form-item label="序号" class="mb-[5px]">
-                        <el-tag type="warning"  class="pl-3 pr-3 text-sm" effect="dark" v-if="t.sort == 1">{{ t.sort }}</el-tag>
+                        <el-tag type="warning" class="pl-3 pr-3 text-sm" effect="dark" v-if="t.sort == 1">{{ t.sort
+                          }}</el-tag>
                         <el-tag type="primary" class="pl-3 pr-3" v-if="t.sort > 1">{{ t.sort }}</el-tag>
                         <!-- <span class="text-base">{{ t.sort }}</span> -->
                       </el-form-item>
@@ -86,8 +87,8 @@
               <el-form class="inbound" ref="formRef" :inline="true" :model="form" label-width="auto"
                 @submit.native.prevent>
                 <el-form-item label="扫描条码">
-                  <el-input v-model="stopsForm.ContainerName" ref="inputRef" :autofocus="inputFocus"
-                    style="width: 500px" placeholder="请扫描条码" @keyup.enter.native="getChange" />
+                  <el-input v-model.trim="barCode" ref="inputRef" :autofocus="inputFocus" style="width: 500px"
+                    placeholder="请扫描条码" @keyup.enter.native="getChange" />
                 </el-form-item>
               </el-form>
               <div class="text-xl font-bold text-[#00B400]" v-show="msgType === true || msgTitle === ''">
@@ -276,6 +277,7 @@ const userStore = useUserStoreWithOut();
 const opui = appStore.getOPUIReal();
 const inputRef = ref();
 const inputFocus = ref(true);
+const barCode = ref("");
 const stopsForm = ref<StopsForm>({
   ToolName: "",
   ContainerName: "",
@@ -663,18 +665,13 @@ const moveUp = (val: any) => {
     userAccount: userStore.getUserInfo,
   };
   SortTools(data).then((res: any) => {
-    // ElNotification({
-    //     title: res.msg,
-    //     type: "success",
-    //   });
-    // getFocus()
     getToolData();
   });
 };
 //获取治具
 const getToolData = () => {
   QueryToolInfo(getToolForm.value).then((res: any) => {
-    if (res.content == null || res.content.lenght == 0) {
+    if (res.content == null || res.content.length == 0) {
       toolList.value = [];
       return;
     }
@@ -784,24 +781,39 @@ const getChange = (val: any) => {
       title: "请选择工单",
       type: "error",
     });
-    stopsForm.value.ContainerName = "";
+    // stopsForm.value.ContainerName = "";
     return;
   }
-  // console.log(stopsForm.value);
-  // inputFocus.value = false;
-  DIPStationMoveOut(stopsForm.value).then((res: any) => {
-    msgTitle.value = res.msg;
-    msgType.value = res.success;
-    stopsForm.value.ContainerName = "";
-    getToolData();
-    getFocus();
-    // inputFocus.value = true;
-    // if (res.success) {
-
-    // } else {
-
-    // }
-  });
+  let barCodeVal = barCode.value
+  if (toolList.value.length != 0) {
+    let toolData = toolList.value.findIndex(
+      (t: any) => t.ToolName == barCode.value
+    );
+    if (toolData != -1) {
+      moveUp(toolList.value[toolData])
+      // stopsForm.value.ToolName = toolList.value[toolData].ToolName;
+      // checked.value[0] = toolList.value[toolData].ToolName;
+      barCode.value = ''
+      return;
+    } else {
+      stopsForm.value.ContainerName = barCodeVal;
+      DIPStationMoveOut(stopsForm.value).then((res: any) => {
+        msgTitle.value = res.msg;
+        msgType.value = res.success;
+        stopsForm.value.ContainerName = "";
+        barCode.value = "";
+        getToolData();
+        getFocus();
+      });
+    }
+  }
+  // DIPStationMoveOut(stopsForm.value).then((res: any) => {
+  //   msgTitle.value = res.msg;
+  //   msgType.value = res.success;
+  //   stopsForm.value.ContainerName = "";
+  //   getToolData();
+  //   getFocus();
+  // });
 };
 
 //分页
