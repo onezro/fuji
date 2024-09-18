@@ -42,4 +42,27 @@ export function SplitStationMoveOut(data: any) {
     });
 }
 
-
+//人工目检过站
+export function VIStationMoveOut(data: any) {
+    return request({
+        url: "/api/visualinspection/VIStationMoveOut",
+        method: "post",
+        data,
+    });
+}
+//在线点胶过站
+export function ODStationMoveOut(data: any) {
+    return request({
+        url: "/api/onlinedispensing/ODStationMoveOut",
+        method: "post",
+        data,
+    });
+}
+//选择焊过站
+export function CWgStationMoveOut(data: any) {
+    return request({
+        url: "/api/choosewelding/CWgStationMoveOut",
+        method: "post",
+        data,
+    });
+}
