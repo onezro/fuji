@@ -179,7 +179,7 @@
             border
             fit
             :tooltip-effect="'dark'"
-            :height="tableHeight"
+            :height="400"
             row-key="MaterialName"
             :tree-props="{ children: 'children' }"
             @selection-change="handleSelectionChange"
@@ -257,7 +257,7 @@
             </el-table-column>
             <el-table-column prop="RequestQty" align="center" label="请求数量">
               <template #default="scope">
-                <el-input v-model="scope.row.RequestQty" v-if="scope.row.isLoadQueue === 1"> </el-input>
+                <el-input v-model="scope.row.RequestQty" v-if="scope.row.isLoadQueue === 1" @input="handleInput(scope.row)"> </el-input>
               </template>
             </el-table-column>
           </el-table>
@@ -285,7 +285,7 @@
 <script lang="ts" setup>
 import { getCheckResults } from "@/api/operate";
 import type { InspectionResult } from "@/typing";
-import { ElMessageBox, ElMessage, ElLoading } from "element-plus";
+import { ElMessageBox, ElMessage, ElLoading, ElNotification } from "element-plus";
 import tableTem from "@/components/tableTem/index.vue";
 import { useUserStoreWithOut } from "@/stores/modules/user";
 import {
@@ -317,7 +317,7 @@ const addNewVisible = ref(false);
 const testValue = ref("");
 const headerRef = ref();
 const orderList = ref<any[]>([]);
-const feedTableData = ref<any>([]);
+const feedTableData = ref<any>([{TotalQtyRequired:2000,isLoadQueue:1}]);
 const choiceList = ref<any[]>([]);
 const dialogVisible = ref(false);
 const historyTable = ref<any>([]);
@@ -395,9 +395,9 @@ const historyForm = ref<historyFormTS>({
 onBeforeMount(() => {});
 
 onMounted(() => {
-  getHistory();
-  getScreenHeight();
-  findOrderData();
+  // getHistory();
+  // getScreenHeight();
+  // findOrderData();
   window.addEventListener("resize", getScreenHeight);
   nextTick(() => {});
 });
@@ -578,6 +578,22 @@ const rowClick = (val:any) => {
       }
       detailedTable.value = res.content
   })
+}
+
+const handleInput = (data:any) => {
+const regex = /^\d+$/;  
+if(data.RequestQty !== undefined || data.RequestQty !== '') {
+  const num = data.RequestQty.replace(/\D/g, '');
+  data.RequestQty = num
+  if(num > data.TotalQtyRequired) {
+    data.RequestQty = ''
+    ElNotification({
+      title: "不得超过需求量",
+      // message: "取消操作",
+      type: "error",
+    });
+  }  
+}
 }
 
 const handleSizeChange = (val: any) => {
