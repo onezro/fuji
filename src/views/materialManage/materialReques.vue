@@ -317,7 +317,7 @@ const addNewVisible = ref(false);
 const testValue = ref("");
 const headerRef = ref();
 const orderList = ref<any[]>([]);
-const feedTableData = ref<any>([{TotalQtyRequired:2000,isLoadQueue:1}]);
+const feedTableData = ref<any>([]);
 const choiceList = ref<any[]>([]);
 const dialogVisible = ref(false);
 const historyTable = ref<any>([]);
@@ -395,9 +395,9 @@ const historyForm = ref<historyFormTS>({
 onBeforeMount(() => {});
 
 onMounted(() => {
-  // getHistory();
-  // getScreenHeight();
-  // findOrderData();
+  getHistory();
+  getScreenHeight();
+  findOrderData();
   window.addEventListener("resize", getScreenHeight);
   nextTick(() => {});
 });
@@ -580,15 +580,15 @@ const rowClick = (val:any) => {
   })
 }
 
+//判断请求数量是否大于需求量
 const handleInput = (data:any) => {
-const regex = /^\d+$/;  
 if(data.RequestQty !== undefined || data.RequestQty !== '') {
-  const num = data.RequestQty.replace(/\D/g, '');
+  const num = data.RequestQty.replace(/^0+|[^0-9]/g, ''); 
   data.RequestQty = num
   if(num > data.TotalQtyRequired) {
     data.RequestQty = ''
     ElNotification({
-      title: "不得超过需求量",
+      title: `不得超过需求量${data.TotalQtyRequired}`,
       // message: "取消操作",
       type: "error",
     });
