@@ -7,15 +7,12 @@
           class="form"
           :inline="true"
           size="small"
-          label-width="85px"
+          label-width="55px"
         >
-          <el-form-item label="工单">
-          <el-input
-            v-model="historyForm.orderNmae"
-            placeholder=""
-          ></el-input>
+          <el-form-item label="工单" class="mb-2">
+            <el-input v-model="historyForm.orderNmae" placeholder=""></el-input>
           </el-form-item>
-          <el-form-item label="日期">
+          <el-form-item label="日期" class="mb-2">
             <el-date-picker
               v-model="date"
               value-format="YYYY-MM-DD"
@@ -25,14 +22,13 @@
               @change="dateChange"
             />
           </el-form-item>
-          <el-form-item label="">
-            <el-button type="primary" @click="getHistory"
-              >查询</el-button
-            >
+          <el-form-item label="" class="mb-2">
+            <el-button type="primary" @click="getHistory()">查询</el-button>
           </el-form-item>
-          <br />
-          <el-form-item label="">
-            <el-button type="primary" @click="dialogVisible = true"
+          <el-form-item label="" class="mb-2">
+            <el-button
+              type="primary"
+              @click="(dialogVisible = true), findOrderData()"
               >申请</el-button
             >
           </el-form-item>
@@ -161,9 +157,6 @@
               </el-input>
             </el-form-item>
             <br />
-            <el-form-item label="">
-              <el-button type="primary" @click="applyFor">申请</el-button>
-            </el-form-item>
           </el-form>
         </div>
         <div class="table_container">
@@ -184,7 +177,11 @@
             :tree-props="{ children: 'children' }"
             @selection-change="handleSelectionChange"
           >
-            <el-table-column type="selection" width="55" :selectable="selectable"/>
+            <el-table-column
+              type="selection"
+              width="55"
+              :selectable="selectable"
+            />
             <!-- <el-table-column type="index" align="center" fixed label="序号" width="60" /> -->
             <el-table-column
               prop="MaterialName"
@@ -257,11 +254,20 @@
             </el-table-column>
             <el-table-column prop="RequestQty" align="center" label="请求数量">
               <template #default="scope">
-                <el-input v-model="scope.row.RequestQty" v-if="scope.row.isLoadQueue === 1" @input="handleInput(scope.row)"> </el-input>
+                <el-input
+                  v-model="scope.row.RequestQty"
+                  v-if="scope.row.isLoadQueue === 1"
+                  @input="handleInput(scope.row)"
+                >
+                </el-input>
               </template>
             </el-table-column>
           </el-table>
-          <div class="block" style="margin: 15px 0">
+          <div
+            class="block flex items-center justify-between"
+            style="margin: 15px 0"
+          >
+            <div></div>
             <el-pagination
               align="center"
               background
@@ -275,6 +281,10 @@
               :total="feedTableData.length"
             >
             </el-pagination>
+            <div>
+              <el-button type="" @click="dialogVisible = false">取消</el-button>
+              <el-button type="primary" @click="applyFor">申请</el-button>
+            </div>
           </div>
         </div>
       </div>
@@ -285,7 +295,12 @@
 <script lang="ts" setup>
 import { getCheckResults } from "@/api/operate";
 import type { InspectionResult } from "@/typing";
-import { ElMessageBox, ElMessage, ElLoading, ElNotification } from "element-plus";
+import {
+  ElMessageBox,
+  ElMessage,
+  ElLoading,
+  ElNotification,
+} from "element-plus";
 import tableTem from "@/components/tableTem/index.vue";
 import { useUserStoreWithOut } from "@/stores/modules/user";
 import {
@@ -293,7 +308,7 @@ import {
   QueryOrderMaterialRequired,
   SubmitMaterialRequest,
   QueryMaterialRequest,
-  QueryMaterialRequestDetail
+  QueryMaterialRequestDetail,
 } from "@/api/operate";
 import { cloneDeep } from "lodash-es";
 import {
@@ -321,15 +336,14 @@ const feedTableData = ref<any>([]);
 const choiceList = ref<any[]>([]);
 const dialogVisible = ref(false);
 const historyTable = ref<any>([]);
-const date = ref([]);
+const date = ref<any[]>([]);
 const detailedTable = ref<any[]>([]);
 const detailedHeight = ref(0);
 const detailedPageObj = ref({
   pageSize: 10,
   currentPage: 1,
-  isShow:-1
+  isShow: -1,
 });
-
 
 const findOrderForm = {
   workCenter: "",
@@ -395,11 +409,26 @@ const historyForm = ref<historyFormTS>({
 onBeforeMount(() => {});
 
 onMounted(() => {
+  const today = new Date();
+  const dateBefore = new Date(today);
+  dateBefore.setDate(today.getDate() - 6); // 减去天数
+  // 转换为YYYY-MM-DD格式
+  const formattedDate = `${dateBefore.getFullYear()}-${(
+    "0" +
+    (dateBefore.getMonth() + 1)
+  ).slice(-2)}-${("0" + dateBefore.getDate()).slice(-2)}`;
+  const formattedTodayDate = `${today.getFullYear()}-${(
+    "0" +
+    (today.getMonth() + 1)
+  ).slice(-2)}-${("0" + today.getDate()).slice(-2)}`;
+  console.log(formattedDate, formattedTodayDate);
+  historyForm.value.requestStartDate = formattedDate;
+  historyForm.value.requestEndDate = formattedTodayDate;
+  date.value = [formattedDate, formattedTodayDate];
   getHistory();
   getScreenHeight();
   findOrderData();
   window.addEventListener("resize", getScreenHeight);
-  nextTick(() => {});
 });
 onBeforeUnmount(() => {
   window.addEventListener("resize", getScreenHeight);
@@ -454,11 +483,10 @@ const getFeedTableData = (order: any) => {
   }).then((res: any) => {
     // console.log(OrganData(res.content));
     if (res.success) {
-      
-    if (!res || res.content === null || res.content.length === 0) {
-      feedTableData.value = [];
-      return;
-    }
+      if (!res || res.content === null || res.content.length === 0) {
+        feedTableData.value = [];
+        return;
+      }
       let data = cloneDeep(feedOrganData(res.content));
       // console.log(data);
 
@@ -529,7 +557,7 @@ const handleSelectionChange = (data: any) => {
     return {
       MaterialName: item.MaterialName,
       RequestQty: item.RequestQty ? item.RequestQty : "0",
-      TotalQtyRequired: item.TotalQtyRequired
+      TotalQtyRequired: item.TotalQtyRequired,
     };
   });
   console.log(choiceList.value);
@@ -539,7 +567,7 @@ const applyFor = () => {
   if (form.value.MfgOrderName === "") {
     return;
   }
-  choiceList.value.forEach(element => {
+  choiceList.value.forEach((element) => {
     if (Number(element.RequestQty) > Number(element.TotalQtyRequired)) {
       return;
     }
@@ -550,7 +578,15 @@ const applyFor = () => {
     MaterialList: choiceList.value,
     userAccount: loginName,
   }).then((res: any) => {
-    console.log(res);
+    if (res.success) {
+      ElNotification({
+        title: res.msg,
+        // message: "取消操作",
+        type: "success",
+      });
+      // findOrderData();
+      getFeedTableData(form.value.MfgOrderName);
+    }
   });
 };
 
@@ -559,42 +595,43 @@ const dateChange = () => {
     historyForm.value.requestStartDate = date.value[0];
     historyForm.value.requestEndDate = date.value[1];
   }
-}
+};
 
-const selectable = (row:any) => {
+const selectable = (row: any) => {
   if (row.isLoadQueue === 0 || !row.RequestQty) {
     return false;
   } else {
     return true;
   }
-}
+};
 
-const rowClick = (val:any) => {
-  QueryMaterialRequestDetail(val.isMaterialRequestTxnHistoryId).then((res:any) => {
-      
+const rowClick = (val: any) => {
+  QueryMaterialRequestDetail(val.isMaterialRequestTxnHistoryId).then(
+    (res: any) => {
       if (!res || res.content === null || res.content.length === 0) {
         detailedTable.value = [];
         return;
       }
-      detailedTable.value = res.content
-  })
-}
+      detailedTable.value = res.content;
+    }
+  );
+};
 
 //判断请求数量是否大于需求量
-const handleInput = (data:any) => {
-if(data.RequestQty !== undefined || data.RequestQty !== '') {
-  const num = data.RequestQty.replace(/^0+|[^0-9]/g, ''); 
-  data.RequestQty = num
-  if(num > data.TotalQtyRequired) {
-    data.RequestQty = ''
-    ElNotification({
-      title: `不得超过需求量${data.TotalQtyRequired}`,
-      // message: "取消操作",
-      type: "error",
-    });
-  }  
-}
-}
+const handleInput = (data: any) => {
+  if (data.RequestQty !== undefined || data.RequestQty !== "") {
+    const num = data.RequestQty.replace(/^0+|[^0-9]/g, "");
+    data.RequestQty = num;
+    if (num > data.TotalQtyRequired) {
+      data.RequestQty = "";
+      ElNotification({
+        title: `不得超过需求量${data.TotalQtyRequired}`,
+        // message: "取消操作",
+        type: "error",
+      });
+    }
+  }
+};
 
 const handleSizeChange = (val: any) => {
   currentPage.value = 1;
@@ -612,16 +649,24 @@ const pageObjHis = ref({
 const columnData = reactive([
   {
     text: true,
-    prop: "MfgOrderName",
-    label: "工单",
+    prop: "BD_RequestNo",
+    label: "申请编号",
     width: "",
     min: true,
     align: "center",
   },
   {
     text: true,
-    prop: "RequestDate",
-    label: "请求时间",
+    prop: "MfgOrderName",
+    label: "申请单号",
+    width: "",
+    min: true,
+    align: "center",
+  },
+  {
+    text: true,
+    prop: "BD_ProductModel",
+    label: "机型",
     width: "",
     min: true,
     align: "center",
@@ -629,7 +674,48 @@ const columnData = reactive([
   {
     text: true,
     prop: "BD_RequestNo",
-    label: "请求编号",
+    label: "产品编号",
+    width: "",
+    min: true,
+    align: "center",
+  },
+  {
+    text: true,
+    prop: "ProductDesc",
+    label: "产品描述",
+    width: "",
+    min: true,
+    align: "center",
+  },
+  {
+    text: true,
+    prop: "Qty",
+    label: "工单数量",
+    width: "",
+    min: true,
+    align: "center",
+  },
+  {
+    text: true,
+    prop: "RequestTypeName",
+    label: "申请类型",
+    width: "",
+    min: true,
+    align: "center",
+  },
+  {
+    text: true,
+    prop: "PlannedStartDate",
+    label: "计划开始时间",
+    width: "",
+    min: true,
+    align: "center",
+  },
+
+  {
+    text: true,
+    prop: "RequestDate",
+    label: "申请时间",
     width: "",
     min: true,
     align: "center",
@@ -637,15 +723,7 @@ const columnData = reactive([
   {
     text: true,
     prop: "BD_EmployeeName",
-    label: "请求人",
-    width: "",
-    min: true,
-    align: "center",
-  },
-  {
-    text: true,
-    prop: "TxnDate",
-    label: "日期",
+    label: "申请人",
     width: "",
     min: true,
     align: "center",

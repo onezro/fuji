@@ -122,11 +122,12 @@
               <div
                 class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]"
               >
-                <span class="ml-5">周转箱装载清单</span>
+                <span class="ml-5">维修记录</span>
               </div>
               <div class="flex-1">
                 <table-tem
                   :showIndex="true"
+                  :showSelect="true"
                   :tableData="tableData"
                   :tableHeight="tableHeight"
                   :columnData="columnData"
