@@ -29,7 +29,7 @@
         </el-tooltip>-->
       </div>
       <!-- </template> -->
-      <el-scrollbar class="h-[calc(100vh-175px)]">
+      <el-scrollbar class="h-[calc(100vh-160px)]">
         <el-tree
           style="max-width: 600px"
           :data="materialTree"

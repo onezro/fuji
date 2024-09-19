@@ -1,136 +1,374 @@
 <template>
-  <div class="p-[10px]">
-    <el-card shadow="always" :body-style="{ padding: '10px' }">
-      <div ref="headerRef">
-        <el-form ref="formRef"  class="form" :inline="true" size="small" label-width="auto">
+  <div class="p-2">
+    <el-card shadow="always" :body-style="{ padding: '8px 8px 0px 8px' }">
+      <div ref="headerRef flex flex-col">
+        <el-form
+          ref="formRef"
+          class="form"
+          :inline="true"
+          size="small"
+        >
           <!-- <div>
             </div> -->
           <el-form-item label="日期" class="mb-[5px]">
-            <el-date-picker v-model="searchDate" value-format="YYYY-MM-DD" type="daterange" range-separator="-"
-              size="small" style="width: 200px" />
+            <el-date-picker
+              v-model="searchDate"
+              value-format="YYYY-MM-DD"
+              type="daterange"
+              range-separator="-"
+              size="small"
+              style="width: 200px"
+            />
           </el-form-item>
           <el-form-item label="产线" class="mb-[5px]">
-            <el-select v-model="searchForm.lineName" placeholder="" clearable style="width: 150px">
-              <el-option v-for="item in lineNameList" :key="item" :label="item.Desc" :value="item.Name" />
+            <el-select
+              v-model="searchForm.lineName"
+              placeholder=""
+              clearable
+              style="width: 150px"
+            >
+              <el-option
+                v-for="item in lineNameList"
+                :key="item"
+                :label="item.Desc"
+                :value="item.Name"
+              />
             </el-select>
           </el-form-item>
           <el-form-item label="产品编码" class="mb-[5px]">
-            <el-input v-model="searchForm.productName" clearable style="width: 150px" class="input-with-select">
+            <el-input
+              v-model="searchForm.productName"
+              clearable
+              style="width: 150px"
+              class="input-with-select"
+            >
             </el-input>
           </el-form-item>
           <el-form-item label="工单号" class="mb-[5px]">
-            <el-input v-model="searchForm.orderName" clearable style="width: 150px" class="input-with-select">
+            <el-input
+              v-model="searchForm.orderName"
+              clearable
+              style="width: 150px"
+              class="input-with-select"
+            >
             </el-input>
           </el-form-item>
           <el-form-item label="状态" class="mb-[5px]">
-            <el-select v-model="searchForm.Status" placeholder="" clearable style="width: 150px">
-              <el-option v-for="item in statusList" :key="item" :label="item.Description"
-                :value="item.OrderStatusName" />
+            <el-select
+              v-model="searchForm.Status"
+              placeholder=""
+              clearable
+              style="width: 150px"
+            >
+              <el-option
+                v-for="item in statusList"
+                :key="item"
+                :label="item.Description"
+                :value="item.OrderStatusName"
+              />
             </el-select>
           </el-form-item>
-          <!-- <el-form-item>
-            <el-button type="primary" @click="">清空条件</el-button>
-          </el-form-item> -->
           <el-form-item class="mb-[5px]">
             <el-button type="primary" @click="getTableData">查询</el-button>
           </el-form-item>
-          <el-form-item class="mb-[5px]">
-            <el-button type="warning"  :disabled="onlineData.length === 1 ? false : true" @click="orderOnline">工单上线</el-button>
+          <!-- <el-form-item class="mb-[5px]">
+            <el-button
+              type="warning"
+              :disabled="onlineData.length === 1 ? false : true"
+              @click="orderOnline"
+              >工单上线</el-button
+            >
           </el-form-item>
+          <el-form-item class="mb-[5px]">
+            <el-button
+              type="info"
+              icon="Lock"
+              :disabled="onlineData.length === 1 ? false : true"
+              @click="orderLock"
+              >锁定</el-button
+            >
+          </el-form-item>
+          <el-form-item class="mb-[5px]">
+            <el-button
+             color="#409eff"
+             style="color: #fff;"
+              icon="Unlock"
+              :disabled="onlineData.length === 1 ? false : true"
+              @click="orderUnlock"
+              >解锁</el-button
+            >
+          </el-form-item> -->
           <!-- <el-form-item>
             <el-button type="primary" @click="addNewVisible = true"
               >新建</el-button
             >
           </el-form-item> -->
         </el-form>
+        <div class="mb-[5px]">
+          <el-button
+              type="warning"
+              size="small"
+              :disabled="onlineData.length === 1 ? false : true"
+              @click="orderOnline"
+              >工单上线</el-button
+            >
+            <el-button
+              type="info"
+              size="small"
+              icon="Lock"
+              :disabled="onlineData.length === 1 ? false : true"
+              @click="orderLock"
+              >锁定</el-button
+            >
+            <el-button
+             color="#409eff"
+             size="small"
+             style="color: #fff;"
+              icon="Unlock"
+              :disabled="onlineData.length === 1 ? false : true"
+              @click="orderUnlock"
+              >解锁</el-button
+            >
+
+        </div>
       </div>
       <div class="table_container">
-        <table-tem size="small" :show-select="true" :tableData="tableData" :tableHeight="tableHeight"
-          :columnData="columnData" :pageObj="pageObj" @handleSizeChange="handleSizeChange"
-          @handleCurrentChange="handleCurrentChange" @rowClick="rowClick"
-          @handleSelectionChange="handleSelectionChange"></table-tem>
+        <table-tem
+          size="small"
+          :show-select="true"
+          :tableData="tableData"
+          :tableHeight="tableHeight"
+          :columnData="columnData"
+          :pageObj="pageObj"
+          @handleSizeChange="handleSizeChange"
+          @handleCurrentChange="handleCurrentChange"
+          @rowClick="rowClick"
+          @handleSelectionChange="handleSelectionChange"
+        ></table-tem>
       </div>
     </el-card>
 
     <el-dialog v-model="dialogVisible" width="80%" align-center>
       <div class="w-full">
-        <el-tabs v-model="activeName" type="border-card" class="demo-tabs" @tab-change="tabChange">
+        <el-tabs
+          v-model="activeName"
+          type="border-card"
+          class="demo-tabs"
+          @tab-change="tabChange"
+        >
           <el-tab-pane label="物料清单明细" name="物料清单明细" :stretch="true">
             <div class="flex-1" ref="tablebox">
-              <el-table :data="feedTableData" size="small" stripe border fit :tooltip-effect="'dark'" :height="400"
-                row-key="MaterialName" :tree-props="{ children: 'children' }">
-                <el-table-column type="index" align="center" fixed label="序号" width="60" />
-                <el-table-column prop="MaterialName" fixed label="物料编码" :min-width="150" width="150">
+              <el-table
+                :data="feedTableData"
+                size="small"
+                stripe
+                border
+                fit
+                :tooltip-effect="'dark'"
+                :height="400"
+                row-key="MaterialName"
+                :tree-props="{ children: 'children' }"
+              >
+                <el-table-column
+                  type="index"
+                  align="center"
+                  fixed
+                  label="序号"
+                  width="60"
+                />
+                <el-table-column
+                  prop="MaterialName"
+                  fixed
+                  label="物料编码"
+                  :min-width="150"
+                  width="150"
+                >
                 </el-table-column>
-                <el-table-column prop="MaterialDesc" label="物料描述" :show-overflow-tooltip="true" width="200">
+                <el-table-column
+                  prop="MaterialDesc"
+                  label="物料描述"
+                  :show-overflow-tooltip="true"
+                  width="200"
+                >
                 </el-table-column>
 
-                <el-table-column prop="isMater" label="主料" width="150" :min-width="150">
+                <el-table-column
+                  prop="isMater"
+                  label="主料"
+                  width="150"
+                  :min-width="150"
+                >
                   <template #default="scope">
                     <span v-if="scope.row.isMater === 1">是</span>
-                    <span v-if="scope.row.isMater === 0">否{{ `(${scope.row.originalMaterialName})` }}</span>
+                    <span v-if="scope.row.isMater === 0"
+                      >否{{ `(${scope.row.originalMaterialName})` }}</span
+                    >
                   </template>
                 </el-table-column>
-                <el-table-column prop="SpecName" label="工序编码" align="center"
-                  :min-width="flexColumnWidth('使用工序', 'SpecDesc')">
+                <el-table-column
+                  prop="SpecName"
+                  label="工序编码"
+                  align="center"
+                  :min-width="flexColumnWidth('使用工序', 'SpecDesc')"
+                >
                 </el-table-column>
-                <el-table-column prop="SpecDesc" label="工序名称" align="center"
-                  :min-width="flexColumnWidth('使用工序', 'SpecDesc')">
+                <el-table-column
+                  prop="SpecDesc"
+                  label="工序名称"
+                  align="center"
+                  :min-width="flexColumnWidth('使用工序', 'SpecDesc')"
+                >
                 </el-table-column>
 
-                <el-table-column prop="isLoadQueue" align="center" label="允许上料" :min-width="flexColumnWidth('允许上料：（是否）', 'isLoadoueue')
-                  ">
+                <el-table-column
+                  prop="isLoadQueue"
+                  align="center"
+                  label="允许上料"
+                  :min-width="
+                    flexColumnWidth('允许上料：（是否）', 'isLoadoueue')
+                  "
+                >
                   <template #default="scope">
                     <span v-if="scope.row.isLoadQueue === 1">是</span>
                     <span v-if="scope.row.isLoadQueue === 0">否</span>
                   </template>
                 </el-table-column>
-                <el-table-column prop="QtyRequired" align="center" label="单件用量"
-                  :min-width="flexColumnWidth('单件用量', 'QtyRequired')">
+                <el-table-column
+                  prop="QtyRequired"
+                  align="center"
+                  label="单件用量"
+                  :min-width="flexColumnWidth('单件用量', 'QtyRequired')"
+                >
                 </el-table-column>
-                <el-table-column prop="TotalQtyRequired" align="center" label="需求量"
-                  :min-width="flexColumnWidth('需求量', 'TotalQtyRequired')">
+                <el-table-column
+                  prop="TotalQtyRequired"
+                  align="center"
+                  label="需求量"
+                  :min-width="flexColumnWidth('需求量', 'TotalQtyRequired')"
+                >
                 </el-table-column>
               </el-table>
             </div>
           </el-tab-pane>
           <el-tab-pane label="工艺流程" name="工艺流程">
-            <el-form ref="formRef" label-position="left" label-width="auto" size="small" :inline="true">
+            <el-form
+              ref="formRef"
+              label-position="left"
+              label-width="auto"
+              size="small"
+              :inline="true"
+            >
               <el-form-item label="工艺流程名称" prop="compid" class="mb-[5px]">
-                <el-input disabled v-model.trim="productObj.WorkflowName" style="width: 240px"></el-input>
+                <el-input
+                  disabled
+                  v-model.trim="productObj.WorkflowName"
+                  style="width: 240px"
+                ></el-input>
               </el-form-item>
               <el-form-item label="工艺流程描述" prop="compid" class="mb-[5px]">
-                <el-input disabled v-model.trim="productObj.WorkflowDesc" style="width: 240px"></el-input>
+                <el-input
+                  disabled
+                  v-model.trim="productObj.WorkflowDesc"
+                  style="width: 240px"
+                ></el-input>
               </el-form-item>
             </el-form>
-            <el-table style="width: auto" :data="productTableData" size="small" stripe border fit
-              :tooltip-effect="'dark'" :height="400">
-              <el-table-column type="index" align="center" fixed label="序号" width="60" />
-              <el-table-column prop="SpecName" label="工序编码" :min-width="180" width="180">
+            <el-table
+              style="width: auto"
+              :data="productTableData"
+              size="small"
+              stripe
+              border
+              fit
+              :tooltip-effect="'dark'"
+              :height="400"
+            >
+              <el-table-column
+                type="index"
+                align="center"
+                fixed
+                label="序号"
+                width="60"
+              />
+              <el-table-column
+                prop="SpecName"
+                label="工序编码"
+                :min-width="180"
+                width="180"
+              >
               </el-table-column>
-              <el-table-column prop="SpecDesc" label="工序描述" :min-width="180" width="180">
+              <el-table-column
+                prop="SpecDesc"
+                label="工序描述"
+                :min-width="180"
+                width="180"
+              >
               </el-table-column>
             </el-table>
           </el-tab-pane>
           <el-tab-pane label="工治具明细" name="工治具明细">
-            <el-table :data="toolTableData" size="small" stripe border fit :tooltip-effect="'dark'" :height="400">
-              <el-table-column type="index" align="center" fixed label="序号" width="60" />
+            <el-table
+              :data="toolTableData"
+              size="small"
+              stripe
+              border
+              fit
+              :tooltip-effect="'dark'"
+              :height="400"
+            >
+              <el-table-column
+                type="index"
+                align="center"
+                fixed
+                label="序号"
+                width="60"
+              />
 
               <!-- <el-table-column prop="MfgLineName" label="产线" :min-width="180" align="center">
               </el-table-column> -->
-              <el-table-column prop="WorkStationName" label="工位" :min-width="180" align="center">
+              <el-table-column
+                prop="WorkStationName"
+                label="工位"
+                :min-width="180"
+                align="center"
+              >
               </el-table-column>
-              <el-table-column prop="WorkStationName" label="工位名称" :min-width="180" align="center">
+              <el-table-column
+                prop="WorkStationName"
+                label="工位名称"
+                :min-width="180"
+                align="center"
+              >
               </el-table-column>
               <!-- <el-table-column prop="OrderNumber" label="工单" :min-width="180" align="center">
                 </el-table-column> -->
-              <el-table-column prop="ToolName" label="工治具编码" :min-width="180" align="center">
+              <el-table-column
+                prop="ToolName"
+                label="工治具编码"
+                :min-width="180"
+                align="center"
+              >
               </el-table-column>
-              <el-table-column prop="compName" label="工治具型号" :min-width="180" align="center">
+              <el-table-column
+                prop="compName"
+                label="工治具型号"
+                :min-width="180"
+                align="center"
+              >
               </el-table-column>
-              <el-table-column prop="OperatorID" label="操作人" :min-width="180" align="center">
+              <el-table-column
+                prop="OperatorID"
+                label="操作人"
+                :min-width="180"
+                align="center"
+              >
               </el-table-column>
-              <el-table-column prop="Timestamp" label="操作时间" :min-width="180" align="center">
+              <el-table-column
+                prop="Timestamp"
+                label="操作时间"
+                :min-width="180"
+                align="center"
+              >
               </el-table-column>
             </el-table>
           </el-tab-pane>
@@ -148,7 +386,12 @@
 <script lang="ts" setup>
 import { OrganData } from "@/utils/dataMenu";
 import type { InspectionResult } from "@/typing";
-import { ElMessageBox, ElMessage, ElLoading } from "element-plus";
+import {
+  ElMessageBox,
+  ElMessage,
+  ElLoading,
+  ElNotification,
+} from "element-plus";
 import { cloneDeep } from "lodash-es";
 import tableTem from "@/components/tableTem/index.vue";
 import { useUserStoreWithOut } from "@/stores/modules/user";
@@ -159,6 +402,7 @@ import {
   QueryOrderMaterialRequired,
   findProductSpec,
   QueryOrderToolsData,
+  UpdateOrderStatus,
 } from "@/api/operate";
 import {
   ref,
@@ -193,7 +437,7 @@ const productChoice = ref("");
 const productTableData = ref<any>();
 const toolTableData = ref<any>();
 const dialogVisible = ref(false);
-const onlineData=ref([])
+const onlineData = ref([]);
 
 interface productObjTS {
   WorkflowDesc: string;
@@ -376,6 +620,8 @@ const columnData = reactive([
     min: true,
     align: "center",
   },
+  
+
   {
     text: true,
     prop: "BD_ProductModel",
@@ -428,6 +674,21 @@ const columnData = reactive([
     text: true,
     prop: "OrderStatusDesc",
     label: "状态",
+    width: "",
+    min: true,
+    align: "center",
+  },
+  {
+
+    text: false,
+    tag: true,
+    tagType: "boolean",
+    tagItem: [
+      { text: "是", type: "warning" },
+      { text: "否", type: "primary" },
+    ],
+    prop: "BD_IsLocked",
+    label: "是否锁定",
     width: "",
     min: true,
     align: "center",
@@ -631,12 +892,44 @@ const handleCurrentChange = (val: any) => {
 };
 //勾选上线数据
 const handleSelectionChange = (val: any) => {
-  onlineData.value=cloneDeep(val)
+  onlineData.value = cloneDeep(val);
   // console.log(onlineData.value);
 };
 //工单上线
-const orderOnline=()=>{
-  
+const orderOnline = () => {};
+//
+const orderLock = () => {
+  let data = cloneDeep(onlineData.value);
+  let lockForm = {
+    orderName: data[0].MfgOrderName,
+    optionType: "lock",
+    StatusDesc: "锁定",
+  };
+  UpdateOrderStatus(lockForm).then((res: any) => {
+    ElNotification({
+      title: "提示信息",
+      message: res.msg,
+      type: "success",
+    });
+    getTableData();
+  });
+};
+//解锁
+const  orderUnlock=()=>{
+  let data = cloneDeep(onlineData.value);
+  let lockForm = {
+    orderName: data[0].MfgOrderName,
+    optionType: "unlock",
+    StatusDesc: "解锁",
+  };
+  UpdateOrderStatus(lockForm).then((res: any) => {
+    ElNotification({
+      title: "提示信息",
+      message: res.msg,
+      type: "success",
+    });
+    getTableData();
+  });
 }
 
 const pageObj1 = ref({
@@ -684,11 +977,11 @@ const handleCurrentChange1 = (val: any) => {
 
 const getScreenHeight = () => {
   nextTick(() => {
-    tableHeight.value = window.innerHeight - 230;
-    tableHeight1.value =
-      (window.innerHeight - 200 - headerRef.value.clientHeight) * 0.55 - 40;
-    tableHeight2.value =
-      (window.innerHeight - 200 - headerRef.value.clientHeight) * 0.55 - 85;
+    tableHeight.value = window.innerHeight - 214;
+    // tableHeight1.value =
+    //   (window.innerHeight - 200 - headerRef.value.clientHeight) * 0.55 - 40;
+    // tableHeight2.value =
+    //   (window.innerHeight - 200 - headerRef.value.clientHeight) * 0.55 - 85;
   });
 };
 </script>
@@ -717,9 +1010,10 @@ const getScreenHeight = () => {
   padding: 5px;
 }
 
-.demo-tabs .el-tabs__item {}
+.demo-tabs .el-tabs__item {
+}
 
-.demo-tabs.el-tabs--border-card>.el-tabs__header .el-tabs__item {
+.demo-tabs.el-tabs--border-card > .el-tabs__header .el-tabs__item {
   color: #fff;
   font-size: 0.8rem;
   // padding: 0 !important;
@@ -732,7 +1026,9 @@ const getScreenHeight = () => {
   // font-weight: bold;
 }
 
-.el-tabs--border-card>.el-tabs__header .el-tabs__item:not(.is-disabled):hover {
+.el-tabs--border-card
+  > .el-tabs__header
+  .el-tabs__item:not(.is-disabled):hover {
   font-size: 0.8rem;
   color: #006487 !important;
   background-color: rgba($color: #fff, $alpha: 0.8);

@@ -188,6 +188,7 @@ const columnData = reactive([
     label: "周转箱条码",
     width: "",
     min: true,
+    fixed:true,
     align: "center",
   },
   {
@@ -280,7 +281,7 @@ onBeforeUnmount(() => {
 
 const getCarrierList = () => {
   isLoding.value = "is-loading";
-  tableData.value = [];
+  // tableData.value = [];
   QueryCarrierList({ workStationName: opui.station }).then((res: any) => {
     let timer = setTimeout(() => {
       isLoding.value = "";
@@ -345,7 +346,7 @@ const getChange = () => {
       getCarrierList();
       msgTitle.value = res.msg + "周转箱列表已更新";
     } else {
-      tableData.value = [];
+      // tableData.value = [];
     }
     inputFocus.value = true;
   });
