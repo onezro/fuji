@@ -27,7 +27,7 @@
           </el-form-item>
           <el-form-item label="" class="mb-2">
             <el-button
-              type="primary"
+              type="warning"
               @click="(dialogVisible = true), findOrderData()"
               >申请</el-button
             >
@@ -268,7 +268,7 @@
             style="margin: 15px 0"
           >
             <div></div>
-            <el-pagination
+            <!-- <el-pagination
               align="center"
               background
               size="small"
@@ -280,7 +280,7 @@
               layout="total,sizes, prev, pager, next, jumper"
               :total="feedTableData.length"
             >
-            </el-pagination>
+            </el-pagination> -->
             <div>
               <el-button type="" @click="dialogVisible = false">取消</el-button>
               <el-button type="primary" @click="applyFor">申请</el-button>
@@ -657,8 +657,16 @@ const columnData = reactive([
   },
   {
     text: true,
+    prop: "RequestTypeName",
+    label: "申请类型",
+    width: "",
+    min: true,
+    align: "center",
+  },
+  {
+    text: true,
     prop: "MfgOrderName",
-    label: "申请单号",
+    label: "工单号",
     width: "",
     min: true,
     align: "center",
@@ -697,14 +705,6 @@ const columnData = reactive([
   },
   {
     text: true,
-    prop: "RequestTypeName",
-    label: "申请类型",
-    width: "",
-    min: true,
-    align: "center",
-  },
-  {
-    text: true,
     prop: "PlannedStartDate",
     label: "计划开始时间",
     width: "",
@@ -734,18 +734,18 @@ const detailedData = reactive([
   {
     text: true,
     prop: "ProductName",
-    label: "产品名称",
+    label: "物料编码",
     width: "",
     min: true,
-    align: "center",
+    align: "left",
   },
   {
     text: true,
     prop: "Description",
-    label: "描述",
+    label: "物料描述",
     width: "",
     min: true,
-    align: "center",
+    align: "left",
   },
   {
     text: true,
