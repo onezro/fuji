@@ -144,3 +144,11 @@ export function QueryMaterialQueueDetails(data: any) {
         data
     })
 }
+//不良品登记
+export function isDefects(data: any) {
+    return request({
+        url: "/api/workstation/isDefects",
+        method: "post",
+        data
+    })
+}
