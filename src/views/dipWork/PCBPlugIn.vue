@@ -28,32 +28,34 @@
                   </div>
                   <!-- </el-form-item> -->
                   <el-row :gutter="20">
+                    
                     <el-col :span="12">
-                      <el-form-item label="治具编码" class="mb-[5px]">
-                        <span>{{ t.ToolName }}</span>
+                      <el-form-item label="类型" class="mb-[5px]">
+                        <span>{{ t.MaterialName }}</span>
                       </el-form-item>
                     </el-col>
                     <el-col :span="12">
                       <el-form-item label="序号" class="mb-[5px]">
-                        <el-tag type="warning" class="pl-3 pr-3 text-sm" effect="dark" v-if="t.sort == 1">{{ t.sort
+                        <el-tag type="warning" class="pl-3 pr-3 text-sm" effect="dark" v-if="t.ToolName == checked[0]">{{ t.sort
                           }}</el-tag>
-                        <el-tag type="primary" class="pl-3 pr-3" v-if="t.sort > 1">{{ t.sort }}</el-tag>
+                        <el-tag type="primary" class="pl-3 pr-3" v-if="t.ToolName !== checked[0]">{{ t.sort }}</el-tag>
                         <!-- <span class="text-base">{{ t.sort }}</span> -->
                       </el-form-item>
                     </el-col>
                   </el-row>
-                  <el-row :gutter="20">
-                    <el-col :span="12">
-                      <el-form-item label="类型名称" class="mb-[5px]">
-                        <span>{{ t.MaterialName }}</span>
+            
+                      <el-form-item label="治具编码" class="mb-[5px]">
+                        <span>{{ t.ToolName }}</span>
                       </el-form-item>
-                    </el-col>
+                    
+                  <!-- <el-row :gutter="20">
+                    
                     <el-col :span="12">
                       <el-form-item label="类型编号" class="mb-[5px]">
                         <span class="text-base">{{ t.CompName }}</span>
                       </el-form-item>
                     </el-col>
-                  </el-row>
+                  </el-row> -->
                 </el-form>
                 <div class="flex justify-end">
                   <!-- <el-tooltip
@@ -102,19 +104,24 @@
           <div class="p-[10px]">
             <el-form class="inbound" size="default" ref="formRef" :model="form" :inline="true" label-width="auto">
               <el-row>
-                <el-col :span="7">
-                  <el-form-item label="工单" class="mb-[5px]">
-                    <selectTa ref="selectTable" :table="orderTable" :selectWidth="180" :columns="orderColumns"
+                <el-col :span="8">
+                  <el-form-item label="工单" class="mb-[5px] flex">
+                    <selectTa ref="selectTable" :table="orderTable" :selectWidth="130" :columns="orderColumns"
                       :max-height="400" :tableWidth="700" :defaultSelectVal="defaultSelectVal" :keywords="{
                         label: 'MfgOrderName',
                         value: 'MfgOrderName',
                       }" @radioChange="(...args: any) => radioChange(args)">
                     </selectTa>
+                    <el-tooltip content="刷新" placement="top">
+                      <el-icon class="ml-2" color="#777777" :class="isLoding" size="24" @click="getOrderData">
+                        <RefreshRight />
+                      </el-icon>
+                    </el-tooltip>
                   </el-form-item>
                 </el-col>
-                <el-col :span="7">
+                <el-col :span="6">
                   <el-form-item class="mb-[5px]" label="产品编码">
-                    <el-input v-model="form.ProductName" disabled /> </el-form-item></el-col>
+                    <el-input v-model="form.ProductName" style="width: 160px" disabled /> </el-form-item></el-col>
                 <el-col :span="10">
                   <el-form-item class="mb-[5px]" label="产品描述">
                     <el-input v-model="form.ProductDesc" style="width: 320px" disabled />
@@ -122,19 +129,19 @@
                 </el-col>
               </el-row>
               <el-row>
-                <el-col :span="7">
+                <el-col :span="8">
                   <el-form-item class="mb-[5px]" label="计划开始时间">
-                    <el-input v-model="form.PlannedStartDate" disabled />
+                    <el-input v-model="form.PlannedStartDate" style="width: 160px" disabled />
                   </el-form-item>
                 </el-col>
-                <el-col :span="7">
+                <el-col :span="6">
                   <el-form-item class="mb-[5px]" label="计划完成时间">
-                    <el-input v-model="form.PlannedCompletionDate" disabled />
+                    <el-input v-model="form.PlannedCompletionDate" style="width: 160px" disabled />
                   </el-form-item>
                 </el-col>
-                <el-col :span="7">
+                <el-col :span="10">
                   <el-form-item class="mb-[5px]" label="工单数量">
-                    <el-input v-model="form.Qty" disabled />
+                    <el-input v-model="form.Qty" style="width: 160px" disabled />
                   </el-form-item>
                 </el-col>
               </el-row>
@@ -242,7 +249,7 @@ import type { Formspan, FormHeader, OrderData } from "@/typing";
 import { ElMessage, ElNotification, ElMessageBox } from "element-plus";
 import {
   QueryWorkOrderInfo,
-  DIPStationMoveOut,
+  PluginStationMoveOut,
   FindAllDevice,
   UpdateDevice,
 } from "@/api/dipApi";
@@ -631,7 +638,7 @@ const FeedHeader = reactive([
     prop: "eqInfo",
   },
 ]);
-
+const isLoding = ref("");
 onBeforeMount(() => {
   getScreenHeight();
 });
@@ -644,9 +651,14 @@ onBeforeUnmount(() => {
 });
 
 const getOrderData = () => {
+  isLoding.value = "is-loading";
   QueryWorkOrderInfo().then((res: any) => {
     let data = res.content;
     orderTable.value.data[0] = data[0];
+    let timer = setTimeout(() => {
+      isLoding.value = "";
+      clearTimeout(timer);
+    }, 2000);
     if (data.length == 1) {
       // console.log(2111);
       let a = data[0].MfgOrderName;
@@ -716,7 +728,7 @@ const radioChange = (args: any) => {
     if (getToolForm.value.OrderNumber == args[0].MfgOrderName) {
       return;
     } else {
-      getToolForm.value.OrderNumber = "24072350";
+      getToolForm.value.OrderNumber = args[0].MfgOrderName//'24072350'
       getToolData();
     }
     //   }
@@ -784,36 +796,38 @@ const getChange = (val: any) => {
     // stopsForm.value.ContainerName = "";
     return;
   }
-  let barCodeVal = barCode.value
+  let barCodeVal = barCode.value;
   if (toolList.value.length != 0) {
     let toolData = toolList.value.findIndex(
       (t: any) => t.ToolName == barCode.value
     );
     if (toolData != -1) {
-      moveUp(toolList.value[toolData])
-      // stopsForm.value.ToolName = toolList.value[toolData].ToolName;
-      // checked.value[0] = toolList.value[toolData].ToolName;
-      barCode.value = ''
+      // moveUp(toolList.value[toolData])
+      stopsForm.value.ToolName = toolList.value[toolData].ToolName;
+      checked.value[0] = toolList.value[toolData].ToolName;
+      barCode.value = "";
       return;
     } else {
-      stopsForm.value.ContainerName = barCodeVal;
-      DIPStationMoveOut(stopsForm.value).then((res: any) => {
-        msgTitle.value = res.msg;
-        msgType.value = res.success;
-        stopsForm.value.ContainerName = "";
-        barCode.value = "";
-        getToolData();
-        getFocus();
-      });
+      // stopsForm.value.ContainerName = barCodeVal;
+      // PluginStationMoveOut(stopsForm.value).then((res: any) => {
+      //   msgTitle.value = res.msg;
+      //   msgType.value = res.success;
+      //   stopsForm.value.ContainerName = "";
+      //   barCode.value = "";
+      //   getToolData();
+      //   getFocus();
+      // });
     }
   }
-  // DIPStationMoveOut(stopsForm.value).then((res: any) => {
-  //   msgTitle.value = res.msg;
-  //   msgType.value = res.success;
-  //   stopsForm.value.ContainerName = "";
-  //   getToolData();
-  //   getFocus();
-  // });
+  stopsForm.value.ContainerName = barCodeVal;
+  PluginStationMoveOut(stopsForm.value).then((res: any) => {
+    msgTitle.value = res.msg;
+    msgType.value = res.success;
+    stopsForm.value.ContainerName = "";
+    barCode.value = "";
+    getToolData();
+    getFocus();
+  });
 };
 
 //分页

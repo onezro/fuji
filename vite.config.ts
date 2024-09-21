@@ -33,8 +33,6 @@ export default defineConfig({
       },
       '/smtApi': {
         target: 'http://192.168.9.50:12026',
-        //target：'http://192.168.9.52:12026',
-        // target: 'http://192.168.14.5:8089'
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/smtApi/, '') 
       },
@@ -42,6 +40,11 @@ export default defineConfig({
         target: 'http://192.168.9.50:12022',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/dipApi/, '') 
+      },
+      '/scrApi': {
+        target: 'http://192.168.9.50:12025',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/scrApi/, '') 
       }
     }
   }

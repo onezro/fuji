@@ -5,10 +5,10 @@
       pageObj.currentPage * pageObj.pageSize
     )
       " stripe border fit :height="tableHeight" :size="size || 'default'" :tooltip-effect="'dark'" style="width: 100%"
-      @selection-change="handleSelectionChange" @row-click="rowClick" ref="multipleTableRef" >
+      @selection-change="handleSelectionChange" @row-click="rowClick"  ref="multipleTableRef">
       <el-table-column type="selection" fixed width="55" align="center" v-if="showSelect" />
-      <el-table-column type="index" align="center" fixed label="序号"  :width="size=='small'?'50':'60'" v-if="showIndex">
-
+      <el-table-column type="index" align="center" fixed label="序号" :width="size == 'small' ? '50' : '60'"
+        v-if="showIndex">
       </el-table-column>
       <el-table-column v-for="(c, i) in columnData" :key="i" :prop="c.prop" :label="c.label"
         :show-overflow-tooltip="true" :width="c.width" :min-width="c.min ? flexColumnWidth(c.label, c.prop) : ''"
@@ -19,7 +19,6 @@
             <el-tag v-if="c.tagType === 'string'" :type="c.tagItem[scope.row[c.prop]]" effect="plain">
               {{ scope.row[c.prop] }}
             </el-tag>
-
             <el-tag v-if="c.tagType === 'boolean'" :type="scope.row[c.prop] ? c.tagItem[0].type : c.tagItem[1].type"
               effect="plain">
               {{ scope.row[c.prop] ? c.tagItem[0].text : c.tagItem[1].text }}
@@ -38,7 +37,6 @@
               scope.row[o.prop] || o.label }}</span> -->
             <el-button v-if="!o.icon" size="small" :type="o.type" @click="o.buttonClick(scope.row)"
               :disabled="scope.row[o.prop] == o.disabled">{{ o.label }}</el-button>
-
           </el-tooltip>
         </template>
       </el-table-column>
@@ -64,6 +62,7 @@ const props = defineProps([
   "showIndex",
   "showSelect",
   "size",
+  "rowName",
 ]);
 const {
   tableData,
@@ -73,10 +72,11 @@ const {
   showIndex,
   showSelect,
   size,
+  rowName,
 } = toRefs(props);
 
 const multipleTableRef = ref();
-const rowId=ref('')
+const rowId = ref("");
 
 const emit = defineEmits([
   "handleSizeChange",
@@ -98,14 +98,20 @@ const handleCurrentChange = (e: any) => {
 
 const rowClick = (e: any) => {
   // console.log(e);
+  rowId.value = e[rowName?.value];
   emit("rowClick", cloneDeep(e));
 };
-// const rowStyle =()=>{
-//   return {
-//     'background-color': '#ffcd50',
-//       // 'color': '#fff'
-//   }
-// }
+const rowStyle = (val: any) => {
+  // console.log(val[rowName?.value]);
+  let data = cloneDeep(val.row)
+  // console.log(rowName?.value,data[rowName?.value]);
+  if (rowId.value == data[rowName?.value]) {
+    return {
+      "background-color": "#ffcd50",
+      // 'color': '#fff'
+    };
+  }
+};
 
 const getMaxLength = (arr: any) => {
   return arr.reduce((acc: any, item: any) => {

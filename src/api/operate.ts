@@ -164,6 +164,14 @@ export function findOrder(data:any) {
         data
     })
 }
+//修改工单状态
+export function UpdateOrderStatus(data:any) {
+    return request({
+        url: "/api/order/UpdateOrderStatus",
+        method: "post",
+        data
+    })
+}
 
 //查询工单明细
 export function QueryOrderMaterialRequired(data:any) {

@@ -48,25 +48,12 @@
                         </div>
                     </div>
                     <div class="flex flex-col flex-1 tabs-css">
-                        <el-tabs v-model="tabsValue" type="border-card" class="demo-tabs">
-                            <el-tab-pane label="历史过站记录" name="history" :stretch="true">
-                                <table-tem :showIndex="true" :tableData="tableData1" :tableHeight="tableHeight"
-                                    :columnData="columnData1" :pageObj="pageObj" @handleSizeChange="handleSizeChange"
-                                    @handleCurrentChange="handleCurrentChange"></table-tem>
-                            </el-tab-pane>
-                            <!-- <el-tab-pane label="SOP" name="sop">
-                                sop
-                                <table-tem :showIndex="true" :tableData="tableData1" :tableHeight="tableHeight"
-                                    :columnData="columnData1" :pageObj="pageObj" @handleSizeChange="handleSizeChange"
-                                    @handleCurrentChange="handleCurrentChange"></table-tem>
-                            </el-tab-pane> -->
-                            <el-tab-pane label="工装治具" name="fixtures">
-                                fixtures
-                                <!-- <table-tem :showIndex="true" :tableData="tableData1" :tableHeight="tableHeight"
-                                    :columnData="columnData1" :pageObj="pageObj" @handleSizeChange="handleSizeChange"
-                                    @handleCurrentChange="handleCurrentChange"></table-tem> -->
-                            </el-tab-pane>
-                        </el-tabs>
+                        <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
+                            <span class="ml-5">历史过站记录</span>
+                        </div>
+                        <table-tem :showIndex="true" :tableData="tableData1" :tableHeight="tableHeight"
+                            :columnData="columnData1" :pageObj="pageObj" @handleSizeChange="handleSizeChange"
+                            @handleCurrentChange="handleCurrentChange"></table-tem>
                     </div>
                 </div>
             </div>

@@ -26,9 +26,9 @@ export function UpdateDevice(data: any) {
     });
 }
 //插件过站
-export function DIPStationMoveOut(data: any) {
+export function PluginStationMoveOut(data: any) {
     return request({
-        url: "/api/plugin/DIPStationMoveOut",
+        url: "/api/plugin/PluginStationMoveOut",
         method: "post",
         data,
     });
@@ -42,10 +42,10 @@ export function SplitStationMoveOut(data: any) {
     });
 }
 
-//人工目检过站
-export function VIStationMoveOut(data: any) {
+//人工目检过站,点胶，
+export function MoveStd(data: any) {
     return request({
-        url: "/api/visualinspection/VIStationMoveOut",
+        url: "/api/workstation/MoveStd",
         method: "post",
         data,
     });
