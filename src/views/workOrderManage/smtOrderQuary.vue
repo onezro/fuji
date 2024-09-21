@@ -679,7 +679,6 @@ const columnData = reactive([
     align: "center",
   },
   {
-
     text: false,
     tag: true,
     tagType: "boolean",
