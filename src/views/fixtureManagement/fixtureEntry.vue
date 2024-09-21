@@ -2,12 +2,12 @@
   <div class="p-2">
     <el-card shadow="always" :body-style="{ padding: '8px' }">
       <div class="pb-[10px] flex justify-between">
-        <el-button type="primary"   @click="openAdd">添加</el-button>
+        <el-button type="primary" @click="openAdd">添加</el-button>
         <div class="flex"></div>
       </div>
       <table-tem
-      :show-index="true"
-      size="small"
+        :show-index="true"
+        size="small"
         :tableData="tableData"
         :tableHeight="tableHeight"
         :columnData="columnData"
@@ -347,10 +347,10 @@ const clearEditForm = () => {
     // ExpirationDate: "",
   };
 };
-const openAdd=()=>{
+const openAdd = () => {
   getCompnameList();
-  addVisible.value=true
-}
+  addVisible.value = true;
+};
 
 const addSumbit = () => {
   ToolsDetail({
@@ -469,7 +469,7 @@ const scrapSubmit = (data: any) => {
       //     type: "info",
       //   });
     });
-}
+};
 
 const deleteConfirm = () => {
   ToolsDetail({ CompID: deleteChoice.value, operationtype: "DEL" }).then(
@@ -488,7 +488,7 @@ const deleteConfirm = () => {
 };
 
 const columnData = reactive([
-{
+  {
     text: true,
     prop: "CompID",
     label: "工治具编码",
@@ -504,7 +504,7 @@ const columnData = reactive([
     min: true,
     align: "center",
   },
- 
+
   {
     text: true,
     prop: "CompName",
@@ -542,8 +542,10 @@ const columnData = reactive([
     tag: true,
     tagType: "number",
     tagItem: [
-      { text: "初始状态", type: "primary", number: 0 },
-      { text: "入库", type: "warning", number: 1 },
+      { text: "必须清洗", type: "primary", number: 4 },
+      { text: "必须清洗", type: "primary", number: 3 },
+      { text: "初始状态", type: "info", number: 0 },
+      { text: "正在清洗", type: "warning", number: 2 },
     ],
     prop: "CleanStatus",
     label: "状态",
@@ -592,7 +594,7 @@ const columnData = reactive([
         label: "报废",
         icon: "Failed",
         buttonClick: scrapSubmit,
-      }
+      },
     ],
   },
 ]);
