@@ -114,8 +114,6 @@ router.beforeEach(async (to, from, next) => {
                 }
                 // console.log(permissionStore.getAddRouters);
                 permissionStore.getAddRouters.forEach((route: any) => {
-                  console.log(route);
-                  
                   router.addRoute(route as unknown as RouteRecordRaw) 
                 })
               })

@@ -35,6 +35,9 @@ const initTags = () => {
         }
     }
 }
+const refreshSelectedTag = async (view?: RouteLocationNormalizedLoaded) => {
+  refreshPage(view)
+}
 //增加
 const addTags = () => {
     const { name } = unref(currentRoute)
@@ -328,6 +331,7 @@ const fullScreen = () => {
                     </div>
                 </div>
             </el-scrollbar>
+           
         </div>
         <el-dialog :append-to-body="true" :close-on-click-modal="false" v-model="addVisible" title="设置" width="400px"
             @close="addCancel">

@@ -12,12 +12,12 @@
                     </div>
                     <div class="p-[10px]">
                         <el-form class="inbound" ref="formRef" :model="form" label-width="auto">
-                            <el-form-item label="工单号">
+                            <!-- <el-form-item label="工单号">
                                 <selectTa ref="selectTable" :table="orderTable" :defaultSelectVal="defaultSelectVal" :columns="orderColumns"  :max-height="400" :tableWidth="700"
                                     :keywords="{ label: 'MfgOrderName', value: 'MfgOrderName' }"
                                     @radioChange="(...args: any) => radioChange(args)">
                                 </selectTa>
-                            </el-form-item>
+                            </el-form-item> -->
                             <el-form-item v-for="f in formHeader" :key="f.value" :label="f.label">
                                 <span class="font-bold text-lg leading-[30px]"
                                     :class="f.value == 'passNum' ? 'text-[#00B400]' : ''">
@@ -34,13 +34,20 @@
                         <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
                             <span class="ml-5"> 扫描条码</span>
                         </div>
-                        <div class="h-[100px] pt-3 pr-5 pl-5">
+                        <div class="h-[120px] pt-3 pr-5 pl-5">
                             <el-form class="inbound" ref="formRef" :inline="true" :model="form" label-width="auto"
                                 @submit.native.prevent>
-                                <el-form-item label="扫描条码">
-                                    <el-input v-model.trim="stopsForm.containerName" ref="inputRef"
+                                <el-form-item label="扫描条码" class="mb-2">
+                                    <el-input v-model.trim="barCode" ref="inputRef"
                                         :autofocus="inputFocus" style="width: 500px" placeholder="请扫描条码"
                                         @keyup.enter.native="getChange" />
+                                </el-form-item>
+                                <el-form-item :class="[stopsForm.result == 'OK' ? 'switchok' : 'switchng']" class="mb-2">
+                                    <el-switch v-model="stopsForm.result" size="large" style="
+                      zoom: 1.2;
+                      --el-switch-on-color: #ff4949;
+                      --el-switch-off-color: #13ce66;
+                    " :active-value="'NG'" :inactive-value="'OK'" active-text="NG" inactive-text="OK" />
                                 </el-form-item>
                             </el-form>
                             <div class="text-xl font-bold text-[#00B400]" v-show="msgType === true || msgTitle === ''">
@@ -74,9 +81,10 @@ import feedTemp from "@/components/feedTemp/index.vue";
 import selectTa from "@/components/selectTable/index.vue";
 import { useAppStore } from "@/stores/modules/app";
 import { useUserStoreWithOut } from "@/stores/modules/user";
+import { checkStringType } from "@/utils/barcodeFormat";
 import type { Formspan, FormHeader, OrderData } from "@/typing";
 import { ElMessage, ElNotification, ElMessageBox } from "element-plus";
-import { MoveStd ,QueryWorkOrderInfo} from "@/api/dipApi";
+import { MoveStd, QueryWorkOrderInfo } from "@/api/dipApi";
 import { QueryToolInfo, SortTools } from "@/api/operate";
 import {
     ref,
@@ -90,6 +98,7 @@ import {
 interface StopsForm {
     containerName: string;
     workstationName: string;
+    result:string;
     userAccount: string;
     txnDate: string;
 }
@@ -113,6 +122,7 @@ const stopsForm = ref<StopsForm>({
     workstationName: opui.station || "",
     userAccount: userStore.getUserInfo,
     txnDate: "",
+    result: "OK",
     // ToolName: "",
     // ContainerName: "",
     // OrderNumber: "",
@@ -138,6 +148,13 @@ const editForm = ref({
     // orderNum: '100',
 });
 const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
+    {
+        label: "工单号",
+        value: "MfgOrderName",
+        disabled: true,
+        type: "input",
+        width: "",
+    },
     {
         label: "产品编码",
         value: "ProductName",
@@ -334,24 +351,24 @@ onBeforeMount(() => {
 });
 onMounted(() => {
     window.addEventListener("resize", getScreenHeight);
-    getOrderData();
+    // getOrderData();
     getFocus();
 });
 onBeforeUnmount(() => {
     window.addEventListener("resize", getScreenHeight);
 });
 
-  const getOrderData = () => {
-    QueryWorkOrderInfo().then((res: any) => {
-      let data = res.content;
-      orderTable.value.data[0] = data[0];
-      if (data.length == 1) {
-        // console.log(2111);
-        let a = data[0].MfgOrderName;
-        defaultSelectVal.value[0] = a;
-      }
-    });
-  };
+//   const getOrderData = () => {
+//     QueryWorkOrderInfo().then((res: any) => {
+//       let data = res.content;
+//       orderTable.value.data[0] = data[0];
+//       if (data.length == 1) {
+//         // console.log(2111);
+//         let a = data[0].MfgOrderName;
+//         defaultSelectVal.value[0] = a;
+//       }
+//     });
+//   };
 //治具上移
 // const moveUp = (val: any) => {
 //     let data = {
@@ -464,11 +481,20 @@ const addBadData = (data: any) => {
 
 //过站
 const getChange = () => {
-    MoveStd(stopsForm.value).then((res: any) => {
+    let barCodeData = barCode.value;
+    if (checkStringType(barCodeData) == "result") {
+        // console.log(badCodeData);
+        stopsForm.value.result = barCodeData;
+    } else {
+        stopsForm.value.containerName = barCodeData;
+        MoveStd(stopsForm.value).then((res: any) => {
         msgTitle.value = res.msg;
         msgType.value = res.success;
         stopsForm.value.containerName = "";
     });
+    }
+    barCode.value = "";
+   
 };
 
 //分页
@@ -483,7 +509,7 @@ const handleCurrentChange = (val: any) => {
 const getScreenHeight = () => {
     nextTick(() => {
         leftBoxH.value = window.innerHeight - 155;
-        tableHeight.value = window.innerHeight - 340;
+        tableHeight.value = window.innerHeight - 360;
     });
 };
 </script>

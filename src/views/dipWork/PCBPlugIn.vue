@@ -28,32 +28,34 @@
                   </div>
                   <!-- </el-form-item> -->
                   <el-row :gutter="20">
+                    
                     <el-col :span="12">
-                      <el-form-item label="治具编码" class="mb-[5px]">
-                        <span>{{ t.ToolName }}</span>
+                      <el-form-item label="类型" class="mb-[5px]">
+                        <span>{{ t.MaterialName }}</span>
                       </el-form-item>
                     </el-col>
                     <el-col :span="12">
                       <el-form-item label="序号" class="mb-[5px]">
-                        <el-tag type="warning" class="pl-3 pr-3 text-sm" effect="dark" v-if="t.sort == 1">{{ t.sort
+                        <el-tag type="warning" class="pl-3 pr-3 text-sm" effect="dark" v-if="t.ToolName == checked[0]">{{ t.sort
                           }}</el-tag>
-                        <el-tag type="primary" class="pl-3 pr-3" v-if="t.sort > 1">{{ t.sort }}</el-tag>
+                        <el-tag type="primary" class="pl-3 pr-3" v-if="t.ToolName !== checked[0]">{{ t.sort }}</el-tag>
                         <!-- <span class="text-base">{{ t.sort }}</span> -->
                       </el-form-item>
                     </el-col>
                   </el-row>
-                  <el-row :gutter="20">
-                    <el-col :span="12">
-                      <el-form-item label="类型名称" class="mb-[5px]">
-                        <span>{{ t.MaterialName }}</span>
+            
+                      <el-form-item label="治具编码" class="mb-[5px]">
+                        <span>{{ t.ToolName }}</span>
                       </el-form-item>
-                    </el-col>
+                    
+                  <!-- <el-row :gutter="20">
+                    
                     <el-col :span="12">
                       <el-form-item label="类型编号" class="mb-[5px]">
                         <span class="text-base">{{ t.CompName }}</span>
                       </el-form-item>
                     </el-col>
-                  </el-row>
+                  </el-row> -->
                 </el-form>
                 <div class="flex justify-end">
                   <!-- <el-tooltip
@@ -726,7 +728,7 @@ const radioChange = (args: any) => {
     if (getToolForm.value.OrderNumber == args[0].MfgOrderName) {
       return;
     } else {
-      getToolForm.value.OrderNumber = args[0].MfgOrderName;
+      getToolForm.value.OrderNumber = args[0].MfgOrderName//'24072350'
       getToolData();
     }
     //   }
