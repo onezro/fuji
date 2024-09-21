@@ -61,7 +61,7 @@
       </div>
     </el-card>
 
-    <el-dialog v-model="dialogVisible" width="80%" align-center>
+    <el-dialog v-model="dialogVisible" width="80%" title="生产补料申请" align-center>
       <div class="w-full">
         <div ref="headerRef">
           <el-form
@@ -108,33 +108,9 @@
               <el-input v-model="form.Qty" class="input-with-select" disabled>
               </el-input>
             </el-form-item>
-            <el-form-item label="单位">
-              <el-input
-                v-model="form.UOMName"
-                class="input-with-select"
-                disabled
-              >
-              </el-input>
-            </el-form-item>
             <el-form-item label="产线">
               <el-input
                 v-model="form.MfgLineDesc"
-                class="input-with-select"
-                disabled
-              >
-              </el-input>
-            </el-form-item>
-            <el-form-item label="状态">
-              <el-input
-                v-model="form.OrderStatusDesc"
-                class="input-with-select"
-                disabled
-              >
-              </el-input>
-            </el-form-item>
-            <el-form-item label="计划完成时间">
-              <el-input
-                v-model="form.PlannedCompletionDate"
                 class="input-with-select"
                 disabled
               >
@@ -157,6 +133,16 @@
               </el-input>
             </el-form-item>
             <br />
+            <el-form-item label="产品描述">
+              <el-input
+                style="width: 420px"
+              type="textarea"
+                v-model="form.ProductDesc"
+                class="input-with-select"
+                disabled
+              >
+              </el-input>
+            </el-form-item>
           </el-form>
         </div>
         <div class="table_container">
@@ -263,31 +249,14 @@
               </template>
             </el-table-column>
           </el-table>
-          <div
-            class="block flex items-center justify-between"
-            style="margin: 15px 0"
-          >
-            <div></div>
-            <!-- <el-pagination
-              align="center"
-              background
-              size="small"
-              @size-change="handleSizeChange"
-              @current-change="handleCurrentChange"
-              :current-page="currentPage"
-              :page-size="pageSize"
-              :page-sizes="[5, 10, 20, 50, 100]"
-              layout="total,sizes, prev, pager, next, jumper"
-              :total="feedTableData.length"
-            >
-            </el-pagination> -->
-            <div>
+        </div>
+      </div>
+          <template #footer>
+            <div class="dialog-footer">
               <el-button type="" @click="dialogVisible = false">取消</el-button>
               <el-button type="primary" @click="applyFor">申请</el-button>
             </div>
-          </div>
-        </div>
-      </div>
+          </template>
     </el-dialog>
   </div>
 </template>
@@ -553,17 +522,36 @@ const getTextWidth = (str: string) => {
 };
 //选中物料框
 const handleSelectionChange = (data: any) => {
-  choiceList.value = data.map((item: any) => {
+  // choiceList.value = data.map((item: any) => {
+  //   return {
+  //     MaterialName: item.MaterialName,
+  //     RequestQty: item.RequestQty ? item.RequestQty : "0",
+  //     TotalQtyRequired: item.TotalQtyRequired,
+  //     originalMaterialName: item.originalMaterialName,
+  //     isMater: item.isMater
+  //   };
+  // });
+  choiceList.value = data.filter((item: any) => item.RequestQty && item.RequestQty != 0).map((item:any) => {
     return {
       MaterialName: item.MaterialName,
       RequestQty: item.RequestQty ? item.RequestQty : "0",
       TotalQtyRequired: item.TotalQtyRequired,
+      originalMaterialName: item.originalMaterialName,
+      isMater: item.isMater
     };
-  });
+  })
   console.log(choiceList.value);
 };
 //申请物料
 const applyFor = () => {
+  if (choiceList.value.length === 0) {
+      ElNotification({
+        title: '请选择申请行',
+        // message: "取消操作",
+        type: "warning",
+      });
+    return;
+  }
   if (form.value.MfgOrderName === "") {
     return;
   }
@@ -682,7 +670,7 @@ const columnData = reactive([
   {
     text: true,
     prop: "BD_RequestNo",
-    label: "产品编号",
+    label: "产品编码",
     width: "",
     min: true,
     align: "center",

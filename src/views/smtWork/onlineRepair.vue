@@ -103,6 +103,9 @@
                       @keyup.enter.native="getChange"
                     />
                   </el-form-item>
+                  <el-form-item label="">
+                    <el-button type="primary" disabled @click="">维修</el-button>
+                  </el-form-item>
                 </el-form>
                 <div
                   class="text-xl font-bold text-[#00B400]"
