@@ -177,7 +177,6 @@
 
 <script lang="ts" setup>
 import { OrganData } from "@/utils/dataMenu";
-import type { InspectionResult } from "@/typing";
 import {
   ElMessageBox,
   ElMessage,
@@ -205,22 +204,11 @@ import {
   onBeforeMount,
   onBeforeUnmount,
 } from "vue";
-import { get } from "lodash-es";
 const tableData = ref<any>([]);
-const pageSize = ref(10);
-const currentPage = ref(1);
 const tableHeight = ref(0);
-const tableData1 = ref<any>([]);
-const tableHeight1 = ref(0);
-const tableHeight2 = ref(0);
 const userStore = useUserStoreWithOut();
-const loginName = userStore.getUserInfo;
-const addNewVisible = ref(false);
-const testValue = ref("");
-const headerRef = ref();
 const lineNameList = ref<any>([]);
 const statusList = ref<any>([]);
-const radio = ref();
 const searchDate = ref([]);
 const activeName = ref("物料清单明细");
 const feedTableData = ref<any>([]);
@@ -334,74 +322,6 @@ const requisitionForm = ref<RuleForm>({
   bs_mn_mtrl: [],
 });
 
-const pmnTypeList = reactive([
-  {
-    value: 1,
-    label: "生产出库单",
-  },
-  {
-    value: 2,
-    label: "其它出库单",
-  },
-  {
-    value: 3,
-    label: "不良品出库申请单",
-  },
-  {
-    value: 4,
-    label: "供应商退货申请单",
-  },
-  {
-    value: 5,
-    label: "报废申请单",
-  },
-  {
-    value: 6,
-    label: "自定义申请单",
-  },
-  {
-    value: 7,
-    label: "维修领料申请单",
-  },
-  {
-    value: 8,
-    label: "研发领料申请单",
-  },
-  {
-    value: 9,
-    label: "生产补料单",
-  },
-  {
-    value: 10,
-    label: "工单",
-  },
-  {
-    value: 11,
-    label: "产品出货申请单",
-  },
-]);
-
-const custType = reactive([
-  {
-    value: 1,
-    label: "生产出库",
-  },
-  {
-    value: 2,
-    label: "委外出库",
-  },
-]);
-
-const cuostStatus = reactive([
-  {
-    value: 1,
-    label: "完成",
-  },
-  {
-    value: 2,
-    label: "未完成",
-  },
-]);
 
 const columnData = reactive([
   {
@@ -501,43 +421,6 @@ const columnData = reactive([
     align: "center",
   },
 ]);
-
-const flexColumnWidth = (label: any, prop: any) => {
-  const arr = feedTableData?.value.map((x: { [x: string]: any }) => x[prop]);
-  arr.push(label); // 把每列的表头也加进去算
-  // console.log(arr);
-  return getMaxLength(arr) + 25 + "px";
-};
-
-const getMaxLength = (arr: any) => {
-  return arr.reduce((acc: any, item: any) => {
-    if (item) {
-      // console.log(acc,item);
-      const calcLen = getTextWidth(item);
-
-      if (acc < calcLen) {
-        acc = calcLen;
-      }
-    }
-    return acc;
-  }, 0);
-};
-
-const getTextWidth = (str: string) => {
-  let width = 0;
-  const html = document.createElement("span");
-  html.style.cssText = `padding: 0; margin: 0; border: 0; line-height: 1; font-size: ${16}px; font-family: Arial, sans-serif;`;
-  html.innerText = str; // 去除字符串前后的空白字符
-  document.body?.appendChild(html);
-
-  const spanElement = html; // 无需再次查询，直接使用创建的元素
-  if (spanElement) {
-    width = spanElement.offsetWidth;
-    spanElement.remove();
-  }
-  // console.log(width);
-  return width;
-};
 
 onBeforeMount(() => {
   getScreenHeight();
@@ -723,48 +606,6 @@ const orderUnlock = () => {
   });
 }
 
-const pageObj1 = ref({
-  pageSize: 10,
-  currentPage: 1,
-});
-
-const addWmsTable = () => {
-  requisitionForm.value.wms_mn_elec.push({
-    phase_code: "",
-    pt_code: "",
-    pl_code: "",
-  });
-};
-
-const addStoreTable = () => {
-  requisitionForm.value.bs_mn_store.push({
-    store_code: "",
-    remark: "",
-  });
-};
-
-const addMtrlTable = () => {
-  requisitionForm.value.bs_mn_mtrl.push({
-    mtrl_code: "",
-    is_main: "",
-    main_code: "",
-    dosage: "",
-    nn_qty: "",
-    tn_qty: "",
-    so_id: "",
-    thrid_rwn: "",
-    bs_mn_mtrl_ex1: "",
-    remark: "",
-  });
-};
-
-const handleSizeChange1 = (val: any) => {
-  pageObj1.value.currentPage = 1;
-  pageObj1.value.pageSize = val;
-};
-const handleCurrentChange1 = (val: any) => {
-  pageObj1.value.currentPage = val;
-};
 
 const getScreenHeight = () => {
   nextTick(() => {
@@ -774,6 +615,40 @@ const getScreenHeight = () => {
     // tableHeight2.value =
     //   (window.innerHeight - 200 - headerRef.value.clientHeight) * 0.55 - 85;
   });
+};
+const flexColumnWidth = (label: any, prop: any) => {
+  const arr = feedTableData?.value.map((x: { [x: string]: any }) => x[prop]);
+  arr.push(label); // 把每列的表头也加进去算
+  return getMaxLength(arr) + 25 + "px";
+};
+
+const getMaxLength = (arr: any) => {
+  return arr.reduce((acc: any, item: any) => {
+    if (item) {
+      const calcLen = getTextWidth(item);
+
+      if (acc < calcLen) {
+        acc = calcLen;
+      }
+    }
+    return acc;
+  }, 0);
+};
+
+const getTextWidth = (str: string) => {
+  let width = 0;
+  const html = document.createElement("span");
+  html.style.cssText = `padding: 0; margin: 0; border: 0; line-height: 1; font-size: ${13}px; font-family: Arial, sans-serif;`;
+  html.innerText = str; // 去除字符串前后的空白字符
+  document.body?.appendChild(html);
+
+  const spanElement = html; // 无需再次查询，直接使用创建的元素
+  if (spanElement) {
+    width = spanElement.offsetWidth;
+    spanElement.remove();
+  }
+  // console.log(width);
+  return width;
 };
 </script>
 

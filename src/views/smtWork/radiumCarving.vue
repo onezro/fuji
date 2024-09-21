@@ -589,7 +589,7 @@ const sureClick = () => {
     return;
   }
   OrderSNQuery({
-    OrderID: choiceRow.value.MfgOrderName,
+    orderName: choiceRow.value.MfgOrderName,
   }).then((data: any) => {
     Completed.value = [];
     awaitLaser.value = [];

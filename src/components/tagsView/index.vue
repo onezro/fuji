@@ -235,7 +235,7 @@ const getBreadcrumb = () => {
     levelList.value = levelList.value.filter((v: any) => v.path !== '/dashboard/index')
     let data = treeToList(unref(levelList))
     treeLength.value = data.length
-    // console.log(treeLength.value)
+    // console.log(treeLength.value) 
 };
 onBeforeMount(() => {
     getBreadcrumb();
