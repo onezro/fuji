@@ -159,7 +159,7 @@ export function findOrderStatus() {
 //查询工单信息
 export function findOrder(data:any) {
     return request({
-        url: "/api/order/findOrder",
+        url: "/api/order/OrderQuery",
         method: "post",
         data
     })
@@ -256,4 +256,18 @@ export function QueryMaterialRequestDetail(data: any) {
         }
     });
 }
-
+//查询亮灯货架
+export function findShelf() {
+    return request({
+        url: "/api/order/findShelf",
+        method: "post",
+    });
+}
+//工单上线
+export function OrderOnline(data: any) {
+    return request({
+        url: "/api/order/OrderOnline",
+        method: "post",
+        data
+    });
+}
