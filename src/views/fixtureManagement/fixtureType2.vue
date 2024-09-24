@@ -183,6 +183,7 @@ const EditForm = ref<EditFormTS>({
   UpdateBy: loginName,
 });
 
+//修改按钮
 const editSubmit = (data: any) => {
   EditForm.value.ClassID = data.ClassID;
   EditForm.value.ClassName = data.ClassName;
@@ -197,6 +198,7 @@ interface toolType {
 
 const MaterialNameList = ref<toolType[]>([]);
 
+//清空添加
 const clearForm = () => {
   form.value = {
     ClassName: "",
@@ -211,6 +213,7 @@ const clearForm = () => {
   };
 };
 
+//清空修改
 const clearEditForm = () => {
   EditForm.value = {
     ClassID: "",
@@ -220,6 +223,7 @@ const clearEditForm = () => {
   };
 };
 
+//页面初始请求数据
 const getData = () => {
   GetPartsClassList({}).then((res: any) => {
     if (res && res.success && res.content.length !== 0) {
@@ -234,6 +238,7 @@ const getData = () => {
   });
 };
 
+//搜索
 const serachData = () => {
   if (inputValue.value === "") {
     getData();
@@ -253,6 +258,7 @@ const serachData = () => {
   }
 };
 
+//删除
 const deleteSubmit = (data: any) => {
   //   deleteVisible.value = true;
   deleteChoice.value = data.ClassID;
@@ -281,6 +287,7 @@ const deleteSubmit = (data: any) => {
     });
 };
 
+//添加
 const addData = () => {
   addPartsClassData(form.value).then((res: any) => {
     if (res && res.success) {
@@ -295,6 +302,7 @@ const addData = () => {
   });
 };
 
+//发送修改请求
 const editData = () => {
   updatePartsClassData(EditForm.value).then((res: any) => {
     if (res && res.success) {
