@@ -40,23 +40,51 @@
       width="50%"
     >
       <el-form
-        ref="formRef"
+        ref="editFormRef"
         :model="EditForm"
         label-position="left"
         label-width="auto"
         :inline="true"
       >
-        <el-form-item label="采购单号">
-          <el-input v-model="EditForm.OrderNo" style="width: 250px" />
+        <el-form-item label="入库单号">
+          <el-input
+            v-model="EditForm.InstockNo"
+            style="width: 250px"
+            disabled
+          />
         </el-form-item>
-        <el-form-item label="入库描述">
-          <el-input v-model="EditForm.Description" style="width: 250px" />
+        <!-- <el-form-item label="采购单号">
+          <el-input
+            v-model="EditForm.PurchaseNo"
+            style="width: 250px"
+            :disabled="EditForm.Type !== '0'"
+          />
+        </el-form-item> -->
+        <el-form-item label="出库单号">
+          <el-input
+            v-model="EditForm.OutstockNo"
+            style="width: 250px"
+            :disabled="EditForm.Type !== '1' && EditForm.Type !== '2'"
+          />
+        </el-form-item>
+        <el-form-item label="归还人">
+          <el-input
+            v-model="EditForm.ReturnBy"
+            style="width: 250px"
+            :disabled="EditForm.Type !== '1'"
+          />
+        </el-form-item>
+        <el-form-item label="归还日期">
+          <el-date-picker
+            v-model="EditForm.ReturnOn"
+            type="datetime"
+            style="width: 250px"
+            value-format="YYYY-MM-DD HH:mm:ss"
+            :disabled="EditForm.Type !== '1'"
+          />
         </el-form-item>
         <el-form-item label="备注">
           <el-input v-model="EditForm.Remark" style="width: 250px" />
-        </el-form-item>
-        <el-form-item label="批次">
-          <el-input v-model="EditForm.Batch" style="width: 250px" />
         </el-form-item>
       </el-form>
 
@@ -84,7 +112,7 @@
         label-width="auto"
         :inline="true"
       >
-        <el-form-item label="备品名称">
+        <el-form-item label="类别">
           <el-select
             v-model="form.Type"
             filterable
@@ -106,17 +134,18 @@
             :disabled="form.Type !== 0"
           />
         </el-form-item>
-        <el-form-item label="出库单号">
+        <!-- <el-form-item label="入库单号">
           <el-input
             v-model="form.InstockNo"
             style="width: 250px"
+            :disabled="form.Type !== 2"
           />
-        </el-form-item>
-        <el-form-item label="归还单号">
+        </el-form-item> -->
+        <el-form-item label="出库单号">
           <el-input
             v-model="form.OutstockNo"
             style="width: 250px"
-            :disabled="form.Type !== 1"
+            :disabled="form.Type !== 1 && form.Type !== 2"
           />
         </el-form-item>
         <el-form-item label="归还人">
@@ -131,6 +160,7 @@
             v-model="form.ReturnOn"
             type="datetime"
             style="width: 250px"
+            value-format="YYYY-MM-DD HH:mm:ss"
             :disabled="form.Type !== 1"
           />
         </el-form-item>
@@ -235,13 +265,14 @@ interface formTS {
 
 interface EditFormTS {
   Chkin_sht: string;
-  Type: number;
-  PartID: string;
-  OrderNo: string;
-  Description: string;
+  Type: string;
+  InstockNo: string;
+  PurchaseNo: string;
+  OutstockNo: string;
+  ReturnBy: string;
+  ReturnOn: string;
   Remark: string;
   UpdateBy: string;
-  Batch: string;
 }
 
 interface inFormTS {
@@ -299,13 +330,14 @@ const form = ref<formTS>({
 
 const EditForm = ref<EditFormTS>({
   Chkin_sht: "",
-  Type: 0,
-  PartID: "",
-  OrderNo: "",
-  Description: "",
+  Type: '0',
+  InstockNo: "",
+  PurchaseNo: "",
+  OutstockNo: "",
+  ReturnBy: "",
+  ReturnOn: "",
   Remark: "",
   UpdateBy: loginName,
-  Batch: "",
 });
 
 const inForm = ref<inFormTS>({
@@ -316,13 +348,15 @@ const inForm = ref<inFormTS>({
 });
 
 const editSubmit = (data: any) => {
+  console.log(data.ReturnOn);
   EditForm.value.Chkin_sht = data.Chkin_sht;
   EditForm.value.Type = data.Type;
-  EditForm.value.PartID = data.PartID;
-  EditForm.value.OrderNo = data.OrderNo;
-  EditForm.value.Description = data.Description;
+  EditForm.value.InstockNo = data.InstockNo;
+  EditForm.value.PurchaseNo = data.PurchaseNo;
+  EditForm.value.OutstockNo = data.OutstockNo;
   EditForm.value.Remark = data.Remark;
-  EditForm.value.Batch = data.Batch;
+  EditForm.value.ReturnBy = data.ReturnBy;
+  EditForm.value.ReturnOn = data.ReturnOn;
   editVisible.value = true;
 };
 
@@ -348,15 +382,16 @@ const clearForm = () => {
 
 const clearEditForm = () => {
   EditForm.value = {
-    Chkin_sht: "",
-    Type: 0,
-    PartID: "",
-    OrderNo: "",
-    Description: "",
-    Remark: "",
-    UpdateBy: loginName,
-    Batch: "",
-  };
+  Chkin_sht: "",
+  Type: '0',
+  InstockNo: "",
+  PurchaseNo: "",
+  OutstockNo: "",
+  ReturnBy: "",
+  ReturnOn: "",
+  Remark: "",
+  UpdateBy: loginName,
+};
 };
 
 const typeChange = () => {
@@ -521,6 +556,14 @@ const columnData = reactive([
   //     align: "1",
   //   },
   {
+    text: true,
+    prop: "InstockNo",
+    label: "入库单号",
+    width: "",
+    min: true,
+    align: "center",
+  },
+  {
     text: false,
     tag: true,
     tagType: "number",
@@ -547,14 +590,6 @@ const columnData = reactive([
     text: true,
     prop: "OutstockNo",
     label: "归还单号",
-    width: "",
-    min: true,
-    align: "center",
-  },
-  {
-    text: true,
-    prop: "InstockNo",
-    label: "维修单号",
     width: "",
     min: true,
     align: "center",
@@ -633,12 +668,12 @@ const columnData = reactive([
         icon: "Delete",
         buttonClick: deleteSubmit,
       },
-      {
-        type: "success",
-        label: "开始入库",
-        icon: "VideoPlay",
-        buttonClick: showInForm,
-      },
+      // {
+      //   type: "success",
+      //   label: "开始入库",
+      //   icon: "VideoPlay",
+      //   buttonClick: showInForm,
+      // },
     ],
   },
 ]);
