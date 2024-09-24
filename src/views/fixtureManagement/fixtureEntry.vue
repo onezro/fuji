@@ -27,7 +27,7 @@
       width="50%"
     >
       <el-form
-        ref="formRef"
+        ref="editFormRef"
         :model="EditForm"
         label-position="left"
         label-width="auto"
@@ -122,9 +122,9 @@
       :append-to-body="true"
       :close-on-click-modal="false"
       v-model="addVisible"
-      @close=""
       title="添加"
       width="50%"
+      @close="closeSumbit"
     >
       <el-form
         ref="formRef"
@@ -207,7 +207,7 @@
 
       <template #footer>
         <span class="dialog-footer">
-          <el-button @click="addVisible = false"> 取消 </el-button>
+          <el-button @click="closeSumbit"> 取消 </el-button>
           <el-button type="primary" @click="addSumbit"> 确定 </el-button>
         </span>
       </template>
@@ -318,6 +318,7 @@ const EditForm = ref<EditFormTS>({
   user: loginName,
   // ExpirationDate: "",
 });
+const formRef=ref()
 
 const clearForm = () => {
   form.value = {
@@ -353,6 +354,10 @@ const openAdd = () => {
   addVisible.value = true;
 };
 
+const closeSumbit=()=>{
+  addVisible.value = false;
+  formRef.value.resetFields()
+}
 const addSumbit = () => {
   ToolsDetail({
     ...form.value,

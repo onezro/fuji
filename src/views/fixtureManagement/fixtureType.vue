@@ -1,6 +1,6 @@
 <template>
   <div class="p-2">
-    <el-card shadow="always" :body-style="{ padding: '8px' }">
+    <el-card shadow="always" :body-style="{ padding: '8px 8px 0 8px' }">
       <div class="pb-2 flex justify-between">
         <el-button type="primary" @click="openAdd(), clearForm()"
           >添加</el-button
@@ -205,6 +205,7 @@
             v-model="form.MaterialName"
             placeholder="请选择"
             style="width: 240px"
+            filterable
           >
             <el-option
               v-for="item in MaterialNameList"
@@ -795,7 +796,7 @@ const handleCurrentChange = (val: any) => {
 };
 const getScreenHeight = () => {
   nextTick(() => {
-    tableHeight.value = window.innerHeight - 205;
+    tableHeight.value = window.innerHeight - 195;
   });
 };
 </script>
