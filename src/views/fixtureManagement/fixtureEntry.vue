@@ -136,7 +136,8 @@
         <el-form-item label="工治具型号" prop="compname">
           <el-select
             v-model="form.compname"
-            placeholder=""
+       
+            filterable
             style="width: 240px"
           >
             <el-option

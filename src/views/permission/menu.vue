@@ -1,7 +1,7 @@
 <template>
-  <div class="p-[10px]">
-    <el-card shadow="always" :body-style="{ padding: '10px' }">
-      <div class="mb-[10px]">
+  <div class="p-2">
+    <el-card shadow="always" :body-style="{ padding: '8px' }">
+      <div class="mb-2">
         <el-button type="primary" @click="openAdd">添加</el-button>
       </div>
       <div class="w-full">
@@ -462,7 +462,7 @@ const handleCurrentChange = (val: any) => {
 };
 const getScreenHeight = () => {
   nextTick(() => {
-    tableHeight.value = window.innerHeight - 170;
+    tableHeight.value = window.innerHeight - 154;
     //后面的50：根据需求空出的高度，自行调整
   });
 };

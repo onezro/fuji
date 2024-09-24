@@ -481,7 +481,7 @@ const dispose = (data: any) => {
         a[isExist].stepItemList[b].stepItemList.push({
           ...item,
           step1:
-            item.Product +
+            item.ProductName +
             "-" +
             item.Step +
             "-" +
@@ -493,11 +493,11 @@ const dispose = (data: any) => {
           Step: item.Step,
          
           InspectContent: item.InspectContent,
-          step1: item.Product + "-" + item.Step,
+          step1: item.ProductName + "-" + item.Step,
           stepItemList: [
             {
               ...item,
-              step1: item.Product + "-" + item.Step + "-" + (isExist + 1),
+              step1: item.ProductName + "-" + item.Step + "-" + (isExist + 1),
             },
           ],
         });
@@ -531,7 +531,7 @@ const dispose = (data: any) => {
     }
   });
   tableData.value = a;
-  // console.log(tableData.value);
+  console.log(tableData.value);
   
   tableData.value.sort((a, b) => {
     return a.ProductName - b.ProductName;

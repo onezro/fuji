@@ -219,7 +219,7 @@
   const getForm = reactive({
     Product: "*",
     WorkSection: "",
-    InspectType: "CI",
+    InspectType: "4I",
     StepList: [
       {
         Step: 0,
@@ -277,18 +277,18 @@
   const editHear = reactive<InstanceType<typeof AllInspection>>({
     Product: "",
     WorkSection: "",
-    InspectType: "CI",
+    InspectType: "4I",
     StepList: [],
   });
   const addFrom = reactive<InstanceType<typeof AllInspection>>({
     Product: "",
     WorkSection: "",
-    InspectType: "CI",
+    InspectType: "4I",
     StepList: [],
   });
   const deleteForm = reactive<InstanceType<typeof AllInspection>>({
     product: "",
-    inspectType: "CI",
+    InspectType: "4I",
     stepList: [],
   });
   

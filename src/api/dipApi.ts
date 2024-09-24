@@ -7,6 +7,14 @@ export function QueryWorkOrderInfo() {
         method: "post",
     });
 }
+// //工单查询
+// export function OrderQuery() {
+//     return request({
+//         url: "/api/workstation/OrderQuery",
+//         method: "post",
+//         data:{}
+//     })
+// }
 
 //获取设备
 export function FindAllDevice(data: { WorkStation: string; }) {

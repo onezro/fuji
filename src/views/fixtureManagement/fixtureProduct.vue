@@ -589,9 +589,9 @@ const columnData = reactive([
     text: true,
     prop: "ProductDsc",
     label: "产品描述",
-    width: "",
+    width: "300",
     min: true,
-    align: "center",
+    align: "1",
   },
   {
     text: true,

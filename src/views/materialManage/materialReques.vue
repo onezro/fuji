@@ -669,7 +669,7 @@ const columnData = reactive([
   },
   {
     text: true,
-    prop: "BD_RequestNo",
+    prop: "ProductName",
     label: "产品编码",
     width: "",
     min: true,
@@ -679,9 +679,9 @@ const columnData = reactive([
     text: true,
     prop: "ProductDesc",
     label: "产品描述",
-    width: "",
+    width: "350",
     min: true,
-    align: "center",
+    align: "1",
   },
   {
     text: true,
