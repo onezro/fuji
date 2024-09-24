@@ -89,7 +89,7 @@ import type { Formspan, FormHeader, OrderData } from "@/typing";
 import { ElMessage, ElNotification, ElMessageBox } from "element-plus";
 import {
     QueryWorkOrderInfo,
-    DIPStationMoveOut,
+    // DIPStationMoveOut,
     FindAllDevice,
     UpdateDevice,
 } from "@/api/dipApi";
