@@ -1,7 +1,7 @@
 <template>
   <div class="p-2">
-    <el-card shadow="always" :body-style="{ padding: '8px' }">
-      <div class="pb-[10px] flex justify-between">
+    <el-card shadow="always" :body-style="{ padding: '8px 8px 0px 8px' }">
+      <div class="pb-2 flex justify-between">
         <el-button type="primary" @click="openAdd">添加</el-button>
         <div class="flex"></div>
       </div>
@@ -635,7 +635,7 @@ const handleCurrentChange = (val: any) => {
 };
 const getScreenHeight = () => {
   nextTick(() => {
-    tableHeight.value = window.innerHeight - 205;
+    tableHeight.value = window.innerHeight - 195;
   });
 };
 </script>
