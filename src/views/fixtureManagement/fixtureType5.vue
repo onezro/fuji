@@ -4,7 +4,7 @@
       <div class="pb-2 flex justify-between">
         <el-button
           type="primary"
-          @click="clearForm(), (addVisible = true), getClassList()"
+          @click="clearForm(), (addVisible = true), GetList()"
           >添加</el-button
         >
         <div class="flex">
@@ -46,54 +46,17 @@
         label-width="auto"
         :inline="true"
       >
-        <el-form-item label="备品名称">
-          <el-input v-model="EditForm.PartName" style="width: 250px" disabled />
+        <el-form-item label="采购单号">
+          <el-input v-model="EditForm.OrderNo" style="width: 250px" />
         </el-form-item>
-        <el-form-item label="备品描述">
+        <el-form-item label="入库描述">
           <el-input v-model="EditForm.Description" style="width: 250px" />
         </el-form-item>
-        <el-form-item label="规格">
-          <el-input v-model="EditForm.Specification" style="width: 250px" />
+        <el-form-item label="备注">
+          <el-input v-model="EditForm.Remark" style="width: 250px" />
         </el-form-item>
-        <el-form-item label="设备">
-          <el-input v-model="EditForm.Equipment" style="width: 250px" />
-        </el-form-item>
-        <el-form-item label="供应商代码">
-          <el-input v-model="EditForm.VendorCode" style="width: 250px" />
-        </el-form-item>
-        <el-form-item label="安全库存">
-          <el-input-number
-            v-model="EditForm.SafetyStock"
-            :min="1"
-            style="width: 250px"
-          />
-        </el-form-item>
-        <el-form-item label="最小库存">
-          <el-input-number
-            v-model="EditForm.MinStock"
-            :min="1"
-            style="width: 250px"
-          />
-        </el-form-item>
-        <el-form-item label="最大库存">
-          <el-input-number
-            v-model="EditForm.MaxStock"
-            :min="1"
-            style="width: 250px"
-          />
-        </el-form-item>
-        <el-form-item label="当前数量">
-          <el-input-number
-            v-model="EditForm.CurrentQty"
-            :min="1"
-            style="width: 250px"
-          />
-        </el-form-item>
-        <el-form-item label="周期">
-          <el-input v-model="EditForm.Cycle" style="width: 250px" />
-        </el-form-item>
-        <el-form-item label="单位">
-          <el-input v-model="EditForm.Unit" style="width: 250px" />
+        <el-form-item label="批次">
+          <el-input v-model="EditForm.Batch" style="width: 250px" />
         </el-form-item>
       </el-form>
 
@@ -121,69 +84,58 @@
         label-width="auto"
         :inline="true"
       >
-        <el-form-item label="类别">
+        <el-form-item label="备品名称">
           <el-select
-            v-model="form.ClassID"
+            v-model="form.Type"
             filterable
-            placeholder=""
             style="width: 250px"
+            @change="typeChange()"
           >
             <el-option
-              v-for="item in ClassList"
-              :key="item.ClassID"
-              :label="item.ClassName"
-              :value="item.ClassID"
+              v-for="(item, index) in typeList"
+              :key="index"
+              :label="item"
+              :value="index"
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="备品名称">
-          <el-input v-model="form.PartName" style="width: 250px" />
+        <el-form-item label="采购单号">
+          <el-input
+            v-model="form.PurchaseNo"
+            style="width: 250px"
+            :disabled="form.Type !== 0"
+          />
         </el-form-item>
-        <el-form-item label="备品描述">
-          <el-input v-model="form.Description" style="width: 250px" />
-        </el-form-item>
-        <el-form-item label="规格">
-          <el-input v-model="form.Specification" style="width: 250px" />
-        </el-form-item>
-        <el-form-item label="设备">
-          <el-input v-model="form.Equipment" style="width: 250px" />
-        </el-form-item>
-        <el-form-item label="供应商代码">
-          <el-input v-model="form.VendorCode" style="width: 250px" />
-        </el-form-item>
-        <el-form-item label="安全库存">
-          <el-input-number
-            v-model="form.SafetyStock"
-            :min="1"
+        <el-form-item label="出库单号">
+          <el-input
+            v-model="form.InstockNo"
             style="width: 250px"
           />
         </el-form-item>
-        <el-form-item label="最小库存">
-          <el-input-number
-            v-model="form.MinStock"
-            :min="1"
+        <el-form-item label="归还单号">
+          <el-input
+            v-model="form.OutstockNo"
             style="width: 250px"
+            :disabled="form.Type !== 1"
           />
         </el-form-item>
-        <el-form-item label="最大库存">
-          <el-input-number
-            v-model="form.MaxStock"
-            :min="1"
+        <el-form-item label="归还人">
+          <el-input
+            v-model="form.ReturnBy"
             style="width: 250px"
+            :disabled="form.Type !== 1"
           />
         </el-form-item>
-        <el-form-item label="当前数量">
-          <el-input-number
-            v-model="form.CurrentQty"
-            :min="1"
+        <el-form-item label="归还日期">
+          <el-date-picker
+            v-model="form.ReturnOn"
+            type="datetime"
             style="width: 250px"
+            :disabled="form.Type !== 1"
           />
         </el-form-item>
-        <el-form-item label="周期">
-          <el-input v-model="form.Cycle" style="width: 250px" />
-        </el-form-item>
-        <el-form-item label="单位">
-          <el-input v-model="form.Unit" style="width: 250px" />
+        <el-form-item label="备注">
+          <el-input v-model="form.Remark" style="width: 250px" />
         </el-form-item>
       </el-form>
 
@@ -195,6 +147,50 @@
         </span>
       </template>
     </el-dialog>
+    <el-dialog
+      align-center
+      :append-to-body="true"
+      :close-on-click-modal="false"
+      v-model="InVisible"
+      @close=""
+      title="开始入库"
+      width="50%"
+    >
+      <el-form
+        ref="formRef"
+        :model="form"
+        label-position="left"
+        label-width="auto"
+        :inline="true"
+      >
+        <el-form-item label="备品名称">
+          <el-select
+            v-model="inForm.PartID"
+            filterable
+            placeholder=""
+            style="width: 250px"
+          >
+            <el-option
+              v-for="item in PartList"
+              :key="item.PartID"
+              :label="item.PartName"
+              :value="item.PartID"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="入库数量">
+          <el-input-number v-model="inForm.Qty" :min="1" style="width: 250px" />
+        </el-form-item>
+      </el-form>
+
+      <template #footer>
+        <span class="dialog-footer">
+          <!-- <el-button type="info" @click="addSon"> 增加子项</el-button> -->
+          <el-button @click="InVisible = false"> 取消 </el-button>
+          <el-button type="primary" @click="startPartIn"> 确定 </el-button>
+        </span>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -202,11 +198,14 @@
 import { ElMessage, ElNotification, ElMessageBox } from "element-plus";
 import tableTem from "@/components/tableTem/index.vue";
 import {
+  GetPartInList,
+  findChkInParameter,
+  updatePartsIn,
+  deletePartsInData,
+  PartsInAdd,
+  StartPartsIn,
+  EndPartsIn,
   GetPartsList,
-  addPartsData,
-  updatePartsData,
-  deletePartsData,
-  GetPartsClassList,
 } from "@/api/sparePartsApi";
 import { useUserStoreWithOut } from "@/stores/modules/user";
 import {
@@ -224,42 +223,39 @@ import {
 const userStore = useUserStoreWithOut();
 
 interface formTS {
-  ClassID: string;
-  PartName: string;
-  Description: string;
-  Specification: string;
-  Equipment: string;
-  VendorCode: string;
-  Cycle: string;
-  SafetyStock: number;
-  MinStock: number;
-  MaxStock: number;
-  CurrentQty: number;
-  Unit: string;
+  Type: number;
+  InstockNo: string;
+  PurchaseNo: string;
+  OutstockNo: string;
+  ReturnBy: string;
+  ReturnOn: string;
+  Remark: string;
   CreatedBy: string;
 }
 
 interface EditFormTS {
+  Chkin_sht: string;
+  Type: number;
   PartID: string;
-  ClassID: string;
-  PartName: string;
+  OrderNo: string;
   Description: string;
-  Specification: string;
-  Equipment: string;
-  VendorCode: string;
-  Cycle: string;
-  SafetyStock: number;
-  MinStock: number;
-  MaxStock: number;
-  CurrentQty: number;
-  Unit: string;
+  Remark: string;
   UpdateBy: string;
+  Batch: string;
+}
+
+interface inFormTS {
+  Chkin_sht: string;
+  Qty: number;
+  PartID: string;
+  CreatedBy: string;
 }
 
 //   const pageSize = ref(10);
 const currentPage = ref(1);
 const tableHeight = ref(0);
 const addVisible = ref(false);
+const InVisible = ref(false);
 const editVisible = ref(false);
 const inputValue = ref("");
 const deleteVisible = ref(false);
@@ -268,6 +264,7 @@ const pageObj = ref({
   pageSize: 30,
   currentPage: 1,
 });
+const typeList = ["采购入库", "归还入库", "维修入库"];
 const loginName = userStore.getUserInfo;
 
 const formControl = ref({
@@ -287,57 +284,48 @@ const editFormControl = ref({
 //     });
 
 const tableData = ref([]);
-const ClassList = ref<any[]>([]);
+const PartList = ref<any[]>([]);
 
 const form = ref<formTS>({
-  ClassID: "",
-  PartName: "",
-  Description: "",
-  Specification: "",
-  Equipment: "",
-  VendorCode: "",
-  Cycle: "",
-  SafetyStock: 1,
-  MinStock: 1,
-  MaxStock: 1,
-  CurrentQty: 1,
-  Unit: "",
+  Type: 0,
+  InstockNo: "",
+  PurchaseNo: "",
+  OutstockNo: "",
+  ReturnBy: "",
+  ReturnOn: "",
+  Remark: "",
   CreatedBy: loginName,
 });
 
 const EditForm = ref<EditFormTS>({
+  Chkin_sht: "",
+  Type: 0,
   PartID: "",
-  ClassID: "",
-  PartName: "",
+  OrderNo: "",
   Description: "",
-  Specification: "",
-  Equipment: "",
-  VendorCode: "",
-  Cycle: "",
-  SafetyStock: 1,
-  MinStock: 1,
-  MaxStock: 1,
-  CurrentQty: 1,
-  Unit: "",
+  Remark: "",
   UpdateBy: loginName,
+  Batch: "",
+});
+
+const inForm = ref<inFormTS>({
+  Chkin_sht: "",
+  Qty: 0,
+  PartID: "",
+  CreatedBy: loginName,
 });
 
 const editSubmit = (data: any) => {
-  EditForm.value.ClassID = data.ClassID;
+  EditForm.value.Chkin_sht = data.Chkin_sht;
+  EditForm.value.Type = data.Type;
   EditForm.value.PartID = data.PartID;
-  EditForm.value.PartName = data.PartName;
+  EditForm.value.OrderNo = data.OrderNo;
   EditForm.value.Description = data.Description;
-  EditForm.value.Specification = data.Specification;
-  EditForm.value.Equipment = data.Equipment;
-  EditForm.value.VendorCode = data.VendorCode;
-  EditForm.value.Cycle = data.Cycle;
-  EditForm.value.SafetyStock = data.SafetyStock;
-  EditForm.value.MinStock = data.MinStock;
-  EditForm.value.MaxStock = data.MaxStock;
-  EditForm.value.CurrentQty = data.CurrentQty;
-  EditForm.value.Unit = data.Unit;
+  EditForm.value.Remark = data.Remark;
+  EditForm.value.Batch = data.Batch;
   editVisible.value = true;
 };
+
 interface toolType {
   Text: string;
   Value: string;
@@ -347,50 +335,53 @@ const MaterialNameList = ref<toolType[]>([]);
 
 const clearForm = () => {
   form.value = {
-    ClassID: "",
-    PartName: "",
-    Description: "",
-    Specification: "",
-    Equipment: "",
-    VendorCode: "",
-    Cycle: "",
-    SafetyStock: 1,
-    MinStock: 1,
-    MaxStock: 1,
-    CurrentQty: 1,
-    Unit: "",
+    Type: 0,
+    InstockNo: "",
+    PurchaseNo: "",
+    OutstockNo: "",
+    ReturnBy: "",
+    ReturnOn: "",
+    Remark: "",
     CreatedBy: loginName,
-  };
-
-  formControl.value = {
-    CleanAfterUses: false,
-    CleanAfterPause: false,
-    CleanAfterTime: false,
   };
 };
 
 const clearEditForm = () => {
   EditForm.value = {
+    Chkin_sht: "",
+    Type: 0,
     PartID: "",
-    ClassID: "",
-    PartName: "",
+    OrderNo: "",
     Description: "",
-    Specification: "",
-    Equipment: "",
-    VendorCode: "",
-    Cycle: "",
-    SafetyStock: 1,
-    MinStock: 1,
-    MaxStock: 1,
-    CurrentQty: 1,
-    Unit: "",
+    Remark: "",
     UpdateBy: loginName,
+    Batch: "",
   };
 };
 
+const typeChange = () => {
+  form.value = {
+    Type: form.value.Type,
+    InstockNo: "",
+    PurchaseNo: "",
+    OutstockNo: "",
+    ReturnBy: "",
+    ReturnOn: "",
+    Remark: "",
+    CreatedBy: loginName,
+  };
+};
+
+const showInForm = (data: any) => {
+  GetList();
+  InVisible.value = true;
+  inForm.value.Chkin_sht = data.Chkin_sht;
+  inForm.value.PartID = data.PartID;
+};
+
 const getData = () => {
-  GetPartsList({}).then((res: any) => {
-    if (res && res.success && res.content.length !== 0) {
+  GetPartInList({}).then((res: any) => {
+    if (res && res.success) {
       tableData.value = res.content;
       //   ElNotification({
       //     title: res.msg,
@@ -401,10 +392,10 @@ const getData = () => {
   });
 };
 
-const getClassList = () => {
-  GetPartsClassList({}).then((res: any) => {
-    if (res && res.success && res.content.length !== 0) {
-      ClassList.value = res.content;
+const startPartIn = () => {
+  InVisible.value = false;
+  StartPartsIn(inForm.value).then((res: any) => {
+    if (res && res.success) {
       ElNotification({
         title: res.msg,
         // message: "取消操作",
@@ -414,11 +405,26 @@ const getClassList = () => {
   });
 };
 
+const GetList = () => {
+  GetPartsList({}).then((res: any) => {
+    if (res && res.success && res.content.length !== 0) {
+      PartList.value = res.content;
+      console.log(res.content);
+
+      // ElNotification({
+      //   title: res.msg,
+      //   // message: "取消操作",
+      //   type: "success",
+      // });
+    }
+  });
+};
+
 const serachData = () => {
   if (inputValue.value === "") {
     getData();
   } else {
-    GetPartsList({ PartName: inputValue.value }).then((res: any) => {
+    findChkInParameter(inputValue.value).then((res: any) => {
       if (res && res.success && res.content.length !== 0) {
         tableData.value = res.content;
         ElNotification({
@@ -442,7 +448,7 @@ const deleteSubmit = (data: any) => {
     type: "warning",
   })
     .then(() => {
-      deletePartsData(data.PartID, loginName).then((data: any) => {
+      deletePartsInData(data.Chkin_sht, loginName).then((data: any) => {
         if (!data) {
           return;
         }
@@ -461,8 +467,16 @@ const deleteSubmit = (data: any) => {
     });
 };
 
+const PartIDChoice = (data: any) => {
+  PartList.value.forEach((element) => {
+    if (data === element.PartID) {
+      console.log(element);
+    }
+  });
+};
+
 const addData = () => {
-  addPartsData(form.value).then((res: any) => {
+  PartsInAdd(form.value).then((res: any) => {
     if (res && res.success) {
       addVisible.value = false;
       ElNotification({
@@ -476,7 +490,7 @@ const addData = () => {
 };
 
 const editData = () => {
-  updatePartsData(EditForm.value).then((res: any) => {
+  updatePartsIn(EditForm.value).then((res: any) => {
     if (res && res.success) {
       editVisible.value = false;
       ElNotification({
@@ -507,89 +521,95 @@ const columnData = reactive([
   //     align: "1",
   //   },
   {
-    text: true,
-    prop: "PartName",
-    label: "备品名称",
+    text: false,
+    tag: true,
+    tagType: "number",
+    tagItem: [
+      { text: "采购入库", type: "primary", number: "0" },
+      { text: "归还入库", type: "primary", number: "1" },
+      { text: "维修入库", type: "primary", number: "2" },
+    ],
+    prop: "Type",
+    label: "入库类型",
     width: "",
     min: true,
     align: "center",
   },
   {
     text: true,
-    prop: "Description",
-    label: "备品描述",
+    prop: "PurchaseNo",
+    label: "采购单号",
     width: "",
     min: true,
     align: "center",
   },
   {
     text: true,
-    prop: "Specification",
-    label: "规格",
+    prop: "OutstockNo",
+    label: "归还单号",
     width: "",
     min: true,
     align: "center",
   },
   {
     text: true,
-    prop: "Equipment",
-    label: "设备",
+    prop: "InstockNo",
+    label: "维修单号",
+    width: "",
+    min: true,
+    align: "center",
+  },
+  {
+    text: false,
+    tag: true,
+    tagType: "number",
+    tagItem: [
+      { text: "待入库", type: "primary", number: 0 },
+      { text: "入库中", type: "primary", number: 1 },
+      { text: "已完成", type: "primary", number: 2 },
+    ],
+    prop: "Status",
+    label: "状态",
+    width: "80",
+    min: true,
+    align: "center",
+  },
+  {
+    text: true,
+    prop: "LendID",
+    label: "借出编号",
     width: "",
     min: true,
     align: "center",
   },
   {
     text: true,
-    prop: "VendorCode",
-    label: "供应商代码",
+    prop: "ReturnBy",
+    label: "归还人",
     width: "",
     min: true,
     align: "center",
   },
   {
     text: true,
-    prop: "Cycle",
-    label: "周期",
+    prop: "CreatedBy",
+    label: "创建人",
     width: "",
     min: true,
     align: "center",
   },
   {
     text: true,
-    prop: "SafetyStock",
-    label: "安全库存",
+    prop: "CreatedOn",
+    label: "创建时间",
     width: "",
     min: true,
     align: "center",
   },
   {
     text: true,
-    prop: "MinStock",
-    label: "最小库存",
-    width: "",
-    min: true,
-    align: "center",
-  },
-  {
-    text: true,
-    prop: "MaxStock",
-    label: "最大库存",
-    width: "",
-    min: true,
-    align: "center",
-  },
-  {
-    text: true,
-    prop: "CurrentQty",
-    label: "当前数量",
-    width: "",
-    min: true,
-    align: "center",
-  },
-  {
-    text: true,
-    prop: "Unit",
-    label: "单位",
+    prop: "Remark",
+    label: "备注",
     width: "",
     min: true,
     align: "center",
@@ -597,7 +617,7 @@ const columnData = reactive([
   {
     isOperation: true,
     label: "操作",
-    width: "120",
+    width: "180",
     align: "center",
     fixed: "right",
     operation: [
@@ -613,12 +633,12 @@ const columnData = reactive([
         icon: "Delete",
         buttonClick: deleteSubmit,
       },
-      //   {
-      //     type: "warning",
-      //     label: "报废",
-      //     icon: "Failed",
-      //     buttonClick: null,
-      //   },
+      {
+        type: "success",
+        label: "开始入库",
+        icon: "VideoPlay",
+        buttonClick: showInForm,
+      },
     ],
   },
 ]);
