@@ -2,9 +2,7 @@
   <div class="p-2">
     <el-card shadow="always" :body-style="{ padding: '8px' }">
       <div class="pb-2 flex justify-between">
-        <el-button
-          type="primary"
-          @click="clearForm(), (addVisible = true), GetList()"
+        <el-button type="primary" @click="clearForm(), (addVisible = true)"
           >添加</el-button
         >
         <div class="flex">
@@ -46,37 +44,49 @@
         label-width="auto"
         :inline="true"
       >
-        <el-form-item label="入库单号">
+        <el-form-item label="出库单号">
           <el-input
-            v-model="EditForm.InstockNo"
+            v-model="EditForm.OutstockNo"
             style="width: 250px"
             disabled
           />
         </el-form-item>
         <!-- <el-form-item label="采购单号">
+            <el-input
+              v-model="EditForm.PurchaseNo"
+              style="width: 250px"
+              :disabled="EditForm.Type !== '0'"
+            />
+          </el-form-item> -->
+        <el-form-item label="部门">
+          <el-input v-model="EditForm.Department" style="width: 250px" />
+        </el-form-item>
+        <el-form-item label="借出人">
           <el-input
-            v-model="EditForm.PurchaseNo"
+            v-model="EditForm.LendBy"
             style="width: 250px"
-            :disabled="EditForm.Type !== '0'"
-          />
-        </el-form-item> -->
-        <el-form-item label="出库单号">
-          <el-input
-            v-model="EditForm.OutstockNo"
-            style="width: 250px"
-            :disabled="EditForm.Type !== '1' && EditForm.Type !== '2'"
+            :disabled="EditForm.Type !== '1'"
           />
         </el-form-item>
-        <el-form-item label="归还人">
+        <el-form-item label="借出日期">
+          <el-date-picker
+            v-model="EditForm.LendOn"
+            type="datetime"
+            style="width: 250px"
+            value-format="YYYY-MM-DD HH:mm:ss"
+            :disabled="EditForm.Type !== '1'"
+          />
+        </el-form-item>
+        <el-form-item label="借出原因">
           <el-input
-            v-model="EditForm.ReturnBy"
+            v-model="EditForm.LendReason"
             style="width: 250px"
             :disabled="EditForm.Type !== '1'"
           />
         </el-form-item>
         <el-form-item label="归还日期">
           <el-date-picker
-            v-model="EditForm.ReturnOn"
+            v-model="EditForm.ReturnDate"
             type="datetime"
             style="width: 250px"
             value-format="YYYY-MM-DD HH:mm:ss"
@@ -127,37 +137,35 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="采购单号">
+        <el-form-item label="部门">
+          <el-input v-model="form.Department" style="width: 250px" />
+        </el-form-item>
+        <el-form-item label="借出人">
           <el-input
-            v-model="form.PurchaseNo"
+            v-model="form.LendBy"
             style="width: 250px"
-            :disabled="form.Type !== 0"
+            :disabled="form.Type !== 1"
           />
         </el-form-item>
-        <!-- <el-form-item label="入库单号">
+        <el-form-item label="借出原因">
           <el-input
-            v-model="form.InstockNo"
+            v-model="form.LendReason"
             style="width: 250px"
-            :disabled="form.Type !== 2"
-          />
-        </el-form-item> -->
-        <el-form-item label="出库单号">
-          <el-input
-            v-model="form.OutstockNo"
-            style="width: 250px"
-            :disabled="form.Type !== 1 && form.Type !== 2"
+            :disabled="form.Type !== 1"
           />
         </el-form-item>
-        <el-form-item label="归还人">
-          <el-input
-            v-model="form.ReturnBy"
+        <el-form-item label="借出日期">
+          <el-date-picker
+            v-model="form.LendOn"
+            type="datetime"
             style="width: 250px"
+            value-format="YYYY-MM-DD HH:mm:ss"
             :disabled="form.Type !== 1"
           />
         </el-form-item>
         <el-form-item label="归还日期">
           <el-date-picker
-            v-model="form.ReturnOn"
+            v-model="form.ReturnDate"
             type="datetime"
             style="width: 250px"
             value-format="YYYY-MM-DD HH:mm:ss"
@@ -208,59 +216,11 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="入库数量" prop="Qty">
+        <el-form-item label="出库数量" prop="Qty">
           <el-input-number v-model="inForm.Qty" :min="1" style="width: 250px" />
         </el-form-item>
-        <el-form-item label="批次号" prop="PartNumber">
-          <el-input
-            v-model="inForm.PartNumber"
-            style="width: 250px"
-            :disabled="inFormType !== '1'"
-          />
-        </el-form-item>
-        <el-form-item label="到期日期" prop="DueDate">
-          <el-date-picker
-            v-model="inForm.DueDate"
-            type="datetime"
-            style="width: 250px"
-            value-format="YYYY-MM-DD HH:mm:ss"
-            :disabled="inFormType !== '1'"
-          />
-        </el-form-item>
-        <el-form-item label="资产编号" prop="AssetNumber">
-          <el-input
-            v-model="inForm.AssetNumber"
-            style="width: 250px"
-            :disabled="inFormType !== '1'"
-          />
-        </el-form-item>
-        <el-form-item label="供应商" prop="Vendor">
-          <el-input
-            v-model="inForm.Vendor"
-            style="width: 250px"
-            :disabled="inFormType !== '1'"
-          />
-        </el-form-item>
-        <el-form-item label="制造商" prop="Manufacturer">
-          <el-input
-            v-model="inForm.Manufacturer"
-            style="width: 250px"
-            :disabled="inFormType !== '1'"
-          />
-        </el-form-item>
-        <el-form-item label="规格" prop="Specification">
-          <el-input
-            v-model="inForm.Specification"
-            style="width: 250px"
-            :disabled="inFormType !== '1'"
-          />
-        </el-form-item>
-        <el-form-item label="库存" prop="StorageLocation">
-          <el-input
-            v-model="inForm.StorageLocation"
-            style="width: 250px"
-            :disabled="inFormType !== '1'"
-          />
+        <el-form-item label="货架编码" prop="StockID">
+          <el-input v-model="inForm.StockID" style="width: 250px" />
         </el-form-item>
       </el-form>
 
@@ -279,13 +239,13 @@
 import { ElMessage, ElNotification, ElMessageBox } from "element-plus";
 import tableTem from "@/components/tableTem/index.vue";
 import {
-  GetPartInList,
-  findChkInParameter,
-  updatePartsIn,
-  deletePartsInData,
-  PartsInAdd,
-  StartPartsIn,
-  EndPartsIn,
+  GetPartsOutList,
+  findChkOutParameter,
+  PartsOutAdd,
+  deletePartsOut,
+  updatePartsOut,
+  StartPartsOut,
+  EndPartsOut,
   GetPartsList,
 } from "@/api/sparePartsApi";
 import { useUserStoreWithOut } from "@/stores/modules/user";
@@ -305,38 +265,33 @@ const userStore = useUserStoreWithOut();
 
 interface formTS {
   Type: number;
-  InstockNo: string;
-  PurchaseNo: string;
-  OutstockNo: string;
-  ReturnBy: string;
-  ReturnOn: string;
+  Department: string;
+  LendOn: string;
+  LendBy: string;
+  LendReason: string;
+  ReturnDate: string;
   Remark: string;
   CreatedBy: string;
 }
 
 interface EditFormTS {
-  Chkin_sht: string;
+  Chkout_sht: string;
   Type: string;
-  InstockNo: string;
-  PurchaseNo: string;
   OutstockNo: string;
-  ReturnBy: string;
-  ReturnOn: string;
+  Department: string;
+  LendOn: string;
+  LendBy: string;
+  LendReason: string;
+  ReturnDate: string;
   Remark: string;
   UpdateBy: string;
 }
 
 interface inFormTS {
-  Chkin_sht: string;
+  Chkout_sht: string;
+  StockID: string;
   PartID: string;
   Qty: number;
-  PartNumber: string;
-  DueDate: string;
-  AssetNumber: string;
-  Vendor: string;
-  Manufacturer: string;
-  Specification: string;
-  StorageLocation: string;
   CreatedBy: string;
 }
 
@@ -355,7 +310,7 @@ const pageObj = ref({
   pageSize: 30,
   currentPage: 1,
 });
-const typeList = ["采购入库", "归还入库", "维修入库"];
+const typeList = ["领用", "借出"];
 const loginName = userStore.getUserInfo;
 
 const formControl = ref({
@@ -379,51 +334,47 @@ const PartList = ref<any[]>([]);
 
 const form = ref<formTS>({
   Type: 0,
-  InstockNo: "",
-  PurchaseNo: "",
-  OutstockNo: "",
-  ReturnBy: "",
-  ReturnOn: "",
+  Department: "",
+  LendOn: "",
+  LendBy: "",
+  LendReason: "",
+  ReturnDate: "",
   Remark: "",
   CreatedBy: loginName,
 });
 
 const EditForm = ref<EditFormTS>({
-  Chkin_sht: "",
-  Type: "0",
-  InstockNo: "",
-  PurchaseNo: "",
+  Chkout_sht: "",
+  Type: "",
   OutstockNo: "",
-  ReturnBy: "",
-  ReturnOn: "",
+  Department: "",
+  LendOn: "",
+  LendBy: "",
+  LendReason: "",
+  ReturnDate: "",
   Remark: "",
   UpdateBy: loginName,
 });
 
 const inForm = ref<inFormTS>({
-  Chkin_sht: "",
+  Chkout_sht: "",
+  StockID: "",
   PartID: "",
-  Qty: 0,
-  PartNumber: "",
-  DueDate: "",
-  AssetNumber: "",
-  Vendor: "",
-  Manufacturer: "",
-  Specification: "",
-  StorageLocation: "",
+  Qty: 1,
   CreatedBy: loginName,
 });
 
 const editSubmit = (data: any) => {
   console.log(data.ReturnOn);
-  EditForm.value.Chkin_sht = data.Chkin_sht;
+  EditForm.value.Chkout_sht = data.Chkout_sht;
   EditForm.value.Type = data.Type;
-  EditForm.value.InstockNo = data.InstockNo;
-  EditForm.value.PurchaseNo = data.PurchaseNo;
   EditForm.value.OutstockNo = data.OutstockNo;
+  EditForm.value.Department = data.Department;
+  EditForm.value.LendBy = data.LendBy;
+  EditForm.value.LendOn = data.LendOn;
+  EditForm.value.LendReason = data.LendReason;
+  EditForm.value.ReturnDate = data.ReturnDate;
   EditForm.value.Remark = data.Remark;
-  EditForm.value.ReturnBy = data.ReturnBy;
-  EditForm.value.ReturnOn = data.ReturnOn;
   editVisible.value = true;
 };
 
@@ -437,11 +388,11 @@ const MaterialNameList = ref<toolType[]>([]);
 const clearForm = () => {
   form.value = {
     Type: 0,
-    InstockNo: "",
-    PurchaseNo: "",
-    OutstockNo: "",
-    ReturnBy: "",
-    ReturnOn: "",
+    Department: "",
+    LendOn: "",
+    LendBy: "",
+    LendReason: "",
+    ReturnDate: "",
     Remark: "",
     CreatedBy: loginName,
   };
@@ -450,17 +401,19 @@ const clearForm = () => {
 const inFormClose = () => {
   inFormRef.value.resetFields();
   InVisible.value = false;
+  inForm.value.CreatedBy = loginName;
 };
 
 const clearEditForm = () => {
   EditForm.value = {
-    Chkin_sht: "",
-    Type: "0",
-    InstockNo: "",
-    PurchaseNo: "",
+    Chkout_sht: "",
+    Type: "",
     OutstockNo: "",
-    ReturnBy: "",
-    ReturnOn: "",
+    Department: "",
+    LendOn: "",
+    LendBy: "",
+    LendReason: "",
+    ReturnDate: "",
     Remark: "",
     UpdateBy: loginName,
   };
@@ -469,11 +422,11 @@ const clearEditForm = () => {
 const typeChange = () => {
   form.value = {
     Type: form.value.Type,
-    InstockNo: "",
-    PurchaseNo: "",
-    OutstockNo: "",
-    ReturnBy: "",
-    ReturnOn: "",
+    Department: "",
+    LendOn: "",
+    LendBy: "",
+    LendReason: "",
+    ReturnDate: "",
     Remark: "",
     CreatedBy: loginName,
   };
@@ -482,7 +435,7 @@ const typeChange = () => {
 const showInForm = (data: any) => {
   if (data.Status !== 0) {
     ElNotification({
-      title: "该项正在入库",
+      title: "该项正在出库",
       // message: "取消操作",
       type: "warning",
     });
@@ -490,13 +443,14 @@ const showInForm = (data: any) => {
   }
   GetList();
   InVisible.value = true;
-  inForm.value.Chkin_sht = data.Chkin_sht;
+  inForm.value.Chkout_sht = data.Chkout_sht;
   inFormType.value = data.Type;
   console.log(inForm.value);
 };
 
+//查询所有
 const getData = () => {
-  GetPartInList({}).then((res: any) => {
+  GetPartsOutList({}).then((res: any) => {
     if (res && res.success) {
       tableData.value = res.content;
       //   ElNotification({
@@ -510,7 +464,7 @@ const getData = () => {
 
 const startPartIn = () => {
   InVisible.value = false;
-  StartPartsIn(inForm.value).then((res: any) => {
+  StartPartsOut(inForm.value).then((res: any) => {
     if (res && res.success) {
       ElNotification({
         title: res.msg,
@@ -539,7 +493,7 @@ const serachData = () => {
   if (inputValue.value === "") {
     getData();
   } else {
-    GetPartInList({"InstockNo": inputValue.value}).then((res: any) => {
+    GetPartsOutList({ InstockNo: inputValue.value }).then((res: any) => {
       if (res && res.success && res.content.length !== 0) {
         tableData.value = res.content;
         ElNotification({
@@ -556,14 +510,14 @@ const serachData = () => {
 
 const deleteSubmit = (data: any) => {
   //   deleteVisible.value = true;
-  deleteChoice.value = data.CompName;
+  //   deleteChoice.value = data.CompName;
   ElMessageBox.confirm("确定删除", "确认操作", {
     confirmButtonText: "确定",
     cancelButtonText: "取消",
     type: "warning",
   })
     .then(() => {
-      deletePartsInData(data.Chkin_sht, loginName).then((data: any) => {
+      deletePartsOut(data.Chkout_sht, loginName).then((data: any) => {
         if (!data) {
           return;
         }
@@ -592,13 +546,13 @@ const PartIDChoice = (data: any) => {
 
 const inPartSubmit = (data: any) => {
   //   deleteVisible.value = true;
-  ElMessageBox.confirm("确定入库", "确认操作", {
+  ElMessageBox.confirm("确定出库", "确认操作", {
     confirmButtonText: "确定",
     cancelButtonText: "取消",
     type: "warning",
   })
     .then(() => {
-      EndPartsIn(data.Chkin_sht, loginName).then((data: any) => {
+      EndPartsOut(data.Chkin_sht, loginName).then((data: any) => {
         if (!data) {
           return;
         }
@@ -618,7 +572,7 @@ const inPartSubmit = (data: any) => {
 };
 
 const addData = () => {
-  PartsInAdd(form.value).then((res: any) => {
+  PartsOutAdd(form.value).then((res: any) => {
     if (res && res.success) {
       addVisible.value = false;
       ElNotification({
@@ -632,7 +586,7 @@ const addData = () => {
 };
 
 const editData = () => {
-  updatePartsIn(EditForm.value).then((res: any) => {
+  updatePartsOut(EditForm.value).then((res: any) => {
     if (res && res.success) {
       editVisible.value = false;
       ElNotification({
@@ -664,8 +618,8 @@ const columnData = reactive([
   //   },
   {
     text: true,
-    prop: "InstockNo",
-    label: "入库单号",
+    prop: "OutstockNo",
+    label: "出库单号",
     width: "",
     min: true,
     align: "center",
@@ -675,28 +629,43 @@ const columnData = reactive([
     tag: true,
     tagType: "number",
     tagItem: [
-      { text: "采购入库", type: "primary", number: "0" },
-      { text: "归还入库", type: "primary", number: "1" },
-      { text: "维修入库", type: "primary", number: "2" },
+      { text: "领用", type: "primary", number: "0" },
+      { text: "借出", type: "primary", number: "1" },
     ],
     prop: "Type",
-    label: "入库类型",
+    label: "出库类型",
     width: "",
     min: true,
     align: "center",
   },
   {
     text: true,
-    prop: "PurchaseNo",
-    label: "采购单号",
+    prop: "LendBy",
+    label: "借出人",
     width: "",
     min: true,
     align: "center",
   },
   {
     text: true,
-    prop: "OutstockNo",
-    label: "归还单号",
+    prop: "LendOn",
+    label: "借出时间",
+    width: "",
+    min: true,
+    align: "center",
+  },
+  {
+    text: true,
+    prop: "LendReason",
+    label: "借出原因",
+    width: "",
+    min: true,
+    align: "center",
+  },
+  {
+    text: true,
+    prop: "ReturnDate",
+    label: "归还日期",
     width: "",
     min: true,
     align: "center",
@@ -706,29 +675,13 @@ const columnData = reactive([
     tag: true,
     tagType: "number",
     tagItem: [
-      { text: "待入库", type: "primary", number: 0 },
-      { text: "入库中", type: "primary", number: 1 },
+      { text: "待出库", type: "primary", number: 0 },
+      { text: "出库中", type: "primary", number: 1 },
       { text: "已完成", type: "primary", number: 2 },
     ],
     prop: "Status",
     label: "状态",
     width: "80",
-    min: true,
-    align: "center",
-  },
-  {
-    text: true,
-    prop: "LendID",
-    label: "借出编号",
-    width: "",
-    min: true,
-    align: "center",
-  },
-  {
-    text: true,
-    prop: "ReturnBy",
-    label: "归还人",
-    width: "",
     min: true,
     align: "center",
   },
@@ -744,6 +697,14 @@ const columnData = reactive([
     text: true,
     prop: "CreatedOn",
     label: "创建时间",
+    width: "",
+    min: true,
+    align: "center",
+  },
+  {
+    text: true,
+    prop: "Department",
+    label: "部门",
     width: "",
     min: true,
     align: "center",
@@ -777,16 +738,16 @@ const columnData = reactive([
       },
       {
         type: "success",
-        label: "开始入库",
+        label: "开始出库",
         icon: "VideoPlay",
         buttonClick: showInForm,
       },
       {
         type: "info",
-        label: "完成入库",
+        label: "完成出库",
         icon: "CircleCheck",
         buttonClick: inPartSubmit,
-      }
+      },
     ],
   },
 ]);

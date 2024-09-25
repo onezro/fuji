@@ -140,10 +140,136 @@ export function StartPartsIn(data: any){
 }
 
 //入库已完成
-export function EndPartsIn(data: any){
+export function EndPartsIn(chkin_sht:any,username: any){
     return request({
         url: "/api/PartsIn/EndPartsIn",
         method: "post",
+        params:{
+            chkin_sht,
+            username
+        }
+    });
+}
+
+//备品备件出库
+//查询所有出库记录
+export function GetPartsOutList(data: any){
+    return request({
+        url: "/api/PartsOut/GetPartsOutList",
+        method: "post",
         data,
+    });
+}
+
+//根据出库单号查询详细数据
+export function findChkOutParameter(chkin_sht: any){
+    return request({
+        url: "/api/PartsOut/findChkOutParameter",
+        method: "post",
+        params:{
+            chkin_sht
+        }
+    });
+}
+
+//创建出库单
+export function PartsOutAdd(data: any){
+    return request({
+        url: "/api/PartsOut/PartsOutAdd",
+        method: "post",
+        data
+    });
+}
+
+//删除出库记录
+export function deletePartsOut(Chkout_sht:any,username: any){
+    return request({
+        url: "/api/PartsOut/deletePartsOut",
+        method: "post",
+        params:{
+            Chkout_sht,
+            username
+        }
+    });
+}
+
+//更改出库数据
+export function updatePartsOut(data: any){
+    return request({
+        url: "/api/PartsOut/updatePartsOut",
+        method: "post",
+        data
+    });
+}
+
+//开始出库
+export function StartPartsOut(data: any){
+    return request({
+        url: "/api/PartsOut/StartPartsOut",
+        method: "post",
+        data,
+    });
+}
+
+//出库已完成
+export function EndPartsOut(chkin_sht:any,username: any){
+    return request({
+        url: "/api/PartsOut/EndPartsOut",
+        method: "post",
+        params:{
+            chkin_sht,
+            username
+        }
+    });
+}
+
+//备品备件台账
+//查询所有库存
+export function GetPartsStockList(data: any){
+    return request({
+        url: "/api/PartsStock/GetPartsStockList",
+        method: "post",
+        data,
+    });
+}
+
+//根据库存ID查询数据
+export function findStockidParameter(chkin_sht: any){
+    return request({
+        url: "/api/PartsStock/findStockidParameter",
+        method: "post",
+        params:{
+            chkin_sht
+        }
+    });
+}
+
+//更改库存
+export function updatePartsStockData(data: any){
+    return request({
+        url: "/api/PartsStock/updatePartsStockData",
+        method: "post",
+        data
+    });
+}
+
+//删除库存
+export function deletePartsStock(Chkout_sht:any,username: any){
+    return request({
+        url: "/api/PartsStock/deletePartsStock",
+        method: "post",
+        params:{
+            Chkout_sht,
+            username
+        }
+    });
+}
+
+//增加库存
+export function addPartsStock(data: any){
+    return request({
+        url: "/api/PartsStock/addPartsStock",
+        method: "post",
+        data
     });
 }

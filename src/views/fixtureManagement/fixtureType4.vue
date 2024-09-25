@@ -4,7 +4,7 @@
         <div class="pb-2 flex justify-between">
           <el-button
             type="primary"
-            @click="clearForm(), (addVisible = true), getClassList()"
+            @click="clearForm(), (addVisible = true)"
             >添加</el-button
           >
           <div class="flex">
@@ -202,11 +202,11 @@
   import { ElMessage, ElNotification, ElMessageBox } from "element-plus";
   import tableTem from "@/components/tableTem/index.vue";
   import {
-    GetPartsList,
-    addPartsData,
-    updatePartsData,
-    deletePartsData,
-    GetPartsClassList,
+    GetPartsStockList,
+    findStockidParameter,
+    updatePartsStockData,
+    deletePartsStock,
+    addPartsStock,
   } from "@/api/sparePartsApi";
   import { useUserStoreWithOut } from "@/stores/modules/user";
   import {
@@ -389,7 +389,7 @@
   };
   
   const getData = () => {
-    GetPartsList({}).then((res: any) => {
+    GetPartsStockList({}).then((res: any) => {
       if (res && res.success && res.content.length !== 0) {
         tableData.value = res.content;
         //   ElNotification({
@@ -401,24 +401,24 @@
     });
   };
   
-  const getClassList = () => {
-    GetPartsClassList({}).then((res: any) => {
-      if (res && res.success && res.content.length !== 0) {
-        ClassList.value = res.content;
-        ElNotification({
-          title: res.msg,
-          // message: "取消操作",
-          type: "success",
-        });
-      }
-    });
-  };
+  // const getClassList = () => {
+  //   GetPartsClassList({}).then((res: any) => {
+  //     if (res && res.success && res.content.length !== 0) {
+  //       ClassList.value = res.content;
+  //       ElNotification({
+  //         title: res.msg,
+  //         // message: "取消操作",
+  //         type: "success",
+  //       });
+  //     }
+  //   });
+  // };
   
   const serachData = () => {
     if (inputValue.value === "") {
       getData();
     } else {
-      GetPartsList({ PartName: inputValue.value }).then((res: any) => {
+      GetPartsStockList({ PartName: inputValue.value }).then((res: any) => {
         if (res && res.success && res.content.length !== 0) {
           tableData.value = res.content;
           ElNotification({
@@ -442,7 +442,7 @@
       type: "warning",
     })
       .then(() => {
-        deletePartsData(data.PartID, loginName).then((data: any) => {
+        deletePartsStock(data.PartID, loginName).then((data: any) => {
           if (!data) {
             return;
           }
@@ -462,7 +462,7 @@
   };
   
   const addData = () => {
-    addPartsData(form.value).then((res: any) => {
+    addPartsStock(form.value).then((res: any) => {
       if (res && res.success) {
         addVisible.value = false;
         ElNotification({
@@ -476,7 +476,7 @@
   };
   
   const editData = () => {
-    updatePartsData(EditForm.value).then((res: any) => {
+    updatePartsStockData(EditForm.value).then((res: any) => {
       if (res && res.success) {
         editVisible.value = false;
         ElNotification({
@@ -508,8 +508,24 @@
     //   },
     {
       text: true,
-      prop: "PartName",
-      label: "备品名称",
+      prop: "PartNumber",
+      label: "备品编号",
+      width: "",
+      min: true,
+      align: "center",
+    },
+    {
+      text: true,
+      prop: "Qty",
+      label: "数量",
+      width: "",
+      min: true,
+      align: "center",
+    },
+    {
+      text: true,
+      prop: "PurchaseNo",
+      label: "采购单",
       width: "",
       min: true,
       align: "center",
@@ -517,7 +533,46 @@
     {
       text: true,
       prop: "Description",
-      label: "放置地点",
+      label: "采购单号",
+      width: "",
+      min: true,
+      align: "center",
+    },
+  {
+    text: false,
+    tag: true,
+    tagType: "number",
+    tagItem: [
+      { text: "待入库", type: "primary", number: 0 },
+      { text: "入库中", type: "primary", number: 1 },
+      { text: "已完成", type: "primary", number: 2 },
+    ],
+    prop: "Status",
+    label: "状态",
+    width: "80",
+    min: true,
+    align: "center",
+  },
+    {
+      text: true,
+      prop: "DueDate",
+      label: "到期日期",
+      width: "",
+      min: true,
+      align: "center",
+    },
+    {
+      text: true,
+      prop: "Vendor",
+      label: "Vendor",
+      width: "",
+      min: true,
+      align: "center",
+    },
+    {
+      text: true,
+      prop: "Manufacturer",
+      label: "Manufacturer",
       width: "",
       min: true,
       align: "center",
@@ -525,93 +580,69 @@
     {
       text: true,
       prop: "Specification",
-      label: "品牌",
+      label: "Specification",
       width: "",
       min: true,
       align: "center",
     },
     {
       text: true,
-      prop: "Equipment",
-      label: "剩余数量",
+      prop: "StorageLocation",
+      label: "StorageLocation",
       width: "",
       min: true,
       align: "center",
     },
     {
       text: true,
-      prop: "VendorCode",
-      label: "单位",
+      prop: "CreatedOn",
+      label: "创建日期",
       width: "",
       min: true,
       align: "center",
     },
     {
       text: true,
-      prop: "Cycle",
-      label: "有效期至",
+      prop: "CreatedBy",
+      label: "创建人",
       width: "",
       min: true,
       align: "center",
     },
-    {
-      text: true,
-      prop: "SafetyStock",
-      label: "类别",
-      width: "",
-      min: true,
-      align: "center",
-    },
-    {
-      text: true,
-      prop: "MinStock",
-      label: "状态",
-      width: "",
-      min: true,
-      align: "center",
-    },
-    {
-      text: true,
-      prop: "MaxStock",
-      label: "安全库存",
-      width: "",
-      min: true,
-      align: "center",
-    },
-    {
-      isOperation: true,
-      label: "操作",
-      width: "120",
-      align: "center",
-      fixed: "right",
-      operation: [
-        {
-          type: "primary",
-          label: "编辑",
-          icon: "EditPen",
-          buttonClick: editSubmit,
-        },
-        {
-          type: "danger",
-          label: "删除",
-          icon: "Delete",
-          buttonClick: deleteSubmit,
-        },
-        //   {
-        //     type: "warning",
-        //     label: "报废",
-        //     icon: "Failed",
-        //     buttonClick: null,
-        //   },
-      ],
-    },
+    // {
+    //   isOperation: true,
+    //   label: "操作",
+    //   width: "120",
+    //   align: "center",
+    //   fixed: "right",
+    //   operation: [
+    //     {
+    //       type: "primary",
+    //       label: "编辑",
+    //       icon: "EditPen",
+    //       buttonClick: editSubmit,
+    //     },
+    //     {
+    //       type: "danger",
+    //       label: "删除",
+    //       icon: "Delete",
+    //       buttonClick: deleteSubmit,
+    //     },
+    //     //   {
+    //     //     type: "warning",
+    //     //     label: "报废",
+    //     //     icon: "Failed",
+    //     //     buttonClick: null,
+    //     //   },
+    //   ],
+    // },
   ]);
   
   onBeforeMount(() => {
     getScreenHeight();
   });
   onMounted(() => {
-    // getData();
+    getData();
     window.addEventListener("resize", getScreenHeight);
   });
   onBeforeUnmount(() => {
