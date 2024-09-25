@@ -2,8 +2,8 @@
   <div class="p-2 flex gap-2">
     <el-card
       shadow="always"
-      :body-style="{ padding: '10px' }"
-      class="w-[300px] h-[calc(100vh-97px)]"
+      :body-style="{ padding: '8px 8px 0 8px' }"
+      class="w-[300px] h-[calc(100vh-96px)]"
     >
       <!-- <template #header> -->
       <div
@@ -45,7 +45,7 @@
     </el-card>
     <el-card
       shadow="always"
-      :body-style="{ padding: '10px 10px 5px 10px' }"
+      :body-style="{ padding: '8px 8px 0 8px' }"
       class="flex-1"
     >
       <el-form
@@ -291,12 +291,7 @@ const editFormHeader = reactive([
     rows: 4,
     disabled: true,
   },
-  {
-    type: "input",
-    label: "机型名称",
-    placeholder: "",
-    value: "BD_ProductModel",
-  },
+
   {
     type: "input",
     label: "芯片类型",
@@ -489,7 +484,7 @@ const handleCurrentChange = (val: any) => {
 };
 const getScreenHeight = () => {
   nextTick(() => {
-    tableHeight.value = window.innerHeight - 195;
+    tableHeight.value = window.innerHeight - 185;
   });
 };
 </script>

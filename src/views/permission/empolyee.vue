@@ -28,7 +28,7 @@
         <div>
         </div>
         <div>
-          <el-input v-model="searchName" placeholder="请输入">
+          <el-input v-model="searchName" clearable placeholder="请输入">
             <template #append>
               <el-button type="primary" icon="Search"></el-button> </template></el-input>
         </div>

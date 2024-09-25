@@ -369,20 +369,21 @@ const columnData = reactive([
   },
   {
     text: true,
-    prop: "PlannedCompletionDate",
-    label: "计划完成时间",
-    width: "",
-    min: true,
-    align: "center",
-  },
-  {
-    text: true,
     prop: "PlannedStartDate",
     label: "计划开始时间",
     width: "",
     min: true,
     align: "center",
   },
+  {
+    text: true,
+    prop: "PlannedCompletionDate",
+    label: "计划完成时间",
+    width: "",
+    min: true,
+    align: "center",
+  },
+
   {
     text: true,
     prop: "MfgLineDesc",

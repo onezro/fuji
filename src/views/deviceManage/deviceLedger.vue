@@ -1,6 +1,6 @@
 <template>
-    <div class="p-[10px]">
-        <el-card shadow="always" :body-style="{ padding: '10px' }">
+    <div class="p-2">
+        <el-card shadow="always" :body-style="{ padding: '8px 8px 0px 8px' }">
             <div class="flex">
                 <el-form ref="formRef" :model="form" :inline="true">
                     <el-form-item label="车间" prop="WorkCenterName" class="mb-2">
@@ -285,7 +285,7 @@ const handleCurrentChange = (val: any) => {
 };
 const getScreenHeight = () => {
     nextTick(() => {
-        tableHeight.value = window.innerHeight - 215;
+        tableHeight.value = window.innerHeight - 195;
     });
 };
 </script>

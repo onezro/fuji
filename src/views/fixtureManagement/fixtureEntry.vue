@@ -3,12 +3,16 @@
     <el-card shadow="always" :body-style="{ padding: '8px 8px 0px 8px' }">
       <div class="pb-2 flex justify-between">
         <el-button type="primary" @click="openAdd">添加</el-button>
-        <div class="flex"></div>
+        <div class="flex">
+          <el-input v-model="searchName"  style="width: 300px" clearable placeholder="请输入">
+            <template #append>
+              <el-button type="primary" icon="Search"></el-button> </template></el-input>
+        </div>
       </div>
       <table-tem
         :show-index="true"
         size="small"
-        :tableData="tableData"
+        :tableData="tableData1"
         :tableHeight="tableHeight"
         :columnData="columnData"
         :pageObj="pageObj"
@@ -242,15 +246,6 @@ import {
 const userStore = useUserStoreWithOut();
 const loginName = userStore.getUserInfo;
 
-interface tableDataTS {
-  number: string;
-  type: string;
-  consumption: string;
-  process: string;
-  FaceType: string;
-  Des: string;
-}
-
 interface formTS {
   compid: string;
   compname: string;
@@ -319,6 +314,8 @@ const EditForm = ref<EditFormTS>({
   // ExpirationDate: "",
 });
 const formRef=ref()
+const searchName=ref('')
+const tableData1=ref([])
 
 const clearForm = () => {
   form.value = {
@@ -333,6 +330,26 @@ const clearForm = () => {
     user: loginName,
     // ExpirationDate: "",
   };
+};
+
+watch(
+  () => searchName.value,
+  (newdata) => {
+    // console.log(newdata);
+    if (newdata == "") {
+      tableData1.value = tableData.value;
+    } else {
+      tableData1.value = table1(newdata);
+    }
+  }
+);
+const table1 = (newdata: any) => {
+  let searchName = newdata.toLowerCase()
+  return tableData.value.filter((v: any) => {
+    return Object.keys(v).some((key) => {
+      return String(v[key]).toLowerCase().indexOf(searchName) > -1;
+    });
+  });
 };
 
 const clearEditForm = () => {
@@ -377,16 +394,13 @@ const addSumbit = () => {
 };
 
 const editSubmit = (data: any) => {
-  // console.log(data);
   EditForm.value.compid = data.CompID;
   EditForm.value.compname = data.CompName;
   EditForm.value.location = data.Location;
   EditForm.value.ManufacturerPartNumber = data.ManufacturerPartNumber;
-  // EditForm.value.Manufacturer = data.Manufacturer;
   EditForm.value.Supplier = data.Supplier;
   EditForm.value.LotNumber = data.LotNumber;
   EditForm.value.remark = data.Remark;
-  // EditForm.value.ExpirationDate = data.ExpirationDate;
   editVisible.value = true;
 };
 
@@ -519,14 +533,6 @@ const columnData = reactive([
     min: true,
     align: "center",
   },
-  // {
-  //   text: true,
-  //   prop: "Location",
-  //   label: "库位",
-  //   width: "",
-  //   min: true,
-  //   align: "center",
-  // },
   {
     text: true,
     prop: "TotalUses",
@@ -559,14 +565,7 @@ const columnData = reactive([
     min: true,
     align: "center",
   },
-  // {
-  //   text: true,
-  //   prop: "Supplier",
-  //   label: "供应商",
-  //   width: "",
-  //   min: true,
-  //   align: "center",
-  // },
+
   {
     text: true,
     prop: "ExpirationDate",
@@ -621,6 +620,7 @@ const getData = () => {
   ToolsDetail({ operationtype: "QAL" }).then((data: any) => {
     const dataText = data.content;
     tableData.value = dataText;
+    tableData1.value = data.content;
   });
 };
 
