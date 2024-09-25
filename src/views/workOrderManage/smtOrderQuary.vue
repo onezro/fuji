@@ -171,7 +171,7 @@
         </div>
       </template>
     </el-dialog>
-    <el-dialog v-model="orderOnlineVisible" title="工单上线" width="400px" align-center :append-to-body="true"
+    <el-dialog v-model="orderOnlineVisible" title="工单上线" width="400px" align-center  :append-to-body="true"
       :close-on-click-modal="false" :close-on-press-escape="false" @close="closeOnline">
       <el-form ref="orderFormRef" :model="orderOnlineForm" label-width="auto">
         <el-form-item label="工单号" prop="OrderNumber">
@@ -369,20 +369,21 @@ const columnData = reactive([
   },
   {
     text: true,
-    prop: "PlannedCompletionDate",
-    label: "计划完成时间",
-    width: "",
-    min: true,
-    align: "center",
-  },
-  {
-    text: true,
     prop: "PlannedStartDate",
     label: "计划开始时间",
     width: "",
     min: true,
     align: "center",
   },
+  {
+    text: true,
+    prop: "PlannedCompletionDate",
+    label: "计划完成时间",
+    width: "",
+    min: true,
+    align: "center",
+  },
+
   {
     text: true,
     prop: "MfgLineDesc",

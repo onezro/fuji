@@ -3,8 +3,6 @@
     <el-card shadow="always" :body-style="{ padding: '8px 8px 0px 8px' }">
       <div ref="headerRef flex flex-col">
         <el-form ref="formRef" class="form" :inline="true" size="small">
-          <!-- <div>
-            </div> -->
           <el-form-item label="日期" class="mb-[5px]">
             <el-date-picker
               v-model="searchDate"
@@ -595,20 +593,21 @@ const columnData = reactive([
   },
   {
     text: true,
-    prop: "PlannedCompletionDate",
-    label: "计划完成时间",
-    width: "",
-    min: true,
-    align: "center",
-  },
-  {
-    text: true,
     prop: "PlannedStartDate",
     label: "计划开始时间",
     width: "",
     min: true,
     align: "center",
   },
+  {
+    text: true,
+    prop: "PlannedCompletionDate",
+    label: "计划完成时间",
+    width: "",
+    min: true,
+    align: "center",
+  },
+
   {
     text: true,
     prop: "MfgLineDesc",

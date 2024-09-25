@@ -1,11 +1,15 @@
 <template>
   <div class="p-2">
-    <el-card shadow="always" :body-style="{ padding: '8px' }">
+    <el-card shadow="always" :body-style="{ padding: '8px 8px 0px 8px' }">
       <div class="pb-2 flex justify-between">
         <el-button type="primary"  @click="(addVisible = true), clearForm()">添加</el-button>
-        <div class="flex"></div>
+        <div class="flex">
+          <el-input v-model="searchName"  style="width: 300px" clearable placeholder="请输入">
+            <template #append>
+              <el-button type="primary" icon="Search"></el-button> </template></el-input>
+        </div>
       </div>
-      <table-tem :show-index="true" size="small" :tableData="tableData" :tableHeight="tableHeight" :columnData="columnData"
+      <table-tem :show-index="true" size="small" :tableData="tableData1" :tableHeight="tableHeight" :columnData="columnData"
         :pageObj="pageObj" @handleSizeChange="handleSizeChange" @handleCurrentChange="handleCurrentChange">
       </table-tem>
     </el-card>
@@ -59,7 +63,7 @@
         </el-form-item>
         <el-form-item label="面别" prop="side">
           <el-select v-model="EditForm.side" placeholder="" style="width: 240px">
-            <el-option v-for="item in ['', 'Bot', 'Top']" :key="item" :label="item" :value="item" />
+            <el-option v-for="item in ['BOT', 'TOP']" :key="item" :label="item" :value="item" />
           </el-select>
         </el-form-item>
         <!-- <el-form-item label="" prop="compid">
@@ -150,14 +154,14 @@
           <el-input disabled v-model="form.proceduredsc" style="width: 240px" placeholder="" />
         </el-form-item>
         <el-form-item label="工治具型号" prop="compname">
-          <el-select v-model="form.compname" placeholder="" style="width: 240px">
+          <el-select v-model="form.compname" placeholder=""   filterable style="width: 240px">
             <el-option v-for="item in compnameList" :key="item.CompName" :label="item.CompName"
               :value="item.CompName" />
           </el-select>
         </el-form-item>
         <el-form-item label="面别" prop="side">
-          <el-select v-model="form.side" placeholder="" style="width: 240px">
-            <el-option v-for="item in ['', 'Bot', 'Top']" :key="item" :label="item" :value="item" />
+          <el-select v-model="form.side" placeholder="" clearable style="width: 240px">
+            <el-option v-for="item in ['BOT', 'TOP']" :key="item" :label="item" :value="item" />
           </el-select>
         </el-form-item>
         <el-form-item label="消耗量" prop="usage">
@@ -311,6 +315,8 @@ const EditFormStatus = computed(() => {
 });
 
 const tableData = ref([]);
+const tableData1 = ref([]);
+const searchName=ref('')
 
 const form = ref<formTS>({
   usage: 1,
@@ -375,6 +381,25 @@ const clearEditForm = () => {
     user: loginName,
     usagespecguid: "",
   };
+};
+
+watch(
+  () => searchName.value,
+  (newdata) => {
+    if (newdata == "") {
+      tableData1.value = tableData.value;
+    } else {
+      tableData1.value = table1(newdata)
+    }
+  }
+);
+const table1 = (newdata: any) => {
+  let searchName = newdata.toLowerCase()
+  return tableData.value.filter((v: any) => {
+    return Object.keys(v).some((key) => {
+      return String(v[key]).toLowerCase().indexOf(searchName) > -1;
+    });
+  });
 };
 
 watch(
@@ -589,9 +614,9 @@ const columnData = reactive([
     text: true,
     prop: "ProductDsc",
     label: "产品描述",
-    width: "",
+    width: "250",
     min: true,
-    align: "center",
+    align: "1",
   },
   {
     text: true,
@@ -711,6 +736,7 @@ const getData = () => {
     }
     const dataText = data.content;
     tableData.value = dataText;
+    tableData1.value=data.content
   });
 };
 
@@ -740,7 +766,7 @@ const handleCurrentChange = (val: any) => {
 };
 const getScreenHeight = () => {
   nextTick(() => {
-    tableHeight.value = window.innerHeight - 202;
+    tableHeight.value = window.innerHeight - 195;
   });
 };
 </script>

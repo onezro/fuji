@@ -87,7 +87,7 @@ export const generateRoutesByFrontEnd = (
     }
   }
 
-  
+
   return res
 }
 
@@ -105,35 +105,26 @@ export const generateRoutesByServer1 = (routes: any) => {
       meta: {
         title: route.title,
         icon: route.icon
-      }
+      },
+      component: route.component
     }
-    // console.log(route.component)
     if (route.component) {
-      // const comModule = modules[`../views/${route.component}.vue`] || modules[`../views/${route.component}.tsx`]
       const component = route.component as string
       // if (!comModule && !component.includes('#')) {
       //   console.error(`未找到${route.component}.vue文件或${route.component}.tsx文件，请创建`)
       // } else {
       // 动态加载路由文件，可根据实际情况进行自定义逻辑
-
+      // console.log(component);
       data.component =
         component === 'Layout' ? Layout : modules[`../views/${route.component}.vue`]
       // }
-      // console.log(data.component)
+
     }
-    // recursive child routes
-    if (route.childMenu!=null) {
-      //  console.log(data.component)
-      // console.log(route.childMenu)
+    if (route.childMenu != null) {
       data.children = generateRoutesByServer1(route.childMenu)
-      // console.log(1);
-      
     }
-      // console.log(data.component)
-    // console.log(data)
     res.push(data as AppRouteRecordRaw)
   }
-  // console.log(res)
   return res
 }
 // 后端控制路由生成

@@ -93,15 +93,15 @@ export function PrintBurnModel(data: any) {
     })
 }
 //烧录工单
-export function OrderQuery() {
-    return request({
-        url: "/api/Burn/OrderQuery",
-        method: "post",
-        data:{
-            orderID:''
-        }
-    })
-}
+// export function OrderQuery() {
+//     return request({
+//         url: "/api/Burn/OrderQuery",
+//         method: "post",
+//         data:{
+//             orderID:''
+//         }
+//     })
+// }
 
 //获取装箱信息
 export function QueryPackListByCarrier(data: any) {
@@ -148,6 +148,14 @@ export function QueryMaterialQueueDetails(data: any) {
 export function isDefects(data: any) {
     return request({
         url: "/api/workstation/isDefects",
+        method: "post",
+        data
+    })
+}
+//工单查询
+export function OrderQuery(data:any) {
+    return request({
+        url: "/api/workstation/OrderQuery",
         method: "post",
         data
     })

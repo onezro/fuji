@@ -496,7 +496,7 @@ onBeforeUnmount(() => {
 
 const getOrderData = () => {
   isLoding.value = "is-loading";
-  OrderQuery().then((res: any) => {
+  OrderQuery({lineName:opui.line}).then((res: any) => {
     // console.log(res);
     let timer = setTimeout(() => {
       isLoding.value = "";

@@ -1,25 +1,29 @@
 <template>
   <div class="p-2">
-    <el-card shadow="always" :body-style="{ padding: '8px' }">
+    <el-card shadow="always" :body-style="{ padding: '8px 8px 0 8px' }">
       <div class="pb-2 flex justify-between">
         <el-button type="primary" @click="openAdd(), clearForm()"
           >添加</el-button
         >
         <div class="flex">
-          <el-input
-            v-model="inputValue"
+          <el-input v-model="searchName"  style="width: 300px" clearable placeholder="请输入">
+            <template #append>
+              <el-button type="primary" icon="Search"></el-button> </template></el-input>
+          <!-- <el-input
+            v-model="searchName"
             style="width: 240px"
             placeholder="请输入"
-          ></el-input>
-          <el-button class="ml-3" type="primary" @click="searchData"
+            clearable
+          ></el-input> -->
+          <!-- <el-button class="ml-3" type="primary" @click="searchData"
             >查询</el-button
-          >
+          > -->
         </div>
       </div>
       <table-tem
         size="small"
         :show-index="true"
-        :tableData="tableData"
+        :tableData="tableData1"
         :tableHeight="tableHeight"
         :columnData="columnData"
         :pageObj="pageObj"
@@ -205,6 +209,7 @@
             v-model="form.MaterialName"
             placeholder="请选择"
             style="width: 240px"
+            filterable
           >
             <el-option
               v-for="item in MaterialNameList"
@@ -417,7 +422,7 @@ const currentPage = ref(1);
 const tableHeight = ref(0);
 const addVisible = ref(false);
 const editVisible = ref(false);
-const inputValue = ref("");
+const searchName = ref("");
 const deleteVisible = ref(false);
 const deleteChoice = ref("");
 const pageObj = ref({
@@ -442,6 +447,7 @@ const editFormControl = ref({
 //     });
 
 const tableData = ref([]);
+const tableData1 = ref([]);
 
 const form = ref<formTS>({
   operationtype: "",
@@ -631,31 +637,51 @@ const addSumbit = () => {
   });
 };
 
-const searchData = () => {
-  if (inputValue.value === "") {
-    getData();
-    return;
-  }
-  ToolsType({ CompName: inputValue.value, operationtype: "QUE" }).then(
-    (data: any) => {
-      if (!data) {
-        return;
-      }
-      if (!data.content) {
-        tableData.value = [];
-        return;
-      }
-      const dataText = data.content;
-      tableData.value = dataText;
+watch(
+  () => searchName.value,
+  (newdata) => {
+    // console.log(newdata);
+    if (newdata == "") {
+      tableData1.value = tableData.value;
+    } else {
+      tableData1.value = table1(newdata);
     }
-  );
-  inputValue.value = "";
+  }
+);
+const table1 = (newdata: any) => {
+  let searchName = newdata.toLowerCase()
+  return tableData.value.filter((v: any) => {
+    return Object.keys(v).some((key) => {
+      return String(v[key]).toLowerCase().indexOf(searchName) > -1;
+    });
+  });
 };
+// const searchData = () => {
+//   if (inputValue.value === "") {
+//     getData();
+//     return;
+//   }
+//   ToolsType({ CompName: inputValue.value, operationtype: "QUE" }).then(
+//     (data: any) => {
+//       if (!data) {
+//         return;
+//       }
+//       if (!data.content) {
+//         tableData.value = [];
+//         return;
+//       }
+//       const dataText = data.content;
+//       tableData.value = dataText;
+//     }
+//   );
+//   inputValue.value = "";
+// };
 
 const getData = () => {
   ToolsType({ operationtype: "QAL" }).then((data: any) => {
     const dataText = data.content;
     tableData.value = dataText;
+    tableData1.value = tableData.value;
   });
 };
 
@@ -667,6 +693,7 @@ const columnData = reactive([
     width: "",
     min: true,
     align: "1",
+    fixed:true,
   },
   {
     text: true,
@@ -675,6 +702,7 @@ const columnData = reactive([
     width: "200",
     min: true,
     align: "1",
+    fixed:true,
   },
   // {
   //   text: false,
@@ -795,7 +823,7 @@ const handleCurrentChange = (val: any) => {
 };
 const getScreenHeight = () => {
   nextTick(() => {
-    tableHeight.value = window.innerHeight - 205;
+    tableHeight.value = window.innerHeight - 195;
   });
 };
 </script>
