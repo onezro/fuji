@@ -482,7 +482,7 @@ const typeChange = () => {
 const showInForm = (data: any) => {
   if (data.Status !== 0) {
     ElNotification({
-      title: "该项正在入库",
+      title: "该项开始入库已完成",
       // message: "取消操作",
       type: "warning",
     });

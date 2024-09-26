@@ -17,7 +17,7 @@
           >
         </div>
       </div>
-      <table-tem
+      <!-- <table-tem
         size="small"
         :show-index="true"
         :tableData="tableData"
@@ -26,7 +26,78 @@
         :pageObj="pageObj"
         @handleSizeChange="handleSizeChange"
         @handleCurrentChange="handleCurrentChange"
-      ></table-tem>
+      ></table-tem> -->
+      <el-table
+      border
+      size="small"
+        :data="
+          tableData.slice((pageObj.currentPage - 1) * pageObj.pageSize, pageObj.currentPage * pageObj.pageSize)
+        "
+        :height="tableHeight"
+        center stripe
+      >
+      
+      <el-table-column prop="OutstockNo" align="center" label="出库单号"> </el-table-column>
+      <el-table-column prop="Type" align="center" label="出库类型"> </el-table-column>
+      <el-table-column prop="LendBy" align="center" label="借出人"> </el-table-column>
+      <el-table-column prop="Department" align="center" label="部门"> </el-table-column>
+      <el-table-column prop="LendOn" align="center" label="借出时间"> </el-table-column>
+      <el-table-column prop="DueDate" align="center" label="到期日期"> </el-table-column>
+      <el-table-column prop="LendReason" align="center" label="借出原因"> </el-table-column>
+      <el-table-column prop="ReturnDate" align="center" label="归还日期"> </el-table-column>
+      <el-table-column prop="ReturnDate" align="center" label="状态">
+        <template #default="scope">
+          <div v-if="scope.row.Status === 0">
+            <el-tag type="info">待出库</el-tag>
+          </div>
+          <div v-if="scope.row.Status === 1">
+            <el-tag type="primary">出库中</el-tag>
+          </div>
+          <div v-if="scope.row.Status === 2">
+            <el-tag type="success">已完成</el-tag>
+          </div>
+        </template>
+      </el-table-column>
+      <el-table-column prop="CreatedBy" align="center" label="创建人"> </el-table-column>
+      <el-table-column prop="CreatedOn" align="center" label="创建时间"> </el-table-column>
+      <el-table-column prop="Remark" align="center" label="备注"> </el-table-column>
+      <el-table-column prop="ReturnDate" align="center"  label="操作" width="240">
+        <template #default="scope"> 
+          <div class="w-full flex items-center justify-around">
+          <el-tooltip content="编辑" placement="top">
+            <el-button type="primary" icon="EditPen" size="small" @click="editSubmit(scope.row)"
+            :disabled="scope.row.Status === 2"></el-button>
+          </el-tooltip>
+          <el-tooltip content="删除" placement="top">
+            <el-button type="danger" icon="Delete" size="small" @click="deleteSubmit(scope.row)"
+            :disabled="scope.row.Status !== 0"></el-button>
+          </el-tooltip>
+          <el-tooltip content="开始出库" placement="top">
+            <el-button type="warning" icon="VideoPlay" color="#409EFF" style="color: #fff" size="small" @click="showInForm(scope.row)"
+            :disabled="scope.row.Status !== 0"></el-button>
+          </el-tooltip>
+          <el-tooltip content="完成出库" placement="top">
+            <el-button type="success" icon="CircleCheck" size="small" @click="inPartSubmit(scope.row)"
+            :disabled="scope.row.Status !== 1"></el-button>
+          </el-tooltip>
+          </div>
+        </template>
+      </el-table-column>
+      </el-table>
+      <div class="mt-3">
+        <el-pagination
+          size="large"
+          background
+          @size-change="LedgerSizeChange"
+          @current-change="LedgerCurrentChange"
+          :current-page="LedgerPageObj.currentPage"
+          :page-size="LedgerPageObj.pageSize"
+          :page-sizes="[5, 10, 20, 50, 100]"
+          layout="total,sizes, prev, pager, next, jumper"
+          :total="LedgerTableData.length"
+        >
+        </el-pagination>
+      </div>
     </el-card>
     <el-dialog
       align-center
@@ -191,8 +262,8 @@
       :close-on-click-modal="false"
       v-model="InVisible"
       @close="inFormClose"
-      title="开始入库"
-      width="50%"
+      title="开始出库"
+      width="400px"
     >
       <el-form
         ref="inFormRef"
@@ -201,34 +272,93 @@
         label-width="100"
         :inline="true"
       >
-        <el-form-item label="备品名称" prop="PartID">
-          <el-select
-            v-model="inForm.PartID"
-            filterable
-            placeholder=""
-            style="width: 250px"
-          >
-            <el-option
-              v-for="item in PartList"
-              :key="item.PartID"
-              :label="item.PartName"
-              :value="item.PartID"
-            />
-          </el-select>
+      <el-form-item label="库存数量" prop="StockID">
+          <el-input v-model="QTY" style="width: 250px" disabled />
         </el-form-item>
         <el-form-item label="出库数量" prop="Qty">
-          <el-input-number v-model="inForm.Qty" :min="1" style="width: 250px" />
+          <el-input v-model="inForm.Qty" style="width: 250px" disabled />
         </el-form-item>
-        <el-form-item label="货架编码" prop="StockID">
-          <el-input v-model="inForm.StockID" style="width: 250px" />
+        <el-form-item label="备品名称" prop="StockID">
+          <el-input v-model="inFormPartName" style="width: 250px" disabled />
         </el-form-item>
       </el-form>
 
       <template #footer>
         <span class="dialog-footer">
           <!-- <el-button type="info" @click="addSon"> 增加子项</el-button> -->
+          <el-button @click="InVisible = false"> 取消 </el-button>
+          <el-button type="primary" @click="partOut,InVisible = false"> 确定 </el-button>
+        </span>
+      </template>
+    </el-dialog>
+    <el-dialog
+      align-center
+      :append-to-body="true"
+      :close-on-click-modal="false"
+      v-model="LedgerVisible"
+      @close="inFormClose"
+      title="开始出库"
+      width="80%"
+    >
+      <!-- <table-tem
+        size="small"
+        :showSelect="true"
+        :show-index="true"
+        :tableData="LedgerTableData"
+        :tableHeight="500"
+        :columnData="LedgerColumnData"
+        :pageObj="LedgerPageObj"
+        @handleSizeChange="LedgerSizeChange"
+        @handleCurrentChange="LedgerCurrentChange"
+        @handleSelectionChange="LedgerSelectionChange"
+      ></table-tem> -->
+      <el-table
+      ref="LedgerTableRef"
+      border
+      size="small"
+        :data="
+          LedgerTableData.slice((LedgerPageObj.currentPage - 1) * LedgerPageObj.pageSize, LedgerPageObj.currentPage * LedgerPageObj.pageSize)
+        "
+        :height="500"
+        center stripe
+        @selection-change="LedgerSelectionChange"
+        @select="select"
+      >
+      <el-table-column type="selection" fixed width="55" align="center" />
+      <el-table-column prop="OutstockNo" align="center" label="备品编号"> </el-table-column>
+      <el-table-column prop="Qty" align="center" label="库存数量"> </el-table-column>
+      <el-table-column prop="PurchaseNo" align="center" label="采购单"> </el-table-column>
+      <el-table-column prop="Description" align="center" label="描述"> </el-table-column>
+      <el-table-column prop="DueDate" align="center" label="到期日期"> </el-table-column>
+      <el-table-column prop="Vendor" align="center" label="供应商"> </el-table-column>
+      <el-table-column prop="Manufacturer" align="center" label="制造商"> </el-table-column>
+      <el-table-column prop="Specification" align="center" label="规格型号"> </el-table-column>
+      <el-table-column prop="StorageLocation" align="center" label="存储位置"> </el-table-column>
+      <el-table-column prop="qty" align="center"  label="去出数量" width="240">
+        <template #default="scope"> 
+          <el-input-number v-model="scope.row.qty" :min="1" :max="scope.row.Qty"></el-input-number>
+        </template>
+      </el-table-column>
+      </el-table>
+      <div class="mt-3">
+        <el-pagination
+          size="large"
+          background
+          @size-change="LedgerSizeChange"
+          @current-change="LedgerCurrentChange"
+          :current-page="LedgerPageObj.currentPage"
+          :page-size="LedgerPageObj.pageSize"
+          :page-sizes="[5, 10, 20, 50, 100]"
+          layout="total,sizes, prev, pager, next, jumper"
+          :total="LedgerTableData.length"
+        >
+        </el-pagination>
+      </div>
+      <template #footer>
+        <span class="dialog-footer">
+          <!-- <el-button type="info" @click="addSon"> 增加子项</el-button> -->
           <el-button @click="inFormClose()"> 取消 </el-button>
-          <el-button type="primary" @click="startPartIn"> 确定 </el-button>
+          <el-button type="primary" @click="startPartOut"> 确定 </el-button>
         </span>
       </template>
     </el-dialog>
@@ -247,6 +377,7 @@ import {
   StartPartsOut,
   EndPartsOut,
   GetPartsList,
+  GetPartsStockList
 } from "@/api/sparePartsApi";
 import { useUserStoreWithOut } from "@/stores/modules/user";
 import {
@@ -302,28 +433,25 @@ const addVisible = ref(false);
 const InVisible = ref(false);
 const editVisible = ref(false);
 const inputValue = ref("");
+const LedgerVisible = ref(false)
 const deleteVisible = ref(false);
 const deleteChoice = ref("");
 const inFormRef = ref();
-const inFormType = ref("");
+const inFormPartName = ref("");
+const LedgerTableData = ref<any[]>([]);
+const choiceList = ref<any[]>([]);
+const QTY = ref('')
 const pageObj = ref({
+  pageSize: 30,
+  currentPage: 1,
+});
+const LedgerPageObj = ref({
   pageSize: 30,
   currentPage: 1,
 });
 const typeList = ["领用", "借出"];
 const loginName = userStore.getUserInfo;
-
-const formControl = ref({
-  CleanAfterUses: false,
-  CleanAfterPause: false,
-  CleanAfterTime: false,
-});
-
-const editFormControl = ref({
-  CleanAfterUses: false,
-  CleanAfterPause: false,
-  CleanAfterTime: false,
-});
+const LedgerTableRef = ref()
 
 // watch(formControl, (newVal, oldVal) => {
 //   UsesUntilRevalidation = ''
@@ -399,8 +527,8 @@ const clearForm = () => {
 };
 
 const inFormClose = () => {
-  inFormRef.value.resetFields();
-  InVisible.value = false;
+  // inFormRef.value.resetFields();
+  // InVisible.value = false;
   inForm.value.CreatedBy = loginName;
 };
 
@@ -433,18 +561,18 @@ const typeChange = () => {
 };
 
 const showInForm = (data: any) => {
-  if (data.Status !== 0) {
-    ElNotification({
-      title: "该项正在出库",
-      // message: "取消操作",
-      type: "warning",
-    });
-    return;
-  }
+  // if (data.Status !== 0) {
+  //   ElNotification({
+  //     title: "该项正在出库",
+  //     // message: "取消操作",
+  //     type: "warning",
+  //   });
+  //   return;
+  // }
   GetList();
-  InVisible.value = true;
+  LedgerVisible.value = true;
   inForm.value.Chkout_sht = data.Chkout_sht;
-  inFormType.value = data.Type;
+  // inForm.value.Qty = 1;
   console.log(inForm.value);
 };
 
@@ -462,8 +590,48 @@ const getData = () => {
   });
 };
 
-const startPartIn = () => {
-  InVisible.value = false;
+const startPartOut = () => {
+  // InVisible.value = false;
+  // StartPartsOut(inForm.value).then((res: any) => {
+  //   if (res && res.success) {
+  //     ElNotification({
+  //       title: res.msg,
+  //       // message: "取消操作",
+  //       type: "success",
+  //     });
+  //     getData();
+  //   }
+  // });
+  if (choiceList.value.length !== 1) {
+      ElNotification({
+        title: '只允许选中一条数据',
+        // message: "取消操作",
+        type: "warning",
+      });
+      LedgerTableRef.value.clearSelection()
+      return;
+  }
+  console.log(inForm.value.Qty);
+  
+  if (!inForm.value.Qty) {
+      ElNotification({
+        title: '请输入数量',
+        // message: "取消操作",
+        type: "warning",
+      });
+      return;
+  }
+  // LedgerVisible.value = false;
+  InVisible.value = true
+  inForm.value.PartID = choiceList.value[0].PartID;
+  inForm.value.Qty =  choiceList.value[0].qty;
+  inForm.value.StockID = choiceList.value[0].StockID;
+  QTY.value = choiceList.value[0].Qty;
+  inFormPartName.value = choiceList.value[0].PartName;
+};
+
+const partOut = () => {
+  LedgerVisible.value = false;
   StartPartsOut(inForm.value).then((res: any) => {
     if (res && res.success) {
       ElNotification({
@@ -474,12 +642,12 @@ const startPartIn = () => {
       getData();
     }
   });
-};
+}
 
 const GetList = () => {
-  GetPartsList({}).then((res: any) => {
+  GetPartsStockList({}).then((res: any) => {
     if (res && res.success && res.content.length !== 0) {
-      PartList.value = res.content;
+      LedgerTableData.value = res.content.filter((item:any) => item.Status === 1)
       // ElNotification({
       //   title: res.msg,
       //   // message: "取消操作",
@@ -552,7 +720,7 @@ const inPartSubmit = (data: any) => {
     type: "warning",
   })
     .then(() => {
-      EndPartsOut(data.Chkin_sht, loginName).then((data: any) => {
+      EndPartsOut(data.Chkout_sht, loginName).then((data: any) => {
         if (!data) {
           return;
         }
@@ -570,6 +738,18 @@ const inPartSubmit = (data: any) => {
       });
     });
 };
+
+const LedgerSelectionChange = (data:any,p:any) => {
+  choiceList.value = data;
+  console.log(data);
+}
+
+const select = (selection: any, row: any) => {
+  if (selection.length > 1) {
+        let del_row = selection.shift();
+        LedgerTableRef.value.toggleRowSelection(del_row, false); // 用于多选表格，切换某一行的选中状态，如果使用了第二个参数，则是设置这一行选中与否（selected 为 true 则选中）；第二个参数为true时又变成了多选
+    }
+}
 
 const addData = () => {
   PartsOutAdd(form.value).then((res: any) => {
@@ -599,158 +779,264 @@ const editData = () => {
   });
 };
 
-const columnData = reactive([
-  //   {
-  //     text: true,
-  //     prop: "PartID",
-  //     label: "备品编号",
-  //     width: "",
-  //     min: true,
-  //     align: "1",
-  //   },
-  //   {
-  //     text: true,
-  //     prop: "ClassID",
-  //     label: "类别编号",
-  //     width: "",
-  //     min: true,
-  //     align: "1",
-  //   },
-  {
-    text: true,
-    prop: "OutstockNo",
-    label: "出库单号",
-    width: "",
-    min: true,
-    align: "center",
-  },
-  {
-    text: false,
-    tag: true,
-    tagType: "number",
-    tagItem: [
-      { text: "领用", type: "primary", number: "0" },
-      { text: "借出", type: "primary", number: "1" },
-    ],
-    prop: "Type",
-    label: "出库类型",
-    width: "",
-    min: true,
-    align: "center",
-  },
-  {
-    text: true,
-    prop: "LendBy",
-    label: "借出人",
-    width: "",
-    min: true,
-    align: "center",
-  },
-  {
-    text: true,
-    prop: "LendOn",
-    label: "借出时间",
-    width: "",
-    min: true,
-    align: "center",
-  },
-  {
-    text: true,
-    prop: "LendReason",
-    label: "借出原因",
-    width: "",
-    min: true,
-    align: "center",
-  },
-  {
-    text: true,
-    prop: "ReturnDate",
-    label: "归还日期",
-    width: "",
-    min: true,
-    align: "center",
-  },
-  {
-    text: false,
-    tag: true,
-    tagType: "number",
-    tagItem: [
-      { text: "待出库", type: "primary", number: 0 },
-      { text: "出库中", type: "primary", number: 1 },
-      { text: "已完成", type: "primary", number: 2 },
-    ],
-    prop: "Status",
-    label: "状态",
-    width: "80",
-    min: true,
-    align: "center",
-  },
-  {
-    text: true,
-    prop: "CreatedBy",
-    label: "创建人",
-    width: "",
-    min: true,
-    align: "center",
-  },
-  {
-    text: true,
-    prop: "CreatedOn",
-    label: "创建时间",
-    width: "",
-    min: true,
-    align: "center",
-  },
-  {
-    text: true,
-    prop: "Department",
-    label: "部门",
-    width: "",
-    min: true,
-    align: "center",
-  },
-  {
-    text: true,
-    prop: "Remark",
-    label: "备注",
-    width: "",
-    min: true,
-    align: "center",
-  },
-  {
-    isOperation: true,
-    label: "操作",
-    width: "240",
-    align: "center",
-    fixed: "right",
-    operation: [
-      {
-        type: "primary",
-        label: "编辑",
-        icon: "EditPen",
-        buttonClick: editSubmit,
-      },
-      {
-        type: "danger",
-        label: "删除",
-        icon: "Delete",
-        buttonClick: deleteSubmit,
-      },
-      {
-        type: "success",
-        label: "开始出库",
-        icon: "VideoPlay",
-        buttonClick: showInForm,
-      },
-      {
-        type: "info",
-        label: "完成出库",
-        icon: "CircleCheck",
-        buttonClick: inPartSubmit,
-      },
-    ],
-  },
-]);
+// const columnData = reactive([
+//   //   {
+//   //     text: true,
+//   //     prop: "PartID",
+//   //     label: "备品编号",
+//   //     width: "",
+//   //     min: true,
+//   //     align: "1",
+//   //   },
+//   //   {
+//   //     text: true,
+//   //     prop: "ClassID",
+//   //     label: "类别编号",
+//   //     width: "",
+//   //     min: true,
+//   //     align: "1",
+//   //   },
+//   {
+//     text: true,
+//     prop: "OutstockNo",
+//     label: "出库单号",
+//     width: "",
+//     min: true,
+//     align: "center",
+//   },
+//   {
+//     text: false,
+//     tag: true,
+//     tagType: "number",
+//     tagItem: [
+//       { text: "领用", type: "primary", number: "0" },
+//       { text: "借出", type: "primary", number: "1" },
+//     ],
+//     prop: "Type",
+//     label: "出库类型",
+//     width: "",
+//     min: true,
+//     align: "center",
+//   },
+//   {
+//     text: true,
+//     prop: "LendBy",
+//     label: "借出人",
+//     width: "",
+//     min: true,
+//     align: "center",
+//   },
+//   {
+//     text: true,
+//     prop: "LendOn",
+//     label: "借出时间",
+//     width: "",
+//     min: true,
+//     align: "center",
+//   },
+//   {
+//     text: true,
+//     prop: "LendReason",
+//     label: "借出原因",
+//     width: "",
+//     min: true,
+//     align: "center",
+//   },
+//   {
+//     text: true,
+//     prop: "ReturnDate",
+//     label: "归还日期",
+//     width: "",
+//     min: true,
+//     align: "center",
+//   },
+//   {
+//     text: false,
+//     tag: true,
+//     tagType: "number",
+//     tagItem: [
+//       { text: "待出库", type: "primary", number: 0 },
+//       { text: "出库中", type: "primary", number: 1 },
+//       { text: "已完成", type: "primary", number: 2 },
+//     ],
+//     prop: "Status",
+//     label: "状态",
+//     width: "80",
+//     min: true,
+//     align: "center",
+//   },
+//   {
+//     text: true,
+//     prop: "CreatedBy",
+//     label: "创建人",
+//     width: "",
+//     min: true,
+//     align: "center",
+//   },
+//   {
+//     text: true,
+//     prop: "CreatedOn",
+//     label: "创建时间",
+//     width: "",
+//     min: true,
+//     align: "center",
+//   },
+//   {
+//     text: true,
+//     prop: "Department",
+//     label: "部门",
+//     width: "",
+//     min: true,
+//     align: "center",
+//   },
+//   {
+//     text: true,
+//     prop: "Remark",
+//     label: "备注",
+//     width: "",
+//     min: true,
+//     align: "center",
+//   },
+//   {
+//     isOperation: true,
+//     label: "操作",
+//     width: "240",
+//     align: "center",
+//     fixed: "right",
+//     operation: [
+//       {
+//         type: "primary",
+//         label: "编辑",
+//         icon: "EditPen",
+//         buttonClick: editSubmit,
+//       },
+//       {
+//         type: "danger",
+//         label: "删除",
+//         icon: "Delete",
+//         buttonClick: deleteSubmit,
+//       },
+//       {
+//         type: "success",
+//         label: "开始出库",
+//         icon: "VideoPlay",
+//         buttonClick: showInForm,
+//       },
+//       {
+//         type: "info",
+//         label: "完成出库",
+//         icon: "CircleCheck",
+//         buttonClick: inPartSubmit,
+//       },
+//     ],
+//   },
+// ]);
+  
+  const LedgerColumnData = reactive([
+    {
+      text: true,
+      prop: "PartNumber",
+      label: "备品编号",
+      width: "",
+      min: true,
+      align: "center",
+    },
+    {
+      text: true,
+      prop: "Qty",
+      label: "数量",
+      width: "",
+      min: true,
+      align: "center",
+    },
+    {
+      text: true,
+      prop: "PurchaseNo",
+      label: "采购单",
+      width: "",
+      min: true,
+      align: "center",
+    },
+    {
+      text: true,
+      prop: "Description",
+      label: "描述",
+      width: "",
+      min: true,
+      align: "center",
+    },
+  // {
+  //   text: false,
+  //   tag: true,
+  //   tagType: "number",
+  //   tagItem: [
+  //     { text: "待入库", type: "primary", number: 0 },
+  //     { text: "入库中", type: "primary", number: 1 },
+  //     { text: "已完成", type: "primary", number: 2 },
+  //   ],
+  //   prop: "Status",
+  //   label: "状态",
+  //   width: "80",
+  //   min: true,
+  //   align: "center",
+  // },
+    {
+      text: true,
+      prop: "DueDate",
+      label: "到期日期",
+      width: "",
+      min: true,
+      align: "center",
+    },
+    {
+      text: true,
+      prop: "Vendor",
+      label: "供应商",
+      width: "",
+      min: true,
+      align: "center",
+    },
+    {
+      text: true,
+      prop: "Manufacturer",
+      label: "制造商",
+      width: "",
+      min: true,
+      align: "center",
+    },
+    {
+      text: true,
+      prop: "Specification",
+      label: "规格型号",
+      width: "",
+      min: true,
+      align: "center",
+    },
+    {
+      text: true,
+      prop: "StorageLocation",
+      label: "存储位置",
+      width: "",
+      min: true,
+      align: "center",
+    },
+    {
+      text: true,
+      prop: "CreatedOn",
+      label: "创建日期",
+      width: "",
+      min: true,
+      align: "center",
+    },
+    {
+      text: true,
+      prop: "CreatedBy",
+      label: "创建人",
+      width: "",
+      min: true,
+      align: "center",
+    },
+  ]);
 
 onBeforeMount(() => {
   getScreenHeight();
@@ -770,6 +1056,15 @@ const handleSizeChange = (val: any) => {
 const handleCurrentChange = (val: any) => {
   pageObj.value.currentPage = val;
 };
+
+const LedgerSizeChange = (val: any) => {
+  pageObj.value.currentPage = 1;
+  pageObj.value.pageSize = val;
+};
+const LedgerCurrentChange = (val: any) => {
+  pageObj.value.currentPage = val;
+};
+
 const getScreenHeight = () => {
   nextTick(() => {
     tableHeight.value = window.innerHeight - 205;
@@ -789,5 +1084,14 @@ const getScreenHeight = () => {
 
 ::v-deep .no_number input[type="number"] {
   appearance: textfield;
+}
+</style>
+
+<style scoped lang='scss'>
+// 隐藏全选按钮
+::v-deep .el-table__header-wrapper {
+ .el-checkbox__inner {
+    display: none;
+ }
 }
 </style>

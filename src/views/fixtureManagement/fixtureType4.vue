@@ -533,7 +533,7 @@
     {
       text: true,
       prop: "Description",
-      label: "采购单号",
+      label: "描述",
       width: "",
       min: true,
       align: "center",
@@ -564,7 +564,7 @@
     {
       text: true,
       prop: "Vendor",
-      label: "Vendor",
+      label: "供应商",
       width: "",
       min: true,
       align: "center",
@@ -572,7 +572,7 @@
     {
       text: true,
       prop: "Manufacturer",
-      label: "Manufacturer",
+      label: "制造商",
       width: "",
       min: true,
       align: "center",
@@ -580,7 +580,7 @@
     {
       text: true,
       prop: "Specification",
-      label: "Specification",
+      label: "规格型号",
       width: "",
       min: true,
       align: "center",
@@ -588,7 +588,7 @@
     {
       text: true,
       prop: "StorageLocation",
-      label: "StorageLocation",
+      label: "存储位置",
       width: "",
       min: true,
       align: "center",

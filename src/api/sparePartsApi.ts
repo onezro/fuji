@@ -212,12 +212,12 @@ export function StartPartsOut(data: any){
 }
 
 //出库已完成
-export function EndPartsOut(chkin_sht:any,username: any){
+export function EndPartsOut(Chkout_sht:any,username: any){
     return request({
         url: "/api/PartsOut/EndPartsOut",
         method: "post",
         params:{
-            chkin_sht,
+            Chkout_sht,
             username
         }
     });
