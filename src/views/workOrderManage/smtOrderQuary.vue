@@ -76,12 +76,12 @@
       <div class="table_container">
         <table-tem size="small" :show-select="true" :tableData="tableData" :tableHeight="tableHeight"
           :columnData="columnData" :pageObj="pageObj" @handleSizeChange="handleSizeChange"
-          @handleCurrentChange="handleCurrentChange" @rowClick="rowClick"
+          @handleCurrentChange="handleCurrentChange" @rowClick="rowClick" 
           @handleSelectionChange="handleSelectionChange"></table-tem>
       </div>
     </el-card>
 
-    <el-dialog v-model="dialogVisible" width="80%" align-center>
+    <el-dialog v-model="dialogVisible" width="80%" :title="'工单：'+orderName" align-center>
       <div class="w-full">
         <el-tabs v-model="activeName" type="border-card" class="demo-tabs" @tab-change="tabChange">
           <el-tab-pane label="物料清单明细" name="物料清单明细" :stretch="true">
@@ -334,6 +334,7 @@ const orderOnlineForm = ref({
 });
 const orderFormRef = ref();
 const shelfList = ref<ShelfList[]>([]);
+const orderName=ref('')
 
 interface productObjTS {
   WorkflowDesc: string;
@@ -515,6 +516,7 @@ const rowClick = (val: any) => {
   orderChoice.value = val.MfgOrderName;
   productChoice.value = val.ProductName;
   activeName.value = "物料清单明细";
+  orderName.value=val.MfgOrderName
   QueryOrderMaterialRequired({
     MfgOrder: val.MfgOrderName,
   }).then((res: any) => {

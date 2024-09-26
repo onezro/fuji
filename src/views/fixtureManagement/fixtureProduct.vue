@@ -2,24 +2,57 @@
   <div class="p-2">
     <el-card shadow="always" :body-style="{ padding: '8px 8px 0px 8px' }">
       <div class="pb-2 flex justify-between">
-        <el-button type="primary"  @click="(addVisible = true), clearForm()">添加</el-button>
+        <el-button type="primary" @click="(addVisible = true), clearForm()"
+          >添加</el-button
+        >
         <div class="flex">
-          <el-input v-model="searchName"  style="width: 300px" clearable placeholder="请输入">
+          <el-input
+            v-model.trim="searchName"
+            style="width: 300px"
+            clearable
+            placeholder="请输入"
+          >
             <template #append>
-              <el-button type="primary" icon="Search"></el-button> </template></el-input>
+              <el-button type="primary" icon="Search"></el-button> </template
+          ></el-input>
         </div>
       </div>
-      <table-tem :show-index="true" size="small" :tableData="tableData1" :tableHeight="tableHeight" :columnData="columnData"
-        :pageObj="pageObj" @handleSizeChange="handleSizeChange" @handleCurrentChange="handleCurrentChange">
+      <table-tem
+        :show-index="true"
+        size="small"
+        :tableData="tableData1"
+        :tableHeight="tableHeight"
+        :columnData="columnData"
+        :pageObj="pageObj"
+        @handleSizeChange="handleSizeChange"
+        @handleCurrentChange="handleCurrentChange"
+      >
       </table-tem>
     </el-card>
-    <el-dialog align-center :append-to-body="true" :close-on-click-modal="false" v-model="editVisible" @close=""
-      title="编辑" width="55%">
-      <el-form ref="EditFormRef" :model="EditForm" label-position="right" label-width="auto" :inline="true"
-        :rules="rules">
-
+    <el-dialog
+      align-center
+      :append-to-body="true"
+      :close-on-click-modal="false"
+      v-model="editVisible"
+      @close=""
+      title="编辑"
+      width="55%"
+    >
+      <el-form
+        ref="EditFormRef"
+        :model="EditForm"
+        label-position="right"
+        label-width="auto"
+        :inline="true"
+        :rules="rules"
+      >
         <el-form-item label="产品编码" prop="productname">
-          <el-input disabled v-model="EditForm.productname" style="width: 240px" placeholder="" />
+          <el-input
+            disabled
+            v-model="EditForm.productname"
+            style="width: 240px"
+            placeholder=""
+          />
           <!-- <el-select
             v-model="EditForm.productname"
             placeholder=""
@@ -34,7 +67,12 @@
           </el-select> -->
         </el-form-item>
         <el-form-item label="工序代码" prop="procedurecode">
-          <el-input disabled v-model="EditForm.procedurecode" style="width: 240px" placeholder="" />
+          <el-input
+            disabled
+            v-model="EditForm.procedurecode"
+            style="width: 240px"
+            placeholder=""
+          />
           <!-- <el-select
             v-model="EditForm.procedurecode"
             placeholder=""
@@ -50,20 +88,47 @@
           </el-select> -->
         </el-form-item>
         <el-form-item label="产品描述" prop="productdsc">
-          <el-input disabled v-model="EditForm.productdsc" style="width: 240px" placeholder="" />
+          <el-input
+            disabled
+            v-model="EditForm.productdsc"
+            style="width: 240px"
+            placeholder=""
+          />
         </el-form-item>
         <el-form-item label="工序描述" prop="proceduredsc">
-          <el-input disabled v-model="EditForm.proceduredsc" style="width: 240px" placeholder="" />
+          <el-input
+            disabled
+            v-model="EditForm.proceduredsc"
+            style="width: 240px"
+            placeholder=""
+          />
         </el-form-item>
         <el-form-item label="工治具型号" prop="compname">
-          <el-select v-model="EditForm.compname" placeholder="" style="width: 240px">
-            <el-option v-for="item in compnameList" :key="item.CompName" :label="item.CompName"
-              :value="item.CompName" />
+          <el-select
+            v-model="EditForm.compname"
+            placeholder=""
+            style="width: 240px"
+          >
+            <el-option
+              v-for="item in compnameList"
+              :key="item.CompName"
+              :label="item.CompName"
+              :value="item.CompName"
+            />
           </el-select>
         </el-form-item>
         <el-form-item label="面别" prop="side">
-          <el-select v-model="EditForm.side" placeholder="" style="width: 240px">
-            <el-option v-for="item in ['BOT', 'TOP']" :key="item" :label="item" :value="item" />
+          <el-select
+            v-model="EditForm.side"
+            placeholder=""
+            style="width: 240px"
+          >
+            <el-option
+              v-for="item in ['BOT', 'TOP']"
+              :key="item"
+              :label="item"
+              :value="item"
+            />
           </el-select>
         </el-form-item>
         <!-- <el-form-item label="" prop="compid">
@@ -80,7 +145,11 @@
             style="width: 240px"
             placeholder=""
           /> -->
-          <el-input-number v-model="EditForm.usage" style="width: 240px" placeholder="" />
+          <el-input-number
+            v-model="EditForm.usage"
+            style="width: 240px"
+            placeholder=""
+          />
         </el-form-item>
         <el-form-item label="状态" prop="status">
           <!-- <el-input
@@ -101,12 +170,22 @@
             />
           </el-select> -->
           <div class="w-[240px]">
-            <el-checkbox v-model="EditFormStatus" :label="EditForm.status === 1 ? '可用' : '不可用'" size="large"
-              @change="EditForm.status = EditForm.status === 1 ? -1 : 1" />
+            <el-checkbox
+              v-model="EditFormStatus"
+              :label="EditForm.status === 1 ? '可用' : '不可用'"
+              size="large"
+              @change="EditForm.status = EditForm.status === 1 ? -1 : 1"
+            />
           </div>
         </el-form-item>
         <el-form-item label="备注" prop="remark">
-          <el-input v-model="EditForm.remark" style="width: 240px" placeholder="" type="textarea" :rows="3" />
+          <el-input
+            v-model="EditForm.remark"
+            style="width: 240px"
+            placeholder=""
+            type="textarea"
+            :rows="3"
+          />
         </el-form-item>
       </el-form>
 
@@ -118,11 +197,29 @@
         </span>
       </template>
     </el-dialog>
-    <el-dialog align-center :append-to-body="true" :close-on-click-modal="false" v-model="addVisible" @close=""
-      title="添加" width="55%">
-      <el-form ref="formRef" :model="form" label-position="right" label-width="120px" :inline="true" :rules="rules">
+    <el-dialog
+      align-center
+      :append-to-body="true"
+      :close-on-click-modal="false"
+      v-model="addVisible"
+      @close=""
+      title="添加"
+      width="55%"
+    >
+      <el-form
+        ref="formRef"
+        :model="form"
+        label-position="right"
+        label-width="120px"
+        :inline="true"
+        :rules="rules"
+      >
         <el-form-item label="产品编码" prop="productname">
-          <el-input v-model="form.productname" style="width: 240px" placeholder="" />
+          <el-input
+            v-model="form.productname"
+            style="width: 240px"
+            placeholder=""
+          />
           <!-- <el-select
             v-model="form.productname"
             placeholder=""
@@ -143,29 +240,73 @@
             style="width: 240px"
             placeholder=""
           /> -->
-          <el-select v-model="form.procedurecode" placeholder="" filterable style="width: 240px" @change="codeChoice">
-            <el-option v-for="item in procedurecodeList" :key="item" :label="item.SpecName" :value="item.SpecName" />
+          <el-select
+            v-model="form.procedurecode"
+            placeholder=""
+            filterable
+            style="width: 240px"
+            @change="codeChoice"
+          >
+            <el-option
+              v-for="item in procedurecodeList"
+              :key="item"
+              :label="item.SpecName"
+              :value="item.SpecName"
+            />
           </el-select>
         </el-form-item>
         <el-form-item label="产品描述" prop="productdsc">
-          <el-input disabled v-model="form.productdsc" style="width: 240px" placeholder="" />
+          <el-input
+            disabled
+            v-model="form.productdsc"
+            style="width: 240px"
+            placeholder=""
+          />
         </el-form-item>
         <el-form-item label="工序描述" prop="proceduredsc">
-          <el-input disabled v-model="form.proceduredsc" style="width: 240px" placeholder="" />
+          <el-input
+            disabled
+            v-model="form.proceduredsc"
+            style="width: 240px"
+            placeholder=""
+          />
         </el-form-item>
         <el-form-item label="工治具型号" prop="compname">
-          <el-select v-model="form.compname" placeholder=""   filterable style="width: 240px">
-            <el-option v-for="item in compnameList" :key="item.CompName" :label="item.CompName"
-              :value="item.CompName" />
+          <el-select
+            v-model="form.compname"
+            placeholder=""
+            filterable
+            style="width: 240px"
+          >
+            <el-option
+              v-for="item in compnameList"
+              :key="item.CompName"
+              :label="item.CompName"
+              :value="item.CompName"
+            />
           </el-select>
         </el-form-item>
         <el-form-item label="面别" prop="side">
-          <el-select v-model="form.side" placeholder="" clearable style="width: 240px">
-            <el-option v-for="item in ['BOT', 'TOP']" :key="item" :label="item" :value="item" />
+          <el-select
+            v-model="form.side"
+            placeholder=""
+            clearable
+            style="width: 240px"
+          >
+            <el-option
+              v-for="item in ['BOT', 'TOP']"
+              :key="item"
+              :label="item"
+              :value="item"
+            />
           </el-select>
         </el-form-item>
         <el-form-item label="消耗量" prop="usage">
-          <el-input-number v-model="form.usage" style="width: 240px" placeholder="" />
+          <el-input-number
+            v-model="form.usage"
+            style="width: 240px"
+            placeholder=""
+          />
         </el-form-item>
         <el-form-item label="状态" prop="status">
           <!-- <el-input
@@ -174,8 +315,12 @@
             placeholder=""
           /> -->
           <div class="w-[240px]">
-            <el-checkbox v-model="formStatus" :label="form.status === 1 ? '可用' : '不可用'" size="large"
-              @change="form.status = form.status === 1 ? -1 : 1" />
+            <el-checkbox
+              v-model="formStatus"
+              :label="form.status === 1 ? '可用' : '不可用'"
+              size="large"
+              @change="form.status = form.status === 1 ? -1 : 1"
+            />
           </div>
           <!-- <el-select
             v-model="form.status"
@@ -191,7 +336,13 @@
           </el-select> -->
         </el-form-item>
         <el-form-item label="备注" prop="remark">
-          <el-input v-model="form.remark" style="width: 240px" placeholder="" type="textarea" :rows="4" />
+          <el-input
+            v-model="form.remark"
+            style="width: 240px"
+            placeholder=""
+            type="textarea"
+            :rows="4"
+          />
         </el-form-item>
       </el-form>
 
@@ -316,7 +467,7 @@ const EditFormStatus = computed(() => {
 
 const tableData = ref([]);
 const tableData1 = ref([]);
-const searchName=ref('')
+const searchName = ref("");
 
 const form = ref<formTS>({
   usage: 1,
@@ -389,12 +540,12 @@ watch(
     if (newdata == "") {
       tableData1.value = tableData.value;
     } else {
-      tableData1.value = table1(newdata)
+      tableData1.value = table1(newdata);
     }
   }
 );
 const table1 = (newdata: any) => {
-  let searchName = newdata.toLowerCase()
+  let searchName = newdata.toLowerCase();
   return tableData.value.filter((v: any) => {
     return Object.keys(v).some((key) => {
       return String(v[key]).toLowerCase().indexOf(searchName) > -1;
@@ -559,29 +710,26 @@ const deleteSubmit = (data: any) => {
     type: "warning",
   })
     .then(() => {
-      ToolsSpec({ CompID: deleteChoice.value, operationtype: "DEL" }).then(
-        (data: any) => {
-          if (!data) {
-            return;
-          }
-          ElMessage({
-            message: data.msg,
-            type: "success",
-          });
-          getData();
+      ToolsSpec({
+        usagespecguid: deleteChoice.value,
+        operationtype: "DEL",
+      }).then((data: any) => {
+        if (!data) {
+          return;
         }
-      );
+        ElNotification({
+          title: "提示信息",
+          message: data.msg,
+          type: "success",
+        });
+        getData();
+      });
     })
     .catch(() => {
       ElNotification({
         type: "info",
         message: "取消操作",
       });
-      //   ElNotification({
-      //     title: "取消操作",
-      //     // message: "取消操作",
-      //     type: "info",
-      //   });
     });
 };
 
@@ -734,9 +882,13 @@ const getData = () => {
       tableData.value = [];
       return;
     }
-    const dataText = data.content;
-    tableData.value = dataText;
-    tableData1.value=data.content
+    tableData.value = data.content;
+    
+    if(searchName.value.trim()){
+      tableData1.value = table1(searchName.value);
+    }else{
+      tableData1.value = data.content;
+    }
   });
 };
 

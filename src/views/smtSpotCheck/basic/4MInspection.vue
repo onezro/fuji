@@ -4,7 +4,7 @@
         <div class="pb-[10px]">
           <el-button type="primary" @click="openAdd">添加</el-button>
         </div>
-        <el-table :data="tableData.slice((currentPage - 1) * pageSize, currentPage * pageSize)
+        <el-table size="small" :data="tableData.slice((currentPage - 1) * pageSize, currentPage * pageSize)
           " stripe border fit :height="tableHeight" row-key="step1" :tree-props="{ children: 'stepItemList' }">
           <!-- <el-table-column label="序号" width="60px" type="index" align="center" /> -->
           <el-table-column prop="WorkSection" label="工段"> </el-table-column>

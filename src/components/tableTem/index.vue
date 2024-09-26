@@ -5,7 +5,7 @@
       pageObj.currentPage * pageObj.pageSize
     )
       " stripe border fit :height="tableHeight" :size="size || 'default'" :tooltip-effect="'dark'" style="width: 100%"
-      @selection-change="handleSelectionChange" @row-click="rowClick"  ref="multipleTableRef">
+      @selection-change="handleSelectionChange" @row-click="rowClick"      ref="multipleTableRef">
       <el-table-column type="selection" fixed width="55" align="center" v-if="showSelect" />
       <el-table-column type="index" align="center" fixed label="序号" :width="size == 'small' ? '50' : '60'"
         v-if="showIndex">
@@ -96,21 +96,26 @@ const handleCurrentChange = (e: any) => {
   emit("handleCurrentChange", e);
 };
 
-const rowClick = (e: any) => {
-  // console.log(e);
+
+
+const rowClick = (e: any,column:any) => {
   rowId.value = e[rowName?.value];
   emit("rowClick", cloneDeep(e));
 };
+
+const rowClassName=(data:any)=>{
+  // console.log(data);
+  return '';  
+}
 const rowStyle = (val: any) => {
-  // console.log(val[rowName?.value]);
   let data = cloneDeep(val.row)
-  // console.log(rowName?.value,data[rowName?.value]);
   if (rowId.value == data[rowName?.value]) {
     return {
       "background-color": "#ffcd50",
       // 'color': '#fff'
     };
   }
+  return {};  
 };
 
 const getMaxLength = (arr: any) => {
@@ -197,6 +202,14 @@ defineExpose({
 });
 </script>
 
+<style>
+.el-table .warning-row {
+  --el-table-tr-bg-color: #ffcd50;
+}
+.el-table .success-row {
+  --el-table-tr-bg-color: var(--el-color-success-light-9);
+}
+</style>
 <style scoped>
 .el-pagination {
   justify-content: center;

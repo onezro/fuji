@@ -1,10 +1,10 @@
 <template>
-  <div class="p-[10px]">
-    <el-card shadow="always" :body-style="{ padding: '10px' }">
-      <div class="mb-[10px]">
+  <div class="p-2">
+    <el-card shadow="always" :body-style="{ padding: '8px' }">
+      <div class="mb-2">
         <el-button type="primary" @click="openAdd">添加</el-button>
       </div>
-      <el-table :data="tableData.slice((currentPage - 1) * pageSize, currentPage * pageSize)
+      <el-table size="small" :data="tableData.slice((currentPage - 1) * pageSize, currentPage * pageSize)
         " border :height="tableHeight" stripe>
         <el-table-column label="序号" type="index" width="60" align="center"></el-table-column>
         <el-table-column label="角色名称" prop="RoleName"> </el-table-column>
@@ -388,7 +388,7 @@ const handleCurrentChange = (val: any) => {
 };
 const getScreenHeight = () => {
   nextTick(() => {
-    tableHeight.value = window.innerHeight - 220;
+    tableHeight.value = window.innerHeight - 194;
   });
 };
 </script>

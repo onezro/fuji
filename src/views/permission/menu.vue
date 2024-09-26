@@ -5,7 +5,7 @@
         <el-button type="primary" @click="openAdd">添加</el-button>
       </div>
       <div class="w-full">
-        <el-table :data="tableData" stripe border fit :height="tableHeight" row-key="id"
+        <el-table size="small" :data="tableData" stripe border fit :height="tableHeight" row-key="id"
           :tree-props="{ children: 'childMenu' }">
 
           <el-table-column prop="title" label="菜单名称"> </el-table-column>
