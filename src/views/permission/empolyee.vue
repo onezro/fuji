@@ -1,6 +1,6 @@
 <template>
-  <div class="p-[10px] flex gap-[10px]">
-    <el-card shadow="always" :body-style="{ padding: '10px' }" class="w-[250px] h-[calc(100vh-105px)]">
+  <div class="p-2 flex gap-[10px]">
+    <el-card shadow="always" :body-style="{ padding: '8px' }" class="w-[250px] h-[calc(100vh-97px)]">
       <template #header>
         <div class="card-header flex justify-between items-center">
           <div class="flex gap-[5px] items-center">
@@ -15,7 +15,7 @@
           </el-tooltip>
         </div>
       </template>
-      <el-scrollbar class="h-[calc(100vh-175px)]">
+      <el-scrollbar class="h-[calc(100vh-160px)]">
         <el-tree style="max-width: 600px"  highlight-current :data="organTree" :expand-on-click-node="false" :props="{
           children: 'children',
           label: 'OrganizationName',
@@ -34,7 +34,7 @@
         </div>
       </div>
 
-      <el-table :data="tableData1.slice((currentPage - 1) * pageSize, currentPage * pageSize)
+      <el-table size="small" :data="tableData1.slice((currentPage - 1) * pageSize, currentPage * pageSize)
         " border :height="tableHeight" stripe>
         <el-table-column label="序号" type="index" width="60" align="center"></el-table-column>
         <el-table-column label="工号" prop="employeeName" min-width="100"> </el-table-column>
@@ -607,7 +607,7 @@ const handleCurrentChange = (val: any) => {
 };
 const getScreenHeight = () => {
   nextTick(() => {
-    tableHeight.value = window.innerHeight - 215;
+    tableHeight.value = window.innerHeight - 204;
   });
 };
 </script>

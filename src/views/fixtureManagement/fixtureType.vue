@@ -6,7 +6,7 @@
           >添加</el-button
         >
         <div class="flex">
-          <el-input v-model="searchName"  style="width: 300px" clearable placeholder="请输入">
+          <el-input v-model.trim="searchName"  style="width: 300px" clearable placeholder="请输入">
             <template #append>
               <el-button type="primary" icon="Search"></el-button> </template></el-input>
           <!-- <el-input
@@ -679,9 +679,16 @@ const table1 = (newdata: any) => {
 
 const getData = () => {
   ToolsType({ operationtype: "QAL" }).then((data: any) => {
-    const dataText = data.content;
-    tableData.value = dataText;
-    tableData1.value = tableData.value;
+    if (data.content === null || data.content.length === 0) {
+      tableData.value = [];
+      return;
+    }
+    tableData.value = data.content;
+    if(searchName.value.trim()){
+      tableData1.value = table1(searchName.value);
+    }else{
+      tableData1.value = data.content;
+    }
   });
 };
 

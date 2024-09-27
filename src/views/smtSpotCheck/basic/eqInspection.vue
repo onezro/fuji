@@ -8,6 +8,7 @@
         :data="
           tableData.slice((currentPage - 1) * pageSize, currentPage * pageSize)
         "
+        size="small"
         stripe
         border
         fit

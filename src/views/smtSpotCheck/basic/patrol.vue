@@ -10,6 +10,7 @@
         "
         stripe
         border
+        size="small"
         fit
         :height="tableHeight"
         row-key="Step1"

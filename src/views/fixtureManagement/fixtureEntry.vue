@@ -4,7 +4,7 @@
       <div class="pb-2 flex justify-between">
         <el-button type="primary" @click="openAdd">添加</el-button>
         <div class="flex">
-          <el-input v-model="searchName"  style="width: 300px" clearable placeholder="请输入">
+          <el-input v-model.trim="searchName"  style="width: 300px" clearable placeholder="请输入">
             <template #append>
               <el-button type="primary" icon="Search"></el-button> </template></el-input>
         </div>
@@ -618,9 +618,17 @@ onBeforeUnmount(() => {
 
 const getData = () => {
   ToolsDetail({ operationtype: "QAL" }).then((data: any) => {
-    const dataText = data.content;
-    tableData.value = dataText;
-    tableData1.value = data.content;
+    if (data.content === null || data.content.length === 0) {
+      tableData.value = [];
+      return;
+    }
+    tableData.value = data.content;
+  
+    if(searchName.value.trim()){
+      tableData1.value = table1(searchName.value);
+    }else{
+      tableData1.value = data.content;
+    }
   });
 };
 

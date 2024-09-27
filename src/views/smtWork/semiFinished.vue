@@ -203,7 +203,7 @@ const columnData = reactive([
   {
     text: true,
     prop: "PCBSerialNumber",
-    label: "小板条码",
+    label: "PCB条码",
     width: "",
     min: true,
     align: "center",
@@ -211,7 +211,7 @@ const columnData = reactive([
   {
     text: true,
     prop: "PanelSerialNumber",
-    label: "大板条码",
+    label: "拼板号",
     width: "",
     min: true,
     align: "center",
