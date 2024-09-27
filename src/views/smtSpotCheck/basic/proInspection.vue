@@ -465,7 +465,7 @@ const addSubmit = () => {
       });
       getData()
       addVisible.value = false;
-
+      form.StepItemList =[]
     }
     resetForm();
     addFrom.stepList = [];

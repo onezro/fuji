@@ -6,77 +6,8 @@
         <span class="text-[1.2rem]"> {{ opui.stationDec }} </span>
       </div>
       <div class="w-full flex-1 flex">
-        <div class="setwidth w-[350px]">
-          <div class="w-full h-full box">
-            <div
-              class="h-[35px] flex items-center justify-between text-lg text-[#fff] bg-[#006487]"
-            >
-              <span class="ml-5">周转箱列表</span>
-              <el-tooltip content="刷新" placement="top">
-                <el-icon
-                  class="mr-3"
-                  color="#fff"
-                  :class="isLoding"
-                  size="24"
-                  @click="getCarrierList"
-                  ><RefreshRight
-                /></el-icon>
-              </el-tooltip>
-            </div>
-            <div class="p-3" :style="{ height: boxHeight + 'px' }">
-              <el-card
-                shadow="always"
-                class="mb-2"
-                :body-style="{ padding: '8px' }"
-                v-for="t in turnData"
-                :key="t.CARRIERNAME"
-              >
-                <el-form ref="formRef" :model="t" label-width="auto">
-                  <el-row :gutter="20">
-                    <el-col :span="12">
-                      <el-form-item label="周转箱类型">
-                        <span
-                          :class="[
-                            t.LOADTYPE == 'OK' ? 'text-[#00B400]' : 'text-[red]',
-                            'font-bold text-base',
-                          ]"
-                          >{{ t.LOADTYPE }}</span
-                        >
-                      </el-form-item>
-                    </el-col>
-                    <el-col :span="12">
-                      <el-form-item label="容量">
-                        <span class="text-base">{{ t.CAPACITY }}</span>
-                      </el-form-item>
-                    </el-col>
-                  </el-row>
-                  <el-row :gutter="20">
-                    <el-col :span="12">
-                      <el-form-item label="周转箱条码">
-                        <span
-                          class="text-base text-[#006487] font-bold underline cursor-pointer"
-                          @click="getList(t.CARRIERNAME)"
-                          >{{ t.CARRIERNAME }}</span
-                        >
-                      </el-form-item>
-                    </el-col>
-                    <el-col :span="12">
-                      <el-form-item label="装箱数量">
-                        <span class="text-base">{{ t.QTY }}</span>
-                      </el-form-item></el-col
-                    >
-                  </el-row>
-                </el-form>
-                <div class="flex justify-end">
-                  <el-button type="primary" :disabled="t.QTY==0" @click="disFullBox(t)"
-                    >不满箱装箱</el-button
-                  >
-                </div>
-              </el-card>
-            </div>
-          </div>
-        </div>
-        <div class="w-[calc(100%-350px)]">
+        <!-- <div class="w-[calc(100%-350px)]"> -->
+          
           <div class="w-full h-full flex flex-col">
             <div>
               <div
@@ -130,7 +61,6 @@
               <div class="flex-1">
                 <table-tem
                   :showIndex="true"
-                  :showSelect="true"
                   :tableData="tableData"
                   :tableHeight="tableHeight"
                   :columnData="columnData"
@@ -141,8 +71,16 @@
               </div>
             </div>
           </div>
-        </div>
       </div>
+      <el-dialog v-model="badVisible" title="Shipping address">
+          <main>container</main>
+          <template #footer>
+              <!-- <span class="dialog-footer">
+                  <el-button @click="show = false">取消</el-button>
+                  <el-button type="primary" @click="show = false"> 确定 </el-button>
+              </span> -->
+          </template>
+      </el-dialog>
     </div>
   </template>
   
@@ -270,89 +208,35 @@
   const boxHeight = ref(0);
   const inputFocus = ref(true);
   const isLoding = ref("");
+  const badVisible=ref(false)
   
   onBeforeMount(() => {
     getScreenHeight();
   });
   onMounted(() => {
     window.addEventListener("resize", getScreenHeight);
-    getCarrierList();
   });
   onBeforeUnmount(() => {
     window.addEventListener("resize", getScreenHeight);
   });
-  
-  const getCarrierList = () => {
-    isLoding.value = "is-loading";
-    tableData.value = [];
-    QueryCarrierList({ workStationName: opui.station }).then((res: any) => {
-      let timer = setTimeout(() => {
-        isLoding.value = "";
-        clearTimeout(timer);
-      }, 2000);
-      if (res.content == null||res.content.length==0) {
-        turnData.value=[]
-        return;
-      }
-      turnData.value = res.content;
-      if (turnData.value.length == 1) {
-        getList(turnData.value[0].CARRIERNAME)
-        return
-      }
-    
-    });
-  };
-  
-  const disFullBox = (val: any) => {
-    // console.log(val);
-    let data = {
-      WorkStationName: opui.station,
-      CarrierName: val.CARRIERNAME,
-      Capacity: val.CAPACITY,
-      LoadType: val.LOADTYPE,
-      CurrentCapacity: val.QTY,
-      OperatorID: userStore.getUserInfo,
-    };
-    ElMessageBox.confirm("确定不满箱提交", "确认操作", {
-      confirmButtonText: "确定",
-      cancelButtonText: "取消",
-      type: "warning",
-    })
-      .then(() => {
-        TrunkDeal(data).then((res: any) => {
-          // console.log(res);
-          msgTitle.value = res.msg;
-          msgType.value = res.success;
-          getCarrierList();
-        });
-      })
-      .catch(() => {});
-  };
-  const getList = (val: any) => {
-    QueryPackListByCarrier({ carrierName: val }).then((res: any) => {
-      if (res.content == null) {
-        tableData.value = [];
-        return;
-      }
-      tableData.value = res.content;
-    });
-  };
-  
+
+
+
   const getChange = () => {
-    inputFocus.value = false;
-    SubmitPcbToPacking(form.value).then((res: any) => {
-      msgTitle.value = res.msg;
-      msgType.value = res.success;
-      form.value.PcbNumber = "";
-      if (res.success) {
-        tableData.value = res.content;
-        getCarrierList();
-        msgTitle.value = res.msg + "周转箱列表已更新";
-      } else {
-        tableData.value = [];
-      }
-      inputFocus.value = true;
-    });
+    badVisible.value=true
+    // inputFocus.value = false;
+    // SubmitPcbToPacking(form.value).then((res: any) => {
+    //   msgTitle.value = res.msg;
+    //   msgType.value = res.success;
+    //   form.value.PcbNumber = "";
+    //   if (res.success) {
+    //     tableData.value = res.content;
+    //     msgTitle.value = res.msg + "周转箱列表已更新";
+    //   } else {
+    //     tableData.value = [];
+    //   }
+    //   inputFocus.value = true;
+    // });
   };
   
   const handleSizeChange = (val: any) => {

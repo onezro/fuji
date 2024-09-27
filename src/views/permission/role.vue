@@ -7,7 +7,7 @@
       <el-table size="small" :data="tableData.slice((currentPage - 1) * pageSize, currentPage * pageSize)
         " border :height="tableHeight" stripe>
         <el-table-column label="序号" type="index" width="60" align="center"></el-table-column>
-        <el-table-column label="角色名称" prop="RoleName"> </el-table-column>
+        <el-table-column label="角色名称" prop="RoleName" > </el-table-column>
         <el-table-column label="描述" prop="RoleDesc"> </el-table-column>
         <el-table-column fixed="right" label="操作" width="120">
           <template #default="scope">
@@ -28,7 +28,7 @@
           </template>
         </el-table-column>
       </el-table>
-      <div class="mt-3">
+      <div class="mt-2">
         <el-pagination size="large" background @size-change="handleSizeChange" @current-change="handleCurrentChange"
           :current-page="currentPage" :page-size="pageSize" :page-sizes="[5, 10, 20, 50, 100]"
           layout="total,sizes, prev, pager, next, jumper" :total="tableData.length">
@@ -345,18 +345,18 @@ const handleDelete = (row: any) => {
   })
     .then(() => {
       deleteRole(row.id).then((data: any) => {
-        // console.log(res);
+       
         if ((data.code = 100200)) {
           getData();
           ElNotification({
-            title: "删除成功",
-            // message: "取消操作",
+            title: "提示信息",
+            message: "删除成功",
             type: "success",
           });
         } else {
           ElNotification({
-            title: "删除失败",
-            // message: "取消操作",
+            title: "提示信息",
+            message: "删除失败",
             type: "error",
           });
           // this.$message({
@@ -367,15 +367,11 @@ const handleDelete = (row: any) => {
       });
     })
     .catch(() => {
-      ElMessage({
-        type: "info",
-        message: "取消操作",
-      });
-      //   ElNotification({
-      //     title: "取消操作",
-      //     // message: "取消操作",
-      //     type: "info",
-      //   });
+        ElNotification({
+          title: "提示信息",
+          message: "取消操作",
+          type: "info",
+        });
     });
 };
 
@@ -391,6 +387,7 @@ const getScreenHeight = () => {
     tableHeight.value = window.innerHeight - 194;
   });
 };
+
 </script>
 
 <style lang="scss" scoped></style>

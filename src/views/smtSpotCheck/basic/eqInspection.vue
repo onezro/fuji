@@ -17,6 +17,7 @@
         :tree-props="{ children: 'stepItemList' }"
       >
         <!-- <el-table-column label="序号" width="60px" type="index" align="center" /> -->
+        <el-table-column prop="WorkSection" label="工段"> </el-table-column>
         <el-table-column prop="Step1" label="检验工序"> </el-table-column>
         <el-table-column prop="StepName" label="检验设备"> </el-table-column>
         <el-table-column prop="SubItem" label="检验编号"> </el-table-column>
@@ -30,7 +31,7 @@
         </el-table-column>
         <el-table-column fixed="right" label="操作" width="120" align="center">
           <template #default="scope">
-            <el-tooltip content="编辑" placement="top">
+            <el-tooltip content="编辑" placement="top"  v-if="scope.row.SubItem">
               <el-button
                 type="primary"
                 icon="EditPen"
@@ -39,7 +40,7 @@
               ></el-button>
             </el-tooltip>
 
-            <el-tooltip content="删除" placement="top">
+            <el-tooltip content="删除" placement="top" v-if="scope.row.SubItem">
               <el-button
                 type="danger"
                 icon="Delete"
@@ -72,6 +73,7 @@
       @close="addCancel()"
       title="添加"
       width="50%"
+      align-center
     >
       <el-form
         ref="formRef"
@@ -79,6 +81,9 @@
         label-position="left"
         label-width="auto"
       >
+      <el-form-item label="工段" prop="WorkSection">
+            <el-input v-model="form.WorkSection" placeholder="工段"></el-input>
+          </el-form-item>
         <el-row :gutter="50">
           <el-col :span="12">
             <el-form-item label="检验工序" prop="step">
@@ -200,6 +205,9 @@
       width="50%"
     >
       <el-form ref="eidtRef" :model="editForm" label-width="100px">
+        <el-form-item label="工段" prop="WorkSection">
+            <el-input v-model="editHear.WorkSection" placeholder="工段"></el-input>
+          </el-form-item>
         <el-row>
           <el-col :span="12">
             <el-form-item label="检验工序" prop="step">
@@ -352,6 +360,7 @@ const form = reactive({
   Step: "",
   Status: "I",
   Name: "",
+  WorkSection:'',
   InspectContent: "",
   StepItemList: [
     {
@@ -458,7 +467,7 @@ const addSubmit = () => {
       });
       getData()
       addVisible.value = false;
-
+      form.StepItemList =[]
     }
     resetForm();
     addFrom.stepList = [];
@@ -554,30 +563,66 @@ const handleDelete = (row: any) => {
 //基础数据处理成树形结构
 const dispose = (data: any) => {
   const a: InstanceType<typeof FistTableData>[] = [];
-  data.forEach((item: any) => {
-    let isExist = a.findIndex((ela: any) => ela.Name == item.Name);
-    if (isExist != -1) {
-      a[isExist].stepItemList.push({
-        ...item,
-        Step1: a[isExist].Step + "-" + item.SubItem,
-      });
-      a[isExist].SubItem1++;
-    } else {
-      const obj: InstanceType<typeof FistTableData> = {
-        Name: item.Name,
-        Step: item.Step,
-        InspectContent: item.InspectContent,
-        Step1: item.Step,
-        stepItemList: [],
-      };
-      obj.stepItemList.push({
-        ...item,
-        Step1: item.Step + "-" + item.SubItem,
-      });
-      a.push(obj);
-    }
-  });
+    data.forEach((item: any) => {
+      let isExist = a.findIndex((ela) => ela.WorkSection == item.WorkSection);
+      if (isExist != -1) {
+        let b = a[isExist].stepItemList.findIndex(
+          (t: any) => t.StepName == item.StepName
+        );
+        if (b != -1) {
+          a[isExist].stepItemList[b].stepItemList.push({
+            ...item,
+            step1:
+              item.WorkSection +
+              "-" +
+              item.Step +
+              "-" +
+              (a[isExist].stepItemList[b].stepItemList.length + 1),
+          });
+        } else {
+          a[isExist].stepItemList.push({
+            StepName: item.StepName,
+            Step: item.Step,
+           
+            InspectContent: item.InspectContent,
+            step1: item.WorkSection + "-" + item.Step,
+            stepItemList: [
+              {
+                ...item,
+                step1: item.WorkSection + "-" + item.Step + "-" + (isExist + 1),
+              },
+            ],
+          });
+        }
+      } else {
+        let obj: InstanceType<typeof AllInspection> = {
+          ProductName: item.ProductName,
+          WorkSection:item.WorkSection,
+          step1: item.WorkSection,
+          stepItemList: [
+            {
+              StepName: item.StepName,
+              InspectContent: item.InspectContent,
+              Step: item.Step,
+              step1: item.WorkSection + "-" + item.Step,
+              stepItemList: [],
+            },
+          ],
+        };
+        obj.stepItemList[0].stepItemList.push({
+          ...item,
+          step1:
+          item.WorkSection +
+            "-" +
+            item.Step +
+            "-" +
+            (obj.stepItemList[0].stepItemList.length + 1),
+        });
+        a.push(obj);
+      }
+    });
   tableData.value = a;
+console.log(a);
   if (tableData.value.length % pageSize.value == 0 && currentPage.value > 1) {
     currentPage.value--;
   }

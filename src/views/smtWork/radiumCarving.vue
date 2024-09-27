@@ -222,6 +222,7 @@ import {
   getMaterialInformation,
   OrderSNQuery,
   getLaserWorkOrder,
+  OrderQuery
 } from "@/api/smtApi";
 import { useAppStore } from "@/stores/modules/app";
 import { watch, computed } from "vue";
@@ -521,12 +522,16 @@ const getScreenHeight = () => {
   });
 };
 const getOrderList = () => {
-  getLaserWorkOrder({ orderID: "" }).then((data: any) => {
-    // const dataText = JSON.parse(data.content);
-    // workOrderList.value = [...dataText,{},{}];
-    workOrderList.value = data.content
-    workOrderList1.value = data.content
-  });
+  OrderQuery({lineName:opui.line}).then((res:any)=>{
+   workOrderList.value = res.content
+    workOrderList1.value = res.content
+  })
+  // getLaserWorkOrder({ orderID: "" }).then((data: any) => {
+  //   // const dataText = JSON.parse(data.content);
+  //   // workOrderList.value = [...dataText,{},{}];
+  //   workOrderList.value = data.content
+  //   workOrderList1.value = data.content
+  // });
 };
 const choiceOrder = () => {
   if (form.MfgOrderName === "") {

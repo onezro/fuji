@@ -23,8 +23,8 @@
       </el-scrollbar>
     </el-card>
 
-    <el-card shadow="always" :body-style="{ padding: '10px' }" class="flex-1">
-      <div class="mb-[10px] flex justify-between">
+    <el-card shadow="always" :body-style="{ padding: '8px 8px 0 8px' }" class="flex-1">
+      <div class="mb-2 flex justify-between">
         <div>
         </div>
         <div>
@@ -37,10 +37,10 @@
       <el-table size="small" :data="tableData1.slice((currentPage - 1) * pageSize, currentPage * pageSize)
         " border :height="tableHeight" stripe>
         <el-table-column label="序号" type="index" width="60" align="center"></el-table-column>
-        <el-table-column label="工号" prop="employeeName" min-width="100"> </el-table-column>
-        <el-table-column label="员工姓名" prop="fullName" min-width="200"> </el-table-column>
-        <el-table-column label="职称" prop="title" min-width="260"> </el-table-column>
-        <el-table-column label="组织" prop="OrganizationName" min-width="200">
+        <el-table-column label="工号" prop="employeeName"  :min-width="flexColumnWidth('工号','employeeName')"> </el-table-column>
+        <el-table-column label="员工姓名" prop="fullName"  :min-width="flexColumnWidth('员工姓名','fullName')" width="100"> </el-table-column>
+        <el-table-column label="职称" prop="title" :min-width="flexColumnWidth('职称','title')"> </el-table-column>
+        <el-table-column label="组织" prop="OrganizationName" :min-width="flexColumnWidth('组织','OrganizationName')">
         </el-table-column>
         <el-table-column fixed="right" label="操作" width="120" align="center">
           <template #default="scope">
@@ -58,9 +58,9 @@
           </template>
         </el-table-column>
       </el-table>
-      <div class="mt-3">
+      <div class="mt-2">
         <el-pagination size="large" background @size-change="handleSizeChange" @current-change="handleCurrentChange"
-          :current-page="currentPage" :page-size="pageSize" :page-sizes="[5, 10, 20, 50, 100]"
+          :current-page="currentPage" :page-size="pageSize" :page-sizes="[30, 50, 100,150,200]"
           layout="total,sizes, prev, pager, next, jumper" :total="tableData1.length">
         </el-pagination>
       </div>
@@ -607,8 +607,43 @@ const handleCurrentChange = (val: any) => {
 };
 const getScreenHeight = () => {
   nextTick(() => {
-    tableHeight.value = window.innerHeight - 204;
+    tableHeight.value = window.innerHeight - 196;
   });
+};
+const getMaxLength = (arr: any) => {
+  return arr.reduce((acc: any, item: any) => {
+    if (item) {
+      // console.log(acc,item);
+      const calcLen = getTextWidth(item);
+
+      if (acc < calcLen) {
+        acc = calcLen;
+      }
+    }
+    return acc;
+  }, 0);
+};
+const getTextWidth = (str: string) => {
+  let width = 0;
+  const html = document.createElement("span");
+  html.style.cssText = `padding: 0; margin: 0; border: 0; line-height: 1; font-size: ${12}px; font-family: Arial, sans-serif;`;
+  html.innerText = str; // 去除字符串前后的空白字符
+  document.body?.appendChild(html);
+
+  const spanElement = html; // 无需再次查询，直接使用创建的元素
+  if (spanElement) {
+    width = spanElement.offsetWidth;
+    spanElement.remove();
+  }
+  // console.log(width);
+  return width;
+};
+
+const flexColumnWidth = (label: any, prop: any) => {
+  const arr = tableData?.value.map((x: { [x: string]: any }) => x[prop]);
+  arr.push(label); // 把每列的表头也加进去算
+  // console.log(arr);
+  return getMaxLength(arr) + 25 + "px";
 };
 </script>
 <style scoped>

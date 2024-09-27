@@ -133,7 +133,7 @@
               </el-form-item>
             </el-form>
             <el-table style="width: auto" :data="productTableData" size="small" stripe border fit
-              :tooltip-effect="'dark'" :height="400">
+              :tooltip-effect="'dark'" :height="367">
               <el-table-column type="index" align="center" fixed label="序号" width="60" />
               <el-table-column prop="SpecName" label="工序编码" :min-width="180" width="180">
               </el-table-column>
@@ -182,8 +182,8 @@
         </el-form-item>
         <el-form-item label="面别" prop="Side">
           <el-select v-model="orderOnlineForm.Side" placeholder="请选择面别">
-            <el-option label="A面" value="A" />
-            <el-option label="B面" value="B" />
+            <el-option label="BOT" value="BOT" />
+            <el-option label="TOP" value="TOP" />
           </el-select>
         </el-form-item>
         <el-form-item label="货架" prop="shelf_ids">

@@ -30,7 +30,7 @@
         </el-table-column>
         <el-table-column fixed="right" label="操作" width="120" align="center">
           <template #default="scope">
-            <el-tooltip content="编辑" placement="top">
+            <el-tooltip content="编辑" placement="top" v-if="scope.row.SubItem">
               <el-button
                 type="primary"
                 icon="EditPen"
@@ -39,7 +39,7 @@
               ></el-button>
             </el-tooltip>
 
-            <el-tooltip content="删除" placement="top">
+            <el-tooltip content="删除" placement="top" v-if="scope.row.SubItem">
               <el-button
                 type="danger"
                 icon="Delete"
@@ -461,7 +461,7 @@ const addSubmit = () => {
       });
       getData()
       addVisible.value = false;
-
+      form.StepItemList =[]
     }
     resetForm();
     addFrom.stepList = [];

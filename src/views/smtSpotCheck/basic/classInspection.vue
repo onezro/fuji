@@ -22,11 +22,11 @@
           </el-table-column>
           <el-table-column fixed="right" label="操作" width="120" align="center">
             <template #default="scope">
-              <el-tooltip content="编辑" placement="top">
+              <el-tooltip content="编辑" placement="top" v-if="scope.row.SubItem">
                 <el-button type="primary" icon="EditPen" size="small" @click.prevent="handleEdit(scope.row)"></el-button>
               </el-tooltip>
   
-              <el-tooltip content="删除" placement="top">
+              <el-tooltip content="删除" placement="top" v-if="scope.row.SubItem">
                 <el-button type="danger" icon="Delete" size="small" @click.prevent="handleDelete(scope.row)"></el-button>
               </el-tooltip>
             </template>
@@ -349,7 +349,7 @@
         });
         getData()
         addVisible.value = false;
-  
+        form.StepItemList =[]
       }
       resetForm();
       addFrom.stepList = [];
@@ -492,7 +492,6 @@
           a[isExist].stepItemList.push({
             StepName: item.StepName,
             Step: item.Step,
-           
             InspectContent: item.InspectContent,
             step1: item.WorkSection + "-" + item.Step,
             stepItemList: [
@@ -508,6 +507,7 @@
           ProductName: item.ProductName,
           WorkSection:item.WorkSection,
           step1: item.WorkSection,
+          
           stepItemList: [
             {
               StepName: item.StepName,

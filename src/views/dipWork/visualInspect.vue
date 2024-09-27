@@ -127,7 +127,7 @@ const stopsForm = ref<StopsForm>({
     // ContainerName: "",
     // OrderNumber: "",
     // workstationName: opui.station || "",
-    // userAccount: userStore.getUserInfo,
+    // userAccount: userStore.getUserInfo, 
 });
 const tabsValue = ref("history");
 const editVisible = ref(false);
@@ -491,6 +491,9 @@ const getChange = () => {
         msgTitle.value = res.msg;
         msgType.value = res.success;
         stopsForm.value.containerName = "";
+        if(res.success){
+            stopsForm.value.result="OK"
+        }
     });
     }
     barCode.value = "";
