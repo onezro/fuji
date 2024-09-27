@@ -46,10 +46,10 @@
         label-width="auto"
         :inline="true"
       >
-        <el-form-item label="备品名称">
+        <el-form-item label="备件名称">
           <el-input v-model="EditForm.PartName" style="width: 250px" disabled />
         </el-form-item>
-        <el-form-item label="备品描述">
+        <el-form-item label="备件描述">
           <el-input v-model="EditForm.Description" style="width: 250px" />
         </el-form-item>
         <el-form-item label="规格">
@@ -89,7 +89,7 @@
             style="width: 250px"
           />
         </el-form-item>
-        <el-form-item label="周期">
+        <el-form-item label="采购周期">
           <el-input v-model="EditForm.Cycle" style="width: 250px" />
         </el-form-item>
         <el-form-item label="单位">
@@ -136,10 +136,10 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="备品名称">
+        <el-form-item label="备件名称">
           <el-input v-model="form.PartName" style="width: 250px" />
         </el-form-item>
-        <el-form-item label="备品描述">
+        <el-form-item label="备件描述">
           <el-input v-model="form.Description" style="width: 250px" />
         </el-form-item>
         <el-form-item label="规格">
@@ -172,14 +172,14 @@
             style="width: 250px"
           />
         </el-form-item>
-        <el-form-item label="当前数量">
+        <!-- <el-form-item label="当前数量">
           <el-input-number
             v-model="form.CurrentQty"
             :min="1"
             style="width: 250px"
           />
-        </el-form-item>
-        <el-form-item label="周期">
+        </el-form-item> -->
+        <el-form-item label="采购周期">
           <el-input v-model="form.Cycle" style="width: 250px" />
         </el-form-item>
         <el-form-item label="单位">
@@ -405,11 +405,11 @@ const getClassList = () => {
   GetPartsClassList({}).then((res: any) => {
     if (res && res.success && res.content.length !== 0) {
       ClassList.value = res.content;
-      ElNotification({
-        title: res.msg,
-        // message: "取消操作",
-        type: "success",
-      });
+      // ElNotification({
+      //   title: res.msg,
+      //   // message: "取消操作",
+      //   type: "success",
+      // });
     }
   });
 };
@@ -509,7 +509,7 @@ const columnData = reactive([
   {
     text: true,
     prop: "PartName",
-    label: "备品名称",
+    label: "备件名称",
     width: "",
     min: true,
     align: "center",
@@ -517,7 +517,7 @@ const columnData = reactive([
   {
     text: true,
     prop: "Description",
-    label: "备品描述",
+    label: "备件描述",
     width: "",
     min: true,
     align: "center",
@@ -549,7 +549,7 @@ const columnData = reactive([
   {
     text: true,
     prop: "Cycle",
-    label: "周期",
+    label: "采购周期",
     width: "",
     min: true,
     align: "center",

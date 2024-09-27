@@ -215,7 +215,7 @@
               />
             </el-select>
           </el-form-item>
-          <el-form-item label="备品编号" prop="WorkSection">
+          <el-form-item label="备件编号" prop="WorkSection">
             <el-input
               v-model="form.CompName"
               style="width: 240px"
@@ -236,7 +236,7 @@
               />
             </el-select>
           </el-form-item> -->
-          <el-form-item label="备品名称">
+          <el-form-item label="备件名称">
             <el-input
               v-model.number="form.TotalUses"
               style="width: 240px"
@@ -324,6 +324,9 @@
   <script setup lang="ts">
   import { ElMessage, ElNotification, ElMessageBox } from "element-plus";
   import tableTem from "@/components/tableTem/index.vue";
+import {
+  GetPartsScrapList
+} from "@/api/sparePartsApi";
   import {
     ref,
     unref,
@@ -443,22 +446,6 @@
     TensionPoints: 0,
   });
   
-  const editSubmit = (data: any) => {
-    EditForm.value.operationtype = data.operationtype;
-    EditForm.value.CompName = data.CompName;
-    EditForm.value.MaterialType = data.MaterialType;
-    EditForm.value.MaterialName = data.MaterialName;
-    EditForm.value.CompType = data.CompType;
-    EditForm.value.TotalUses = data.TotalUses;
-    EditForm.value.UsesUntilRevalidation = data.UsesUntilRevalidation;
-    EditForm.value.PauseUntilRevalidate = data.PauseUntilRevalidate;
-    EditForm.value.TimeUntilRevalidation = data.TimeUntilRevalidation;
-    EditForm.value.CleaningTime = data.CleaningTime;
-    editFormControl.value.CleanAfterUses = data.CleanAfterUses === "Y";
-    editFormControl.value.CleanAfterPause = data.CleanAfterPause === "Y";
-    editFormControl.value.CleanAfterTime = data.CleanAfterTime === "Y";
-    editVisible.value = true;
-  };
   interface toolType {
     Text: string;
     Value: string;
@@ -513,96 +500,62 @@
       TensionPoints: 0,
     };
   };
+
+  const getData = () => {
+    GetPartsScrapList({}).then((res: any) => {
+    if (res && res.success && res.content.length !== 0) {
+      tableData.value = res.content;
+      //   ElNotification({
+      //     title: res.msg,
+      //     // message: "取消操作",
+      //     type: "success",
+      //   });
+    }
+  });
+  }
   
   const columnData = reactive([
     {
       text: true,
-      prop: "MaterialName",
-      label: "报废单据编号",
+      prop: "Qty",
+      label: "数量",
       width: "",
       min: true,
       align: "1",
     },
     {
       text: true,
-      prop: "CompName",
-      label: "报废时间",
+      prop: "Remark",
+      label: "备注",
       width: "200",
       min: true,
       align: "1",
     },
     {
       text: true,
-      prop: "TotalUses",
+      prop: "ScrapReason",
+      label: "报废原因",
+      width: "",
+      min: true,
+      align: "center",
+    },
+    {
+      text: true,
+      prop: "CreatedOn",
+      label: "报废时间",
+      width: "",
+      min: true,
+      align: "center",
+    },
+    {
+      text: true,
+      prop: "CreatedBy",
       label: "报废人",
       width: "",
       min: true,
       align: "center",
     },
-    {
-      text: true,
-      prop: "UsesUntilRevalidation",
-      label: "备品编号",
-      width: "",
-      min: true,
-      align: "center",
-    },
-    {
-      text: true,
-      prop: "PauseUntilRevalidate",
-      label: "备品名称",
-      width: "",
-      min: true,
-      align: "center",
-    },
-    {
-      text: true,
-      prop: "TimeUntilRevalidation",
-      label: "报废数量",
-      width: "",
-      min: true,
-      align: "center",
-    },
-    {
-      text: true,
-      prop: "CleaningTime",
-      label: "放置地点",
-      width: "",
-      min: true,
-      align: "center",
-    },
-    {
-      text: true,
-      prop: "TensionLimit",
-      label: "品牌",
-      width: "",
-      min: true,
-      align: "center",
-    },
-    {
-      text: true,
-      prop: "LowerTensionLimit",
-      label: "单位",
-      width: "",
-      min: true,
-      align: "center",
-    },
-    {
-      text: true,
-      prop: "TensionPoints",
-      label: "类别",
-      width: "",
-      min: true,
-      align: "center",
-    },
-    {
-      text: true,
-      prop: "TensionPoints",
-      label: "有效期至",
-      width: "",
-      min: true,
-      align: "center",
-    },
+   
     // {
     //   isOperation: true,
     //   label: "操作",
@@ -630,6 +583,7 @@
     getScreenHeight();
   });
   onMounted(() => {
+    getData()
     window.addEventListener("resize", getScreenHeight);
   });
   onBeforeUnmount(() => {
