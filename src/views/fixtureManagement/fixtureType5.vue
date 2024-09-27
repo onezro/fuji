@@ -19,7 +19,7 @@
           >
         </div>
       </div>
-      <table-tem
+      <!-- <table-tem
         size="small"
         :show-index="true"
         :tableData="tableData"
@@ -28,7 +28,88 @@
         :pageObj="pageObj"
         @handleSizeChange="handleSizeChange"
         @handleCurrentChange="handleCurrentChange"
-      ></table-tem>
+      ></table-tem> -->
+      <el-table
+      border
+      size="small"
+        :data="
+          tableData1.slice((pageObj.currentPage - 1) * pageObj.pageSize, pageObj.currentPage * pageObj.pageSize)
+        "
+        :height="tableHeight"
+        center stripe
+      >
+      
+      <el-table-column prop="InstockNo" align="center" label="入库单号"> </el-table-column>
+      <el-table-column prop="Type" align="center" label="入库类型">
+        <template #default="scope">
+          <div v-if="scope.row.Type === '0'">
+            <el-tag type="primary">采购入库</el-tag>
+          </div>
+          <div v-if="scope.row.Type === '1'">
+            <el-tag type="success">归还入库</el-tag>
+          </div>
+          <div v-if="scope.row.Type === '2'">
+            <el-tag type="warning">维修入库</el-tag>
+          </div>
+        </template>
+      </el-table-column>
+      <el-table-column prop="PurchaseNo" align="center" label="采购单号"> </el-table-column>
+      <el-table-column prop="OutstockNo" align="center" label="归还单号"> </el-table-column>
+      <el-table-column prop="ReturnDate" align="center" label="状态">
+        <template #default="scope">
+          <div v-if="scope.row.Status === 0">
+            <el-tag type="info">待入库</el-tag>
+          </div>
+          <div v-if="scope.row.Status === 1">
+            <el-tag type="primary">入库中</el-tag>
+          </div>
+          <div v-if="scope.row.Status === 2">
+            <el-tag type="success">已完成</el-tag>
+          </div>
+        </template>
+      </el-table-column>
+      <el-table-column prop="LendID" align="center" label="借出编号"> </el-table-column>
+      <el-table-column prop="ReturnBy" align="center" label="归还人"> </el-table-column>
+      <el-table-column prop="CreatedBy" align="center" label="创建人"> </el-table-column>
+      <el-table-column prop="CreatedOn" align="center" label="创建时间"> </el-table-column>
+      <el-table-column prop="Remark" align="center" label="备注"> </el-table-column>
+      <el-table-column prop="ReturnDate" align="center"  label="操作" width="240">
+        <template #default="scope"> 
+          <div class="w-full flex items-center justify-around">
+          <el-tooltip content="编辑" placement="top">
+            <el-button type="primary" icon="EditPen" size="small" @click="editSubmit(scope.row)"
+            :disabled="scope.row.Status !== 0"></el-button>
+          </el-tooltip>
+          <el-tooltip content="删除" placement="top">
+            <el-button type="danger" icon="Delete" size="small" @click="deleteSubmit(scope.row)"
+            :disabled="scope.row.Status !== 0"></el-button>
+          </el-tooltip>
+          <el-tooltip content="开始入库" placement="top">
+            <el-button type="warning" icon="VideoPlay" color="#409EFF" style="color: #fff" size="small" @click="showInForm(scope.row)"
+            :disabled="scope.row.Status === 2"></el-button>
+          </el-tooltip>
+          <el-tooltip content="完成入库" placement="top">
+            <el-button type="success" icon="CircleCheck" size="small" @click="inPartSubmit(scope.row)"
+            :disabled="scope.row.Status !== 1"></el-button>
+          </el-tooltip>
+          </div>
+        </template>
+      </el-table-column>
+      </el-table>
+      <div class="mt-3">
+        <el-pagination
+          size="small"
+          background
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page="pageObj.currentPage"
+          :page-size="pageObj.pageSize"
+          :page-sizes="[5, 10, 20, 50, 100]"
+          layout="total,sizes, prev, pager, next, jumper"
+          :total="tableData1.length"
+        >
+        </el-pagination>
+      </div>
     </el-card>
     <el-dialog
       align-center
@@ -193,7 +274,7 @@
         label-width="100"
         :inline="true"
       >
-        <el-form-item label="备品名称" prop="PartID">
+        <el-form-item label="备件名称" prop="PartID">
           <el-select
             v-model="inForm.PartID"
             filterable
@@ -215,7 +296,7 @@
           <el-input
             v-model="inForm.PartNumber"
             style="width: 250px"
-            :disabled="inFormType !== '1'"
+            :disabled="inFormType !== '0'"
           />
         </el-form-item>
         <el-form-item label="到期日期" prop="DueDate">
@@ -224,42 +305,42 @@
             type="datetime"
             style="width: 250px"
             value-format="YYYY-MM-DD HH:mm:ss"
-            :disabled="inFormType !== '1'"
+            :disabled="inFormType !== '0'"
           />
         </el-form-item>
         <el-form-item label="资产编号" prop="AssetNumber">
           <el-input
             v-model="inForm.AssetNumber"
             style="width: 250px"
-            :disabled="inFormType !== '1'"
+            :disabled="inFormType !== '0'"
           />
         </el-form-item>
         <el-form-item label="供应商" prop="Vendor">
           <el-input
             v-model="inForm.Vendor"
             style="width: 250px"
-            :disabled="inFormType !== '1'"
+            :disabled="inFormType !== '0'"
           />
         </el-form-item>
         <el-form-item label="制造商" prop="Manufacturer">
           <el-input
             v-model="inForm.Manufacturer"
             style="width: 250px"
-            :disabled="inFormType !== '1'"
+            :disabled="inFormType !== '0'"
           />
         </el-form-item>
         <el-form-item label="规格" prop="Specification">
           <el-input
             v-model="inForm.Specification"
             style="width: 250px"
-            :disabled="inFormType !== '1'"
+            :disabled="inFormType !== '0'"
           />
         </el-form-item>
         <el-form-item label="库存" prop="StorageLocation">
           <el-input
             v-model="inForm.StorageLocation"
             style="width: 250px"
-            :disabled="inFormType !== '1'"
+            :disabled="inFormType !== '0'"
           />
         </el-form-item>
       </el-form>
@@ -351,6 +432,7 @@ const deleteVisible = ref(false);
 const deleteChoice = ref("");
 const inFormRef = ref();
 const inFormType = ref("");
+const tableData1 = ref<any[]>([]);
 const pageObj = ref({
   pageSize: 30,
   currentPage: 1,
@@ -432,6 +514,26 @@ interface toolType {
   Value: string;
 }
 
+watch(
+  () => inputValue.value,
+  (newdata) => {
+    // console.log(newdata);
+    if (newdata == "") {
+      tableData1.value = tableData.value;
+    } else {
+      tableData1.value = table1(newdata);
+    }
+  }
+);
+const table1 = (newdata: any) => {
+  let searchName = newdata.toLowerCase()
+  return tableData.value.filter((v: any) => {
+    return Object.keys(v).some((key) => {
+      return String(v[key]).toLowerCase().indexOf(searchName) > -1;
+    });
+  });
+};
+
 const MaterialNameList = ref<toolType[]>([]);
 
 const clearForm = () => {
@@ -504,6 +606,11 @@ const getData = () => {
       //     // message: "取消操作",
       //     type: "success",
       //   });
+    if(inputValue.value.trim()){
+      tableData1.value = table1(inputValue.value);
+    }else{
+      tableData1.value = res.content;
+    }
     }
   });
 };
@@ -539,18 +646,18 @@ const serachData = () => {
   if (inputValue.value === "") {
     getData();
   } else {
-    GetPartInList({"InstockNo": inputValue.value}).then((res: any) => {
-      if (res && res.success && res.content.length !== 0) {
-        tableData.value = res.content;
-        ElNotification({
-          title: res.msg,
-          // message: "取消操作",
-          type: "success",
-        });
-      } else {
-        tableData.value = res.content;
-      }
-    });
+    // GetPartInList({"InstockNo": inputValue.value}).then((res: any) => {
+    //   if (res && res.success && res.content.length !== 0) {
+    //     tableData.value = res.content;
+    //     ElNotification({
+    //       title: res.msg,
+    //       // message: "取消操作",
+    //       type: "success",
+    //     });
+    //   } else {
+    //     tableData.value = res.content;
+    //   }
+    // });
   }
 };
 

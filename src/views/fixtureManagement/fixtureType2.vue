@@ -243,18 +243,18 @@ const serachData = () => {
   if (inputValue.value === "") {
     getData();
   } else {
-    GetPartsClassList({ ClassName: inputValue.value }).then((res: any) => {
-      if (res && res.success && res.content.length !== 0) {
-        tableData.value = res.content;
-        ElNotification({
-          title: res.msg,
-          // message: "取消操作",
-          type: "success",
-        });
-      } else {
-        tableData.value = res.content;
-      }
-    });
+    // GetPartsClassList({ ClassName: inputValue.value }).then((res: any) => {
+    //   if (res && res.success && res.content.length !== 0) {
+    //     tableData.value = res.content;
+    //     ElNotification({
+    //       title: res.msg,
+    //       // message: "取消操作",
+    //       type: "success",
+    //     });
+    //   } else {
+    //     tableData.value = res.content;
+    //   }
+    // });
   }
 };
 

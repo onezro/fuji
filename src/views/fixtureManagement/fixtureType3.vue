@@ -22,7 +22,7 @@
       <table-tem
         size="small"
         :show-index="true"
-        :tableData="tableData"
+        :tableData="tableData1"
         :tableHeight="tableHeight"
         :columnData="columnData"
         :pageObj="pageObj"
@@ -46,10 +46,10 @@
         label-width="auto"
         :inline="true"
       >
-        <el-form-item label="备品名称">
+        <el-form-item label="备件名称">
           <el-input v-model="EditForm.PartName" style="width: 250px" disabled />
         </el-form-item>
-        <el-form-item label="备品描述">
+        <el-form-item label="备件描述">
           <el-input v-model="EditForm.Description" style="width: 250px" />
         </el-form-item>
         <el-form-item label="规格">
@@ -89,7 +89,7 @@
             style="width: 250px"
           />
         </el-form-item>
-        <el-form-item label="周期">
+        <el-form-item label="采购周期">
           <el-input v-model="EditForm.Cycle" style="width: 250px" />
         </el-form-item>
         <el-form-item label="单位">
@@ -136,10 +136,10 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="备品名称">
+        <el-form-item label="备件名称">
           <el-input v-model="form.PartName" style="width: 250px" />
         </el-form-item>
-        <el-form-item label="备品描述">
+        <el-form-item label="备件描述">
           <el-input v-model="form.Description" style="width: 250px" />
         </el-form-item>
         <el-form-item label="规格">
@@ -172,14 +172,14 @@
             style="width: 250px"
           />
         </el-form-item>
-        <el-form-item label="当前数量">
+        <!-- <el-form-item label="当前数量">
           <el-input-number
             v-model="form.CurrentQty"
             :min="1"
             style="width: 250px"
           />
-        </el-form-item>
-        <el-form-item label="周期">
+        </el-form-item> -->
+        <el-form-item label="采购周期">
           <el-input v-model="form.Cycle" style="width: 250px" />
         </el-form-item>
         <el-form-item label="单位">
@@ -264,6 +264,7 @@ const editVisible = ref(false);
 const inputValue = ref("");
 const deleteVisible = ref(false);
 const deleteChoice = ref("");
+const tableData1 = ref<any[]>([]);
 const pageObj = ref({
   pageSize: 30,
   currentPage: 1,
@@ -321,6 +322,26 @@ const EditForm = ref<EditFormTS>({
   Unit: "",
   UpdateBy: loginName,
 });
+
+watch(
+  () => inputValue.value,
+  (newdata) => {
+    // console.log(newdata);
+    if (newdata == "") {
+      tableData1.value = tableData.value;
+    } else {
+      tableData1.value = table1(newdata);
+    }
+  }
+);
+const table1 = (newdata: any) => {
+  let searchName = newdata.toLowerCase()
+  return tableData.value.filter((v: any) => {
+    return Object.keys(v).some((key) => {
+      return String(v[key]).toLowerCase().indexOf(searchName) > -1;
+    });
+  });
+};
 
 const editSubmit = (data: any) => {
   EditForm.value.ClassID = data.ClassID;
@@ -397,6 +418,11 @@ const getData = () => {
       //     // message: "取消操作",
       //     type: "success",
       //   });
+    if(inputValue.value.trim()){
+      tableData1.value = table1(inputValue.value);
+    }else{
+      tableData1.value = res.content;
+    }
     }
   });
 };
@@ -405,11 +431,11 @@ const getClassList = () => {
   GetPartsClassList({}).then((res: any) => {
     if (res && res.success && res.content.length !== 0) {
       ClassList.value = res.content;
-      ElNotification({
-        title: res.msg,
-        // message: "取消操作",
-        type: "success",
-      });
+      // ElNotification({
+      //   title: res.msg,
+      //   // message: "取消操作",
+      //   type: "success",
+      // });
     }
   });
 };
@@ -418,18 +444,18 @@ const serachData = () => {
   if (inputValue.value === "") {
     getData();
   } else {
-    GetPartsList({ PartName: inputValue.value }).then((res: any) => {
-      if (res && res.success && res.content.length !== 0) {
-        tableData.value = res.content;
-        ElNotification({
-          title: res.msg,
-          // message: "取消操作",
-          type: "success",
-        });
-      } else {
-        tableData.value = res.content;
-      }
-    });
+    // GetPartsList({ PartName: inputValue.value }).then((res: any) => {
+    //   if (res && res.success && res.content.length !== 0) {
+    //     tableData.value = res.content;
+    //     ElNotification({
+    //       title: res.msg,
+    //       // message: "取消操作",
+    //       type: "success",
+    //     });
+    //   } else {
+    //     tableData.value = res.content;
+    //   }
+    // });
   }
 };
 
@@ -509,7 +535,7 @@ const columnData = reactive([
   {
     text: true,
     prop: "PartName",
-    label: "备品名称",
+    label: "备件名称",
     width: "",
     min: true,
     align: "center",
@@ -517,7 +543,7 @@ const columnData = reactive([
   {
     text: true,
     prop: "Description",
-    label: "备品描述",
+    label: "备件描述",
     width: "",
     min: true,
     align: "center",
@@ -549,7 +575,7 @@ const columnData = reactive([
   {
     text: true,
     prop: "Cycle",
-    label: "周期",
+    label: "采购周期",
     width: "",
     min: true,
     align: "center",

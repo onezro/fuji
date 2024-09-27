@@ -273,3 +273,22 @@ export function addPartsStock(data: any){
         data
     });
 }
+
+//备品备件报废
+//查询所有报废信息
+export function GetPartsScrapList(data: any){
+    return request({
+        url: "/api/PartsScrap/GetPartsScrapList",
+        method: "post",
+        data,
+    });
+}
+
+//增加备件报废
+export function addPartsScrapData(data: any){
+    return request({
+        url: "/api/PartsScrap/addPartsScrapData",
+        method: "post",
+        data
+    });
+}

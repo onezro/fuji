@@ -31,7 +31,7 @@
       border
       size="small"
         :data="
-          tableData.slice((pageObj.currentPage - 1) * pageObj.pageSize, pageObj.currentPage * pageObj.pageSize)
+          tableData1.slice((pageObj.currentPage - 1) * pageObj.pageSize, pageObj.currentPage * pageObj.pageSize)
         "
         :height="tableHeight"
         center stripe
@@ -66,7 +66,7 @@
           <div class="w-full flex items-center justify-around">
           <el-tooltip content="编辑" placement="top">
             <el-button type="primary" icon="EditPen" size="small" @click="editSubmit(scope.row)"
-            :disabled="scope.row.Status === 2"></el-button>
+            :disabled="scope.row.Status !== 0"></el-button>
           </el-tooltip>
           <el-tooltip content="删除" placement="top">
             <el-button type="danger" icon="Delete" size="small" @click="deleteSubmit(scope.row)"
@@ -74,7 +74,7 @@
           </el-tooltip>
           <el-tooltip content="开始出库" placement="top">
             <el-button type="warning" icon="VideoPlay" color="#409EFF" style="color: #fff" size="small" @click="showInForm(scope.row)"
-            :disabled="scope.row.Status !== 0"></el-button>
+            :disabled="scope.row.Status === 2"></el-button>
           </el-tooltip>
           <el-tooltip content="完成出库" placement="top">
             <el-button type="success" icon="CircleCheck" size="small" @click="inPartSubmit(scope.row)"
@@ -86,15 +86,15 @@
       </el-table>
       <div class="mt-3">
         <el-pagination
-          size="large"
+          size="small"
           background
-          @size-change="LedgerSizeChange"
-          @current-change="LedgerCurrentChange"
-          :current-page="LedgerPageObj.currentPage"
-          :page-size="LedgerPageObj.pageSize"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page="pageObj.currentPage"
+          :page-size="pageObj.pageSize"
           :page-sizes="[5, 10, 20, 50, 100]"
           layout="total,sizes, prev, pager, next, jumper"
-          :total="LedgerTableData.length"
+          :total="tableData1.length"
         >
         </el-pagination>
       </div>
@@ -262,10 +262,10 @@
       :close-on-click-modal="false"
       v-model="InVisible"
       @close="inFormClose"
-      title="开始出库"
+      title="确认出库"
       width="400px"
     >
-      <el-form
+      <!-- <el-form
         ref="inFormRef"
         :model="inForm"
         label-position="left"
@@ -278,16 +278,16 @@
         <el-form-item label="出库数量" prop="Qty">
           <el-input v-model="inForm.Qty" style="width: 250px" disabled />
         </el-form-item>
-        <el-form-item label="备品名称" prop="StockID">
+        <el-form-item label="备件名称" prop="StockID">
           <el-input v-model="inFormPartName" style="width: 250px" disabled />
         </el-form-item>
-      </el-form>
+      </el-form> -->
 
       <template #footer>
         <span class="dialog-footer">
           <!-- <el-button type="info" @click="addSon"> 增加子项</el-button> -->
           <el-button @click="InVisible = false"> 取消 </el-button>
-          <el-button type="primary" @click="partOut,InVisible = false"> 确定 </el-button>
+          <el-button type="primary" @click="partOut(),InVisible = false"> 确定 </el-button>
         </span>
       </template>
     </el-dialog>
@@ -325,7 +325,7 @@
         @select="select"
       >
       <el-table-column type="selection" fixed width="55" align="center" />
-      <el-table-column prop="OutstockNo" align="center" label="备品编号"> </el-table-column>
+      <el-table-column prop="OutstockNo" align="center" label="备件编号"> </el-table-column>
       <el-table-column prop="Qty" align="center" label="库存数量"> </el-table-column>
       <el-table-column prop="PurchaseNo" align="center" label="采购单"> </el-table-column>
       <el-table-column prop="Description" align="center" label="描述"> </el-table-column>
@@ -441,6 +441,7 @@ const inFormPartName = ref("");
 const LedgerTableData = ref<any[]>([]);
 const choiceList = ref<any[]>([]);
 const QTY = ref('')
+const tableData1 = ref<any[]>([]);
 const pageObj = ref({
   pageSize: 30,
   currentPage: 1,
@@ -510,6 +511,26 @@ interface toolType {
   Text: string;
   Value: string;
 }
+
+watch(
+  () => inputValue.value,
+  (newdata) => {
+    // console.log(newdata);
+    if (newdata == "") {
+      tableData1.value = tableData.value;
+    } else {
+      tableData1.value = table1(newdata);
+    }
+  }
+);
+const table1 = (newdata: any) => {
+  let searchName = newdata.toLowerCase()
+  return tableData.value.filter((v: any) => {
+    return Object.keys(v).some((key) => {
+      return String(v[key]).toLowerCase().indexOf(searchName) > -1;
+    });
+  });
+};
 
 const MaterialNameList = ref<toolType[]>([]);
 
@@ -586,6 +607,11 @@ const getData = () => {
       //     // message: "取消操作",
       //     type: "success",
       //   });
+    if(inputValue.value.trim()){
+      tableData1.value = table1(inputValue.value);
+    }else{
+      tableData1.value = res.content;
+    }
     }
   });
 };
@@ -661,18 +687,18 @@ const serachData = () => {
   if (inputValue.value === "") {
     getData();
   } else {
-    GetPartsOutList({ InstockNo: inputValue.value }).then((res: any) => {
-      if (res && res.success && res.content.length !== 0) {
-        tableData.value = res.content;
-        ElNotification({
-          title: res.msg,
-          // message: "取消操作",
-          type: "success",
-        });
-      } else {
-        tableData.value = res.content;
-      }
-    });
+    // GetPartsOutList({ InstockNo: inputValue.value }).then((res: any) => {
+    //   if (res && res.success && res.content.length !== 0) {
+    //     tableData.value = res.content;
+    //     ElNotification({
+    //       title: res.msg,
+    //       // message: "取消操作",
+    //       type: "success",
+    //     });
+    //   } else {
+    //     tableData.value = res.content;
+    //   }
+    // });
   }
 };
 
@@ -714,7 +740,7 @@ const PartIDChoice = (data: any) => {
 
 const inPartSubmit = (data: any) => {
   //   deleteVisible.value = true;
-  ElMessageBox.confirm("确定出库", "确认操作", {
+  ElMessageBox.confirm("完成出库", "确认操作", {
     confirmButtonText: "确定",
     cancelButtonText: "取消",
     type: "warning",
@@ -936,7 +962,7 @@ const editData = () => {
     {
       text: true,
       prop: "PartNumber",
-      label: "备品编号",
+      label: "备件编号",
       width: "",
       min: true,
       align: "center",
