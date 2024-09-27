@@ -22,7 +22,7 @@
       <table-tem
         size="small"
         :show-index="true"
-        :tableData="tableData"
+        :tableData="tableData1"
         :tableHeight="tableHeight"
         :columnData="columnData"
         :pageObj="pageObj"
@@ -264,6 +264,7 @@ const editVisible = ref(false);
 const inputValue = ref("");
 const deleteVisible = ref(false);
 const deleteChoice = ref("");
+const tableData1 = ref<any[]>([]);
 const pageObj = ref({
   pageSize: 30,
   currentPage: 1,
@@ -321,6 +322,26 @@ const EditForm = ref<EditFormTS>({
   Unit: "",
   UpdateBy: loginName,
 });
+
+watch(
+  () => inputValue.value,
+  (newdata) => {
+    // console.log(newdata);
+    if (newdata == "") {
+      tableData1.value = tableData.value;
+    } else {
+      tableData1.value = table1(newdata);
+    }
+  }
+);
+const table1 = (newdata: any) => {
+  let searchName = newdata.toLowerCase()
+  return tableData.value.filter((v: any) => {
+    return Object.keys(v).some((key) => {
+      return String(v[key]).toLowerCase().indexOf(searchName) > -1;
+    });
+  });
+};
 
 const editSubmit = (data: any) => {
   EditForm.value.ClassID = data.ClassID;
@@ -397,6 +418,11 @@ const getData = () => {
       //     // message: "取消操作",
       //     type: "success",
       //   });
+    if(inputValue.value.trim()){
+      tableData1.value = table1(inputValue.value);
+    }else{
+      tableData1.value = res.content;
+    }
     }
   });
 };
@@ -418,18 +444,18 @@ const serachData = () => {
   if (inputValue.value === "") {
     getData();
   } else {
-    GetPartsList({ PartName: inputValue.value }).then((res: any) => {
-      if (res && res.success && res.content.length !== 0) {
-        tableData.value = res.content;
-        ElNotification({
-          title: res.msg,
-          // message: "取消操作",
-          type: "success",
-        });
-      } else {
-        tableData.value = res.content;
-      }
-    });
+    // GetPartsList({ PartName: inputValue.value }).then((res: any) => {
+    //   if (res && res.success && res.content.length !== 0) {
+    //     tableData.value = res.content;
+    //     ElNotification({
+    //       title: res.msg,
+    //       // message: "取消操作",
+    //       type: "success",
+    //     });
+    //   } else {
+    //     tableData.value = res.content;
+    //   }
+    // });
   }
 };
 

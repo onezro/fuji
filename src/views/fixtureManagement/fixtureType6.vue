@@ -31,7 +31,7 @@
       border
       size="small"
         :data="
-          tableData.slice((pageObj.currentPage - 1) * pageObj.pageSize, pageObj.currentPage * pageObj.pageSize)
+          tableData1.slice((pageObj.currentPage - 1) * pageObj.pageSize, pageObj.currentPage * pageObj.pageSize)
         "
         :height="tableHeight"
         center stripe
@@ -94,7 +94,7 @@
           :page-size="pageObj.pageSize"
           :page-sizes="[5, 10, 20, 50, 100]"
           layout="total,sizes, prev, pager, next, jumper"
-          :total="tableData.length"
+          :total="tableData1.length"
         >
         </el-pagination>
       </div>
@@ -441,6 +441,7 @@ const inFormPartName = ref("");
 const LedgerTableData = ref<any[]>([]);
 const choiceList = ref<any[]>([]);
 const QTY = ref('')
+const tableData1 = ref<any[]>([]);
 const pageObj = ref({
   pageSize: 30,
   currentPage: 1,
@@ -510,6 +511,26 @@ interface toolType {
   Text: string;
   Value: string;
 }
+
+watch(
+  () => inputValue.value,
+  (newdata) => {
+    // console.log(newdata);
+    if (newdata == "") {
+      tableData1.value = tableData.value;
+    } else {
+      tableData1.value = table1(newdata);
+    }
+  }
+);
+const table1 = (newdata: any) => {
+  let searchName = newdata.toLowerCase()
+  return tableData.value.filter((v: any) => {
+    return Object.keys(v).some((key) => {
+      return String(v[key]).toLowerCase().indexOf(searchName) > -1;
+    });
+  });
+};
 
 const MaterialNameList = ref<toolType[]>([]);
 
@@ -586,6 +607,11 @@ const getData = () => {
       //     // message: "取消操作",
       //     type: "success",
       //   });
+    if(inputValue.value.trim()){
+      tableData1.value = table1(inputValue.value);
+    }else{
+      tableData1.value = res.content;
+    }
     }
   });
 };
@@ -661,18 +687,18 @@ const serachData = () => {
   if (inputValue.value === "") {
     getData();
   } else {
-    GetPartsOutList({ InstockNo: inputValue.value }).then((res: any) => {
-      if (res && res.success && res.content.length !== 0) {
-        tableData.value = res.content;
-        ElNotification({
-          title: res.msg,
-          // message: "取消操作",
-          type: "success",
-        });
-      } else {
-        tableData.value = res.content;
-      }
-    });
+    // GetPartsOutList({ InstockNo: inputValue.value }).then((res: any) => {
+    //   if (res && res.success && res.content.length !== 0) {
+    //     tableData.value = res.content;
+    //     ElNotification({
+    //       title: res.msg,
+    //       // message: "取消操作",
+    //       type: "success",
+    //     });
+    //   } else {
+    //     tableData.value = res.content;
+    //   }
+    // });
   }
 };
 
