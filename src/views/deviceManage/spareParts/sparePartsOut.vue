@@ -11,35 +11,13 @@
             style="width: 240px"
             placeholder="请输入"
             clearable
-          ></el-input> -->
-          <el-form ref="formRef" class="form" :inline="true" label-width="auto">
-            <el-form-item label="时间" class="mb-2">
-              <el-date-picker
-                v-model="dateValue"
-                type="daterange"
-                range-separator="到"
-                size=""
-                value-format="YYYY-MM-DD"
-                @change="dateChange"
-              />
-            </el-form-item>
-            <el-form-item label="出库单号" class="mb-2">
-              <el-input
-                v-model="searchForm.OutstockNo"
-                style="width: 240px"
-                placeholder="请输入"
-                clearable
-              ></el-input>
-            </el-form-item>
-            <el-form-item label="" class="mb-2">
-              <el-button class="ml-3" type="primary" @click="searchData"
-                >查询</el-button
-              >
-            </el-form-item>
-          </el-form>
-          <!-- <el-input v-model="inputValue" placeholder="请输入">
+          ></el-input>
+          <el-button class="ml-3" type="primary" @click="serachData"
+            >查询</el-button
+          > -->
+          <el-input v-model="inputValue" placeholder="请输入">
                         <template #append>
-                            <el-button type="primary" icon="Search" @click="serachData"></el-button> </template></el-input> -->
+                            <el-button type="primary" icon="Search" @click="serachData"></el-button> </template></el-input>
         </div>
       </div>
       <!-- <table-tem
@@ -56,7 +34,7 @@
       border
       size="small"
         :data="
-          tableData.slice((pageObj.currentPage - 1) * pageObj.pageSize, pageObj.currentPage * pageObj.pageSize)
+          tableData1.slice((pageObj.currentPage - 1) * pageObj.pageSize, pageObj.currentPage * pageObj.pageSize)
         "
         :height="tableHeight"
         center stripe
@@ -74,10 +52,10 @@
       </el-table-column>
       <el-table-column prop="OutstockNo" align="center" label="出库单号" :min-width="flexColumnWidth('出库单号', 'OutstockNo')"> </el-table-column>
       <!-- <el-table-column prop="Type" align="center" label="出库类型"> </el-table-column> -->
-      <el-table-column prop="Department" align="center" label="部门" :min-width="flexColumnWidth('部门', 'Department')"> </el-table-column>
       <el-table-column prop="LendBy" align="center" label="借出人" :min-width="flexColumnWidth('借出人', 'LendBy')"> </el-table-column>
+      <el-table-column prop="Department" align="center" label="部门" :min-width="flexColumnWidth('部门', 'Department')"> </el-table-column>
       <el-table-column prop="LendOn" align="center" label="借出时间" :min-width="flexColumnWidth('借出时间', 'LendOn')"> </el-table-column>
-      <!-- <el-table-column prop="DueDate" align="center" label="到期日期" :min-width="flexColumnWidth('到期日期', 'DueDate')"> </el-table-column> -->
+      <el-table-column prop="DueDate" align="center" label="到期日期" :min-width="flexColumnWidth('到期日期', 'DueDate')"> </el-table-column>
       <el-table-column prop="LendReason" align="center" label="借出原因" :min-width="flexColumnWidth('借出原因', 'LendReason')"> </el-table-column>
       <el-table-column prop="ReturnDate" align="center" label="归还日期" :min-width="flexColumnWidth('归还日期', 'ReturnDate')"> </el-table-column>
       <el-table-column prop="Status" align="center" label="状态">
@@ -129,7 +107,7 @@
           :page-size="pageObj.pageSize"
           :page-sizes="[5, 10, 20, 50, 100]"
           layout="total,sizes, prev, pager, next, jumper"
-          :total="tableData.length"
+          :total="tableData1.length"
         >
         </el-pagination>
       </div>
@@ -461,19 +439,13 @@ interface inFormTS {
   CreatedBy: string;
 }
 
-interface SearchFormTS {
-  OutstockNo: string;
-  StartDate: string;
-  EndDate: string;
-}
-
 //   const pageSize = ref(10);
 const currentPage = ref(1);
 const tableHeight = ref(0);
 const addVisible = ref(false);
 const InVisible = ref(false);
 const editVisible = ref(false);
-const dateValue = ref<any[]>([]);
+const inputValue = ref("");
 const LedgerVisible = ref(false)
 const deleteVisible = ref(false);
 const deleteChoice = ref("");
@@ -534,12 +506,6 @@ const inForm = ref<inFormTS>({
   CreatedBy: loginName,
 });
 
-const searchForm = ref<SearchFormTS>({
-  OutstockNo: "",
-  StartDate: "",
-  EndDate: "",
-});
-
 const editSubmit = (data: any) => {
   console.log(data.ReturnOn);
   EditForm.value.Chkout_sht = data.Chkout_sht;
@@ -558,6 +524,26 @@ interface toolType {
   Text: string;
   Value: string;
 }
+
+watch(
+  () => inputValue.value,
+  (newdata) => {
+    // console.log(newdata);
+    if (newdata == "") {
+      tableData1.value = tableData.value;
+    } else {
+      tableData1.value = table1(newdata);
+    }
+  }
+);
+const table1 = (newdata: any) => {
+  let searchName = newdata.toLowerCase()
+  return tableData.value.filter((v: any) => {
+    return Object.keys(v).some((key) => {
+      return String(v[key]).toLowerCase().indexOf(searchName) > -1;
+    });
+  });
+};
 
 const MaterialNameList = ref<toolType[]>([]);
 
@@ -635,6 +621,11 @@ const getData = () => {
       //     // message: "取消操作",
       //     type: "success",
       //   });
+    if(inputValue.value.trim()){
+      tableData1.value = table1(inputValue.value);
+    }else{
+      tableData1.value = res.content;
+    }
     }
   });
 };
@@ -706,27 +697,23 @@ const GetList = () => {
   });
 };
 
-const dateChange = (data: any) => {
-  if (data.length > 0) {
-    searchForm.value.StartDate = data[0];
-    searchForm.value.EndDate = data[1];
+const serachData = () => {
+  if (inputValue.value === "") {
+    getData();
   } else {
-    searchForm.value.StartDate = "";
-    searchForm.value.EndDate = "";
+    // GetPartsOutList({ InstockNo: inputValue.value }).then((res: any) => {
+    //   if (res && res.success && res.content.length !== 0) {
+    //     tableData.value = res.content;
+    //     ElNotification({
+    //       title: res.msg,
+    //       // message: "取消操作",
+    //       type: "success",
+    //     });
+    //   } else {
+    //     tableData.value = res.content;
+    //   }
+    // });
   }
-};
-
-const searchData = () => {
-  GetPartsOutList(searchForm.value).then((res: any) => {
-    if (res && res.success) {
-      tableData.value = res.content;
-      //   ElNotification({
-      //     title: res.msg,
-      //     // message: "取消操作",
-      //     type: "success",
-      //   });
-    }
-  });
 };
 
 const deleteSubmit = (data: any) => {
@@ -1126,7 +1113,7 @@ const getScreenHeight = () => {
 
 //el-table自动计算宽度
 const flexColumnWidth = (label: any, prop: any) => {
-  const arr = tableData?.value.map((x: { [x: string]: any }) => x[prop]);
+  const arr = tableData1?.value.map((x: { [x: string]: any }) => x[prop]);
   arr.push(label); // 把每列的表头也加进去算
   return getMaxLength(arr) + 25 + "px";
 };

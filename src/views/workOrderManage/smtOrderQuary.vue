@@ -101,7 +101,7 @@
                   </template>
                 </el-table-column>
                 <el-table-column prop="SpecName" label="工序编码" align="center"
-                  :min-width="flexColumnWidth('使用工序', 'SpecDesc')">
+                  :min-width="flexColumnWidth('使用工序', 'SpecName')">
                 </el-table-column>
                 <el-table-column prop="SpecDesc" label="工序名称" align="center"
                   :min-width="flexColumnWidth('使用工序', 'SpecDesc')">
