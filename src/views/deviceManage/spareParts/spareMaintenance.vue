@@ -2,48 +2,21 @@
   <div class="p-2">
     <el-card shadow="always" :body-style="{ padding: '8px' }">
       <div class="pb-2 flex justify-between">
-        <!-- <el-button
-            type="primary"
-            @click="clearForm(), (addVisible = true)"
-            >添加</el-button
-          > -->
+        <el-button
+          type="primary"
+          @click="clearForm(), (addVisible = true), getClassList()"
+          >添加</el-button
+        >
         <div class="flex">
-          <el-form ref="formRef" class="form" :inline="true" label-width="auto">
-            <el-form-item label="时间" class="mb-2">
-              <el-date-picker
-                v-model="dateValue"
-                type="daterange"
-                range-separator="到"
-                size=""
-                value-format="YYYY-MM-DD"
-                @change="dateChange"
-              />
-            </el-form-item>
-            <el-form-item label="备件名称" class="mb-2">
-              <el-input
-                v-model="searchForm.PartName"
-                style="width: 240px"
-                placeholder="请输入"
-              ></el-input>
-            </el-form-item>
-            <el-form-item label="" class="mb-2">
-              <el-button class="ml-3" type="primary" @click="serachData"
-                >查询</el-button
-              >
-            </el-form-item>
-          </el-form>
-          <!-- <el-input
+          <el-input
             v-model="inputValue"
             style="width: 240px"
             placeholder="请输入"
             clearable
           ></el-input>
-          <el-button class="ml-3" type="primary" @click=""
+          <el-button class="ml-3" type="primary" @click="serachData"
             >查询</el-button
-          > -->
-          <!-- <el-input v-model="inputValue" placeholder="请输入">
-                        <template #append>
-                            <el-button type="primary" icon="Search" @click="serachData"></el-button> </template></el-input> -->
+          >
         </div>
       </div>
       <table-tem
@@ -64,20 +37,63 @@
       v-model="editVisible"
       @close=""
       title="编辑"
-      width="550px"
+      width="50%"
     >
       <el-form
         ref="formRef"
-        :model="ScrapForm"
+        :model="EditForm"
         label-position="left"
-        label-width="80"
+        label-width="auto"
         :inline="true"
       >
-        <el-form-item label="报废原因">
-          <el-input v-model="ScrapForm.ScrapReason" style="width: 400px" />
+        <el-form-item label="备件名称">
+          <el-input v-model="EditForm.PartName" style="width: 250px" disabled />
         </el-form-item>
-        <el-form-item label="备注">
-          <el-input v-model="ScrapForm.Remark" style="width: 400px" />
+        <el-form-item label="备件描述">
+          <el-input v-model="EditForm.Description" style="width: 250px" />
+        </el-form-item>
+        <el-form-item label="规格">
+          <el-input v-model="EditForm.Specification" style="width: 250px" />
+        </el-form-item>
+        <el-form-item label="设备">
+          <el-input v-model="EditForm.Equipment" style="width: 250px" />
+        </el-form-item>
+        <el-form-item label="供应商代码">
+          <el-input v-model="EditForm.VendorCode" style="width: 250px" />
+        </el-form-item>
+        <el-form-item label="安全库存">
+          <el-input-number
+            v-model="EditForm.SafetyStock"
+            :min="1"
+            style="width: 250px"
+          />
+        </el-form-item>
+        <el-form-item label="最小库存">
+          <el-input-number
+            v-model="EditForm.MinStock"
+            :min="1"
+            style="width: 250px"
+          />
+        </el-form-item>
+        <el-form-item label="最大库存">
+          <el-input-number
+            v-model="EditForm.MaxStock"
+            :min="1"
+            style="width: 250px"
+          />
+        </el-form-item>
+        <el-form-item label="当前数量">
+          <el-input-number
+            v-model="EditForm.CurrentQty"
+            :min="1"
+            style="width: 250px"
+          />
+        </el-form-item>
+        <el-form-item label="采购周期">
+          <el-input v-model="EditForm.Cycle" style="width: 250px" />
+        </el-form-item>
+        <el-form-item label="单位">
+          <el-input v-model="EditForm.Unit" style="width: 250px" />
         </el-form-item>
       </el-form>
 
@@ -85,7 +101,7 @@
         <span class="dialog-footer">
           <!-- <el-button type="info" @click="addSon"> 增加子项</el-button> -->
           <el-button @click="editVisible = false"> 取消 </el-button>
-          <el-button type="primary" @click="ScrapData"> 确定 </el-button>
+          <el-button type="primary" @click="editData"> 确定 </el-button>
         </span>
       </template>
     </el-dialog>
@@ -156,14 +172,14 @@
             style="width: 250px"
           />
         </el-form-item>
-        <el-form-item label="当前数量">
+        <!-- <el-form-item label="当前数量">
           <el-input-number
             v-model="form.CurrentQty"
             :min="1"
             style="width: 250px"
           />
-        </el-form-item>
-        <el-form-item label="周期">
+        </el-form-item> -->
+        <el-form-item label="采购周期">
           <el-input v-model="form.Cycle" style="width: 250px" />
         </el-form-item>
         <el-form-item label="单位">
@@ -186,12 +202,11 @@
 import { ElMessage, ElNotification, ElMessageBox } from "element-plus";
 import tableTem from "@/components/tableTem/index.vue";
 import {
-  GetPartsStockList,
-  findStockidParameter,
-  updatePartsStockData,
-  deletePartsStock,
-  addPartsStock,
-  addPartsScrapData,
+  GetPartsList,
+  addPartsData,
+  updatePartsData,
+  deletePartsData,
+  GetPartsClassList,
 } from "@/api/sparePartsApi";
 import { useUserStoreWithOut } from "@/stores/modules/user";
 import {
@@ -224,19 +239,21 @@ interface formTS {
   CreatedBy: string;
 }
 
-interface ScrapFormTS {
-  StockID: string;
+interface EditFormTS {
   PartID: string;
-  Qty: number;
-  Remark: string;
-  ScrapReason: string;
-  CreatedBy: string;
-}
-
-interface SearchFormTS {
+  ClassID: string;
   PartName: string;
-  StartDate: string;
-  EndDate: string;
+  Description: string;
+  Specification: string;
+  Equipment: string;
+  VendorCode: string;
+  Cycle: string;
+  SafetyStock: number;
+  MinStock: number;
+  MaxStock: number;
+  CurrentQty: number;
+  Unit: string;
+  UpdateBy: string;
 }
 
 //   const pageSize = ref(10);
@@ -244,7 +261,7 @@ const currentPage = ref(1);
 const tableHeight = ref(0);
 const addVisible = ref(false);
 const editVisible = ref(false);
-const dateValue = ref<any[]>([]);
+const inputValue = ref("");
 const deleteVisible = ref(false);
 const deleteChoice = ref("");
 const tableData1 = ref<any[]>([]);
@@ -289,28 +306,59 @@ const form = ref<formTS>({
   CreatedBy: loginName,
 });
 
-const ScrapForm = ref<ScrapFormTS>({
-  StockID: "",
+const EditForm = ref<EditFormTS>({
   PartID: "",
-  Qty: 0,
-  Remark: "",
-  ScrapReason: "",
-  CreatedBy: loginName,
-});
-
-const searchForm = ref<SearchFormTS>({
+  ClassID: "",
   PartName: "",
-  StartDate: "",
-  EndDate: "",
+  Description: "",
+  Specification: "",
+  Equipment: "",
+  VendorCode: "",
+  Cycle: "",
+  SafetyStock: 1,
+  MinStock: 1,
+  MaxStock: 1,
+  CurrentQty: 1,
+  Unit: "",
+  UpdateBy: loginName,
 });
 
-const ScrapSubmit = (data: any) => {
-  ScrapForm.value.StockID = data.StockID;
-  ScrapForm.value.PartID = data.PartID;
-  ScrapForm.value.Qty = data.Qty;
-  editVisible.value = true;
+watch(
+  () => inputValue.value,
+  (newdata) => {
+    // console.log(newdata);
+    if (newdata == "") {
+      tableData1.value = tableData.value;
+    } else {
+      tableData1.value = table1(newdata);
+    }
+  }
+);
+const table1 = (newdata: any) => {
+  let searchName = newdata.toLowerCase()
+  return tableData.value.filter((v: any) => {
+    return Object.keys(v).some((key) => {
+      return String(v[key]).toLowerCase().indexOf(searchName) > -1;
+    });
+  });
 };
 
+const editSubmit = (data: any) => {
+  EditForm.value.ClassID = data.ClassID;
+  EditForm.value.PartID = data.PartID;
+  EditForm.value.PartName = data.PartName;
+  EditForm.value.Description = data.Description;
+  EditForm.value.Specification = data.Specification;
+  EditForm.value.Equipment = data.Equipment;
+  EditForm.value.VendorCode = data.VendorCode;
+  EditForm.value.Cycle = data.Cycle;
+  EditForm.value.SafetyStock = data.SafetyStock;
+  EditForm.value.MinStock = data.MinStock;
+  EditForm.value.MaxStock = data.MaxStock;
+  EditForm.value.CurrentQty = data.CurrentQty;
+  EditForm.value.Unit = data.Unit;
+  editVisible.value = true;
+};
 interface toolType {
   Text: string;
   Value: string;
@@ -342,39 +390,27 @@ const clearForm = () => {
   };
 };
 
-const clearScrapForm = () => {
-  ScrapForm.value = {
-    StockID: "",
+const clearEditForm = () => {
+  EditForm.value = {
     PartID: "",
-    Qty: 0,
-    Remark: "",
-    ScrapReason: "",
-    CreatedBy: loginName,
+    ClassID: "",
+    PartName: "",
+    Description: "",
+    Specification: "",
+    Equipment: "",
+    VendorCode: "",
+    Cycle: "",
+    SafetyStock: 1,
+    MinStock: 1,
+    MaxStock: 1,
+    CurrentQty: 1,
+    Unit: "",
+    UpdateBy: loginName,
   };
 };
 
-watch(
-  () => searchForm.value.PartName,
-  (newdata) => {
-    // console.log(newdata);
-    if (newdata == "") {
-      tableData1.value = tableData.value;
-    } else {
-      tableData1.value = table1(newdata);
-    }
-  }
-);
-const table1 = (newdata: any) => {
-  let searchName = newdata.toLowerCase();
-  return tableData.value.filter((v: any) => {
-    return Object.keys(v).some((key) => {
-      return String(v[key]).toLowerCase().indexOf(searchName) > -1;
-    });
-  });
-};
-
 const getData = () => {
-  GetPartsStockList({}).then((res: any) => {
+  GetPartsList({}).then((res: any) => {
     if (res && res.success && res.content.length !== 0) {
       tableData.value = res.content;
       //   ElNotification({
@@ -382,43 +418,48 @@ const getData = () => {
       //     // message: "取消操作",
       //     type: "success",
       //   });
-      if (searchForm.value.PartName) {
-        tableData1.value = table1(searchForm.value.PartName);
-      } else {
-        tableData1.value = res.content;
-      }
+    if(inputValue.value.trim()){
+      tableData1.value = table1(inputValue.value);
+    }else{
+      tableData1.value = res.content;
+    }
     }
   });
 };
-const dateChange = (data: any) => {
-  if (data.length > 0) {
-    searchForm.value.StartDate = data[0];
-    searchForm.value.EndDate = data[1];
-  } else {
-    searchForm.value.StartDate = "";
-    searchForm.value.EndDate = "";
-  }
+
+const getClassList = () => {
+  GetPartsClassList({}).then((res: any) => {
+    if (res && res.success && res.content.length !== 0) {
+      ClassList.value = res.content;
+      // ElNotification({
+      //   title: res.msg,
+      //   // message: "取消操作",
+      //   type: "success",
+      // });
+    }
+  });
 };
 
 const serachData = () => {
-  GetPartsStockList(searchForm.value).then((res: any) => {
-    if (res && res.success) {
-      tableData.value = res.content;
-      //   ElNotification({
-      //     title: res.msg,
-      //     // message: "取消操作",
-      //     type: "success",
-      //   });
-      if (searchForm.value.PartName) {
-        tableData1.value = table1(searchForm.value.PartName);
-      } else {
-        tableData1.value = res.content;
-      }
-    }
-  });
+  if (inputValue.value === "") {
+    getData();
+  } else {
+    // GetPartsList({ PartName: inputValue.value }).then((res: any) => {
+    //   if (res && res.success && res.content.length !== 0) {
+    //     tableData.value = res.content;
+    //     ElNotification({
+    //       title: res.msg,
+    //       // message: "取消操作",
+    //       type: "success",
+    //     });
+    //   } else {
+    //     tableData.value = res.content;
+    //   }
+    // });
+  }
 };
 
-const scrappedSubmit = (data: any) => {
+const deleteSubmit = (data: any) => {
   //   deleteVisible.value = true;
   deleteChoice.value = data.CompName;
   ElMessageBox.confirm("确定删除", "确认操作", {
@@ -427,16 +468,16 @@ const scrappedSubmit = (data: any) => {
     type: "warning",
   })
     .then(() => {
-      // addPartsScrapData(data.PartID, loginName).then((data: any) => {
-      //   if (!data) {
-      //     return;
-      //   }
-      //   ElNotification({
-      //     type: "success",
-      //     message: data.msg,
-      //   });
-      //   getData();
-      // });
+      deletePartsData(data.PartID, loginName).then((data: any) => {
+        if (!data) {
+          return;
+        }
+        ElNotification({
+          type: "success",
+          message: data.msg,
+        });
+        getData();
+      });
     })
     .catch(() => {
       ElNotification({
@@ -447,7 +488,7 @@ const scrappedSubmit = (data: any) => {
 };
 
 const addData = () => {
-  addPartsStock(form.value).then((res: any) => {
+  addPartsData(form.value).then((res: any) => {
     if (res && res.success) {
       addVisible.value = false;
       ElNotification({
@@ -461,7 +502,7 @@ const addData = () => {
 };
 
 const editData = () => {
-  updatePartsStockData(ScrapForm.value).then((res: any) => {
+  updatePartsData(EditForm.value).then((res: any) => {
     if (res && res.success) {
       editVisible.value = false;
       ElNotification({
@@ -474,19 +515,6 @@ const editData = () => {
   });
 };
 
-const ScrapData = () => {
-  addPartsScrapData(ScrapForm.value).then((res: any) => {
-    if (res && res.success) {
-      editVisible.value = false;
-      ElNotification({
-        title: res.msg,
-        // message: "取消操作",
-        type: "success",
-      });
-    }
-    getData();
-  });
-};
 const columnData = reactive([
   //   {
   //     text: true,
@@ -514,63 +542,8 @@ const columnData = reactive([
   },
   {
     text: true,
-    prop: "Qty",
-    label: "数量",
-    width: "",
-    min: true,
-    align: "center",
-  },
-  {
-    text: true,
-    prop: "PurchaseNo",
-    label: "采购单",
-    width: "",
-    min: true,
-    align: "center",
-  },
-  // {
-  //   text: true,
-  //   prop: "Description",
-  //   label: "描述",
-  //   width: "",
-  //   min: true,
-  //   align: "center",
-  // },
-  {
-    text: false,
-    tag: true,
-    tagType: "number",
-    tagItem: [
-      { text: "在库", type: "primary", number: 0 },
-      { text: "已出库", type: "primary", number: 1 },
-      { text: "报废", type: "danger", number: 99 },
-    ],
-    prop: "Status",
-    label: "状态",
-    width: "80",
-    min: true,
-    align: "center",
-  },
-  {
-    text: true,
-    prop: "DueDate",
-    label: "到期日期",
-    width: "",
-    min: true,
-    align: "center",
-  },
-  {
-    text: true,
-    prop: "Vendor",
-    label: "供应商",
-    width: "",
-    min: true,
-    align: "center",
-  },
-  {
-    text: true,
-    prop: "Manufacturer",
-    label: "制造商",
+    prop: "Description",
+    label: "备件描述",
     width: "",
     min: true,
     align: "center",
@@ -578,31 +551,71 @@ const columnData = reactive([
   {
     text: true,
     prop: "Specification",
-    label: "规格型号",
+    label: "规格",
     width: "",
     min: true,
     align: "center",
   },
   {
     text: true,
-    prop: "StorageLocation",
-    label: "存储位置",
+    prop: "Equipment",
+    label: "设备",
     width: "",
     min: true,
     align: "center",
   },
   {
     text: true,
-    prop: "CreatedOn",
-    label: "创建日期",
+    prop: "VendorCode",
+    label: "供应商代码",
     width: "",
     min: true,
     align: "center",
   },
   {
     text: true,
-    prop: "CreatedBy",
-    label: "创建人",
+    prop: "Cycle",
+    label: "采购周期",
+    width: "",
+    min: true,
+    align: "center",
+  },
+  {
+    text: true,
+    prop: "SafetyStock",
+    label: "安全库存",
+    width: "",
+    min: true,
+    align: "center",
+  },
+  {
+    text: true,
+    prop: "MinStock",
+    label: "最小库存",
+    width: "",
+    min: true,
+    align: "center",
+  },
+  {
+    text: true,
+    prop: "MaxStock",
+    label: "最大库存",
+    width: "",
+    min: true,
+    align: "center",
+  },
+  {
+    text: true,
+    prop: "CurrentQty",
+    label: "当前数量",
+    width: "",
+    min: true,
+    align: "center",
+  },
+  {
+    text: true,
+    prop: "Unit",
+    label: "单位",
     width: "",
     min: true,
     align: "center",
@@ -614,17 +627,17 @@ const columnData = reactive([
     align: "center",
     fixed: "right",
     operation: [
-      // {
-      //   type: "primary",
-      //   label: "编辑",
-      //   icon: "EditPen",
-      //   buttonClick: ScrapSubmit,
-      // },
       {
-        type: "warning",
-        label: "报废",
-        icon: "Failed",
-        buttonClick: ScrapSubmit,
+        type: "primary",
+        label: "编辑",
+        icon: "EditPen",
+        buttonClick: editSubmit,
+      },
+      {
+        type: "danger",
+        label: "删除",
+        icon: "Delete",
+        buttonClick: deleteSubmit,
       },
       //   {
       //     type: "warning",
@@ -656,7 +669,7 @@ const handleCurrentChange = (val: any) => {
 };
 const getScreenHeight = () => {
   nextTick(() => {
-    tableHeight.value = window.innerHeight - 210;
+    tableHeight.value = window.innerHeight - 205;
   });
 };
 </script>

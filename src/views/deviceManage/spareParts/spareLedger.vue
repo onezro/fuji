@@ -8,42 +8,18 @@
             >添加</el-button
           > -->
         <div class="flex">
-          <el-form ref="formRef" class="form" :inline="true" label-width="auto">
-            <el-form-item label="时间" class="mb-2">
-              <el-date-picker
-                v-model="dateValue"
-                type="daterange"
-                range-separator="到"
-                size=""
-                value-format="YYYY-MM-DD"
-                @change="dateChange"
-              />
-            </el-form-item>
-            <el-form-item label="备件名称" class="mb-2">
-              <el-input
-                v-model="searchForm.PartName"
-                style="width: 240px"
-                placeholder="请输入"
-              ></el-input>
-            </el-form-item>
-            <el-form-item label="" class="mb-2">
-              <el-button class="ml-3" type="primary" @click="serachData"
-                >查询</el-button
-              >
-            </el-form-item>
-          </el-form>
           <!-- <el-input
             v-model="inputValue"
             style="width: 240px"
             placeholder="请输入"
             clearable
           ></el-input>
-          <el-button class="ml-3" type="primary" @click=""
+          <el-button class="ml-3" type="primary" @click="serachData"
             >查询</el-button
           > -->
-          <!-- <el-input v-model="inputValue" placeholder="请输入">
+          <el-input v-model="inputValue" placeholder="请输入">
                         <template #append>
-                            <el-button type="primary" icon="Search" @click="serachData"></el-button> </template></el-input> -->
+                            <el-button type="primary" icon="Search" @click="serachData"></el-button> </template></el-input>
         </div>
       </div>
       <table-tem
@@ -225,18 +201,12 @@ interface formTS {
 }
 
 interface ScrapFormTS {
-  StockID: string;
+  StockID:  string;
   PartID: string;
   Qty: number;
   Remark: string;
   ScrapReason: string;
-  CreatedBy: string;
-}
-
-interface SearchFormTS {
-  PartName: string;
-  StartDate: string;
-  EndDate: string;
+  CreatedBy:  string;
 }
 
 //   const pageSize = ref(10);
@@ -244,7 +214,7 @@ const currentPage = ref(1);
 const tableHeight = ref(0);
 const addVisible = ref(false);
 const editVisible = ref(false);
-const dateValue = ref<any[]>([]);
+const inputValue = ref("");
 const deleteVisible = ref(false);
 const deleteChoice = ref("");
 const tableData1 = ref<any[]>([]);
@@ -290,18 +260,12 @@ const form = ref<formTS>({
 });
 
 const ScrapForm = ref<ScrapFormTS>({
-  StockID: "",
-  PartID: "",
+  StockID:  '',
+  PartID: '',
   Qty: 0,
-  Remark: "",
-  ScrapReason: "",
-  CreatedBy: loginName,
-});
-
-const searchForm = ref<SearchFormTS>({
-  PartName: "",
-  StartDate: "",
-  EndDate: "",
+  Remark: '',
+  ScrapReason: '',
+  CreatedBy:  loginName
 });
 
 const ScrapSubmit = (data: any) => {
@@ -315,6 +279,26 @@ interface toolType {
   Text: string;
   Value: string;
 }
+
+watch(
+  () => inputValue.value,
+  (newdata) => {
+    // console.log(newdata);
+    if (newdata == "") {
+      tableData1.value = tableData.value;
+    } else {
+      tableData1.value = table1(newdata);
+    }
+  }
+);
+const table1 = (newdata: any) => {
+  let searchName = newdata.toLowerCase()
+  return tableData.value.filter((v: any) => {
+    return Object.keys(v).some((key) => {
+      return String(v[key]).toLowerCase().indexOf(searchName) > -1;
+    });
+  });
+};
 
 const MaterialNameList = ref<toolType[]>([]);
 
@@ -344,33 +328,13 @@ const clearForm = () => {
 
 const clearScrapForm = () => {
   ScrapForm.value = {
-    StockID: "",
-    PartID: "",
-    Qty: 0,
-    Remark: "",
-    ScrapReason: "",
-    CreatedBy: loginName,
-  };
+  StockID:  '',
+  PartID: '',
+  Qty: 0,
+  Remark: '',
+  ScrapReason: '',
+  CreatedBy:  loginName
 };
-
-watch(
-  () => searchForm.value.PartName,
-  (newdata) => {
-    // console.log(newdata);
-    if (newdata == "") {
-      tableData1.value = tableData.value;
-    } else {
-      tableData1.value = table1(newdata);
-    }
-  }
-);
-const table1 = (newdata: any) => {
-  let searchName = newdata.toLowerCase();
-  return tableData.value.filter((v: any) => {
-    return Object.keys(v).some((key) => {
-      return String(v[key]).toLowerCase().indexOf(searchName) > -1;
-    });
-  });
 };
 
 const getData = () => {
@@ -382,40 +346,45 @@ const getData = () => {
       //     // message: "取消操作",
       //     type: "success",
       //   });
-      if (searchForm.value.PartName) {
-        tableData1.value = table1(searchForm.value.PartName);
-      } else {
-        tableData1.value = res.content;
-      }
+    if(inputValue.value.trim()){
+      tableData1.value = table1(inputValue.value);
+    }else{
+      tableData1.value = res.content;
+    }
     }
   });
-};
-const dateChange = (data: any) => {
-  if (data.length > 0) {
-    searchForm.value.StartDate = data[0];
-    searchForm.value.EndDate = data[1];
-  } else {
-    searchForm.value.StartDate = "";
-    searchForm.value.EndDate = "";
-  }
 };
 
+// const getClassList = () => {
+//   GetPartsClassList({}).then((res: any) => {
+//     if (res && res.success && res.content.length !== 0) {
+//       ClassList.value = res.content;
+//       ElNotification({
+//         title: res.msg,
+//         // message: "取消操作",
+//         type: "success",
+//       });
+//     }
+//   });
+// };
+
 const serachData = () => {
-  GetPartsStockList(searchForm.value).then((res: any) => {
-    if (res && res.success) {
-      tableData.value = res.content;
-      //   ElNotification({
-      //     title: res.msg,
-      //     // message: "取消操作",
-      //     type: "success",
-      //   });
-      if (searchForm.value.PartName) {
-        tableData1.value = table1(searchForm.value.PartName);
-      } else {
-        tableData1.value = res.content;
-      }
-    }
-  });
+  if (inputValue.value === "") {
+    getData();
+  } else {
+    // GetPartsStockList({ PartName: inputValue.value }).then((res: any) => {
+    //   if (res && res.success && res.content.length !== 0) {
+    //     tableData.value = res.content;
+    //     ElNotification({
+    //       title: res.msg,
+    //       // message: "取消操作",
+    //       type: "success",
+    //     });
+    //   } else {
+    //     tableData.value = res.content;
+    //   }
+    // });
+  }
 };
 
 const scrappedSubmit = (data: any) => {
@@ -506,7 +475,7 @@ const columnData = reactive([
   //   },
   {
     text: true,
-    prop: "PartName",
+    prop: "PartNumber",
     label: "备件名称",
     width: "",
     min: true,
@@ -528,14 +497,14 @@ const columnData = reactive([
     min: true,
     align: "center",
   },
-  // {
-  //   text: true,
-  //   prop: "Description",
-  //   label: "描述",
-  //   width: "",
-  //   min: true,
-  //   align: "center",
-  // },
+  {
+    text: true,
+    prop: "Description",
+    label: "描述",
+    width: "",
+    min: true,
+    align: "center",
+  },
   {
     text: false,
     tag: true,
@@ -621,9 +590,9 @@ const columnData = reactive([
       //   buttonClick: ScrapSubmit,
       // },
       {
-        type: "warning",
+        type: "danger",
         label: "报废",
-        icon: "Failed",
+        icon: "Delete",
         buttonClick: ScrapSubmit,
       },
       //   {
@@ -656,7 +625,7 @@ const handleCurrentChange = (val: any) => {
 };
 const getScreenHeight = () => {
   nextTick(() => {
-    tableHeight.value = window.innerHeight - 210;
+    tableHeight.value = window.innerHeight - 205;
   });
 };
 </script>
