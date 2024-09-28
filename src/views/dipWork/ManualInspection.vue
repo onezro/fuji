@@ -21,12 +21,6 @@
               :model="form"
               label-width="auto"
             >
-              <!-- <el-form-item label="工单号">
-                                <selectTa ref="selectTable" :table="orderTable" :defaultSelectVal="defaultSelectVal" :columns="orderColumns"  :max-height="400" :tableWidth="700"
-                                    :keywords="{ label: 'MfgOrderName', value: 'MfgOrderName' }"
-                                    @radioChange="(...args: any) => radioChange(args)">
-                                </selectTa>
-                            </el-form-item> -->
               <el-form-item
                 v-for="f in formHeader"
                 :key="f.value"
@@ -113,7 +107,7 @@
             </div>
             <table-tem
               :showIndex="true"
-              :tableData="tableData1"
+              :tableData="tableData"
               :tableHeight="tableHeight"
               :columnData="columnData1"
               :pageObj="pageObj"
@@ -124,21 +118,134 @@
         </div>
       </div>
     </div>
+    <el-dialog
+      v-model="badVisible"
+      title="不良登记"
+      width="60%"
+      :append-to-body="true"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      align-center
+      @close="badCancel"
+    >
+      <div>
+        <div>
+          <div
+            class="h-[30px] pl-3 flex items-center text-base text-[#fff] bg-[#006487]"
+          >
+            基本信息
+          </div>
+          <el-form ref="badFormRef" :model="badheadForm" label-width="auto">
+            <el-form-item label="PCB条码" class="mb-[5px] flex">
+              <el-input
+                v-model="badForm.containerName"
+                style="width: 160px"
+                disabled
+              />
+            </el-form-item>
+            <el-row>
+              <el-col :span="8">
+                <el-form-item label="工单" class="mb-[5px] flex">
+                  <el-input
+                    v-model="badheadForm.orderName"
+                    style="width: 160px"
+                    disabled
+                  />
+                </el-form-item>
+              </el-col>
+              <el-col :span="6">
+                <el-form-item class="mb-[5px]" label="产品编码">
+                  <el-input
+                    v-model="badheadForm.ProductName"
+                    style="width: 160px"
+                    disabled
+                  /> </el-form-item
+              ></el-col>
+              <el-col :span="10">
+                <el-form-item class="mb-[5px]" label="产品描述">
+                  <el-input
+                    v-model="badheadForm.ProductDesc"
+                    style="width: 320px"
+                    disabled
+                  />
+                </el-form-item>
+              </el-col>
+            </el-row>
+            <el-row>
+              <el-col :span="8">
+                <el-form-item class="mb-[5px]" label="计划开始时间">
+                  <el-input
+                    v-model="badheadForm.PlannedStartDate"
+                    style="width: 160px"
+                    disabled
+                  />
+                </el-form-item>
+              </el-col>
+              <el-col :span="6">
+                <el-form-item class="mb-[5px]" label="计划完成时间">
+                  <el-input
+                    v-model="badheadForm.PlannedCompletionDate"
+                    style="width: 160px"
+                    disabled
+                  />
+                </el-form-item>
+              </el-col>
+              <el-col :span="10">
+                <el-form-item class="mb-[5px]" label="工单数量">
+                  <el-input
+                    v-model="badheadForm.Qty"
+                    style="width: 160px"
+                    disabled
+                  />
+                </el-form-item>
+              </el-col>
+            </el-row>
+          </el-form>
+        </div>
+        <div>
+          <div
+            class="h-[30px] pl-3 flex items-center text-base text-[#fff] bg-[#006487]"
+          >
+            不良原因
+          </div>
+          <table-tem
+            :showIndex="true"
+            :show-select="true"
+            :tableData="BadtableData"
+            :tableHeight="300"
+            :columnData="badColumn"
+            :pageObj="badpageObj"
+            @handleSelectionChange="handleSelectionChange"
+          ></table-tem>
+        </div>
+      </div>
+
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="badCancel">取消</el-button>
+          <el-button type="primary" @click="badSubmit"> 确定 </el-button>
+        </span>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
 <script lang="ts" setup>
 import tableTem from "@/components/tableTem/index.vue";
-import badInfoTem from "@/components/badInfoTem/index.vue";
-import formTem from "@/components/formTem/index.vue";
-import feedTemp from "@/components/feedTemp/index.vue";
-import selectTa from "@/components/selectTable/index.vue";
+// import badInfoTem from "@/components/badInfoTem/index.vue";
+// import formTem from "@/components/formTem/index.vue";
+// import feedTemp from "@/components/feedTemp/index.vue";
+// import selectTa from "@/components/selectTable/index.vue";
 import { useAppStore } from "@/stores/modules/app";
 import { useUserStoreWithOut } from "@/stores/modules/user";
 import { checkStringType } from "@/utils/barcodeFormat";
 import type { Formspan, FormHeader, OrderData } from "@/typing";
 import { ElMessage, ElNotification, ElMessageBox } from "element-plus";
-import { InspectionStationMoveOut } from "@/api/dipApi";
+import {
+  VIStationMoveOut,
+  VIDefectProductRecord,
+  QueryDefectCode,
+} from "@/api/dipApi";
 
 import {
   ref,
@@ -149,6 +256,7 @@ import {
   onBeforeMount,
   onBeforeUnmount,
 } from "vue";
+import { cloneDeep } from "lodash-es";
 interface StopsForm {
   containerName: string;
   workstationName: string;
@@ -156,14 +264,15 @@ interface StopsForm {
   userAccount: string;
   txnDate: string;
 }
-
-interface ToolList {
-  WorkStationName: string;
-  OrderNumber: string;
-  ToolName: string;
-  sort: number;
-  MaterialName: string;
-  CompName: string;
+interface Defect {
+  ES_Net1: string;
+  Comment: string;
+}
+interface BadForm {
+  containerName: string;
+  DefectDetails: Array<Defect>;
+  workstationName: string;
+  userAccount: string;
 }
 const appStore = useAppStore();
 const userStore = useUserStoreWithOut();
@@ -177,9 +286,9 @@ const stopsForm = ref<StopsForm>({
   userAccount: userStore.getUserInfo,
   txnDate: "",
   result: "OK",
-
 });
 
+const badVisible = ref(false);
 const form = ref<InstanceType<typeof Formspan>>({
   MfgOrderName: "",
   ProductName: "",
@@ -205,7 +314,7 @@ const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
   },
   {
     label: "产品描述",
-    value: "Description",
+    value: "ProductDesc",
     disabled: true,
     type: "textarea",
     width: 300,
@@ -232,6 +341,7 @@ const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
     width: "",
   },
 ]);
+
 const columnData1 = reactive([
   {
     text: true,
@@ -255,15 +365,59 @@ const columnData1 = reactive([
     align: "1",
   },
 ]);
-const tableData1 = ref([]);
+const tableData = ref([]);
 const tableHeight = ref(0);
 const pageObj = ref({
   pageSize: 10,
   currentPage: 1,
 });
+const badheadForm = ref<InstanceType<typeof Formspan>>({
+  MfgOrderName: "",
+  ProductName: "",
+  ProductDesc: "",
+  Qty: "",
+  PlannedStartDate: "",
+  PlannedCompletionDate: "",
+});
+const badForm = ref<BadForm>({
+  containerName: "",
+  DefectDetails: [],
+  workstationName: opui.station || "",
+  userAccount: userStore.getUserInfo,
+});
+//不良信息table
+const BadtableData = ref([
+  //   {
+  //     isDefectReasonName: "s004",
+  //     isDefectReasonDesc: "少件",
+  //   },
+]);
 
+const badpageObj = ref({
+  pageSize: 10,
+  currentPage: 1,
+  isShow: -1,
+});
+const badColumn = reactive([
+  {
+    text: true,
+    prop: "isDefectReasonName",
+    label: "不良代码",
+    width: "100",
+    align: "1",
+  },
+  {
+    text: true,
+    prop: "isDefectReasonDesc",
+    label: "不良原因",
+    width: "100",
+    align: "1",
+  },
+]);
+const changeList = ref([]);
 const msgTitle = ref("");
 const msgType = ref(true);
+const leftBoxH = ref(0);
 
 onBeforeMount(() => {
   getScreenHeight();
@@ -290,6 +444,46 @@ const formText = (data: string) => {
   return form[key];
 };
 
+const handleSelectionChange = (data: any) => {
+  let content = cloneDeep(data);
+  changeList.value = content;
+};
+
+//不良登记取消
+const badCancel = () => {
+  badVisible.value = false;
+  changeList.value = [];
+  BadtableData.value = [];
+};
+//不良登记提交
+const badSubmit = () => {
+  changeList.value.forEach((c: any) => {
+    badForm.value.DefectDetails.push({
+      ES_Net1: c.isDefectReasonName,
+      Comment: c.isDefectReasonDesc,
+    });
+  });
+  // console.log(badForm.value);
+  VIDefectProductRecord(badForm.value).then((res: any) => {
+    if (res.success) {
+      ElNotification({
+        title: "提示信息",
+        message: res.msg,
+        type: "success",
+      });
+    } else {
+      ElNotification({
+        title: "提示信息",
+        message: res.msg,
+        type: "error",
+      });
+    }
+    badVisible.value = false;
+    // console.log(res);
+    changeList.value = [];
+    BadtableData.value = [];
+  });
+};
 
 //过站
 const getChange = () => {
@@ -299,17 +493,31 @@ const getChange = () => {
     stopsForm.value.result = barCodeData;
   } else {
     stopsForm.value.containerName = barCodeData;
-    InspectionStationMoveOut(stopsForm.value, stopsForm.value.result).then(
-      (res: any) => {
+    // console.log(stopsForm.value.result);
+    if (stopsForm.value.result == "OK") {
+      VIStationMoveOut(stopsForm.value).then((res: any) => {
         msgTitle.value = res.msg;
         msgType.value = res.success;
         stopsForm.value.containerName = "";
-        form.value=res.content[0]
+        form.value = res.content[0];
         // if (res.success) {
         stopsForm.value.result = "OK";
-        // }
-      }
-    );
+      });
+    } else {
+      badForm.value.containerName = barCodeData;
+      badVisible.value = true;
+      QueryDefectCode(stopsForm.value.containerName).then((res: any) => {
+        //   console.log(res);
+        badheadForm.value.MfgOrderName = res.content.MfgOrderName;
+        badheadForm.value.ProductName = res.content.ProductName;
+        badheadForm.value.ProductDesc = res.content.ProductDesc;
+        badheadForm.value.Qty = res.content.Qty;
+        badheadForm.value.PlannedstartDate = res.content.PlannedstartDate;
+        badheadForm.value.PlannedCompletionDate =
+          res.content.PlannedCompletionDate;
+        BadtableData.value = res.content.defectCode;
+      });
+    }
   }
   barCode.value = "";
 };
@@ -325,6 +533,7 @@ const handleCurrentChange = (val: any) => {
 
 const getScreenHeight = () => {
   nextTick(() => {
+    leftBoxH.value = window.innerHeight - 155;
     tableHeight.value = window.innerHeight - 360;
   });
 };

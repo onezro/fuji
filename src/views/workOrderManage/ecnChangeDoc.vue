@@ -30,6 +30,7 @@
                 type="daterange"
                 range-separator="-"
                 style="width: 240px"
+                :clearable="false"
               />
             </el-form-item>
             <!-- <el-form-item label="面号" class="mb-2">
@@ -79,39 +80,43 @@
         size="small"
         :inline="true"
       >
-        <el-form-item label="ECN编码" prop="name" class="mb-[5px]">
-          <el-input v-model="addForm.ECN_NUMBER" placeholder="请输入" disabled />
-        </el-form-item>
-        <el-form-item label="ECN类型" prop="zone" class="mb-[5px]">
-          <el-input v-model="addForm.ECNType" placeholder="请输入" disabled />
-        </el-form-item>
-        <el-form-item label="客户名称" prop="time" class="mb-[5px]">
-          <el-input v-model="addForm.TGIECOAttribute1" placeholder="请输入"  disabled/>
-        </el-form-item>
-        <el-form-item label="更改时间" prop="time" class="mb-[5px]">
-          <el-input v-model="addForm.modified" placeholder="请输入" disabled/>
-        </el-form-item>
-        <el-form-item label="ECN变更所处阶段" prop="time" class="mb-[5px]">
-          <el-input v-model="addForm.TGIECOAttribute7" placeholder="请输入" disabled/>
-        </el-form-item>
-        <!-- <el-form-item label="切换方式" prop="time" class="mb-[5px]">
-          <el-input v-model="addForm.number" placeholder="请输入" />
-        </el-form-item>
-        <el-form-item label="变更时间点" prop="time" class="mb-[5px]">
-          <el-input v-model="addForm.number" placeholder="请输入" />
-        </el-form-item> -->
-        <el-form-item label="申请人" prop="time" class="mb-[5px]">
-          <el-input v-model="addForm.Owner" placeholder="请输入" disabled/>
-        </el-form-item>
-        <el-form-item label="受影响的项目和产品" prop="time" class="mb-[5px]">
+        <el-form-item label="ECN编码" prop="ECN_NUMBER" class="mb-[5px]">
           <el-input
-            v-model="addForm.TGIECOAttribute8"
-            style="width: 600px"
+            v-model="addForm.ECN_NUMBER"
             placeholder="请输入"
             disabled
           />
         </el-form-item>
-        <el-form-item label="变更原因" prop="time" class="mb-[5px]">
+        <el-form-item label="ECN类型" prop="ECNType" class="mb-[5px]">
+          <el-input v-model="addForm.ECNType" placeholder="请输入" disabled />
+        </el-form-item>
+        <el-form-item label="客户名称" prop="TGIECOAttribute1" class="mb-[5px]">
+          <el-input
+            v-model="addForm.TGIECOAttribute1"
+            placeholder="请输入"
+            disabled
+          />
+        </el-form-item>
+        <el-form-item label="更改时间" prop="modified" class="mb-[5px]">
+          <el-input v-model="addForm.modified" placeholder="请输入" disabled />
+        </el-form-item>
+        <el-form-item label="变更所处阶段" prop="TGIECOAttribute7" class="mb-[5px]">
+          <el-input
+            v-model="addForm.TGIECOAttribute7"
+            placeholder="请输入"
+            disabled
+          />
+        </el-form-item>
+        <el-form-item label="切换方式" prop="BicvAddTGIECOAttribute3" class="mb-[5px]">
+          <el-input v-model="addForm.BicvAddTGIECOAttribute3" placeholder="请输入" disabled/>
+        </el-form-item>
+        <el-form-item label="变更时间点" prop="BicvAddTGIECOAttribute4" class="mb-[5px]">
+          <el-input v-model="addForm.BicvAddTGIECOAttribute4" placeholder="请输入" disabled />
+        </el-form-item>
+        <el-form-item label="申请人" prop="Owner" class="mb-[5px]">
+          <el-input v-model="addForm.Owner" placeholder="请输入" disabled />
+        </el-form-item>
+        <el-form-item label="变更原因" prop="BicvECNChangeReason" class="mb-[5px]">
           <el-input
             v-model="addForm.BicvECNChangeReason"
             style="width: 600px"
@@ -119,12 +124,22 @@
             disabled
           />
         </el-form-item>
-        <el-form-item label="变更原因详述" prop="time" class="mb-[5px]">
+        <el-form-item label="受影响项目/产品" prop="TGIECOAttribute8" class="mb-[5px]">
+          <el-input
+            v-model="addForm.TGIECOAttribute8"
+            style="width: 600px"
+            placeholder="请输入"
+            disabled
+          />
+        </el-form-item>
+    
+        <el-form-item label="变更原因详述" prop="TGIECOAttribute4" class="mb-[5px]">
           <el-input
             v-model="addForm.TGIECOAttribute4"
             style="width: 600px"
             placeholder="请输入"
             disabled
+            type="textarea"
           />
         </el-form-item>
       </el-form>
@@ -170,15 +185,28 @@ const searchDate = ref([]);
 const formRef = ref();
 const detailsVisible = ref(false);
 const addForm = ref({
-    ECN_NUMBER: "",
-    ECNType:'',
-    TGIECOAttribute1:'',
-    modified:'',
-    TGIECOAttribute7:'',
-    Owner:'',
-    TGIECOAttribute8:'',
-    BicvECNChangeReason:'',
-    TGIECOAttribute4:''
+  ECN_NUMBER: "",
+  ECNType: "",
+  TGIECOAttribute1: "",
+  modified: "",
+  TGIECOAttribute7: "",
+  Owner: "",
+  TGIECOAttribute8: "",
+  BicvECNChangeReason: "",
+  TGIECOAttribute4: "",
+  id: 1,
+  P_IFACE_CODE: "",
+  P_BATCH_NUMBER: "",
+  ONLY_CHECK_FLAG: "",
+  BATCH_NUMBER: "",
+  ECN_NUM: null,
+  ORGANIZATION_CODE: "",
+  CHANGE_ORDER_TYPE: "",
+  DESCRIPTION: "",
+  TGIECOAttribute3: "",
+  BicvAddTGIECOAttribute3: "",
+  BicvAddTGIECOAttribute4: "",
+  CREATETIME: null,
 });
 const searchName = ref("");
 const tableData = ref([]);
@@ -186,12 +214,12 @@ const pageObj = ref({
   pageSize: 50,
   currentPage: 1,
 });
-const editSubmit = (row:any) => {
+const editSubmit = (row: any) => {
   detailsVisible.value = true;
-  addForm.value={...row}
-  GetECNOrderitem(row.id).then((res:any)=>{
-    detailsData.value=res.content
-  })
+  addForm.value = { ...row };
+  GetECNOrderitem(row.id).then((res: any) => {
+    detailsData.value = res.content;
+  });
 };
 const columnData = reactive([
   {
@@ -227,42 +255,64 @@ const columnData = reactive([
     min: true,
     align: "1",
   },
+
+  //   {
+  //     text: true,
+  //     prop: "TGIECOAttribute7",
+  //     label: "变更所处阶段",
+  //     width: "",
+  //     min: true,
+  //     align: "1",
+  //   },
+  //   {
+  //     text: true,
+  //     prop: "BicvAddTGlECOAttribute3",
+  //     label: "切换方式",
+  //     width: "",
+  //     min: true,
+  //     align: "1",
+  //   },
+  //   {
+  //     text: true,
+  //     prop: "BicvAddTGlECOAttribute4",
+  //     label: "变更切换时间点",
+  //     width: "",
+  //     min: true,
+  //     align: "1",
+  //   },
+
   {
-    text: true,
-    prop: "modified",
-    label: "更改时间",
+    text: false,
+    prop: "ONLY_CHECK_FLAG",
+    label: "是否校验",
     width: "",
     min: true,
-    align: "1",
+    align: "center",
+    tag: true,
+    tagType: "number",
+    tagItem: [
+      { text: "校验", type: "info", number: "Y" },
+      { text: "正式发送", type: "success", number: "N" },
+    ],
+  },
+  {
+    // text: true,
+    prop: "CHANGE_ORDER_TYPE",
+    label: "类型",
+    width: "85",
+    min: true,
+    align: "center",
+    tag: true,
+    tagType: "number",
+    tagItem: [
+      { text: "立即切换", type: "primary", number: 1 },
+      { text: "用完切换", type: "warning", number: 2 },
+    ],
   },
   {
     text: true,
-    prop: "TGIECOAttribute7",
-    label: "ECN变更所处阶段",
-    width: "",
-    min: true,
-    align: "1",
-  },
-  {
-    text: true,
-    prop: "BicvAddTGlECOAttribute3",
-    label: "切换方式",
-    width: "",
-    min: true,
-    align: "1",
-  },
-  {
-    text: true,
-    prop: "BicvAddTGlECOAttribute4",
-    label: "变更切换时间点",
-    width: "",
-    min: true,
-    align: "1",
-  },
-  {
-    text: true,
-    prop: "Owner",
-    label: "申请人",
+    prop: "BicvECNChangeReason",
+    label: "变更原因",
     width: "",
     min: true,
     align: "1",
@@ -275,22 +325,31 @@ const columnData = reactive([
     min: true,
     align: "1",
   },
+
   {
     text: true,
-    prop: "BicvECNChangeReason",
-    label: "变更原因",
+    prop: "Owner",
+    label: "申请人",
     width: "",
     min: true,
     align: "1",
   },
   {
     text: true,
-    prop: "TGIECOAttribute4",
-    label: "变更详述",
+    prop: "modified",
+    label: "更改时间",
     width: "",
     min: true,
     align: "1",
   },
+  //   {
+  //     text: true,
+  //     prop: "TGIECOAttribute4",
+  //     label: "变更详述",
+  //     width: "",
+  //     min: true,
+  //     align: "1",
+  //   },
   {
     isOperation: true,
     label: "明细",
@@ -364,39 +423,39 @@ const detailsColumn = ref([
     min: true,
     align: "1",
   },
-//   {
-//     text: true,
-//     prop: "MaterialName",
-//     label: "计量单位代码",
-//     width: "",
-//     min: true,
-//     align: "1",
-//   },
+  //   {
+  //     text: true,
+  //     prop: "MaterialName",
+  //     label: "计量单位代码",
+  //     width: "",
+  //     min: true,
+  //     align: "1",
+  //   },
 
-  {
-    text: true,
-    prop: "ITEM_NUM",
-    label: "物料序号",
-    width: "",
-    min: true,
-    align: "1",
-  },
+  //   {
+  //     text: true,
+  //     prop: "ITEM_NUM",
+  //     label: "物料序号",
+  //     width: "",
+  //     min: true,
+  //     align: "1",
+  //   },
   {
     text: true,
     prop: "OPERATION_SEQ_NUM",
-    label: "工序名称",
+    label: "工序",
     width: "",
     min: true,
     align: "1",
   },
-//   {
-//     text: true,
-//     prop: "MaterialName",
-//     label: "基准",
-//     width: "",
-//     min: true,
-//     align: "1",
-//   },
+  //   {
+  //     text: true,
+  //     prop: "MaterialName",
+  //     label: "基准",
+  //     width: "",
+  //     min: true,
+  //     align: "1",
+  //   },
   {
     text: true,
     prop: "COMPONENT_YIELD_FACTOR",
@@ -480,14 +539,14 @@ onBeforeMount(() => {
 });
 onMounted(() => {
   window.addEventListener("resize", getScreenHeight);
-  getData()
+  getData();
 });
 onBeforeUnmount(() => {
   window.addEventListener("resize", getScreenHeight);
 });
 
 const getData = () => {
-    console.log(formData.value);
+  // console.log(formData.value);
   GetECNorder(formData.value).then((res: any) => {
     tableData.value = res.content;
     // console.log(res.content);
@@ -496,7 +555,8 @@ const getData = () => {
 const restData = () => {
   searchDate.value = [];
   formRef.value.resetFields();
-  console.log(formData.value);
+  //   console.log(formData.value);
+  getData();
 };
 
 const detailsSizeChange = (val: any) => {
