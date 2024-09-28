@@ -6,7 +6,7 @@
           >添加</el-button
         >
         <div class="flex">
-          <el-input
+          <!-- <el-input
             v-model="inputValue"
             style="width: 240px"
             placeholder="请输入"
@@ -14,7 +14,10 @@
           ></el-input>
           <el-button class="ml-3" type="primary" @click="serachData"
             >查询</el-button
-          >
+          > -->
+          <el-input v-model="inputValue" placeholder="请输入">
+                        <template #append>
+                            <el-button type="primary" icon="Search" @click="serachData"></el-button> </template></el-input>
         </div>
       </div>
       <!-- <table-tem
@@ -37,15 +40,25 @@
         center stripe
       >
       
-      <el-table-column prop="OutstockNo" align="center" label="出库单号"> </el-table-column>
-      <el-table-column prop="Type" align="center" label="出库类型"> </el-table-column>
-      <el-table-column prop="LendBy" align="center" label="借出人"> </el-table-column>
-      <el-table-column prop="Department" align="center" label="部门"> </el-table-column>
-      <el-table-column prop="LendOn" align="center" label="借出时间"> </el-table-column>
-      <el-table-column prop="DueDate" align="center" label="到期日期"> </el-table-column>
-      <el-table-column prop="LendReason" align="center" label="借出原因"> </el-table-column>
-      <el-table-column prop="ReturnDate" align="center" label="归还日期"> </el-table-column>
-      <el-table-column prop="ReturnDate" align="center" label="状态">
+      <el-table-column prop="Type" align="center" label="出库类型" :min-width="flexColumnWidth('出库类型', 'Type')">
+        <template #default="scope">
+          <div v-if="scope.row.Type === '0'">
+            <div>领用出库</div>
+          </div>
+          <div v-if="scope.row.Type === '1'">
+            <div>借出出库</div>
+          </div>
+        </template>
+      </el-table-column>
+      <el-table-column prop="OutstockNo" align="center" label="出库单号" :min-width="flexColumnWidth('出库单号', 'OutstockNo')"> </el-table-column>
+      <!-- <el-table-column prop="Type" align="center" label="出库类型"> </el-table-column> -->
+      <el-table-column prop="LendBy" align="center" label="借出人" :min-width="flexColumnWidth('借出人', 'LendBy')"> </el-table-column>
+      <el-table-column prop="Department" align="center" label="部门" :min-width="flexColumnWidth('部门', 'Department')"> </el-table-column>
+      <el-table-column prop="LendOn" align="center" label="借出时间" :min-width="flexColumnWidth('借出时间', 'LendOn')"> </el-table-column>
+      <el-table-column prop="DueDate" align="center" label="到期日期" :min-width="flexColumnWidth('到期日期', 'DueDate')"> </el-table-column>
+      <el-table-column prop="LendReason" align="center" label="借出原因" :min-width="flexColumnWidth('借出原因', 'LendReason')"> </el-table-column>
+      <el-table-column prop="ReturnDate" align="center" label="归还日期" :min-width="flexColumnWidth('归还日期', 'ReturnDate')"> </el-table-column>
+      <el-table-column prop="Status" align="center" label="状态">
         <template #default="scope">
           <div v-if="scope.row.Status === 0">
             <el-tag type="info">待出库</el-tag>
@@ -58,12 +71,12 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column prop="CreatedBy" align="center" label="创建人"> </el-table-column>
-      <el-table-column prop="CreatedOn" align="center" label="创建时间"> </el-table-column>
-      <el-table-column prop="Remark" align="center" label="备注"> </el-table-column>
-      <el-table-column prop="ReturnDate" align="center"  label="操作" width="240">
+      <el-table-column prop="CreatedBy" align="center" label="创建人" :min-width="flexColumnWidth('创建人', 'CreatedBy')"> </el-table-column>
+      <el-table-column prop="CreatedOn" align="center" label="创建时间" :min-width="flexColumnWidth('创建时间', 'CreatedOn')"> </el-table-column>
+      <el-table-column prop="Remark" align="center" label="备注" :min-width="flexColumnWidth('备注', 'Remark')"> </el-table-column>
+      <el-table-column prop="ReturnDate" fixed="right" align="center"  label="操作" width="200">
         <template #default="scope"> 
-          <div class="w-full flex items-center justify-around">
+          <div class="">
           <el-tooltip content="编辑" placement="top">
             <el-button type="primary" icon="EditPen" size="small" @click="editSubmit(scope.row)"
             :disabled="scope.row.Status !== 0"></el-button>
@@ -550,6 +563,7 @@ const clearForm = () => {
 const inFormClose = () => {
   // inFormRef.value.resetFields();
   // InVisible.value = false;
+  LedgerVisible.value = false;
   inForm.value.CreatedBy = loginName;
 };
 
@@ -1095,6 +1109,41 @@ const getScreenHeight = () => {
   nextTick(() => {
     tableHeight.value = window.innerHeight - 205;
   });
+};
+
+//el-table自动计算宽度
+const flexColumnWidth = (label: any, prop: any) => {
+  const arr = tableData1?.value.map((x: { [x: string]: any }) => x[prop]);
+  arr.push(label); // 把每列的表头也加进去算
+  return getMaxLength(arr) + 25 + "px";
+};
+
+const getMaxLength = (arr: any) => {
+  return arr.reduce((acc: any, item: any) => {
+    if (item) {
+      const calcLen = getTextWidth(item);
+
+      if (acc < calcLen) {
+        acc = calcLen;
+      }
+    }
+    return acc;
+  }, 0);
+};
+const getTextWidth = (str: string) => {
+  let width = 0;
+  const html = document.createElement("span");
+  html.style.cssText = `padding: 0; margin: 0; border: 0; line-height: 1; font-size: ${13}px; font-family: Arial, sans-serif;`;
+  html.innerText = str; // 去除字符串前后的空白字符
+  document.body?.appendChild(html);
+
+  const spanElement = html; // 无需再次查询，直接使用创建的元素
+  if (spanElement) {
+    width = spanElement.offsetWidth;
+    spanElement.remove();
+  }
+  // console.log(width);
+  return width;
 };
 </script>
 

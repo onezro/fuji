@@ -8,7 +8,7 @@
           >添加</el-button
         >
         <div class="flex">
-          <el-input
+          <!-- <el-input
             v-model="inputValue"
             style="width: 240px"
             placeholder="请输入"
@@ -16,7 +16,10 @@
           ></el-input>
           <el-button class="ml-3" type="primary" @click="serachData"
             >查询</el-button
-          >
+          > -->
+          <el-input v-model="inputValue" placeholder="请输入">
+                        <template #append>
+                            <el-button type="primary" icon="Search" @click="serachData"></el-button> </template></el-input>
         </div>
       </div>
       <!-- <table-tem
@@ -39,22 +42,22 @@
         center stripe
       >
       
-      <el-table-column prop="InstockNo" align="center" label="入库单号"> </el-table-column>
-      <el-table-column prop="Type" align="center" label="入库类型">
+      <el-table-column prop="Type" align="center" label="入库类型" :min-width="flexColumnWidth('入库类型', 'Type')">
         <template #default="scope">
           <div v-if="scope.row.Type === '0'">
-            <el-tag type="primary">采购入库</el-tag>
+            <div>采购入库</div>
           </div>
           <div v-if="scope.row.Type === '1'">
-            <el-tag type="success">归还入库</el-tag>
+            <div>归还入库</div>
           </div>
           <div v-if="scope.row.Type === '2'">
-            <el-tag type="warning">维修入库</el-tag>
+            <div>维修入库</div>
           </div>
         </template>
       </el-table-column>
-      <el-table-column prop="PurchaseNo" align="center" label="采购单号"> </el-table-column>
-      <el-table-column prop="OutstockNo" align="center" label="归还单号"> </el-table-column>
+      <el-table-column prop="InstockNo" align="center" label="入库单号" :min-width="flexColumnWidth('入库单号', 'InstockNo')"> </el-table-column>
+      <el-table-column prop="PurchaseNo" align="center" label="采购单号" :min-width="flexColumnWidth('采购单号', 'PurchaseNo')"> </el-table-column>
+      <el-table-column prop="OutstockNo" align="center" label="出库单号" :min-width="flexColumnWidth('出库单号', 'OutstockNo')"> </el-table-column>
       <el-table-column prop="ReturnDate" align="center" label="状态">
         <template #default="scope">
           <div v-if="scope.row.Status === 0">
@@ -68,14 +71,14 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column prop="LendID" align="center" label="借出编号"> </el-table-column>
-      <el-table-column prop="ReturnBy" align="center" label="归还人"> </el-table-column>
-      <el-table-column prop="CreatedBy" align="center" label="创建人"> </el-table-column>
-      <el-table-column prop="CreatedOn" align="center" label="创建时间"> </el-table-column>
-      <el-table-column prop="Remark" align="center" label="备注"> </el-table-column>
-      <el-table-column prop="ReturnDate" align="center"  label="操作" width="240">
+      <!-- <el-table-column prop="LendID" align="center" label="借出编号"> </el-table-column> -->
+      <el-table-column prop="ReturnBy" align="center" label="归还人" :min-width="flexColumnWidth('归还人', 'ReturnBy')"> </el-table-column>
+      <el-table-column prop="CreatedBy" align="center" label="创建人" :min-width="flexColumnWidth('创建人', 'CreatedBy')"> </el-table-column>
+      <el-table-column prop="CreatedOn" align="center" label="创建时间" :min-width="flexColumnWidth('创建时间', 'CreatedOn')"> </el-table-column>
+      <el-table-column prop="Remark" align="center" label="备注" :min-width="flexColumnWidth('备注', 'Remark')"> </el-table-column>
+      <el-table-column prop="ReturnDate" fixed="right" align="center"  label="操作" width="200">
         <template #default="scope"> 
-          <div class="w-full flex items-center justify-around">
+          <div class="w-full">
           <el-tooltip content="编辑" placement="top">
             <el-button type="primary" icon="EditPen" size="small" @click="editSubmit(scope.row)"
             :disabled="scope.row.Status !== 0"></el-button>
@@ -86,7 +89,7 @@
           </el-tooltip>
           <el-tooltip content="开始入库" placement="top">
             <el-button type="warning" icon="VideoPlay" color="#409EFF" style="color: #fff" size="small" @click="showInForm(scope.row)"
-            :disabled="scope.row.Status === 2"></el-button>
+            :disabled="scope.row.Status !== 0"></el-button>
           </el-tooltip>
           <el-tooltip content="完成入库" placement="top">
             <el-button type="success" icon="CircleCheck" size="small" @click="inPartSubmit(scope.row)"
@@ -336,7 +339,7 @@
             :disabled="inFormType !== '0'"
           />
         </el-form-item>
-        <el-form-item label="库存" prop="StorageLocation">
+        <el-form-item label="库存位置" prop="StorageLocation">
           <el-input
             v-model="inForm.StorageLocation"
             style="width: 250px"
@@ -920,6 +923,43 @@ const getScreenHeight = () => {
   nextTick(() => {
     tableHeight.value = window.innerHeight - 205;
   });
+};
+
+
+
+//el-table自动计算宽度
+const flexColumnWidth = (label: any, prop: any) => {
+  const arr = tableData1?.value.map((x: { [x: string]: any }) => x[prop]);
+  arr.push(label); // 把每列的表头也加进去算
+  return getMaxLength(arr) + 25 + "px";
+};
+
+const getMaxLength = (arr: any) => {
+  return arr.reduce((acc: any, item: any) => {
+    if (item) {
+      const calcLen = getTextWidth(item);
+
+      if (acc < calcLen) {
+        acc = calcLen;
+      }
+    }
+    return acc;
+  }, 0);
+};
+const getTextWidth = (str: string) => {
+  let width = 0;
+  const html = document.createElement("span");
+  html.style.cssText = `padding: 0; margin: 0; border: 0; line-height: 1; font-size: ${13}px; font-family: Arial, sans-serif;`;
+  html.innerText = str; // 去除字符串前后的空白字符
+  document.body?.appendChild(html);
+
+  const spanElement = html; // 无需再次查询，直接使用创建的元素
+  if (spanElement) {
+    width = spanElement.offsetWidth;
+    spanElement.remove();
+  }
+  // console.log(width);
+  return width;
 };
 </script>
 

@@ -6,14 +6,17 @@
             >添加</el-button
           > -->
           <div class="flex">
-            <el-input
+            <!-- <el-input
               v-model="inputValue"
               style="width: 240px"
               placeholder="请输入"
             ></el-input>
             <el-button class="ml-3" type="primary" @click=""
               >查询</el-button
-            >
+            > -->
+          <el-input v-model="inputValue" placeholder="请输入">
+                        <template #append>
+                            <el-button type="primary" icon="Search" @click="getData"></el-button> </template></el-input>
           </div>
         </div>
         <table-tem

@@ -8,7 +8,7 @@
             >添加</el-button
           > -->
         <div class="flex">
-          <el-input
+          <!-- <el-input
             v-model="inputValue"
             style="width: 240px"
             placeholder="请输入"
@@ -16,7 +16,10 @@
           ></el-input>
           <el-button class="ml-3" type="primary" @click="serachData"
             >查询</el-button
-          >
+          > -->
+          <el-input v-model="inputValue" placeholder="请输入">
+                        <template #append>
+                            <el-button type="primary" icon="Search" @click="serachData"></el-button> </template></el-input>
         </div>
       </div>
       <table-tem
@@ -473,7 +476,7 @@ const columnData = reactive([
   {
     text: true,
     prop: "PartNumber",
-    label: "备件编号",
+    label: "备件名称",
     width: "",
     min: true,
     align: "center",
