@@ -291,7 +291,7 @@ const orderOnlineVisible = ref(false);
 const orderOnlineForm = ref({
   OrderNumber: "", //工单号
   Side: "", //AB面
-  LineName: "", //线体
+  LineNumber: "", //线体
   LineNameDesc: "",
   shelf_ids: '', //货位
   shelf_ids_list: [],
@@ -575,7 +575,7 @@ const openOrderOnline = () => {
   orderOnlineVisible.value = true;
   let data = cloneDeep(onlineData.value);
   orderOnlineForm.value.OrderNumber = data[0].MfgOrderName;
-  orderOnlineForm.value.LineName = data[0].MfgLineName;
+  orderOnlineForm.value.LineNumber = data[0].MfgLineName;
   orderOnlineForm.value.LineNameDesc = data[0].MfgLineDesc;
   findShelf().then((res: any) => {
     shelfList.value = res.content;
