@@ -1,7 +1,7 @@
 <template>
   <div class="p-2">
     <el-card shadow="always" :body-style="{ padding: '8px' }">
-      <div class="pb-2 flex justify-between">
+      <div class="flex justify-between">
         <div class="flex">
           <!-- <el-input
             v-model="inputValue"
@@ -9,7 +9,7 @@
             placeholder="请输入"
             clearable
           ></el-input> -->
-          <el-form ref="formRef" class="form" :inline="true" label-width="auto">
+          <el-form ref="formRef" class="form" :inline="true" label-width="">
             <el-form-item label="时间" class="mb-2">
               <el-date-picker
                 v-model="dateValue"
@@ -96,6 +96,11 @@
           label="入库单号"
           :min-width="flexColumnWidth('入库单号', 'InstockNo')"
         >
+          <template #default="scope">
+            <div @click="findDetail(scope.row.Chkin_sht)">
+              {{ scope.row.InstockNo }}
+            </div>
+          </template>
         </el-table-column>
         <el-table-column
           prop="PurchaseNo"
@@ -119,7 +124,7 @@
           :min-width="flexColumnWidth('归还人', 'ReturnBy')"
         >
         </el-table-column>
-        <el-table-column prop="ReturnDate" align="center" label="状态">
+        <el-table-column prop="ReturnDate" align="left" label="状态">
           <template #default="scope">
             <div v-if="scope.row.Status === 0">
               <el-tag type="info">待入库</el-tag>
@@ -212,7 +217,7 @@
           @current-change="handleCurrentChange"
           :current-page="pageObj.currentPage"
           :page-size="pageObj.pageSize"
-          :page-sizes="[5, 10, 20, 50, 100]"
+          :page-sizes="[10, 30, 50, 100, 150]"
           layout="total,sizes, prev, pager, next, jumper"
           :total="tableData.length"
         >
@@ -461,6 +466,73 @@
         </span>
       </template>
     </el-dialog>
+    <el-dialog
+      align-center
+      :append-to-body="true"
+      :close-on-click-modal="false"
+      v-model="detailVisible"
+      @close="inFormClose"
+      title="详细信息"
+      width="60%"
+    >
+      <el-form
+        ref="inFormRef"
+        :model="inForm"
+        label-position="left"
+        label-width="100"
+        :inline="true"
+      >
+        <el-form-item label="备件名称" prop="PartName">
+          <el-input v-model="detailForm.PartName" style="width: 250px" />
+        </el-form-item>
+        <el-form-item label="备件描述" prop="PartDesc">
+          <el-input v-model="detailForm.PartDesc" style="width: 250px" />
+        </el-form-item>
+        <el-form-item label="类型名称" prop="ClassName">
+          <el-input v-model="detailForm.ClassName" style="width: 250px" />
+        </el-form-item>
+        <el-form-item label="批次号" prop="ClassDesc">
+          <el-input v-model="detailForm.PartNumber" style="width: 250px" />
+        </el-form-item>
+        <el-form-item label="库存数量" prop="Qty">
+          <el-input v-model="detailForm.Qty" style="width: 250px" />
+        </el-form-item>
+        <el-form-item label="库存数量" prop="Qty">
+          <el-input v-model="detailForm.Qty" style="width: 250px" />
+        </el-form-item>
+        <el-form-item label="到期日期" prop="DueDate">
+          <el-input v-model="detailForm.DueDate" style="width: 250px" />
+        </el-form-item>
+        <el-form-item label="资产编号" prop="AssetNumber">
+          <el-input v-model="detailForm.AssetNumber" style="width: 250px" />
+        </el-form-item>
+        <el-form-item label="供应商" prop="Vendor">
+          <el-input v-model="detailForm.Vendor" style="width: 250px" />
+        </el-form-item>
+        <el-form-item label="制造商" prop="Manufacturer">
+          <el-input v-model="detailForm.Manufacturer" style="width: 250px" />
+        </el-form-item>
+        <el-form-item label="规格型号" prop="Specification">
+          <el-input v-model="detailForm.Specification" style="width: 250px" />
+        </el-form-item>
+        <el-form-item label="库存位置" prop="StorageLocation">
+          <el-input v-model="detailForm.StorageLocation" style="width: 250px" />
+        </el-form-item>
+        <el-form-item label="入库时间" prop="CreatedOn">
+          <el-input v-model="detailForm.CreatedOn" style="width: 250px" />
+        </el-form-item>
+        <el-form-item label="入库人" prop="CreatedBy">
+          <el-input v-model="detailForm.CreatedBy" style="width: 250px" />
+        </el-form-item>
+      </el-form>
+
+      <!-- <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="inFormClose()"> 取消 </el-button>
+          <el-button type="primary" @click="startPartIn"> 确定 </el-button>
+        </span>
+      </template> -->
+    </el-dialog>
   </div>
 </template>
 
@@ -476,6 +548,7 @@ import {
   StartPartsIn,
   EndPartsIn,
   GetPartsList,
+  findInParameter,
 } from "@/api/sparePartsApi";
 import { useUserStoreWithOut } from "@/stores/modules/user";
 import {
@@ -536,6 +609,23 @@ interface SearchFormTS {
   Type: string;
 }
 
+interface detailFormTS {
+  Qty: number;
+  PartNumber: string | null;
+  DueDate: string | null;
+  AssetNumber: string;
+  Vendor: string | null;
+  Manufacturer: string | null;
+  Specification: string | null;
+  StorageLocation: string | null;
+  CreatedOn: string;
+  CreatedBy: string;
+  PartName: string;
+  PartDesc: string;
+  ClassName: string;
+  ClassDesc: string;
+}
+
 //   const pageSize = ref(10);
 const currentPage = ref(1);
 const tableHeight = ref(0);
@@ -544,6 +634,7 @@ const InVisible = ref(false);
 const editVisible = ref(false);
 const dateValue = ref<any[]>([]);
 const deleteVisible = ref(false);
+const detailVisible = ref(false);
 const deleteChoice = ref("");
 const inFormRef = ref();
 const inFormType = ref("");
@@ -618,6 +709,23 @@ const searchForm = ref<SearchFormTS>({
   Type: "",
 });
 
+const detailForm = ref<detailFormTS>({
+  Qty: 0,
+  PartNumber: "",
+  DueDate: "",
+  AssetNumber: "",
+  Vendor: "",
+  Manufacturer: "",
+  Specification: "",
+  StorageLocation: "",
+  CreatedOn: "",
+  CreatedBy: "",
+  PartName: "",
+  PartDesc: "",
+  ClassName: "",
+  ClassDesc: "",
+});
+
 const editSubmit = (data: any) => {
   console.log(data.ReturnOn);
   EditForm.value.Chkin_sht = data.Chkin_sht;
@@ -636,25 +744,50 @@ interface toolType {
   Value: string;
 }
 
-// watch(
-//   () => inputValue.value,
-//   (newdata) => {
-//     // console.log(newdata);
-//     if (newdata == "") {
-//       tableData1.value = tableData.value;
-//     } else {
-//       tableData1.value = table1(newdata);
-//     }
-//   }
-// );
-// const table1 = (newdata: any) => {
-//   let searchName = newdata.toLowerCase()
-//   return tableData.value.filter((v: any) => {
-//     return Object.keys(v).some((key) => {
-//       return String(v[key]).toLowerCase().indexOf(searchName) > -1;
-//     });
-//   });
-// };
+const findDetail = (data: any) => {
+  findInParameter(data).then((res: any) => {
+    if (res && res.content && res.content.length > 0) {
+      detailVisible.value = true
+      const obj = res.content[0];
+      detailForm.value.Qty = obj.Qty;
+      detailForm.value.PartNumber = obj.PartNumber;
+      detailForm.value.AssetNumber = obj.AssetNumber;
+      detailForm.value.DueDate = obj.DueDate;
+      detailForm.value.Vendor = obj.Vendor;
+      detailForm.value.Manufacturer = obj.Manufacturer;
+      detailForm.value.Specification = obj.Specification;
+      detailForm.value.StorageLocation = obj.StorageLocation;
+      detailForm.value.CreatedOn = obj.CreatedOn;
+      detailForm.value.CreatedBy = obj.CreatedBy;
+      detailForm.value.PartName = obj.PartName;
+      detailForm.value.PartDesc = obj.PartDesc;
+      detailForm.value.ClassName = obj.ClassName;
+      detailForm.value.ClassDesc = obj.ClassDesc;
+    } else if (res.content.length === 0) {
+      ElNotification({
+        title: "未查询到此项详细信息或信息为空",
+        // message: "取消操作",
+        type: "warning",
+      });
+      detailForm.value = {
+        Qty: 0,
+        PartNumber: "",
+        DueDate: "",
+        AssetNumber: "",
+        Vendor: "",
+        Manufacturer: "",
+        Specification: "",
+        StorageLocation: "",
+        CreatedOn: "",
+        CreatedBy: "",
+        PartName: "",
+        PartDesc: "",
+        ClassName: "",
+        ClassDesc: "",
+      };
+    }
+  });
+};
 
 const MaterialNameList = ref<toolType[]>([]);
 

@@ -1,7 +1,7 @@
 <template>
   <div class="p-2">
     <el-card shadow="always" :body-style="{ padding: '8px' }">
-      <div class="pb-2 flex justify-between">
+      <div class="flex justify-between">
         <!-- <el-button type="primary" @click="clearForm(),addVisible = true"
             >添加</el-button
           > -->
@@ -11,7 +11,7 @@
               style="width: 240px"
               placeholder="请输入"
             ></el-input> -->
-          <el-form ref="formRef" class="form" :inline="true" label-width="auto">
+          <el-form ref="formRef" class="form" :inline="true" label-width="">
             <el-form-item label="时间" class="mb-2">
               <el-date-picker
                 v-model="dateValue"
@@ -282,6 +282,14 @@ const searchData = () => {
 };
 
 const columnData = reactive([
+  {
+    text: true,
+    prop: "PartName",
+    label: "备件名称",
+    width: "",
+    min: true,
+    align: "center",
+  },
   {
     text: true,
     prop: "ClassName",
