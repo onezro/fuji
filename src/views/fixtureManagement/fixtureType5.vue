@@ -24,24 +24,25 @@
               <el-input
                 v-model="searchForm.InstockNo"
                 style="width: 240px"
-                placeholder="请输入"
+                placeholder=""
                 clearable
               ></el-input>
             </el-form-item>
             <el-form-item label="入库类型" class="mb-2">
-              
-          <el-select
-            v-model="searchForm.Type"
-            filterable
-            style="width: 150px"
-          >
-            <el-option
-              v-for="(item, index) in typeList"
-              :key="index"
-              :label="item"
-              :value="`${index}`"
-            />
-          </el-select>
+              <el-select
+                v-model="searchForm.Type"
+                filterable
+                style="width: 150px"
+                clearable
+                placeholder=""
+              >
+                <el-option
+                  v-for="(item, index) in typeList"
+                  :key="index"
+                  :label="item"
+                  :value="`${index}`"
+                />
+              </el-select>
             </el-form-item>
             <el-form-item label="" class="mb-2">
               <el-button class="ml-3" type="primary" @click="searchData"
@@ -56,7 +57,7 @@
         <el-button
           type="primary"
           @click="clearForm(), (addVisible = true), GetList()"
-          >添加</el-button
+          >新建入库单</el-button
         >
       </div>
       <!-- <table-tem
@@ -70,71 +71,138 @@
         @handleCurrentChange="handleCurrentChange"
       ></table-tem> -->
       <el-table
-      border
-      size="small"
+        border
+        size="small"
         :data="
-          tableData.slice((pageObj.currentPage - 1) * pageObj.pageSize, pageObj.currentPage * pageObj.pageSize)
+          tableData.slice(
+            (pageObj.currentPage - 1) * pageObj.pageSize,
+            pageObj.currentPage * pageObj.pageSize
+          )
         "
         :height="tableHeight"
-        center stripe
+        center
+        stripe
       >
-      
-      <el-table-column prop="Type" align="center" label="入库类型" :min-width="flexColumnWidth('入库类型', 'Type')">
-        <template #default="scope">
-          <div v-if="scope.row.Type === '0'">
-            <div>采购入库</div>
-          </div>
-          <div v-if="scope.row.Type === '1'">
-            <div>归还入库</div>
-          </div>
-          <div v-if="scope.row.Type === '2'">
-            <div>维修入库</div>
-          </div>
-        </template>
-      </el-table-column>
-      <el-table-column prop="InstockNo" align="center" label="入库单号" :min-width="flexColumnWidth('入库单号', 'InstockNo')"> </el-table-column>
-      <el-table-column prop="PurchaseNo" align="center" label="采购单号" :min-width="flexColumnWidth('采购单号', 'PurchaseNo')"> </el-table-column>
-      <el-table-column prop="OutstockNo" align="center" label="出库单号" :min-width="flexColumnWidth('出库单号', 'OutstockNo')"> </el-table-column>
-      <!-- <el-table-column prop="LendID" align="center" label="借出编号"> </el-table-column> -->
-      <el-table-column prop="ReturnBy" align="center" label="归还人" :min-width="flexColumnWidth('归还人', 'ReturnBy')"> </el-table-column>
-      <el-table-column prop="ReturnDate" align="center" label="状态">
-        <template #default="scope">
-          <div v-if="scope.row.Status === 0">
-            <el-tag type="info">待入库</el-tag>
-          </div>
-          <div v-if="scope.row.Status === 1">
-            <el-tag type="primary">入库中</el-tag>
-          </div>
-          <div v-if="scope.row.Status === 2">
-            <el-tag type="success">已完成</el-tag>
-          </div>
-        </template>
-      </el-table-column>
-      <el-table-column prop="CreatedBy" align="center" label="创建人" :min-width="flexColumnWidth('创建人', 'CreatedBy')"> </el-table-column>
-      <el-table-column prop="CreatedOn" align="center" label="创建时间" :min-width="flexColumnWidth('创建时间', 'CreatedOn')"> </el-table-column>
-      <el-table-column prop="Remark" align="center" label="备注" :min-width="flexColumnWidth('备注', 'Remark')"> </el-table-column>
-      <el-table-column prop="ReturnDate" fixed="right" align="center"  label="操作" width="200">
-        <template #default="scope"> 
-          <div class="w-full">
-          <el-tooltip content="编辑" placement="top">
-            <el-button type="primary" icon="EditPen" size="small" @click="editSubmit(scope.row)"
-            :disabled="scope.row.Status !== 0"></el-button>
-          </el-tooltip>
-          <el-tooltip content="删除" placement="top">
-            <el-button type="danger" icon="Delete" size="small" @click="deleteSubmit(scope.row)"
-            :disabled="scope.row.Status !== 0"></el-button>
-          </el-tooltip>
-          <el-tooltip content="开始入库" placement="top">
-            <el-button type="warning" icon="VideoPlay" color="#409EFF" style="color: #fff" size="small" @click="showInForm(scope.row)"
-            :disabled="scope.row.Status !== 0"></el-button>
-          </el-tooltip>
-          <el-tooltip content="完成入库" placement="top">
-            <el-button type="success" icon="CircleCheck" size="small" @click="inPartSubmit(scope.row)"
-            :disabled="scope.row.Status !== 1"></el-button>
-          </el-tooltip>
-          </div>
-        </template>
-      </el-table-column>
+        <el-table-column
+          prop="TypeName"
+          align="center"
+          label="入库类型"
+          :min-width="flexColumnWidth('入库类型', 'TypeName')"
+        >
+        </el-table-column>
+        <el-table-column
+          prop="InstockNo"
+          align="center"
+          label="入库单号"
+          :min-width="flexColumnWidth('入库单号', 'InstockNo')"
+        >
+        </el-table-column>
+        <el-table-column
+          prop="PurchaseNo"
+          align="center"
+          label="采购单号"
+          :min-width="flexColumnWidth('采购单号', 'PurchaseNo')"
+        >
+        </el-table-column>
+        <el-table-column
+          prop="OutstockNo"
+          align="center"
+          label="出库单号"
+          :min-width="flexColumnWidth('出库单号', 'OutstockNo')"
+        >
+        </el-table-column>
+        <!-- <el-table-column prop="LendID" align="center" label="借出编号"> </el-table-column> -->
+        <el-table-column
+          prop="ReturnBy"
+          align="center"
+          label="归还人"
+          :min-width="flexColumnWidth('归还人', 'ReturnBy')"
+        >
+        </el-table-column>
+        <el-table-column prop="ReturnDate" align="center" label="状态">
+          <template #default="scope">
+            <div v-if="scope.row.Status === 0">
+              <el-tag type="info">待入库</el-tag>
+            </div>
+            <div v-if="scope.row.Status === 1">
+              <el-tag type="primary">入库中</el-tag>
+            </div>
+            <div v-if="scope.row.Status === 2">
+              <el-tag type="success">已完成</el-tag>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="CreatedBy"
+          align="center"
+          label="创建人"
+          :min-width="flexColumnWidth('创建人', 'CreatedBy')"
+        >
+        </el-table-column>
+        <el-table-column
+          prop="CreatedOn"
+          align="center"
+          label="创建时间"
+          :min-width="flexColumnWidth('创建时间', 'CreatedOn')"
+        >
+        </el-table-column>
+        <el-table-column
+          prop="Remark"
+          align="center"
+          label="备注"
+          :min-width="flexColumnWidth('备注', 'Remark')"
+        >
+        </el-table-column>
+        <el-table-column
+          prop="ReturnDate"
+          fixed="right"
+          align="center"
+          label="操作"
+          width="200"
+        >
+          <template #default="scope">
+            <div class="w-full">
+              <el-tooltip content="编辑" placement="top">
+                <el-button
+                  type="primary"
+                  icon="EditPen"
+                  size="small"
+                  @click="editSubmit(scope.row)"
+                  :disabled="scope.row.Status !== 0"
+                ></el-button>
+              </el-tooltip>
+              <el-tooltip content="删除" placement="top">
+                <el-button
+                  type="danger"
+                  icon="Delete"
+                  size="small"
+                  @click="deleteSubmit(scope.row)"
+                  :disabled="scope.row.Status !== 0"
+                ></el-button>
+              </el-tooltip>
+              <el-tooltip content="开始入库" placement="top">
+                <el-button
+                  type="warning"
+                  icon="VideoPlay"
+                  color="#409EFF"
+                  style="color: #fff"
+                  size="small"
+                  @click="showInForm(scope.row)"
+                  :disabled="scope.row.Status !== 0"
+                ></el-button>
+              </el-tooltip>
+              <el-tooltip content="完成入库" placement="top">
+                <el-button
+                  type="success"
+                  icon="CircleCheck"
+                  size="small"
+                  @click="inPartSubmit(scope.row)"
+                  :disabled="scope.row.Status !== 1"
+                ></el-button>
+              </el-tooltip>
+            </div>
+          </template>
+        </el-table-column>
       </el-table>
       <div class="mt-3">
         <el-pagination
@@ -223,7 +291,7 @@
       :close-on-click-modal="false"
       v-model="addVisible"
       @close=""
-      title="添加"
+      title="新建入库单"
       width="50%"
     >
       <el-form
@@ -547,7 +615,7 @@ const searchForm = ref<SearchFormTS>({
   InstockNo: "",
   StartDate: "",
   EndDate: "",
-  Type: ""
+  Type: "",
 });
 
 const editSubmit = (data: any) => {
@@ -946,7 +1014,7 @@ const columnData = reactive([
         label: "完成入库",
         icon: "CircleCheck",
         buttonClick: inPartSubmit,
-      }
+      },
     ],
   },
 ]);
@@ -974,8 +1042,6 @@ const getScreenHeight = () => {
     tableHeight.value = window.innerHeight - 205;
   });
 };
-
-
 
 //el-table自动计算宽度
 const flexColumnWidth = (label: any, prop: any) => {
