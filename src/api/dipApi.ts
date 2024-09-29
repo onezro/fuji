@@ -74,3 +74,40 @@ export function CWgStationMoveOut(data: any) {
         data,
     });
 }
+//目检过站
+export function InspectionStationMoveOut(data: any,result:any) {
+    return request({
+        url: "/api/inspection/InspectionStationMoveOut",
+        method: "post",
+        data,
+        params:{
+            status:result
+        }
+    });
+}
+//人工目检过站
+export function VIStationMoveOut(data: any) {
+    return request({
+        url: "/api/visualinspection/VIStationMoveOut",
+        method: "post",
+        data
+    });
+}
+//人工目检提交不良登记信息
+export function VIDefectProductRecord(data: any) {
+    return request({
+        url: "/api/visualinspection/VIDefectProductRecord",
+        method: "post",
+        data
+    });
+}
+//人工目检通过PCB条码查询不良原因
+export function QueryDefectCode(data: any) {
+    return request({
+        url: "/api/visualinspection/QueryDefectCode",
+        method: "post",
+        params: {
+            containerName: data
+        }
+    });
+}

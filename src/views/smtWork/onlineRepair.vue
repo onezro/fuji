@@ -53,12 +53,14 @@
           <div class="h-[30px] flex items-center text-base text-[#fff] bg-[#006487]">
             基本信息
           </div>
+
         </div>
 
         <div>
           <div class="h-[30px] flex items-center text-base text-[#fff] bg-[#006487]">
             不良列表
           </div>
+          
         </div>
         <div>
           <div class="h-[30px] flex items-center text-base text-[#fff] bg-[#006487]">
