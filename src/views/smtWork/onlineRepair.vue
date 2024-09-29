@@ -42,28 +42,56 @@
         </div>
       </div>
     </div>
-    <el-dialog v-model="badVisible" title="返修">
+    <el-dialog v-model="badVisible"  title="返修" width="70%" :append-to-body="true" :close-on-click-modal="false"
+    :close-on-press-escape="false" align-center>
       <div class="flex flex-col border-solid border-1 border-[#bdbdbd]">
-        <div class="">
-          <div class="h-[30px] flex items-center text-base text-[#fff] bg-[#006487]">
-            条码信息
-          </div>
-        </div>
+       
         <div>
-          <div class="h-[30px] flex items-center text-base text-[#fff] bg-[#006487]">
+          <div class="h-[30px] pl-3  flex items-center text-base text-[#fff] bg-[#006487]">
             基本信息
           </div>
-
+          <el-form ref="baseFormRef" :model="baseForm" label-width="auto" class="pt-[5px]"> 
+            <el-row>
+              <el-col :span="8">
+              <el-form-item label="PCB条码" class="mb-[5px] flex">
+              <el-input v-model="baseForm.ContainerName" style="width: 200px" disabled />
+            </el-form-item>
+          </el-col>
+              <el-col :span="11">
+                <el-form-item label="工单" class="mb-[5px] flex">
+                  <el-input v-model="baseForm.MfgOrderName" style="width: 200px" disabled />
+                </el-form-item>
+              </el-col>
+            </el-row>
+         
+            <el-row>
+             
+              <el-col :span="8">
+                <el-form-item class="mb-[5px]" label="产品编码">
+                  <el-input v-model="baseForm.ProductName" style="width: 200px" disabled /> </el-form-item></el-col>
+              <el-col :span="11">
+                <el-form-item class="mb-[5px]" label="产品描述">
+                  <el-input v-model="baseForm.Description" style="width: 320px" disabled />
+                </el-form-item>
+              </el-col>
+              <el-col :span="5">
+                <el-form-item class="mb-[5px]" label="数量">
+                  <el-input v-model="baseForm.Qty" style="width: 100px" disabled />
+                </el-form-item>
+              </el-col>
+            </el-row>
+            
+          </el-form>
         </div>
 
         <div>
-          <div class="h-[30px] flex items-center text-base text-[#fff] bg-[#006487]">
+          <div class="h-[30px] pl-3 flex items-center text-base text-[#fff] bg-[#006487]">
             不良列表
           </div>
           
         </div>
         <div>
-          <div class="h-[30px] flex items-center text-base text-[#fff] bg-[#006487]">
+          <div class="h-[30px] pl-3 flex items-center text-base text-[#fff] bg-[#006487]">
             返修工序
           </div>
         </div>
@@ -203,6 +231,13 @@ const boxHeight = ref(0);
 const inputFocus = ref(true);
 const isLoding = ref("");
 const badVisible = ref(false);
+const baseForm=ref({
+  ContainerName:'',
+  MfgOrderName:'',
+  ProductName:'',
+  Description:'',
+  Qty:''
+})
 
 onBeforeMount(() => {
   getScreenHeight();

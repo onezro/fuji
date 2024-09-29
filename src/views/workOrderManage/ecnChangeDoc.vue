@@ -8,7 +8,7 @@
             <el-form-item label="ECN编码" class="mb-2" prop="ECN_NUMBER">
               <el-input
                 v-model="formData.ECN_NUMBER"
-                placeholder="ECN编码"
+               
                 @clear="getData"
                 clearable
                 style="width: 180px"
@@ -17,7 +17,7 @@
             <el-form-item label="项目编码" class="mb-2" prop="TGIECOAttribute3">
               <el-input
                 v-model="formData.TGIECOAttribute3"
-                placeholder="项目编码"
+               
                 @clear="getData"
                 clearable
                 style="width: 180px"
