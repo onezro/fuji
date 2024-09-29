@@ -2,25 +2,63 @@
   <div class="p-2">
     <el-card shadow="always" :body-style="{ padding: '8px' }">
       <div class="pb-2 flex justify-between">
-        <el-button
-          type="primary"
-          @click="clearForm(), (addVisible = true), GetList()"
-          >添加</el-button
-        >
         <div class="flex">
           <!-- <el-input
             v-model="inputValue"
             style="width: 240px"
             placeholder="请输入"
             clearable
-          ></el-input>
-          <el-button class="ml-3" type="primary" @click="serachData"
-            >查询</el-button
-          > -->
-          <el-input v-model="inputValue" placeholder="请输入">
+          ></el-input> -->
+          <el-form ref="formRef" class="form" :inline="true" label-width="auto">
+            <el-form-item label="时间" class="mb-2">
+              <el-date-picker
+                v-model="dateValue"
+                type="daterange"
+                range-separator="到"
+                size=""
+                value-format="YYYY-MM-DD"
+                @change="dateChange"
+              />
+            </el-form-item>
+            <el-form-item label="入库单号" class="mb-2">
+              <el-input
+                v-model="searchForm.InstockNo"
+                style="width: 240px"
+                placeholder=""
+                clearable
+              ></el-input>
+            </el-form-item>
+            <el-form-item label="入库类型" class="mb-2">
+              <el-select
+                v-model="searchForm.Type"
+                filterable
+                style="width: 150px"
+                clearable
+                placeholder=""
+              >
+                <el-option
+                  v-for="(item, index) in typeList"
+                  :key="index"
+                  :label="item"
+                  :value="`${index}`"
+                />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="" class="mb-2">
+              <el-button class="ml-3" type="primary" @click="searchData"
+                >查询</el-button
+              >
+            </el-form-item>
+          </el-form>
+          <!-- <el-input v-model="inputValue" placeholder="请输入">
                         <template #append>
-                            <el-button type="primary" icon="Search" @click="serachData"></el-button> </template></el-input>
+                            <el-button type="primary" icon="Search" @click="serachData"></el-button> </template></el-input> -->
         </div>
+        <el-button
+          type="primary"
+          @click="clearForm(), (addVisible = true), GetList()"
+          >新建入库单</el-button
+        >
       </div>
       <!-- <table-tem
         size="small"
@@ -33,71 +71,138 @@
         @handleCurrentChange="handleCurrentChange"
       ></table-tem> -->
       <el-table
-      border
-      size="small"
+        border
+        size="small"
         :data="
-          tableData1.slice((pageObj.currentPage - 1) * pageObj.pageSize, pageObj.currentPage * pageObj.pageSize)
+          tableData.slice(
+            (pageObj.currentPage - 1) * pageObj.pageSize,
+            pageObj.currentPage * pageObj.pageSize
+          )
         "
         :height="tableHeight"
-        center stripe
+        center
+        stripe
       >
-      
-      <el-table-column prop="Type" align="center" label="入库类型" :min-width="flexColumnWidth('入库类型', 'Type')">
-        <template #default="scope">
-          <div v-if="scope.row.Type === '0'">
-            <div>采购入库</div>
-          </div>
-          <div v-if="scope.row.Type === '1'">
-            <div>归还入库</div>
-          </div>
-          <div v-if="scope.row.Type === '2'">
-            <div>维修入库</div>
-          </div>
-        </template>
-      </el-table-column>
-      <el-table-column prop="InstockNo" align="center" label="入库单号" :min-width="flexColumnWidth('入库单号', 'InstockNo')"> </el-table-column>
-      <el-table-column prop="PurchaseNo" align="center" label="采购单号" :min-width="flexColumnWidth('采购单号', 'PurchaseNo')"> </el-table-column>
-      <el-table-column prop="OutstockNo" align="center" label="出库单号" :min-width="flexColumnWidth('出库单号', 'OutstockNo')"> </el-table-column>
-      <el-table-column prop="ReturnDate" align="center" label="状态">
-        <template #default="scope">
-          <div v-if="scope.row.Status === 0">
-            <el-tag type="info">待入库</el-tag>
-          </div>
-          <div v-if="scope.row.Status === 1">
-            <el-tag type="primary">入库中</el-tag>
-          </div>
-          <div v-if="scope.row.Status === 2">
-            <el-tag type="success">已完成</el-tag>
-          </div>
-        </template>
-      </el-table-column>
-      <!-- <el-table-column prop="LendID" align="center" label="借出编号"> </el-table-column> -->
-      <el-table-column prop="ReturnBy" align="center" label="归还人" :min-width="flexColumnWidth('归还人', 'ReturnBy')"> </el-table-column>
-      <el-table-column prop="CreatedBy" align="center" label="创建人" :min-width="flexColumnWidth('创建人', 'CreatedBy')"> </el-table-column>
-      <el-table-column prop="CreatedOn" align="center" label="创建时间" :min-width="flexColumnWidth('创建时间', 'CreatedOn')"> </el-table-column>
-      <el-table-column prop="Remark" align="center" label="备注" :min-width="flexColumnWidth('备注', 'Remark')"> </el-table-column>
-      <el-table-column prop="ReturnDate" fixed="right" align="center"  label="操作" width="200">
-        <template #default="scope"> 
-          <div class="w-full">
-          <el-tooltip content="编辑" placement="top">
-            <el-button type="primary" icon="EditPen" size="small" @click="editSubmit(scope.row)"
-            :disabled="scope.row.Status !== 0"></el-button>
-          </el-tooltip>
-          <el-tooltip content="删除" placement="top">
-            <el-button type="danger" icon="Delete" size="small" @click="deleteSubmit(scope.row)"
-            :disabled="scope.row.Status !== 0"></el-button>
-          </el-tooltip>
-          <el-tooltip content="开始入库" placement="top">
-            <el-button type="warning" icon="VideoPlay" color="#409EFF" style="color: #fff" size="small" @click="showInForm(scope.row)"
-            :disabled="scope.row.Status !== 0"></el-button>
-          </el-tooltip>
-          <el-tooltip content="完成入库" placement="top">
-            <el-button type="success" icon="CircleCheck" size="small" @click="inPartSubmit(scope.row)"
-            :disabled="scope.row.Status !== 1"></el-button>
-          </el-tooltip>
-          </div>
-        </template>
-      </el-table-column>
+        <el-table-column
+          prop="TypeName"
+          align="center"
+          label="入库类型"
+          :min-width="flexColumnWidth('入库类型', 'TypeName')"
+        >
+        </el-table-column>
+        <el-table-column
+          prop="InstockNo"
+          align="center"
+          label="入库单号"
+          :min-width="flexColumnWidth('入库单号', 'InstockNo')"
+        >
+        </el-table-column>
+        <el-table-column
+          prop="PurchaseNo"
+          align="center"
+          label="采购单号"
+          :min-width="flexColumnWidth('采购单号', 'PurchaseNo')"
+        >
+        </el-table-column>
+        <el-table-column
+          prop="OutstockNo"
+          align="center"
+          label="出库单号"
+          :min-width="flexColumnWidth('出库单号', 'OutstockNo')"
+        >
+        </el-table-column>
+        <!-- <el-table-column prop="LendID" align="center" label="借出编号"> </el-table-column> -->
+        <el-table-column
+          prop="ReturnBy"
+          align="center"
+          label="归还人"
+          :min-width="flexColumnWidth('归还人', 'ReturnBy')"
+        >
+        </el-table-column>
+        <el-table-column prop="ReturnDate" align="center" label="状态">
+          <template #default="scope">
+            <div v-if="scope.row.Status === 0">
+              <el-tag type="info">待入库</el-tag>
+            </div>
+            <div v-if="scope.row.Status === 1">
+              <el-tag type="primary">入库中</el-tag>
+            </div>
+            <div v-if="scope.row.Status === 2">
+              <el-tag type="success">已完成</el-tag>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="CreatedBy"
+          align="center"
+          label="创建人"
+          :min-width="flexColumnWidth('创建人', 'CreatedBy')"
+        >
+        </el-table-column>
+        <el-table-column
+          prop="CreatedOn"
+          align="center"
+          label="创建时间"
+          :min-width="flexColumnWidth('创建时间', 'CreatedOn')"
+        >
+        </el-table-column>
+        <el-table-column
+          prop="Remark"
+          align="center"
+          label="备注"
+          :min-width="flexColumnWidth('备注', 'Remark')"
+        >
+        </el-table-column>
+        <el-table-column
+          prop="ReturnDate"
+          fixed="right"
+          align="center"
+          label="操作"
+          width="200"
+        >
+          <template #default="scope">
+            <div class="w-full">
+              <el-tooltip content="编辑" placement="top">
+                <el-button
+                  type="primary"
+                  icon="EditPen"
+                  size="small"
+                  @click="editSubmit(scope.row)"
+                  :disabled="scope.row.Status !== 0"
+                ></el-button>
+              </el-tooltip>
+              <el-tooltip content="删除" placement="top">
+                <el-button
+                  type="danger"
+                  icon="Delete"
+                  size="small"
+                  @click="deleteSubmit(scope.row)"
+                  :disabled="scope.row.Status !== 0"
+                ></el-button>
+              </el-tooltip>
+              <el-tooltip content="开始入库" placement="top">
+                <el-button
+                  type="warning"
+                  icon="VideoPlay"
+                  color="#409EFF"
+                  style="color: #fff"
+                  size="small"
+                  @click="showInForm(scope.row)"
+                  :disabled="scope.row.Status !== 0"
+                ></el-button>
+              </el-tooltip>
+              <el-tooltip content="完成入库" placement="top">
+                <el-button
+                  type="success"
+                  icon="CircleCheck"
+                  size="small"
+                  @click="inPartSubmit(scope.row)"
+                  :disabled="scope.row.Status !== 1"
+                ></el-button>
+              </el-tooltip>
+            </div>
+          </template>
+        </el-table-column>
       </el-table>
       <div class="mt-3">
         <el-pagination
@@ -109,7 +214,7 @@
           :page-size="pageObj.pageSize"
           :page-sizes="[5, 10, 20, 50, 100]"
           layout="total,sizes, prev, pager, next, jumper"
-          :total="tableData1.length"
+          :total="tableData.length"
         >
         </el-pagination>
       </div>
@@ -186,7 +291,7 @@
       :close-on-click-modal="false"
       v-model="addVisible"
       @close=""
-      title="添加"
+      title="新建入库单"
       width="50%"
     >
       <el-form
@@ -424,13 +529,20 @@ interface inFormTS {
   CreatedBy: string;
 }
 
+interface SearchFormTS {
+  InstockNo: string;
+  StartDate: string;
+  EndDate: string;
+  Type: string;
+}
+
 //   const pageSize = ref(10);
 const currentPage = ref(1);
 const tableHeight = ref(0);
 const addVisible = ref(false);
 const InVisible = ref(false);
 const editVisible = ref(false);
-const inputValue = ref("");
+const dateValue = ref<any[]>([]);
 const deleteVisible = ref(false);
 const deleteChoice = ref("");
 const inFormRef = ref();
@@ -499,6 +611,13 @@ const inForm = ref<inFormTS>({
   CreatedBy: loginName,
 });
 
+const searchForm = ref<SearchFormTS>({
+  InstockNo: "",
+  StartDate: "",
+  EndDate: "",
+  Type: "",
+});
+
 const editSubmit = (data: any) => {
   console.log(data.ReturnOn);
   EditForm.value.Chkin_sht = data.Chkin_sht;
@@ -517,25 +636,25 @@ interface toolType {
   Value: string;
 }
 
-watch(
-  () => inputValue.value,
-  (newdata) => {
-    // console.log(newdata);
-    if (newdata == "") {
-      tableData1.value = tableData.value;
-    } else {
-      tableData1.value = table1(newdata);
-    }
-  }
-);
-const table1 = (newdata: any) => {
-  let searchName = newdata.toLowerCase()
-  return tableData.value.filter((v: any) => {
-    return Object.keys(v).some((key) => {
-      return String(v[key]).toLowerCase().indexOf(searchName) > -1;
-    });
-  });
-};
+// watch(
+//   () => inputValue.value,
+//   (newdata) => {
+//     // console.log(newdata);
+//     if (newdata == "") {
+//       tableData1.value = tableData.value;
+//     } else {
+//       tableData1.value = table1(newdata);
+//     }
+//   }
+// );
+// const table1 = (newdata: any) => {
+//   let searchName = newdata.toLowerCase()
+//   return tableData.value.filter((v: any) => {
+//     return Object.keys(v).some((key) => {
+//       return String(v[key]).toLowerCase().indexOf(searchName) > -1;
+//     });
+//   });
+// };
 
 const MaterialNameList = ref<toolType[]>([]);
 
@@ -609,11 +728,6 @@ const getData = () => {
       //     // message: "取消操作",
       //     type: "success",
       //   });
-    if(inputValue.value.trim()){
-      tableData1.value = table1(inputValue.value);
-    }else{
-      tableData1.value = res.content;
-    }
     }
   });
 };
@@ -645,23 +759,27 @@ const GetList = () => {
   });
 };
 
-const serachData = () => {
-  if (inputValue.value === "") {
-    getData();
+const dateChange = (data: any) => {
+  if (data.length > 0) {
+    searchForm.value.StartDate = data[0];
+    searchForm.value.EndDate = data[1];
   } else {
-    // GetPartInList({"InstockNo": inputValue.value}).then((res: any) => {
-    //   if (res && res.success && res.content.length !== 0) {
-    //     tableData.value = res.content;
-    //     ElNotification({
-    //       title: res.msg,
-    //       // message: "取消操作",
-    //       type: "success",
-    //     });
-    //   } else {
-    //     tableData.value = res.content;
-    //   }
-    // });
+    searchForm.value.StartDate = "";
+    searchForm.value.EndDate = "";
   }
+};
+
+const searchData = () => {
+  GetPartInList(searchForm.value).then((res: any) => {
+    if (res && res.success) {
+      tableData.value = res.content;
+      //   ElNotification({
+      //     title: res.msg,
+      //     // message: "取消操作",
+      //     type: "success",
+      //   });
+    }
+  });
 };
 
 const deleteSubmit = (data: any) => {
@@ -896,7 +1014,7 @@ const columnData = reactive([
         label: "完成入库",
         icon: "CircleCheck",
         buttonClick: inPartSubmit,
-      }
+      },
     ],
   },
 ]);
@@ -925,11 +1043,9 @@ const getScreenHeight = () => {
   });
 };
 
-
-
 //el-table自动计算宽度
 const flexColumnWidth = (label: any, prop: any) => {
-  const arr = tableData1?.value.map((x: { [x: string]: any }) => x[prop]);
+  const arr = tableData?.value.map((x: { [x: string]: any }) => x[prop]);
   arr.push(label); // 把每列的表头也加进去算
   return getMaxLength(arr) + 25 + "px";
 };
