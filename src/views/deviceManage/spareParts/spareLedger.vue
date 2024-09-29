@@ -1,14 +1,14 @@
 <template>
   <div class="p-2">
     <el-card shadow="always" :body-style="{ padding: '8px' }">
-      <div class="pb-2 flex justify-between">
+      <div class="flex justify-between">
         <!-- <el-button
             type="primary"
             @click="clearForm(), (addVisible = true)"
             >添加</el-button
           > -->
         <div class="flex">
-          <el-form ref="formRef" class="form" :inline="true" label-width="auto">
+          <el-form ref="formRef" class="form" :inline="true" label-width="">
             <el-form-item label="时间" class="mb-2">
               <el-date-picker
                 v-model="dateValue"
@@ -78,6 +78,9 @@
         </el-form-item>
         <el-form-item label="备注">
           <el-input v-model="ScrapForm.Remark" style="width: 400px" />
+        </el-form-item>
+        <el-form-item label="备注">
+          <el-input-number v-model="ScrapForm.Qty" :min="1" :max="maxCount" style="width: 400px" />
         </el-form-item>
       </el-form>
 
@@ -252,6 +255,7 @@ const pageObj = ref({
   pageSize: 30,
   currentPage: 1,
 });
+const maxCount = ref(1);
 const loginName = userStore.getUserInfo;
 
 const formControl = ref({
@@ -307,7 +311,8 @@ const searchForm = ref<SearchFormTS>({
 const ScrapSubmit = (data: any) => {
   ScrapForm.value.StockID = data.StockID;
   ScrapForm.value.PartID = data.PartID;
-  ScrapForm.value.Qty = data.Qty;
+  maxCount.value = data.Qty;
+  // ScrapForm.value.Qty = data.Qty;
   editVisible.value = true;
 };
 
@@ -549,7 +554,7 @@ const columnData = reactive([
     label: "状态",
     width: "80",
     min: true,
-    align: "center",
+    align: "1",
   },
   {
     text: true,

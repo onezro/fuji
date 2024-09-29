@@ -151,6 +151,17 @@ export function EndPartsIn(chkin_sht:any,username: any){
     });
 }
 
+//根据入库单号查询详细数据
+export function findInParameter(chkin_sht:AnalyserOptions){
+    return request({
+        url: "/api/PartsIn/findChkInParameter",
+        method: "post",
+        params:{
+            chkin_sht
+        }
+    });
+}
+
 //备品备件出库
 //查询所有出库记录
 export function GetPartsOutList(data: any){
@@ -219,6 +230,17 @@ export function EndPartsOut(Chkout_sht:any,username: any){
         params:{
             Chkout_sht,
             username
+        }
+    });
+}
+
+//根据出库单号查询详细数据
+export function findOutParameter(chkout_sht: any){
+    return request({
+        url: "/api/PartsOut/findChkOutParameter",
+        method: "post",
+        params:{
+            chkout_sht
         }
     });
 }

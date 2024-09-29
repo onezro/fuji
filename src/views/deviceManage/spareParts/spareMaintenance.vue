@@ -55,7 +55,7 @@
         <el-form-item label="规格">
           <el-input v-model="EditForm.Specification" style="width: 250px" />
         </el-form-item>
-        <el-form-item label="设备">
+        <el-form-item label="使用设备">
           <el-input v-model="EditForm.Equipment" style="width: 250px" />
         </el-form-item>
         <el-form-item label="供应商代码">
@@ -145,7 +145,7 @@
         <el-form-item label="规格">
           <el-input v-model="form.Specification" style="width: 250px" />
         </el-form-item>
-        <el-form-item label="设备">
+        <el-form-item label="使用设备">
           <el-input v-model="form.Equipment" style="width: 250px" />
         </el-form-item>
         <el-form-item label="供应商代码">
@@ -559,7 +559,7 @@ const columnData = reactive([
   {
     text: true,
     prop: "Equipment",
-    label: "设备",
+    label: "使用设备",
     width: "",
     min: true,
     align: "center",
