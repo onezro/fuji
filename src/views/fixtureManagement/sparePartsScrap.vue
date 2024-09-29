@@ -288,7 +288,7 @@ const columnData = reactive([
     label: "类型名称",
     width: "",
     min: true,
-    align: "1",
+    align: "center",
   },
   {
     text: true,
@@ -296,7 +296,7 @@ const columnData = reactive([
     label: "类型描述",
     width: "200",
     min: true,
-    align: "1",
+    align: "center",
   },
   {
     text: true,
@@ -304,7 +304,7 @@ const columnData = reactive([
     label: "采购单号",
     width: "200",
     min: true,
-    align: "1",
+    align: "center",
   },
   {
     text: true,
@@ -312,7 +312,7 @@ const columnData = reactive([
     label: "数量",
     width: "",
     min: true,
-    align: "1",
+    align: "center",
   },
   {
     text: true,
@@ -320,7 +320,7 @@ const columnData = reactive([
     label: "备注",
     width: "200",
     min: true,
-    align: "1",
+    align: "center",
   },
   {
     text: true,

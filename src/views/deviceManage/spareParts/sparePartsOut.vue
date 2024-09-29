@@ -2,23 +2,60 @@
   <div class="p-2">
     <el-card shadow="always" :body-style="{ padding: '8px' }">
       <div class="pb-2 flex justify-between">
-        <el-button type="primary" @click="clearForm(), (addVisible = true)"
-          >添加</el-button
-        >
         <div class="flex">
           <!-- <el-input
             v-model="inputValue"
             style="width: 240px"
             placeholder="请输入"
             clearable
-          ></el-input>
-          <el-button class="ml-3" type="primary" @click="serachData"
-            >查询</el-button
-          > -->
-          <el-input v-model="inputValue" placeholder="请输入">
+          ></el-input> -->
+          <el-form ref="formRef" class="form" :inline="true" label-width="auto">
+            <el-form-item label="时间" class="mb-2">
+              <el-date-picker
+                v-model="dateValue"
+                type="daterange"
+                range-separator="到"
+                size=""
+                value-format="YYYY-MM-DD"
+                @change="dateChange"
+              />
+            </el-form-item>
+            <el-form-item label="出库单号" class="mb-2">
+              <el-input
+                v-model="searchForm.OutstockNo"
+                style="width: 240px"
+                clearable
+              ></el-input>
+            </el-form-item>
+            <el-form-item label="入库类型" class="mb-2">
+              <el-select
+                v-model="searchForm.Type"
+                filterable
+                style="width: 150px"
+                placeholder=""
+                clearable
+              >
+                <el-option
+                  v-for="(item, index) in typeList"
+                  :key="index"
+                  :label="item"
+                  :value="`${index}`"
+                />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="" class="mb-2">
+              <el-button class="ml-3" type="primary" @click="searchData"
+                >查询</el-button
+              >
+            </el-form-item>
+          </el-form>
+          <!-- <el-input v-model="inputValue" placeholder="请输入">
                         <template #append>
-                            <el-button type="primary" icon="Search" @click="serachData"></el-button> </template></el-input>
+                            <el-button type="primary" icon="Search" @click="serachData"></el-button> </template></el-input> -->
         </div>
+        <el-button type="primary" @click="clearForm(), (addVisible = true)"
+          >新建出库单</el-button
+        >
       </div>
       <!-- <table-tem
         size="small"
@@ -31,71 +68,161 @@
         @handleCurrentChange="handleCurrentChange"
       ></table-tem> -->
       <el-table
-      border
-      size="small"
+        border
+        size="small"
         :data="
-          tableData1.slice((pageObj.currentPage - 1) * pageObj.pageSize, pageObj.currentPage * pageObj.pageSize)
+          tableData.slice(
+            (pageObj.currentPage - 1) * pageObj.pageSize,
+            pageObj.currentPage * pageObj.pageSize
+          )
         "
         :height="tableHeight"
-        center stripe
+        center
+        stripe
       >
-      
-      <el-table-column prop="Type" align="center" label="出库类型" :min-width="flexColumnWidth('出库类型', 'Type')">
-        <template #default="scope">
-          <div v-if="scope.row.Type === '0'">
-            <div>领用出库</div>
-          </div>
-          <div v-if="scope.row.Type === '1'">
-            <div>借出出库</div>
-          </div>
-        </template>
-      </el-table-column>
-      <el-table-column prop="OutstockNo" align="center" label="出库单号" :min-width="flexColumnWidth('出库单号', 'OutstockNo')"> </el-table-column>
-      <!-- <el-table-column prop="Type" align="center" label="出库类型"> </el-table-column> -->
-      <el-table-column prop="LendBy" align="center" label="借出人" :min-width="flexColumnWidth('借出人', 'LendBy')"> </el-table-column>
-      <el-table-column prop="Department" align="center" label="部门" :min-width="flexColumnWidth('部门', 'Department')"> </el-table-column>
-      <el-table-column prop="LendOn" align="center" label="借出时间" :min-width="flexColumnWidth('借出时间', 'LendOn')"> </el-table-column>
-      <el-table-column prop="DueDate" align="center" label="到期日期" :min-width="flexColumnWidth('到期日期', 'DueDate')"> </el-table-column>
-      <el-table-column prop="LendReason" align="center" label="借出原因" :min-width="flexColumnWidth('借出原因', 'LendReason')"> </el-table-column>
-      <el-table-column prop="ReturnDate" align="center" label="归还日期" :min-width="flexColumnWidth('归还日期', 'ReturnDate')"> </el-table-column>
-      <el-table-column prop="Status" align="center" label="状态">
-        <template #default="scope">
-          <div v-if="scope.row.Status === 0">
-            <el-tag type="info">待出库</el-tag>
-          </div>
-          <div v-if="scope.row.Status === 1">
-            <el-tag type="primary">出库中</el-tag>
-          </div>
-          <div v-if="scope.row.Status === 2">
-            <el-tag type="success">已完成</el-tag>
-          </div>
-        </template>
-      </el-table-column>
-      <el-table-column prop="CreatedBy" align="center" label="创建人" :min-width="flexColumnWidth('创建人', 'CreatedBy')"> </el-table-column>
-      <el-table-column prop="CreatedOn" align="center" label="创建时间" :min-width="flexColumnWidth('创建时间', 'CreatedOn')"> </el-table-column>
-      <el-table-column prop="Remark" align="center" label="备注" :min-width="flexColumnWidth('备注', 'Remark')"> </el-table-column>
-      <el-table-column prop="ReturnDate" fixed="right" align="center"  label="操作" width="200">
-        <template #default="scope"> 
-          <div class="">
-          <el-tooltip content="编辑" placement="top">
-            <el-button type="primary" icon="EditPen" size="small" @click="editSubmit(scope.row)"
-            :disabled="scope.row.Status !== 0"></el-button>
-          </el-tooltip>
-          <el-tooltip content="删除" placement="top">
-            <el-button type="danger" icon="Delete" size="small" @click="deleteSubmit(scope.row)"
-            :disabled="scope.row.Status !== 0"></el-button>
-          </el-tooltip>
-          <el-tooltip content="开始出库" placement="top">
-            <el-button type="warning" icon="VideoPlay" color="#409EFF" style="color: #fff" size="small" @click="showInForm(scope.row)"
-            :disabled="scope.row.Status === 2"></el-button>
-          </el-tooltip>
-          <el-tooltip content="完成出库" placement="top">
-            <el-button type="success" icon="CircleCheck" size="small" @click="inPartSubmit(scope.row)"
-            :disabled="scope.row.Status !== 1"></el-button>
-          </el-tooltip>
-          </div>
-        </template>
-      </el-table-column>
+        <el-table-column
+          prop="Type"
+          align="center"
+          label="出库类型"
+          :min-width="flexColumnWidth('出库类型', 'Type')"
+        >
+          <template #default="scope">
+            <div v-if="scope.row.Type === '0'">
+              <div>领用出库</div>
+            </div>
+            <div v-if="scope.row.Type === '1'">
+              <div>借出出库</div>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="OutstockNo"
+          align="center"
+          label="出库单号"
+          :min-width="flexColumnWidth('出库单号', 'OutstockNo')"
+        >
+        </el-table-column>
+        <!-- <el-table-column prop="Type" align="center" label="出库类型"> </el-table-column> -->
+        <el-table-column
+          prop="Department"
+          align="center"
+          label="使用部门"
+          :min-width="flexColumnWidth('部门', 'Department')"
+        >
+        </el-table-column>
+        <el-table-column
+          prop="LendBy"
+          align="center"
+          label="借出人"
+          :min-width="flexColumnWidth('借出人', 'LendBy')"
+        >
+        </el-table-column>
+        <el-table-column
+          prop="LendOn"
+          align="center"
+          label="借出时间"
+          :min-width="flexColumnWidth('借出时间', 'LendOn')"
+        >
+        </el-table-column>
+        <!-- <el-table-column prop="DueDate" align="center" label="到期日期" :min-width="flexColumnWidth('到期日期', 'DueDate')"> </el-table-column> -->
+        <el-table-column
+          prop="LendReason"
+          align="center"
+          label="借出原因"
+          :min-width="flexColumnWidth('借出原因', 'LendReason')"
+        >
+        </el-table-column>
+        <el-table-column
+          prop="ReturnDate"
+          align="center"
+          label="预计归还日期"
+          :min-width="flexColumnWidth('归还日期', 'ReturnDate')"
+        >
+        </el-table-column>
+        <el-table-column prop="Status" align="center" label="状态">
+          <template #default="scope">
+            <div v-if="scope.row.Status === 0">
+              <el-tag type="info">待出库</el-tag>
+            </div>
+            <div v-if="scope.row.Status === 1">
+              <el-tag type="primary">出库中</el-tag>
+            </div>
+            <div v-if="scope.row.Status === 2">
+              <el-tag type="success">已完成</el-tag>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="CreatedBy"
+          align="center"
+          label="创建人"
+          :min-width="flexColumnWidth('创建人', 'CreatedBy')"
+        >
+        </el-table-column>
+        <el-table-column
+          prop="CreatedOn"
+          align="center"
+          label="创建时间"
+          :min-width="flexColumnWidth('创建时间', 'CreatedOn')"
+        >
+        </el-table-column>
+        <el-table-column
+          prop="Remark"
+          align="center"
+          label="备注"
+          :min-width="flexColumnWidth('备注', 'Remark')"
+        >
+        </el-table-column>
+        <el-table-column
+          prop="ReturnDate"
+          fixed="right"
+          align="center"
+          label="操作"
+          width="200"
+        >
+          <template #default="scope">
+            <div class="">
+              <el-tooltip content="编辑" placement="top">
+                <el-button
+                  type="primary"
+                  icon="EditPen"
+                  size="small"
+                  @click="editSubmit(scope.row)"
+                  :disabled="scope.row.Status !== 0"
+                ></el-button>
+              </el-tooltip>
+              <el-tooltip content="删除" placement="top">
+                <el-button
+                  type="danger"
+                  icon="Delete"
+                  size="small"
+                  @click="deleteSubmit(scope.row)"
+                  :disabled="scope.row.Status !== 0"
+                ></el-button>
+              </el-tooltip>
+              <el-tooltip content="开始出库" placement="top">
+                <el-button
+                  type="warning"
+                  icon="VideoPlay"
+                  color="#409EFF"
+                  style="color: #fff"
+                  size="small"
+                  @click="showInForm(scope.row)"
+                  :disabled="scope.row.Status === 2"
+                ></el-button>
+              </el-tooltip>
+              <el-tooltip content="完成出库" placement="top">
+                <el-button
+                  type="success"
+                  icon="CircleCheck"
+                  size="small"
+                  @click="inPartSubmit(scope.row)"
+                  :disabled="scope.row.Status !== 1"
+                ></el-button>
+              </el-tooltip>
+            </div>
+          </template>
+        </el-table-column>
       </el-table>
       <div class="mt-3">
         <el-pagination
@@ -107,7 +234,7 @@
           :page-size="pageObj.pageSize"
           :page-sizes="[5, 10, 20, 50, 100]"
           layout="total,sizes, prev, pager, next, jumper"
-          :total="tableData1.length"
+          :total="tableData.length"
         >
         </el-pagination>
       </div>
@@ -142,7 +269,7 @@
               :disabled="EditForm.Type !== '0'"
             />
           </el-form-item> -->
-        <el-form-item label="部门">
+        <el-form-item label="使用部门">
           <el-input v-model="EditForm.Department" style="width: 250px" />
         </el-form-item>
         <el-form-item label="借出人">
@@ -168,7 +295,7 @@
             :disabled="EditForm.Type !== '1'"
           />
         </el-form-item>
-        <el-form-item label="归还日期">
+        <el-form-item label="预计归还日期">
           <el-date-picker
             v-model="EditForm.ReturnDate"
             type="datetime"
@@ -196,7 +323,7 @@
       :close-on-click-modal="false"
       v-model="addVisible"
       @close=""
-      title="添加"
+      title="新建出库单"
       width="50%"
     >
       <el-form
@@ -221,7 +348,7 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="部门">
+        <el-form-item label="使用部门">
           <el-input v-model="form.Department" style="width: 250px" />
         </el-form-item>
         <el-form-item label="借出人">
@@ -247,7 +374,7 @@
             :disabled="form.Type !== 1"
           />
         </el-form-item>
-        <el-form-item label="归还日期">
+        <el-form-item label="预计归还日期">
           <el-date-picker
             v-model="form.ReturnDate"
             type="datetime"
@@ -300,7 +427,9 @@
         <span class="dialog-footer">
           <!-- <el-button type="info" @click="addSon"> 增加子项</el-button> -->
           <el-button @click="InVisible = false"> 取消 </el-button>
-          <el-button type="primary" @click="partOut(),InVisible = false"> 确定 </el-button>
+          <el-button type="primary" @click="partOut(), (InVisible = false)">
+            确定
+          </el-button>
         </span>
       </template>
     </el-dialog>
@@ -326,32 +455,49 @@
         @handleSelectionChange="LedgerSelectionChange"
       ></table-tem> -->
       <el-table
-      ref="LedgerTableRef"
-      border
-      size="small"
+        ref="LedgerTableRef"
+        border
+        size="small"
         :data="
-          LedgerTableData.slice((LedgerPageObj.currentPage - 1) * LedgerPageObj.pageSize, LedgerPageObj.currentPage * LedgerPageObj.pageSize)
+          LedgerTableData.slice(
+            (LedgerPageObj.currentPage - 1) * LedgerPageObj.pageSize,
+            LedgerPageObj.currentPage * LedgerPageObj.pageSize
+          )
         "
         :height="500"
-        center stripe
+        center
+        stripe
         @selection-change="LedgerSelectionChange"
         @select="select"
       >
-      <el-table-column type="selection" fixed width="55" align="center" />
-      <el-table-column prop="OutstockNo" align="center" label="备件编号"> </el-table-column>
-      <el-table-column prop="Qty" align="center" label="库存数量"> </el-table-column>
-      <el-table-column prop="PurchaseNo" align="center" label="采购单"> </el-table-column>
-      <el-table-column prop="Description" align="center" label="描述"> </el-table-column>
-      <el-table-column prop="DueDate" align="center" label="到期日期"> </el-table-column>
-      <el-table-column prop="Vendor" align="center" label="供应商"> </el-table-column>
-      <el-table-column prop="Manufacturer" align="center" label="制造商"> </el-table-column>
-      <el-table-column prop="Specification" align="center" label="规格型号"> </el-table-column>
-      <el-table-column prop="StorageLocation" align="center" label="存储位置"> </el-table-column>
-      <el-table-column prop="qty" align="center"  label="去出数量" width="240">
-        <template #default="scope"> 
-          <el-input-number v-model="scope.row.qty" :min="1" :max="scope.row.Qty"></el-input-number>
-        </template>
-      </el-table-column>
+        <el-table-column type="selection" fixed width="55" align="center" />
+        <el-table-column prop="OutstockNo" align="center" label="备件编号">
+        </el-table-column>
+        <el-table-column prop="Qty" align="center" label="库存数量">
+        </el-table-column>
+        <el-table-column prop="PurchaseNo" align="center" label="采购单">
+        </el-table-column>
+        <el-table-column prop="Description" align="center" label="描述">
+        </el-table-column>
+        <el-table-column prop="DueDate" align="center" label="到期日期">
+        </el-table-column>
+        <el-table-column prop="Vendor" align="center" label="供应商">
+        </el-table-column>
+        <el-table-column prop="Manufacturer" align="center" label="制造商">
+        </el-table-column>
+        <el-table-column prop="Specification" align="center" label="规格型号">
+        </el-table-column>
+        <el-table-column prop="StorageLocation" align="center" label="存储位置">
+        </el-table-column>
+        <el-table-column prop="qty" align="center" label="去出数量" width="240">
+          <template #default="scope">
+            <el-input-number
+              v-model="scope.row.qty"
+              :min="1"
+              :max="scope.row.Qty"
+            ></el-input-number>
+          </template>
+        </el-table-column>
       </el-table>
       <div class="mt-3">
         <el-pagination
@@ -390,7 +536,7 @@ import {
   StartPartsOut,
   EndPartsOut,
   GetPartsList,
-  GetPartsStockList
+  GetPartsStockList,
 } from "@/api/sparePartsApi";
 import { useUserStoreWithOut } from "@/stores/modules/user";
 import {
@@ -439,21 +585,28 @@ interface inFormTS {
   CreatedBy: string;
 }
 
+interface SearchFormTS {
+  OutstockNo: string;
+  StartDate: string;
+  EndDate: string;
+  Type: string;
+}
+
 //   const pageSize = ref(10);
 const currentPage = ref(1);
 const tableHeight = ref(0);
 const addVisible = ref(false);
 const InVisible = ref(false);
 const editVisible = ref(false);
-const inputValue = ref("");
-const LedgerVisible = ref(false)
+const dateValue = ref<any[]>([]);
+const LedgerVisible = ref(false);
 const deleteVisible = ref(false);
 const deleteChoice = ref("");
 const inFormRef = ref();
 const inFormPartName = ref("");
 const LedgerTableData = ref<any[]>([]);
 const choiceList = ref<any[]>([]);
-const QTY = ref('')
+const QTY = ref("");
 const tableData1 = ref<any[]>([]);
 const pageObj = ref({
   pageSize: 30,
@@ -465,7 +618,7 @@ const LedgerPageObj = ref({
 });
 const typeList = ["领用", "借出"];
 const loginName = userStore.getUserInfo;
-const LedgerTableRef = ref()
+const LedgerTableRef = ref();
 
 // watch(formControl, (newVal, oldVal) => {
 //   UsesUntilRevalidation = ''
@@ -506,6 +659,13 @@ const inForm = ref<inFormTS>({
   CreatedBy: loginName,
 });
 
+const searchForm = ref<SearchFormTS>({
+  OutstockNo: "",
+  StartDate: "",
+  EndDate: "",
+  Type: "",
+});
+
 const editSubmit = (data: any) => {
   console.log(data.ReturnOn);
   EditForm.value.Chkout_sht = data.Chkout_sht;
@@ -524,26 +684,6 @@ interface toolType {
   Text: string;
   Value: string;
 }
-
-watch(
-  () => inputValue.value,
-  (newdata) => {
-    // console.log(newdata);
-    if (newdata == "") {
-      tableData1.value = tableData.value;
-    } else {
-      tableData1.value = table1(newdata);
-    }
-  }
-);
-const table1 = (newdata: any) => {
-  let searchName = newdata.toLowerCase()
-  return tableData.value.filter((v: any) => {
-    return Object.keys(v).some((key) => {
-      return String(v[key]).toLowerCase().indexOf(searchName) > -1;
-    });
-  });
-};
 
 const MaterialNameList = ref<toolType[]>([]);
 
@@ -621,11 +761,6 @@ const getData = () => {
       //     // message: "取消操作",
       //     type: "success",
       //   });
-    if(inputValue.value.trim()){
-      tableData1.value = table1(inputValue.value);
-    }else{
-      tableData1.value = res.content;
-    }
     }
   });
 };
@@ -643,28 +778,28 @@ const startPartOut = () => {
   //   }
   // });
   if (choiceList.value.length !== 1) {
-      ElNotification({
-        title: '只允许选中一条数据',
-        // message: "取消操作",
-        type: "warning",
-      });
-      LedgerTableRef.value.clearSelection()
-      return;
+    ElNotification({
+      title: "只允许选中一条数据",
+      // message: "取消操作",
+      type: "warning",
+    });
+    LedgerTableRef.value.clearSelection();
+    return;
   }
   console.log(inForm.value.Qty);
-  
+
   if (!inForm.value.Qty) {
-      ElNotification({
-        title: '请输入数量',
-        // message: "取消操作",
-        type: "warning",
-      });
-      return;
+    ElNotification({
+      title: "请输入数量",
+      // message: "取消操作",
+      type: "warning",
+    });
+    return;
   }
   // LedgerVisible.value = false;
-  InVisible.value = true
+  InVisible.value = true;
   inForm.value.PartID = choiceList.value[0].PartID;
-  inForm.value.Qty =  choiceList.value[0].qty;
+  inForm.value.Qty = choiceList.value[0].qty;
   inForm.value.StockID = choiceList.value[0].StockID;
   QTY.value = choiceList.value[0].Qty;
   inFormPartName.value = choiceList.value[0].PartName;
@@ -682,12 +817,14 @@ const partOut = () => {
       getData();
     }
   });
-}
+};
 
 const GetList = () => {
   GetPartsStockList({}).then((res: any) => {
     if (res && res.success && res.content.length !== 0) {
-      LedgerTableData.value = res.content.filter((item:any) => item.Status === 1)
+      LedgerTableData.value = res.content.filter(
+        (item: any) => item.Status === 1
+      );
       // ElNotification({
       //   title: res.msg,
       //   // message: "取消操作",
@@ -697,23 +834,27 @@ const GetList = () => {
   });
 };
 
-const serachData = () => {
-  if (inputValue.value === "") {
-    getData();
+const dateChange = (data: any) => {
+  if (data.length > 0) {
+    searchForm.value.StartDate = data[0];
+    searchForm.value.EndDate = data[1];
   } else {
-    // GetPartsOutList({ InstockNo: inputValue.value }).then((res: any) => {
-    //   if (res && res.success && res.content.length !== 0) {
-    //     tableData.value = res.content;
-    //     ElNotification({
-    //       title: res.msg,
-    //       // message: "取消操作",
-    //       type: "success",
-    //     });
-    //   } else {
-    //     tableData.value = res.content;
-    //   }
-    // });
+    searchForm.value.StartDate = "";
+    searchForm.value.EndDate = "";
   }
+};
+
+const searchData = () => {
+  GetPartsOutList(searchForm.value).then((res: any) => {
+    if (res && res.success) {
+      tableData.value = res.content;
+      //   ElNotification({
+      //     title: res.msg,
+      //     // message: "取消操作",
+      //     type: "success",
+      //   });
+    }
+  });
 };
 
 const deleteSubmit = (data: any) => {
@@ -779,17 +920,17 @@ const inPartSubmit = (data: any) => {
     });
 };
 
-const LedgerSelectionChange = (data:any,p:any) => {
+const LedgerSelectionChange = (data: any, p: any) => {
   choiceList.value = data;
   console.log(data);
-}
+};
 
 const select = (selection: any, row: any) => {
   if (selection.length > 1) {
-        let del_row = selection.shift();
-        LedgerTableRef.value.toggleRowSelection(del_row, false); // 用于多选表格，切换某一行的选中状态，如果使用了第二个参数，则是设置这一行选中与否（selected 为 true 则选中）；第二个参数为true时又变成了多选
-    }
-}
+    let del_row = selection.shift();
+    LedgerTableRef.value.toggleRowSelection(del_row, false); // 用于多选表格，切换某一行的选中状态，如果使用了第二个参数，则是设置这一行选中与否（selected 为 true 则选中）；第二个参数为true时又变成了多选
+  }
+};
 
 const addData = () => {
   PartsOutAdd(form.value).then((res: any) => {
@@ -971,40 +1112,40 @@ const editData = () => {
 //     ],
 //   },
 // ]);
-  
-  const LedgerColumnData = reactive([
-    {
-      text: true,
-      prop: "PartNumber",
-      label: "备件编号",
-      width: "",
-      min: true,
-      align: "center",
-    },
-    {
-      text: true,
-      prop: "Qty",
-      label: "数量",
-      width: "",
-      min: true,
-      align: "center",
-    },
-    {
-      text: true,
-      prop: "PurchaseNo",
-      label: "采购单",
-      width: "",
-      min: true,
-      align: "center",
-    },
-    {
-      text: true,
-      prop: "Description",
-      label: "描述",
-      width: "",
-      min: true,
-      align: "center",
-    },
+
+const LedgerColumnData = reactive([
+  {
+    text: true,
+    prop: "PartNumber",
+    label: "备件编号",
+    width: "",
+    min: true,
+    align: "center",
+  },
+  {
+    text: true,
+    prop: "Qty",
+    label: "数量",
+    width: "",
+    min: true,
+    align: "center",
+  },
+  {
+    text: true,
+    prop: "PurchaseNo",
+    label: "采购单",
+    width: "",
+    min: true,
+    align: "center",
+  },
+  {
+    text: true,
+    prop: "Description",
+    label: "描述",
+    width: "",
+    min: true,
+    align: "center",
+  },
   // {
   //   text: false,
   //   tag: true,
@@ -1020,63 +1161,63 @@ const editData = () => {
   //   min: true,
   //   align: "center",
   // },
-    {
-      text: true,
-      prop: "DueDate",
-      label: "到期日期",
-      width: "",
-      min: true,
-      align: "center",
-    },
-    {
-      text: true,
-      prop: "Vendor",
-      label: "供应商",
-      width: "",
-      min: true,
-      align: "center",
-    },
-    {
-      text: true,
-      prop: "Manufacturer",
-      label: "制造商",
-      width: "",
-      min: true,
-      align: "center",
-    },
-    {
-      text: true,
-      prop: "Specification",
-      label: "规格型号",
-      width: "",
-      min: true,
-      align: "center",
-    },
-    {
-      text: true,
-      prop: "StorageLocation",
-      label: "存储位置",
-      width: "",
-      min: true,
-      align: "center",
-    },
-    {
-      text: true,
-      prop: "CreatedOn",
-      label: "创建日期",
-      width: "",
-      min: true,
-      align: "center",
-    },
-    {
-      text: true,
-      prop: "CreatedBy",
-      label: "创建人",
-      width: "",
-      min: true,
-      align: "center",
-    },
-  ]);
+  {
+    text: true,
+    prop: "DueDate",
+    label: "到期日期",
+    width: "",
+    min: true,
+    align: "center",
+  },
+  {
+    text: true,
+    prop: "Vendor",
+    label: "供应商",
+    width: "",
+    min: true,
+    align: "center",
+  },
+  {
+    text: true,
+    prop: "Manufacturer",
+    label: "制造商",
+    width: "",
+    min: true,
+    align: "center",
+  },
+  {
+    text: true,
+    prop: "Specification",
+    label: "规格型号",
+    width: "",
+    min: true,
+    align: "center",
+  },
+  {
+    text: true,
+    prop: "StorageLocation",
+    label: "存储位置",
+    width: "",
+    min: true,
+    align: "center",
+  },
+  {
+    text: true,
+    prop: "CreatedOn",
+    label: "创建日期",
+    width: "",
+    min: true,
+    align: "center",
+  },
+  {
+    text: true,
+    prop: "CreatedBy",
+    label: "创建人",
+    width: "",
+    min: true,
+    align: "center",
+  },
+]);
 
 onBeforeMount(() => {
   getScreenHeight();
@@ -1113,7 +1254,7 @@ const getScreenHeight = () => {
 
 //el-table自动计算宽度
 const flexColumnWidth = (label: any, prop: any) => {
-  const arr = tableData1?.value.map((x: { [x: string]: any }) => x[prop]);
+  const arr = tableData?.value.map((x: { [x: string]: any }) => x[prop]);
   arr.push(label); // 把每列的表头也加进去算
   return getMaxLength(arr) + 25 + "px";
 };
@@ -1162,11 +1303,11 @@ const getTextWidth = (str: string) => {
 }
 </style>
 
-<style scoped lang='scss'>
+<style scoped lang="scss">
 // 隐藏全选按钮
 ::v-deep .el-table__header-wrapper {
- .el-checkbox__inner {
+  .el-checkbox__inner {
     display: none;
- }
+  }
 }
 </style>
