@@ -130,13 +130,14 @@
       align-center
     >
       <tableTem
+       size="small"
         :showIndex="true"
         :tableData="bomtableData"
         :tableHeight="450"
         :columnData="bomcolumnData"
         :pageObj="bompageObj"
-        @handleSizeChange="handleSizeChange"
-        @handleCurrentChange="handleCurrentChange"
+        @handleSizeChange="handleSizeChange1"
+        @handleCurrentChange="handleCurrentChange1"
       >
       </tableTem>
       <template #footer>
@@ -340,7 +341,7 @@ const bomcolumnData = reactive([
     text: true,
     prop: "SpecName",
     label: "工序",
-    width: "150",
+    width: "",
     min: true,
     align: "1",
   },
@@ -481,6 +482,13 @@ const handleSizeChange = (val: any) => {
 };
 const handleCurrentChange = (val: any) => {
   pageObj.value.currentPage = val;
+};
+const handleSizeChange1 = (val: any) => {
+  bompageObj.value.currentPage = 1;
+  bompageObj.value.pageSize = val;
+};
+const handleCurrentChange1 = (val: any) => {
+  bompageObj.value.currentPage = val;
 };
 const getScreenHeight = () => {
   nextTick(() => {

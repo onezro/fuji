@@ -377,6 +377,14 @@ const detailsPageObj = ref({
 const detailsColumn = ref([
   {
     text: true,
+    prop: "action",
+    label: "标记",
+    width: "",
+    min: true,
+    align: "1",
+  },
+  {
+    text: true,
     prop: "Parent",
     label: "父级零件",
     width: "",

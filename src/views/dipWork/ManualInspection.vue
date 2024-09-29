@@ -361,19 +361,11 @@ const badSubmit = () => {
   });
   // console.log(badForm.value);
   VIDefectProductRecord(badForm.value).then((res: any) => {
-    if (res.success) {
-      ElNotification({
+    ElNotification({
         title: "提示信息",
         message: res.msg,
-        type: "success",
+        type: res.success?"success":"error",
       });
-    } else {
-      ElNotification({
-        title: "提示信息",
-        message: res.msg,
-        type: "error",
-      });
-    }
     badVisible.value = false;
     // console.log(res);
     changeList.value = [];

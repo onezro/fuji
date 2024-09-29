@@ -145,8 +145,10 @@
         <el-form-item label="工单号" prop="OrderNumber">
           <el-input v-model="orderOnlineForm.OrderNumber" disabled />
         </el-form-item>
-        <el-form-item label="线体" prop="LineName">
-          <el-input v-model="orderOnlineForm.LineNameDesc" disabled />
+        <el-form-item label="线体" prop="LineNumber">
+          <el-select v-model="orderOnlineForm.LineNumber" placeholder="请选择线体" clearable >
+              <el-option v-for="item in lineNameList" :key="item" :label="item.Desc" :value="item.Name" />
+            </el-select>
         </el-form-item>
         <el-form-item label="面别" prop="Side">
           <el-select v-model="orderOnlineForm.Side" placeholder="请选择面别">
@@ -575,8 +577,7 @@ const openOrderOnline = () => {
   orderOnlineVisible.value = true;
   let data = cloneDeep(onlineData.value);
   orderOnlineForm.value.OrderNumber = data[0].MfgOrderName;
-  orderOnlineForm.value.LineNumber = data[0].MfgLineName;
-  orderOnlineForm.value.LineNameDesc = data[0].MfgLineDesc;
+  
   findShelf().then((res: any) => {
     shelfList.value = res.content;
   });

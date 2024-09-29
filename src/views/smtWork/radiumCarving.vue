@@ -1,13 +1,9 @@
 <template>
   <div class="flex flex-col w-full h-full">
-    <div
-      class="h-[40px] min-h-[40px] pl-2 pr-2 flex justify-between items-center"
-    >
+    <div class="h-[40px] min-h-[40px] pl-2 pr-2 flex justify-between items-center">
       <span class="text-[1.2rem]">{{ opui.stationDec }}</span>
       <div>
-        <el-button type="primary" @click="dialogVisible = true,getOrderList()"
-          >工单开工</el-button
-        >
+        <el-button type="primary" @click="dialogVisible = true, getOrderList()">工单开工</el-button>
         <!-- <el-button type="warning" @click="openFeed">物料上料</el-button> -->
         <!-- <el-button type="primary">条码转工单</el-button> -->
       </div>
@@ -15,30 +11,14 @@
     <div class="w-full flex-1 flex">
       <div class="setwidth w-[320px]">
         <div class="w-full h-full box">
-          <div
-            class="h-[35px] flex items-center text-xl text-[#fff] bg-[#006487]"
-          >
+          <div class="h-[35px] flex items-center text-xl text-[#fff] bg-[#006487]">
             <span class="ml-5">基本信息</span>
           </div>
-          <div
-            class="p-[10px] overflow-auto custom-scrollbar-hidden"
-            :style="{ height: formHeight + 'px' }"
-          >
-            <el-form
-              class="inbound"
-              ref="formRef"
-              :model="form"
-              label-width="auto"
-            >
-              <el-form-item
-                size="default"
-                v-for="f in formHeader"
-                :key="f.value"
-                :label="f.lable"
-              >
+          <div class="p-[10px] overflow-auto custom-scrollbar-hidden" :style="{ height: formHeight + 'px' }">
+            <el-form class="inbound" ref="formRef" :model="form" label-width="auto">
+              <el-form-item size="default" v-for="f in formHeader" :key="f.value" :label="f.lable">
                 <span class="font-bold text-[18px] leading-[30px]">
-                  {{ formText(f.value) }}</span
-                >
+                  {{ formText(f.value) }}</span>
               </el-form-item>
             </el-form>
           </div>
@@ -47,95 +27,55 @@
       <div class="w-[calc(100%-320px)]">
         <div class="w-full h-full ">
           <div>
-            <div
-              class="h-[35px] flex items-center text-xl text-[#fff] bg-[#006487]"
-            >
+            <div class="h-[35px] flex items-center text-xl text-[#fff] bg-[#006487]">
               <span class="ml-5"> 扫描条码</span>
             </div>
             <div class="h-[120px] p-5">
-              <el-form
-                class="inbound"
-                ref="formRef"
-                :model="form"
-                label-width="auto"
-                @submit.native.prevent
-              >
+              <el-form class="inbound" ref="formRef" :model="form" label-width="auto" @submit.native.prevent>
                 <el-form-item label="扫描条码">
-                  <el-input
-                    v-model="barCode"
-                    style="width: 500px"
-                    placeholder="请扫描条码"
-                    @keyup.enter="choiceOrder()"
-                  />
+                  <el-input v-model="barCode" style="width: 500px" placeholder="请扫描条码" @keyup.enter="choiceOrder()" />
                 </el-form-item>
               </el-form>
-              <div
-                class="text-xl font-bold text-[#00B400]"
-                v-show="msgType === true || msgTitle === ''"
-              >
+              <div class="text-xl font-bold text-[#00B400]" v-show="msgType === true || msgTitle === ''">
                 {{ msgTitle === "" ? "请扫描批次条码" : msgTitle }}
               </div>
-              <div
-                class="text-xl font-bold text-[red]"
-                v-show="msgType === false && msgTitle !== ''"
-              >
+              <div class="text-xl font-bold text-[red]" v-show="msgType === false && msgTitle !== ''">
                 {{ msgTitle }}
               </div>
             </div>
           </div>
           <div class="flex flex-col flex-1">
-            <div
-              class="h-[35px] flex items-center text-xl justify-between text-[#fff] bg-[#006487]"
-            >
+            <div class="h-[35px] flex items-center text-xl justify-between text-[#fff] bg-[#006487]">
               <span class="ml-5"> PCB条码列表</span>
               <div class="h-full flex items-center">
-                <el-checkbox-group
-                  v-model="checkList"
-                  class="laser-table-filter"
-                >
-                
+                <el-checkbox-group v-model="checkList" class="laser-table-filter">
+
                   <el-checkbox :label="`未释放(${notReleased.length})`" value="未释放" />
                   <el-checkbox :label="`待镭雕(${awaitLaser.length})`" value="待镭雕" />
                   <el-checkbox :label="`已完成(${Completed.length})`" value="已完成" />
                 </el-checkbox-group>
-                <el-icon @click="refreshClick()" class="mx-4"
-                  ><RefreshRight
-                /></el-icon>
+                <el-icon @click="refreshClick()" class="mx-4">
+                  <RefreshRight />
+                </el-icon>
               </div>
             </div>
             <div class="h-full">
-              <table-tem
-                :showIndex="true"
-                :tableData="filteredData"
-                :tableHeight="tableHeight"
-                :columnData="columnData"
-                :pageObj="pageObj"
-                @handleSizeChange="handleSizeChange"
-                @handleCurrentChange="handleCurrentChange"
-              ></table-tem>
+              <table-tem :showIndex="true" :tableData="filteredData" :tableHeight="tableHeight" :columnData="columnData"
+                :pageObj="pageObj" @handleSizeChange="handleSizeChange"
+                @handleCurrentChange="handleCurrentChange"></table-tem>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <el-dialog
-      v-model="dialogVisible"
-      title="工单开工"
-      width="90%"
-      align-center
-    >
+    <el-dialog v-model="dialogVisible" title="工单开工" width="90%" align-center>
       <template #header>
         <div class="custom-dialog-title flex items-center justify-between">
           <div>工单列表</div>
           <!-- 在标题右侧插入一个按钮 -->
-          <el-input
-            v-model="workOrderInput"
-            style="width: 400px"
-            placeholder="请输入"
-          >
+          <el-input v-model="workOrderInput" style="width: 400px" placeholder="请输入">
             <template #append>
-              <el-button type="primary" icon="Search"></el-button> </template
-          ></el-input>
+              <el-button type="primary" icon="Search"></el-button> </template></el-input>
         </div>
       </template>
       <!-- <el-table
@@ -151,37 +91,16 @@
           :label="item.lable"
         />
       </el-table> -->
-      <el-table
-        ref="taskTableRef"
-        class="test"
-        :header-cell-class-name="cellClass"
-        stripe
-        border
-        :data="workOrderList1"
-        style="width: 100%"
-        :height="'50vh'"
-        @select="selectClick"
-      >
+      <el-table ref="taskTableRef" class="test" :header-cell-class-name="cellClass" stripe border :data="workOrderList1"
+        style="width: 100%" :height="'50vh'" @select="selectClick">
         <el-table-column type="selection" width="55" />
-        <el-table-column
-          v-for="item in formHeader"
-          :prop="item.value"
-          :label="item.lable"
-          :min-width="flexColumnWidth(item.lable, item.value)"
-        />
+        <el-table-column v-for="item in formHeader" :prop="item.value" :label="item.lable"
+          :min-width="flexColumnWidth(item.lable, item.value)" />
       </el-table>
       <div class="mt-3">
-        <el-pagination
-          size="large"
-          background
-          @size-change="handleSizeChange1"
-          @current-change="handleCurrentChange1"
-          :current-page="pageObj.currentPage"
-          :page-size="pageObj1.pageSize"
-          :page-sizes="[5, 10, 20, 50, 100]"
-          layout="total,sizes, prev, pager, next, jumper"
-          :total="workOrderList.length"
-        >
+        <el-pagination size="large" background @size-change="handleSizeChange1" @current-change="handleCurrentChange1"
+          :current-page="pageObj.currentPage" :page-size="pageObj1.pageSize" :page-sizes="[5, 10, 20, 50, 100]"
+          layout="total,sizes, prev, pager, next, jumper" :total="workOrderList.length">
         </el-pagination>
       </div>
       <template #footer>
@@ -191,17 +110,9 @@
         </div>
       </template>
     </el-dialog>
-    <el-dialog
-      v-model="feedVisible"
-      title="物料上料"
-      width="90%"
-      align-center
-      class="saveAsDialog"
-      :append-to-body="true"
-      :close-on-click-modal="false"
-      :close-on-press-escape="false"
-    >
-      <feedTemp :form="feedForm" :form-header="FeedHeader"/>
+    <el-dialog v-model="feedVisible" title="物料上料" width="90%" align-center class="saveAsDialog" :append-to-body="true"
+      :close-on-click-modal="false" :close-on-press-escape="false">
+      <feedTemp :form="feedForm" :form-header="FeedHeader" />
       <template #footer>
         <span class="dialog-footer">
           <el-button @click="feedCancel">关闭</el-button>
@@ -397,42 +308,42 @@ const pageObj1 = ref({
 });
 
 const feedVisible = ref(false);
-const feedForm=ref({
-  MfgOrderName:'208310182',
-  type:opui.station,
-  ProductName:'240106000131',
-  ProductDesc:'0402封装贴片电容100DF+5%50V MURATAGRM1555C1H101JA01D',
-  Qty:'100',
-  eqInfo:opui.stationDec
+const feedForm = ref({
+  MfgOrderName: '208310182',
+  type: opui.station,
+  ProductName: '240106000131',
+  ProductDesc: '0402封装贴片电容100DF+5%50V MURATAGRM1555C1H101JA01D',
+  Qty: '100',
+  eqInfo: opui.stationDec
 })
 
-const FeedHeader=reactive([
-{
-        label:'机台',
-        prop:'eqInfo'
-    },
-    {
-        label:'工单号',
-        prop:'MfgOrderName'
-    },
- 
-    {
-        label:'机型',
-        prop:'type'
-    },
-    {
-        label:'产品编码',
-        prop:'ProductName'
-    },
-    {
-        label:'产品描述',
-        prop:'ProductDesc'
-    },
-    {
-        label:'工单数量',
-        prop:'Qty'
-    },
-  
+const FeedHeader = reactive([
+  {
+    label: '机台',
+    prop: 'eqInfo'
+  },
+  {
+    label: '工单号',
+    prop: 'MfgOrderName'
+  },
+
+  {
+    label: '机型',
+    prop: 'type'
+  },
+  {
+    label: '产品编码',
+    prop: 'ProductName'
+  },
+  {
+    label: '产品描述',
+    prop: 'ProductDesc'
+  },
+  {
+    label: '工单数量',
+    prop: 'Qty'
+  },
+
 ])
 
 watch(
@@ -486,11 +397,11 @@ const openFeed = () => {
     barCode.value = "";
     return;
   }
-  let data=cloneDeep(form)
-  
-  feedForm.value={...data}
-  feedForm.value.type=opui.station
-  feedForm.value.eqInfo=opui.stationDec
+  let data = cloneDeep(form)
+
+  feedForm.value = { ...data }
+  feedForm.value.type = opui.station
+  feedForm.value.eqInfo = opui.stationDec
   feedVisible.value = true;
 };
 //关闭物料上料
@@ -522,8 +433,8 @@ const getScreenHeight = () => {
   });
 };
 const getOrderList = () => {
-  OrderQuery({lineName:opui.line}).then((res:any)=>{
-   workOrderList.value = res.content
+  OrderQuery({ lineName: opui.line }).then((res: any) => {
+    workOrderList.value = res.content
     workOrderList1.value = res.content
   })
   // getLaserWorkOrder({ orderID: "" }).then((data: any) => {
@@ -629,7 +540,7 @@ const refreshClick = () => {
     awaitLaser.value = [];
     notReleased.value = [];
     // const dataText = JSON.parse(data.content);
-    tableData.value =data.content;
+    tableData.value = data.content;
     checkList.value = ["待镭雕", "未释放"];
     Completed.value = tableData.value.filter((item) => item.IsResponse === '已完成');
     awaitLaser.value = tableData.value.filter((item) => item.IsResponse === '待镭雕');
@@ -724,22 +635,29 @@ const flexColumnWidth = (label: any, prop: any) => {
 
 /* 如果你只想隐藏特定元素的滚动条，可以这样做 */
 .custom-scrollbar-hidden {
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE 和 Edge */
+  scrollbar-width: none;
+  /* Firefox */
+  -ms-overflow-style: none;
+
+  /* IE 和 Edge */
   &::-webkit-scrollbar {
-    display: none; /* Chrome, Safari, Opera */
+    display: none;
+    /* Chrome, Safari, Opera */
   }
 }
 
 ::v-deep .laser-table-filter .el-checkbox__inner {
   /* 你的样式 */
-  background-color: #409eff !important; /* 使用 !important，但请谨慎 */
+  background-color: #409eff !important;
+  /* 使用 !important，但请谨慎 */
   color: white !important;
 }
+
 ::v-deep .laser-table-filter .el-checkbox__label {
   /* 你的样式 */
   color: white !important;
 }
+
 .saveAsDialog {
   min-width: 954px;
 }
