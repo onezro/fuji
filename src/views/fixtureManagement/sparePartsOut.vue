@@ -136,7 +136,7 @@
           prop="ReturnDate"
           align="center"
           label="预计归还日期"
-          :min-width="flexColumnWidth('归还日期', 'ReturnDate')"
+          :min-width="flexColumnWidth('预计归还日期', 'ReturnDate')"
         >
         </el-table-column>
         <el-table-column prop="Status" align="center" label="状态">

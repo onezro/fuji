@@ -23,7 +23,7 @@
               <el-input
                 v-model="searchForm.PartName"
                 style="width: 240px"
-                placeholder="请输入"
+                clearable
               ></el-input>
             </el-form-item>
             <el-form-item label="" class="mb-2">
@@ -46,7 +46,7 @@
                             <el-button type="primary" icon="Search" @click="serachData"></el-button> </template></el-input> -->
         </div>
       </div>
-      <table-tem
+      <!-- <table-tem
         size="small"
         :show-index="true"
         :tableData="tableData1"
@@ -55,7 +55,153 @@
         :pageObj="pageObj"
         @handleSizeChange="handleSizeChange"
         @handleCurrentChange="handleCurrentChange"
-      ></table-tem>
+      ></table-tem> -->
+      <el-table
+        border
+        size="small"
+        :data="
+          tableData1.slice(
+            (pageObj.currentPage - 1) * pageObj.pageSize,
+            pageObj.currentPage * pageObj.pageSize
+          )
+        "
+        :height="tableHeight"
+        center
+        stripe
+      >
+        <el-table-column
+          prop="PartName"
+          align="center"
+          label="备件名称"
+          :min-width="flexColumnWidth('备件名称', 'PartName')"
+        >
+        </el-table-column>
+        <el-table-column
+          prop="Qty"
+          align="center"
+          label="当前数量"
+          :min-width="flexColumnWidth('当前数量', 'Qty')"
+        >
+        </el-table-column>
+        <el-table-column
+          prop="OutQty"
+          align="center"
+          label="出库数量"
+          :min-width="flexColumnWidth('出库数量', 'OutQty')"
+        >
+        </el-table-column>
+        <el-table-column
+          prop="ScrapQty"
+          align="center"
+          label="报废数量"
+          :min-width="flexColumnWidth('报废数量', 'ScrapQty')"
+        >
+        </el-table-column>
+        <el-table-column
+          prop="PurchaseNo"
+          align="center"
+          label="采购单号"
+          :min-width="flexColumnWidth('采购单号', 'PurchaseNo')"
+        >
+        </el-table-column>
+        <el-table-column prop="number" align="left" label="状态">
+          <template #default="scope">
+            <div v-if="scope.row.Status === 0">
+              <el-tag type="primary">在库</el-tag>
+            </div>
+            <div v-if="scope.row.Status === 1">
+              <el-tag type="success">入库中</el-tag>
+            </div>
+            <div v-if="scope.row.Status === 99">
+              <el-tag type="warning">报废</el-tag>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="DueDate"
+          align="center"
+          label="到期日期"
+          :min-width="flexColumnWidth('到期日期', 'DueDate')"
+        >
+        </el-table-column>
+        <el-table-column
+          prop="Vendor"
+          align="center"
+          label="供应商"
+          :min-width="flexColumnWidth('供应商', 'Vendor')"
+        >
+        </el-table-column>
+        <el-table-column
+          prop="Manufacturer"
+          align="center"
+          label="制造商"
+          :min-width="flexColumnWidth('制造商', 'Manufacturer')"
+        >
+        </el-table-column>
+        <el-table-column
+          prop="Specification"
+          align="center"
+          label="规格型号"
+          :min-width="flexColumnWidth('规格型号', 'Specification')"
+        >
+        </el-table-column>
+        <el-table-column
+          prop="StorageLocation"
+          align="center"
+          label="存储位置"
+          :min-width="flexColumnWidth('存储位置', 'StorageLocation')"
+        >
+        </el-table-column>
+        <el-table-column
+          prop="CreatedOn"
+          align="center"
+          label="创建日期"
+          :min-width="flexColumnWidth('创建日期', 'CreatedOn')"
+        >
+        </el-table-column>
+        <el-table-column
+          prop="CreatedBy"
+          align="center"
+          label="创建人"
+          :min-width="flexColumnWidth('创建人', 'CreatedBy')"
+        >
+        </el-table-column>
+        <el-table-column
+          prop="ReturnDate"
+          fixed="right"
+          align="center"
+          label="操作"
+          width="80"
+        >
+          <template #default="scope">
+            <div class="w-full">
+              <el-tooltip content="报废" placement="top">
+                <el-button
+                  type="warning"
+                  icon="Failed"
+                  size="small"
+                  @click="ScrapSubmit"
+                  :disabled="scope.row.Status === 99"
+                ></el-button>
+              </el-tooltip>
+            </div>
+          </template>
+        </el-table-column>
+      </el-table>
+      <div class="mt-3">
+        <el-pagination
+          size="small"
+          background
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page="pageObj.currentPage"
+          :page-size="pageObj.pageSize"
+          :page-sizes="[10, 30, 50, 100, 150]"
+          layout="total,sizes, prev, pager, next, jumper"
+          :total="tableData.length"
+        >
+        </el-pagination>
+      </div>
     </el-card>
     <el-dialog
       align-center
@@ -396,7 +542,7 @@ const getData = () => {
   });
 };
 const dateChange = (data: any) => {
-  if (data.length > 0) {
+  if (data !== null && data !== '') {
     searchForm.value.StartDate = data[0];
     searchForm.value.EndDate = data[1];
   } else {
@@ -663,6 +809,41 @@ const getScreenHeight = () => {
   nextTick(() => {
     tableHeight.value = window.innerHeight - 210;
   });
+};
+
+//el-table自动计算宽度
+const flexColumnWidth = (label: any, prop: any) => {
+  const arr = tableData?.value.map((x: { [x: string]: any }) => x[prop]);
+  arr.push(label); // 把每列的表头也加进去算
+  return getMaxLength(arr) + 25 + "px";
+};
+
+const getMaxLength = (arr: any) => {
+  return arr.reduce((acc: any, item: any) => {
+    if (item) {
+      const calcLen = getTextWidth(item);
+
+      if (acc < calcLen) {
+        acc = calcLen;
+      }
+    }
+    return acc;
+  }, 0);
+};
+const getTextWidth = (str: string) => {
+  let width = 0;
+  const html = document.createElement("span");
+  html.style.cssText = `padding: 0; margin: 0; border: 0; line-height: 1; font-size: ${13}px; font-family: Arial, sans-serif;`;
+  html.innerText = str; // 去除字符串前后的空白字符
+  document.body?.appendChild(html);
+
+  const spanElement = html; // 无需再次查询，直接使用创建的元素
+  if (spanElement) {
+    width = spanElement.offsetWidth;
+    spanElement.remove();
+  }
+  // console.log(width);
+  return width;
 };
 </script>
 

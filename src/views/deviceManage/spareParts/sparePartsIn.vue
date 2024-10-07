@@ -97,9 +97,9 @@
           :min-width="flexColumnWidth('入库单号', 'InstockNo')"
         >
           <template #default="scope">
-            <div @click="findDetail(scope.row.Chkin_sht)">
+            <u @click="findDetail(scope.row.Chkin_sht)">
               {{ scope.row.InstockNo }}
-            </div>
+            </u>
           </template>
         </el-table-column>
         <el-table-column
@@ -268,7 +268,7 @@
             :disabled="EditForm.Type !== '1'"
           />
         </el-form-item>
-        <el-form-item label="归还日期">
+        <el-form-item label="预计归还日期">
           <el-date-picker
             v-model="EditForm.ReturnOn"
             type="datetime"
@@ -349,7 +349,7 @@
             :disabled="form.Type !== 1"
           />
         </el-form-item>
-        <el-form-item label="归还日期">
+        <el-form-item label="预计归还日期">
           <el-date-picker
             v-model="form.ReturnOn"
             type="datetime"
@@ -893,7 +893,7 @@ const GetList = () => {
 };
 
 const dateChange = (data: any) => {
-  if (data.length > 0) {
+  if (data !== null && data !== '') {
     searchForm.value.StartDate = data[0];
     searchForm.value.EndDate = data[1];
   } else {

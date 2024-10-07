@@ -259,7 +259,7 @@ const getData = () => {
 };
 
 const dateChange = (data: any) => {
-  if (data.length > 0) {
+  if (data !== null && data !== '') {
     searchForm.value.StartDate = data[0];
     searchForm.value.EndDate = data[1];
   } else {
