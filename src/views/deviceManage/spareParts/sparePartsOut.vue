@@ -102,9 +102,9 @@
           :min-width="flexColumnWidth('出库单号', 'OutstockNo')"
         >
           <template #default="scope">
-            <div @click="findDetail(scope.row.Chkout_sht)">
+            <u @click="findDetail(scope.row.Chkout_sht)">
               {{ scope.row.OutstockNo }}
-            </div>
+            </u>
           </template>
         </el-table-column>
         <!-- <el-table-column prop="Type" align="center" label="出库类型"> </el-table-column> -->
@@ -141,7 +141,7 @@
           prop="ReturnDate"
           align="center"
           label="预计归还日期"
-          :min-width="flexColumnWidth('归还日期', 'ReturnDate')"
+          :min-width="flexColumnWidth('预计归还日期', 'ReturnDate')"
         >
         </el-table-column>
         <el-table-column prop="Status" align="left" label="状态">
@@ -985,7 +985,7 @@ const GetList = () => {
 };
 
 const dateChange = (data: any) => {
-  if (data.length > 0) {
+  if (data !== null && data !== '') {
     searchForm.value.StartDate = data[0];
     searchForm.value.EndDate = data[1];
   } else {

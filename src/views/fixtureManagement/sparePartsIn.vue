@@ -263,7 +263,7 @@
             :disabled="EditForm.Type !== '1'"
           />
         </el-form-item>
-        <el-form-item label="归还日期">
+        <el-form-item label="预计归还日期">
           <el-date-picker
             v-model="EditForm.ReturnOn"
             type="datetime"
@@ -344,7 +344,7 @@
             :disabled="form.Type !== 1"
           />
         </el-form-item>
-        <el-form-item label="归还日期">
+        <el-form-item label="预计归还日期">
           <el-date-picker
             v-model="form.ReturnOn"
             type="datetime"
