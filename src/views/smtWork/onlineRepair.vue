@@ -1,6 +1,8 @@
 <template>
   <div class="flex flex-col w-full h-full">
-    <div class="h-[40px] min-h-[40px] pl-2 pr-2 flex justify-between items-center">
+    <div
+      class="h-[40px] min-h-[40px] pl-2 pr-2 flex justify-between items-center"
+    >
       <span class="text-[1.2rem]"> {{ opui.stationDec }} </span>
     </div>
     <div class="w-full flex-1 flex">
@@ -8,71 +10,230 @@
 
       <div class="w-full h-full flex flex-col">
         <div>
-          <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
+          <div
+            class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]"
+          >
             <span class="ml-5"> 扫描条码</span>
           </div>
           <div class="h-[120px] p-5">
-            <el-form class="inbound" ref="formRef" :inline="true" :model="form" label-width="auto"
-              @submit.native.prevent>
+            <el-form
+              class="inbound"
+              ref="formRef"
+              :inline="true"
+              :model="form"
+              label-width="auto"
+              @submit.native.prevent
+            >
               <el-form-item label="扫描条码">
-                <el-input v-model.trim="form.PcbNumber" ref="inputRef" :autofocus="inputFocus" style="width: 500px"
-                  placeholder="请扫描条码" @keyup.enter.native="getChange" />
+                <el-input
+                  v-model.trim="barCode"
+                  ref="inputRef"
+                  :autofocus="inputFocus"
+                  style="width: 500px"
+                  placeholder="请扫描条码"
+                  @keyup.enter.native="getChange"
+                />
               </el-form-item>
-              <el-form-item label="">
+              <!-- <el-form-item label="">
                 <el-button type="primary" disabled @click="">维修</el-button>
-              </el-form-item>
+              </el-form-item> -->
             </el-form>
-            <div class="text-xl font-bold text-[#00B400]" v-show="msgType === true || msgTitle === ''">
-              {{ msgTitle === "" ? "请扫描PCB条码" : msgTitle }}
-            </div>
-            <div class="text-xl font-bold text-[red]" v-show="msgType === false && msgTitle !== ''">
-              {{ msgTitle }}
-            </div>
+            <div
+                class="text-xl font-bold text-[#00B400]"
+                v-show="msgType === true || msgTitle === ''"
+              >
+                {{ msgTitle === "" ? "请扫描PCB条码" : msgTitle }}
+              </div>
+              <div
+                class="text-xl font-bold text-[red]"
+                v-show="msgType === false && msgTitle !== ''"
+              >
+                {{ msgTitle }}
+              </div>
           </div>
         </div>
         <div class="flex flex-col flex-1">
-          <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
+          <div
+            class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]"
+          >
             <span class="ml-5">维修记录</span>
           </div>
           <div class="flex-1">
-            <table-tem :showIndex="true" :tableData="tableData" :tableHeight="tableHeight" :columnData="columnData"
-              :pageObj="pageObj" @handleSizeChange="handleSizeChange"
-              @handleCurrentChange="handleCurrentChange"></table-tem>
+            <table-tem
+              :showIndex="true"
+              :tableData="tableData"
+              :tableHeight="tableHeight"
+              :columnData="columnData"
+              :pageObj="pageObj"
+              @handleSizeChange="handleSizeChange"
+              @handleCurrentChange="handleCurrentChange"
+            ></table-tem>
           </div>
         </div>
       </div>
     </div>
-    <el-dialog v-model="badVisible" title="返修">
-      <div class="flex flex-col border-solid border-1 border-[#bdbdbd]">
-        <div class="">
-          <div class="h-[30px] flex items-center text-base text-[#fff] bg-[#006487]">
-            条码信息
-          </div>
+    <el-dialog
+      v-model="badVisible"
+      width="80%"
+      :fullscreen="false"
+      :append-to-body="true"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      align-center
+    >
+      <template #header="{ close, titleId, titleClass }">
+        <div class="flex justify-between">
+          <h4 :id="titleId" :class="titleClass">返修登记</h4>
+          <div></div>
         </div>
+      </template>
+      <div class="flex flex-col border-solid border-1 border-[#bdbdbd]">
         <div>
-          <div class="h-[30px] flex items-center text-base text-[#fff] bg-[#006487]">
+          <div
+            class="h-[30px] pl-3 flex items-center text-base text-[#fff] bg-[#006487]"
+          >
             基本信息
           </div>
-
+          <el-form
+            ref="baseFormRef"
+            :model="baseForm"
+            label-width="auto"
+            class="pt-[5px]"
+            size="small"
+          >
+            <el-row>
+              <el-col :span="8">
+                <el-form-item
+                  label="PCB条码"
+                  class="mb-[5px] flex"
+                  prop="ContainerName"
+                >
+                  <el-input
+                    v-model="baseForm.ContainerName"
+                    style="width: 200px"
+                    disabled
+                  />
+                </el-form-item>
+              </el-col>
+              <el-col :span="11">
+                <el-form-item
+                  label="工单"
+                  class="mb-[5px] flex"
+                  prop="MfgOrderName"
+                >
+                  <el-input
+                    v-model="baseForm.MfgOrderName"
+                    style="width: 200px"
+                    disabled
+                  />
+                </el-form-item>
+              </el-col>
+            </el-row>
+            <el-row>
+              <el-col :span="8">
+                <el-form-item
+                  class="mb-[5px]"
+                  label="产品编码"
+                  prop="ProductName"
+                >
+                  <el-input
+                    v-model="baseForm.ProductName"
+                    style="width: 200px"
+                    disabled
+                  /> </el-form-item
+              ></el-col>
+              <el-col :span="11">
+                <el-form-item class="mb-[5px]" label="产品描述">
+                  <el-input
+                    v-model="baseForm.ProductDesc"
+                    style="width: 200px"
+                    disabled
+                  />
+                </el-form-item>
+              </el-col>
+            </el-row>
+            <el-row>
+              <el-col :span="8">
+                <el-form-item class="mb-[5px]" label="工序编码" prop="SpecName">
+                  <el-input
+                    v-model="baseForm.SpecName"
+                    style="width: 200px"
+                    disabled
+                  /> </el-form-item
+              ></el-col>
+              <el-col :span="11">
+                <el-form-item class="mb-[5px]" label="工序描述" prop="SpecDesc">
+                  <el-input
+                    v-model="baseForm.SpecDesc"
+                    style="width: 200px"
+                    disabled
+                  />
+                </el-form-item>
+              </el-col>
+            </el-row>
+          </el-form>
         </div>
 
         <div>
-          <div class="h-[30px] flex items-center text-base text-[#fff] bg-[#006487]">
+          <div
+            class="h-[30px] pl-3 flex items-center text-base text-[#fff] bg-[#006487]"
+          >
             不良列表
           </div>
-          
+          <tableTemp
+            :showIndex="true"
+            :tableData="badData"
+            :tableHeight="200"
+            :columnData="badColumn"
+               size="small"
+          >
+          </tableTemp>
         </div>
         <div>
-          <div class="h-[30px] flex items-center text-base text-[#fff] bg-[#006487]">
-            返修工序
+          <div
+            class="h-[30px] pl-3 flex items-center text-base text-[#fff] bg-[#006487]"
+          >
+            返修
           </div>
+          <el-form
+            ref="repairFormRef"
+            :model="repairForm"
+            :inline="true"
+            class="pt-2"
+          >
+            <div class="flex items-start">
+              <el-form-item label="返修工序" prop="WorkFlowStep">
+                <el-select
+                  v-model="repairForm.WorkFlowStep"
+                  placeholder="请选择"
+                  style="width: 250px"
+                >
+                  <el-option
+                    v-for="item in specList"
+                    :key="item.WorkflowStepName"
+                    :label="item.WorkflowStepName"
+                    :value="item.WorkflowStepName"
+                  />
+                </el-select>
+              </el-form-item>
+              <el-form-item label="返修原因" prop="Remark">
+                <el-input
+                  v-model="repairForm.Remark"
+                  :rows="3"
+                  style="width: 350px"
+                  type="textarea"
+                  placeholder="请输入"
+                />
+              </el-form-item>
+            </div>
+          </el-form>
         </div>
       </div>
       <template #footer>
-        <!-- <span class="dialog-footer">
-                  <el-button @click="show = false">取消</el-button>
-                  <el-button type="primary" @click="show = false"> 确定 </el-button>
-              </span> -->
+        <span class="dialog-footer">
+          <el-button @click="repairCancel">取消</el-button>
+          <el-button type="primary" @click="repairSubmit"> 确定 </el-button>
+        </span>
       </template>
     </el-dialog>
   </div>
@@ -80,20 +241,18 @@
 
 <script lang="ts" setup>
 import {
-  QueryCarrierList,
-  SubmitPcbToPacking,
-  TrunkDeal,
-  QueryPackListByCarrier,
+  QuerySMTDefectRecordDetail,
+  QueryWorkflowList,
+  SaveRepairRecord,
 } from "@/api/smtApi";
 import tableTem from "@/components/tableTem/index.vue";
+import tableTemp from "@/components/tableTemp/index.vue";
 import { useAppStoreWithOut } from "@/stores/modules/app";
 import { useUserStoreWithOut } from "@/stores/modules/user";
 import { ElMessage, ElMessageBox, ElNotification } from "element-plus";
-interface Turn {
-  CARRIERNAME: string;
-  LOADTYPE: string;
-  CAPACITY: number;
-  QTY: number;
+interface Spec {
+  WorkflowName: string;
+  WorkflowStepName: string;
 }
 import {
   ref,
@@ -196,13 +355,83 @@ const columnData = reactive([
 const pageObj = ref({
   pageSize: 50,
   currentPage: 1,
-  // isShow:-1
 });
-const turnData = ref<Turn[]>([]);
-const boxHeight = ref(0);
 const inputFocus = ref(true);
-const isLoding = ref("");
 const badVisible = ref(false);
+const baseForm = ref({
+  ContainerName: "",
+  MfgOrderName: "",
+  ProductName: "",
+  ProductDesc: "",
+  SpecName: "",
+  SpecDesc: "",
+});
+const badData = ref([]);
+const badColumn = ref([
+  {
+    text: true,
+    prop: "ref_name",
+    label: "不良点位",
+    width: "",
+    min: true,
+    align: "1",
+  },
+  {
+    text: true,
+    prop: "DefectCode",
+    label: "不良代码",
+    width: "",
+    min: true,
+    align: "1",
+  },
+  {
+    text: true,
+    prop: "DefectDesc",
+    label: "不良原因",
+    width: "",
+    min: true,
+    align: "1",
+  },
+  {
+    text: true,
+    prop: "ref_name1",
+    label: "不良点位",
+    width: "",
+    min: true,
+    align: "1",
+  },
+  {
+    text: true,
+    prop: "DefectCode1",
+    label: "不良代码",
+    width: "",
+    min: true,
+    align: "1",
+  },
+  {
+    text: true,
+    prop: "DefectDesc1",
+    label: "不良原因",
+    width: "",
+    min: true,
+    align: "1",
+  },
+]);
+const barCode = ref("");
+const repairForm = ref({
+  // SpecName: "",
+  // remark: "",
+  IsDefectHistoryId: "",
+  ContainerName: "",
+  WorkStation: opui.station,
+  // Status: "",
+  Remark: "",
+  CreatedBy: userStore.getUserInfo,
+  WorkFlowStep: "",
+});
+const specList = ref<Spec[]>([]);
+const baseFormRef = ref();
+const repairFormRef = ref();
 
 onBeforeMount(() => {
   getScreenHeight();
@@ -213,9 +442,43 @@ onMounted(() => {
 onBeforeUnmount(() => {
   window.addEventListener("resize", getScreenHeight);
 });
+//获取光标
+const getFocus = () => {
+  inputFocus.value = false;
+  setTimeout(() => {
+    inputFocus.value = true;
+  }, 100);
+};
+
 
 const getChange = () => {
-  badVisible.value = true;
+  if (!barCode.value) {
+    return;
+  }
+ 
+  QuerySMTDefectRecordDetail(barCode.value).then((res: any) => {
+    // console.log(res);
+    if(!res.success){
+      msgTitle.value = res.msg;
+      msgType.value = res.success;
+      barCode.value=''
+      getFocus()
+      return
+    }
+    badVisible.value = true;
+    baseForm.value.ContainerName = res.content.ContainerName;
+    baseForm.value.ProductDesc = res.content.ProductDesc;
+    baseForm.value.MfgOrderName = res.content.MfgOrderName;
+    baseForm.value.ProductName = res.content.ProductName;
+    baseForm.value.SpecDesc = res.content.SpecDesc;
+    baseForm.value.SpecName = res.content.SpecName;
+    badData.value = res.content.defectCodeDetail;
+    repairForm.value.IsDefectHistoryId = res.content.isDefectHistoryId;
+    repairForm.value.ContainerName = res.content.ContainerName;
+    QueryWorkflowList(res.content.WorkflowName).then((res: any) => {
+      specList.value = res.content;
+    });
+  });
   // inputFocus.value = false;
   // SubmitPcbToPacking(form.value).then((res: any) => {
   //   msgTitle.value = res.msg;
@@ -230,6 +493,27 @@ const getChange = () => {
   //   inputFocus.value = true;
   // });
 };
+const repairCancel = () => {
+  badVisible.value = false;
+  badData.value = [];
+  baseFormRef.value.resetFields();
+  repairFormRef.value.resetFields();
+  repairForm.value.IsDefectHistoryId = "";
+  repairForm.value.ContainerName = "";
+};
+const repairSubmit = () => {
+  SaveRepairRecord(repairForm.value).then((res: any) => {
+    ElNotification({
+      title: "提示信息",
+      message: res.msg,
+      type: res.success ? "success" : "error",
+    });
+    if (res.success) {
+      repairCancel();
+      getFocus
+    }
+  });
+};
 
 const handleSizeChange = (val: any) => {
   pageObj.value.currentPage = 1;
@@ -240,7 +524,6 @@ const handleCurrentChange = (val: any) => {
 };
 const getScreenHeight = () => {
   nextTick(() => {
-    boxHeight.value = window.innerHeight - 155;
     tableHeight.value = window.innerHeight - 360;
   });
 };

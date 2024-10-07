@@ -1,37 +1,20 @@
 <template>
   <div class="flex flex-col w-full h-full">
-    <div
-      class="h-[40px] min-h-[40px] pl-2 pr-2 flex justify-between items-center"
-    >
+    <div class="h-[40px] min-h-[40px] pl-2 pr-2 flex justify-between items-center">
       <span class="text-[1.2rem]"> {{ opui.stationDec }} </span>
       <div></div>
     </div>
     <div class="w-full flex-1 flex">
       <div class="setwidth w-[350px]">
         <div class="w-full h-full box">
-          <div
-            class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]"
-          >
+          <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
             <span class="ml-5">基本信息</span>
           </div>
           <div class="p-[10px]">
-            <el-form
-              class="inbound"
-              ref="formRef"
-              :model="form"
-              label-width="auto"
-            >
-              <el-form-item
-                v-for="f in formHeader"
-                :key="f.value"
-                :label="f.label"
-              >
-                <span
-                  class="font-bold text-lg leading-[30px]"
-                  :class="f.value == 'passNum' ? 'text-[#00B400]' : ''"
-                >
-                  {{ formText(f.value) }}</span
-                >
+            <el-form class="inbound" ref="formRef" :model="form" label-width="auto">
+              <el-form-item v-for="f in formHeader" :key="f.value" :label="f.label">
+                <span class="font-bold text-lg leading-[30px]" :class="f.value == 'passNum' ? 'text-[#00B400]' : ''">
+                  {{ formText(f.value) }}</span>
               </el-form-item>
             </el-form>
           </div>
@@ -41,182 +24,95 @@
         <!-- <div class="w-full"> -->
         <div class="w-full h-full flex flex-col">
           <div>
-            <div
-              class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]"
-            >
+            <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
               <span class="ml-5"> 扫描条码</span>
             </div>
             <div class="h-[120px] pt-3 pr-5 pl-5">
-              <el-form
-                class="inbound"
-                ref="formRef"
-                :inline="true"
-                :model="form"
-                label-width="auto"
-                @submit.native.prevent
-              >
+              <el-form class="inbound" ref="formRef" :inline="true" :model="form" label-width="auto"
+                @submit.native.prevent>
                 <el-form-item label="扫描条码" class="mb-2">
-                  <el-input
-                    v-model.trim="barCode"
-                    ref="inputRef"
-                    :autofocus="inputFocus"
-                    style="width: 500px"
-                    placeholder="请扫描条码"
-                    @keyup.enter.native="getChange"
-                  />
+                  <el-input v-model.trim="barCode" ref="inputRef" :autofocus="inputFocus" style="width: 500px"
+                    placeholder="请扫描条码" @keyup.enter.native="getChange" />
                 </el-form-item>
-                <el-form-item
-                  :class="[stopsForm.result == 'OK' ? 'switchok' : 'switchng']"
-                  class="mb-2"
-                >
-                  <el-switch
-                    v-model="stopsForm.result"
-                    size="large"
-                    style="
+                <el-form-item :class="[stopsForm.result == 'OK' ? 'switchok' : 'switchng']" class="mb-2">
+                  <el-switch v-model="stopsForm.result" size="large" style="
                       zoom: 1.2;
                       --el-switch-on-color: #ff4949;
                       --el-switch-off-color: #13ce66;
-                    "
-                    :active-value="'NG'"
-                    :inactive-value="'OK'"
-                    active-text="NG"
-                    inactive-text="OK"
-                  />
+                    " :active-value="'NG'" :inactive-value="'OK'" active-text="NG" inactive-text="OK" />
                 </el-form-item>
               </el-form>
-              <div
-                class="text-xl font-bold text-[#00B400]"
-                v-show="msgType === true || msgTitle === ''"
-              >
+              <div class="text-xl font-bold text-[#00B400]" v-show="msgType === true || msgTitle === ''">
                 {{ msgTitle === "" ? "请扫描PCB条码" : msgTitle }}
               </div>
-              <div
-                class="text-xl font-bold text-[red]"
-                v-show="msgType === false && msgTitle !== ''"
-              >
+              <div class="text-xl font-bold text-[red]" v-show="msgType === false && msgTitle !== ''">
                 {{ msgTitle }}
               </div>
             </div>
           </div>
 
           <div class="flex flex-col flex-1 tabs-css">
-            <div
-              class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]"
-            >
+            <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
               <span class="ml-5">历史过站记录</span>
             </div>
-            <table-tem
-              :showIndex="true"
-              :tableData="tableData"
-              :tableHeight="tableHeight"
-              :columnData="columnData1"
-              :pageObj="pageObj"
-              @handleSizeChange="handleSizeChange"
-              @handleCurrentChange="handleCurrentChange"
-            ></table-tem>
+            <table-tem :showIndex="true" :tableData="tableData" :tableHeight="tableHeight" :columnData="columnData1"
+              :pageObj="pageObj" @handleSizeChange="handleSizeChange"
+              @handleCurrentChange="handleCurrentChange"></table-tem>
           </div>
         </div>
       </div>
     </div>
-    <el-dialog
-      v-model="badVisible"
-      title="不良登记"
-      width="60%"
-      :append-to-body="true"
-      :close-on-click-modal="false"
-      :close-on-press-escape="false"
-      align-center
-      @close="badCancel"
-    >
+    <el-dialog v-model="badVisible" title="不良登记" width="60%" :append-to-body="true" :close-on-click-modal="false"
+      :close-on-press-escape="false" align-center @close="badCancel">
       <div>
         <div>
-          <div
-            class="h-[30px] pl-3 flex items-center text-base text-[#fff] bg-[#006487]"
-          >
+          <div class="h-[30px] pl-3 flex items-center text-base text-[#fff] bg-[#006487]">
             基本信息
           </div>
           <el-form ref="badFormRef" :model="badheadForm" label-width="auto">
             <el-form-item label="PCB条码" class="mb-[5px] flex">
-              <el-input
-                v-model="badForm.containerName"
-                style="width: 160px"
-                disabled
-              />
+              <el-input v-model="badForm.containerName" style="width: 160px" disabled />
             </el-form-item>
             <el-row>
               <el-col :span="8">
                 <el-form-item label="工单" class="mb-[5px] flex">
-                  <el-input
-                    v-model="badheadForm.orderName"
-                    style="width: 160px"
-                    disabled
-                  />
+                  <el-input v-model="badheadForm.MfgOrderName" style="width: 160px" disabled />
                 </el-form-item>
               </el-col>
               <el-col :span="6">
                 <el-form-item class="mb-[5px]" label="产品编码">
-                  <el-input
-                    v-model="badheadForm.ProductName"
-                    style="width: 160px"
-                    disabled
-                  /> </el-form-item
-              ></el-col>
+                  <el-input v-model="badheadForm.ProductName" style="width: 160px" disabled /> </el-form-item></el-col>
               <el-col :span="10">
                 <el-form-item class="mb-[5px]" label="产品描述">
-                  <el-input
-                    v-model="badheadForm.ProductDesc"
-                    style="width: 320px"
-                    disabled
-                  />
+                  <el-input v-model="badheadForm.ProductDesc" style="width: 320px" disabled />
                 </el-form-item>
               </el-col>
             </el-row>
             <el-row>
               <el-col :span="8">
                 <el-form-item class="mb-[5px]" label="计划开始时间">
-                  <el-input
-                    v-model="badheadForm.PlannedStartDate"
-                    style="width: 160px"
-                    disabled
-                  />
+                  <el-input v-model="badheadForm.PlannedStartDate" style="width: 160px" disabled />
                 </el-form-item>
               </el-col>
               <el-col :span="6">
                 <el-form-item class="mb-[5px]" label="计划完成时间">
-                  <el-input
-                    v-model="badheadForm.PlannedCompletionDate"
-                    style="width: 160px"
-                    disabled
-                  />
+                  <el-input v-model="badheadForm.PlannedCompletionDate" style="width: 160px" disabled />
                 </el-form-item>
               </el-col>
               <el-col :span="10">
                 <el-form-item class="mb-[5px]" label="工单数量">
-                  <el-input
-                    v-model="badheadForm.Qty"
-                    style="width: 160px"
-                    disabled
-                  />
+                  <el-input v-model="badheadForm.Qty" style="width: 160px" disabled />
                 </el-form-item>
               </el-col>
             </el-row>
           </el-form>
         </div>
         <div>
-          <div
-            class="h-[30px] pl-3 flex items-center text-base text-[#fff] bg-[#006487]"
-          >
+          <div class="h-[30px] pl-3 flex items-center text-base text-[#fff] bg-[#006487]">
             不良原因
           </div>
-          <table-tem
-            :showIndex="true"
-            :show-select="true"
-            :tableData="BadtableData"
-            :tableHeight="300"
-            :columnData="badColumn"
-            :pageObj="badpageObj"
-            @handleSelectionChange="handleSelectionChange"
-          ></table-tem>
+          <table-tem :showIndex="true" :show-select="true" :tableData="BadtableData" :tableHeight="300"
+            :columnData="badColumn" :pageObj="badpageObj" @handleSelectionChange="handleSelectionChange"></table-tem>
         </div>
       </div>
 
@@ -465,19 +361,11 @@ const badSubmit = () => {
   });
   // console.log(badForm.value);
   VIDefectProductRecord(badForm.value).then((res: any) => {
-    if (res.success) {
-      ElNotification({
+    ElNotification({
         title: "提示信息",
         message: res.msg,
-        type: "success",
+        type: res.success?"success":"error",
       });
-    } else {
-      ElNotification({
-        title: "提示信息",
-        message: res.msg,
-        type: "error",
-      });
-    }
     badVisible.value = false;
     // console.log(res);
     changeList.value = [];
@@ -568,7 +456,7 @@ const getScreenHeight = () => {
   font-size: 1.1rem;
 }
 
-.tabs-css .el-tabs--border-card > .el-tabs__header .el-tabs__item {
+.tabs-css .el-tabs--border-card>.el-tabs__header .el-tabs__item {
   color: #fff;
   // padding: 0 !important;
 }
@@ -587,10 +475,7 @@ const getScreenHeight = () => {
   color: #ff4949;
 }
 
-.tabs-css
-  .el-tabs--border-card
-  > .el-tabs__header
-  .el-tabs__item:not(.is-disabled):hover {
+.tabs-css .el-tabs--border-card>.el-tabs__header .el-tabs__item:not(.is-disabled):hover {
   // color: #fff;
   // background-color: #fff;
   background-color: rgba($color: #fff, $alpha: 0.8);

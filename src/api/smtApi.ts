@@ -160,3 +160,32 @@ export function OrderQuery(data:any) {
         data
     })
 }
+//返修登记
+export function QuerySMTDefectRecordDetail(data:any) {
+    return request({
+        url: "/api/repair/QuerySMTDefectRecordDetail",
+        method: "post",
+        params:{
+            ContainerName:data
+        }
+    })
+}
+//返修工序
+export function QueryWorkflowList(data:any) {
+    return request({
+        url: "/api/repair/QueryWorkflowList",
+        method: "post",
+        params:{
+            workflowName:data
+        }
+    })
+}
+//提交返修登记
+
+export function SaveRepairRecord(data:any) {
+    return request({
+        url: "/api/repair/SaveRepairRecord",
+        method: "post",
+       data
+    })
+}

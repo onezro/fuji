@@ -96,9 +96,10 @@ service.interceptors.response.use(
         return response.data;
       } 
       else {
-        ElMessageBox.alert(response.data.msg, "提示信息", {
-          confirmButtonText: "确定",
-        });
+        return response.data;
+        // ElMessageBox.alert(response.data.msg, "提示信息", {
+        //   confirmButtonText: "确定",
+        // });
         // return Promise.reject(response.data);
       }
     }
