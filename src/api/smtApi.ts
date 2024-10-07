@@ -181,11 +181,30 @@ export function QueryWorkflowList(data:any) {
     })
 }
 //提交返修登记
-
 export function SaveRepairRecord(data:any) {
     return request({
         url: "/api/repair/SaveRepairRecord",
         method: "post",
        data
+    })
+}
+//查询返修修操作
+export function QueryRepairAction(data:any) {
+    return request({
+        url: "/api/repair/QueryRepairAction",
+        method: "post",
+        params:{
+            operationName:data
+        }
+    })
+}
+//根据工序查询不良记录
+export function QueryRepairRecord(data:any) {
+    return request({
+        url: "/api/repair/QueryRepairRecord",
+        method: "post",
+        params:{
+            workStaion:data
+        }
     })
 }

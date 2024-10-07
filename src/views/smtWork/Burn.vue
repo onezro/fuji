@@ -58,7 +58,7 @@
             :model="form"
             label-width="auto"
           >
-            <el-form-item label="创建时间" prop="startTime" class="mb-2">
+            <el-form-item label="烧录日期" prop="startTime" class="mb-2">
               <el-date-picker
                 v-model="form.date"
                 type="daterange"
@@ -326,7 +326,7 @@ const columnData = reactive([
   {
     text: true,
     prop: "FromContainerName",
-    label: "原材料码",
+    label: "原材料批次号",
     width: "",
     min: true,
     align: "1",
@@ -334,7 +334,7 @@ const columnData = reactive([
   {
     text: true,
     prop: "ContainerName",
-    label: "半成品码",
+    label: "半成品条码",
     width: "",
     min: true,
     align: "1",
@@ -342,7 +342,7 @@ const columnData = reactive([
   {
     text: true,
     prop: "MaterialCode",
-    label: "物料编码",
+    label: "产品编码",
     width: "",
     min: true,
     align: "1",
@@ -350,7 +350,7 @@ const columnData = reactive([
   {
     text: true,
     prop: "MaterialDesc",
-    label: "物料描述",
+    label: "产品描述",
     // width: "600",
     min: true,
     align: "1",
@@ -366,7 +366,7 @@ const columnData = reactive([
   {
     text: true,
     prop: "TxnDate",
-    label: "创建时间",
+    label: "烧录时间",
     width: "",
     min: true,
     align: "1",
@@ -405,13 +405,12 @@ const RawmaterialFeeding = () => {
     return;
   }
   let data = cloneDeep(OrderForm);
+
   feedForm.value = { ...data };
-  feedForm.value.type = opui.station;
+  feedForm.value.type = data.BD_ProductModel;
   feedForm.value.eqInfo = opui.stationDec;
   feedVisible.value = true;
-  // nextTick(()=>{
-  //  feedRef.value.getFocus()
-  // })
+
   getFeedData()
 };
 const getFeedData=()=>{
@@ -496,7 +495,7 @@ onBeforeUnmount(() => {
 
 const getOrderData = () => {
   isLoding.value = "is-loading";
-  OrderQuery({lineName:opui.line}).then((res: any) => {
+  OrderQuery({lineName:opui.line,OrderTypeName:'BURN'}).then((res: any) => {
     // console.log(res);
     let timer = setTimeout(() => {
       isLoding.value = "";
@@ -543,9 +542,9 @@ const radioChange = (args: any) => {
         OrderForm.PlannedCompletionDate = v.PlannedCompletionDate;
         OrderForm.Qty = v.Qty;
         form.value.OrderNum=v.MfgOrderName
-        onSubmit()
       }
     });
+    onSubmit()
   }
 
   //   inputRef.value.focus();

@@ -5,7 +5,7 @@
       pageObj.currentPage * pageObj.pageSize
     )
       " stripe border fit :height="tableHeight" :size="size || 'default'" :tooltip-effect="'dark'" style="width: 100%"
-      @selection-change="handleSelectionChange" @row-click="rowClick"      ref="multipleTableRef">
+      @selection-change="handleSelectionChange" @row-click="rowClick" ref="multipleTableRef">
       <el-table-column type="selection" fixed width="55" align="center" v-if="showSelect" />
       <el-table-column type="index" align="center" fixed label="序号" :width="size == 'small' ? '50' : '60'"
         v-if="showIndex">
@@ -29,20 +29,26 @@
               " :type="item.type" effect="plain">
                 {{ item.text }}
               </el-tag>
-            </div> 
+            </div>
           </div>
           <el-tooltip v-if="c.isOperation" v-for="(o, oi) in c.operation" :key="oi" :content="o.label" placement="top">
-            <el-button v-if="o.icon" :icon="o.icon" size="small" :color="o.color" :type="o.type" :disabled="o.disabled?scope.row[o.prop] == o.disabled:false" @click="o.buttonClick(scope.row)" />
-            <!-- <span v-if="!o.icon" text class="underline font-bold text-[#006487]" @click="o.buttonClick(scope.row)">{{
-              scope.row[o.prop] || o.label }}</span> -->
-            <el-button v-if="!o.icon" size="small" :type="o.type" :color="o.color" @click="o.buttonClick(scope.row)"
-            :disabled="o.disabled?scope.row[o.prop] == o.disabled:false">{{ o.label }}</el-button>
+            <el-button v-if="o.icon" :icon="o.icon" size="small" :color="o.color" :type="o.type"
+              :disabled="o.disabled ? scope.row[o.prop] == o.disabled : false" @click="o.buttonClick(scope.row)" />
+            <span v-if="!o.icon" text class="underline font-bold text-[#006487]" @click="o.buttonClick(scope.row)">{{
+              scope.row[o.prop] || o.label }}</span>
+            <!-- <el-button class="underline" v-if="!o.icon" size="small" :type="o.type" :color="o.color" @click="o.buttonClick(scope.row)"
+              :disabled="o.disabled ? scope.row[o.prop] == o.disabled : false">{{ o.label }}</el-button> -->
           </el-tooltip>
         </template>
       </el-table-column>
+      <template #empty>
+        <div class="flex items-center justify-center h-100%">
+          <el-empty />
+        </div>
+      </template>
     </el-table>
     <div class="mt-2 mb-2" v-if="pageObj.isShow == -1 ? false : true">
-      <el-pagination :size="size || 'default'" background @size-change="handleSizeChange"
+      <el-pagination :size="'default'" background @size-change="handleSizeChange"
         @current-change="handleCurrentChange" :pager-count="5" :current-page="pageObj.currentPage"
         :page-size="pageObj.pageSize" :page-sizes="[10, 30, 50, 100, 150]" layout="total,sizes, prev, pager, next"
         :total="tableData.length">
@@ -96,26 +102,24 @@ const handleCurrentChange = (e: any) => {
   emit("handleCurrentChange", e);
 };
 
-
-
-const rowClick = (e: any,column:any) => {
+const rowClick = (e: any, column: any) => {
   rowId.value = e[rowName?.value];
   emit("rowClick", cloneDeep(e));
 };
 
-const rowClassName=(data:any)=>{
+const rowClassName = (data: any) => {
   // console.log(data);
-  return '';  
-}
+  return "";
+};
 const rowStyle = (val: any) => {
-  let data = cloneDeep(val.row)
+  let data = cloneDeep(val.row);
   if (rowId.value == data[rowName?.value]) {
     return {
       "background-color": "#ffcd50",
       // 'color': '#fff'
     };
   }
-  return {};  
+  return {};
 };
 
 const getMaxLength = (arr: any) => {
@@ -206,6 +210,7 @@ defineExpose({
 .el-table .warning-row {
   --el-table-tr-bg-color: #ffcd50;
 }
+
 .el-table .success-row {
   --el-table-tr-bg-color: var(--el-color-success-light-9);
 }

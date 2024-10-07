@@ -1,5 +1,5 @@
 import axios from "axios";
-import { ElMessageBox, ElMessage, ElLoading } from "element-plus";
+import { ElMessageBox, ElMessage, ElLoading ,ElNotification} from "element-plus";
 import { getToken } from "@/utils/auth";
 
 // import store from '@/store'
@@ -96,6 +96,11 @@ service.interceptors.response.use(
         return response.data;
       } 
       else {
+        ElNotification({
+          title: "提示信息",
+          message:response.data.msg,
+          type: "error",
+        });
         return response.data;
         // ElMessageBox.alert(response.data.msg, "提示信息", {
         //   confirmButtonText: "确定",

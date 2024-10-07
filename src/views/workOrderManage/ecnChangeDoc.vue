@@ -23,7 +23,7 @@
                 style="width: 180px"
               />
             </el-form-item>
-            <el-form-item label="更改时间区间" class="mb-2">
+            <el-form-item label="更改时间" class="mb-2">
               <el-date-picker
                 v-model="searchDate"
                 value-format="YYYY-MM-DD"
@@ -155,7 +155,7 @@
       ></table-tem>
       <template #footer>
         <span class="dialog-footer">
-          <el-button>关闭</el-button>
+          <el-button @click="detailsCancel">关闭</el-button>
         </span>
       </template>
     </el-dialog>
@@ -566,6 +566,9 @@ const restData = () => {
   //   console.log(formData.value);
   getData();
 };
+const detailsCancel=()=>{
+  detailsVisible.value=false
+}
 
 const detailsSizeChange = (val: any) => {
   detailsPageObj.value.currentPage = 1;

@@ -21,12 +21,6 @@
               :model="form"
               label-width="auto"
             >
-              <!-- <el-form-item label="工单号">
-                                <selectTa ref="selectTable" :table="orderTable" :defaultSelectVal="defaultSelectVal" :columns="orderColumns"  :max-height="400" :tableWidth="700"
-                                    :keywords="{ label: 'MfgOrderName', value: 'MfgOrderName' }"
-                                    @radioChange="(...args: any) => radioChange(args)">
-                                </selectTa>
-                            </el-form-item> -->
               <el-form-item
                 v-for="f in formHeader"
                 :key="f.value"
@@ -304,7 +298,7 @@ const getChange = () => {
         msgTitle.value = res.msg;
         msgType.value = res.success;
         stopsForm.value.containerName = "";
-        form.value=res.content[0]
+        form.value={...res.content[0]}
         // if (res.success) {
         stopsForm.value.result = "OK";
         // }

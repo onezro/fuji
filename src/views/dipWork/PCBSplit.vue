@@ -1,6 +1,6 @@
 <template>
     <div class="flex flex-col w-full h-full">
-        <div class="h-[40px] min-h-[40px] pl-2 pr-2 flex justify-between items-center">
+        <div class="h-[40px]  pl-2 pr-2 flex justify-between items-center">
             <span class="text-[1.2rem]"> {{ opui.stationDec }} </span>
             <div>
                 <el-button type="primary" @click="openDialog">不良品登记</el-button>
@@ -65,10 +65,11 @@
                                     @handleCurrentChange="handleCurrentChange"></table-tem>
                             </el-tab-pane>
                             <el-tab-pane label="工装治具" name="fixtures">
-                                fixtures
-                                <!-- <table-tem :showIndex="true" :tableData="tableData1" :tableHeight="tableHeight"
-                                    :columnData="columnData1" :pageObj="pageObj" @handleSizeChange="handleSizeChange"
-                                    @handleCurrentChange="handleCurrentChange"></table-tem> -->
+                                <!-- fixtures -->
+
+                                <table-tem :showIndex="true" :tableData="fixtureData" :tableHeight="tableHeight"
+                                    :columnData="fixtureColumn" :pageObj="fixturePageObj" @handleSizeChange="handleSizeChange1"
+                                    @handleCurrentChange="handleCurrentChange1"></table-tem>
                             </el-tab-pane>
                         </el-tabs>
                     </div>
@@ -98,6 +99,7 @@ import {
 } from "vue";
 import { ElMessage, ElMessageBox, ElNotification } from "element-plus";
 import { SplitStationMoveOut,QueryWorkOrderInfo } from "@/api/dipApi";
+import { QueryToolInfo } from "@/api/operate";
 const appStore = useAppStore();
 const userStore = useUserStoreWithOut();
 const opui = appStore.getOPUIReal();
@@ -302,6 +304,36 @@ const orderColumns = ref([
     { label: "计划完成", width: "", prop: "PlannedCompletionDate" },
 ]);
 
+const fixtureColumn = reactive([
+    {
+        text: true,
+        prop: "ToolName",
+        label: "治具编码",
+        width: "",
+        align: "1",
+    },
+    {
+        text: true,
+        prop: "MaterialName",
+        label: "类型",
+        width: "",
+        align: "1",
+    },
+    {
+        text: true,
+        prop: "CompName",
+        label: "类型编号",
+        width: "",
+        align: "1",
+    },
+]);
+const fixtureData = ref([]);
+
+const fixturePageObj = ref({
+    pageSize: 10,
+    currentPage: 1,
+});
+
 onBeforeMount(() => {
     getScreenHeight();
 });
@@ -400,16 +432,16 @@ const handleCurrentChange = (val: any) => {
     pageObj.value.currentPage = val;
 };
 const handleSizeChange1 = (val: any) => {
-    pageObj1.value.currentPage = 1;
-    pageObj1.value.pageSize = val;
+    fixturePageObj.value.currentPage = 1;
+    fixturePageObj.value.pageSize = val;
 };
 const handleCurrentChange1 = (val: any) => {
-    pageObj1.value.currentPage = val;
+    fixturePageObj.value.currentPage = val;
 };
 
 const getScreenHeight = () => {
     nextTick(() => {
-        tableHeight.value = window.innerHeight - 369.5;
+        tableHeight.value = window.innerHeight - 358;
     });
 };
 </script>
@@ -432,11 +464,12 @@ const getScreenHeight = () => {
 }
 
 .tabs-css .el-tabs__header {
+    --el-tabs-header-height: 35px;
     background-color: #006487 !important;
 }
 
 .tabs-css .el-tabs__content {
-    padding: 5px 0px;
+    padding:0px;
 }
 
 .tabs-css .el-tabs__item {
@@ -454,10 +487,13 @@ const getScreenHeight = () => {
     // font-weight: bold;
 }
 
-.tabs-css .el-tabs--border-card>.el-tabs__header .el-tabs__item:not(.is-disabled):hover {
-    // color: #fff;
-    background-color: #fff;
-}
+.el-tabs--border-card
+    > .el-tabs__header
+    .el-tabs__item:not(.is-disabled):hover {
+        font-size: 1.1rem;
+    color: #006487 !important;
+    background-color: rgba(255, 255, 255, 0.8);
+  }
 
 .el-table th.el-table__cell .el-checkbox {
     display: none;

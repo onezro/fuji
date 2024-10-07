@@ -6,11 +6,7 @@
       </div>
       <el-form ref="formRef" :model="form" label-width="auto" class="p-2">
         <div v-for="f in formHeader" :key="f.prop">
-          <el-form-item
-            :label="f.label"
-            :prop="f.prop"
-            :class="[f.prop == 'eqInfo' ? 'mb-2' : '']"
-          >
+          <el-form-item :label="f.label" :prop="f.prop" :class="[f.prop == 'eqInfo' ? 'mb-2' : '']">
             <span class="font-bold text-[1rem] text-wrap break-all">{{
               form[f.prop]
             }}</span>
@@ -22,131 +18,59 @@
     <div class="w-[calc(100%-320px)] min-w-[600px]">
       <div class="w-full h-full flex flex-col">
         <div>
-          <div
-            class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]"
-          >
+          <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
             <span class="ml-5"> 扫描条码</span>
           </div>
           <div class="h-[120px] p-5">
-            <el-form
-              class="inbound"
-              :inline="true"
-              :model="formData"
-              label-width="auto"
-              @submit.native.prevent
-            >
+            <el-form class="inbound" :inline="true" :model="formData" label-width="auto" @submit.native.prevent>
               <el-form-item label="扫描条码">
-                <el-input
-                  v-model="formData.Container"
-                  ref="feedInputRef"
-                  style="width: 500px"
-                  placeholder="请扫描条码"
-                  @keyup.enter.native="getChange"
-                />
+                <el-input v-model="formData.Container" ref="feedInputRef" style="width: 500px" placeholder="请扫描条码"
+                  @keyup.enter.native="getChange" />
               </el-form-item>
             </el-form>
-            <div
-              class="text-xl font-bold text-[#00B400]"
-              v-show="msgType === true || msgTitle === ''"
-            >
+            <div class="text-xl font-bold text-[#00B400]" v-show="msgType === true || msgTitle === ''">
               {{ msgTitle === "" ? "请扫描物料编码" : msgTitle }}
             </div>
-            <div
-              class="text-xl font-bold text-[red]"
-              v-show="msgType === false && msgTitle !== ''"
-            >
+            <div class="text-xl font-bold text-[red]" v-show="msgType === false && msgTitle !== ''">
               {{ msgTitle }}
             </div>
           </div>
         </div>
         <div class="flex flex-col flex-1">
-          <div
-            class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]"
-          >
+          <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
             <span class="ml-5">工单物料需求清单</span>
           </div>
           <div class="flex-1" ref="tablebox">
-            <el-table
-              :data="
-                tableData.slice(
-                  (pageObj.currentPage - 1) * pageObj.pageSize,
-                  pageObj.currentPage * pageObj.pageSize
-                )
-              "
-              stripe
-              border
-              fit
-              :tooltip-effect="'dark'"
-              :height="300"
-              row-key="MaterialName"
-              :tree-props="{ children: 'children' }"
-            >
-              <el-table-column
-                type="index"
-                align="center"
-                fixed
-                label="序号"
-                width="60"
-              />
-              <el-table-column
-                prop="MaterialName"
-                label="物料编码"
-                :min-width="180"
-                width="180"
-              >
+            <el-table :data="tableData.slice(
+              (pageObj.currentPage - 1) * pageObj.pageSize,
+              pageObj.currentPage * pageObj.pageSize
+            )
+              " stripe border fit :tooltip-effect="'dark'" :height="300" row-key="MaterialName"
+              :tree-props="{ children: 'children' }">
+              <el-table-column type="index" align="center" fixed label="序号" width="60" />
+              <el-table-column prop="MaterialName" label="物料编码" :min-width="180" width="180">
               </el-table-column>
-              <el-table-column
-                prop="MaterialDesc"
-                label="物料描述"
-                :show-overflow-tooltip="true"
-                width="200"
-              >
+              <el-table-column prop="MaterialDesc" label="物料描述" :show-overflow-tooltip="true" width="200">
               </el-table-column>
-              <el-table-column
-                prop="isMater"
-                label="主料"
-                width="160"
-                :min-width="160"
-              >
+              <el-table-column prop="isMater" label="主料" width="160" :min-width="160">
                 <template #default="scope">
                   <span v-if="scope.row.isMater === 1">是</span>
-                  <span v-if="scope.row.isMater === 0"
-                    >否{{ `(${scope.row.originalMaterialName})` }}</span
-                  >
+                  <span v-if="scope.row.isMater === 0">否{{ `(${scope.row.originalMaterialName})` }}</span>
                 </template>
               </el-table-column>
-              <el-table-column
-                prop="QtyRequired"
-                align="center"
-                label="单件用量"
-                :min-width="flexColumnWidth('单件用量', 'QtyRequired')"
-              >
+              <el-table-column prop="QtyRequired" align="center" label="单件用量"
+                :min-width="flexColumnWidth('单件用量', 'QtyRequired')">
               </el-table-column>
-              <el-table-column
-                prop="TotalQtyRequired"
-                align="center"
-                label="需求量"
-                :min-width="flexColumnWidth('需求量', 'TotalQtyRequired')"
-              >
+              <el-table-column prop="TotalQtyRequired" align="center" label="需求量"
+                :min-width="flexColumnWidth('需求量', 'TotalQtyRequired')">
               </el-table-column>
-              <el-table-column
-                label="上料总量"
-                fixed="right"
-                :min-width="flexColumnWidth('上料总量', 'LoadQueueQty')"
-                align="center"
-              >
+              <el-table-column label="上料总量" fixed="right" :min-width="flexColumnWidth('上料总量', 'LoadQueueQty')"
+                align="center">
                 <template #default="scope">
                   <!-- <span class="underline font-bold text-[#006487] cursor-pointer" @click="handleEdit(scope.row)">{{
                     scope.row.LoadQueueQty }}</span> -->
-                  <el-button
-                    type="warning"
-                    text
-                    bg
-                    :disabled="
-                      scope.row.isLoadQueue != 1 || scope.row.LoadQueueQty == 0
-                    "
-                    @click="handleEdit(scope.row)"
-                  >
+                  <el-button type="warning" text bg :disabled="scope.row.isLoadQueue != 1 || scope.row.LoadQueueQty == 0
+                    " @click="handleEdit(scope.row)">
                     {{
                       scope.row.LoadQueueQty == 0 ? "" : scope.row.LoadQueueQty
                     }}
@@ -154,20 +78,12 @@
                 </template>
               </el-table-column>
             </el-table>
-            <div class="mt-2 mb-2">
-              <el-pagination
-                background
-                @size-change="handleSizeChange"
-                @current-change="handleCurrentChange"
-                :pager-count="5"
-                :current-page="pageObj.currentPage"
-                :page-size="pageObj.pageSize"
-                :page-sizes="[10, 30, 50, 100, 150]"
-                layout="total,sizes, prev, pager, next"
-                :total="tableData.length"
-              >
+            <!-- <div class="mt-2 mb-2">
+              <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange"
+                :pager-count="5" :current-page="pageObj.currentPage" :page-size="pageObj.pageSize"
+                :page-sizes="[10, 30, 50, 100, 150]" layout="total,sizes, prev, pager, next" :total="tableData.length">
               </el-pagination>
-            </div>
+            </div> -->
             <!-- <table-tem
               :showIndex="true"
               :tableData="tableData"
@@ -181,69 +97,34 @@
         </div>
       </div>
     </div>
-    <el-dialog
-      v-model="detailVisible"
-      title="物料上料明细"
-      width="75%"
-      align-center
-      @close="detailVisible = false"
-      :append-to-body="true"
-      :close-on-click-modal="false"
-      :close-on-press-escape="false"
-    >
+    <el-dialog v-model="detailVisible" title="物料上料明细" width="75%" align-center @close="detailVisible = false"
+      :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false">
       <div class="box">
-        <div
-          class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]"
-        >
+        <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
           <span class="ml-5">基本信息</span>
         </div>
-        <el-form
-          class="pt-2 pl-2"
-          ref="formRef"
-          :inline="true"
-          :model="detailForm"
-          label-width="auto"
-        >
+        <el-form class="pt-2 pl-2" ref="formRef" :inline="true" :model="detailForm" label-width="auto">
           <el-form-item class="mb-2" label="工单号" prop="order">
-            <el-input v-model="detailForm.MfgOrderName" disabled
-          /></el-form-item>
+            <el-input v-model="detailForm.MfgOrderName" disabled /></el-form-item>
           <el-form-item class="mb-2" label="需求量" prop="order">
-            <el-input v-model="detailForm.TotalQtyRequired" disabled
-          /></el-form-item>
+            <el-input v-model="detailForm.TotalQtyRequired" disabled /></el-form-item>
           <el-form-item class="mb-2" label="上料总量" prop="order">
-            <el-input v-model="detailForm.LoadQueueQty" disabled
-          /></el-form-item>
+            <el-input v-model="detailForm.LoadQueueQty" disabled /></el-form-item>
           <el-form-item class="mb-2" label="物料编码" prop="order">
-            <el-input v-model="detailForm.MaterialName" disabled
-          /></el-form-item>
+            <el-input v-model="detailForm.MaterialName" disabled /></el-form-item>
           <el-form-item class="mb-2" label="物料描述" prop="order">
-            <el-input
-              type="textarea"
-              style="width: 457px"
-              v-model="detailForm.MaterialDesc"
-              disabled
-          /></el-form-item>
+            <el-input type="textarea" style="width: 457px" v-model="detailForm.MaterialDesc" disabled /></el-form-item>
         </el-form>
         <div>
-          <div
-            class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]"
-          >
+          <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
             <span class="ml-5">物料批次明细</span>
           </div>
           <!-- <div class="m-2">
             <el-button type="primary" :disabled="BlankList.length == 0" @click="batchBlank">批量下料</el-button>
           </div> -->
-          <table-tem
-            :showIndex="true"
-            ref="feedTableRef"
-            :tableData="detailtableData"
-            :tableHeight="300"
-            :columnData="detailcolumnData"
-            :pageObj="detailpageObj"
-            @handleSizeChange="handleSizeChange1"
-            @handleSelectionChange="handleSelectionChange"
-            @handleCurrentChange="handleCurrentChange1"
-          ></table-tem>
+          <table-tem :showIndex="true" ref="feedTableRef" :tableData="detailtableData" :tableHeight="300"
+            :columnData="detailcolumnData" :pageObj="detailpageObj" @handleSizeChange="handleSizeChange1"
+            @handleSelectionChange="handleSelectionChange" @handleCurrentChange="handleCurrentChange1"></table-tem>
         </div>
       </div>
       <template #footer>
@@ -544,7 +425,7 @@ const getData = () => {
   QueryMaterialQueueDetails(getDetailForm.value).then((res: any) => {
     // console.log(res.content);
     if (res.success) {
-      detailForm.value.LoadQueueQty=res.content.reduce((sum:any, e:any) => sum + Number(e.LoadQueueQty || 0), 0)
+      detailForm.value.LoadQueueQty = res.content.reduce((sum: any, e: any) => sum + Number(e.LoadQueueQty || 0), 0)
       detailtableData.value = res.content;
     }
   });

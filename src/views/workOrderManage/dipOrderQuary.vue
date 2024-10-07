@@ -43,7 +43,7 @@
       <div class="table_container">
         <table-tem size="small" :show-select="true" :tableData="tableData" :tableHeight="tableHeight"
           :columnData="columnData" :pageObj="pageObj" @handleSizeChange="handleSizeChange"
-          @handleCurrentChange="handleCurrentChange" @rowClick="rowClick"
+          @handleCurrentChange="handleCurrentChange" 
           @handleSelectionChange="handleSelectionChange"></table-tem>
       </div>
     </el-card>
@@ -329,14 +329,47 @@ watch(
   }
 );
 
+const rowClick = (val: any) => {
+  dialogVisible.value = true;
+  if (orderChoice.value === val.MfgOrderName) {
+    return;
+  }
+  orderChoice.value = val.MfgOrderName;
+  productChoice.value = val.ProductName;
+  activeName.value = "物料清单明细";
+  orderName.value=val.MfgOrderName
+  QueryOrderMaterialRequired({
+    MfgOrder: val.MfgOrderName,
+  }).then((res: any) => {
+
+    if (res.success) {
+      let data = cloneDeep(feedOrganData(res.content));
+      feedTableData.value = data;
+    }
+  });
+};
 const columnData = reactive([
   {
-    text: true,
-    prop: "MfgOrderName",
+    // text: true,
+    // prop: "MfgOrderName",
+    // label: "工单",
+    // width: "",
+    // min: true,
+    // align: "center",
+    isOperation: true,
     label: "工单",
-    width: "",
-    min: true,
+    width: "120",
     align: "center",
+    operation: [
+      {
+        type: "primary",
+        label: "明细",
+        prop: "MfgOrderName",
+        icon: "",
+        // isButton:false,
+        buttonClick: rowClick,
+      },
+    ],
   },
   {
     text: true,
@@ -478,25 +511,7 @@ const getTableData = () => {
   });
 };
 
-const rowClick = (val: any) => {
-  dialogVisible.value = true;
-  if (orderChoice.value === val.MfgOrderName) {
-    return;
-  }
-  orderChoice.value = val.MfgOrderName;
-  productChoice.value = val.ProductName;
-  activeName.value = "物料清单明细";
-  orderName.value=val.MfgOrderName
-  QueryOrderMaterialRequired({
-    MfgOrder: val.MfgOrderName,
-  }).then((res: any) => {
 
-    if (res.success) {
-      let data = cloneDeep(feedOrganData(res.content));
-      feedTableData.value = data;
-    }
-  });
-};
 
 const feedOrganData = (organizations: any) => {
   const organizationMap = new Map();

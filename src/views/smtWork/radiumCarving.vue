@@ -433,7 +433,7 @@ const getScreenHeight = () => {
   });
 };
 const getOrderList = () => {
-  OrderQuery({ lineName: opui.line }).then((res: any) => {
+  OrderQuery({ lineName: opui.line, OrderTypeName:'LASER'}).then((res: any) => {
     workOrderList.value = res.content
     workOrderList1.value = res.content
   })

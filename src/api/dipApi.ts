@@ -1,23 +1,31 @@
 import request from "@/utils/dipRequest";
 
 //获取插件工单信息
-export function QueryWorkOrderInfo() {
-    return request({
-        url: "/api/plugin/QueryWorkOrderInfo",
-        method: "post",
-    });
-}
-// //工单查询
-// export function OrderQuery() {
+// export function QueryWorkOrderInfo() {
 //     return request({
-//         url: "/api/workstation/OrderQuery",
+//         url: "/api/plugin/QueryWorkOrderInfo",
 //         method: "post",
-//         data:{}
-//     })
+//     });
 // }
+// //工单查询
+export function OrderQuery(data:any) {
+    return request({
+        url: "/api/workstation/OrderQuery",
+        method: "post",
+        data
+    })
+}
+//历史过站记录
+export function QueryMoveHistory(data:any) {
+    return request({
+        url: "/api/workstation/QueryMoveHistory",
+        method: "post",
+        data
+    })
+}
 
 //获取设备
-export function FindAllDevice(data: { WorkStation: string; }) {
+export function FindAllDevice(data:any) {
     return request({
         url: "/api/plugin/FindAllDevice",
         method: "post",
@@ -51,13 +59,13 @@ export function SplitStationMoveOut(data: any) {
 }
 
 //人工目检过站,点胶，
-export function MoveStd(data: any) {
-    return request({
-        url: "/api/workstation/MoveStd",
-        method: "post",
-        data,
-    });
-}
+// export function MoveStd(data: any) {
+//     return request({
+//         url: "/api/workstation/MoveStd",
+//         method: "post",
+//         data,
+//     });
+// }
 //在线点胶过站
 export function ODStationMoveOut(data: any) {
     return request({

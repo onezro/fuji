@@ -245,7 +245,7 @@ onBeforeMount(() => {
 const fullScreen = () => {
     // 是否全屏，否为null
     let full = document.fullscreenElement
-    console.log(full)
+    // console.log(full)
     if (!full) {
         // document自带的全屏方法
         document.documentElement.requestFullscreen()

@@ -9,40 +9,21 @@
     <div class="w-full flex-1 flex">
       <div class="setwidth w-[350px]">
         <div class="w-full h-full box">
-          <div
-            class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]"
-          >
+          <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
             <span class="ml-5">工装治具</span>
           </div>
           <div class="p-3 overflow-auto" :style="{ height: leftBoxH + 'px' }">
             <el-checkbox-group v-model="checked">
-              <el-card
-                shadow="always"
-                class="mb-2"
-                :body-style="{ padding: '8px' }"
-                v-for="t in toolList"
-                :key="t.ToolName"
-              >
+              <el-card shadow="always" class="mb-2" :body-style="{ padding: '8px' }" v-for="t in toolList"
+                :key="t.ToolName">
                 <el-form ref="formRef" :model="t" label-width="auto">
                   <!-- <el-form-item class="mb-[5px]"> -->
                   <div class="flex justify-between items-center">
                     <div class="checked">
-                      <el-checkbox
-                        :value="t.ToolName"
-                        @change="changeCheck(t.ToolName)"
-                      />
+                      <el-checkbox :value="t.ToolName" @change="changeCheck(t.ToolName)" />
                     </div>
-                    <el-tooltip
-                      effect="dark"
-                      content="上移"
-                      placement="top-start"
-                    >
-                      <el-button
-                        icon="Top"
-                        circle
-                        :disabled="t.sort == 1"
-                        @click="moveUp(t)"
-                      />
+                    <el-tooltip effect="dark" content="上移" placement="top-start">
+                      <el-button icon="Top" circle :disabled="t.sort == 1" @click="moveUp(t)" />
                     </el-tooltip>
                   </div>
                   <!-- </el-form-item> -->
@@ -54,19 +35,9 @@
                     </el-col>
                     <el-col :span="12">
                       <el-form-item label="序号" class="mb-[5px]">
-                        <el-tag
-                          type="warning"
-                          class="pl-3 pr-3 text-sm"
-                          effect="dark"
-                          v-if="t.ToolName == checked[0]"
-                          >{{ t.sort }}</el-tag
-                        >
-                        <el-tag
-                          type="primary"
-                          class="pl-3 pr-3"
-                          v-if="t.ToolName !== checked[0]"
-                          >{{ t.sort }}</el-tag
-                        >
+                        <el-tag type="warning" class="pl-3 pr-3 text-sm" effect="dark"
+                          v-if="t.ToolName == checked[0]">{{ t.sort }}</el-tag>
+                        <el-tag type="primary" class="pl-3 pr-3" v-if="t.ToolName !== checked[0]">{{ t.sort }}</el-tag>
                         <!-- <span class="text-base">{{ t.sort }}</span> -->
                       </el-form-item>
                     </el-col>
@@ -110,80 +81,38 @@
       <div class="w-[calc(100%-350px)]">
         <div class="w-full h-full flex flex-col">
           <div>
-            <div
-              class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]"
-            >
+            <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
               <span class="ml-5"> 扫描条码</span>
             </div>
             <div class="h-[100px] pt-3 pr-5 pl-5">
-              <el-form
-                class="inbound"
-                ref="formRef"
-                :inline="true"
-                :model="form"
-                label-width="auto"
-                @submit.native.prevent
-              >
+              <el-form class="inbound" ref="formRef" :inline="true" :model="form" label-width="auto"
+                @submit.native.prevent>
                 <el-form-item label="扫描条码">
-                  <el-input
-                    v-model.trim="barCode"
-                    ref="inputRef"
-                    :autofocus="inputFocus"
-                    style="width: 500px"
-                    placeholder="请扫描条码"
-                    @keyup.enter.native="getChange"
-                  />
+                  <el-input v-model.trim="barCode" ref="inputRef" :autofocus="inputFocus" style="width: 500px"
+                    placeholder="请扫描条码" @keyup.enter.native="getChange" />
                 </el-form-item>
               </el-form>
-              <div
-                class="text-xl font-bold text-[#00B400]"
-                v-show="msgType === true || msgTitle === ''"
-              >
+              <div class="text-xl font-bold text-[#00B400]" v-show="msgType === true || msgTitle === ''">
                 {{ msgTitle === "" ? "请扫描PCB条码" : msgTitle }}
               </div>
-              <div
-                class="text-xl font-bold text-[red]"
-                v-show="msgType === false && msgTitle !== ''"
-              >
+              <div class="text-xl font-bold text-[red]" v-show="msgType === false && msgTitle !== ''">
                 {{ msgTitle }}
               </div>
             </div>
           </div>
           <div class="p-2">
-            <el-form
-              class="inbound"
-              size="default"
-              ref="formRef"
-              :model="form"
-              :inline="true"
-              label-width="auto"
-            >
+            <el-form class="inbound" size="default" ref="formRef" :model="form" :inline="true" label-width="auto">
               <el-row>
                 <el-col :span="8">
                   <el-form-item label="工单" class="mb-[5px] flex">
-                    <selectTa
-                      ref="selectTable"
-                      :table="orderTable"
-                      :selectWidth="160"
-                      :columns="orderColumns"
-                      :max-height="400"
-                      :tableWidth="700"
-                      :defaultSelectVal="defaultSelectVal"
-                      :keywords="{
+                    <selectTa ref="selectTable" :table="orderTable" :selectWidth="160" :columns="orderColumns"
+                      :max-height="400" :tableWidth="700" :defaultSelectVal="defaultSelectVal" :keywords="{
                         label: 'MfgOrderName',
                         value: 'MfgOrderName',
-                      }"
-                      @radioChange="(...args: any) => radioChange(args)"
-                    >
+                      }" @radioChange="(...args: any) => radioChange(args)">
                     </selectTa>
                     <el-tooltip content="刷新" placement="top">
-                      <el-icon
-                        class="ml-2"
-                        color="#777777"
-                        :class="isLoding"
-                        size="24"
-                        @click="getOrderData"
-                      >
+                      <el-icon class="ml-2" color="#777777" :class="isLoding" size="24" @click="getOrderData">
                         <RefreshRight />
                       </el-icon>
                     </el-tooltip>
@@ -191,48 +120,27 @@
                 </el-col>
                 <el-col :span="6">
                   <el-form-item class="mb-[5px]" label="产品编码">
-                    <el-input
-                      v-model="form.ProductName"
-                      style="width: 160px"
-                      disabled
-                    /> </el-form-item
-                ></el-col>
+                    <el-input v-model="form.ProductName" style="width: 160px" disabled /> </el-form-item></el-col>
                 <el-col :span="10">
                   <el-form-item class="mb-[5px]" label="产品描述">
-                    <el-input
-                      v-model="form.ProductDesc"
-                      style="width: 320px"
-                      disabled
-                    />
+                    <el-input v-model="form.ProductDesc" style="width: 320px" disabled />
                   </el-form-item>
                 </el-col>
               </el-row>
               <el-row>
                 <el-col :span="8">
                   <el-form-item class="mb-[5px]" label="计划开始时间">
-                    <el-input
-                      v-model="form.PlannedStartDate"
-                      style="width: 160px"
-                      disabled
-                    />
+                    <el-input v-model="form.PlannedStartDate" style="width: 160px" disabled />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">
                   <el-form-item class="mb-[5px]" label="计划完成时间">
-                    <el-input
-                      v-model="form.PlannedCompletionDate"
-                      style="width: 160px"
-                      disabled
-                    />
+                    <el-input v-model="form.PlannedCompletionDate" style="width: 160px" disabled />
                   </el-form-item>
                 </el-col>
                 <el-col :span="10">
                   <el-form-item class="mb-[5px]" label="工单数量">
-                    <el-input
-                      v-model="form.Qty"
-                      style="width: 160px"
-                      disabled
-                    />
+                    <el-input v-model="form.Qty" style="width: 160px" disabled />
                   </el-form-item>
                 </el-col>
               </el-row>
@@ -271,33 +179,16 @@
             <table-tem :showIndex="true" :tableData="tableData1" :tableHeight="tableHeight" :columnData="columnData1"
               :pageObj="pageObj" @handleSizeChange="handleSizeChange"
               @handleCurrentChange="handleCurrentChange"></table-tem> -->
-            <el-tabs
-              v-model="tabsValue"
-              type="border-card"
-              class="demo-tabs"
-              @tab-click="tabClick"
-            >
+            <el-tabs v-model="tabsValue" type="border-card" class="demo-tabs" @tab-click="tabClick">
               <el-tab-pane label="历史过站记录" name="history">
-                <table-tem
-                  :showIndex="true"
-                  :tableData="tableData1"
-                  :tableHeight="tableHeight"
-                  :columnData="columnData1"
-                  :pageObj="pageObj"
-                  @handleSizeChange="handleSizeChange"
-                  @handleCurrentChange="handleCurrentChange"
-                ></table-tem>
+                <table-tem :showIndex="true" :tableData="tableData1" :tableHeight="tableHeight"
+                  :columnData="columnData1" :pageObj="pageObj" @handleSizeChange="handleSizeChange"
+                  @handleCurrentChange="handleCurrentChange"></table-tem>
               </el-tab-pane>
               <el-tab-pane label="物料上料明细" name="details">
-                <table-tem
-                  :showIndex="true"
-                  :tableData="detailsData"
-                  :tableHeight="tableHeight"
-                  :columnData="detailsColumn"
-                  :pageObj="detailsPageObj"
-                  @handleSizeChange="detailsSizeChange"
-                  @handleCurrentChange="detailsCurrentChange"
-                ></table-tem>
+                <table-tem :showIndex="true" :tableData="detailsData" :tableHeight="tableHeight"
+                  :columnData="detailsColumn" :pageObj="detailsPageObj" @handleSizeChange="detailsSizeChange"
+                  @handleCurrentChange="detailsCurrentChange"></table-tem>
               </el-tab-pane>
             </el-tabs>
           </div>
@@ -317,16 +208,8 @@
       @addBadData="addBadData"
       @openAddBad="openAddBad"
     /> -->
-    <formTem
-      ref="addOverRef"
-      :width="'400px'"
-      :visible="overAddVisible"
-      :title="'波峰焊过序设置'"
-      :form="overAddForm"
-      :formHeader="overHeader"
-      @formCancel="addOverCancel"
-      @onSubmit="addOveronSubmit"
-    ></formTem>
+    <formTem ref="addOverRef" :width="'400px'" :visible="overAddVisible" :title="'波峰焊过序设置'" :form="overAddForm"
+      :formHeader="overHeader" @formCancel="addOverCancel" @onSubmit="addOveronSubmit"></formTem>
     <!-- <el-dialog
       v-model="feedVisible"
       title="物料上料"
@@ -359,10 +242,11 @@ import { useUserStoreWithOut } from "@/stores/modules/user";
 import type { Formspan, FormHeader, OrderData } from "@/typing";
 import { ElMessage, ElNotification, ElMessageBox } from "element-plus";
 import {
-  QueryWorkOrderInfo,
+  OrderQuery,
   PluginStationMoveOut,
   FindAllDevice,
   UpdateDevice,
+  QueryMoveHistory
 } from "@/api/dipApi";
 import { QueryToolInfo, SortTools } from "@/api/operate";
 import {
@@ -374,6 +258,7 @@ import {
   onBeforeMount,
   onBeforeUnmount,
 } from "vue";
+import { CollectionTag } from "@element-plus/icons-vue";
 interface StopsForm {
   ToolName: string;
   ContainerName: string;
@@ -499,7 +384,7 @@ const columnData1 = reactive([
   {
     text: true,
     prop: "zcnumber",
-    label: "载具",
+    label: "工装治具",
     width: "",
     align: "1",
   },
@@ -641,14 +526,14 @@ const getToolForm = ref({
 const defaultSelectVal = ref<string[]>([]);
 const checked = ref<string[]>([]);
 const leftBoxH = ref(0);
-const detailsData=ref([])
-const detailsPageObj=ref({
+const detailsData = ref([])
+const detailsPageObj = ref({
   pageSize: 10,
   currentPage: 1,
 })
 
-const detailsColumn=ref([
-{
+const detailsColumn = ref([
+  {
     text: true,
     prop: "eqty",
     label: "物料编码",
@@ -705,6 +590,10 @@ const detailsColumn=ref([
     align: "1",
   },
 ])
+const hisForm = ref({
+  MfgOrderName: "",
+  workstationName: opui.station
+})
 
 
 const changeCheck = (val: any) => {
@@ -821,14 +710,17 @@ onBeforeMount(() => {
 onMounted(() => {
   window.addEventListener("resize", getScreenHeight);
   getOrderData();
+ 
 });
 onBeforeUnmount(() => {
   window.addEventListener("resize", getScreenHeight);
 });
 
+
+
 const getOrderData = () => {
   isLoding.value = "is-loading";
-  QueryWorkOrderInfo().then((res: any) => {
+  OrderQuery({ lineName: opui.line, OrderTypeName: 'DIP' }).then((res: any) => {
     let data = res.content;
     orderTable.value.data[0] = data[0];
     let timer = setTimeout(() => {
@@ -840,8 +732,17 @@ const getOrderData = () => {
       let a = data[0].MfgOrderName;
       defaultSelectVal.value[0] = a;
     }
+   
   });
 };
+//历史过站记录
+const getHisData = () => {
+  QueryMoveHistory(hisForm.value).then((res: any) => {
+    tableData1.value = res.content
+  })
+}
+
+
 //治具上移
 const moveUp = (val: any) => {
   let data = {
@@ -901,6 +802,9 @@ const radioChange = (args: any) => {
     form.PlannedStartDate = args[0].PlannedStartDate;
     form.PlannedCompletionDate = args[0].PlannedCompletionDate;
     form.Qty = args[0].Qty;
+    hisForm.value.MfgOrderName=args[0].MfgOrderName
+    // console.log(args[0].MfgOrderName);
+    getHisData()
     if (getToolForm.value.OrderNumber == args[0].MfgOrderName) {
       return;
     } else {
@@ -914,6 +818,7 @@ const radioChange = (args: any) => {
     //     })
 
     //   inputRef.value.focus();
+    
   }
 };
 
@@ -1005,6 +910,7 @@ const getChange = (val: any) => {
     stopsForm.value.ContainerName = "";
     barCode.value = "";
     getToolData();
+    getHisData()
     getFocus();
   });
 };
@@ -1017,7 +923,7 @@ const handleSizeChange = (val: any) => {
 const handleCurrentChange = (val: any) => {
   pageObj.value.currentPage = val;
 };
-const detailsSizeChange= (val: any) => {
+const detailsSizeChange = (val: any) => {
   pageObj.value.currentPage = 1;
   pageObj.value.pageSize = val;
 };
@@ -1063,7 +969,7 @@ const getScreenHeight = () => {
   font-size: 1.1rem;
 }
 
-.tabs-css .el-tabs--border-card > .el-tabs__header .el-tabs__item {
+.tabs-css .el-tabs--border-card>.el-tabs__header .el-tabs__item {
   color: #fff;
   // padding: 0 !important;
 }
@@ -1082,10 +988,7 @@ const getScreenHeight = () => {
   color: #ff4949;
 }
 
-.tabs-css
-  .el-tabs--border-card
-  > .el-tabs__header
-  .el-tabs__item:not(.is-disabled):hover {
+.tabs-css .el-tabs--border-card>.el-tabs__header .el-tabs__item:not(.is-disabled):hover {
   // color: #fff;
   // background-color: #fff;
   background-color: rgba($color: #fff, $alpha: 0.8);

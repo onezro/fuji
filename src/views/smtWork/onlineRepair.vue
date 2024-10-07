@@ -1,8 +1,6 @@
 <template>
   <div class="flex flex-col w-full h-full">
-    <div
-      class="h-[40px] min-h-[40px] pl-2 pr-2 flex justify-between items-center"
-    >
+    <div class="h-[40px] min-h-[40px] pl-2 pr-2 flex justify-between items-center">
       <span class="text-[1.2rem]"> {{ opui.stationDec }} </span>
     </div>
     <div class="w-full flex-1 flex">
@@ -10,77 +8,42 @@
 
       <div class="w-full h-full flex flex-col">
         <div>
-          <div
-            class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]"
-          >
+          <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
             <span class="ml-5"> 扫描条码</span>
           </div>
           <div class="h-[120px] p-5">
-            <el-form
-              class="inbound"
-              ref="formRef"
-              :inline="true"
-              :model="form"
-              label-width="auto"
-              @submit.native.prevent
-            >
+            <el-form class="inbound" ref="formRef" :inline="true" :model="form" label-width="auto"
+              @submit.native.prevent>
               <el-form-item label="扫描条码">
-                <el-input
-                  v-model.trim="barCode"
-                  ref="inputRef"
-                  :autofocus="inputFocus"
-                  style="width: 500px"
-                  placeholder="请扫描条码"
-                  @keyup.enter.native="getChange"
-                />
+                <el-input v-model.trim="barCode" ref="inputRef" :autofocus="inputFocus" style="width: 500px"
+                  placeholder="请扫描条码" @keyup.enter.native="getChange" />
               </el-form-item>
               <!-- <el-form-item label="">
                 <el-button type="primary" disabled @click="">维修</el-button>
               </el-form-item> -->
             </el-form>
-            <div
-                class="text-xl font-bold text-[#00B400]"
-                v-show="msgType === true || msgTitle === ''"
-              >
-                {{ msgTitle === "" ? "请扫描PCB条码" : msgTitle }}
-              </div>
-              <div
-                class="text-xl font-bold text-[red]"
-                v-show="msgType === false && msgTitle !== ''"
-              >
-                {{ msgTitle }}
-              </div>
+            <div class="text-xl font-bold text-[#00B400]" v-show="msgType === true || msgTitle === ''">
+              {{ msgTitle === "" ? "请扫描条码" : msgTitle }}
+            </div>
+            <div class="text-xl font-bold text-[red]" v-show="msgType === false && msgTitle !== ''">
+              {{ msgTitle }}
+            </div>
           </div>
         </div>
         <div class="flex flex-col flex-1">
-          <div
-            class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]"
-          >
+          <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
             <span class="ml-5">维修记录</span>
           </div>
           <div class="flex-1">
-            <table-tem
-              :showIndex="true"
-              :tableData="tableData"
-              :tableHeight="tableHeight"
-              :columnData="columnData"
-              :pageObj="pageObj"
-              @handleSizeChange="handleSizeChange"
-              @handleCurrentChange="handleCurrentChange"
-            ></table-tem>
+            <table-tem :showIndex="true" :tableData="tableData" :tableHeight="tableHeight" :columnData="columnData"
+              :pageObj="pageObj" @handleSizeChange="handleSizeChange"
+              @handleCurrentChange="handleCurrentChange"></table-tem>
           </div>
         </div>
       </div>
     </div>
-    <el-dialog
-      v-model="badVisible"
-      width="80%"
-      :fullscreen="false"
-      :append-to-body="true"
-      :close-on-click-modal="false"
-      :close-on-press-escape="false"
-      align-center
-    >
+    <el-dialog v-model="badVisible" width="80%" :fullscreen="false" :append-to-body="true" :close-on-click-modal="false"
+      :close-on-press-escape="false" align-center>
       <template #header="{ close, titleId, titleClass }">
         <div class="flex justify-between">
           <h4 :id="titleId" :class="titleClass">返修登记</h4>
@@ -89,85 +52,39 @@
       </template>
       <div class="flex flex-col border-solid border-1 border-[#bdbdbd]">
         <div>
-          <div
-            class="h-[30px] pl-3 flex items-center text-base text-[#fff] bg-[#006487]"
-          >
+          <div class="h-[30px] pl-3 flex items-center text-base text-[#fff] bg-[#006487]">
             基本信息
           </div>
-          <el-form
-            ref="baseFormRef"
-            :model="baseForm"
-            label-width="auto"
-            class="pt-[5px]"
-            size="small"
-          >
+          <el-form ref="baseFormRef" :model="baseForm" label-width="auto" class="pt-[5px]">
             <el-row>
               <el-col :span="8">
-                <el-form-item
-                  label="PCB条码"
-                  class="mb-[5px] flex"
-                  prop="ContainerName"
-                >
-                  <el-input
-                    v-model="baseForm.ContainerName"
-                    style="width: 200px"
-                    disabled
-                  />
+                <el-form-item label="PCB条码" class="mb-[5px] flex" prop="ContainerName">
+                  <el-input v-model="baseForm.ContainerName" style="width: 200px" disabled />
                 </el-form-item>
               </el-col>
               <el-col :span="11">
-                <el-form-item
-                  label="工单"
-                  class="mb-[5px] flex"
-                  prop="MfgOrderName"
-                >
-                  <el-input
-                    v-model="baseForm.MfgOrderName"
-                    style="width: 200px"
-                    disabled
-                  />
+                <el-form-item label="工单" class="mb-[5px] flex" prop="MfgOrderName">
+                  <el-input v-model="baseForm.MfgOrderName" style="width: 200px" disabled />
                 </el-form-item>
               </el-col>
             </el-row>
             <el-row>
               <el-col :span="8">
-                <el-form-item
-                  class="mb-[5px]"
-                  label="产品编码"
-                  prop="ProductName"
-                >
-                  <el-input
-                    v-model="baseForm.ProductName"
-                    style="width: 200px"
-                    disabled
-                  /> </el-form-item
-              ></el-col>
+                <el-form-item class="mb-[5px]" label="产品编码" prop="ProductName">
+                  <el-input v-model="baseForm.ProductName" style="width: 200px" disabled /> </el-form-item></el-col>
               <el-col :span="11">
                 <el-form-item class="mb-[5px]" label="产品描述">
-                  <el-input
-                    v-model="baseForm.ProductDesc"
-                    style="width: 200px"
-                    disabled
-                  />
+                  <el-input v-model="baseForm.ProductDesc" style="width: 200px" disabled />
                 </el-form-item>
               </el-col>
             </el-row>
             <el-row>
               <el-col :span="8">
                 <el-form-item class="mb-[5px]" label="工序编码" prop="SpecName">
-                  <el-input
-                    v-model="baseForm.SpecName"
-                    style="width: 200px"
-                    disabled
-                  /> </el-form-item
-              ></el-col>
+                  <el-input v-model="baseForm.SpecName" style="width: 200px" disabled /> </el-form-item></el-col>
               <el-col :span="11">
                 <el-form-item class="mb-[5px]" label="工序描述" prop="SpecDesc">
-                  <el-input
-                    v-model="baseForm.SpecDesc"
-                    style="width: 200px"
-                    disabled
-                  />
+                  <el-input v-model="baseForm.SpecDesc" style="width: 200px" disabled />
                 </el-form-item>
               </el-col>
             </el-row>
@@ -175,55 +92,34 @@
         </div>
 
         <div>
-          <div
-            class="h-[30px] pl-3 flex items-center text-base text-[#fff] bg-[#006487]"
-          >
+          <div class="h-[30px] pl-3 flex items-center text-base text-[#fff] bg-[#006487]">
             不良列表
           </div>
-          <tableTemp
-            :showIndex="true"
-            :tableData="badData"
-            :tableHeight="200"
-            :columnData="badColumn"
-               size="small"
-          >
+          <tableTemp :showIndex="true" :tableData="badData" :tableHeight="200" :columnData="badColumn" size="small">
           </tableTemp>
         </div>
         <div>
-          <div
-            class="h-[30px] pl-3 flex items-center text-base text-[#fff] bg-[#006487]"
-          >
+          <div class="h-[30px] pl-3 flex items-center text-base text-[#fff] bg-[#006487]">
             返修
           </div>
-          <el-form
-            ref="repairFormRef"
-            :model="repairForm"
-            :inline="true"
-            class="pt-2"
-          >
+          <el-form ref="repairFormRef" :model="repairForm" :inline="true" class="pt-2">
             <div class="flex items-start">
+              <el-form-item label="返修操作" prop="RepairAction">
+                <el-select v-model="repairForm.RepairAction" placeholder="请选择" style="width: 200px">
+                  <el-option v-for="item in actionList" :key="item.isRepairActionName" :label="item.Description"
+                    :value="item.isRepairActionName" />
+                </el-select>
+              </el-form-item>
               <el-form-item label="返修工序" prop="WorkFlowStep">
-                <el-select
-                  v-model="repairForm.WorkFlowStep"
-                  placeholder="请选择"
-                  style="width: 250px"
-                >
-                  <el-option
-                    v-for="item in specList"
-                    :key="item.WorkflowStepName"
-                    :label="item.WorkflowStepName"
-                    :value="item.WorkflowStepName"
-                  />
+                <el-select v-model="repairForm.WorkFlowStep" placeholder="请选择" style="width: 200px"
+                  :disabled="isAction">
+                  <el-option v-for="item in specList" :key="item.WorkflowStepName" :label="item.WorkflowStepName"
+                    :value="item.WorkflowStepName" />
                 </el-select>
               </el-form-item>
               <el-form-item label="返修原因" prop="Remark">
-                <el-input
-                  v-model="repairForm.Remark"
-                  :rows="3"
-                  style="width: 350px"
-                  type="textarea"
-                  placeholder="请输入"
-                />
+                <el-input v-model="repairForm.RepairRemark" :rows="3" style="width: 350px" type="textarea"
+                  placeholder="请输入" />
               </el-form-item>
             </div>
           </el-form>
@@ -244,6 +140,8 @@ import {
   QuerySMTDefectRecordDetail,
   QueryWorkflowList,
   SaveRepairRecord,
+  QueryRepairRecord,
+  QueryRepairAction
 } from "@/api/smtApi";
 import tableTem from "@/components/tableTem/index.vue";
 import tableTemp from "@/components/tableTemp/index.vue";
@@ -254,6 +152,10 @@ interface Spec {
   WorkflowName: string;
   WorkflowStepName: string;
 }
+interface ActionList {
+  Description: string,
+  isRepairActionName: string
+}
 import {
   ref,
   reactive,
@@ -261,6 +163,7 @@ import {
   nextTick,
   onBeforeMount,
   onBeforeUnmount,
+  watch,
 } from "vue";
 const appStore = useAppStoreWithOut();
 const userStore = useUserStoreWithOut();
@@ -279,74 +182,83 @@ const tableHeight = ref(0);
 const columnData = reactive([
   {
     text: true,
-    prop: "CarrierName",
-    label: "周转箱条码",
+    prop: "ContainerName",
+    label: "PCB条码",
     width: "",
     min: true,
-    align: "center",
+    align: "1",
   },
   {
     text: true,
-    prop: "OrderNumber",
-    label: "工单号",
+    prop: "RepairAction",
+    label: "返修操作",
     width: "",
     min: true,
-    align: "center",
+    align: "1",
+  },
+  {
+    text: true,
+    prop: "WorkFolwStep",
+    label: "返修工序",
+    width: "",
+    min: true,
+    align: "1",
+  },
+
+
+  // {
+  //   text: true,
+  //   prop: "PCBSerialNumber",
+  //   label: "小板条码",
+  //   width: "",
+  //   min: true,
+  //   align: "center",
+  // },
+  // {
+  //   text: true,
+  //   prop: "PanelSerialNumber",
+  //   label: "大板条码",
+  //   width: "",
+  //   min: true,
+  //   align: "center",
+  // },
+  // {
+  //   text: true,
+  //   prop: "ProductName",
+  //   label: "产品编码",
+  //   width: "",
+  //   min: true,
+  //   align: "center",
+  // },
+  // {
+  //   text: true,
+  //   prop: "ProductDescription",
+  //   label: "产品描述",
+  //   width: "",
+  //   min: true,
+  //   align: "center",
+  // },
+  {
+    text: true,
+    prop: "RepairRemark",
+    label: "备注",
+    width: "",
+    min: true,
+    align: "1",
   },
 
   {
     text: true,
-    prop: "PCBSerialNumber",
-    label: "小板条码",
+    prop: "CreatedBy",
+    label: "扫描人",
     width: "",
     min: true,
     align: "center",
   },
   {
     text: true,
-    prop: "PanelSerialNumber",
-    label: "大板条码",
-    width: "",
-    min: true,
-    align: "center",
-  },
-  {
-    text: true,
-    prop: "ProductName",
-    label: "产品编码",
-    width: "",
-    min: true,
-    align: "center",
-  },
-  {
-    text: true,
-    prop: "ProductDescription",
-    label: "产品描述",
-    width: "",
-    min: true,
-    align: "center",
-  },
-  {
-    text: true,
-    prop: "Qty",
-    label: "数量",
-    width: "",
-    min: true,
-    align: "center",
-  },
-
-  {
-    text: true,
-    prop: "LoadTimestamp",
-    label: "装箱时间",
-    width: "",
-    min: true,
-    align: "center",
-  },
-  {
-    text: true,
-    prop: "LoadOperatorID",
-    label: "装箱人",
+    prop: "CreatedOn",
+    label: "扫描时间",
     width: "",
     min: true,
     align: "center",
@@ -425,23 +337,42 @@ const repairForm = ref({
   ContainerName: "",
   WorkStation: opui.station,
   // Status: "",
-  Remark: "",
+  RepairAction: '',
+  RepairRemark: "",
   CreatedBy: userStore.getUserInfo,
   WorkFlowStep: "",
+  WorkFlow: ''
 });
 const specList = ref<Spec[]>([]);
 const baseFormRef = ref();
 const repairFormRef = ref();
+const actionList = ref<ActionList[]>([])
+const isAction = ref(true)
 
+watch(
+  () => repairForm.value.RepairAction,
+  (newVal) => {
+    // console.log(newVal);
+    if (newVal == "Scrap" || newVal == '') {
+      isAction.value = true
+      repairForm.value.WorkFlowStep = ''
+    } else {
+      isAction.value = false
+    }
+  },
+  { deep: true, immediate: true }
+)
 onBeforeMount(() => {
   getScreenHeight();
 });
 onMounted(() => {
   window.addEventListener("resize", getScreenHeight);
+  getHisData()
 });
 onBeforeUnmount(() => {
   window.addEventListener("resize", getScreenHeight);
 });
+
 //获取光标
 const getFocus = () => {
   inputFocus.value = false;
@@ -450,18 +381,22 @@ const getFocus = () => {
   }, 100);
 };
 
+const getHisData=()=>{
+  QueryRepairRecord(opui.station).then((res:any)=>{
+    tableData.value=res.content
+  })
+}
 
 const getChange = () => {
   if (!barCode.value) {
     return;
   }
- 
   QuerySMTDefectRecordDetail(barCode.value).then((res: any) => {
     // console.log(res);
-    if(!res.success){
+    if (!res.success) {
       msgTitle.value = res.msg;
       msgType.value = res.success;
-      barCode.value=''
+      barCode.value = ''
       getFocus()
       return
     }
@@ -473,11 +408,11 @@ const getChange = () => {
     baseForm.value.SpecDesc = res.content.SpecDesc;
     baseForm.value.SpecName = res.content.SpecName;
     badData.value = res.content.defectCodeDetail;
+    repairForm.value.WorkFlow = res.content.WorkflowName
     repairForm.value.IsDefectHistoryId = res.content.isDefectHistoryId;
     repairForm.value.ContainerName = res.content.ContainerName;
-    QueryWorkflowList(res.content.WorkflowName).then((res: any) => {
-      specList.value = res.content;
-    });
+    getWorkflowList(res.content.WorkflowName)
+    getActionList(res.content.OperationName)
   });
   // inputFocus.value = false;
   // SubmitPcbToPacking(form.value).then((res: any) => {
@@ -493,6 +428,18 @@ const getChange = () => {
   //   inputFocus.value = true;
   // });
 };
+//获取返修工序
+const getWorkflowList = (data: any) => {
+  QueryWorkflowList(data).then((res: any) => {
+    specList.value = res.content;
+  });
+}
+//获取返修操作
+const getActionList = (data: any) => {
+  QueryRepairAction(data).then((res: any) => {
+    actionList.value = res.content
+  });
+}
 const repairCancel = () => {
   badVisible.value = false;
   badData.value = [];
@@ -500,18 +447,29 @@ const repairCancel = () => {
   repairFormRef.value.resetFields();
   repairForm.value.IsDefectHistoryId = "";
   repairForm.value.ContainerName = "";
+  repairForm.value.RepairRemark=""
 };
 const repairSubmit = () => {
+  // console.log(repairForm.value);
+
   SaveRepairRecord(repairForm.value).then((res: any) => {
-    ElNotification({
-      title: "提示信息",
-      message: res.msg,
-      type: res.success ? "success" : "error",
-    });
+    // ElNotification({
+    //   title: "提示信息",
+    //   message: res.msg,
+    //   type: res.success ? "success" : "error",
+    // });
     if (res.success) {
+      ElNotification({
+        title: "提示信息",
+        message: res.msg,
+        type: "success",
+      });
       repairCancel();
-      getFocus
+      getFocus()
+      barCode.value=''
+      badVisible.value = false
     }
+    getHisData()
   });
 };
 
