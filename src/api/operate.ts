@@ -76,10 +76,25 @@ export function findProductMaterial(data: any) {
         data
     })
 }
-//修改物料
-export function UpdateProductMaterial(data: any) {
+//修改物料属性
+export function UpdateProductProperty(data: any) {
     return request({
-        url: "/api/product/UpdateProduct",
+        url: "/api/product/UpdateProductProperty",
+        method: "post",
+        data
+    })
+}
+//获取物料MSD等级
+export function GetMSDLevel() {
+    return request({
+        url: "/api/product/GetMSDLevel",
+        method: "post",
+    })
+}
+//修改物料MSD属性
+export function UpdateMSDMaterialAttribute(data: any) {
+    return request({
+        url: "/api/product/UpdateMSDMaterialAttribute",
         method: "post",
         data
     })
@@ -287,5 +302,33 @@ export function GetECNOrderitem(data: any) {
         params: {
             ECNOrderId:data
         }
+    });
+}
+//不良代码
+export function QueryDefectCode(data: any) {
+    return request({
+        url: "/api/Defect/QueryDefectCode",
+        method: "post",
+        data
+    });
+}
+//不良明细
+export function QueryDefectCodeDetail(data: any) {
+    return request({
+        url: "/api/Defect/QueryDefectCodeDetail",
+        method: "post",
+        params:{
+            defectid:data
+           }
+    });
+}
+//查询工序
+export function QuerySpec(data: any) {
+    return request({
+        url: "/api/Defect/QuerySpec",
+        method: "post",
+       params:{
+        spec:data
+       }
     });
 }

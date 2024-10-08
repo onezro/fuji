@@ -141,7 +141,7 @@ import {
   QueryWorkflowList,
   SaveRepairRecord,
   QueryRepairRecord,
-  QueryRepairAction
+  QueryRepairAction,
 } from "@/api/smtApi";
 import tableTem from "@/components/tableTem/index.vue";
 import tableTemp from "@/components/tableTemp/index.vue";
@@ -153,8 +153,8 @@ interface Spec {
   WorkflowStepName: string;
 }
 interface ActionList {
-  Description: string,
-  isRepairActionName: string
+  Description: string;
+  isRepairActionName: string;
 }
 import {
   ref,
@@ -204,7 +204,6 @@ const columnData = reactive([
     min: true,
     align: "1",
   },
-
 
   // {
   //   text: true,
@@ -337,37 +336,37 @@ const repairForm = ref({
   ContainerName: "",
   WorkStation: opui.station,
   // Status: "",
-  RepairAction: '',
+  RepairAction: "",
   RepairRemark: "",
   CreatedBy: userStore.getUserInfo,
   WorkFlowStep: "",
-  WorkFlow: ''
+  WorkFlow: "",
 });
 const specList = ref<Spec[]>([]);
 const baseFormRef = ref();
 const repairFormRef = ref();
-const actionList = ref<ActionList[]>([])
-const isAction = ref(true)
+const actionList = ref<ActionList[]>([]);
+const isAction = ref(true);
 
 watch(
   () => repairForm.value.RepairAction,
   (newVal) => {
     // console.log(newVal);
-    if (newVal == "Scrap" || newVal == '') {
-      isAction.value = true
-      repairForm.value.WorkFlowStep = ''
+    if (newVal == "Scrap" || newVal == "") {
+      isAction.value = true;
+      repairForm.value.WorkFlowStep = "";
     } else {
-      isAction.value = false
+      isAction.value = false;
     }
   },
   { deep: true, immediate: true }
-)
+);
 onBeforeMount(() => {
   getScreenHeight();
 });
 onMounted(() => {
   window.addEventListener("resize", getScreenHeight);
-  getHisData()
+  getHisData();
 });
 onBeforeUnmount(() => {
   window.addEventListener("resize", getScreenHeight);
@@ -381,11 +380,11 @@ const getFocus = () => {
   }, 100);
 };
 
-const getHisData=()=>{
-  QueryRepairRecord(opui.station).then((res:any)=>{
-    tableData.value=res.content
-  })
-}
+const getHisData = () => {
+  QueryRepairRecord(opui.station).then((res: any) => {
+    tableData.value = res.content;
+  });
+};
 
 const getChange = () => {
   if (!barCode.value) {
@@ -396,10 +395,12 @@ const getChange = () => {
     if (!res.success) {
       msgTitle.value = res.msg;
       msgType.value = res.success;
-      barCode.value = ''
-      getFocus()
-      return
+      barCode.value = "";
+      getFocus();
+      return;
     }
+    // msgTitle.value = res.msg;
+    //   msgType.value = res.success;
     badVisible.value = true;
     baseForm.value.ContainerName = res.content.ContainerName;
     baseForm.value.ProductDesc = res.content.ProductDesc;
@@ -408,11 +409,11 @@ const getChange = () => {
     baseForm.value.SpecDesc = res.content.SpecDesc;
     baseForm.value.SpecName = res.content.SpecName;
     badData.value = res.content.defectCodeDetail;
-    repairForm.value.WorkFlow = res.content.WorkflowName
+    repairForm.value.WorkFlow = res.content.WorkflowName;
     repairForm.value.IsDefectHistoryId = res.content.isDefectHistoryId;
     repairForm.value.ContainerName = res.content.ContainerName;
-    getWorkflowList(res.content.WorkflowName)
-    getActionList(res.content.OperationName)
+    getWorkflowList(res.content.WorkflowName);
+    getActionList(res.content.OperationName);
   });
   // inputFocus.value = false;
   // SubmitPcbToPacking(form.value).then((res: any) => {
@@ -433,13 +434,13 @@ const getWorkflowList = (data: any) => {
   QueryWorkflowList(data).then((res: any) => {
     specList.value = res.content;
   });
-}
+};
 //获取返修操作
 const getActionList = (data: any) => {
   QueryRepairAction(data).then((res: any) => {
-    actionList.value = res.content
+    actionList.value = res.content;
   });
-}
+};
 const repairCancel = () => {
   badVisible.value = false;
   badData.value = [];
@@ -447,7 +448,10 @@ const repairCancel = () => {
   repairFormRef.value.resetFields();
   repairForm.value.IsDefectHistoryId = "";
   repairForm.value.ContainerName = "";
-  repairForm.value.RepairRemark=""
+  repairForm.value.RepairRemark = "";
+  barCode.value = "";
+  msgTitle.value = "";
+  msgType.value = true;
 };
 const repairSubmit = () => {
   // console.log(repairForm.value);
@@ -465,11 +469,11 @@ const repairSubmit = () => {
         type: "success",
       });
       repairCancel();
-      getFocus()
-      barCode.value=''
-      badVisible.value = false
+      getFocus();
+      barCode.value = "";
+      badVisible.value = false;
     }
-    getHisData()
+    getHisData();
   });
 };
 
