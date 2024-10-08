@@ -3,6 +3,7 @@
     <div class="h-[40px] pl-2 pr-2 flex justify-between items-center">
       <span class="text-[1.2rem]"> {{ opui.stationDec }} </span>
       <div>
+        <el-button type="primary" >上料明细</el-button>
         <el-button type="primary" @click="openOver">波峰焊设置</el-button>
       </div>
     </div>
@@ -173,13 +174,13 @@
             </el-form>
           </div>
           <div class="flex flex-col flex-1 tabs-css">
-            <!-- <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
+            <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
               <span class="ml-5">历史过站记录</span>
             </div>
             <table-tem :showIndex="true" :tableData="tableData1" :tableHeight="tableHeight" :columnData="columnData1"
               :pageObj="pageObj" @handleSizeChange="handleSizeChange"
-              @handleCurrentChange="handleCurrentChange"></table-tem> -->
-            <el-tabs v-model="tabsValue" type="border-card" class="demo-tabs" @tab-click="tabClick">
+              @handleCurrentChange="handleCurrentChange"></table-tem> 
+            <!-- <el-tabs v-model="tabsValue" type="border-card" class="demo-tabs" @tab-click="tabClick">
               <el-tab-pane label="历史过站记录" name="history">
                 <table-tem :showIndex="true" :tableData="tableData1" :tableHeight="tableHeight"
                   :columnData="columnData1" :pageObj="pageObj" @handleSizeChange="handleSizeChange"
@@ -190,7 +191,7 @@
                   :columnData="detailsColumn" :pageObj="detailsPageObj" @handleSizeChange="detailsSizeChange"
                   @handleCurrentChange="detailsCurrentChange"></table-tem>
               </el-tab-pane>
-            </el-tabs>
+            </el-tabs> -->
           </div>
         </div>
       </div>
@@ -804,20 +805,14 @@ const radioChange = (args: any) => {
     form.Qty = args[0].Qty;
     hisForm.value.MfgOrderName=args[0].MfgOrderName
     // console.log(args[0].MfgOrderName);
-    getHisData()
+  
     if (getToolForm.value.OrderNumber == args[0].MfgOrderName) {
       return;
     } else {
       getToolForm.value.OrderNumber = args[0].MfgOrderName; //'24072350'
+      getHisData()
       getToolData();
     }
-    //   }
-    // });
-    //  QueryToolInfo( getToolForm.value).then((res:any)=>{
-    //       toolList.value=res.content
-    //     })
-
-    //   inputRef.value.focus();
     
   }
 };

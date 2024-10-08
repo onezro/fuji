@@ -30,11 +30,11 @@
     <el-card shadow="always" :body-style="{ padding: '8px 8px 0 8px' }" class="flex-1">
       <el-form ref="formRef" size="small" :inline="true" :model="form" label-width="auto">
         <el-form-item label="物料编码" prop="MaterialCode" class="mb-2">
-          <el-input style="width: 150px" v-model="form.ProductName" placeholder="请输入物料编码" clearable @clear="onSubmit" />
+          <el-input style="width: 150px" v-model.trim="form.ProductName" placeholder="请输入物料编码" clearable @clear="onSubmit"  @change="onSubmit"/>
         </el-form-item>
         <el-form-item label="物料描述" prop="MaterialName" class="mb-2">
-          <el-input style="width: 150px" v-model="form.ProductDescription" placeholder="请输入物料描述" clearable
-            @clear="onSubmit" />
+          <el-input style="width: 150px" v-model.trim="form.ProductDescription" placeholder="请输入物料描述" clearable
+            @clear="onSubmit" @change="onSubmit" />
         </el-form-item>
         <el-form-item label="物料类型" prop="QueryType" class="mb-2">
           <el-select v-model="form.QueryType" style="width: 150px" @change="onSubmit">
@@ -54,11 +54,11 @@
         @handleCurrentChange="handleCurrentChange" @handleSelectionChange="handleSelectionChange">
       </tableTem>
     </el-card>
-    <el-dialog v-model="editVisible" title="修改物料属性" width="700px" :append-to-body="true" :close-on-click-modal="false"
-      :close-on-press-escape="false" align-center>
+    <el-dialog v-model="editVisible" draggable title="修改物料属性" width="700px" :append-to-body="true"
+      :close-on-click-modal="false" :close-on-press-escape="false" align-center>
       <div>
         <el-form-item label="物料编码" prop="ProductName">
-          <el-input v-model="editForm.ProductName" disabled  />
+          <el-input v-model="editForm.ProductName" disabled />
         </el-form-item>
         <el-form-item label="物料描述" prop="ProductDescription">
           <el-input v-model="editForm.ProductDescription" disabled type="textarea" :rows="2" />
@@ -66,32 +66,40 @@
       </div>
       <el-tabs v-model="activeName" type="border-card" class="demo-tabs">
         <el-tab-pane label="物料基本属性" name="base">
-          <el-form ref="editFormRef" :model="editForm" label-width="auto"  class="h-[200px]">
-            <el-form-item label="芯片类型" prop="BD_ChipType">
-              <el-input v-model="editForm.BD_ChipType" style="width: 200px" />
+          <el-form ref="editFormRef" :model="editForm" label-width="auto" class="h-[200px]">
+            <el-form-item label="机型" prop="BD_ProductModel" class="flex items-center">
+              <el-input v-model="editForm.BD_ProductModel" style="width: 250px" />
+              <el-checkbox v-model="editForm.BD_IsICCID" label="ICCID物料" class="ml-3" />
             </el-form-item>
-            <el-form-item label="机型" prop="BD_ProductModel">
-              <el-input v-model="editForm.BD_ProductModel" style="width: 200px" />
+            <el-form-item label="芯片类型" prop="BD_ChipType" class="flex items-center">
+              <el-input v-model="editForm.BD_ChipType" style="width: 250px" />
+              <el-checkbox v-model="editForm.BD_IsActivate" label="激活物料" class="ml-3" />
             </el-form-item>
+
             <el-form-item label="软件版本" prop="BD_SoftVersion">
-              <el-input v-model="editForm.BD_SoftVersion" style="width: 200px" />
+              <el-input v-model="editForm.BD_SoftVersion" style="width: 250px" />
             </el-form-item>
             <el-form-item label="校验和" prop="BD_CheckSum">
-              <el-input v-model="editForm.BD_CheckSum" style="width: 200px" />
+              <el-input v-model="editForm.BD_CheckSum" style="width: 250px" />
             </el-form-item>
           </el-form>
         </el-tab-pane>
         <el-tab-pane label="MSD物料属性" name="msd">
-          <el-form ref="editFormRef" :model="msdForm" label-width="auto"  class="h-[200px]">
-            <el-form-item label="MSD物料等级" prop="level">
-               <el-select v-model="msdForm.level" placeholder="请选择" style="width: 200px">
-                   <el-option v-for="l in levelList" :key="l.value"  :label="l.label" :value="l.value" />
-                  
-               </el-select>
+          <el-form ref="editFormRef" :model="msdForm" label-width="auto" class="h-[200px]">
+            <el-form-item label="MSD物料" prop="BD_IsMSD">
+              <!-- <el-checkbox v-model="msdForm.BD_IsMSD"/> -->
+              <el-switch v-model="msdForm.BD_IsMSD" inline-prompt :active-value="true" :inactive-value="false"
+                active-text="是" inactive-text="否" @change="changeMsd" />
+            </el-form-item>
+            <el-form-item label="MSD等级" prop="MsdLevel">
+              <el-select v-model="msdForm.MsdLevel" placeholder="请选择" style="width: 200px"
+                :disabled="!msdForm.BD_IsMSD">
+                <el-option v-for="l in levelList" :key="l.MsdLevel" :label="l.MsdLevel" :value="l.MsdLevel" />
+              </el-select>
             </el-form-item>
           </el-form>
         </el-tab-pane>
-        <el-tab-pane label="物料包装属性" name="packe">
+        <!-- <el-tab-pane label="产品包装属性" name="packe">
           <el-form ref="editFormRef" :model="packeForm" label-width="auto" class="h-[200px]">
             <el-form-item label="装箱容量" prop="zxrl">
               <el-input v-model="packeForm.zxrl" style="width: 250px" />
@@ -99,14 +107,12 @@
             <el-form-item label="数字类型" prop="numType">
               <el-input v-model="packeForm.numType" style="width: 250px" />
             </el-form-item>
-         
           </el-form>
-        </el-tab-pane>
-        <el-tab-pane label="烧录组件属性" name="burn"> </el-tab-pane>
+        </el-tab-pane> -->
       </el-tabs>
       <template #footer>
         <span class="dialog-footer">
-          <el-button @click="editCancel">取消</el-button>
+          <el-button @click="editCancel">关闭</el-button>
           <el-button type="primary" @click="editOnSubmit"> 确定 </el-button>
         </span>
       </template>
@@ -140,8 +146,10 @@
 import {
   findAllMaterialTree,
   findProductMaterial,
-  UpdateProductMaterial,
+  UpdateProductProperty,
   findProductBOM,
+  GetMSDLevel,
+  UpdateMSDMaterialAttribute,
 } from "@/api/operate";
 import tableTem from "@/components/tableTem/index.vue";
 import formTem from "@/components/formTem/index.vue";
@@ -155,7 +163,10 @@ import {
   nextTick,
   reactive,
 } from "vue";
-import { values } from "lodash-es";
+interface Level {
+  MsdLevel: string;
+  OpenTime: string;
+}
 const isLoding = ref("");
 const materialTree = ref([]);
 const form = ref({
@@ -265,6 +276,8 @@ const editForm = ref({
   BD_CheckSum: "",
   BD_ChipType: "",
   BD_SoftVersion: "",
+  BD_IsICCID: "",
+  BD_IsActivate: "",
 });
 const editFormHeader = reactive([
   {
@@ -400,23 +413,12 @@ const msdForm = ref({
   BD_CheckSum: "",
   BD_ChipType: "",
   BD_SoftVersion: "",
-  level: "",
+  BD_IsMSD: "",
+  MsdLevel: "",
+  CompType: "",
 });
-const levelList=ref([
-  {
-    label:1,
-    value:1,
-  }
-  ,{
-    label:2,
-    value:2,
-  },
-  {
-    label:3,
-    value:3,
-  }
-])
-const packeForm =ref({
+const levelList = ref<Level[]>([]);
+const packeForm = ref({
   ProductName: "",
   Revision: "",
   ProductDescription: "",
@@ -434,21 +436,29 @@ const packeForm =ref({
   BD_CheckSum: "",
   BD_ChipType: "",
   BD_SoftVersion: "",
-  zxrl:'',
-  numType:''
-})
+  zxrl: "",
+  numType: "",
+});
 
 onBeforeMount(() => {
   getScreenHeight();
+  // onSubmit()
 });
 onMounted(() => {
   window.addEventListener("resize", getScreenHeight);
   getMaterialTree();
+  getMsdLevel();
 });
 onBeforeUnmount(() => {
   window.addEventListener("resize", getScreenHeight);
 });
 
+//
+const getMsdLevel = () => {
+  GetMSDLevel().then((res: any) => {
+    levelList.value = res.content;
+  });
+};
 const getMaterialTree = () => {
   findAllMaterialTree().then((res: any) => {
     if (res.content == null || res.content.length == 0) {
@@ -472,9 +482,10 @@ const onSubmit = () => {
     // console.log();
   });
 };
+//打开修改物料属性
 const onEditSubmit = () => {
   let data = cloneDeep(selectData.value[0]);
-
+  console.log(data);
   editForm.value = {
     ...data,
   };
@@ -482,6 +493,8 @@ const onEditSubmit = () => {
   msdForm.value = {
     ...data,
   };
+  msdForm.value.CompType = data.ProductName;
+  msdForm.value.MsdLevel = data.BD_MSDLevel;
   msdForm.value.ProductDescription = data.ProductDesc;
   editVisible.value = true;
 };
@@ -489,31 +502,61 @@ const editCancel = () => {
   editVisible.value = false;
   editFormRef.value.resetFields();
 };
+//是否MSD
+const changeMsd = (val: any) => {
+  if (!val) {
+    msdForm.value.MsdLevel = "";
+  }
+};
 const editOnSubmit = () => {
-  editFormRef.value.resetFields();
-  UpdateProductMaterial(editForm.value).then((res: any) => {
-    editVisible.value = false;
-    // editRef.value.cleanForm();
-    ElNotification({
-      title: res.msg,
-      // message: "取消操作",
-      type: "success",
+  // editFormRef.value.resetFields();
+  if (activeName.value == "base") {
+    UpdateProductProperty(editForm.value).then((res: any) => {
+      ElNotification({
+        title: "提示信息",
+        message: res.msg,
+        type: "success",
+      });
+      onSubmit();
     });
-    onSubmit();
-    // console.log(res);
-  });
+  }
+  if (activeName.value == "msd") {
+    
+    if (msdForm.value.BD_IsMSD) {
+      if( msdForm.value.MsdLevel==""||msdForm.value.MsdLevel==null||msdForm.value.MsdLevel==undefined){
+        ElNotification({
+          title: "提示信息",
+          message: "MSD等级不能为空！！！",
+          type: "warning",
+        });
+      }else{
+        UpdateMSDMaterialAttribute(msdForm.value).then((res: any) => {
+        ElNotification({
+          title: "提示信息",
+          message: res.msg,
+          type: "success",
+        });
+        onSubmit();
+      });
+      }
+      
+    } else {
+      UpdateMSDMaterialAttribute(msdForm.value).then((res: any) => {
+        ElNotification({
+          title: "提示信息",
+          message: res.msg,
+          type: "success",
+        });
+        onSubmit();
+      });
+    }
+  }
 };
 const onQuerySubmit = () => {
   let data = cloneDeep(selectData.value[0]);
-  // console.log(1010101100099);
   findProductBOM(data.ProductName).then((res: any) => {
-    // console.log(res.content);
     if (res.content.length == 0 || res.content == null) {
       bomtableData.value = [];
-      // ElNotification({
-      //   title: '无数据',
-      //   type: "success",
-      // });
       return;
     }
     bomtableData.value = res.content;
@@ -525,7 +568,7 @@ const handleSelectionChange = (val: any) => {
   let data = cloneDeep(val);
   selectData.value = data;
   //   console.log(selectData.value);
-  console.log(data);
+  // console.log(data);
 };
 const handleSizeChange = (val: any) => {
   pageObj.value.currentPage = 1;
@@ -562,7 +605,6 @@ const getScreenHeight = () => {
 .demo-tabs .el-tabs__content {
   padding: 5px;
 }
-
 
 .demo-tabs.el-tabs--border-card>.el-tabs__header .el-tabs__item {
   color: #fff;

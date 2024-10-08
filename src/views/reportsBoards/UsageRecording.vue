@@ -42,10 +42,10 @@
       >
       <el-table-column type="index" width="50" />
         <el-table-column
-          prop="planNo"
+          prop="PlanNo"
           align="center"
           label="计划号"
-          :min-width="flexColumnWidth('计划号', 'planNo')"
+          :min-width="flexColumnWidth('计划号', 'PlanNo')"
         >
         </el-table-column>
         <el-table-column

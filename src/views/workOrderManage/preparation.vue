@@ -1,13 +1,18 @@
 <template>
   <div class="p-2">
     <el-card shadow="always" :body-style="{ padding: '8px 8px 0px 8px' }">
-      <el-form ref="formRef" class="form" :inline="true"  :model="form">
+      <el-form ref="formRef" class="form" :inline="true"  :model="getForm">
+        <el-form-item label="计划时间" prop="timePeriod" class="mb-2">
+          <el-date-picker v-model="getForm.timePeriod" value-format="YYYY-MM-DD" type="daterange" range-separator="-"
+            style="width: 240px" :clearable="true"    start-placeholder="开始"
+            end-placeholder="结束" />
+        </el-form-item>
           <el-form-item label="工单" class="mb-2">
-          <el-input v-model="form.orderName" placeholder="请输入工单" />
+          <el-input v-model="getForm.orderName" placeholder="请输入工单" />
           </el-form-item>
           <el-form-item label="面别" class="mb-2">
             <el-select
-              v-model="form.side"
+              v-model="getForm.side"
               clearable
               style="width: 150px"
             >
@@ -19,20 +24,7 @@
               />
             </el-select>
           </el-form-item>
-          <el-form-item label="状态" class="mb-2">
-            <el-select
-              v-model="form.McId"
-              clearable
-              style="width: 150px"
-            >
-              <el-option
-                v-for="item in McIdList"
-                :key="item"
-                :label="item.label"
-                :value="item.value"
-              />
-            </el-select>
-          </el-form-item>
+          
       
           <el-form-item class="mb-2">
             <el-button type="primary" @click="getData">查询</el-button>
@@ -49,15 +41,15 @@
 </template>
 
 <script setup lang="ts">
-
-import { ref,reactive,nextTick,onBeforeMount,onMounted,onBeforeUnmount } from "vue";
+import { ref,reactive,watch,nextTick,onBeforeMount,onMounted,onBeforeUnmount } from "vue";
 import tableTem from "@/components/tableTem/index.vue";
-const form = ref(
+const getForm = ref(
   {
     orderName:'',
     side:'',
-    McId:'',
-    Station:''
+    StartTime:'',
+    EndTime:'',
+    timePeriod:[]
   }
 );
 const orderList=ref([
@@ -186,6 +178,18 @@ const columnData = reactive([
     align: "center",
     fixed: "right",
     operation: [
+    {
+        type: "primary",
+        label: "开始备料",
+        icon: "Sunrise",
+        buttonClick: editSubmit,
+      },
+      {
+        type: "primary",
+        label: "结束备料",
+        icon: "Sunrise",
+        buttonClick: editSubmit,
+      },
       {
         type: "primary",
         label: "亮灯",
@@ -195,6 +199,21 @@ const columnData = reactive([
     ],
   },
 ]);
+watch(
+  () => getForm.value.timePeriod,
+  (newVal: any) => {
+    if (newVal === null) {
+      getForm.value.StartTime = "";
+      getForm.value.EndTime = "";
+      getTableData()
+      return [];
+    }
+    getForm.value.StartTime = newVal[0];
+    getForm.value.EndTime = newVal[1];
+  },
+  { deep: true }
+);
+
 
 onBeforeMount(() => {
     getScreenHeight();
