@@ -102,9 +102,7 @@
           :min-width="flexColumnWidth('出库单号', 'OutstockNo')"
         >
           <template #default="scope">
-            <u @click="findDetail(scope.row)">
-              {{ scope.row.OutstockNo }}
-            </u>
+            <div text class="underline font-bold text-[#006487]" @click="findDetail(scope.row)" >{{ scope.row.OutstockNo }}</div>
           </template>
         </el-table-column>
         <!-- <el-table-column prop="Type" align="center" label="出库类型"> </el-table-column> -->

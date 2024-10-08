@@ -97,9 +97,9 @@
           :min-width="flexColumnWidth('入库单号', 'InstockNo')"
         >
           <template #default="scope">
-            <u @click="findDetail(scope.row)">
+            <div @click="findDetail(scope.row)" text class="underline font-bold text-[#006487]" >
               {{ scope.row.InstockNo }}
-            </u>
+            </div>
           </template>
         </el-table-column>
         <el-table-column
