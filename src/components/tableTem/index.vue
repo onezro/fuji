@@ -33,9 +33,10 @@
           </div>
           <el-tooltip v-if="c.isOperation" v-for="(o, oi) in c.operation" :key="oi" :content="o.label" placement="top">
             <el-button v-if="o.icon" :icon="o.icon" size="small" :color="o.color" :type="o.type"
-              :disabled="o.disabled ? scope.row[o.prop] == o.disabled : false" @click="o.buttonClick(scope.row)" />
+              :disabled="o.disabled ? scope.row[o.prop] == o.disabled: false" @click="o.buttonClick(scope.row)" />
             <span v-if="!o.icon" text class="underline font-bold text-[#006487]" @click="o.buttonClick(scope.row)">{{
               scope.row[o.prop] || o.label }}</span>
+             
             <!-- <el-button class="underline" v-if="!o.icon" size="small" :type="o.type" :color="o.color" @click="o.buttonClick(scope.row)"
               :disabled="o.disabled ? scope.row[o.prop] == o.disabled : false">{{ o.label }}</el-button> -->
           </el-tooltip>
