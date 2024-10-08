@@ -254,20 +254,21 @@
   const getTableData = () => {
     getBurningData(searchForm.value).then((res: any) => {
       feedTableData.value = [];
+      tableData1.value = [];
+      tableData2.value = [];
       if (!res || res.content === null) {
         tableData.value = [];
         return;
       }
       // console.log(res);
       tableData.value = res.content;
-      tableData1.value = [];
-      tableData2.value = [];
     });
   };
   
   const rowClick = (val: any) => {
     GetBurnProgDataSiteInfo(val.DataGuid).then((res: any) => {
       tableData1.value = [];
+      tableData2.value = [];
       if (!res || res.content === null) {
         tableData1.value = [];
         return;
