@@ -209,7 +209,7 @@
       :close-on-click-modal="false"
       v-model="editVisible"
       @close=""
-      title="编辑"
+      title="报废"
       width="550px"
     >
       <el-form
@@ -225,7 +225,7 @@
         <el-form-item label="备注">
           <el-input v-model="ScrapForm.Remark" style="width: 400px" />
         </el-form-item>
-        <el-form-item label="备注">
+        <el-form-item label="报废数量">
           <el-input-number v-model="ScrapForm.Qty" :min="1" :max="maxCount" style="width: 400px" />
         </el-form-item>
       </el-form>
@@ -555,11 +555,11 @@ const serachData = () => {
   GetPartsStockList(searchForm.value).then((res: any) => {
     if (res && res.success) {
       tableData.value = res.content;
-      //   ElNotification({
-      //     title: res.msg,
-      //     // message: "取消操作",
-      //     type: "success",
-      //   });
+        ElNotification({
+          title: res.msg,
+          // message: "取消操作",
+          type: "success",
+        });
       if (searchForm.value.PartName) {
         tableData1.value = table1(searchForm.value.PartName);
       } else {

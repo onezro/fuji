@@ -20,14 +20,6 @@
                 @change="dateChange"
               />
             </el-form-item>
-            <el-form-item label="入库单号" class="mb-2">
-              <el-input
-                v-model="searchForm.InstockNo"
-                style="width: 240px"
-                placeholder=""
-                clearable
-              ></el-input>
-            </el-form-item>
             <el-form-item label="入库类型" class="mb-2">
               <el-select
                 v-model="searchForm.Type"
@@ -43,6 +35,14 @@
                   :value="`${index}`"
                 />
               </el-select>
+            </el-form-item>
+            <el-form-item label="入库单号" class="mb-2">
+              <el-input
+                v-model="searchForm.InstockNo"
+                style="width: 240px"
+                placeholder=""
+                clearable
+              ></el-input>
             </el-form-item>
             <el-form-item label="" class="mb-2">
               <el-button class="ml-3" type="primary" @click="searchData"
@@ -97,7 +97,7 @@
           :min-width="flexColumnWidth('入库单号', 'InstockNo')"
         >
           <template #default="scope">
-            <u @click="findDetail(scope.row.Chkin_sht)">
+            <u @click="findDetail(scope.row)">
               {{ scope.row.InstockNo }}
             </u>
           </template>
@@ -473,7 +473,7 @@
       v-model="detailVisible"
       @close="inFormClose"
       title="详细信息"
-      width="60%"
+      width="1200"
     >
       <el-form
         ref="inFormRef"
@@ -482,50 +482,43 @@
         label-width="100"
         :inline="true"
       >
-        <el-form-item label="备件名称" prop="PartName">
-          <el-input v-model="detailForm.PartName" style="width: 250px" />
+        <el-form-item label="入库类型" prop="PartName">
+          <el-input v-model="detailForm.TypeName" style="width: 250px" disabled />
         </el-form-item>
-        <el-form-item label="备件描述" prop="PartDesc">
-          <el-input v-model="detailForm.PartDesc" style="width: 250px" />
+        <el-form-item label="入库单号" prop="PartDesc">
+          <el-input v-model="detailForm.InstockNo" style="width: 250px" disabled />
         </el-form-item>
-        <el-form-item label="类型名称" prop="ClassName">
-          <el-input v-model="detailForm.ClassName" style="width: 250px" />
+        <el-form-item label="采购单号" prop="ClassName">
+          <el-input v-model="detailForm.PurhaseNo" style="width: 250px" disabled />
         </el-form-item>
-        <el-form-item label="批次号" prop="ClassDesc">
-          <el-input v-model="detailForm.PartNumber" style="width: 250px" />
+        <el-form-item label="出库单号" prop="ClassDesc">
+          <el-input v-model="detailForm.OutstockNo" style="width: 250px" disabled />
         </el-form-item>
-        <el-form-item label="库存数量" prop="Qty">
-          <el-input v-model="detailForm.Qty" style="width: 250px" />
+        <el-form-item label="归还人" prop="Qty">
+          <el-input v-model="detailForm.ReturnBy" style="width: 250px" disabled />
         </el-form-item>
-        <el-form-item label="库存数量" prop="Qty">
-          <el-input v-model="detailForm.Qty" style="width: 250px" />
+        <el-form-item label="状态" prop="InStockStatus">
+          <el-input v-model="detailForm.InStockStatus" style="width: 250px" disabled />
         </el-form-item>
-        <el-form-item label="到期日期" prop="DueDate">
-          <el-input v-model="detailForm.DueDate" style="width: 250px" />
+        <el-form-item label="创建人" prop="ReturnQty">
+          <el-input v-model="detailForm.CreatedBy" style="width: 250px" disabled />
         </el-form-item>
-        <el-form-item label="资产编号" prop="AssetNumber">
-          <el-input v-model="detailForm.AssetNumber" style="width: 250px" />
+        <el-form-item label="创建时间" prop="Vendor">
+          <el-input v-model="detailForm.CreatedOn" style="width: 250px" disabled />
         </el-form-item>
-        <el-form-item label="供应商" prop="Vendor">
-          <el-input v-model="detailForm.Vendor" style="width: 250px" />
-        </el-form-item>
-        <el-form-item label="制造商" prop="Manufacturer">
-          <el-input v-model="detailForm.Manufacturer" style="width: 250px" />
-        </el-form-item>
-        <el-form-item label="规格型号" prop="Specification">
-          <el-input v-model="detailForm.Specification" style="width: 250px" />
-        </el-form-item>
-        <el-form-item label="库存位置" prop="StorageLocation">
-          <el-input v-model="detailForm.StorageLocation" style="width: 250px" />
-        </el-form-item>
-        <el-form-item label="入库时间" prop="CreatedOn">
-          <el-input v-model="detailForm.CreatedOn" style="width: 250px" />
-        </el-form-item>
-        <el-form-item label="入库人" prop="CreatedBy">
-          <el-input v-model="detailForm.CreatedBy" style="width: 250px" />
+        <el-form-item label="备注" prop="Manufacturer">
+          <el-input v-model="detailForm.Remark" style="width: 250px" disabled />
         </el-form-item>
       </el-form>
-
+      
+      <table-tem
+                :tableData="detailTable"
+                :tableHeight="400"
+                :columnData="columnData"
+                :pageObj="pageObj1"
+                @handleSizeChange="handleSizeChange1"
+                @handleCurrentChange="handleCurrentChange1"
+              ></table-tem>
       <!-- <template #footer>
         <span class="dialog-footer">
           <el-button @click="inFormClose()"> 取消 </el-button>
@@ -610,20 +603,15 @@ interface SearchFormTS {
 }
 
 interface detailFormTS {
-  Qty: number;
-  PartNumber: string | null;
-  DueDate: string | null;
-  AssetNumber: string;
-  Vendor: string | null;
-  Manufacturer: string | null;
-  Specification: string | null;
-  StorageLocation: string | null;
-  CreatedOn: string;
-  CreatedBy: string;
-  PartName: string;
-  PartDesc: string;
-  ClassName: string;
-  ClassDesc: string;
+  TypeName:string;
+  InstockNo:string;
+  PurhaseNo:string;
+  OutstockNo:string;
+  ReturnBy:string;
+  InStockStatus:string;
+  CreatedBy:string;
+  CreatedOn:string;
+  Remark:string;
 }
 
 //   const pageSize = ref(10);
@@ -633,13 +621,17 @@ const addVisible = ref(false);
 const InVisible = ref(false);
 const editVisible = ref(false);
 const dateValue = ref<any[]>([]);
-const deleteVisible = ref(false);
 const detailVisible = ref(false);
+const detailTable = ref<any[]>([]);
 const deleteChoice = ref("");
 const inFormRef = ref();
 const inFormType = ref("");
 const tableData1 = ref<any[]>([]);
 const pageObj = ref({
+  pageSize: 30,
+  currentPage: 1,
+});
+const pageObj1 = ref({
   pageSize: 30,
   currentPage: 1,
 });
@@ -710,20 +702,15 @@ const searchForm = ref<SearchFormTS>({
 });
 
 const detailForm = ref<detailFormTS>({
-  Qty: 0,
-  PartNumber: "",
-  DueDate: "",
-  AssetNumber: "",
-  Vendor: "",
-  Manufacturer: "",
-  Specification: "",
-  StorageLocation: "",
-  CreatedOn: "",
-  CreatedBy: "",
-  PartName: "",
-  PartDesc: "",
-  ClassName: "",
-  ClassDesc: "",
+  TypeName:'',
+  InstockNo:'',
+  PurhaseNo:'',
+  OutstockNo:'',
+  ReturnBy:'',
+  InStockStatus:'',
+  CreatedBy:'',
+  CreatedOn:'',
+  Remark:''
 });
 
 const editSubmit = (data: any) => {
@@ -745,24 +732,21 @@ interface toolType {
 }
 
 const findDetail = (data: any) => {
-  findInParameter(data).then((res: any) => {
+  findInParameter(data.Chkin_sht).then((res: any) => {
     if (res && res.content && res.content.length > 0) {
       detailVisible.value = true
-      const obj = res.content[0];
-      detailForm.value.Qty = obj.Qty;
-      detailForm.value.PartNumber = obj.PartNumber;
-      detailForm.value.AssetNumber = obj.AssetNumber;
-      detailForm.value.DueDate = obj.DueDate;
-      detailForm.value.Vendor = obj.Vendor;
-      detailForm.value.Manufacturer = obj.Manufacturer;
-      detailForm.value.Specification = obj.Specification;
-      detailForm.value.StorageLocation = obj.StorageLocation;
-      detailForm.value.CreatedOn = obj.CreatedOn;
-      detailForm.value.CreatedBy = obj.CreatedBy;
-      detailForm.value.PartName = obj.PartName;
-      detailForm.value.PartDesc = obj.PartDesc;
-      detailForm.value.ClassName = obj.ClassName;
-      detailForm.value.ClassDesc = obj.ClassDesc;
+      // const obj = res.content[0];
+      console.log(data);
+      detailTable.value = res.content;
+      detailForm.value.TypeName = data.TypeName;
+      detailForm.value.InstockNo = data.InstockNo;
+      detailForm.value.PurhaseNo = data.PurchaseNo;
+      detailForm.value.OutstockNo = data.OutstockNo;
+      detailForm.value.ReturnBy = data.ReturnBy;
+      detailForm.value.InStockStatus = data.InStockStatus;
+      detailForm.value.CreatedBy = data.CreatedBy;
+      detailForm.value.CreatedOn = data.CreatedOn;
+      detailForm.value.Remark = data.Remark;
     } else if (res.content.length === 0) {
       ElNotification({
         title: "未查询到此项详细信息或信息为空",
@@ -770,21 +754,16 @@ const findDetail = (data: any) => {
         type: "warning",
       });
       detailForm.value = {
-        Qty: 0,
-        PartNumber: "",
-        DueDate: "",
-        AssetNumber: "",
-        Vendor: "",
-        Manufacturer: "",
-        Specification: "",
-        StorageLocation: "",
-        CreatedOn: "",
-        CreatedBy: "",
-        PartName: "",
-        PartDesc: "",
-        ClassName: "",
-        ClassDesc: "",
-      };
+  TypeName:'',
+  InstockNo:'',
+  PurhaseNo:'',
+  OutstockNo:'',
+  ReturnBy:'',
+  InStockStatus:'',
+  CreatedBy:'',
+  CreatedOn:'',
+  Remark:''
+};
     }
   });
 };
@@ -1007,22 +986,30 @@ const editData = () => {
 };
 
 const columnData = reactive([
-  //   {
-  //     text: true,
-  //     prop: "PartID",
-  //     label: "备品编号",
-  //     width: "",
-  //     min: true,
-  //     align: "1",
-  //   },
-  //   {
-  //     text: true,
-  //     prop: "ClassID",
-  //     label: "类别编号",
-  //     width: "",
-  //     min: true,
-  //     align: "1",
-  //   },
+  {
+    text: true,
+    prop: "PartName",
+    label: "备件名称",
+    width: "",
+    min: true,
+    align: "center",
+  },
+  {
+    text: true,
+    prop: "PartDesc",
+    label: "备件描述",
+    width: "",
+    min: true,
+    align: "center",
+  },
+  {
+    text: true,
+    prop: "ClassName",
+    label: "类型名称",
+    width: "",
+    min: true,
+    align: "center",
+  },
   {
     text: true,
     prop: "InstockNo",
@@ -1032,63 +1019,65 @@ const columnData = reactive([
     align: "center",
   },
   {
-    text: false,
-    tag: true,
-    tagType: "number",
-    tagItem: [
-      { text: "采购入库", type: "primary", number: "0" },
-      { text: "归还入库", type: "primary", number: "1" },
-      { text: "维修入库", type: "primary", number: "2" },
-    ],
-    prop: "Type",
-    label: "入库类型",
+    text: true,
+    prop: "PartNumber",
+    label: "批次号",
     width: "",
     min: true,
     align: "center",
   },
   {
     text: true,
-    prop: "PurchaseNo",
-    label: "采购单号",
+    prop: "Qty",
+    label: "库存数量",
     width: "",
     min: true,
     align: "center",
   },
   {
     text: true,
-    prop: "OutstockNo",
-    label: "归还单号",
-    width: "",
-    min: true,
-    align: "center",
-  },
-  {
-    text: false,
-    tag: true,
-    tagType: "number",
-    tagItem: [
-      { text: "待入库", type: "primary", number: 0 },
-      { text: "入库中", type: "primary", number: 1 },
-      { text: "已完成", type: "primary", number: 2 },
-    ],
-    prop: "Status",
-    label: "状态",
-    width: "80",
-    min: true,
-    align: "center",
-  },
-  {
-    text: true,
-    prop: "LendID",
-    label: "借出编号",
+    prop: "DueDate",
+    label: "到期日期",
     width: "",
     min: true,
     align: "center",
   },
   {
     text: true,
-    prop: "ReturnBy",
-    label: "归还人",
+    prop: "AssetNumber",
+    label: "资产编号",
+    width: "",
+    min: true,
+    align: "center",
+  },
+  {
+    text: true,
+    prop: "Vendor",
+    label: "供应商",
+    width: "",
+    min: true,
+    align: "center",
+  },
+  {
+    text: true,
+    prop: "Manufacturer",
+    label: "制造商",
+    width: "",
+    min: true,
+    align: "center",
+  },
+  {
+    text: true,
+    prop: "Specification",
+    label: "规格型号",
+    width: "",
+    min: true,
+    align: "center",
+  },
+  {
+    text: true,
+    prop: "StorageLocation",
+    label: "库存位置",
     width: "",
     min: true,
     align: "center",
@@ -1096,7 +1085,7 @@ const columnData = reactive([
   {
     text: true,
     prop: "CreatedBy",
-    label: "创建人",
+    label: "入库人",
     width: "",
     min: true,
     align: "center",
@@ -1104,51 +1093,10 @@ const columnData = reactive([
   {
     text: true,
     prop: "CreatedOn",
-    label: "创建时间",
+    label: "入库时间",
     width: "",
     min: true,
     align: "center",
-  },
-  {
-    text: true,
-    prop: "Remark",
-    label: "备注",
-    width: "",
-    min: true,
-    align: "center",
-  },
-  {
-    isOperation: true,
-    label: "操作",
-    width: "240",
-    align: "center",
-    fixed: "right",
-    operation: [
-      {
-        type: "primary",
-        label: "编辑",
-        icon: "EditPen",
-        buttonClick: editSubmit,
-      },
-      {
-        type: "danger",
-        label: "删除",
-        icon: "Delete",
-        buttonClick: deleteSubmit,
-      },
-      {
-        type: "success",
-        label: "开始入库",
-        icon: "VideoPlay",
-        buttonClick: showInForm,
-      },
-      {
-        type: "info",
-        label: "完成入库",
-        icon: "CircleCheck",
-        buttonClick: inPartSubmit,
-      },
-    ],
   },
 ]);
 
@@ -1169,6 +1117,14 @@ const handleSizeChange = (val: any) => {
 };
 const handleCurrentChange = (val: any) => {
   pageObj.value.currentPage = val;
+};
+
+const handleSizeChange1 = (val: any) => {
+  pageObj1.value.currentPage = 1;
+  pageObj1.value.pageSize = val;
+};
+const handleCurrentChange1 = (val: any) => {
+  pageObj1.value.currentPage = val;
 };
 const getScreenHeight = () => {
   nextTick(() => {
