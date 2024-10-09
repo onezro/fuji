@@ -31,30 +31,13 @@
         <div class="ml-2">
           <el-form ref="formRef" :inline="true" size="default" :model="form" label-width="auto">
             <el-form-item label="烧录日期" prop="startTime" class="mb-2">
-              <el-date-picker v-model="form.date" type="daterange" range-separator="~" start-placeholder="开始时间"
+              <el-date-picker :shortcuts="shortcuts" v-model="form.date" type="daterange" range-separator="~" start-placeholder="开始时间"
                 format="YYYY-MM-DD" :clearable="false" value-format="YYYY-MM-DD" end-placeholder="结束时间" />
             </el-form-item>
-            <!-- <el-form-item label="产线" prop="line">
-              <el-select
-                v-model="form.line"
-                placeholder="请选择"
-                style="width: 150px"
-              >
-                <el-option
-                  v-for="l in lineOption"
-                  :key="l.value"
-                  :label="l.label"
-                  :value="l.value"
-                />
-              </el-select>
-            </el-form-item> -->
             <el-form-item label="工单号" prop="workOrder" class="mb-2"><el-input v-model="form.OrderNum"
                 style="width: 180px" placeholder="请输入工单号" clearable /></el-form-item>
             <el-form-item label="条码" prop="barCode" class="mb-2"><el-input style="width: 180px" clearable
                 v-model="form.barCode" placeholder="请输入条码" /></el-form-item>
-            <!-- <el-form-item class="mb-2">
-              
-            </el-form-item> -->
           </el-form>
         </div>
         <div class="mb-2 ml-2">
@@ -100,6 +83,7 @@ import tableTem from "@/components/tableTem/index.vue";
 import feedTemp from "@/components/feedTemp/index.vue";
 import { cloneDeep } from "lodash-es";
 import { useUserStoreWithOut } from "@/stores/modules/user";
+import {shortcuts} from "@/utils/dataMenu"
 const userStore = useUserStoreWithOut();
 const form = ref<InstanceType<typeof BurnForm>>({
   date: [],
@@ -295,14 +279,6 @@ const columnData = reactive([
 ]);
 
 const burnPrint = () => {
-  // if (!hasDuplicateValue(BurnTableData.value,'OrderNum')) {
-  //   ElMessage({
-  //     showClose: true,
-  //     message: '不可选重复工单打印',
-  //     type: "warning",
-  //   });
-  //   return;
-  // }
   PrintBurnModel(BurnTableData.value).then((data: any) => {
     ElMessage({
       showClose: true,
@@ -441,7 +417,7 @@ const setDefaultDate = () => {
 };
 
 const radioChange = (args: any) => {
-  // console.log(args[1]);
+  console.log(args);
   if (args[1] == null) {
     OrderForm.MfgOrderName = "";
     OrderForm.ProductName = "";

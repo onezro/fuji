@@ -3,8 +3,8 @@
     <el-card shadow="always" :body-style="{ padding: '8px 8px 0px 8px' }">
       <el-form ref="formRef" class="form" :inline="true" :model="getForm">
         <el-form-item label="时间" prop="timePeriod" class="mb-2">
-          <el-date-picker v-model="getForm.timePeriod" value-format="YYYY-MM-DD" type="daterange" range-separator="-"
-            style="width: 240px" :clearable="true" />
+          <el-date-picker :shortcuts="shortcuts" v-model="getForm.timePeriod" value-format="YYYY-MM-DD" type="daterange"
+            range-separator="-" style="width: 240px" :clearable="true" />
         </el-form-item>
         <el-form-item label="工单" class="mb-2">
           <el-input v-model="getForm.OrderNumber" placeholder="请输入工单" @change="getData" clearable @clear="getData" />
@@ -23,26 +23,25 @@
         (pageObj.currentPage - 1) * pageObj.pageSize,
         pageObj.currentPage * pageObj.pageSize
       )
-        " :height="tableHeight"  stripe>
-          <el-table-column type="index" align="center" fixed label="序号" 
-          />
-        <el-table-column prop="OrderNumber" align="center" fixed label="工单" :min-width="flexColumnWidth('工单', 'OrderNumber')">
+        " :height="tableHeight" stripe>
+        <el-table-column type="index" align="center" fixed label="序号" />
+        <el-table-column prop="OrderNumber" align="center" fixed label="工单" flexible>
         </el-table-column>
-        <el-table-column prop="Side" align="center" label="面号"
-          :min-width="flexColumnWidth('面号', 'Side')">
+        <el-table-column prop="Side" align="center" label="面号" fixed flexible>
         </el-table-column>
         <el-table-column prop="PlanedStartTime" align="center" label="计划开始时间"
           :min-width="flexColumnWidth('计划开始时间', 'PlanedStartTime')">
         </el-table-column>
-        <el-table-column prop="PlanedEndTime" align="center" label="计划完成时间" :min-width="flexColumnWidth('计划完成时间', 'PlanedEndTime')">
+        <el-table-column prop="PlanedEndTime" align="center" label="计划完成时间"
+          :min-width="flexColumnWidth('计划完成时间', 'PlanedEndTime')">
         </el-table-column>
-        <el-table-column prop="LineNumber" align="center" label="产线"
-          :min-width="flexColumnWidth('产线', 'LineNumber')">
+        <el-table-column prop="LineNumber" align="center" label="产线" :min-width="flexColumnWidth('产线', 'LineNumber')">
         </el-table-column>
         <el-table-column prop="ProductNumber" align="center" label="产品编码"
           :min-width="flexColumnWidth('产品编码', 'ProductNumber')">
         </el-table-column>
-        <el-table-column prop="OrderPlanedQty" align="center" label="工单数量" :min-width="flexColumnWidth('工单数量', 'OrderPlanedQty')">
+        <el-table-column prop="OrderPlanedQty" align="center" label="工单数量"
+          :min-width="flexColumnWidth('工单数量', 'OrderPlanedQty')">
         </el-table-column>
         <el-table-column prop="ReturnDate" align="center" label="状态" width="100">
           <template #default="scope">
@@ -60,11 +59,13 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column prop="StartTime" align="center" label="备料开始时间" :min-width="flexColumnWidth('备料开始时间', 'StartTime')">
+        <el-table-column prop="StartTime" align="center" label="备料开始时间"
+          :min-width="flexColumnWidth('备料开始时间', 'StartTime')">
         </el-table-column>
         <el-table-column prop="EndTime" align="center" label="备料完成时间" :min-width="flexColumnWidth('备料完成时间', 'EndTime')">
         </el-table-column>
-        <el-table-column prop="PreparationBy" align="center" label="备料人" :min-width="flexColumnWidth('备料人', 'PreparationBy')">
+        <el-table-column prop="PreparationBy" align="center" label="备料人"
+          :min-width="flexColumnWidth('备料人', 'PreparationBy')">
         </el-table-column>
         <el-table-column prop="shelf_ids" align="center" label="亮灯货架" :min-width="flexColumnWidth('亮灯货架', 'shelf_ids')">
         </el-table-column>
@@ -78,23 +79,25 @@
                   :disabled="scope.row.Status == 0"></el-button>
               </el-tooltip>
               <el-tooltip content="开始备料" placement="top">
-                <el-button type="info" icon="VideoPlay" size="small" @click="startSubmit(scope.row)"
-                  ></el-button>
+                <el-button type="info" icon="VideoPlay" size="small" @click="startSubmit(scope.row)"></el-button>
               </el-tooltip>
               <el-tooltip content="亮灯" placement="top">
-                <el-button type="warning" icon="VideoPlay"  size="small"
-                  @click="onLightSubmit(scope.row)"></el-button>
+                <el-button type="warning" icon="Sunrise" size="small" @click="onLightSubmit(scope.row)"></el-button>
               </el-tooltip>
               <el-tooltip content="完成备料" placement="top">
-                <el-button type="success" icon="CircleCheck" size="small" @click="endSubmit(scope.row)"
-                 ></el-button>
+                <el-button type="success" icon="CircleCheck" size="small" @click="endSubmit(scope.row)"></el-button>
               </el-tooltip>
             </div>
           </template>
         </el-table-column>
+        <template #empty>
+          <div class="flex items-center justify-center h-100%">
+            <el-empty />
+          </div>
+        </template>
       </el-table>
       <div class="mt-2 mb-2">
-        <el-pagination  background @size-change="handleSizeChange" @current-change="handleCurrentChange"
+        <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange"
           :current-page="pageObj.currentPage" :page-size="pageObj.pageSize" :page-sizes="[10, 30, 50, 100, 150]"
           layout="total,sizes, prev, pager, next" :total="tableData.length">
         </el-pagination>
@@ -109,7 +112,7 @@
         <el-form-item label="工单号" prop="OrderNumber">
           <el-input v-model="editForm.OrderNumber" disabled />
         </el-form-item>
-       
+
         <el-form-item label="面号" prop="Side">
           <el-input v-model="editForm.Side" disabled />
         </el-form-item>
@@ -176,6 +179,7 @@ import {
   onBeforeUnmount,
 } from "vue";
 import tableTem from "@/components/tableTem/index.vue";
+import {shortcuts} from "@/utils/dataMenu"
 import { GetSMTPreparationOrderList } from "@/api/smtApi";
 import { useUserStoreWithOut } from "@/stores/modules/user";
 const userStore = useUserStoreWithOut();
@@ -228,20 +232,20 @@ const editForm = ref({
 const shelfList = ref<ShelfList[]>([]);
 const lineNameList = ref<any>([]);
 const editFormRef = ref()
-const startVisible=ref(false)
-const startForm=ref({
-  shelf_ids:'',
-  CreatedBy:'',
-  Side:'',
-  shelf_ids_list:'',
-  Remark:'',
-  LineNumber:'',
+const startVisible = ref(false)
+const startForm = ref({
+  shelf_ids: '',
+  CreatedBy: '',
+  Side: '',
+  shelf_ids_list: '',
+  Remark: '',
+  LineNumber: '',
 })
-const startFormRef=ref()
+const startFormRef = ref()
 //编辑
 const editSubmit = (data: any) => {
   // console.log(data);
-  editForm.value={...data}
+  editForm.value = { ...data }
   editVisible.value = true;
 };
 const editCancel = () => {
@@ -251,21 +255,21 @@ const editCancel = () => {
 const editConfirm = () => { };
 
 //开始备料
-const startSubmit = (data: any) => { 
-  startForm.value={...data}
+const startSubmit = (data: any) => {
+  startForm.value = { ...data }
   startVisible.value = true;
 };
-const startCancel=()=>{
+const startCancel = () => {
   startFormRef.value.resetFields()
   startVisible.value = false
 }
-const startConfirm=()=>{
+const startConfirm = () => {
 
 }
 //完成备料
-const endSubmit = (data:any) => { };
+const endSubmit = (data: any) => { };
 //亮灯
-const onLightSubmit = (data:any) => { };
+const onLightSubmit = (data: any) => { };
 const columnData = reactive([
   {
     text: true,
@@ -399,19 +403,19 @@ const columnData = reactive([
       {
         type: "primary",
         label: "编辑",
-        prop:'Status',
-        disabled:0,
+        prop: 'Status',
+        disabled: 0,
         icon: "EditPen",
         buttonClick: editSubmit,
       },
       {
         type: "info",
-     
+
         label: "开始备料",
         icon: "VideoPlay",
         buttonClick: startSubmit,
       },
-    
+
       {
         type: "warning",
         label: "亮灯",

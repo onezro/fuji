@@ -1,7 +1,7 @@
 import axios from "axios";
-import { ElMessageBox, ElMessage, ElLoading,ElNotification } from "element-plus";
-import { getToken } from "@/utils/auth";
-
+import { ElMessageBox, ElMessage, ElLoading, ElNotification } from "element-plus";
+import { getToken, removeToken } from "@/utils/auth";
+import router from '@/router';
 // import store from '@/store'
 // import { getToken } from '@/utils/auth'
 let loadingRequestCount = 0;
@@ -89,27 +89,34 @@ service.interceptors.response.use(
       });
       return Promise.reject();
     }
+    if (response.status === 401) {
+      // userStore.logout()
+      // router.push({path: '/login'});
+      removeToken()
+      router.push('/login');
+    }
 
     //成功的返回
     if (response.status === 200) {
+
       if (response.data.code == 100200 || !response.data.code) {
+        // router.push({path: '/login'});
         return response.data;
       } else if (response.data.code == 100300) {
         return response.data;
       }
+      else if (response.data.code === 401) {
+        removeToken()
+        router.push('/login');
+      }
       else {
-        
         ElNotification({
           title: "提示信息",
-          message:response.data.msg,
+          message: response.data.msg,
           type: "error",
         });
-        // ElMessageBox.alert(response.data.msg, "提示信息", {
-        //   confirmButtonText: "确定",
-        // });
-        // return response.data;
       }
-    
+
     }
   },
   (error) => {

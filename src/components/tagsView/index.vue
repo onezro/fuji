@@ -36,7 +36,7 @@ const initTags = () => {
     }
 }
 const refreshSelectedTag = async (view?: RouteLocationNormalizedLoaded) => {
-  refreshPage(view)
+    refreshPage(view)
 }
 //增加
 const addTags = () => {
@@ -99,6 +99,19 @@ const logoutsys = () => {
     // console.log(1111)
     userStore.logout()
     // push('/login');
+}
+const switchSystem = () => {
+    localStorage.setItem("SYSTEM_TYPE", JSON.stringify(!appStore.getSystemType));
+    appStore.setSystemType(!appStore.getSystemType);
+    if (appStore.getSystemType && localStorage.getItem("OPUIData")) {
+        let routestr = appStore.getOpuiData.path || "/";
+        push(routestr);
+    } else {
+        push({ path: "/login", query: { redirect: "/dashboard/index" } });
+    }
+
+    location.reload()
+
 }
 const tabActive = ref("");
 const addVisible = ref(false)
@@ -295,7 +308,7 @@ const fullScreen = () => {
                             </el-tooltip>
                             <div v-for="(v, i) in treeToList(unref(levelList))" :key="v.name">{{
                                 textArr[i]
-                                }}<span class="text-[1.1rem] text-[#006487] underline">&nbsp;{{ v.meta.title
+                            }}<span class="text-[1.1rem] text-[#006487] underline">&nbsp;{{ v.meta.title
                                     }}&nbsp;</span>
                             </div>
                         </div>
@@ -321,9 +334,13 @@ const fullScreen = () => {
                                 <template #dropdown>
                                     <el-dropdown-menu>
                                         <!-- <el-dropdown-item @click.native="openUpdatePwd">修改密码</el-dropdown-item> -->
+                                        <el-dropdown-item @click.native="switchSystem"><el-icon>
+                                                <Connection />
+                                            </el-icon>切换系统</el-dropdown-item>
                                         <el-dropdown-item @click.native="logoutsys"><el-icon>
                                                 <Promotion />
                                             </el-icon>退出登录</el-dropdown-item>
+                                      
                                     </el-dropdown-menu>
                                 </template>
                             </el-dropdown>
@@ -331,7 +348,7 @@ const fullScreen = () => {
                     </div>
                 </div>
             </el-scrollbar>
-           
+
         </div>
         <el-dialog :append-to-body="true" :close-on-click-modal="false" v-model="addVisible" title="设置" width="400px"
             @close="addCancel">

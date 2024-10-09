@@ -3,25 +3,25 @@
     <el-card shadow="always" :body-style="{ padding: '8px 8px 0px 8px' }">
       <div ref="headerRef flex flex-col">
         <el-form ref="formRef" class="form" :inline="true" size="small">
-          <el-form-item label="日期" class="mb-[5px]">
-            <el-date-picker v-model="searchDate" value-format="YYYY-MM-DD" type="daterange" range-separator="-"
-              size="small" style="width: 200px" />
+          <el-form-item label="时间" class="mb-[5px]">
+            <el-date-picker :shortcuts="shortcuts" v-model="searchDate" value-format="YYYY-MM-DD" type="daterange" range-separator="-"
+              size="small" style="width: 200px"  clearable/>
           </el-form-item>
           <el-form-item label="产线" class="mb-[5px]">
-            <el-select v-model="searchForm.lineName" placeholder="" clearable style="width: 150px">
+            <el-select v-model="searchForm.lineName"  clearable style="width: 150px" @clear="getTableData" @change="getTableData">
               <el-option v-for="item in lineNameList" :key="item" :label="item.Desc" :value="item.Name" />
             </el-select>
           </el-form-item>
           <el-form-item label="产品编码" class="mb-[5px]">
-            <el-input v-model="searchForm.productName" clearable style="width: 150px" class="input-with-select">
+            <el-input v-model="searchForm.productName" clearable style="width: 150px" @clear="getTableData" @change="getTableData" class="input-with-select">
             </el-input>
           </el-form-item>
           <el-form-item label="工单号" class="mb-[5px]">
-            <el-input v-model="searchForm.orderName" clearable style="width: 150px" class="input-with-select">
+            <el-input v-model="searchForm.orderName" clearable @clear="getTableData" @change="getTableData" style="width: 150px" class="input-with-select">
             </el-input>
           </el-form-item>
           <el-form-item label="状态" class="mb-[5px]">
-            <el-select v-model="searchForm.Status" placeholder="" clearable style="width: 150px">
+            <el-select v-model="searchForm.Status" placeholder="" clearable @clear="getTableData" @change="getTableData" style="width: 150px">
               <el-option v-for="item in statusList" :key="item" :label="item.Description"
                 :value="item.OrderStatusName" />
             </el-select>
@@ -53,7 +53,7 @@
         <el-tabs v-model="activeName" type="border-card" class="tabs-css" @tab-change="tabChange">
           <el-tab-pane label="物料清单明细" name="物料清单明细" :stretch="true">
             <div class="flex-1" ref="tablebox">
-              <el-table :data="feedTableData" size="small" stripe border fit :tooltip-effect="'dark'" :height="400"
+              <el-table :data="feedTableData" default-expand-all size="small" stripe border fit :tooltip-effect="'dark'" :height="400"
                 row-key="MaterialName" :tree-props="{ children: 'children' }">
                 <el-table-column type="index" align="center" fixed label="序号" width="60" />
                 <el-table-column prop="MaterialName" fixed label="物料编码" :min-width="150" width="150">
@@ -74,7 +74,7 @@
                   :min-width="flexColumnWidth('使用工序', 'SpecDesc')">
                 </el-table-column>
 
-                <el-table-column prop="isLoadQueue" align="center" label="允许上料" :min-width="flexColumnWidth('允许上料：（是否）', 'isLoadoueue')
+                <el-table-column prop="isLoadQueue" align="center" label="允许上料" :min-width="flexColumnWidth('允许上料', 'isLoadoueue')
                   ">
                   <template #default="scope">
                     <span v-if="scope.row.isLoadQueue === 1">是</span>
@@ -183,9 +183,7 @@
 <script lang="ts" setup>
 import { OrganData } from "@/utils/dataMenu";
 import {
-  ElMessageBox,
-  ElMessage,
-  ElLoading,
+  
   ElNotification,
 } from "element-plus";
 import { cloneDeep } from "lodash-es";
@@ -211,6 +209,7 @@ import {
   onBeforeMount,
   onBeforeUnmount,
 } from "vue";
+import {shortcuts} from "@/utils/dataMenu"
 interface wmsType {
   phase_code: string;
   pt_code: string;

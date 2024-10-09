@@ -47,6 +47,9 @@
             <el-dropdown-item @click.native="openUpdatePwd"><el-icon>
                 <Key />
               </el-icon>修改密码</el-dropdown-item>
+              <el-dropdown-item @click.native="switchSystem"><el-icon>
+                <Connection />
+              </el-icon>切换系统</el-dropdown-item>
             <el-dropdown-item @click.native="logoutsys"><el-icon>
                 <Promotion />
               </el-icon>退出登录</el-dropdown-item>
@@ -104,10 +107,12 @@ import {
 import { usePermissionStoreWithOut } from "@/stores/modules/permission";
 import { useUserStoreWithOut } from '@/stores/modules/user'
 import { cloneDeep } from "lodash-es";
+import { useAppStore } from "@/stores/modules/app";
 import axios from "axios";
 const { currentRoute, push } = useRouter();
 const permissionStore = usePermissionStoreWithOut();
 const userStore = useUserStoreWithOut()
+const appStore = useAppStore();
 
 const loginName = userStore.getUserInfo
 const showMenu = ref(false); //展示子菜单
@@ -237,6 +242,20 @@ const solwCanel = () => {
 
 const logoutsys = () => {
   userStore.logout()
+}
+
+const switchSystem=()=>{
+  localStorage.setItem("SYSTEM_TYPE", JSON.stringify(!appStore.getSystemType));
+  appStore.setSystemType(!appStore.getSystemType);
+  if (appStore.getSystemType && localStorage.getItem("OPUIData")) {
+    let routestr = appStore.getOpuiData.path || "/";
+    push(routestr);
+  } else {
+    push({ path: "/login", query: { redirect: "/dashboard/index" } });
+  }
+
+  location.reload()
+ 
 }
 const tabClick = (item: any) => {
   const newPath = item.children ? item.path : item.path.split("/")[0];
