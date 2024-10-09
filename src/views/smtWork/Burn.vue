@@ -5,45 +5,23 @@
         <span class="ml-5">基本信息</span>
       </div>
       <div class="p-2">
-        <el-form
-          class="inbound"
-          size="default"
-          ref="formRef"
-          :model="OrderForm"
-          label-width="auto"
-        >
+        <el-form class="inbound" size="default" ref="formRef" :model="OrderForm" label-width="auto">
           <el-form-item label="工单">
             <div class="flex items-center">
-              <selectTa
-                ref="selectTable"
-                :table="orderTable"
-                :columns="orderColumns"
-                :selectWidth="220"
-                :max-height="400"
-                :tableWidth="700"
-                :keywords="{ label: 'MfgOrderName', value: 'MfgOrderName' }"
-                @radioChange="(...args: any) => radioChange(args)"
-              >
+              <selectTa ref="selectTable" :table="orderTable" :columns="orderColumns" :selectWidth="220"
+                :max-height="400" :tableWidth="700" :keywords="{ label: 'MfgOrderName', value: 'MfgOrderName' }"
+                @radioChange="(...args: any) => radioChange(args)">
               </selectTa>
               <el-tooltip content="刷新" placement="top">
-                <el-icon
-                  class="ml-3"
-                  color="#777777"
-                  :class="isLoding"
-                  size="24"
-                  @click="getOrderData"
-                  ><RefreshRight
-                /></el-icon>
+                <el-icon class="ml-3" color="#777777" :class="isLoding" size="24" @click="getOrderData">
+                  <RefreshRight />
+                </el-icon>
               </el-tooltip>
             </div>
           </el-form-item>
           <el-form-item v-for="f in formHeader" :key="f.value" :label="f.label">
-            <span
-              class="font-bold text-base leading-[30px]"
-              :class="f.value == 'passNum' ? 'text-[#00B400]' : ''"
-            >
-              {{ formText(f.value) }}</span
-            >
+            <span class="font-bold text-base leading-[30px]" :class="f.value == 'passNum' ? 'text-[#00B400]' : ''">
+              {{ formText(f.value) }}</span>
           </el-form-item>
         </el-form>
       </div>
@@ -51,24 +29,10 @@
     <div class="w-[calc(100%-350px)] pt-[5px]">
       <div>
         <div class="ml-2">
-          <el-form
-            ref="formRef"
-            :inline="true"
-            size="default"
-            :model="form"
-            label-width="auto"
-          >
+          <el-form ref="formRef" :inline="true" size="default" :model="form" label-width="auto">
             <el-form-item label="烧录日期" prop="startTime" class="mb-2">
-              <el-date-picker
-                v-model="form.date"
-                type="daterange"
-                range-separator="~"
-                start-placeholder="开始时间"
-                format="YYYY-MM-DD"
-                :clearable="false"
-                value-format="YYYY-MM-DD"
-                end-placeholder="结束时间"
-              />
+              <el-date-picker v-model="form.date" type="daterange" range-separator="~" start-placeholder="开始时间"
+                format="YYYY-MM-DD" :clearable="false" value-format="YYYY-MM-DD" end-placeholder="结束时间" />
             </el-form-item>
             <!-- <el-form-item label="产线" prop="line">
               <el-select
@@ -84,20 +48,10 @@
                 />
               </el-select>
             </el-form-item> -->
-            <el-form-item label="工单号" prop="workOrder" class="mb-2"
-              ><el-input
-                v-model="form.OrderNum"
-                style="width: 180px"
-                placeholder="请输入工单号"
-                clearable
-            /></el-form-item>
-            <el-form-item label="条码" prop="barCode" class="mb-2"
-              ><el-input
-                style="width: 180px"
-                clearable
-                v-model="form.barCode"
-                placeholder="请输入条码"
-            /></el-form-item>
+            <el-form-item label="工单号" prop="workOrder" class="mb-2"><el-input v-model="form.OrderNum"
+                style="width: 180px" placeholder="请输入工单号" clearable /></el-form-item>
+            <el-form-item label="条码" prop="barCode" class="mb-2"><el-input style="width: 180px" clearable
+                v-model="form.barCode" placeholder="请输入条码" /></el-form-item>
             <!-- <el-form-item class="mb-2">
               
             </el-form-item> -->
@@ -105,55 +59,22 @@
         </div>
         <div class="mb-2 ml-2">
           <el-button type="primary" @click="onSubmit">查询</el-button>
-          <el-button
-            icon="Printer"
-            type="primary"
-            @click="burnPrint"
-            :disabled="BurnTableData.length == 0"
-            >打印</el-button
-          >
+          <el-button icon="Printer" type="primary" @click="burnPrint"
+            :disabled="BurnTableData.length == 0">打印</el-button>
 
-          <el-button
-            :disabled="OrderForm.MfgOrderName == ''"
-            type="warning"
-            @click="RawmaterialFeeding"
-            >物料上料</el-button
-          >
+          <el-button :disabled="OrderForm.MfgOrderName == ''" type="warning"
+            @click="RawmaterialFeeding">物料上料</el-button>
         </div>
-        <tableTem
-          ref="BurnTableRef"
-          :showIndex="true"
-          :size="'small'"
-          :tableData="tableData"
-          :tableHeight="tableHeight"
-          :columnData="columnData"
-          :pageObj="pageObj"
-          @handleSizeChange="handleSizeChange"
-          @handleCurrentChange="handleCurrentChange"
-          showSelect="ture"
-          @handleSelectionChange="getChoice"
-        >
+        <tableTem ref="BurnTableRef" :showIndex="true" :size="'small'" :tableData="tableData" :tableHeight="tableHeight"
+          :columnData="columnData" :pageObj="pageObj" @handleSizeChange="handleSizeChange"
+          @handleCurrentChange="handleCurrentChange" showSelect="ture" @handleSelectionChange="getChoice">
         </tableTem>
       </div>
     </div>
-    <el-dialog
-      v-model="feedVisible"
-      title="物料上料"
-      width="90%"
-      align-center
-      class="saveAsDialog"
-      :append-to-body="true"
-      :close-on-click-modal="false"
-      :close-on-press-escape="false"
-    >
-      <feedTemp
-        ref="feedRef"
-        :form="feedForm"
-        :form-header="FeedHeader"
-        :tableData="feedTableData"
-        :specName="'SMT-Burn'"
-        @updateList="getFeedData"
-      />
+    <el-dialog v-model="feedVisible" title="物料上料" width="90%" align-center class="saveAsDialog" :append-to-body="true"
+      :close-on-click-modal="false" :close-on-press-escape="false">
+      <feedTemp ref="feedRef" :form="feedForm" :form-header="FeedHeader" :tableData="feedTableData"
+        :specName="'SMT-Burn'" @updateList="getFeedData" />
       <template #footer>
         <span class="dialog-footer">
           <el-button @click="feedCancel">关闭</el-button>
@@ -392,8 +313,8 @@ const burnPrint = () => {
   BurnTableRef.value.toggleSelection();
 };
 
-const feedTableData=ref([])//上料需求清单
-const feedRef=ref()
+const feedTableData = ref([])//上料需求清单
+const feedRef = ref()
 //打开物料上料
 const RawmaterialFeeding = () => {
   // console.log(OrderForm.MfgOrderName);
@@ -413,7 +334,7 @@ const RawmaterialFeeding = () => {
 
   getFeedData()
 };
-const getFeedData=()=>{
+const getFeedData = () => {
   QueryOrderMaterialRequired({
     MfgOrder: feedForm.value.MfgOrderName,
     Container: "",
@@ -422,9 +343,9 @@ const getFeedData=()=>{
     userAccount: userStore.getUserInfo,
   }).then((res: any) => {
     // console.log(OrganData(res.content));
-    if(res.success){
-      let data=cloneDeep(OrganData(res.content))   
-      feedTableData.value=data
+    if (res.success) {
+      let data = cloneDeep(OrganData(res.content))
+      feedTableData.value = data
       // OrganData(res.content)
     }
   });
@@ -495,7 +416,7 @@ onBeforeUnmount(() => {
 
 const getOrderData = () => {
   isLoding.value = "is-loading";
-  OrderQuery({lineName:opui.line,OrderTypeName:'BURN'}).then((res: any) => {
+  OrderQuery({ lineName: opui.line, OrderTypeName: 'BURN' }).then((res: any) => {
     // console.log(res);
     let timer = setTimeout(() => {
       isLoding.value = "";
@@ -541,7 +462,7 @@ const radioChange = (args: any) => {
         OrderForm.PlannedStartDate = v.PlannedStartDate;
         OrderForm.PlannedCompletionDate = v.PlannedCompletionDate;
         OrderForm.Qty = v.Qty;
-        form.value.OrderNum=v.MfgOrderName
+        form.value.OrderNum = v.MfgOrderName
       }
     });
     onSubmit()
@@ -605,20 +526,20 @@ const getScreenHeight = () => {
   });
 };
 const OrganData = (organizations: any) => {
-    const organizationMap = new Map();
-    organizations.forEach((org: any) => {
-      organizationMap.set(org.MaterialName, { ...org, children: [] });
-    });
-    organizations.forEach((org: any) => {
-      if (org.originalMaterialName !== org.MaterialName) {
-        const parentOrg = organizationMap.get(org.originalMaterialName);
-        if (parentOrg) {
-          parentOrg.children.push(organizationMap.get(org.MaterialName));
-        }
+  const organizationMap = new Map();
+  organizations.forEach((org: any) => {
+    organizationMap.set(org.MaterialName, { ...org, children: [] });
+  });
+  organizations.forEach((org: any) => {
+    if (org.originalMaterialName !== org.MaterialName) {
+      const parentOrg = organizationMap.get(org.originalMaterialName);
+      if (parentOrg) {
+        parentOrg.children.push(organizationMap.get(org.MaterialName));
       }
-    });
-    return Array.from(organizationMap.values()).filter(org => org.originalMaterialName ==org.MaterialName);
-  }
+    }
+  });
+  return Array.from(organizationMap.values()).filter(org => org.originalMaterialName == org.MaterialName);
+}
 </script>
 
 <style lang="scss">

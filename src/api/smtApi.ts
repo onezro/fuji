@@ -115,7 +115,7 @@ export function QueryPackListByCarrier(data: any) {
 //物料上料
 export function LoadMaterialQueue(data: any) {
     return requestNoMessage({
-        url: "/api/Burn/LoadMaterialQueue",
+        url: "/api/workstation/LoadMaterialQueue",
         method: "post",
         data
     })
@@ -123,7 +123,7 @@ export function LoadMaterialQueue(data: any) {
 //物料下料
 export function UnLoadMaterialQueue(data: any) {
     return request({
-        url: "/api/Burn/UnLoadMaterialQueue",
+        url: "/api/workstation/UnLoadMaterialQueue",
         method: "post",
         data
     })
@@ -206,5 +206,13 @@ export function QueryRepairRecord(data:any) {
         params:{
             workStaion:data
         }
+    })
+}
+//查询备料
+export function GetSMTPreparationOrderList(data:any) {
+    return request({
+        url: "/api/smtpreparation/GetSMTPreparationOrderList",
+        method: "post",
+       data
     })
 }

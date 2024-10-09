@@ -261,7 +261,7 @@ import {
 } from "vue";
 import { CollectionTag } from "@element-plus/icons-vue";
 interface StopsForm {
-  ToolName: string;
+  tools: string;
   ContainerName: string;
   OrderNumber: string;
   workstationName: string;
@@ -283,7 +283,7 @@ const inputRef = ref();
 const inputFocus = ref(true);
 const barCode = ref("");
 const stopsForm = ref<StopsForm>({
-  ToolName: "",
+  tools: "",
   ContainerName: "",
   OrderNumber: "",
   workstationName: opui.station || "",
@@ -377,32 +377,33 @@ const formHeader1 = reactive<InstanceType<typeof FormHeader>[]>([
 const columnData1 = reactive([
   {
     text: true,
-    prop: "eqty",
+    prop: "ContainerName",
     label: "PCB条码",
     width: "",
     align: "1",
   },
   {
     text: true,
-    prop: "zcnumber",
+    prop: "BD_Tools",
     label: "工装治具",
     width: "",
     align: "1",
   },
   {
     text: true,
-    prop: "level",
-    label: "扫描时间",
+    prop: "BD_EmployeeName",
+    label: "扫描人",
     width: "",
     align: "1",
   },
   {
     text: true,
-    prop: "level",
-    label: "扫描人",
+    prop: "TxnDate",
+    label: "扫描时间",
     width: "",
     align: "1",
   },
+
 ]);
 const tableData1 = ref([]);
 const tableHeight = ref(0);
@@ -601,11 +602,11 @@ const changeCheck = (val: any) => {
   // console.log(val, checked.value);
   if (checked.value.length == 0) {
     checked.value = [];
-    stopsForm.value.ToolName = "";
+    stopsForm.value.tools = "";
   } else {
     checked.value = [];
     checked.value[0] = val;
-    stopsForm.value.ToolName = val;
+    stopsForm.value.tools = val;
   }
 };
 const openOver = () => {
@@ -766,7 +767,7 @@ const getToolData = () => {
       return;
     }
     toolList.value = res.content;
-    stopsForm.value.ToolName = res.content[0].ToolName;
+    stopsForm.value.tools = res.content[0].ToolName;
     checked.value[0] = res.content[0].ToolName;
   });
 };
@@ -882,7 +883,7 @@ const getChange = (val: any) => {
     );
     if (toolData != -1) {
       // moveUp(toolList.value[toolData])
-      stopsForm.value.ToolName = toolList.value[toolData].ToolName;
+      stopsForm.value.tools = toolList.value[toolData].ToolName;
       checked.value[0] = toolList.value[toolData].ToolName;
       barCode.value = "";
       return;

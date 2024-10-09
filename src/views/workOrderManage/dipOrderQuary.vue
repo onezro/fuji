@@ -115,9 +115,9 @@
 
               <!-- <el-table-column prop="MfgLineName" label="产线" :min-width="180" align="center">
               </el-table-column> -->
-              <el-table-column prop="WorkStationName" label="工位" :min-width="180" align="center">
+              <el-table-column prop="MfgLineName" label="产线编码" :min-width="180" align="center">
               </el-table-column>
-              <el-table-column prop="WorkStationName" label="工位名称" :min-width="180" align="center">
+              <el-table-column prop="WorkStationName" label="工位编码" :min-width="180" align="center">
               </el-table-column>
               <!-- <el-table-column prop="OrderNumber" label="工单" :min-width="180" align="center">
                 </el-table-column> -->

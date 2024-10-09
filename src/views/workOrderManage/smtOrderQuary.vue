@@ -147,9 +147,9 @@
 
               <!-- <el-table-column prop="MfgLineName" label="产线" :min-width="180" align="center">
               </el-table-column> -->
-              <el-table-column prop="WorkStationName" label="工位" :min-width="180" align="center">
+              <el-table-column prop="MfgLineName" label="产线编码" :min-width="180" align="center">
               </el-table-column>
-              <el-table-column prop="WorkStationName" label="工位名称" :min-width="180" align="center">
+              <el-table-column prop="WorkStationName" label="工位编码" :min-width="180" align="center">
               </el-table-column>
               <!-- <el-table-column prop="OrderNumber" label="工单" :min-width="180" align="center">
                 </el-table-column> -->
@@ -177,13 +177,12 @@
         <el-form-item label="工单号" prop="OrderNumber">
           <el-input v-model="orderOnlineForm.OrderNumber" disabled />
         </el-form-item>
-        <el-form-item label="线体" prop="LineNumber">
+        <el-form-item label="产线" prop="LineNumber">
           <el-select v-model="orderOnlineForm.LineNumber" placeholder="请选择线体" clearable >
               <el-option v-for="item in lineNameList" :key="item" :label="item.Desc" :value="item.Name" />
             </el-select>
-          <!-- <el-input v-model=".LineNameDesc" disabled /> -->
         </el-form-item>
-        <el-form-item label="面别" prop="Side">
+        <el-form-item label="面号" prop="Side">
           <el-select v-model="orderOnlineForm.Side" placeholder="请选择面别">
             <el-option label="BOT" value="BOT" />
             <el-option label="TOP" value="TOP" />
@@ -510,15 +509,13 @@ onBeforeUnmount(() => {
 
 const getModeList = () => {
   GetFactoryModelList().then((res: any) => {
-    // let data = JSON.parse(res.content);
-    // option1.value = OrganData(res.content);
+    
     if (!res || res.content === null) {
       return;
     }
     let data = OrganData(res.content);
     data = data.filter((d: any) => d.Name == "M08-SMT01");
     lineNameList.value = data[0].childMenu;
-    // lineNameList.value = [{ Name: "" }, ...OrganData(res.content)[0].childMenu];
   });
 };
 
