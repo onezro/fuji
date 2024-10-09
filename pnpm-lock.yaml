@@ -39,13 +39,8 @@ importers:
         specifier: ^1.7.2
         version: 1.7.7
       element-plus:
-<<<<<<< HEAD
-        specifier: ^2.8.4
-        version: 2.8.4(vue@3.5.11(typescript@5.4.5))
-=======
         specifier: ^2.8.1
-        version: 2.8.1(vue@3.4.27(typescript@5.4.5))
->>>>>>> 9050740c1b447a5be9e23487c71f1e183fc6d234
+        version: 2.8.1(vue@3.5.11(typescript@5.4.5))
       js-cookie:
         specifier: ^3.0.5
         version: 3.0.5
@@ -2183,11 +2178,7 @@ snapshots:
 
   electron-to-chromium@1.5.33: {}
 
-<<<<<<< HEAD
-  element-plus@2.8.4(vue@3.5.11(typescript@5.4.5)):
-=======
-  element-plus@2.8.1(vue@3.4.27(typescript@5.4.5)):
->>>>>>> 9050740c1b447a5be9e23487c71f1e183fc6d234
+  element-plus@2.8.1(vue@3.5.11(typescript@5.4.5)):
     dependencies:
       '@ctrl/tinycolor': 3.6.1
       '@element-plus/icons-vue': 2.3.1(vue@3.5.11(typescript@5.4.5))
