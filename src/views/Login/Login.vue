@@ -84,11 +84,11 @@ const switchSystems = () => {
   } else {
     push({ path: "/login", query: { redirect: "/dashboard/index" } });
   }
-  ElNotification({
-    title: "系统已切换",
-    message: appStore.getSystemType ? "当前为操作端" : "当前为系统端",
-    type: "warning",
-  });
+  // ElNotification({
+  //   title: "系统已切换",
+  //   message: appStore.getSystemType ? "当前为操作端" : "当前为系统端",
+  //   type: "warning",
+  // });
 };
 </script>
 

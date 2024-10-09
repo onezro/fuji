@@ -19,7 +19,7 @@
             </el-input>
           </el-form-item>
           <el-form-item v-show="inquire != 'order'" class="mb-2">
-            <el-date-picker v-model="value1" format="YYYY-MM-DD" value-format="YYYY-MM-DD" type="daterange"
+            <el-date-picker :shortcuts="shortcuts"  v-model="value1" format="YYYY-MM-DD" value-format="YYYY-MM-DD" type="daterange"
               range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期">
             </el-date-picker>
           </el-form-item>
@@ -78,6 +78,7 @@
 </template>
 
 <script lang="ts" setup>
+import {shortcuts} from "@/utils/dataMenu"
 import { getCheckResults } from "@/api/operate";
 import type { InspectionResult } from "@/typing";
 import { ref, reactive, watch, nextTick, onMounted, onBeforeMount, onBeforeUnmount } from 'vue'

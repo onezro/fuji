@@ -4,7 +4,7 @@
       <div>
         <el-form ref="formRef" :inline="true" :model="getDataText">
           <el-form-item label="计划开始时间" class="mb-2">
-            <el-date-picker v-model="getDataText.date" format="YYYY-MM-DD" :clearable="true" value-format="YYYY-MM-DD"
+            <el-date-picker  :shortcuts="shortcuts" v-model="getDataText.date" format="YYYY-MM-DD" :clearable="true" value-format="YYYY-MM-DD"
               type="daterange" range-separator="-" start-placeholder="开始时间" end-placeholder="结束时间"
               style="width: 240px" />
           </el-form-item>
@@ -92,6 +92,7 @@ import type { InspectionResult } from "@/typing";
 import { ElMessageBox, ElMessage, ElLoading } from "element-plus";
 import tableTem from "@/components/tableTem/index.vue";
 import { useUserStoreWithOut } from "@/stores/modules/user";
+import {shortcuts} from "@/utils/dataMenu"
 
 import {
   ref,

@@ -14,6 +14,7 @@
           </el-form-item>
           <el-form-item label="日期" class="mb-2">
             <el-date-picker
+            :shortcuts="shortcuts"
               v-model="date"
               value-format="YYYY-MM-DD"
               type="daterange"
@@ -289,6 +290,7 @@ import {
   onBeforeMount,
   onBeforeUnmount,
 } from "vue";
+import {shortcuts} from "@/utils/dataMenu"
 const tableData = ref<any>([]);
 const pageSize = ref(10);
 const currentPage = ref(1);

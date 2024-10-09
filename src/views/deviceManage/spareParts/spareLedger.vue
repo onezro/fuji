@@ -11,9 +11,10 @@
           <el-form ref="formRef" class="form" :inline="true" label-width="">
             <el-form-item label="时间" class="mb-2">
               <el-date-picker
+              :shortcuts="shortcuts"
                 v-model="dateValue"
                 type="daterange"
-                range-separator="到"
+                range-separator="-"
                 size=""
                 value-format="YYYY-MM-DD"
                 @change="dateChange"
@@ -188,9 +189,9 @@
           </template>
         </el-table-column>
       </el-table>
-      <div class="mt-3">
+      <div class="mt-2">
         <el-pagination
-          size="small"
+     
           background
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
@@ -354,6 +355,7 @@ import {
   onMounted,
   onBeforeUnmount,
 } from "vue";
+import {shortcuts} from "@/utils/dataMenu"
 
 const userStore = useUserStoreWithOut();
 
@@ -807,7 +809,7 @@ const handleCurrentChange = (val: any) => {
 };
 const getScreenHeight = () => {
   nextTick(() => {
-    tableHeight.value = window.innerHeight - 210;
+    tableHeight.value = window.innerHeight - 194;
   });
 };
 

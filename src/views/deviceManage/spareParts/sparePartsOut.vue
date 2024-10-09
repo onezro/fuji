@@ -12,6 +12,7 @@
           <el-form ref="formRef" class="form" :inline="true" label-width="">
             <el-form-item label="时间" class="mb-2">
               <el-date-picker
+              :shortcuts="shortcuts"
                 v-model="dateValue"
                 type="daterange"
                 range-separator="到"
@@ -227,15 +228,15 @@
           </template>
         </el-table-column>
       </el-table>
-      <div class="mt-3">
+      <div class="mt-2">
         <el-pagination
-          size="small"
+        
           background
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
           :current-page="pageObj.currentPage"
           :page-size="pageObj.pageSize"
-          :page-sizes="[5, 10, 20, 50, 100]"
+          :page-sizes="[5, 10,30, 20, 50, 100]"
           layout="total,sizes, prev, pager, next, jumper"
           :total="tableData.length"
         >
@@ -615,6 +616,7 @@ import {
   onMounted,
   onBeforeUnmount,
 } from "vue";
+import {shortcuts} from "@/utils/dataMenu"
 
 const userStore = useUserStoreWithOut();
 
@@ -1355,7 +1357,7 @@ const LedgerCurrentChange = (val: any) => {
 
 const getScreenHeight = () => {
   nextTick(() => {
-    tableHeight.value = window.innerHeight - 205;
+    tableHeight.value = window.innerHeight - 194;
   });
 };
 

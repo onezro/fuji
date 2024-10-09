@@ -3,7 +3,7 @@
     <div class="h-[40px] pl-2 pr-2 flex justify-between items-center">
       <span class="text-[1.2rem]"> {{ opui.stationDec }} </span>
       <div>
-        <el-button type="primary" >上料明细</el-button>
+        <el-button type="warning" @click="opendetail">上料明细</el-button>
         <el-button type="primary" @click="openOver">波峰焊设置</el-button>
       </div>
     </div>
@@ -145,32 +145,6 @@
                   </el-form-item>
                 </el-col>
               </el-row>
-
-              <!-- <el-form-item class="mb-[5px]" label="产品描述">
-                <el-input v-model="form.ProductDesc" disabled />
-              </el-form-item> -->
-              <!-- <el-form-item class="mb-[5px]" label="计划开始">
-                <el-input v-model="form.PlannedStartDate" disabled />
-              </el-form-item>
-              <el-form-item class="mb-[5px]" label="计划完成">
-                <el-input v-model="form.PlannedCompletionDate" disabled />
-              </el-form-item>
-              <el-form-item class="mb-[5px]" label="工单数量">
-                <el-input v-model="form.Qty" disabled />
-              </el-form-item> -->
-              <!-- <el-form-item
-                v-for="f in formHeader"
-                :key="f.value"
-                :label="f.label"
-                class="mb-[5px]"
-              >
-                <span
-                  class="font-bold text-[18px] leading-[30px]"
-                 
-                >
-                  {{ formText(f.value) }}</span
-                >
-              </el-form-item> -->
             </el-form>
           </div>
           <div class="flex flex-col flex-1 tabs-css">
@@ -229,6 +203,26 @@
         </span>
       </template>
 </el-dialog> -->
+    <el-dialog
+      v-model="detailVisible"
+      title="上料明细"
+      width="70%"
+      align-center
+      draggable
+      :append-to-body="true"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+    >
+    <table-tem :showIndex="true" size="small" :tableData="detailsData" :tableHeight="400"
+                  :columnData="detailsColumn" :pageObj="detailsPageObj" @handleSizeChange="detailsSizeChange"
+                  @handleCurrentChange="detailsCurrentChange"></table-tem>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="detailVisible=false">关闭</el-button>
+        </span>
+      </template>
+</el-dialog>
+
   </div>
 </template>
 
@@ -247,7 +241,8 @@ import {
   PluginStationMoveOut,
   FindAllDevice,
   UpdateDevice,
-  QueryMoveHistory
+  QueryMoveHistory,
+  QueryOrderMaterialRequired
 } from "@/api/dipApi";
 import { QueryToolInfo, SortTools } from "@/api/operate";
 import {
@@ -537,30 +532,34 @@ const detailsPageObj = ref({
 const detailsColumn = ref([
   {
     text: true,
-    prop: "eqty",
+    prop: "MaterialName",
     label: "物料编码",
     width: "",
     align: "1",
+    min:true
   },
   {
     text: true,
-    prop: "zcnumber",
+    prop: "MaterialDesc",
     label: "物料描述",
-    width: "",
+    width: "250",
+    min:true,
     align: "1",
   },
   {
     text: true,
-    prop: "level",
+    prop: "QtyRequired",
     label: "单量用量",
     width: "",
+    min:true,
     align: "1",
   },
   {
     text: true,
-    prop: "level",
-    label: "上料数据",
+    prop: "LoadQueueQty",
+    label: "上料数量",
     width: "",
+    min:true,
     align: "1",
   },
   {
@@ -568,6 +567,7 @@ const detailsColumn = ref([
     prop: "level",
     label: "已使用数量",
     width: "",
+    min:true,
     align: "1",
   },
   {
@@ -575,6 +575,7 @@ const detailsColumn = ref([
     prop: "level",
     label: "剩余数量",
     width: "",
+    min:true,
     align: "1",
   },
   {
@@ -582,6 +583,7 @@ const detailsColumn = ref([
     prop: "level",
     label: "最后上料时间",
     width: "",
+    min:true,
     align: "1",
   },
   {
@@ -589,6 +591,7 @@ const detailsColumn = ref([
     prop: "level",
     label: "最后上料人",
     width: "",
+    min:true,
     align: "1",
   },
 ])
@@ -596,7 +599,12 @@ const hisForm = ref({
   MfgOrderName: "",
   workstationName: opui.station
 })
-
+const detailVisible=ref(false)
+const getFeedForm=ref({
+  MfgOrder: '',
+		workstationName: opui.station,
+		SpecName: "DIP-PlugIn",
+})
 
 const changeCheck = (val: any) => {
   // console.log(val, checked.value);
@@ -613,6 +621,12 @@ const openOver = () => {
   overAddVisible.value = true;
   getOverData();
 };
+const opendetail=()=>{
+  detailVisible.value=true
+  QueryOrderMaterialRequired(getFeedForm.value).then((res:any)=>{
+    detailsData.value=res.content
+  })
+}
 //获取过序
 const getOverData = () => {
   FindAllDevice({ WorkStation: opui.station }).then((res: any) => {
@@ -806,6 +820,7 @@ const radioChange = (args: any) => {
     form.Qty = args[0].Qty;
     hisForm.value.MfgOrderName=args[0].MfgOrderName
     // console.log(args[0].MfgOrderName);
+    getFeedForm.value.MfgOrder=args[0].MfgOrderName
   
     if (getToolForm.value.OrderNumber == args[0].MfgOrderName) {
       return;

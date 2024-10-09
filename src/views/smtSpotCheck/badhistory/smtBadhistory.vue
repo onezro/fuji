@@ -3,7 +3,7 @@
     <el-card shadow="always" :body-style="{ padding: '8px 8px 0px 8px' }">
       <el-form ref="getFormRef" :model="getForm" :inline="true">
         <el-form-item label="时间" prop="timePeriod" class="mb-2">
-          <el-date-picker v-model="getForm.timePeriod" value-format="YYYY-MM-DD" type="daterange" range-separator="-"
+          <el-date-picker :shortcuts="shortcuts"  v-model="getForm.timePeriod" value-format="YYYY-MM-DD" type="daterange" range-separator="-"
             style="width: 240px" :clearable="true" />
         </el-form-item>
         <el-form-item label="工序" prop="Spec" class="mb-2">
@@ -38,6 +38,7 @@
 </template>
 
 <script setup lang="ts">
+import {shortcuts} from "@/utils/dataMenu"
 import {
   ref,
   watch,

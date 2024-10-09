@@ -128,7 +128,7 @@
       @onSubmit="editOnSubmit"
     ></formTem> -->
     <!-- 物料BOM明细 -->
-    <el-dialog v-model="bomVisible" width="70%" title="产品BOM" :append-to-body="true" :close-on-click-modal="false"
+    <el-dialog v-model="bomVisible" draggable width="70%" title="产品BOM" :append-to-body="true" :close-on-click-modal="false"
       :close-on-press-escape="false" align-center>
       <tableTem size="small" :showIndex="true" :tableData="bomtableData" :tableHeight="450" :columnData="bomcolumnData"
         :pageObj="bompageObj" @handleSizeChange="handleSizeChange1" @handleCurrentChange="handleCurrentChange1">
@@ -151,7 +151,7 @@ import {
   GetMSDLevel,
   UpdateMSDMaterialAttribute,
 } from "@/api/operate";
-import tableTem from "@/components/tableTem/index.vue";
+import tableTem from "@/components/tableTem/indexCopy.vue";
 import formTem from "@/components/formTem/index.vue";
 import { cloneDeep } from "lodash-es";
 import { ElNotification } from "element-plus";
@@ -186,8 +186,8 @@ const columnData = reactive([
     text: true,
     prop: "ProductName",
     label: "物料编码",
-    width: "",
-    min: true,
+    width: "120",
+    // min: true,
     fixed: true,
     align: "1",
   },
@@ -196,7 +196,7 @@ const columnData = reactive([
     prop: "ProductDesc",
     label: "物料描述",
     width: "258",
-    min: true,
+    // min: true,
     align: "1",
   },
   {
@@ -204,55 +204,55 @@ const columnData = reactive([
     prop: "BD_ProductModel",
     label: "机型名称",
     width: "150",
-    min: true,
+    // min: true,
     align: "1",
   },
   {
     text: true,
     prop: "BD_ChipType",
     label: "芯片类型",
-    width: "",
-    min: true,
+    width: "100",
+    // min: true,
     align: "1",
   },
   {
     text: true,
     prop: "BD_SoftVersion",
     label: "软件版本",
-    width: "",
-    min: true,
+    width: "100",
+    // min: true,
     align: "1",
   },
   {
     text: true,
     prop: "BD_CheckSum",
     label: "校验和",
-    width: "",
-    min: true,
+    width: "100",
+    // min: true,
     align: "1",
   },
   {
     text: true,
     prop: "FirstClass",
     label: "一级分类",
-    width: "",
-    min: true,
+    width: "100",
+
     align: "1",
   },
   {
     text: true,
     prop: "SecondClass",
     label: "二级分类",
-    width: "",
-    min: true,
+    width: "100",
+    // min: true,
     align: "1",
   },
   {
     text: true,
     prop: "ThirdClass",
     label: "三级分类",
-    width: "",
-    min: true,
+    width: "150",
+    // min: true,
     align: "1",
   },
 ]);

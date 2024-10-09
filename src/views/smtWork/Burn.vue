@@ -19,7 +19,7 @@
               </el-tooltip>
             </div>
           </el-form-item>
-          <el-form-item v-for="f in formHeader" :key="f.value" :label="f.label">
+          <el-form-item v-for="f in formHeader" :key="f.value" :label="f.label" class="mb-2">
             <span class="font-bold text-base leading-[30px]" :class="f.value == 'passNum' ? 'text-[#00B400]' : ''">
               {{ formText(f.value) }}</span>
           </el-form-item>

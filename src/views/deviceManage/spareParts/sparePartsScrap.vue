@@ -1,6 +1,6 @@
 <template>
   <div class="p-2">
-    <el-card shadow="always" :body-style="{ padding: '8px' }">
+    <el-card shadow="always" :body-style="{ padding: '8px 8px 0 8px' }">
       <div class="flex justify-between">
         <!-- <el-button type="primary" @click="clearForm(),addVisible = true"
             >添加</el-button
@@ -14,6 +14,7 @@
           <el-form ref="formRef" class="form" :inline="true" label-width="">
             <el-form-item label="时间" class="mb-2">
               <el-date-picker
+              :shortcuts="shortcuts"
                 v-model="dateValue"
                 type="daterange"
                 range-separator="到"
@@ -69,6 +70,7 @@ import {
   onMounted,
   onBeforeUnmount,
 } from "vue";
+import {shortcuts} from "@/utils/dataMenu"
 
 interface formTS {
   operationtype: string;
@@ -398,7 +400,7 @@ const handleCurrentChange = (val: any) => {
 };
 const getScreenHeight = () => {
   nextTick(() => {
-    tableHeight.value = window.innerHeight - 210;
+    tableHeight.value = window.innerHeight - 194;
   });
 };
 </script>

@@ -6,7 +6,7 @@
             <!-- <div>
               </div> -->
             <el-form-item label="记录时间" class="mb-[5px]">
-              <el-date-picker v-model="searchDate" value-format="YYYY-MM-DD" type="daterange" range-separator="-"
+              <el-date-picker :shortcuts="shortcuts" v-model="searchDate" value-format="YYYY-MM-DD" type="daterange" range-separator="-"
                 size="small" style="width: 200px" />
             </el-form-item>
             <!-- <el-form-item label="编程器序列号" class="mb-[5px]">
@@ -104,6 +104,7 @@
   </template>
   
   <script lang="ts" setup>
+  import {shortcuts} from "@/utils/dataMenu"
   import { OrganData } from "@/utils/dataMenu";
   import {
     ElMessageBox,

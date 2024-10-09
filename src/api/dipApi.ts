@@ -119,3 +119,11 @@ export function QueryDefectCode(data: any) {
         }
     });
 }
+//获取上料明细
+export function QueryOrderMaterialRequired(data:any) {
+    return request({
+        url: "/api/workstation/QueryOrderMaterialRequired",
+        method: "post",
+        data
+    })
+}
