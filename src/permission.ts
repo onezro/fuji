@@ -12,6 +12,7 @@ import { getMenu, getInfo, getMenuOPUI, getWorksMenuOPUI } from '@/api/permiss'
 import { updateParentMenus } from "@/utils/routerAata"
 import { setMenu } from "@/utils/dataMenu"
 import axios from "axios";
+import { ElNotification, ElMessage, ElMessageBox } from "element-plus";
 
 const { start, done } = useNProgress()
 
@@ -133,6 +134,11 @@ router.beforeEach(async (to, from, next) => {
       const nextData = to.path === redirect ? { ...to, replace: true } : { path: redirect }
       permissionStore.setIsAddRouters(true)
       next(nextData)
+      // ElNotification({
+      //   title: "系统已切换",
+      //   message: appStore.getSystemType ? "当前为操作端" : "当前为系统端",
+      //   type: "warning",
+      // });
     }
   } else {
     if (NO_REDIRECT_WHITE_LIST.indexOf(to.path) !== -1) {

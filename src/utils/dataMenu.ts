@@ -36,3 +36,33 @@ export  const OrganData = (organizations: any) => {
     });
     return Array.from(organizationMap.values()).filter(org => org.FID === null);
   }
+
+  export const shortcuts = [
+    {
+      text: '本月',
+      value: () => {
+        const end = new Date()
+        const start = new Date()
+        const date = (new Date()).getDate() - 1
+        start.setTime(start.getTime() - 3600 * 1000 * 24 * date)
+        return [start, end]
+      },
+    },
+    {
+      text: '近七天',
+      value: () => {
+        const end = new Date()
+        const start = new Date()
+        start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
+        return [start, end]
+      },
+    },
+    {
+      text: '当天',
+      value: () => {
+        const end = new Date()
+        const start = new Date()
+        return [start, end]
+      },
+    }
+  ]

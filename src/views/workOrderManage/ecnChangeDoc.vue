@@ -6,109 +6,47 @@
         <div>
           <el-form ref="formRef" :inline="true" :model="formData">
             <el-form-item label="ECN编码" class="mb-2" prop="ECN_NUMBER">
-              <el-input
-                v-model="formData.ECN_NUMBER"
-               
-                @clear="getData"
-                clearable
-                style="width: 180px"
-              />
+              <el-input v-model="formData.ECN_NUMBER" @clear="getData" clearable style="width: 180px" />
             </el-form-item>
             <el-form-item label="项目编码" class="mb-2" prop="TGIECOAttribute3">
-              <el-input
-                v-model="formData.TGIECOAttribute3"
-               
-                @clear="getData"
-                clearable
-                style="width: 180px"
-              />
+              <el-input v-model="formData.TGIECOAttribute3" @clear="getData" clearable style="width: 180px" />
             </el-form-item>
             <el-form-item label="更改时间" class="mb-2">
-              <el-date-picker
-                v-model="searchDate"
-                value-format="YYYY-MM-DD"
-                type="daterange"
-                range-separator="-"
-                style="width: 240px"
-                :clearable="false"
-              />
+              <el-date-picker v-model="searchDate" value-format="YYYY-MM-DD" type="daterange" range-separator="-"
+                style="width: 240px" :clearable="false" />
             </el-form-item>
-            <!-- <el-form-item label="面号" class="mb-2">
-                            <el-select v-model="getDataText.Side" placeholder="请选择" @clear="getData" clearable
-                                style="width: 180px">
-                                <el-option v-for="s in sideList" :label="s.label" :value="s.value" />
-                            </el-select>
-                        </el-form-item>
-
-                        -->
+        
             <el-form-item class="mb-2">
               <el-button type="primary" @click="getData">查询</el-button>
               <el-button @click="restData">重置</el-button>
             </el-form-item>
           </el-form>
         </div>
-        <!-- <div>
-          <el-input v-model="searchName" placeholder="请输入">
-            <template #append>
-              <el-button type="primary" icon="Search"></el-button> </template></el-input>
-</div> -->
       </div>
-      <table-tem
-        size="small"
-        :show-index="true"
-        :tableData="tableData"
-        :tableHeight="tableHeight"
-        :columnData="columnData"
-        :pageObj="pageObj"
-        @handleSizeChange="handleSizeChange"
-        @handleCurrentChange="handleCurrentChange"
-      ></table-tem>
+      <table-tem size="small" :show-index="true" :tableData="tableData" :tableHeight="tableHeight"
+        :columnData="columnData" :pageObj="pageObj" @handleSizeChange="handleSizeChange"
+        @handleCurrentChange="handleCurrentChange"></table-tem>
     </el-card>
-    <el-dialog
-      v-model="detailsVisible"
-      width="90%"
-      title="ECN变更单"
-      :append-to-body="true"
-      :close-on-click-modal="false"
-      :close-on-press-escape="false"
-      align-center
-    >
-      <el-form
-        ref="formRef"
-        :model="addForm"
-        label-width="auto"
-        size="small"
-        :inline="true"
-      >
+    <el-dialog v-model="detailsVisible" width="90%" title="ECN变更单" :append-to-body="true" :close-on-click-modal="false"
+      :close-on-press-escape="false" align-center>
+      <el-form ref="formRef" :model="addForm" label-width="auto" size="small" :inline="true">
         <el-form-item label="ECN编码" prop="ECN_NUMBER" class="mb-[5px]">
-          <el-input
-            v-model="addForm.ECN_NUMBER"
-            placeholder="请输入"
-            disabled
-          />
+          <el-input v-model="addForm.ECN_NUMBER" placeholder="请输入" disabled />
         </el-form-item>
         <el-form-item label="ECN类型" prop="ECNType" class="mb-[5px]">
           <el-input v-model="addForm.ECNType" placeholder="请输入" disabled />
         </el-form-item>
         <el-form-item label="客户名称" prop="TGIECOAttribute1" class="mb-[5px]">
-          <el-input
-            v-model="addForm.TGIECOAttribute1"
-            placeholder="请输入"
-            disabled
-          />
+          <el-input v-model="addForm.TGIECOAttribute1" placeholder="请输入" disabled />
         </el-form-item>
         <el-form-item label="更改时间" prop="modified" class="mb-[5px]">
           <el-input v-model="addForm.modified" placeholder="请输入" disabled />
         </el-form-item>
         <el-form-item label="变更所处阶段" prop="TGIECOAttribute7" class="mb-[5px]">
-          <el-input
-            v-model="addForm.TGIECOAttribute7"
-            placeholder="请输入"
-            disabled
-          />
+          <el-input v-model="addForm.TGIECOAttribute7" placeholder="请输入" disabled />
         </el-form-item>
         <el-form-item label="切换方式" prop="BicvAddTGIECOAttribute3" class="mb-[5px]">
-          <el-input v-model="addForm.BicvAddTGIECOAttribute3" placeholder="请输入" disabled/>
+          <el-input v-model="addForm.BicvAddTGIECOAttribute3" placeholder="请输入" disabled />
         </el-form-item>
         <el-form-item label="变更时间点" prop="BicvAddTGIECOAttribute4" class="mb-[5px]">
           <el-input v-model="addForm.BicvAddTGIECOAttribute4" placeholder="请输入" disabled />
@@ -117,42 +55,20 @@
           <el-input v-model="addForm.Owner" placeholder="请输入" disabled />
         </el-form-item>
         <el-form-item label="变更原因" prop="BicvECNChangeReason" class="mb-[5px]">
-          <el-input
-            v-model="addForm.BicvECNChangeReason"
-            style="width: 600px"
-            placeholder="请输入"
-            disabled
-          />
+          <el-input v-model="addForm.BicvECNChangeReason" style="width: 600px" placeholder="请输入" disabled />
         </el-form-item>
         <el-form-item label="受影响项目/产品" prop="TGIECOAttribute8" class="mb-[5px]">
-          <el-input
-            v-model="addForm.TGIECOAttribute8"
-            style="width: 600px"
-            placeholder="请输入"
-            disabled
-          />
+          <el-input v-model="addForm.TGIECOAttribute8" style="width: 600px" placeholder="请输入" disabled />
         </el-form-item>
-    
+
         <el-form-item label="变更原因详述" prop="TGIECOAttribute4" class="mb-[5px]">
-          <el-input
-            v-model="addForm.TGIECOAttribute4"
-            style="width: 600px"
-            placeholder="请输入"
-            disabled
-            type="textarea"
-          />
+          <el-input v-model="addForm.TGIECOAttribute4" style="width: 600px" placeholder="请输入" disabled
+            type="textarea" />
         </el-form-item>
       </el-form>
-      <table-tem
-        size="small"
-        :show-index="true"
-        :tableData="detailsData"
-        :tableHeight="400"
-        :columnData="detailsColumn"
-        :pageObj="detailsPageObj"
-        @handleSizeChange="detailsSizeChange"
-        @handleCurrentChange="detailsCurrentChange"
-      ></table-tem>
+      <table-tem size="small" :show-index="true" :tableData="detailsData" :tableHeight="400" :columnData="detailsColumn"
+        :pageObj="detailsPageObj" @handleSizeChange="detailsSizeChange"
+        @handleCurrentChange="detailsCurrentChange"></table-tem>
       <template #footer>
         <span class="dialog-footer">
           <el-button @click="detailsCancel">关闭</el-button>
@@ -566,8 +482,8 @@ const restData = () => {
   //   console.log(formData.value);
   getData();
 };
-const detailsCancel=()=>{
-  detailsVisible.value=false
+const detailsCancel = () => {
+  detailsVisible.value = false
 }
 
 const detailsSizeChange = (val: any) => {
