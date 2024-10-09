@@ -530,15 +530,15 @@
         });
       return;
     }
-    if (form.value.CompId === "") {
-      return;
-    }
+    // if (form.value.CompId === "") {
+    //   return;
+    // }
     // choiceList.value.forEach((element) => {
     //   if (Number(element.RequestQty) > Number(element.TotalQtyRequired)) {
     //     return;
     //   }
     // });
-    OrderGoodMaterials(choiceList).then((res: any) => {
+    OrderGoodMaterials(choiceList.value).then((res: any) => {
       if (res.success) {
         ElNotification({
           title: res.msg,
