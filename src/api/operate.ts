@@ -332,3 +332,50 @@ export function QuerySpec(data: any) {
        }
     });
 }
+
+//查询物料退料可申请工单
+export function QueryMaterialReturnApply(data: any) {
+    return request({
+        url: "/api/order/QueryMaterialReturnApply",
+        method: "post",
+        data
+    });
+}
+
+//退料单查询
+export function QueryMaterialReturn(data: any) {
+    return request({
+        url: "/api/order/QueryMaterialReturn",
+        method: "post",
+        data
+    });
+}
+
+//退料单详情查询
+export function QueryMaterialReturnDetail(data: any) {
+    return request({
+        url: "/api/order/QueryMaterialReturnDetail",
+        method: "post",
+        params:{
+            historyId:data
+        }
+    });
+}
+
+//工单良品退料
+export function OrderGoodMaterials(data: any) {
+    return request({
+        url: "/api/order/OrderGoodMaterials",
+        method: "post",
+        data
+    });
+}
+
+//查询物料退料可申请工单
+export function QueryMaterialReturnApplyDetail(data: any) {
+    return request({
+        url: "/api/order/QueryMaterialReturnApplyDetail",
+        method: "post",
+        data
+    });
+}
