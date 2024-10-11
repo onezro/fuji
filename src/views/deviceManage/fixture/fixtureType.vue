@@ -6,9 +6,15 @@
           >添加</el-button
         >
         <div class="flex">
-          <el-input v-model.trim="searchName"  style="width: 300px" clearable placeholder="请输入">
+          <el-input
+            v-model.trim="searchName"
+            style="width: 300px"
+            clearable
+            placeholder="请输入"
+          >
             <template #append>
-              <el-button type="primary" icon="Search"></el-button> </template></el-input>
+              <el-button type="primary" icon="Search"></el-button> </template
+          ></el-input>
           <!-- <el-input
             v-model="searchName"
             style="width: 240px"
@@ -530,9 +536,10 @@ const editConfirm = () => {
     }
     clearEditForm();
     ElNotification({
-            type: "success",
-            message: data.msg,
-          });
+      type: "success",
+      title: "提示信息",
+      message: data.msg,
+    });
     getData();
     editVisible.value = false;
   });
@@ -554,6 +561,7 @@ const deleteSubmit = (data: any) => {
           }
           ElNotification({
             type: "success",
+            title: "提示信息",
             message: data.msg,
           });
           getData();
@@ -649,7 +657,7 @@ watch(
   }
 );
 const table1 = (newdata: any) => {
-  let searchName = newdata.toLowerCase()
+  let searchName = newdata.toLowerCase();
   return tableData.value.filter((v: any) => {
     return Object.keys(v).some((key) => {
       return String(v[key]).toLowerCase().indexOf(searchName) > -1;
@@ -684,9 +692,9 @@ const getData = () => {
       return;
     }
     tableData.value = data.content;
-    if(searchName.value.trim()){
+    if (searchName.value.trim()) {
       tableData1.value = table1(searchName.value);
-    }else{
+    } else {
       tableData1.value = data.content;
     }
   });
@@ -700,7 +708,7 @@ const columnData = reactive([
     width: "",
     min: true,
     align: "1",
-    fixed:true,
+    fixed: true,
   },
   {
     text: true,
@@ -709,7 +717,7 @@ const columnData = reactive([
     width: "200",
     min: true,
     align: "1",
-    fixed:true,
+    fixed: true,
   },
   // {
   //   text: false,

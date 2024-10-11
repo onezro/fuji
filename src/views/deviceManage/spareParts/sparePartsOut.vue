@@ -803,8 +803,8 @@ const findDetail = (data: any) => {
       detailForm.value.Remark = data.Remark;
     } else if (res.content.length === 0) {
       ElNotification({
-        title: "未查询到此项详细信息或信息为空",
-        // message: "取消操作",
+        title: "提示信息",
+        message: "未查询到此项详细信息或信息为空",
         type: "warning",
       });
       detailForm.value = {
@@ -918,19 +918,19 @@ const startPartOut = () => {
   // });
   if (choiceList.value.length !== 1) {
     ElNotification({
-      title: "只允许选中一条数据",
-      // message: "取消操作",
+      title: "提示信息",
+      message: "只允许选中一条数据",
       type: "warning",
     });
     LedgerTableRef.value.clearSelection();
     return;
   }
-  console.log(inForm.value.Qty);
+  // console.log(inForm.value.Qty);
 
   if (!inForm.value.Qty) {
     ElNotification({
-      title: "请输入数量",
-      // message: "取消操作",
+      title: "提示信息",
+      message: "请输入数量",
       type: "warning",
     });
     return;
@@ -949,8 +949,8 @@ const partOut = () => {
   StartPartsOut(inForm.value).then((res: any) => {
     if (res && res.success) {
       ElNotification({
-        title: res.msg,
-        // message: "取消操作",
+        title: '提示信息',
+        message: res.msg,
         type: "success",
       });
       getData();
@@ -1076,8 +1076,8 @@ const addData = () => {
     if (res && res.success) {
       addVisible.value = false;
       ElNotification({
-        title: res.msg,
-        // message: "取消操作",
+        title: '提示信息',
+        message: res.msg,
         type: "success",
       });
     }
@@ -1090,8 +1090,8 @@ const editData = () => {
     if (res && res.success) {
       editVisible.value = false;
       ElNotification({
-        title: res.msg,
-        // message: "取消操作",
+        title: '提示信息',
+        message: res.msg,
         type: "success",
       });
     }

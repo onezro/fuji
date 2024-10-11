@@ -4,9 +4,15 @@
       <div class="pb-2 flex justify-between">
         <el-button type="primary" @click="openAdd">添加</el-button>
         <div class="flex">
-          <el-input v-model.trim="searchName"  style="width: 300px" clearable placeholder="请输入">
+          <el-input
+            v-model.trim="searchName"
+            style="width: 300px"
+            clearable
+            placeholder="请输入"
+          >
             <template #append>
-              <el-button type="primary" icon="Search"></el-button> </template></el-input>
+              <el-button type="primary" icon="Search"></el-button> </template
+          ></el-input>
         </div>
       </div>
       <table-tem
@@ -138,12 +144,7 @@
         :inline="true"
       >
         <el-form-item label="工治具型号" prop="compname">
-          <el-select
-            v-model="form.compname"
-       
-            filterable
-            style="width: 240px"
-          >
+          <el-select v-model="form.compname" filterable style="width: 240px">
             <el-option
               v-for="item in compnameList"
               :key="item.CompName"
@@ -313,9 +314,9 @@ const EditForm = ref<EditFormTS>({
   user: loginName,
   // ExpirationDate: "",
 });
-const formRef=ref()
-const searchName=ref('')
-const tableData1=ref([])
+const formRef = ref();
+const searchName = ref("");
+const tableData1 = ref([]);
 
 const clearForm = () => {
   form.value = {
@@ -344,7 +345,7 @@ watch(
   }
 );
 const table1 = (newdata: any) => {
-  let searchName = newdata.toLowerCase()
+  let searchName = newdata.toLowerCase();
   return tableData.value.filter((v: any) => {
     return Object.keys(v).some((key) => {
       return String(v[key]).toLowerCase().indexOf(searchName) > -1;
@@ -371,10 +372,10 @@ const openAdd = () => {
   addVisible.value = true;
 };
 
-const closeSumbit=()=>{
+const closeSumbit = () => {
   addVisible.value = false;
-  formRef.value.resetFields()
-}
+  formRef.value.resetFields();
+};
 const addSumbit = () => {
   ToolsDetail({
     ...form.value,
@@ -437,6 +438,7 @@ const deleteSubmit = (data: any) => {
             return;
           }
           ElNotification({
+            title: "提示信息",
             message: data.msg,
             type: "success",
           });
@@ -471,6 +473,7 @@ const scrapSubmit = (data: any) => {
             return;
           }
           ElNotification({
+            title: "提示信息",
             message: data.msg,
             type: "success",
           });
@@ -623,10 +626,10 @@ const getData = () => {
       return;
     }
     tableData.value = data.content;
-  
-    if(searchName.value.trim()){
+
+    if (searchName.value.trim()) {
       tableData1.value = table1(searchName.value);
-    }else{
+    } else {
       tableData1.value = data.content;
     }
   });
