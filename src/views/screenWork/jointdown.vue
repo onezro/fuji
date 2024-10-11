@@ -23,7 +23,7 @@
               label-width="auto"
             >
               <el-form-item label="工单">
-                <selectTa
+                <!-- <selectTa
                   ref="selectTable"
                   :table="orderTable"
                   :columns="orderColumns"
@@ -32,7 +32,7 @@
                   :keywords="{ label: 'order', value: 'order' }"
                   @radioChange="(...args: any) => radioChange(args)"
                   ><</selectTa
-                >
+                > -->
               </el-form-item>
               <el-form-item
                 size="large"

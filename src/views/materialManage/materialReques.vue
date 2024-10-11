@@ -61,7 +61,12 @@
       </div>
     </el-card>
 
-    <el-dialog v-model="dialogVisible" width="80%" title="生产补料申请" align-center>
+    <el-dialog
+      v-model="dialogVisible"
+      width="80%"
+      title="生产补料申请"
+      align-center
+    >
       <div class="w-full">
         <div ref="headerRef">
           <el-form
@@ -136,7 +141,7 @@
             <el-form-item label="产品描述">
               <el-input
                 style="width: 420px"
-              type="textarea"
+                type="textarea"
                 v-model="form.ProductDesc"
                 class="input-with-select"
                 disabled
@@ -251,12 +256,12 @@
           </el-table>
         </div>
       </div>
-          <template #footer>
-            <div class="dialog-footer">
-              <el-button type="" @click="dialogVisible = false">取消</el-button>
-              <el-button type="primary" @click="applyFor">申请</el-button>
-            </div>
-          </template>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button type="" @click="dialogVisible = false">取消</el-button>
+          <el-button type="primary" @click="applyFor">申请</el-button>
+        </div>
+      </template>
     </el-dialog>
   </div>
 </template>
@@ -531,25 +536,27 @@ const handleSelectionChange = (data: any) => {
   //     isMater: item.isMater
   //   };
   // });
-  choiceList.value = data.filter((item: any) => item.RequestQty && item.RequestQty != 0).map((item:any) => {
-    return {
-      MaterialName: item.MaterialName,
-      RequestQty: item.RequestQty ? item.RequestQty : "0",
-      TotalQtyRequired: item.TotalQtyRequired,
-      originalMaterialName: item.originalMaterialName,
-      isMater: item.isMater
-    };
-  })
+  choiceList.value = data
+    .filter((item: any) => item.RequestQty && item.RequestQty != 0)
+    .map((item: any) => {
+      return {
+        MaterialName: item.MaterialName,
+        RequestQty: item.RequestQty ? item.RequestQty : "0",
+        TotalQtyRequired: item.TotalQtyRequired,
+        originalMaterialName: item.originalMaterialName,
+        isMater: item.isMater,
+      };
+    });
   console.log(choiceList.value);
 };
 //申请物料
 const applyFor = () => {
   if (choiceList.value.length === 0) {
-      ElNotification({
-        title: '请选择申请行',
-        // message: "取消操作",
-        type: "warning",
-      });
+    ElNotification({
+      title: "请选择申请行",
+      // message: "取消操作",
+      type: "warning",
+    });
     return;
   }
   if (form.value.MfgOrderName === "") {
@@ -579,9 +586,12 @@ const applyFor = () => {
 };
 
 const dateChange = () => {
-  if (date.value.length != 0) {
+  if (date.value !== null && date.value.length !== 0) {
     historyForm.value.requestStartDate = date.value[0];
     historyForm.value.requestEndDate = date.value[1];
+  } else {
+    historyForm.value.requestStartDate = "";
+    historyForm.value.requestEndDate = "";
   }
 };
 

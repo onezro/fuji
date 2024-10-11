@@ -749,8 +749,8 @@ const findDetail = (data: any) => {
       detailForm.value.Remark = data.Remark;
     } else if (res.content.length === 0) {
       ElNotification({
-        title: "未查询到此项详细信息或信息为空",
-        // message: "取消操作",
+        title: "提示信息",
+        message: "未查询到此项详细信息或信息为空",
         type: "warning",
       });
       detailForm.value = {
@@ -818,8 +818,8 @@ const typeChange = () => {
 const showInForm = (data: any) => {
   if (data.Status !== 0) {
     ElNotification({
-      title: "该项开始入库已完成",
-      // message: "取消操作",
+      title: "提示信息",
+      message: "该项开始入库已完成",
       type: "warning",
     });
     return;
@@ -849,8 +849,8 @@ const startPartIn = () => {
   StartPartsIn(inForm.value).then((res: any) => {
     if (res && res.success) {
       ElNotification({
-        title: res.msg,
-        // message: "取消操作",
+        title: '提示信息',
+        message: res.msg,
         type: "success",
       });
       getData();
@@ -962,8 +962,8 @@ const addData = () => {
     if (res && res.success) {
       addVisible.value = false;
       ElNotification({
-        title: res.msg,
-        // message: "取消操作",
+        title: '提示信息',
+        message: res.msg,
         type: "success",
       });
     }
@@ -976,8 +976,8 @@ const editData = () => {
     if (res && res.success) {
       editVisible.value = false;
       ElNotification({
-        title: res.msg,
-        // message: "取消操作",
+        title: '提示信息',
+        message: res.msg,
         type: "success",
       });
     }

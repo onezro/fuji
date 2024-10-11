@@ -556,8 +556,8 @@ const serachData = () => {
     if (res && res.success) {
       tableData.value = res.content;
         ElNotification({
-          title: res.msg,
-          // message: "取消操作",
+          title: '提示信息',
+          message: res.msg,
           type: "success",
         });
       if (searchForm.value.PartName) {
@@ -602,8 +602,8 @@ const addData = () => {
     if (res && res.success) {
       addVisible.value = false;
       ElNotification({
-        title: res.msg,
-        // message: "取消操作",
+        title: '提示信息',
+        message: res.msg,
         type: "success",
       });
     }
@@ -616,8 +616,8 @@ const editData = () => {
     if (res && res.success) {
       editVisible.value = false;
       ElNotification({
-        title: res.msg,
-        // message: "取消操作",
+        title: '提示信息',
+        message: res.msg,
         type: "success",
       });
     }
@@ -630,8 +630,8 @@ const ScrapData = () => {
     if (res && res.success) {
       editVisible.value = false;
       ElNotification({
-        title: res.msg,
-        // message: "取消操作",
+        title: '提示信息',
+        message: res.msg,
         type: "success",
       });
     }
