@@ -750,11 +750,7 @@ const findDetail = (data: any) => {
       detailForm.value.Remark = data.Remark;
     } else if (res.content.length === 0) {
       ElNotification({
-<<<<<<< HEAD
-        title: "提示",
-=======
         title: "提示信息",
->>>>>>> f5aac514a8ac18cfd02bcf1e60aaa6a685f0721b
         message: "未查询到此项详细信息或信息为空",
         type: "warning",
       });
