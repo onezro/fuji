@@ -216,3 +216,71 @@ export function GetSMTPreparationOrderList(data:any) {
        data
     })
 }
+
+//贴片机亮灯
+//根据工序查询不良记录
+export function QueryDeviceInfo(data:any) {
+    return request({
+        url: "/api/smtOnlineRack/QueryDeviceInfo",
+        method: "post",
+        params:{
+            LineName:data
+        }
+    })
+}
+
+//查询机台物料清单
+export function QueryMachineMaterialList(data:any) {
+    return request({
+        url: "/api/smtOnlineRack/QueryMachineMaterialList",
+        method: "post",
+        params:{
+            mcid:data
+        }
+    })
+}
+
+//查询机台物料清单
+export function MaterialOrderQuery(data:any) {
+    return request({
+        url: "/api/smtOnlineRack/OrderQuery",
+        method: "post",
+        data
+    })
+}
+
+//接料亮灯
+export function SendOneLine(data:any) {
+    return request({
+        url: "/api/smtOnlineRack/SendOneLine",
+        method: "post",
+        data
+    })
+}
+
+//取消接料亮灯
+export function CancelOneLine(data:any) {
+    return request({
+        url: "/api/smtOnlineRack/CancelOneLine",
+        method: "post",
+        data
+    })
+}
+
+//修改产线是否自动接料
+export function UpdateMfgLineAutoSplicing(data:any) {
+    return request({
+        url: "/api/smtOnlineRack/UpdateMfgLineAutoSplicing",
+        method: "post",
+        data
+    })
+}
+
+//自动接料亮灯
+export function AutoOnlineRack(data:any) {
+    return request({
+        url: "/api/smtOnlineRack/AutoOnlineRack",
+        method: "post",
+        data
+    })
+}
