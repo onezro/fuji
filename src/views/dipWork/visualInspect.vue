@@ -1,37 +1,20 @@
 <template>
   <div class="flex flex-col w-full h-full">
-    <div
-      class="h-[40px] min-h-[40px] pl-2 pr-2 flex justify-between items-center"
-    >
+    <div class="h-[40px] min-h-[40px] pl-2 pr-2 flex justify-between items-center">
       <span class="text-[1.2rem]"> {{ opui.stationDec }} </span>
       <div></div>
     </div>
     <div class="w-full flex-1 flex">
       <div class="setwidth w-[350px]">
         <div class="w-full h-full box">
-          <div
-            class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]"
-          >
+          <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
             <span class="ml-5">基本信息</span>
           </div>
           <div class="p-[10px]">
-            <el-form
-              class="inbound"
-              ref="formRef"
-              :model="form"
-              label-width="auto"
-            >
-              <el-form-item
-                v-for="f in formHeader"
-                :key="f.value"
-                :label="f.label"
-              >
-                <span
-                  class="font-bold text-lg leading-[30px]"
-                  :class="f.value == 'passNum' ? 'text-[#00B400]' : ''"
-                >
-                  {{ formText(f.value) }}</span
-                >
+            <el-form class="inbound" ref="formRef" :model="form" label-width="auto">
+              <el-form-item v-for="f in formHeader" :key="f.value" :label="f.label">
+                <span class="font-bold text-lg leading-[30px]" :class="f.value == 'passNum' ? 'text-[#00B400]' : ''">
+                  {{ formText(f.value) }}</span>
               </el-form-item>
             </el-form>
           </div>
@@ -41,79 +24,40 @@
         <!-- <div class="w-full"> -->
         <div class="w-full h-full flex flex-col">
           <div>
-            <div
-              class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]"
-            >
+            <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
               <span class="ml-5"> 扫描条码</span>
             </div>
             <div class="h-[120px] pt-3 pr-5 pl-5">
-              <el-form
-                class="inbound"
-                ref="formRef"
-                :inline="true"
-                :model="form"
-                label-width="auto"
-                @submit.native.prevent
-              >
+              <el-form class="inbound" ref="formRef" :inline="true" :model="form" label-width="auto"
+                @submit.native.prevent>
                 <el-form-item label="扫描条码" class="mb-2">
-                  <el-input
-                    v-model.trim="barCode"
-                    ref="inputRef"
-                    :autofocus="inputFocus"
-                    style="width: 500px"
-                    placeholder="请扫描条码"
-                    @keyup.enter.native="getChange"
-                  />
+                  <el-input v-model.trim="barCode" ref="inputRef" :autofocus="inputFocus" style="width: 500px"
+                    placeholder="请扫描条码" @keyup.enter.native="getChange" />
                 </el-form-item>
-                <el-form-item
-                  :class="[stopsForm.result == 'OK' ? 'switchok' : 'switchng']"
-                  class="mb-2"
-                >
-                  <el-switch
-                    v-model="stopsForm.result"
-                    size="large"
-                    style="
+                <el-form-item :class="[stopsForm.result == 'OK' ? 'switchok' : 'switchng']" class="mb-2">
+                  <el-switch v-model="stopsForm.result" size="large" style="
                       zoom: 1.2;
                       --el-switch-on-color: #ff4949;
                       --el-switch-off-color: #13ce66;
-                    "
-                    :active-value="'NG'"
-                    :inactive-value="'OK'"
-                    active-text="NG"
-                    inactive-text="OK"
-                  />
+                    " :active-value="'NG'" :inactive-value="'OK'" active-text="NG" inactive-text="OK" />
                 </el-form-item>
               </el-form>
-              <div
-                class="text-xl font-bold text-[#00B400]"
-                v-show="msgType === true || msgTitle === ''"
-              >
+              <div class="text-xl font-bold text-[#00B400]" v-show="msgType === true || msgTitle === ''">
                 {{ msgTitle === "" ? "请扫描PCB条码" : msgTitle }}
               </div>
-              <div
-                class="text-xl font-bold text-[red]"
-                v-show="msgType === false && msgTitle !== ''"
-              >
+              <div class="text-xl font-bold text-[red]" v-show="msgType === false && msgTitle !== ''">
                 {{ msgTitle }}
               </div>
             </div>
           </div>
 
           <div class="flex flex-col flex-1 tabs-css">
-            <div
-              class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]"
-            >
+            <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
               <span class="ml-5">历史过站记录</span>
             </div>
-            <table-tem
-              :showIndex="true"
-              :tableData="tableData1"
-              :tableHeight="tableHeight"
-              :columnData="columnData1"
-              :pageObj="pageObj"
-              @handleSizeChange="handleSizeChange"
-              @handleCurrentChange="handleCurrentChange"
-            ></table-tem>
+            <table-tem :showIndex="true" :tableData="tableData1" :tableHeight="tableHeight" :columnData="columnData1"
+              :pageObj="pageObj" @handleSizeChange="handleSizeChange"
+              @handleCurrentChange="handleCurrentChange"></table-tem>
           </div>
         </div>
       </div>
@@ -132,7 +76,7 @@ import { useUserStoreWithOut } from "@/stores/modules/user";
 import { checkStringType } from "@/utils/barcodeFormat";
 import type { Formspan, FormHeader, OrderData } from "@/typing";
 import { ElMessage, ElNotification, ElMessageBox } from "element-plus";
-import { InspectionStationMoveOut } from "@/api/dipApi";
+import { InspectionStationMoveOut ,QueryMoveHistory} from "@/api/dipApi";
 
 import {
   ref,
@@ -229,25 +173,26 @@ const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
 const columnData1 = reactive([
   {
     text: true,
-    prop: "eqty",
+    prop: "ContainerName",
     label: "PCB条码",
     width: "",
     align: "1",
   },
   {
     text: true,
-    prop: "level",
-    label: "扫描时间",
+    prop: "BD_EmployeeName",
+    label: "扫描人",
     width: "",
     align: "1",
   },
   {
     text: true,
-    prop: "level",
-    label: "扫描人",
+    prop: "TxnDate",
+    label: "扫描时间",
     width: "",
     align: "1",
-  },
+  }
+
 ]);
 const tableData1 = ref([]);
 const tableHeight = ref(0);
@@ -258,6 +203,10 @@ const pageObj = ref({
 
 const msgTitle = ref("");
 const msgType = ref(true);
+const hisForm = ref({
+  MfgOrderName: "",
+  workstationName: opui.station
+})
 
 onBeforeMount(() => {
   getScreenHeight();
@@ -284,6 +233,12 @@ const formText = (data: string) => {
   return form[key];
 };
 
+//获取过站历史记录
+const getHisData=()=>{
+  QueryMoveHistory(hisForm.value).then((res:any)=>{
+    tableData1.value=res.content
+  })
+}
 
 //过站
 const getChange = () => {
@@ -298,10 +253,10 @@ const getChange = () => {
         msgTitle.value = res.msg;
         msgType.value = res.success;
         stopsForm.value.containerName = "";
-        form.value={...res.content[0]}
-        // if (res.success) {
+        form.value = { ...res.content[0] }
         stopsForm.value.result = "OK";
-        // }
+        hisForm.value.MfgOrderName=res.content[0].MfgOrderName
+        getHisData()
       }
     );
   }
@@ -353,7 +308,7 @@ const getScreenHeight = () => {
   font-size: 1.1rem;
 }
 
-.tabs-css .el-tabs--border-card > .el-tabs__header .el-tabs__item {
+.tabs-css .el-tabs--border-card>.el-tabs__header .el-tabs__item {
   color: #fff;
   // padding: 0 !important;
 }
@@ -372,10 +327,7 @@ const getScreenHeight = () => {
   color: #ff4949;
 }
 
-.tabs-css
-  .el-tabs--border-card
-  > .el-tabs__header
-  .el-tabs__item:not(.is-disabled):hover {
+.tabs-css .el-tabs--border-card>.el-tabs__header .el-tabs__item:not(.is-disabled):hover {
   // color: #fff;
   // background-color: #fff;
   background-color: rgba($color: #fff, $alpha: 0.8);

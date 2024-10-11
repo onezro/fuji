@@ -53,7 +53,7 @@
       </el-table>
       <div class="mt-3">
         <el-pagination
-          size="large"
+         
           background
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
@@ -450,6 +450,8 @@ const deleteSon = (index: any) => {
 
 const addCancel = () => {
   addVisible.value = false
+  form.StepItemList =[]
+  addFrom.stepList = [];
   resetForm();
   // formRef.value.resetFields()
 };
@@ -467,9 +469,9 @@ const addSubmit = () => {
       });
       getData()
       addVisible.value = false;
-      form.StepItemList =[]
     }
     resetForm();
+    form.StepItemList =[]
     addFrom.stepList = [];
   });
 };

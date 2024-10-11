@@ -31,38 +31,38 @@
       :close-on-press-escape="false" align-center>
       <el-form ref="formRef" :model="addForm" label-width="auto" size="small" :inline="true">
         <el-form-item label="ECN编码" prop="ECN_NUMBER" class="mb-[5px]">
-          <el-input v-model="addForm.ECN_NUMBER" placeholder="请输入" disabled />
+          <el-input v-model="addForm.ECN_NUMBER" disabled />
         </el-form-item>
         <el-form-item label="ECN类型" prop="ECNType" class="mb-[5px]">
-          <el-input v-model="addForm.ECNType" placeholder="请输入" disabled />
+          <el-input v-model="addForm.ECNType"  disabled />
         </el-form-item>
         <el-form-item label="客户名称" prop="TGIECOAttribute1" class="mb-[5px]">
-          <el-input v-model="addForm.TGIECOAttribute1" placeholder="请输入" disabled />
+          <el-input v-model="addForm.TGIECOAttribute1" disabled />
         </el-form-item>
         <el-form-item label="更改时间" prop="modified" class="mb-[5px]">
-          <el-input v-model="addForm.modified" placeholder="请输入" disabled />
+          <el-input v-model="addForm.modified"  disabled />
         </el-form-item>
         <el-form-item label="变更所处阶段" prop="TGIECOAttribute7" class="mb-[5px]">
-          <el-input v-model="addForm.TGIECOAttribute7" placeholder="请输入" disabled />
+          <el-input v-model="addForm.TGIECOAttribute7"  disabled />
         </el-form-item>
         <el-form-item label="切换方式" prop="BicvAddTGIECOAttribute3" class="mb-[5px]">
-          <el-input v-model="addForm.BicvAddTGIECOAttribute3" placeholder="请输入" disabled />
+          <el-input v-model="addForm.BicvAddTGIECOAttribute3"  disabled />
         </el-form-item>
         <el-form-item label="变更时间点" prop="BicvAddTGIECOAttribute4" class="mb-[5px]">
-          <el-input v-model="addForm.BicvAddTGIECOAttribute4" placeholder="请输入" disabled />
+          <el-input v-model="addForm.BicvAddTGIECOAttribute4"  disabled />
         </el-form-item>
         <el-form-item label="申请人" prop="Owner" class="mb-[5px]">
-          <el-input v-model="addForm.Owner" placeholder="请输入" disabled />
+          <el-input v-model="addForm.Owner"  disabled />
         </el-form-item>
         <el-form-item label="变更原因" prop="BicvECNChangeReason" class="mb-[5px]">
-          <el-input v-model="addForm.BicvECNChangeReason" style="width: 600px" placeholder="请输入" disabled />
+          <el-input v-model="addForm.BicvECNChangeReason" style="width: 600px"  disabled />
         </el-form-item>
         <el-form-item label="受影响项目/产品" prop="TGIECOAttribute8" class="mb-[5px]">
-          <el-input v-model="addForm.TGIECOAttribute8" style="width: 600px" placeholder="请输入" disabled />
+          <el-input v-model="addForm.TGIECOAttribute8" style="width: 600px"  disabled />
         </el-form-item>
 
         <el-form-item label="变更原因详述" prop="TGIECOAttribute4" class="mb-[5px]">
-          <el-input v-model="addForm.TGIECOAttribute4" style="width: 600px" placeholder="请输入" disabled
+          <el-input v-model="addForm.TGIECOAttribute4" style="width: 600px"  disabled
             type="textarea" />
         </el-form-item>
       </el-form>
@@ -400,7 +400,7 @@ const detailsColumn = ref([
     text: true,
     prop: "COMP_REFERENCE",
     label: "参考指标符",
-    width: "",
+    width: "300",
     min: true,
     align: "1",
   },

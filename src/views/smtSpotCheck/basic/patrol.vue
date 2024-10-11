@@ -52,7 +52,7 @@
       </el-table>
       <div class="mt-3">
         <el-pagination
-          size="large"
+        
           background
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"

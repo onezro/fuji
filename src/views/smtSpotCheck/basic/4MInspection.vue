@@ -33,7 +33,7 @@
           </el-table-column>
         </el-table>
         <div class="mt-3">
-          <el-pagination size="large" background @size-change="handleSizeChange" @current-change="handleCurrentChange"
+          <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange"
             :current-page="currentPage" :page-size="pageSize" :page-sizes="[5, 10, 20, 50, 100]"
             layout="total,sizes, prev, pager, next, jumper" :total="tableData.length">
           </el-pagination>

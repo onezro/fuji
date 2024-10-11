@@ -153,7 +153,7 @@
             </div>
             <table-tem :showIndex="true" :tableData="tableData1" :tableHeight="tableHeight" :columnData="columnData1"
               :pageObj="pageObj" @handleSizeChange="handleSizeChange"
-              @handleCurrentChange="handleCurrentChange"></table-tem> 
+              @handleCurrentChange="handleCurrentChange"></table-tem>
             <!-- <el-tabs v-model="tabsValue" type="border-card" class="demo-tabs" @tab-click="tabClick">
               <el-tab-pane label="历史过站记录" name="history">
                 <table-tem :showIndex="true" :tableData="tableData1" :tableHeight="tableHeight"
@@ -203,25 +203,17 @@
         </span>
       </template>
 </el-dialog> -->
-    <el-dialog
-      v-model="detailVisible"
-      title="上料明细"
-      width="70%"
-      align-center
-      draggable
-      :append-to-body="true"
-      :close-on-click-modal="false"
-      :close-on-press-escape="false"
-    >
-    <table-tem :showIndex="true" size="small" :tableData="detailsData" :tableHeight="400"
-                  :columnData="detailsColumn" :pageObj="detailsPageObj" @handleSizeChange="detailsSizeChange"
-                  @handleCurrentChange="detailsCurrentChange"></table-tem>
+    <el-dialog v-model="detailVisible" title="上料明细" width="70%" align-center draggable :append-to-body="true"
+      :close-on-click-modal="false" :close-on-press-escape="false">
+      <table-tem :showIndex="true" size="small" :tableData="detailsData" :tableHeight="400" :columnData="detailsColumn"
+        :pageObj="detailsPageObj" @handleSizeChange="detailsSizeChange"
+        @handleCurrentChange="detailsCurrentChange"></table-tem>
       <template #footer>
         <span class="dialog-footer">
-          <el-button @click="detailVisible=false">关闭</el-button>
+          <el-button @click="detailVisible = false">关闭</el-button>
         </span>
       </template>
-</el-dialog>
+    </el-dialog>
 
   </div>
 </template>
@@ -536,14 +528,14 @@ const detailsColumn = ref([
     label: "物料编码",
     width: "",
     align: "1",
-    min:true
+    min: true
   },
   {
     text: true,
     prop: "MaterialDesc",
     label: "物料描述",
     width: "250",
-    min:true,
+    min: true,
     align: "1",
   },
   {
@@ -551,7 +543,7 @@ const detailsColumn = ref([
     prop: "QtyRequired",
     label: "单量用量",
     width: "",
-    min:true,
+    min: true,
     align: "1",
   },
   {
@@ -559,7 +551,7 @@ const detailsColumn = ref([
     prop: "LoadQueueQty",
     label: "上料数量",
     width: "",
-    min:true,
+    min: true,
     align: "1",
   },
   {
@@ -567,7 +559,7 @@ const detailsColumn = ref([
     prop: "level",
     label: "已使用数量",
     width: "",
-    min:true,
+    min: true,
     align: "1",
   },
   {
@@ -575,7 +567,7 @@ const detailsColumn = ref([
     prop: "level",
     label: "剩余数量",
     width: "",
-    min:true,
+    min: true,
     align: "1",
   },
   {
@@ -583,7 +575,7 @@ const detailsColumn = ref([
     prop: "level",
     label: "最后上料时间",
     width: "",
-    min:true,
+    min: true,
     align: "1",
   },
   {
@@ -591,7 +583,7 @@ const detailsColumn = ref([
     prop: "level",
     label: "最后上料人",
     width: "",
-    min:true,
+    min: true,
     align: "1",
   },
 ])
@@ -599,11 +591,11 @@ const hisForm = ref({
   MfgOrderName: "",
   workstationName: opui.station
 })
-const detailVisible=ref(false)
-const getFeedForm=ref({
+const detailVisible = ref(false)
+const getFeedForm = ref({
   MfgOrder: '',
-		workstationName: opui.station,
-		SpecName: "DIP-PlugIn",
+  workstationName: opui.station,
+  SpecName: "DIP-PlugIn",
 })
 
 const changeCheck = (val: any) => {
@@ -621,10 +613,10 @@ const openOver = () => {
   overAddVisible.value = true;
   getOverData();
 };
-const opendetail=()=>{
-  detailVisible.value=true
-  QueryOrderMaterialRequired(getFeedForm.value).then((res:any)=>{
-    detailsData.value=res.content
+const opendetail = () => {
+  detailVisible.value = true
+  QueryOrderMaterialRequired(getFeedForm.value).then((res: any) => {
+    detailsData.value = res.content
   })
 }
 //获取过序
@@ -726,7 +718,7 @@ onBeforeMount(() => {
 onMounted(() => {
   window.addEventListener("resize", getScreenHeight);
   getOrderData();
- 
+
 });
 onBeforeUnmount(() => {
   window.addEventListener("resize", getScreenHeight);
@@ -748,7 +740,7 @@ const getOrderData = () => {
       let a = data[0].MfgOrderName;
       defaultSelectVal.value[0] = a;
     }
-   
+
   });
 };
 //历史过站记录
@@ -818,18 +810,18 @@ const radioChange = (args: any) => {
     form.PlannedStartDate = args[0].PlannedStartDate;
     form.PlannedCompletionDate = args[0].PlannedCompletionDate;
     form.Qty = args[0].Qty;
-    hisForm.value.MfgOrderName=args[0].MfgOrderName
+    hisForm.value.MfgOrderName = args[0].MfgOrderName
     // console.log(args[0].MfgOrderName);
-    getFeedForm.value.MfgOrder=args[0].MfgOrderName
-  
+    getFeedForm.value.MfgOrder = args[0].MfgOrderName
+
     if (getToolForm.value.OrderNumber == args[0].MfgOrderName) {
       return;
     } else {
-      getToolForm.value.OrderNumber = args[0].MfgOrderName; //'24072350'
+      getToolForm.value.OrderNumber = args[0].MfgOrderName;
       getHisData()
       getToolData();
     }
-    
+
   }
 };
 

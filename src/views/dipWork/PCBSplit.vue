@@ -15,8 +15,8 @@
                     <div class="p-[10px]">
                         <el-form class="inbound" ref="formRef" :model="form" label-width="auto">
                             <el-form-item label="工单号">
-                                <selectTa ref="selectTable" :table="orderTable" :columns="orderColumns" :max-height="400"
-                                    :keywords="{ label: 'MfgOrderName', value: 'MfgOrderName' }"
+                                <selectTa ref="selectTable" :table="orderTable" :columns="orderColumns"
+                                    :max-height="400" :keywords="{ label: 'MfgOrderName', value: 'MfgOrderName' }"
                                     @radioChange="(...args: any) => radioChange(args)">
                                 </selectTa>
                             </el-form-item>
@@ -39,8 +39,8 @@
                             <el-form class="inbound" ref="formRef" :inline="true" :model="form" label-width="auto"
                                 @submit.native.prevent>
                                 <el-form-item label="扫描条码">
-                                    <el-input v-model="stopsForm.containerName" clearable ref="inputRef" style="width: 500px"
-                                        placeholder="请扫描条码" @keyup.enter.native="getChange" />
+                                    <el-input v-model="stopsForm.containerName" clearable ref="inputRef"
+                                        style="width: 500px" placeholder="请扫描条码" @keyup.enter.native="getChange" />
                                 </el-form-item>
                                 <el-form-item>
                                     <!-- <div class="">
@@ -59,16 +59,16 @@
                     <div class="flex flex-col flex-1 tabs-css">
                         <el-tabs v-model="tabsValue" type="border-card" class="demo-tabs">
                             <el-tab-pane label="历史过站记录" name="history" :stretch="true">
-                                <table-tem :showIndex="true" :tableData="tableData1" 
-                                    :tableHeight="tableHeight" :columnData="hisColumn" :pageObj="pageObj"
-                                    @handleSizeChange="handleSizeChange"
+                                <table-tem :showIndex="true" :tableData="tableData1" :tableHeight="tableHeight"
+                                    :columnData="hisColumn" :pageObj="pageObj" @handleSizeChange="handleSizeChange"
                                     @handleCurrentChange="handleCurrentChange"></table-tem>
                             </el-tab-pane>
                             <el-tab-pane label="工装治具" name="fixtures">
                                 <!-- fixtures -->
 
                                 <table-tem :showIndex="true" :tableData="fixtureData" :tableHeight="tableHeight"
-                                    :columnData="fixtureColumn" :pageObj="fixturePageObj" @handleSizeChange="handleSizeChange1"
+                                    :columnData="fixtureColumn" :pageObj="fixturePageObj"
+                                    @handleSizeChange="handleSizeChange1"
                                     @handleCurrentChange="handleCurrentChange1"></table-tem>
                             </el-tab-pane>
                         </el-tabs>
@@ -88,7 +88,7 @@ import badInfoTem from "@/components/badInfoTem/index.vue";
 import selectTa from "@/components/selectTable/index.vue";
 import { useAppStore } from "@/stores/modules/app";
 import { useUserStoreWithOut } from "@/stores/modules/user";
-import type { Formspan, FormHeader,OrderData } from "@/typing";
+import type { Formspan, FormHeader, OrderData } from "@/typing";
 import {
     ref,
     reactive,
@@ -98,7 +98,7 @@ import {
     onBeforeUnmount,
 } from "vue";
 import { ElMessage, ElMessageBox, ElNotification } from "element-plus";
-import { SplitStationMoveOut,QueryWorkOrderInfo } from "@/api/dipApi";
+import { SplitStationMoveOut, OrderQuery } from "@/api/dipApi";
 import { QueryToolInfo } from "@/api/operate";
 const appStore = useAppStore();
 const userStore = useUserStoreWithOut();
@@ -347,9 +347,8 @@ onBeforeUnmount(() => {
 });
 
 const getOrderData = () => {
-    QueryWorkOrderInfo().then((res: any) => {
-        let data = res.content
-        orderTable.value.data[0] = data[0];
+    OrderQuery({ lineName: opui.line, OrderTypeName: 'DIP' }).then((res: any) => {
+        orderTable.value.data[0] = res.content
     });
 }
 
@@ -358,7 +357,7 @@ const formText = (data: string) => {
     return form[key];
 };
 const getChange = (val: any) => {
-    SplitStationMoveOut(stopsForm.value).then((res:any)=>{
+    SplitStationMoveOut(stopsForm.value).then((res: any) => {
         if (res.succes) {
             msgTitle.value = "成功";
             stopsForm.value.containerName = "";
@@ -374,17 +373,51 @@ const getChange = (val: any) => {
 const selectTable = ref();
 
 const radioChange = (args: any) => {
-    orderTable.value.data.forEach((v: any) => {
-        if (v.MfgOrderName == args[1]) {
-            form.MfgOrderName = v.MfgOrderName;
-            form.ProductName = v.ProductName;
-            form.ProductDesc = v.ProductDesc;
-            form.PlannedStartDate = v.PlannedStartDate;
-            form.PlannedCompletionDate = v.PlannedCompletionDate;
-            form.Qty = v.Qty;
-        }
-    });
-    inputRef.value.focus();
+
+    if (args[1] == null) {
+    form.MfgOrderName = "";
+    form.ProductName = "";
+    form.ProductDesc = "";
+    form.PlannedStartDate = "";
+    form.BD_ProductModel = "";
+    form.BD_SoftVersion = "";
+    form.PlannedCompletionDate = "";
+    form.Qty = "";
+  } else {
+    // orderTable.value.data.forEach((v: any) => {
+    //   if (v.MfgOrderName == args[1]) {
+    form.MfgOrderName = args[0].MfgOrderName;
+    form.ProductName = args[0].ProductName;
+    form.ProductDesc = args[0].ProductDesc;
+    form.BD_ProductModel = args[0].BD_ProductModel;
+    form.BD_SoftVersion = args[0].BD_SoftVersion;
+    form.PlannedStartDate = args[0].PlannedStartDate;
+    form.PlannedCompletionDate = args[0].PlannedCompletionDate;
+    form.Qty = args[0].Qty;
+    // hisForm.value.MfgOrderName = args[0].MfgOrderName
+  
+    // getFeedForm.value.MfgOrder = args[0].MfgOrderName
+
+    // if (getToolForm.value.OrderNumber == args[0].MfgOrderName) {
+    //   return;
+    // } else {
+    //   getToolForm.value.OrderNumber = args[0].MfgOrderName;
+    //   getHisData()
+    //   getToolData();
+    // }
+
+  }
+    // orderTable.value.data.forEach((v: any) => {
+    //     if (v.MfgOrderName == args[1]) {
+    //         form.MfgOrderName = v.MfgOrderName;
+    //         form.ProductName = v.ProductName;
+    //         form.ProductDesc = v.ProductDesc;
+    //         form.PlannedStartDate = v.PlannedStartDate;
+    //         form.PlannedCompletionDate = v.PlannedCompletionDate;
+    //         form.Qty = v.Qty;
+    //     }
+    // });
+    // inputRef.value.focus();
 };
 const clear = () => {
     console.log("selectTable.value", selectTable.value);
@@ -469,7 +502,7 @@ const getScreenHeight = () => {
 }
 
 .tabs-css .el-tabs__content {
-    padding:0px;
+    padding: 0px;
 }
 
 .tabs-css .el-tabs__item {
@@ -487,13 +520,11 @@ const getScreenHeight = () => {
     // font-weight: bold;
 }
 
-.el-tabs--border-card
-    > .el-tabs__header
-    .el-tabs__item:not(.is-disabled):hover {
-        font-size: 1.1rem;
+.el-tabs--border-card>.el-tabs__header .el-tabs__item:not(.is-disabled):hover {
+    font-size: 1.1rem;
     color: #006487 !important;
     background-color: rgba(255, 255, 255, 0.8);
-  }
+}
 
 .el-table th.el-table__cell .el-checkbox {
     display: none;
