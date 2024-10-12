@@ -11,7 +11,7 @@
           <el-form ref="formRef" class="form" :inline="true" label-width="">
             <el-form-item label="时间" class="mb-2">
               <el-date-picker
-              :shortcuts="shortcuts"
+                :shortcuts="shortcuts"
                 v-model="dateValue"
                 type="daterange"
                 range-separator="-"
@@ -191,7 +191,6 @@
       </el-table>
       <div class="mt-2">
         <el-pagination
-     
           background
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
@@ -227,7 +226,12 @@
           <el-input v-model="ScrapForm.Remark" style="width: 400px" />
         </el-form-item>
         <el-form-item label="报废数量">
-          <el-input-number v-model="ScrapForm.Qty" :min="1" :max="maxCount" style="width: 400px" />
+          <el-input-number
+            v-model="ScrapForm.Qty"
+            :min="1"
+            :max="maxCount"
+            style="width: 400px"
+          />
         </el-form-item>
       </el-form>
 
@@ -355,7 +359,7 @@ import {
   onMounted,
   onBeforeUnmount,
 } from "vue";
-import {shortcuts,setTodayDate,setLastDate} from "@/utils/dataMenu"
+import { shortcuts, setTodayDate, setLastDate } from "@/utils/dataMenu";
 
 const userStore = useUserStoreWithOut();
 
@@ -544,7 +548,7 @@ const getData = () => {
   });
 };
 const dateChange = (data: any) => {
-  if (data !== null && data !== '') {
+  if (data !== null && data !== "") {
     searchForm.value.StartDate = data[0];
     searchForm.value.EndDate = data[1];
   } else {
@@ -557,11 +561,11 @@ const serachData = () => {
   GetPartsStockList(searchForm.value).then((res: any) => {
     if (res && res.success) {
       tableData.value = res.content;
-        ElNotification({
-          title: '提示信息',
-          message: res.msg,
-          type: "success",
-        });
+      ElNotification({
+        title: "提示信息",
+        message: res.msg,
+        type: "success",
+      });
       if (searchForm.value.PartName) {
         tableData1.value = table1(searchForm.value.PartName);
       } else {
@@ -604,7 +608,7 @@ const addData = () => {
     if (res && res.success) {
       addVisible.value = false;
       ElNotification({
-        title: '提示信息',
+        title: "提示信息",
         message: res.msg,
         type: "success",
       });
@@ -618,7 +622,7 @@ const editData = () => {
     if (res && res.success) {
       editVisible.value = false;
       ElNotification({
-        title: '提示信息',
+        title: "提示信息",
         message: res.msg,
         type: "success",
       });
@@ -632,7 +636,7 @@ const ScrapData = () => {
     if (res && res.success) {
       editVisible.value = false;
       ElNotification({
-        title: '提示信息',
+        title: "提示信息",
         message: res.msg,
         type: "success",
       });
@@ -794,9 +798,11 @@ onBeforeMount(() => {
   let end: string = setTodayDate();
   let start: string = setLastDate();
   dateValue.value = [start, end];
+  searchForm.value.StartDate = start;
+  searchForm.value.EndDate = end;
 });
 onMounted(() => {
-  getData();
+  serachData();
   window.addEventListener("resize", getScreenHeight);
 });
 onBeforeUnmount(() => {

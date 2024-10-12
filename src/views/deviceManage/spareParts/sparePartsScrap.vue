@@ -385,9 +385,11 @@ onBeforeMount(() => {
   let end: string = setTodayDate();
   let start: string = setLastDate();
   dateValue.value = [start, end];
+  searchForm.value.StartDate = start;
+  searchForm.value.EndDate = end;
 });
 onMounted(() => {
-  getData();
+  searchData();
   window.addEventListener("resize", getScreenHeight);
 });
 onBeforeUnmount(() => {
