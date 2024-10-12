@@ -139,9 +139,6 @@
     <el-dialog v-model="startVisible" draggable title="开始备料" width="400px" :append-to-body="true"
       :close-on-click-modal="false" :close-on-press-escape="false" align-center @close="startCancel">
       <el-form ref="startFormRef" :model="startForm" label-width="auto">
-        <!-- <el-form-item label="工单号" prop="OrderNumber">
-          <el-input v-model="editForm.OrderNumber" disabled />
-        </el-form-item> -->
         <el-form-item label="产线" prop="LineNumber">
           <el-input v-model="startForm.LineNumber" disabled />
         </el-form-item>
@@ -203,11 +200,11 @@ const getForm = ref<GetForm>({
 
 const sideList = ref([
   {
-    value: "Top",
+    value: "TOP",
     label: "TOP",
   },
   {
-    value: "Bot",
+    value: "BOT",
     label: "BOT",
   },
 ]);

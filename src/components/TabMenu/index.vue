@@ -172,9 +172,7 @@ onMounted(() => {
   //   let res = data.data;
   //   versionForm.value ={...res.content}
   // });
-  GetVersion().then((res: any) => {
-    versionForm.value ={...res.content}
-  })
+
 });
 //Tab高亮
 const isActive = (currentPath: string) => {
@@ -233,8 +231,11 @@ const upDateSubmit = () => {
   })
 }
 const getSolw = () => {
-  solow.value = true
 
+  GetVersion().then((res: any) => {
+    solow.value = true
+    versionForm.value ={...res.content}
+  })
 }
 const solwCanel = () => {
   solow.value = false
