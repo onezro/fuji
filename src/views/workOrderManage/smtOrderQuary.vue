@@ -359,9 +359,6 @@ watch(
       searchForm.value.PlanEndTime = newVal[1];
       getTableData();
     }
-  },{
-    deep:true,
-    immediate:true
   }
 );
 const rowClick = (val: any) => {
@@ -722,7 +719,7 @@ const getScreenHeight = () => {
   padding: 5px;
 }
 
-.demo-tabs .el-tabs__item {}
+
 
 .demo-tabs.el-tabs--border-card>.el-tabs__header .el-tabs__item {
   color: #fff;
