@@ -5,17 +5,17 @@
         <el-form ref="formRef" :inline="true" :model="getDataText">
           <el-form-item label="计划开始时间" class="mb-2">
             <el-date-picker :shortcuts="shortcuts" v-model="getDataText.date" format="YYYY-MM-DD" :clearable="true" value-format="YYYY-MM-DD"
-              type="daterange" range-separator="-" start-placeholder="开始时间" end-placeholder="结束时间"
+              type="daterange" range-separator="-"
               style="width: 240px" />
           </el-form-item>
           <el-form-item label="面号" class="mb-2">
-            <el-select v-model="getDataText.Side" placeholder="请选择" @clear="getData" clearable style="width: 180px">
+            <el-select v-model="getDataText.Side" @clear="getData" clearable style="width: 180px">
               <el-option v-for="s in sideList" :label="s.label" :value="s.value" />
             </el-select>
           </el-form-item>
 
           <el-form-item label="工单号" class="mb-2">
-            <el-input v-model="getDataText.OrderNumber" placeholder="请输入工单号" @clear="getData" clearable style="width: 180px" />
+            <el-input v-model="getDataText.OrderNumber" @clear="getData" clearable style="width: 180px" />
           </el-form-item>
           <el-form-item class="mb-2">
             <el-button type="primary" @click="getData">查询</el-button>
@@ -92,7 +92,7 @@ import type { InspectionResult } from "@/typing";
 import { ElMessageBox, ElMessage, ElLoading } from "element-plus";
 import tableTem from "@/components/tableTem/index.vue";
 import { useUserStoreWithOut } from "@/stores/modules/user";
-import {shortcuts} from "@/utils/dataMenu"
+import {shortcuts,setTodayDate,setLastDate} from "@/utils/dataMenu"
 
 import {
   ref,
@@ -113,7 +113,7 @@ const OperationType = ref("");
 const userStore = useUserStoreWithOut();
 const loginName = userStore.getUserInfo;
 const getDataText = ref({
-  date: [],
+  date:<any> [],
   OrderNumber: "",
   Side: "",
   PlanStartTime: "",
@@ -198,6 +198,9 @@ watch(
 );
 onBeforeMount(() => {
   getScreenHeight();
+  let end: string = setTodayDate();
+  let start: string = setLastDate();
+  getDataText.value.date = [start, end];
 });
 
 onMounted(() => {

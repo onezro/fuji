@@ -167,11 +167,12 @@
                 <el-button type="info" @click="lightOut" :disabled="selectList.length === 0"
                   >取消亮灯</el-button
                 >
-                <div class="text-[#606266] mx-2">扫码选中</div>
+                <div class="text-[#606266] ml-[2rem] mr-2">扫描接料条码</div>
                   <el-input
+                  class="code-input"
                   sise="small"
                     v-model.trim="code"
-                    style="width: 180px"
+                    style="width: 450px"
                     @keydown.enter="keydown"
                   />
                 <!-- <el-button type="warning">首套亮灯</el-button> -->
@@ -472,5 +473,9 @@ const getScreenHeight = () => {
 <style lang="scss">
 .setwidth {
   flex: 0 0 300px;
+}
+
+.el-input__wrapper {
+  background-color: rgb(252.5, 245.7, 235.5);
 }
 </style>

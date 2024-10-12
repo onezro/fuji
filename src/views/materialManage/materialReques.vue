@@ -7,7 +7,7 @@
           class="form"
           :inline="true"
           size="small"
-          label-width="55px"
+          label-width="auto"
         >
           <el-form-item label="工单" class="mb-2">
             <el-input v-model="historyForm.orderNmae" placeholder=""></el-input>

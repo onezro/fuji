@@ -70,7 +70,7 @@ import {
   onMounted,
   onBeforeUnmount,
 } from "vue";
-import {shortcuts} from "@/utils/dataMenu"
+import {shortcuts,setTodayDate,setLastDate} from "@/utils/dataMenu"
 
 interface formTS {
   operationtype: string;
@@ -382,6 +382,9 @@ const columnData = reactive([
 
 onBeforeMount(() => {
   getScreenHeight();
+  let end: string = setTodayDate();
+  let start: string = setLastDate();
+  dateValue.value = [start, end];
 });
 onMounted(() => {
   getData();
