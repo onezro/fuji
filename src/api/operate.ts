@@ -278,6 +278,16 @@ export function findShelf() {
         method: "post",
     });
 }
+//查询上线产线
+export function QueryOrderLine(data: any) {
+    return request({
+        url: "/api/order/QueryOrderLine",
+        method: "post",
+        params: {
+            orderType:data
+        }
+    });
+}
 //工单上线
 export function OrderOnline(data: any) {
     return request({
@@ -318,7 +328,7 @@ export function QueryDefectCodeDetail(data: any) {
         url: "/api/Defect/QueryDefectCodeDetail",
         method: "post",
         params:{
-            defectid:data
+            ContainerName:data
            }
     });
 }

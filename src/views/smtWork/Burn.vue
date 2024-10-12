@@ -417,7 +417,7 @@ const setDefaultDate = () => {
 };
 
 const radioChange = (args: any) => {
-  console.log(args);
+  // console.log(args);
   if (args[1] == null) {
     OrderForm.MfgOrderName = "";
     OrderForm.ProductName = "";

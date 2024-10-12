@@ -6,24 +6,28 @@
           <!-- <div>
             </div> -->
           <el-form-item label="时间" class="mb-[5px]">
-            <el-date-picker :shortcuts="shortcuts" v-model="searchDate" value-format="YYYY-MM-DD" type="daterange" range-separator="-"
-              size="small" style="width: 200px"  clearable/>
+            <el-date-picker :shortcuts="shortcuts" v-model="searchDate" value-format="YYYY-MM-DD" type="daterange"
+              range-separator="-" size="small" style="width: 200px" clearable />
           </el-form-item>
           <el-form-item label="产线" class="mb-[5px]">
-            <el-select v-model="searchForm.lineName"  clearable style="width: 150px" @clear="getTableData" @change="getTableData">
+            <el-select v-model="searchForm.lineName" clearable style="width: 150px" @clear="getTableData"
+              @change="getTableData" placeholder="">
               <el-option v-for="item in lineNameList" :key="item" :label="item.Desc" :value="item.Name" />
             </el-select>
           </el-form-item>
           <el-form-item label="产品编码" class="mb-[5px]">
-            <el-input v-model="searchForm.productName" clearable style="width: 150px" @clear="getTableData" @change="getTableData" class="input-with-select">
+            <el-input v-model="searchForm.productName" clearable style="width: 150px" @clear="getTableData"
+              @change="getTableData" class="input-with-select">
             </el-input>
           </el-form-item>
           <el-form-item label="工单号" class="mb-[5px]">
-            <el-input v-model="searchForm.orderName" clearable @clear="getTableData" @change="getTableData" style="width: 150px" class="input-with-select">
+            <el-input v-model="searchForm.orderName" clearable @clear="getTableData" @change="getTableData"
+              style="width: 150px" class="input-with-select">
             </el-input>
           </el-form-item>
           <el-form-item label="状态" class="mb-[5px]">
-            <el-select v-model="searchForm.Status" placeholder="" clearable @clear="getTableData" @change="getTableData" style="width: 150px">
+            <el-select v-model="searchForm.Status" placeholder="" clearable @clear="getTableData" @change="getTableData"
+              style="width: 150px">
               <el-option v-for="item in statusList" :key="item" :label="item.Description"
                 :value="item.OrderStatusName" />
             </el-select>
@@ -76,22 +80,21 @@
       <div class="table_container">
         <table-tem size="small" :show-select="true" :tableData="tableData" :tableHeight="tableHeight"
           :columnData="columnData" :pageObj="pageObj" @handleSizeChange="handleSizeChange"
-          @handleCurrentChange="handleCurrentChange"
-          @handleSelectionChange="handleSelectionChange"></table-tem>
+          @handleCurrentChange="handleCurrentChange" @handleSelectionChange="handleSelectionChange"></table-tem>
       </div>
     </el-card>
 
-    <el-dialog v-model="dialogVisible" width="80%" :title="'工单：'+orderName" align-center>
+    <el-dialog v-model="dialogVisible" width="80%" :title="'工单：' + orderName" align-center>
       <div class="w-full">
         <el-tabs v-model="activeName" type="border-card" class="demo-tabs" @tab-change="tabChange">
           <el-tab-pane label="物料清单明细" name="物料清单明细" :stretch="true">
             <div class="flex-1" ref="tablebox">
-              <el-table :data="feedTableData" default-expand-all size="small" stripe border fit :tooltip-effect="'dark'" :height="400"
-                row-key="MaterialName" :tree-props="{ children: 'children' }">
+              <el-table :data="feedTableData" default-expand-all size="small" stripe border fit :tooltip-effect="'dark'"
+                :height="400" row-key="MaterialName" :tree-props="{ children: 'children' }">
                 <el-table-column type="index" align="center" fixed label="序号" width="60" />
                 <el-table-column prop="MaterialName" fixed label="物料编码" flexible width="150">
                 </el-table-column>
-                <el-table-column prop="MaterialDesc" label="物料描述" :show-overflow-tooltip="true" width="200" flexible >
+                <el-table-column prop="MaterialDesc" label="物料描述" :show-overflow-tooltip="true" width="200" flexible>
                 </el-table-column>
 
                 <el-table-column prop="isMater" label="主料" width="150" flexible>
@@ -100,11 +103,9 @@
                     <span v-if="scope.row.isMater === 0">否{{ `(${scope.row.originalMaterialName})` }}</span>
                   </template>
                 </el-table-column>
-                <el-table-column prop="SpecName" label="工序编码" align="center"
-                flexible>
+                <el-table-column prop="SpecName" label="工序编码" align="center" flexible>
                 </el-table-column>
-                <el-table-column prop="SpecDesc" label="工序名称" align="center"
-                flexible>
+                <el-table-column prop="SpecDesc" label="工序名称" align="center" flexible>
                 </el-table-column>
 
                 <el-table-column prop="isLoadQueue" align="center" label="允许上料" flexible>
@@ -113,11 +114,9 @@
                     <span v-if="scope.row.isLoadQueue === 0">否</span>
                   </template>
                 </el-table-column>
-                <el-table-column prop="QtyRequired" align="center" label="单件用量"
-                flexible>
+                <el-table-column prop="QtyRequired" align="center" label="单件用量" flexible>
                 </el-table-column>
-                <el-table-column prop="TotalQtyRequired" align="center" label="需求量"
-                flexible>
+                <el-table-column prop="TotalQtyRequired" align="center" label="需求量" flexible>
                 </el-table-column>
               </el-table>
             </div>
@@ -170,16 +169,17 @@
         </div>
       </template>
     </el-dialog>
-    <el-dialog v-model="orderOnlineVisible" title="工单上线" width="400px" align-center  :append-to-body="true"
+    <el-dialog v-model="orderOnlineVisible" title="工单上线" width="400px" align-center :append-to-body="true"
       :close-on-click-modal="false" :close-on-press-escape="false" @close="closeOnline">
       <el-form ref="orderFormRef" :model="orderOnlineForm" label-width="auto">
         <el-form-item label="工单号" prop="OrderNumber">
           <el-input v-model="orderOnlineForm.OrderNumber" disabled />
         </el-form-item>
         <el-form-item label="产线" prop="LineNumber">
-          <el-select v-model="orderOnlineForm.LineNumber" placeholder="请选择线体" clearable >
-              <el-option v-for="item in lineNameList" :key="item" :label="item.Desc" :value="item.Name" />
-            </el-select>
+          <el-select v-model="orderOnlineForm.LineNumber" placeholder="请选择线体" clearable>
+            <el-option v-for="item in onlineList" :key="item.MfgLineName" :label="item.Description"
+              :value="item.MfgLineName" />
+          </el-select>
         </el-form-item>
         <el-form-item label="面号" prop="Side">
           <el-select v-model="orderOnlineForm.Side" placeholder="请选择面别">
@@ -213,9 +213,7 @@
 
 <script lang="ts" setup>
 import { OrganData } from "@/utils/dataMenu";
-import {
-  ElNotification,
-} from "element-plus";
+import { ElNotification } from "element-plus";
 import { cloneDeep } from "lodash-es";
 import tableTem from "@/components/tableTem/index.vue";
 import { useUserStoreWithOut } from "@/stores/modules/user";
@@ -229,6 +227,7 @@ import {
   UpdateOrderStatus,
   findShelf,
   OrderOnline,
+  QueryOrderLine,
 } from "@/api/operate";
 import {
   ref,
@@ -239,7 +238,7 @@ import {
   onBeforeMount,
   onBeforeUnmount,
 } from "vue";
-import {shortcuts} from "@/utils/dataMenu"
+import { shortcuts,setTodayDate,setLastDate } from "@/utils/dataMenu";
 interface wmsType {
   phase_code: string;
   pt_code: string;
@@ -309,7 +308,7 @@ const tableHeight = ref(0);
 const userStore = useUserStoreWithOut();
 const lineNameList = ref<any>([]);
 const statusList = ref<any>([]);
-const searchDate = ref([]);
+const searchDate = ref<any[]>([]);
 const activeName = ref("物料清单明细");
 const feedTableData = ref<any>([]);
 const orderChoice = ref("");
@@ -333,7 +332,7 @@ const orderOnlineForm = ref({
 });
 const orderFormRef = ref();
 const shelfList = ref<ShelfList[]>([]);
-const orderName=ref('')
+const orderName = ref("");
 
 interface productObjTS {
   WorkflowDesc: string;
@@ -344,19 +343,24 @@ const productObj = ref<productObjTS>({
   WorkflowDesc: "",
   WorkflowName: "",
 });
-
+const onlineList = ref<any[]>([]);
 
 watch(
   () => searchDate.value,
-  (newVal: any, oldVal) => {
+  (newVal: any, oldVal: any) => {
     if (newVal === null) {
       searchForm.value.PlanStartTime = "";
       searchForm.value.PlanEndTime = "";
-      getTableData()
-      return [];
+      getTableData();
+      return 
     }
-    searchForm.value.PlanStartTime = newVal[0];
-    searchForm.value.PlanEndTime = newVal[1];
+    if (newVal !== oldVal) {
+      searchForm.value.PlanStartTime = newVal[0];
+      searchForm.value.PlanEndTime = newVal[1];
+      getTableData();
+    }
+
+
   }
 );
 const rowClick = (val: any) => {
@@ -367,10 +371,10 @@ const rowClick = (val: any) => {
   orderChoice.value = val.MfgOrderName;
   productChoice.value = val.ProductName;
   activeName.value = "物料清单明细";
-  orderName.value=val.MfgOrderName
+  orderName.value = val.MfgOrderName;
   QueryOrderMaterialRequired({
     MfgOrder: val.MfgOrderName,
-  }).then((res: any) => {;
+  }).then((res: any) => {
     if (res.success) {
       let data = cloneDeep(feedOrganData(res.content));
 
@@ -493,14 +497,17 @@ const columnData = reactive([
 
 onBeforeMount(() => {
   getScreenHeight();
+  let end: string = setTodayDate();
+  let start: string = setLastDate();
+  searchDate.value = [start, end];
 });
 
 onMounted(() => {
-  getScreenHeight();
   window.addEventListener("resize", getScreenHeight);
+
   getModeList();
   getStatusList();
-  getTableData();
+  // getTableData();
 });
 onBeforeUnmount(() => {
   window.addEventListener("resize", getScreenHeight);
@@ -508,7 +515,6 @@ onBeforeUnmount(() => {
 
 const getModeList = () => {
   GetFactoryModelList().then((res: any) => {
-    
     if (!res || res.content === null) {
       return;
     }
@@ -538,8 +544,6 @@ const getTableData = () => {
     tableData.value = res.content;
   });
 };
-
-
 
 const feedOrganData = (organizations: any) => {
   const organizationMap = new Map();
@@ -620,18 +624,21 @@ const openOrderOnline = () => {
   orderOnlineVisible.value = true;
   let data = cloneDeep(onlineData.value);
   orderOnlineForm.value.OrderNumber = data[0].MfgOrderName;
+
+  QueryOrderLine(data[0].OrderTypeName).then((res: any) => {
+    onlineList.value = res.content;
+  });
   findShelf().then((res: any) => {
     shelfList.value = res.content;
   });
 };
 //关闭工单上线
-const closeOnline=()=>{
+const closeOnline = () => {
   orderOnlineVisible.value = false;
-  orderFormRef.value.resetFields()
-}
+  orderFormRef.value.resetFields();
+};
 //工单上线
 const orderOnline = () => {
-
   orderOnlineForm.value.shelf_ids =
     orderOnlineForm.value.shelf_ids_list.toString();
   // console.log(orderOnlineForm.value);

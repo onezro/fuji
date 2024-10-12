@@ -3,25 +3,31 @@
     <el-card shadow="always" :body-style="{ padding: '8px 8px 0px 8px' }">
       <div ref="headerRef flex flex-col">
         <el-form ref="formRef" class="form" :inline="true" size="small">
+          <!-- <div>
+            </div> -->
           <el-form-item label="时间" class="mb-[5px]">
-            <el-date-picker :shortcuts="shortcuts" v-model="searchDate" value-format="YYYY-MM-DD" type="daterange" range-separator="-"
-              size="small" style="width: 200px"  clearable/>
+            <el-date-picker :shortcuts="shortcuts" v-model="searchDate" value-format="YYYY-MM-DD" type="daterange"
+              range-separator="-" size="small" style="width: 200px" clearable />
           </el-form-item>
           <el-form-item label="产线" class="mb-[5px]">
-            <el-select v-model="searchForm.lineName"  clearable style="width: 150px" @clear="getTableData" @change="getTableData">
+            <el-select v-model="searchForm.lineName" clearable style="width: 150px" @clear="getTableData"
+              @change="getTableData" placeholder="">
               <el-option v-for="item in lineNameList" :key="item" :label="item.Desc" :value="item.Name" />
             </el-select>
           </el-form-item>
           <el-form-item label="产品编码" class="mb-[5px]">
-            <el-input v-model="searchForm.productName" clearable style="width: 150px" @clear="getTableData" @change="getTableData" class="input-with-select">
+            <el-input v-model="searchForm.productName" clearable style="width: 150px" @clear="getTableData"
+              @change="getTableData" class="input-with-select">
             </el-input>
           </el-form-item>
           <el-form-item label="工单号" class="mb-[5px]">
-            <el-input v-model="searchForm.orderName" clearable @clear="getTableData" @change="getTableData" style="width: 150px" class="input-with-select">
+            <el-input v-model="searchForm.orderName" clearable @clear="getTableData" @change="getTableData"
+              style="width: 150px" class="input-with-select">
             </el-input>
           </el-form-item>
           <el-form-item label="状态" class="mb-[5px]">
-            <el-select v-model="searchForm.Status" placeholder="" clearable @clear="getTableData" @change="getTableData" style="width: 150px">
+            <el-select v-model="searchForm.Status" placeholder="" clearable @clear="getTableData" @change="getTableData"
+              style="width: 150px">
               <el-option v-for="item in statusList" :key="item" :label="item.Description"
                 :value="item.OrderStatusName" />
             </el-select>
@@ -29,7 +35,38 @@
           <el-form-item class="mb-[5px]">
             <el-button type="primary" @click="getTableData">查询</el-button>
           </el-form-item>
-
+          <!-- <el-form-item class="mb-[5px]">
+            <el-button
+              type="warning"
+              :disabled="onlineData.length === 1 ? false : true"
+              @click="orderOnline"
+              >工单上线</el-button
+            >
+          </el-form-item>
+          <el-form-item class="mb-[5px]">
+            <el-button
+              type="info"
+              icon="Lock"
+              :disabled="onlineData.length === 1 ? false : true"
+              @click="orderLock"
+              >锁定</el-button
+            >
+          </el-form-item>
+          <el-form-item class="mb-[5px]">
+            <el-button
+             color="#409eff"
+             style="color: #fff;"
+              icon="Unlock"
+              :disabled="onlineData.length === 1 ? false : true"
+              @click="orderUnlock"
+              >解锁</el-button
+            >
+          </el-form-item> -->
+          <!-- <el-form-item>
+            <el-button type="primary" @click="addNewVisible = true"
+              >新建</el-button
+            >
+          </el-form-item> -->
         </el-form>
         <div class="mb-[5px]">
           <el-button type="warning" size="small" :disabled="onlineData.length === 1 ? false : true"
@@ -43,56 +80,49 @@
       <div class="table_container">
         <table-tem size="small" :show-select="true" :tableData="tableData" :tableHeight="tableHeight"
           :columnData="columnData" :pageObj="pageObj" @handleSizeChange="handleSizeChange"
-          @handleCurrentChange="handleCurrentChange" 
-          @handleSelectionChange="handleSelectionChange"></table-tem>
+          @handleCurrentChange="handleCurrentChange" @handleSelectionChange="handleSelectionChange"></table-tem>
       </div>
     </el-card>
 
     <el-dialog v-model="dialogVisible" width="80%" :title="'工单：' + orderName" align-center>
       <div class="w-full">
-        <el-tabs v-model="activeName" type="border-card" class="tabs-css" @tab-change="tabChange">
+        <el-tabs v-model="activeName" type="border-card" class="demo-tabs" @tab-change="tabChange">
           <el-tab-pane label="物料清单明细" name="物料清单明细" :stretch="true">
             <div class="flex-1" ref="tablebox">
-              <el-table :data="feedTableData" default-expand-all size="small" stripe border fit :tooltip-effect="'dark'" :height="400"
-                row-key="MaterialName" :tree-props="{ children: 'children' }">
+              <el-table :data="feedTableData" default-expand-all size="small" stripe border fit :tooltip-effect="'dark'"
+                :height="400" row-key="MaterialName" :tree-props="{ children: 'children' }">
                 <el-table-column type="index" align="center" fixed label="序号" width="60" />
-                <el-table-column prop="MaterialName" fixed label="物料编码" :min-width="150" width="150">
+                <el-table-column prop="MaterialName" fixed label="物料编码" flexible width="150">
                 </el-table-column>
-                <el-table-column prop="MaterialDesc" label="物料描述" :show-overflow-tooltip="true" width="200">
+                <el-table-column prop="MaterialDesc" label="物料描述" :show-overflow-tooltip="true" width="200" flexible>
                 </el-table-column>
 
-                <el-table-column prop="isMater" label="主料" width="150" :min-width="150">
+                <el-table-column prop="isMater" label="主料" width="150" flexible>
                   <template #default="scope">
                     <span v-if="scope.row.isMater === 1">是</span>
                     <span v-if="scope.row.isMater === 0">否{{ `(${scope.row.originalMaterialName})` }}</span>
                   </template>
                 </el-table-column>
-                <el-table-column prop="SpecName" label="工序编码" align="center"
-                  :min-width="flexColumnWidth('使用工序', 'SpecDesc')">
+                <el-table-column prop="SpecName" label="工序编码" align="center" flexible>
                 </el-table-column>
-                <el-table-column prop="SpecDesc" label="工序名称" align="center"
-                  :min-width="flexColumnWidth('使用工序', 'SpecDesc')">
+                <el-table-column prop="SpecDesc" label="工序名称" align="center" flexible>
                 </el-table-column>
 
-                <el-table-column prop="isLoadQueue" align="center" label="允许上料" :min-width="flexColumnWidth('允许上料', 'isLoadoueue')
-                  ">
+                <el-table-column prop="isLoadQueue" align="center" label="允许上料" flexible>
                   <template #default="scope">
                     <span v-if="scope.row.isLoadQueue === 1">是</span>
                     <span v-if="scope.row.isLoadQueue === 0">否</span>
                   </template>
                 </el-table-column>
-                <el-table-column prop="QtyRequired" align="center" label="单件用量"
-                  :min-width="flexColumnWidth('单件用量', 'QtyRequired')">
+                <el-table-column prop="QtyRequired" align="center" label="单件用量" flexible>
                 </el-table-column>
-                <el-table-column prop="TotalQtyRequired" align="center" label="需求量"
-                  :min-width="flexColumnWidth('需求量', 'TotalQtyRequired')">
+                <el-table-column prop="TotalQtyRequired" align="center" label="需求量" flexible>
                 </el-table-column>
               </el-table>
             </div>
           </el-tab-pane>
           <el-tab-pane label="工艺流程" name="工艺流程">
-            <el-form ref="formRef" label-position="left" label-width="auto" size="small" :inline="true"
-              class="mt-[5px]">
+            <el-form ref="formRef" label-position="left" label-width="auto" size="small" :inline="true">
               <el-form-item label="工艺流程名称" prop="compid" class="mb-[5px]">
                 <el-input disabled v-model.trim="productObj.WorkflowName" style="width: 240px"></el-input>
               </el-form-item>
@@ -145,15 +175,16 @@
         <el-form-item label="工单号" prop="OrderNumber">
           <el-input v-model="orderOnlineForm.OrderNumber" disabled />
         </el-form-item>
-        <el-form-item label="线体" prop="LineNumber">
-          <el-select v-model="orderOnlineForm.LineNumber" placeholder="请选择线体" clearable >
-              <el-option v-for="item in lineNameList" :key="item" :label="item.Desc" :value="item.Name" />
-            </el-select>
+        <el-form-item label="产线" prop="LineNumber">
+          <el-select v-model="orderOnlineForm.LineNumber" placeholder="请选择线体" clearable>
+            <el-option v-for="item in onlineList" :key="item.MfgLineName" :label="item.Description"
+              :value="item.MfgLineName" />
+          </el-select>
         </el-form-item>
-        <el-form-item label="面别" prop="Side">
+        <el-form-item label="面号" prop="Side">
           <el-select v-model="orderOnlineForm.Side" placeholder="请选择面别">
-            <el-option label="A面" value="A" />
-            <el-option label="B面" value="B" />
+            <el-option label="BOT" value="BOT" />
+            <el-option label="TOP" value="TOP" />
           </el-select>
         </el-form-item>
         <el-form-item label="货架" prop="shelf_ids">
@@ -182,10 +213,7 @@
 
 <script lang="ts" setup>
 import { OrganData } from "@/utils/dataMenu";
-import {
-  
-  ElNotification,
-} from "element-plus";
+import { ElNotification } from "element-plus";
 import { cloneDeep } from "lodash-es";
 import tableTem from "@/components/tableTem/index.vue";
 import { useUserStoreWithOut } from "@/stores/modules/user";
@@ -199,6 +227,7 @@ import {
   UpdateOrderStatus,
   findShelf,
   OrderOnline,
+  QueryOrderLine,
 } from "@/api/operate";
 import {
   ref,
@@ -209,7 +238,7 @@ import {
   onBeforeMount,
   onBeforeUnmount,
 } from "vue";
-import {shortcuts} from "@/utils/dataMenu"
+import { shortcuts } from "@/utils/dataMenu";
 interface wmsType {
   phase_code: string;
   pt_code: string;
@@ -279,7 +308,7 @@ const tableHeight = ref(0);
 const userStore = useUserStoreWithOut();
 const lineNameList = ref<any>([]);
 const statusList = ref<any>([]);
-const searchDate = ref([]);
+const searchDate = ref<any[]>([]);
 const activeName = ref("物料清单明细");
 const feedTableData = ref<any>([]);
 const orderChoice = ref("");
@@ -294,7 +323,7 @@ const orderOnlineForm = ref({
   Side: "", //AB面
   LineNumber: "", //线体
   LineNameDesc: "",
-  shelf_ids: '', //货位
+  shelf_ids: "", //货位
   shelf_ids_list: [],
   IsFirstArticle: true, //是否首检
   Remark: "", //备注
@@ -303,7 +332,7 @@ const orderOnlineForm = ref({
 });
 const orderFormRef = ref();
 const shelfList = ref<ShelfList[]>([]);
-const orderName=ref('')
+const orderName = ref("");
 
 interface productObjTS {
   WorkflowDesc: string;
@@ -314,20 +343,26 @@ const productObj = ref<productObjTS>({
   WorkflowDesc: "",
   WorkflowName: "",
 });
+const onlineList = ref<any[]>([]);
 
 watch(
   () => searchDate.value,
-  (newVal: any, oldVal) => {
+  (newVal: any, oldVal: any) => {
     if (newVal === null) {
       searchForm.value.PlanStartTime = "";
       searchForm.value.PlanEndTime = "";
-      return [];
+      getTableData();
+      return
     }
-    searchForm.value.PlanStartTime = newVal[0];
-    searchForm.value.PlanEndTime = newVal[1];
+    if (newVal !== oldVal) {
+      searchForm.value.PlanStartTime = newVal[0];
+      searchForm.value.PlanEndTime = newVal[1];
+      getTableData();
+    }
+
+
   }
 );
-
 const rowClick = (val: any) => {
   dialogVisible.value = true;
   if (orderChoice.value === val.MfgOrderName) {
@@ -336,13 +371,13 @@ const rowClick = (val: any) => {
   orderChoice.value = val.MfgOrderName;
   productChoice.value = val.ProductName;
   activeName.value = "物料清单明细";
-  orderName.value=val.MfgOrderName
+  orderName.value = val.MfgOrderName;
   QueryOrderMaterialRequired({
     MfgOrder: val.MfgOrderName,
   }).then((res: any) => {
-
     if (res.success) {
       let data = cloneDeep(feedOrganData(res.content));
+
       feedTableData.value = data;
     }
   });
@@ -462,14 +497,17 @@ const columnData = reactive([
 
 onBeforeMount(() => {
   getScreenHeight();
+  let end: string = setDefaultDate();
+  let start: string = setDefaultDate1();
+  searchDate.value = [start, end];
 });
 
 onMounted(() => {
-  getScreenHeight();
   window.addEventListener("resize", getScreenHeight);
+
   getModeList();
   getStatusList();
-  getTableData();
+  // getTableData();
 });
 onBeforeUnmount(() => {
   window.addEventListener("resize", getScreenHeight);
@@ -477,15 +515,12 @@ onBeforeUnmount(() => {
 
 const getModeList = () => {
   GetFactoryModelList().then((res: any) => {
-    // let data = JSON.parse(res.content);
-    // option1.value = OrganData(res.content);
     if (!res || res.content === null) {
       return;
     }
     let data = OrganData(res.content);
     data = data.filter((d: any) => d.Name == "M08-ASY01");
     lineNameList.value = data[0].childMenu;
-    // lineNameList.value = [{ Name: "" }, ...OrganData(res.content)[0].childMenu];
   });
 };
 
@@ -509,8 +544,6 @@ const getTableData = () => {
     tableData.value = res.content;
   });
 };
-
-
 
 const feedOrganData = (organizations: any) => {
   const organizationMap = new Map();
@@ -542,7 +575,7 @@ const tabChange = (name: any) => {
     QueryOrderMaterialRequired({
       MfgOrder: orderChoice.value,
     }).then((res: any) => {
-
+      // console.log(OrganData(res.content));
       if (res.success) {
         let data = cloneDeep(feedOrganData(res.content));
         feedTableData.value = data;
@@ -591,7 +624,10 @@ const openOrderOnline = () => {
   orderOnlineVisible.value = true;
   let data = cloneDeep(onlineData.value);
   orderOnlineForm.value.OrderNumber = data[0].MfgOrderName;
-  
+
+  QueryOrderLine(data[0].OrderTypeName).then((res: any) => {
+    onlineList.value = res.content;
+  });
   findShelf().then((res: any) => {
     shelfList.value = res.content;
   });
@@ -599,11 +635,13 @@ const openOrderOnline = () => {
 //关闭工单上线
 const closeOnline = () => {
   orderOnlineVisible.value = false;
-  orderFormRef.value.resetFields()
-}
+  orderFormRef.value.resetFields();
+};
 //工单上线
 const orderOnline = () => {
-  orderOnlineForm.value.shelf_ids = orderOnlineForm.value.shelf_ids_list.toString()
+  orderOnlineForm.value.shelf_ids =
+    orderOnlineForm.value.shelf_ids_list.toString();
+  // console.log(orderOnlineForm.value);
   OrderOnline(orderOnlineForm.value).then((res: any) => {
     orderOnlineVisible.value = false;
     ElNotification({
@@ -611,9 +649,9 @@ const orderOnline = () => {
       message: res.msg,
       type: "success",
     });
-    orderFormRef.value.resetFields()
+    orderFormRef.value.resetFields();
     getTableData();
-  })
+  });
 };
 //
 const orderLock = () => {
@@ -657,39 +695,23 @@ const getScreenHeight = () => {
     tableHeight.value = window.innerHeight - 214;
   });
 };
-const flexColumnWidth = (label: any, prop: any) => {
-  const arr = feedTableData?.value.map((x: { [x: string]: any }) => x[prop]);
-  arr.push(label); // 把每列的表头也加进去算
-  return getMaxLength(arr) + 25 + "px";
+const setDefaultDate = () => {
+  // 获取当前日期
+  const now = new Date();
+  // 格式化日期为YYYY-MM-DD
+  const formattedDate = `${now.getFullYear()}-${String(
+    now.getMonth() + 1
+  ).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+  return formattedDate;
 };
-
-const getMaxLength = (arr: any) => {
-  return arr.reduce((acc: any, item: any) => {
-    if (item) {
-      const calcLen = getTextWidth(item);
-
-      if (acc < calcLen) {
-        acc = calcLen;
-      }
-    }
-    return acc;
-  }, 0);
-};
-
-const getTextWidth = (str: string) => {
-  let width = 0;
-  const html = document.createElement("span");
-  html.style.cssText = `padding: 0; margin: 0; border: 0; line-height: 1; font-size: ${13}px; font-family: Arial, sans-serif;`;
-  html.innerText = str; // 去除字符串前后的空白字符
-  document.body?.appendChild(html);
-
-  const spanElement = html; // 无需再次查询，直接使用创建的元素
-  if (spanElement) {
-    width = spanElement.offsetWidth;
-    spanElement.remove();
-  }
-  // console.log(width);
-  return width;
+const setDefaultDate1 = () => {
+  // 获取当前日期
+  const now = new Date();
+  // 格式化日期为YYYY-MM-DD
+  const formattedDate = `${now.getFullYear()}-${String(
+    now.getMonth() + 1
+  ).padStart(2, "0")}-${String(now.getDate() - 6).padStart(2, "0")}`;
+  return formattedDate;
 };
 </script>
 
@@ -700,9 +722,41 @@ const getTextWidth = (str: string) => {
 }
 </style>
 <style lang="scss">
-@import '../../style//tab.css';
-
 .el-pagination {
   justify-content: center;
+}
+
+.el-tabs--border-card {
+  border-top: 1px solid #006487;
+}
+
+.demo-tabs .el-tabs__header {
+  --el-tabs-header-height: 30px;
+  background-color: #006487 !important;
+}
+
+.demo-tabs .el-tabs__content {
+  padding: 5px;
+}
+
+.demo-tabs .el-tabs__item {}
+
+.demo-tabs.el-tabs--border-card>.el-tabs__header .el-tabs__item {
+  color: #fff;
+  font-size: 0.8rem;
+  // padding: 0 !important;
+}
+
+.demo-tabs .el-tabs__item.is-active {
+  font-size: 0.8rem;
+  // color: #fff;
+  color: #006487 !important;
+  // font-weight: bold;
+}
+
+.el-tabs--border-card>.el-tabs__header .el-tabs__item:not(.is-disabled):hover {
+  font-size: 0.8rem;
+  color: #006487 !important;
+  background-color: rgba($color: #fff, $alpha: 0.8);
 }
 </style>

@@ -11,9 +11,9 @@
                         <span class="ml-5">基本信息</span>
                     </div>
                     <div class="p-2">
-                        <el-form ref="formRef" :model="form" label-width="auto">
-                            <el-form-item label="产线">
-                                <el-select v-model="form.LineNumber" clearable @change="changeLine">
+                        <el-form ref="formRef" class="myselect" :model="form" :rules="formRule" label-width="auto">
+                            <el-form-item label="产线" prop="LineNumber">
+                                <el-select  v-model="form.LineNumber" clearable @change="changeLine">
                                     <el-option v-for="l in lineList" :label="l.LineDesc" :value="l.LineNumber"
                                         :key="l.LineNumber" />
                                 </el-select>
@@ -144,7 +144,7 @@
         </el-dialog>
         <el-dialog v-model="startVisible" draggable title="开始备料" width="400px" :append-to-body="true"
             :close-on-click-modal="false" :close-on-press-escape="false" align-center @close="startCancel">
-            <el-form ref="startFormRef" :model="startForm" label-width="auto">
+            <el-form ref="startFormRef" :model="startForm" :rules="formRule" label-width="auto">
                 <el-form-item label="工单" prop="OrderNumber" v-if="false">
                     <el-input v-model="startForm.OrderNumber" disabled />
                 </el-form-item>
@@ -153,6 +153,9 @@
                 </el-form-item>
                 <el-form-item label="面号" prop="Side" v-if="false">
                     <el-input v-model="startForm.Side" disabled />
+                </el-form-item>
+                <el-form-item label="备料人" prop="userAccount">
+                    <el-input v-model="startForm.userAccount" disabled />
                 </el-form-item>
                 <el-form-item label="货架" prop="shelf_ids_list">
                     <el-select v-model="startForm.shelf_ids_list" multiple collapse-tags collapse-tags-tooltip
@@ -177,17 +180,19 @@
         </el-dialog>
         <el-dialog v-model="firstVisible" draggable title="首套亮灯" width="400px" :append-to-body="true"
             :close-on-click-modal="false" :close-on-press-escape="false" align-center @close="firstCancel">
-            <el-form ref="firstFormRef" :model="firstForm" label-width="auto">
-                <el-form-item label="操作类型">
-                    <el-radio-group v-model="operateType">
-                        <el-radio :value="0">首套亮灯</el-radio>
-                        <el-radio :value="1">取消首套亮灯</el-radio>
+            <el-form ref="firstFormRef" :model="firstForm" :rules="firstRule" label-width="auto">
 
+                <div class="flex justify-around border-2 border-dashed  border-red-600 mb-3">
+                    <el-radio-group v-model="operateType">
+                        <el-radio :value="0" size="large">首套亮灯</el-radio>
+                        <el-radio :value="1" size="large">取消首套亮灯</el-radio>
                     </el-radio-group>
-                </el-form-item>
+
+                </div>
+
                 <el-form-item label="灯色" prop="issue_color">
                     <!-- <el-input v-model="firstForm.issue_color" /> -->
-                    <el-radio-group v-model="firstForm.issue_color" :disabled="operateType == 1">
+                    <el-radio-group v-model="firstForm.issue_color"  :disabled="operateType == 1">
                         <el-radio :value="3">蓝</el-radio>
                         <el-radio :value="4">黄</el-radio>
                         <el-radio :value="5">紫</el-radio>
@@ -204,15 +209,12 @@
                     <el-input v-model="firstForm.Side" disabled />
                 </el-form-item>
 
-
                 <el-form-item label="货架" prop="shelf_ids_list">
-
                     <el-input v-model="firstForm.shelf_ids" disabled />
                     <!-- <el-select v-model="firstForm.shelf_ids" multiple collapse-tags collapse-tags-tooltip
             :max-collapse-tags="7" placeholder="">
             <el-option v-for="item in shelfList" :key="item.Shelf_id" :label="item.Shelf_id" :value="item.Shelf_id" />
           </el-select> -->
-                   
                 </el-form-item>
                 <el-form-item label="台车" prop="Station">
                     <el-select v-model="firstForm.Station" placeholder="">
@@ -220,7 +222,6 @@
                             :value="item.Station" />
                     </el-select>
                 </el-form-item>
-
             </el-form>
             <template #footer>
                 <span class="dialog-footer">
@@ -241,7 +242,7 @@ import {
     findShelf,
     SubmitSMTPreparation,
     SendFirstSet,
-    CancelFirstSet
+    CancelFirstSet,
 } from "@/api/smtApi";
 import {
     ref,
@@ -404,12 +405,52 @@ const firstForm = ref({
     OrderNumber: "",
     Side: "",
     Station: "",
-    shelf_ids: '',
+    shelf_ids: "",
     // shelf_ids_list:[],
     OperatorName: userStore.getUserInfo,
 });
-const operateType = ref(0)
-const StationList = ref<any[]>([])
+const operateType = ref(0);
+const StationList = ref<any[]>([]);
+const formRef = ref();
+const firstFormRef = ref()
+
+//规则
+
+const formRule = reactive({
+    LineNumber: [
+        {
+            required: true,
+            message: "请选择产线",
+            trigger: "change",
+        },
+    ],
+    shelf_ids_list: [
+        {
+            required: true,
+            message: "请选择货架",
+            trigger: "change",
+        },
+    ]
+});
+const operateRule = reactive({
+    OrderNumber: [
+        {
+            required: true,
+            message: "工单不能为空",
+            trigger: "blur",
+        }
+    ]
+})
+
+const firstRule = reactive({
+    Station: [
+        {
+            required: true,
+            message: "请选择台车",
+            trigger: "change",
+        },
+    ]
+})
 
 watch(
     () => operateForm.value.Status,
@@ -434,11 +475,10 @@ watch(
     () => operateType.value,
     (newVal, oldVal) => {
         if (newVal == 1 && oldVal != newVal) {
-            firstForm.value.issue_color = 0
+            firstForm.value.issue_color = 0;
         } else {
-            firstForm.value.issue_color = 3
+            firstForm.value.issue_color = 3;
         }
-
     },
     {
         immediate: true,
@@ -517,7 +557,7 @@ const cellClick = (row: any) => {
     }
     if (row.Status == 1) {
         StatusDec = "备料中";
-        firstForm.value.shelf_ids = row.shelf_ids
+        firstForm.value.shelf_ids = row.shelf_ids;
         // firstForm.value.shelf_ids_list.push (row.shelf_ids)
     }
     if (row.Status == 2) {
@@ -534,7 +574,7 @@ const celldblclick = (row: any) => {
     }
     if (row.Status == 1) {
         StatusDec = "备料中";
-        firstForm.value.shelf_ids = row.shelf_ids
+        firstForm.value.shelf_ids = row.shelf_ids;
     }
     if (row.Status == 2) {
         StatusDec = "备料完成";
@@ -547,6 +587,9 @@ const celldblclick = (row: any) => {
     firstForm.value.Side = row.Side;
     status.value = row.Status;
     orderVisiable.value = false;
+    msgTitle.value = ``;
+    msgType.value = true;
+    // operateFormRef.value.clearValidate()
 };
 const orderCancel = () => {
     orderVisiable.value = false;
@@ -560,55 +603,69 @@ const orderConfirm = () => {
     firstForm.value.Side = chooseOrder.value.Side;
     status.value = chooseOrder.value.Status;
     orderVisiable.value = false;
+    msgTitle.value = ``;
+    msgType.value = true;
+    // operateFormRef.value.clearValidate()
 };
 const getChange = () => {
     //   getOrderData(operateForm.value);
-    GetSMTPreparationOrderList({
-        OrderNumber: operateForm.value.OrderNumber,
-        Side: operateForm.value.Side,
-        LineNumber: form.value.LineNumber,
-    }).then((res: any) => {
-        if(res.content.length==0){
-            msgTitle.value = `未找到${operateForm.value.OrderNumber}工单信息`;
-            msgType.value = false;
-            tableData.value=[]
-        }
-        operateForm.value = { ...res.content[0] };
-        // console.log(res.content);
-        let StatusDec = "";
-        if (res.content[0].Status == 0) {
-            StatusDec = "待备料";
-        }
-        if (res.content[0].Status == 1) {
-            StatusDec = "备料中";
-            firstForm.value.shelf_ids = res.content[0].shelf_ids
-        }
-        if (res.content[0].Status == 2) {
-            StatusDec = "备料完成";
-        }
-        // console.log(res.content[0].Statu);
-        startForm.value.LineNumber = res.content[0].LineNumber;
-        startForm.value.OrderNumber = res.content[0].OrderNumber;
-        startForm.value.Side = res.content[0].Side;
-        firstForm.value.OrderNumber = res.content[0].OrderNumber;
-        firstForm.value.Side = res.content[0].Side;
-        operateForm.value.StatusDec = StatusDec;
-    });
+    if (operateForm.value.OrderNumber == "") {
+        msgTitle.value = `工单不能为空`;
+        msgType.value = false;
+        tableData.value = [];
+        operateForm.value.Status=""
+        operateFormRef.value.resetFields();
+      
+    } else {
+        msgTitle.value = ``;
+        msgType.value = true;
+        GetSMTPreparationOrderList({
+            OrderNumber: operateForm.value.OrderNumber,
+            Side: operateForm.value.Side,
+            LineNumber: form.value.LineNumber,
+        }).then((res: any) => {
+            if (res.content.length == 0) {
+                msgTitle.value = `未找到${operateForm.value.OrderNumber}工单信息`;
+                msgType.value = false;
+                tableData.value = [];
+            }
+            operateForm.value = { ...res.content[0] };
+            // console.log(res.content);
+            let StatusDec = "";
+            if (res.content[0].Status == 0) {
+                StatusDec = "待备料";
+            }
+            if (res.content[0].Status == 1) {
+                StatusDec = "备料中";
+                firstForm.value.shelf_ids = res.content[0].shelf_ids;
+            }
+            if (res.content[0].Status == 2) {
+                StatusDec = "备料完成";
+            }
+            // console.log(res.content[0].Statu);
+            startForm.value.LineNumber = res.content[0].LineNumber;
+            startForm.value.OrderNumber = res.content[0].OrderNumber;
+            startForm.value.Side = res.content[0].Side;
+            firstForm.value.OrderNumber = res.content[0].OrderNumber;
+            firstForm.value.Side = res.content[0].Side;
+            operateForm.value.StatusDec = StatusDec;
+        });
+    }
+
 };
 const restForm = () => {
     status.value = -1;
     operateFormRef.value.resetFields();
-  
+
     msgTitle.value = "";
     msgType.value = true;
-    operateForm.value.Status=''
-    tableData.value=[]
+    operateForm.value.Status = "";
+    tableData.value = [];
     //   startFormRef.value.resetFields();
     // console.log(  operateForm.value);
 };
 
 const openStart = () => {
-
     startVisible.value = true;
     findShelf().then((res: any) => {
         shelfList.value = res.content;
@@ -621,17 +678,24 @@ const startCancel = () => {
 const startConfirm = () => {
     startForm.value.shelf_ids = startForm.value.shelf_ids_list.toString();
     startForm.value.optionType = "start";
-    SubmitSMTPreparation(startForm.value).then((res: any) => {
-        // console.log(res);
-        msgTitle.value = res.msg;
-        msgType.value = res.success;
-        startVisible.value = false;
-        if (res.success) {
-            getChange();
-            getOrderData();
+    startFormRef.value.validate((valid: any) => {
+        if (valid) {
+            msgTitle.value = ``;
+            msgType.value = true;
+            SubmitSMTPreparation(startForm.value).then((res: any) => {
+                // console.log(res);
+                msgTitle.value = res.msg;
+                msgType.value = res.success;
+                startVisible.value = false;
+                if (res.success) {
+                    getChange();
+                    getOrderData();
+                }
+            });
+        } else {
+            console.log('error submit!')
         }
-    });
-    // console.log(startForm.value);
+    })
 };
 const completeSubmit = () => {
     ElMessageBox.confirm("确定备料完成", "确认操作", {
@@ -641,6 +705,8 @@ const completeSubmit = () => {
     })
         .then(() => {
             startForm.value.optionType = "end";
+            msgTitle.value = ``;
+            msgType.value = true;
             SubmitSMTPreparation(startForm.value).then((res: any) => {
                 // console.log(res);
                 msgTitle.value = res.msg;
@@ -669,33 +735,43 @@ const openFirst = () => {
 };
 const firstCancel = () => {
     firstVisible.value = false;
-    firstForm.value.Station=''
-    firstForm.value.issue_color=3
+    firstForm.value.Station = "";
+    firstForm.value.issue_color = 3;
 };
 const firstSubmit = () => {
-    console.log(firstForm.value);
-    if (operateType.value == 1) {
-        CancelFirstSet(firstForm.value).then((res: any) => {
-            msgTitle.value = res.msg;
-                msgType.value = res.success;
-                if (res.success) {
-                    getChange();
-                    getOrderData();
-                }
-        })
-    } else {
-        SendFirstSet(firstForm.value).then((res: any) => {
-            msgTitle.value = res.msg;
-                msgType.value = res.success;
-                if (res.success) {
-                    getChange();
-                    getOrderData();
-                }
-        })
-    }
-    firstVisible.value = false;
-    firstForm.value.Station=''
-     firstForm.value.issue_color=3
+    // console.log(firstForm.value);
+    firstFormRef.value.validate((valid: any) => {
+        if (valid) {
+            // console.log(firstForm.value);
+            msgTitle.value = ``;
+            msgType.value = true;
+            if (operateType.value == 1) {
+                CancelFirstSet(firstForm.value).then((res: any) => {
+                    msgTitle.value = res.msg;
+                    msgType.value = res.success;
+                    if (res.success) {
+                        getChange();
+                        getOrderData();
+                    }
+                });
+            } else {
+                SendFirstSet(firstForm.value).then((res: any) => {
+                    msgTitle.value = res.msg;
+                    msgType.value = res.success;
+                    if (res.success) {
+                        getChange();
+                        getOrderData();
+                    }
+                });
+            }
+            firstVisible.value = false;
+            firstForm.value.Station = "";
+            firstForm.value.issue_color = 3;
+        } else {
+            console.log('error submit!')
+        }
+    })
+
 };
 
 const handleSizeChange = (val: any) => {
@@ -717,4 +793,11 @@ const getScreenHeight = () => {
 .setwidth {
     flex: 0 0 300px;
 }
+// .myselect .el-input__inner{
+//     font-size: 30px;
+// }
+.myselect  .el-select__selection {
+	  font-size: 18px;
+      font-weight: bold;
+	}
 </style>

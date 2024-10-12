@@ -53,7 +53,7 @@ export  const OrganData = (organizations: any) => {
       value: () => {
         const end = new Date()
         const start = new Date()
-        start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
+        start.setTime(start.getTime() - 3600 * 1000 * 24 * 6)
         return [start, end]
       },
     },
@@ -66,3 +66,22 @@ export  const OrganData = (organizations: any) => {
       },
     }
   ]
+
+  export const setTodayDate = () => {
+    // 获取当前日期
+    const now = new Date();
+    // 格式化日期为YYYY-MM-DD
+    const formattedDate = `${now.getFullYear()}-${String(
+      now.getMonth() + 1
+    ).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+    return formattedDate;
+  };
+  export const setLastDate = () => {
+    // 获取当前日期
+    const now = new Date();
+    // 格式化日期为YYYY-MM-DD
+    const formattedDate = `${now.getFullYear()}-${String(
+      now.getMonth() + 1
+    ).padStart(2, "0")}-${String(now.getDate() - 6).padStart(2, "0")}`;
+    return formattedDate;
+  };
