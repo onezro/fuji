@@ -17,6 +17,7 @@
           </el-form-item>
           <el-form-item label="日期" class="mb-2">
             <el-date-picker
+            :shortcuts="shortcuts"
               v-model="date"
               value-format="YYYY-MM-DD"
               type="daterange"
@@ -256,6 +257,7 @@
 </template>
 
 <script lang="ts" setup>
+import {shortcuts} from "@/utils/dataMenu"
 import { getCheckResults } from "@/api/operate";
 import type { InspectionResult } from "@/typing";
 import {

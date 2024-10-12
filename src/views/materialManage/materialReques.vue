@@ -295,7 +295,7 @@ import {
   onBeforeMount,
   onBeforeUnmount,
 } from "vue";
-import {shortcuts} from "@/utils/dataMenu"
+import {shortcuts} from "@/utils/dataMenu";
 const tableData = ref<any>([]);
 const pageSize = ref(10);
 const currentPage = ref(1);
