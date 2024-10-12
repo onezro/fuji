@@ -12,8 +12,8 @@
               <el-input v-model="formData.TGIECOAttribute3" @clear="getData" clearable style="width: 180px" />
             </el-form-item>
             <el-form-item label="更改时间" class="mb-2">
-              <el-date-picker v-model="searchDate" value-format="YYYY-MM-DD" type="daterange" range-separator="-"
-                style="width: 240px" :clearable="false" />
+              <el-date-picker  :shortcuts="shortcuts" v-model="searchDate" value-format="YYYY-MM-DD" type="daterange" range-separator="-"
+                style="width: 240px" clearable />
             </el-form-item>
         
             <el-form-item class="mb-2">
@@ -90,6 +90,7 @@ import {
   nextTick,
 } from "vue";
 import tableTem from "@/components/tableTem/index.vue";
+import { shortcuts,setTodayDate,setLastDate } from "@/utils/dataMenu";
 const formData = ref({
   ECN_NUMBER: "",
   ECNType: "",
@@ -97,7 +98,7 @@ const formData = ref({
   startModified: "",
   EndModified: "",
 });
-const searchDate = ref([]);
+const searchDate = ref<any[]>([]);
 const formRef = ref();
 const detailsVisible = ref(false);
 const addForm = ref({
@@ -447,23 +448,32 @@ const detailsColumn = ref([
 ]);
 watch(
   () => searchDate.value,
-  (newVal: any) => {
+  (newVal: any, oldVal: any) => {
     if (newVal === null) {
       formData.value.startModified = "";
       formData.value.EndModified = "";
-      return;
+      getData();
+      return 
     }
-    formData.value.startModified = newVal[0];
-    formData.value.EndModified = newVal[1];
+    if (newVal !== oldVal) {
+      formData.value.startModified = newVal[0];
+      formData.value.EndModified = newVal[1];
+      getData();
+    }
+
+
   }
 );
 
 onBeforeMount(() => {
   getScreenHeight();
+  let end: string = setTodayDate();
+  let start: string = setLastDate();
+  searchDate.value = [start, end];
 });
 onMounted(() => {
   window.addEventListener("resize", getScreenHeight);
-  getData();
+  // getData();
 });
 onBeforeUnmount(() => {
   window.addEventListener("resize", getScreenHeight);
