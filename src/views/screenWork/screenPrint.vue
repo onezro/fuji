@@ -60,6 +60,7 @@
           >
             <el-form-item label="创建时间" prop="startTime" class="mb-2">
               <el-date-picker
+              :shortcuts="shortcuts"
                 v-model="form.date"
                 type="daterange"
                 range-separator="~"
@@ -179,6 +180,7 @@ import tableTem from "@/components/tableTem/index.vue";
 import feedTemp from "@/components/feedTemp/index.vue";
 import { cloneDeep } from "lodash-es";
 import { useUserStoreWithOut } from "@/stores/modules/user";
+  import {shortcuts} from "@/utils/dataMenu";
 const userStore = useUserStoreWithOut();
 const form = ref<InstanceType<typeof BurnForm>>({
   date: [],

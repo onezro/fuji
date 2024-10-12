@@ -7,7 +7,7 @@
           class="form"
           :inline="true"
           size="small"
-          label-width="55px"
+          label-width="auto"
         >
           <el-form-item label="工单" class="mb-2">
             <el-input
@@ -17,6 +17,7 @@
           </el-form-item>
           <el-form-item label="日期" class="mb-2">
             <el-date-picker
+            :shortcuts="shortcuts"
               v-model="date"
               value-format="YYYY-MM-DD"
               type="daterange"
@@ -256,6 +257,7 @@
 </template>
 
 <script lang="ts" setup>
+import {shortcuts} from "@/utils/dataMenu"
 import { getCheckResults } from "@/api/operate";
 import type { InspectionResult } from "@/typing";
 import {
@@ -642,6 +644,14 @@ const columnData = reactive([
   },
   {
     text: true,
+    prop: "ApplyNo",
+    label: "退料单号",
+    width: "",
+    min: true,
+    align: "center",
+  },
+  {
+    text: true,
     prop: "BD_ProductModel",
     label: "机型",
     width: "",
@@ -684,6 +694,22 @@ const columnData = reactive([
     text: true,
     prop: "PlannedStartDate",
     label: "计划开始时间",
+    width: "",
+    min: true,
+    align: "center",
+  },
+  {
+    text: true,
+    prop: "ApplyTime",
+    label: "申请时间",
+    width: "",
+    min: true,
+    align: "center",
+  },
+  {
+    text: true,
+    prop: "Applicant",
+    label: "申请人",
     width: "",
     min: true,
     align: "center",

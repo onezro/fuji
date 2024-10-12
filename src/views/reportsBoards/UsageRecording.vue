@@ -104,7 +104,7 @@
   </template>
   
   <script lang="ts" setup>
-  import {shortcuts} from "@/utils/dataMenu"
+  import {shortcuts,setTodayDate,setLastDate} from "@/utils/dataMenu"
   import { OrganData } from "@/utils/dataMenu";
   import {
     ElMessageBox,
@@ -151,7 +151,7 @@
     const tableData2 = ref<any[]>([]);
   const tableHeight = ref(0);
   const userStore = useUserStoreWithOut();
-  const searchDate = ref([]);
+  const searchDate = ref<any>([]);
   const feedTableData = ref<any>([]);
   
   watch(
@@ -239,6 +239,9 @@
   
   onBeforeMount(() => {
     getScreenHeight();
+  let end: string = setTodayDate();
+  let start: string = setLastDate();
+  searchDate.value = [start, end];
   });
   
   onMounted(() => {

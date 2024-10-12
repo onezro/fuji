@@ -29,8 +29,7 @@
                       <el-checkbox
                         v-model="selectBox"
                         @change="AutoSplicing"
-                      ></el-checkbox>
-                      <div class="ml-2 cursor-default">自动亮灯</div>
+                      >    自动亮灯</el-checkbox>
                     </div>
                   </div>
                 </div>
@@ -158,7 +157,7 @@
                   />
                 </el-form-item>
               </el-form>
-              <div>
+              <div class="flex items-center">
                 <el-button type="primary" @click="getOrderQuery"
                   >刷新</el-button
                 >
@@ -168,6 +167,14 @@
                 <el-button type="info" @click="lightOut" :disabled="selectList.length === 0"
                   >取消亮灯</el-button
                 >
+                <div class="text-[#606266] ml-[2rem] mr-2">扫描接料条码</div>
+                  <el-input
+                  class="code-input"
+                  sise="small"
+                    v-model.trim="code"
+                    style="width: 450px"
+                    @keydown.enter="keydown"
+                  />
                 <!-- <el-button type="warning">首套亮灯</el-button> -->
               </div>
             </div>
@@ -180,6 +187,7 @@
               <span class="ml-5">机台物料清单</span>
             </div>
             <table-tem
+            ref="lightTable"
               :showSelect="true"
               :showIndex="true"
               :tableData="tableData"
@@ -243,7 +251,8 @@ const selectBox = ref(false);
 const tableData = ref([]);
 const tableHeight = ref(0);
 const selectList = ref<any[]>([]);
-
+const lightTable = ref();
+const code = ref('');
 const pageObj = ref({
   pageSize: 10,
   currentPage: 1,
@@ -252,30 +261,6 @@ const pageObj = ref({
 const deviceList = ref<any[]>([]);
 
 const columnData = reactive([
-  {
-    text: true,
-    prop: "CompID",
-    label: "物料批次号",
-    width: "",
-    min: true,
-    align: "center",
-  },
-  {
-    text: true,
-    prop: "CompName",
-    label: "物料编码",
-    width: "",
-    min: true,
-    align: "center",
-  },
-  {
-    text: true,
-    prop: "Description",
-    label: "物料描述",
-    width: "",
-    min: true,
-    align: "center",
-  },
   {
     text: true,
     prop: "Station",
@@ -302,8 +287,32 @@ const columnData = reactive([
   },
   {
     text: true,
+    prop: "CompID",
+    label: "物料批次号",
+    width: "",
+    min: true,
+    align: "center",
+  },
+  {
+    text: true,
     prop: "used",
     label: "总量",
+    width: "",
+    min: true,
+    align: "center",
+  },
+  {
+    text: true,
+    prop: "CompName",
+    label: "物料编码",
+    width: "",
+    min: true,
+    align: "center",
+  },
+  {
+    text: true,
+    prop: "Description",
+    label: "物料描述",
     width: "",
     min: true,
     align: "center",
@@ -375,6 +384,7 @@ const handleSelectionChange = (e: any) => {
       Slot: item.Slot,
       SubSlot: item.SubSlot,
       MaterialName: item.CompName,
+      CompID:item.CompID
     };
   });
 };
@@ -400,6 +410,34 @@ const lightOut = (e: any) => {
     OperatorName: loginName,
   });
 };
+
+const keydown = () => {
+  const rowToSelect = tableData.value.find((row:any,index) => row.CompID === code.value);
+  if (rowToSelect) {
+    const exist = selectList.value.find((item:any) => item.CompID === code.value)
+    if (exist) {
+        ElNotification({
+          title: "提示",
+          message: '此条码已选中',
+          type: "warning",
+        });
+    }else {
+      lightTable.value.toggleSelection([rowToSelect]);
+    }
+  }else {
+        ElNotification({
+          title: "提示",
+          message: '未搜索到此批次号',
+          type: "warning",
+        });
+  }
+  code.value = ''
+}
+
+const codeSelect = () => {
+  const rowToSelect = tableData.value.find((row,index) => index === 0);
+  lightTable.value.toggleSelection([rowToSelect])
+}
 
 onBeforeMount(() => {
   getScreenHeight();
@@ -435,5 +473,9 @@ const getScreenHeight = () => {
 <style lang="scss">
 .setwidth {
   flex: 0 0 300px;
+}
+
+.el-input__wrapper {
+  background-color: rgb(252.5, 245.7, 235.5);
 }
 </style>
