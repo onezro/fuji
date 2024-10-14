@@ -608,8 +608,9 @@ const orderConfirm = () => {
     // operateFormRef.value.clearValidate()
 };
 const getChange = () => {
-    //   getOrderData(operateForm.value);
-    if (operateForm.value.OrderNumber == "") {
+  
+    
+    if (operateForm.value.OrderNumber == ""||operateForm.value.OrderNumber==undefined) {
         msgTitle.value = `工单不能为空`;
         msgType.value = false;
         tableData.value = [];
@@ -628,6 +629,8 @@ const getChange = () => {
                 msgTitle.value = `未找到${operateForm.value.OrderNumber}工单信息`;
                 msgType.value = false;
                 tableData.value = [];
+                //   operateForm.value.Status=""
+                // operateFormRef.value.resetFields();
             }
             operateForm.value = { ...res.content[0] };
             // console.log(res.content);

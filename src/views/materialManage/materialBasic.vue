@@ -201,6 +201,14 @@ const columnData = reactive([
   },
   {
     text: true,
+    prop: "BD_ProjectNo",
+    label: "项目号",
+    width: "120",
+    // min: true,
+    align: "1",
+  },
+  {
+    text: true,
     prop: "BD_ProductModel",
     label: "机型名称",
     width: "150",

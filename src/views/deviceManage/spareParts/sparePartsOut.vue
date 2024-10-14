@@ -980,6 +980,7 @@ const dateChange = (data: any) => {
   } else {
     searchForm.value.StartDate = "";
     searchForm.value.EndDate = "";
+    
   }
 };
 

@@ -246,7 +246,6 @@ import {
   onBeforeMount,
   onBeforeUnmount,
 } from "vue";
-import { CollectionTag } from "@element-plus/icons-vue";
 interface StopsForm {
   tools: string;
   ContainerName: string;

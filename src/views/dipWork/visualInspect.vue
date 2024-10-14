@@ -115,7 +115,6 @@ const stopsForm = ref<StopsForm>({
   userAccount: userStore.getUserInfo,
   txnDate: "",
   result: "OK",
-
 });
 
 const form = ref<InstanceType<typeof Formspan>>({
@@ -180,6 +179,13 @@ const columnData1 = reactive([
   },
   {
     text: true,
+    prop: "BD_Tools",
+    label: "工装治具",
+    width: "",
+    align: "1",
+  },
+  {
+    text: true,
     prop: "BD_EmployeeName",
     label: "扫描人",
     width: "",
@@ -230,7 +236,7 @@ const getFocus = () => {
 
 const formText = (data: string) => {
   let key = data as keyof typeof form;
-  return form[key];
+  return form.value[key];
 };
 
 //获取过站历史记录
@@ -317,6 +323,9 @@ const getScreenHeight = () => {
   // color: #fff;
   color: #006487 !important;
   // font-weight: bold;
+}
+.el-switch__label {
+  font-weight: bold;
 }
 
 .switchok .el-switch__label.is-active {

@@ -251,6 +251,13 @@ const columnData1 = reactive([
   },
   {
     text: true,
+    prop: "BD_Tools",
+    label: "工装治具",
+    width: "",
+    align: "1",
+  },
+  {
+    text: true,
     prop: "BD_EmployeeName",
     label: "扫描人",
     width: "",
@@ -362,7 +369,7 @@ const getHisData=()=>{
 
 const formText = (data: string) => {
   let key = data as keyof typeof form;
-  return form[key];
+  return form.value[key];
 };
 
 const handleSelectionChange = (data: any) => {
@@ -425,6 +432,7 @@ const getChange = () => {
         form.value = {...res.content[0]};
         hisForm.value.MfgOrderName=res.content[0].MfgOrderName
         getHisData()
+        getFocus()
         // if (res.success) {
         stopsForm.value.result = "OK";
       });

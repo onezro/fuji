@@ -444,7 +444,7 @@ const eidtCancel = () => {
   editVisible.value = false;
 };
 const editSubmit = () => {
-  editHear.StepList.push(editForm);
+  editHear.StepList[0]=editForm
   // console.log(JSON.stringify(editHear));
   UpdateInspectData(editHear).then((res: any) => {
     if (res.code == 100200) {

@@ -4,51 +4,21 @@
       <div class="pb-2 flex justify-between">
         <el-button type="primary" @click="openAdd">添加</el-button>
         <div class="flex">
-          <el-input
-            v-model.trim="searchName"
-            style="width: 300px"
-            clearable
-            placeholder="请输入"
-          >
+          <el-input v-model.trim="searchName" style="width: 300px" clearable placeholder="请输入">
             <template #append>
-              <el-button type="primary" icon="Search"></el-button> </template
-          ></el-input>
+              <el-button type="primary" icon="Search"></el-button> </template></el-input>
         </div>
       </div>
-      <table-tem
-        :show-index="true"
-        size="small"
-        :tableData="tableData1"
-        :tableHeight="tableHeight"
-        :columnData="columnData"
-        :pageObj="pageObj"
-        @handleSizeChange="handleSizeChange"
-        @handleCurrentChange="handleCurrentChange"
-      >
+      <table-tem :show-index="true" size="small" :tableData="tableData1" :tableHeight="tableHeight"
+        :columnData="columnData" :pageObj="pageObj" @handleSizeChange="handleSizeChange"
+        @handleCurrentChange="handleCurrentChange">
       </table-tem>
     </el-card>
-    <el-dialog
-      align-center
-      :append-to-body="true"
-      :close-on-click-modal="false"
-      v-model="editVisible"
-      @close=""
-      title="编辑"
-      width="50%"
-    >
-      <el-form
-        ref="editFormRef"
-        :model="EditForm"
-        label-position="left"
-        label-width="auto"
-        :inline="true"
-      >
+    <el-dialog align-center :append-to-body="true" :close-on-click-modal="false" v-model="editVisible" @close=""
+      title="编辑" width="50%">
+      <el-form ref="editFormRef" :model="EditForm" label-position="left" label-width="auto" :inline="true">
         <el-form-item label="工治具型号" prop="compname">
-          <el-input
-            disabled
-            v-model.trim="EditForm.compname"
-            style="width: 240px"
-          ></el-input>
+          <el-input disabled v-model.trim="EditForm.compname" style="width: 240px"></el-input>
           <!-- <el-select
             v-model="EditForm.compname"
             placeholder=""
@@ -63,11 +33,7 @@
           </el-select> -->
         </el-form-item>
         <el-form-item label="工治具编码" prop="compid">
-          <el-input
-            disabled
-            v-model.trim="EditForm.compid"
-            style="width: 240px"
-          ></el-input>
+          <el-input disabled v-model.trim="EditForm.compid" style="width: 240px"></el-input>
         </el-form-item>
         <!-- <el-form-item label="库位" prop="location">
           <el-input
@@ -77,18 +43,10 @@
           ></el-input>
         </el-form-item> -->
         <el-form-item label="供应商" prop="Supplier">
-          <el-input
-            v-model="EditForm.Supplier"
-            style="width: 240px"
-            placeholder=""
-          ></el-input>
+          <el-input v-model="EditForm.Supplier" style="width: 240px" placeholder=""></el-input>
         </el-form-item>
         <el-form-item label="批次号" prop="LotNumber">
-          <el-input
-            v-model="EditForm.LotNumber"
-            style="width: 240px"
-            placeholder=""
-          ></el-input>
+          <el-input v-model="EditForm.LotNumber" style="width: 240px" placeholder=""></el-input>
         </el-form-item>
         <!-- <el-form-item label="到期日期" prop="ExpirationDate">
           <el-date-picker
@@ -100,22 +58,11 @@
           />
         </el-form-item> -->
         <el-form-item label="供应商料号" prop="ManufacturerPartNumber">
-          <el-input
-            v-model="EditForm.ManufacturerPartNumber"
-            style="width: 240px"
-            :rows="1"
-            type="textarea"
-            class="custom-textarea"
-          />
+          <el-input v-model="EditForm.ManufacturerPartNumber" style="width: 240px" :rows="1" type="textarea"
+            class="custom-textarea" />
         </el-form-item>
         <el-form-item label="备注" prop="remark">
-          <el-input
-            v-model="EditForm.remark"
-            style="width: 240px"
-            :rows="2"
-            type="textarea"
-            class="custom-textarea"
-          />
+          <el-input v-model="EditForm.remark" style="width: 240px" :rows="2" type="textarea" class="custom-textarea" />
         </el-form-item>
       </el-form>
 
@@ -127,38 +74,17 @@
         </span>
       </template>
     </el-dialog>
-    <el-dialog
-      align-center
-      :append-to-body="true"
-      :close-on-click-modal="false"
-      v-model="addVisible"
-      title="添加"
-      width="50%"
-      @close="closeSumbit"
-    >
-      <el-form
-        ref="formRef"
-        :model="form"
-        label-position="left"
-        label-width="auto"
-        :inline="true"
-      >
+    <el-dialog align-center :append-to-body="true" :close-on-click-modal="false" v-model="addVisible" title="添加"
+      width="50%" @close="closeSumbit">
+      <el-form ref="formRef" :model="form" label-position="left" label-width="auto" :inline="true">
         <el-form-item label="工治具型号" prop="compname">
           <el-select v-model="form.compname" filterable style="width: 240px">
-            <el-option
-              v-for="item in compnameList"
-              :key="item.CompName"
-              :label="item.CompName"
-              :value="item.CompName"
-            />
+            <el-option v-for="item in compnameList" :key="item.CompName" :label="item.CompName"
+              :value="item.CompName" />
           </el-select>
         </el-form-item>
         <el-form-item label="工治具编号" prop="compid">
-          <el-input
-            v-model="form.compid"
-            style="width: 240px"
-            placeholder=""
-          ></el-input>
+          <el-input v-model="form.compid" style="width: 240px" placeholder=""></el-input>
         </el-form-item>
         <!-- <el-form-item label="库位" prop="location">
           <el-input
@@ -168,18 +94,10 @@
           ></el-input>
         </el-form-item> -->
         <el-form-item label="供应商" prop="Supplier">
-          <el-input
-            v-model="form.Supplier"
-            style="width: 240px"
-            placeholder=""
-          ></el-input>
+          <el-input v-model="form.Supplier" style="width: 240px" placeholder=""></el-input>
         </el-form-item>
         <el-form-item label="批次号" prop="LotNumber">
-          <el-input
-            v-model="form.LotNumber"
-            style="width: 240px"
-            placeholder=""
-          ></el-input>
+          <el-input v-model="form.LotNumber" style="width: 240px" placeholder=""></el-input>
         </el-form-item>
         <!-- <el-form-item label="到期日期" prop="ExpirationDate">
           <el-date-picker
@@ -191,22 +109,11 @@
           />
         </el-form-item> -->
         <el-form-item label="供应商料号" prop="ManufacturerPartNumber">
-          <el-input
-            v-model="form.ManufacturerPartNumber"
-            style="width: 240px"
-            :rows="1"
-            type="textarea"
-            class="custom-textarea"
-          />
+          <el-input v-model="form.ManufacturerPartNumber" style="width: 240px" :rows="1" type="textarea"
+            class="custom-textarea" />
         </el-form-item>
         <el-form-item label="备注" prop="remark">
-          <el-input
-            v-model="form.remark"
-            style="width: 240px"
-            :rows="2"
-            type="textarea"
-            class="custom-textarea"
-          />
+          <el-input v-model="form.remark" style="width: 240px" :rows="2" type="textarea" class="custom-textarea" />
         </el-form-item>
       </el-form>
 
@@ -568,7 +475,14 @@ const columnData = reactive([
     min: true,
     align: "center",
   },
-
+  {
+    text: true,
+    prop: "Location",
+    label: "库位",
+    width: "",
+    min: true,
+    align: "center",
+  },
   {
     text: true,
     prop: "ExpirationDate",
@@ -577,6 +491,7 @@ const columnData = reactive([
     min: true,
     align: "center",
   },
+
 
   {
     isOperation: true,
@@ -660,6 +575,7 @@ const getScreenHeight = () => {
 .el-pagination {
   justify-content: center;
 }
+
 /* 隐藏滚动条，但保持可滚动功能 */
 .custom-textarea ::-webkit-scrollbar {
   display: none;

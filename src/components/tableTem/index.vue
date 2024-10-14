@@ -122,6 +122,15 @@ const rowStyle = (val: any) => {
   }
   return {};
 };
+const toggleSelection = (rows?: any) => {
+  if (rows) {
+    rows.forEach((row: any, index: any) => {
+      multipleTableRef.value!.toggleRowSelection(row, undefined);
+    });
+  } else {
+    multipleTableRef.value!.clearSelection();
+  }
+};
 
 const getMaxLength = (arr: any) => {
   return arr.reduce((acc: any, item: any) => {
@@ -137,15 +146,7 @@ const getMaxLength = (arr: any) => {
   }, 0);
 };
 
-const toggleSelection = (rows?: any) => {
-  if (rows) {
-    rows.forEach((row: any, index: any) => {
-      multipleTableRef.value!.toggleRowSelection(row, undefined);
-    });
-  } else {
-    multipleTableRef.value!.clearSelection();
-  }
-};
+
 
 const getTextWidth = (str: string) => {
   let fontSizeNum = size?.value == "small" ? 13 : 16;

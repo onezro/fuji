@@ -465,17 +465,17 @@ const handleCurrentChange = (val: any) => {
 
 const getScreenHeight = () => {
   nextTick(() => {
-    tableHeight.value = window.innerHeight - 374;
+    tableHeight.value = window.innerHeight - 355;
   });
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" >
 .setwidth {
   flex: 0 0 300px;
 }
 
-.el-input__wrapper {
+.code-input  .el-input__wrapper {
   background-color: rgb(252.5, 245.7, 235.5);
 }
 </style>

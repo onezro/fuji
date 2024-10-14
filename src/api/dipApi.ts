@@ -50,9 +50,9 @@ export function PluginStationMoveOut(data: any) {
     });
 }
 
-export function SplitStationMoveOut(data: any) {
+export function PCBASplitMoveStd(data: any) {
     return request({
-        url: "/api/pcbasplit/DIPStationMoveOut",
+        url: "/api/pcbasplit/PCBASplitMoveStd",
         method: "post",
         data,
     });

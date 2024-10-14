@@ -91,14 +91,23 @@
           :label="item.lable"
         />
       </el-table> -->
-      <el-table ref="taskTableRef" class="test" :header-cell-class-name="cellClass" stripe border :data="workOrderList1"
-        style="width: 100%" :height="'50vh'" @select="selectClick">
+      <el-table ref="taskTableRef" class="test"  :header-cell-class-name="cellClass" stripe border :data="workOrderList1"
+        style="width: 100%" :height="'50vh'" @select="selectClick" :tooltip-effect="'dark'">
         <el-table-column type="selection" width="55" />
-        <el-table-column v-for="item in formHeader" :prop="item.value" :label="item.lable"
-          :min-width="flexColumnWidth(item.lable, item.value)" />
+        <el-table-column prop="MfgOrderName" label="工单号" width="100" :min-width="100" ></el-table-column>
+        <el-table-column prop="ProductName" label="产品编码" width="150" :min-width="150" ></el-table-column>
+        <el-table-column prop="ProductDesc" label="产品描述" :show-overflow-tooltip="true"  :min-width="flexColumnWidth('产品描述', 'ProductDesc')" ></el-table-column>
+        <el-table-column prop="MfgLineDesc" label="产线" width="150"  :min-width="150"  ></el-table-column>
+        <el-table-column prop="OrderStatusDesc" label="状态" width="100"  :min-width="100"  ></el-table-column>
+        <el-table-column prop="PlannedStartDate" label="开始时间" width="180"  :min-width="180"  ></el-table-column>
+        <el-table-column prop="PlannedCompletionDate" label="结束时间" width="180"  :min-width="180"  ></el-table-column>
+        <el-table-column prop="RMANumber" label="面号" width="80"  :min-width="80"  ></el-table-column>
+        <el-table-column prop="Qty" label="数量" width="100"  :min-width="100"  ></el-table-column>
+        <!-- <el-table-column v-for="item in formHeader" :prop="item.value" :label="item.lable"
+          :min-width="flexColumnWidth(item.lable, item.value)" /> -->
       </el-table>
       <div class="mt-3">
-        <el-pagination size="large" background @size-change="handleSizeChange1" @current-change="handleCurrentChange1"
+        <el-pagination background @size-change="handleSizeChange1" @current-change="handleCurrentChange1"
           :current-page="pageObj.currentPage" :page-size="pageObj1.pageSize" :page-sizes="[5, 10, 20, 50, 100]"
           layout="total,sizes, prev, pager, next, jumper" :total="workOrderList.length">
         </el-pagination>
@@ -433,7 +442,7 @@ const getScreenHeight = () => {
   });
 };
 const getOrderList = () => {
-  OrderQuery({ lineName: opui.line, OrderTypeName:'LASER'}).then((res: any) => {
+  OrderQuery({ lineName: opui.line, OrderTypeName:'SMT'}).then((res: any) => {
     workOrderList.value = res.content
     workOrderList1.value = res.content
   })
@@ -566,14 +575,14 @@ const getMaxLength = (arr: any) => {
 };
 
 const getTextWidth = (str: string) => {
+  let fontSizeNum =16;
   let width = 0;
   const html = document.createElement("span");
-  html.innerText = str;
-  html.className = "getTextWidth";
+  html.style.cssText = `padding: 0; margin: 0; border: 0; line-height: 1; font-size: ${fontSizeNum}px; font-family: Arial, sans-serif;`;
+  html.innerText = str; // 去除字符串前后的空白字符
   document.body?.appendChild(html);
 
-  // 使用类型断言将 Element 转换为 HTMLElement
-  const spanElement = document.querySelector(".getTextWidth") as HTMLElement;
+  const spanElement = html; // 无需再次查询，直接使用创建的元素
   if (spanElement) {
     width = spanElement.offsetWidth;
     spanElement.remove();
@@ -585,6 +594,8 @@ const getTextWidth = (str: string) => {
 const flexColumnWidth = (label: any, prop: any) => {
   const arr = tableData?.value.map((x: { [x: string]: any }) => x[prop]);
   arr.push(label); // 把每列的表头也加进去算
+
+console.log(getMaxLength(arr) + 25 + "px");
 
   return getMaxLength(arr) + 25 + "px";
 };
