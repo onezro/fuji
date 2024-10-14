@@ -14,7 +14,7 @@
           </el-form-item>
           <el-form-item label="日期" class="mb-2">
             <el-date-picker
-            :shortcuts="shortcuts"
+              :shortcuts="shortcuts"
               v-model="date"
               value-format="YYYY-MM-DD"
               type="daterange"
@@ -295,7 +295,7 @@ import {
   onBeforeMount,
   onBeforeUnmount,
 } from "vue";
-import {shortcuts} from "@/utils/dataMenu";
+import { shortcuts } from "@/utils/dataMenu";
 const tableData = ref<any>([]);
 const pageSize = ref(10);
 const currentPage = ref(1);
@@ -547,6 +547,12 @@ const handleSelectionChange = (data: any) => {
         TotalQtyRequired: item.TotalQtyRequired,
         originalMaterialName: item.originalMaterialName,
         isMater: item.isMater,
+        UOMName: form.value.UOMName,
+        MaterialDesc: item.MaterialDesc,
+        OriginalMaterialName: item.OriginalMaterialName,
+        SpecName: item.SpecName,
+        ERPRouteName: item.ERPRouteName,
+        QtyRequired:item.QtyRequired
       };
     });
   console.log(choiceList.value);
@@ -573,6 +579,10 @@ const applyFor = () => {
     RequestType: "5",
     MfgOrderName: form.value.MfgOrderName,
     MaterialList: choiceList.value,
+    ProductName: form.value.ProductName,
+    ProductDesc: form.value.ProductDesc,
+    MfgOrderQty: form.value.Qty,
+    MfgLineName: form.value.MfgLineName,
     userAccount: loginName,
   }).then((res: any) => {
     if (res.success) {
