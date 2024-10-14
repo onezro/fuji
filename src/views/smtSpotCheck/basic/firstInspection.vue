@@ -834,7 +834,7 @@ const dispose = (data: any) => {
       }
     } else {
       let obj: InstanceType<typeof AllInspection> = {
-        ProductName: item.ProductName,
+        // ProductName: item.ProductName,
         WorkSection: item.WorkSection,
         step1: item.WorkSection,
 
@@ -873,7 +873,7 @@ const dispose = (data: any) => {
       a.push(obj);
     }
   });
-  console.log(a);
+  // console.log(a);
 
   tableData.value = a;
   // console.log(tableData.value);
