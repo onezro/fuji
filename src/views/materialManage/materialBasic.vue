@@ -30,10 +30,10 @@
     <el-card shadow="always" :body-style="{ padding: '8px 8px 0 8px' }" class="flex-1">
       <el-form ref="formRef" size="small" :inline="true" :model="form" label-width="auto">
         <el-form-item label="物料编码" prop="MaterialCode" class="mb-2">
-          <el-input style="width: 150px" v-model.trim="form.ProductName" placeholder="请输入物料编码" clearable @clear="onSubmit"  @change="onSubmit"/>
+          <el-input style="width: 150px" v-model.trim="form.ProductName"  clearable @clear="onSubmit"  @change="onSubmit"/>
         </el-form-item>
         <el-form-item label="物料描述" prop="MaterialName" class="mb-2">
-          <el-input style="width: 150px" v-model.trim="form.ProductDescription" placeholder="请输入物料描述" clearable
+          <el-input style="width: 150px" v-model.trim="form.ProductDescription"  clearable
             @clear="onSubmit" @change="onSubmit" />
         </el-form-item>
         <el-form-item label="物料类型" prop="QueryType" class="mb-2">

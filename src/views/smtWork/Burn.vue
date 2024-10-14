@@ -31,13 +31,13 @@
         <div class="ml-2">
           <el-form ref="formRef" :inline="true" size="default" :model="form" label-width="auto">
             <el-form-item label="烧录日期" prop="startTime" class="mb-2">
-              <el-date-picker :shortcuts="shortcuts" v-model="form.date" type="daterange" range-separator="~" start-placeholder="开始时间"
+              <el-date-picker :shortcuts="shortcuts" v-model="form.date" type="daterange" range-separator="-" start-placeholder="开始时间"
                 format="YYYY-MM-DD" :clearable="false" value-format="YYYY-MM-DD" end-placeholder="结束时间" />
             </el-form-item>
             <el-form-item label="工单号" prop="workOrder" class="mb-2"><el-input v-model="form.OrderNum"
                 style="width: 180px" placeholder="请输入工单号" clearable /></el-form-item>
             <el-form-item label="条码" prop="barCode" class="mb-2"><el-input style="width: 180px" clearable
-                v-model="form.barCode" placeholder="请输入条码" /></el-form-item>
+                v-model="form.BarCode" placeholder="请输入条码" /></el-form-item>
           </el-form>
         </div>
         <div class="mb-2 ml-2">
@@ -76,6 +76,7 @@ import {
   onMounted,
   onBeforeUnmount,
   nextTick,
+  watch
 } from "vue";
 import type { Formspan, FormHeader, OrderData, BurnForm } from "@/typing";
 import selectTa from "@/components/selectTable/index.vue";
@@ -83,13 +84,15 @@ import tableTem from "@/components/tableTem/index.vue";
 import feedTemp from "@/components/feedTemp/index.vue";
 import { cloneDeep } from "lodash-es";
 import { useUserStoreWithOut } from "@/stores/modules/user";
-import {shortcuts} from "@/utils/dataMenu"
+import { shortcuts,setTodayDate,setLastDate } from "@/utils/dataMenu";
 const userStore = useUserStoreWithOut();
 const form = ref<InstanceType<typeof BurnForm>>({
   date: [],
   SpecName: "SMT-Burn",
-  barCode: "",
+  BarCode: "",
   OrderNum: "",
+  StartTime:"",
+  EndTime:""
 });
 import { useAppStore } from "@/stores/modules/app";
 import {
@@ -105,6 +108,8 @@ const opui = appStore.getOPUIReal();
 const BurnTableRef = ref();
 
 const BurnTableData = ref([]);
+
+
 
 const getChoice = (e: any) => {
   BurnTableData.value = e.map((item: any) => {
@@ -213,6 +218,25 @@ const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
 ]);
 
 const tableData = ref([]);
+
+watch(
+  () => form.value.date,
+  (newVal: any, oldVal: any) => {
+    if (newVal === null) {
+      form.value.StartTime = "";
+      form.value.EndTime = "";
+      onSubmit();
+      return 
+    }
+    if (newVal !== oldVal) {
+      form.value.StartTime = newVal[0];
+      form.value.EndTime  = newVal[1];
+      onSubmit();
+      // console.log( form.value);
+      
+    }
+  }
+);
 
 const formText = (data: string) => {
   let key = data as keyof typeof OrderForm;
@@ -379,8 +403,9 @@ const isLoding = ref("");
 
 onBeforeMount(() => {
   getScreenHeight();
-  let date: string = setDefaultDate();
-  form.value.date = [date, date];
+  let end: string = setTodayDate();
+  let start: string = setLastDate();
+  form.value.date = [start, end];
 });
 onMounted(() => {
   window.addEventListener("resize", getScreenHeight);
@@ -448,13 +473,7 @@ const radioChange = (args: any) => {
 };
 const onSubmit = () => {
   // console.log(form.value);
-  QueryBurnPrintData({
-    SpecName: form.value.SpecName,
-    StartTime: form.value.date[0] ? form.value.date[0] : "",
-    EndTime: form.value.date[1] ? form.value.date[1] : "",
-    OrderNum: form.value.OrderNum,
-    BarCode: form.value.barCode,
-  }).then((res: any) => {
+  QueryBurnPrintData(form.value).then((res: any) => {
     if (res.content == null || res.content.length == 0) {
       tableData.value = [];
       return;

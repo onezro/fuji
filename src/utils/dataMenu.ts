@@ -53,7 +53,7 @@ export  const OrganData = (organizations: any) => {
       value: () => {
         const end = new Date()
         const start = new Date()
-        start.setTime(start.getTime() - 3600 * 1000 * 24 * 6)
+        start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
         return [start, end]
       },
     },
@@ -82,6 +82,6 @@ export  const OrganData = (organizations: any) => {
     // 格式化日期为YYYY-MM-DD
     const formattedDate = `${now.getFullYear()}-${String(
       now.getMonth() + 1
-    ).padStart(2, "0")}-${String(now.getDate() - 6).padStart(2, "0")}`;
+    ).padStart(2, "0")}-${String(now.getDate() - 7).padStart(2, "0")}`;
     return formattedDate;
   };

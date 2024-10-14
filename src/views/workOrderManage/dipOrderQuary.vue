@@ -176,23 +176,23 @@
           <el-input v-model="orderOnlineForm.OrderNumber" disabled />
         </el-form-item>
         <el-form-item label="产线" prop="LineNumber">
-          <el-select v-model="orderOnlineForm.LineNumber" placeholder="请选择线体" clearable>
+          <el-select v-model="orderOnlineForm.LineNumber" placeholder="" clearable>
             <el-option v-for="item in onlineList" :key="item.MfgLineName" :label="item.Description"
               :value="item.MfgLineName" />
           </el-select>
         </el-form-item>
         <el-form-item label="面号" prop="Side">
-          <el-select v-model="orderOnlineForm.Side" placeholder="请选择面别">
+          <el-select v-model="orderOnlineForm.Side" placeholder="">
             <el-option label="BOT" value="BOT" />
             <el-option label="TOP" value="TOP" />
           </el-select>
         </el-form-item>
-        <el-form-item label="货架" prop="shelf_ids">
+        <!-- <el-form-item label="货架" prop="shelf_ids">
           <el-select v-model="orderOnlineForm.shelf_ids_list" multiple collapse-tags collapse-tags-tooltip
             :max-collapse-tags="3" placeholder="选择货架">
             <el-option v-for="item in shelfList" :key="item.Shelf_id" :label="item.Shelf_id" :value="item.Shelf_id" />
           </el-select>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="是否首检" prop="IsFirstArticle">
           <el-switch v-model="orderOnlineForm.IsFirstArticle" inline-prompt active-text="是" inactive-text="否"
             :active-value="true" :inactive-value="false" />
@@ -238,7 +238,7 @@ import {
   onBeforeMount,
   onBeforeUnmount,
 } from "vue";
-import { shortcuts } from "@/utils/dataMenu";
+import { shortcuts,setTodayDate,setLastDate } from "@/utils/dataMenu";
 interface wmsType {
   phase_code: string;
   pt_code: string;
@@ -352,7 +352,7 @@ watch(
       searchForm.value.PlanStartTime = "";
       searchForm.value.PlanEndTime = "";
       getTableData();
-      return
+      return 
     }
     if (newVal !== oldVal) {
       searchForm.value.PlanStartTime = newVal[0];
@@ -497,8 +497,8 @@ const columnData = reactive([
 
 onBeforeMount(() => {
   getScreenHeight();
-  let end: string = setDefaultDate();
-  let start: string = setDefaultDate1();
+  let end: string = setTodayDate();
+  let start: string = setLastDate();
   searchDate.value = [start, end];
 });
 
@@ -694,24 +694,6 @@ const getScreenHeight = () => {
   nextTick(() => {
     tableHeight.value = window.innerHeight - 214;
   });
-};
-const setDefaultDate = () => {
-  // 获取当前日期
-  const now = new Date();
-  // 格式化日期为YYYY-MM-DD
-  const formattedDate = `${now.getFullYear()}-${String(
-    now.getMonth() + 1
-  ).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
-  return formattedDate;
-};
-const setDefaultDate1 = () => {
-  // 获取当前日期
-  const now = new Date();
-  // 格式化日期为YYYY-MM-DD
-  const formattedDate = `${now.getFullYear()}-${String(
-    now.getMonth() + 1
-  ).padStart(2, "0")}-${String(now.getDate() - 6).padStart(2, "0")}`;
-  return formattedDate;
 };
 </script>
 
