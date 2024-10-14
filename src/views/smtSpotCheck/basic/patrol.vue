@@ -1,23 +1,15 @@
 <template>
-  <div class="p-[10px]">
-    <el-card shadow="always" :body-style="{ padding: '10px' }">
-      <div class="pb-[10px]">
+  <div class="p-2">
+    <el-card shadow="always" :body-style="{ padding: '8px' }">
+      <div class="pb-2">
         <el-button type="primary" @click="openAdd">添加</el-button>
       </div>
-      <el-table
-        :data="
-          tableData.slice((currentPage - 1) * pageSize, currentPage * pageSize)
-        "
-        stripe
-        border
-        size="small"
-        fit
-        :height="tableHeight"
-        row-key="Step1"
-        :tree-props="{ children: 'stepItemList' }"
-      >
+      <el-table size="small" :data="tableData.slice((currentPage - 1) * pageSize, currentPage * pageSize)
+        " stripe border fit :height="tableHeight" row-key="step1" :tree-props="{ children: 'stepItemList' }">
         <!-- <el-table-column label="序号" width="60px" type="index" align="center" /> -->
-        <el-table-column prop="Step1" label="检验工序"> </el-table-column>
+        <el-table-column prop="WorkSection" label="工段"> </el-table-column>
+        <!-- <el-table-column prop="ProductName" label="产品编码"> </el-table-column> -->
+        <el-table-column prop="Step" label="检验工序"> </el-table-column>
         <el-table-column prop="StepName" label="检验设备"> </el-table-column>
         <el-table-column prop="SubItem" label="检验编号"> </el-table-column>
         <el-table-column prop="SubItemName" label="检验名称"> </el-table-column>
@@ -28,60 +20,37 @@
         </el-table-column>
         <el-table-column prop="SubItemSolution" label="结果处理方式">
         </el-table-column>
-        <el-table-column fixed="right" label="操作" width="120" align="center">
+        <el-table-column fixed="right" label="操作" width="160" align="center">
           <template #default="scope">
-            <el-tooltip content="编辑" placement="top" v-if="scope.row.SubItem">
-              <el-button
-                type="primary"
-                icon="EditPen"
-                size="small"
-                @click.prevent="handleEdit(scope.row)"
-              ></el-button>
+            <el-tooltip content="添加" placement="top">
+              <el-button type="warning" icon="Plus" size="small" @click.prevent="handleAdd(scope.row)"></el-button>
             </el-tooltip>
-
-            <el-tooltip content="删除" placement="top" v-if="scope.row.SubItem">
-              <el-button
-                type="danger"
-                icon="Delete"
-                size="small"
-                @click.prevent="handleDelete(scope.row)"
-              ></el-button>
+            <el-tooltip content="编辑" placement="top" v-if="scope.row.SubItem">
+              <el-button type="primary" icon="EditPen" size="small" @click.prevent="handleEdit(scope.row)"></el-button>
+            </el-tooltip>
+            <el-tooltip content="删除" placement="top"  v-if="scope.row.SubItem">
+              <el-button type="danger" icon="Delete" size="small" @click.prevent="handleDelete(scope.row)"></el-button>
             </el-tooltip>
           </template>
         </el-table-column>
       </el-table>
-      <div class="mt-3">
-        <el-pagination
-        
-          background
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-          :current-page="currentPage"
-          :page-size="pageSize"
-          :page-sizes="[5, 10, 20, 50, 100]"
-          layout="total,sizes, prev, pager, next, jumper"
-          :total="tableData.length"
-        >
+      <div class="mt-2">
+        <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange"
+          :current-page="currentPage" :page-size="pageSize" :page-sizes="[5, 10, 20, 50, 100]"
+          layout="total,sizes, prev, pager, next, jumper" :total="tableData.length">
         </el-pagination>
       </div>
     </el-card>
-    <el-dialog
-      :append-to-body="true"
-      :close-on-click-modal="false"
-      v-model="addVisible"
-      @close="addCancel()"
-      title="添加"
-      width="50%"
-    >
-      <el-form
-        ref="formRef"
-        :model="form"
-        label-position="left"
-        label-width="auto"
-      >
-      <!-- <el-form-item label="工段" prop="WorkSection">
+    <el-dialog :append-to-body="true" :close-on-click-modal="false" v-model="addVisible" @close="addCancel()" title="添加"
+      width="50%">
+      <el-form ref="formRef" :model="form" label-position="left" label-width="auto">
+        <el-form-item label="工段" prop="WorkSection">
           <el-input v-model="addFrom.WorkSection" placeholder="工段"></el-input>
-        </el-form-item> -->
+        </el-form-item>
+        <!-- <el-form-item label="产品编码" prop="Product">
+            <el-input v-model="addFrom.Product" placeholder="产品编码"></el-input>
+          </el-form-item> -->
+
         <el-row :gutter="50">
           <el-col :span="12">
             <el-form-item label="检验工序" prop="step">
@@ -95,11 +64,7 @@
           </el-col>
         </el-row>
         <el-form-item label="内容" prop="inspectContent">
-          <el-input
-            type="textarea"
-            v-model="form.InspectContent"
-            placeholder="内容"
-          ></el-input>
+          <el-input type="textarea" v-model="form.InspectContent" placeholder="内容"></el-input>
         </el-form-item>
 
         <!-- <el-form ref="formRef2" :model="formItem" label-position="left" label-width="auto"> -->
@@ -108,80 +73,37 @@
           <el-divider>检验子项{{ index + 1 }}</el-divider>
           <el-row :gutter="50">
             <el-col :span="12">
-              <el-form-item
-                label="编号"
-                :prop="'stepItemList.' + index + '.subItem'"
-              >
-                <el-input
-                  v-model.number="item.SubItem"
-                  placeholder="子项编号"
-                ></el-input>
+              <el-form-item label="编号" :prop="'stepItemList.' + index + '.subItem'">
+                <el-input v-model.number="item.SubItem" placeholder="子项编号"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="12">
-              <el-form-item
-                label="名称"
-                :prop="'stepItemList.' + index + '.subItemName'"
-              >
-                <el-input
-                  v-model="item.SubItemName"
-                  placeholder="子项名称"
-                ></el-input>
+              <el-form-item label="名称" :prop="'stepItemList.' + index + '.subItemName'">
+                <el-input v-model="item.SubItemName" placeholder="子项名称"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
 
           <el-row :gutter="50">
             <el-col :span="12">
-              <el-form-item
-                label="检查目标"
-                :prop="'stepItemList.' + index + '.subItemAim'"
-              >
-                <el-input
-                  type="textarea"
-                  v-model="item.SubItemAim"
-                  placeholder="子项检查目标"
-                ></el-input> </el-form-item
-            ></el-col>
-            <el-col :span="12"
-              ><el-form-item
-                label="检验方法"
-                :prop="'stepItemList.' + index + '.subItemMethod'"
-              >
-                <el-input
-                  type="textarea"
-                  v-model="item.SubItemMethod"
-                  placeholder="子项检验方法"
-                ></el-input> </el-form-item
-            ></el-col>
+              <el-form-item label="检查目标" :prop="'stepItemList.' + index + '.subItemAim'">
+                <el-input type="textarea" v-model="item.SubItemAim" placeholder="子项检查目标"></el-input>
+              </el-form-item></el-col>
+            <el-col :span="12"><el-form-item label="检验方法" :prop="'stepItemList.' + index + '.subItemMethod'">
+                <el-input type="textarea" v-model="item.SubItemMethod" placeholder="子项检验方法"></el-input>
+              </el-form-item></el-col>
           </el-row>
           <el-row :gutter="50">
             <el-col :span="12">
-              <el-form-item
-                label="检查标准"
-                :prop="'stepItemList.' + index + '.subItemBasic'"
-              >
-                <el-input
-                  type="textarea"
-                  v-model="item.SubItemBasic"
-                  placeholder="检查标准"
-                ></el-input> </el-form-item
-            ></el-col>
+              <el-form-item label="检查标准" :prop="'stepItemList.' + index + '.subItemBasic'">
+                <el-input type="textarea" v-model="item.SubItemBasic" placeholder="检查标准"></el-input>
+              </el-form-item></el-col>
             <el-col :span="12">
-              <el-form-item
-                label="解决办法"
-                :prop="'stepItemList.' + index + '.subItemSolution'"
-              >
-                <el-input
-                  type="textarea"
-                  v-model="item.SubItemSolution"
-                  placeholder="子项检查解决办法"
-                ></el-input> </el-form-item
-            ></el-col>
+              <el-form-item label="解决办法" :prop="'stepItemList.' + index + '.subItemSolution'">
+                <el-input type="textarea" v-model="item.SubItemSolution" placeholder="子项检查解决办法"></el-input>
+              </el-form-item></el-col>
           </el-row>
-          <el-button v-if="index != 0" type="danger" @click="deleteSon(index)"
-            >删除子项</el-button
-          >
+          <el-button v-if="index != 0" type="danger" @click="deleteSon(index)">删除子项</el-button>
         </div>
       </el-form>
       <!-- </el-form> -->
@@ -194,57 +116,41 @@
         </span>
       </template>
     </el-dialog>
-    <el-dialog
-      :append-to-body="true"
-      :close-on-click-modal="false"
-      v-model="editVisible"
-      @close="eidtCancel()"
-      title="添加"
-      width="50%"
-    >
+    <el-dialog :append-to-body="true" :close-on-click-modal="false" v-model="editVisible" @close="eidtCancel()"
+      title="修改" width="50%">
       <el-form ref="eidtRef" :model="editForm" label-width="100px">
+        <el-form-item label="工段" prop="WorkSection">
+          <el-input v-model="editHear.WorkSection" placeholder="工段" disabled></el-input>
+        </el-form-item>
+        <!-- <el-form-item label="产品编码" prop="Product">
+            <el-input v-model="editHear.Product" placeholder="产品编码"></el-input>
+          </el-form-item> -->
         <el-row>
           <el-col :span="12">
             <el-form-item label="检验工序" prop="step">
-              <el-input
-                v-model.number="editForm.Step"
-                placeholder="检验工序"
-              ></el-input>
+              <el-input v-model.number="editForm.Step" placeholder="检验工序" disabled></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="检验设备" prop="name">
-              <el-input
-                v-model="editForm.Name"
-                placeholder="检验设备"
-              ></el-input>
+              <el-input v-model="editForm.Name" placeholder="检验设备"></el-input>
             </el-form-item>
           </el-col>
         </el-row>
 
         <el-form-item label="内容" prop="inspectContent">
-          <el-input
-            type="textarea"
-            v-model="editForm.InspectContent"
-            placeholder="内容"
-          ></el-input>
+          <el-input type="textarea" v-model="editForm.InspectContent" placeholder="内容"></el-input>
         </el-form-item>
         <el-divider></el-divider>
         <el-row>
           <el-col :span="12">
             <el-form-item label="编号">
-              <el-input
-                v-model.number="editForm.StepItemList[0].SubItem"
-                placeholder="子项编号"
-              ></el-input>
+              <el-input v-model.number="editForm.StepItemList[0].SubItem" placeholder="子项编号" disabled></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="名称">
-              <el-input
-                v-model="editForm.StepItemList[0].SubItemName"
-                placeholder="子项名称"
-              ></el-input>
+              <el-input v-model="editForm.StepItemList[0].SubItemName" placeholder="子项名称"></el-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -252,44 +158,28 @@
         <el-row>
           <el-col :span="12">
             <el-form-item label="检查目标">
-              <el-input
-                type="textarea"
-                v-model="editForm.StepItemList[0].SubItemAim"
-                placeholder="子项检查目标"
-              ></el-input> </el-form-item
-          ></el-col>
-          <el-col :span="12"
-            ><el-form-item label="检验方法">
-              <el-input
-                type="textarea"
-                v-model="editForm.StepItemList[0].SubItemMethod"
-                placeholder="子项检验方法"
-              ></el-input> </el-form-item
-          ></el-col>
+              <el-input type="textarea" v-model="editForm.StepItemList[0].SubItemAim" placeholder="子项检查目标"></el-input>
+            </el-form-item></el-col>
+          <el-col :span="12"><el-form-item label="检验方法">
+              <el-input type="textarea" v-model="editForm.StepItemList[0].SubItemMethod"
+                placeholder="子项检验方法"></el-input>
+            </el-form-item></el-col>
         </el-row>
         <el-row>
           <el-col :span="12">
             <el-form-item label="检查标准">
-              <el-input
-                type="textarea"
-                v-model="editForm.StepItemList[0].SubItemBasic"
-                placeholder="检查标准"
-              ></el-input> </el-form-item
-          ></el-col>
+              <el-input type="textarea" v-model="editForm.StepItemList[0].SubItemBasic" placeholder="检查标准"></el-input>
+            </el-form-item></el-col>
           <el-col :span="12">
             <el-form-item label="解决办法">
-              <el-input
-                type="textarea"
-                v-model="editForm.StepItemList[0].SubItemSolution"
-                placeholder="子项检查解决办法"
-              ></el-input> </el-form-item
-          ></el-col>
+              <el-input type="textarea" v-model="editForm.StepItemList[0].SubItemSolution"
+                placeholder="子项检查解决办法"></el-input> </el-form-item></el-col>
         </el-row>
       </el-form>
 
       <!-- <el-form ref="eidtForm2" :model="stepItemList" label-width="100px">
-       
-      </el-form> -->
+         
+        </el-form> -->
 
       <template #footer>
         <span class="dialog-footer">
@@ -320,6 +210,8 @@ import {
   onMounted,
   onBeforeUnmount,
 } from "vue";
+import { cloneDeep } from "lodash-es";
+
 const tableData = ref<InstanceType<typeof FistTableData>[]>([]);
 const pageSize = ref(10);
 const currentPage = ref(1);
@@ -359,7 +251,7 @@ const form = reactive({
   StepItemList: [
     {
       SubItemName: "",
-      SubItem: "",
+      SubItem: 0,
       SubItemMethod: "",
       SubItemBasic: "",
       SubItemSolution: "",
@@ -403,6 +295,27 @@ const deleteForm = reactive<InstanceType<typeof AllInspection>>({
   stepList: [],
 });
 
+watch(() => form.Step, (newVal, oldVal) => {
+  if (newVal !== oldVal) {
+    if (addFrom.WorkSection !== '') {
+      const autoData = tableData.value.filter((t: any) => addFrom.WorkSection === t.WorkSection)
+      const data = cloneDeep(autoData[0])
+      const inputData = data.stepItemList.find((d: any) => newVal == d.Step)
+      // console.log(inputData);
+      if (inputData !== undefined) {
+        // console.log(inputData);
+        form.Name = inputData.StepName
+        form.StepItemList[0].SubItem = inputData.stepItemList.length + 1
+      } else {
+        form.Name = ''
+        form.StepItemList[0].SubItem = 1
+      }
+    }
+
+
+  }
+}, { deep: true })
+
 onBeforeMount(() => {
   getScreenHeight();
 });
@@ -416,12 +329,12 @@ onBeforeUnmount(() => {
 
 //获取基础数据
 const getData = () => {
-  GetInspectData(getForm).then((res:any)=>{
+  GetInspectData(getForm).then((res: any) => {
     // console.log(res);
-    if(res.code==100200){
-      dispose(res.content)
+    if (res.code == 100200) {
+      dispose(res.content);
     }
-  })
+  });
 };
 
 const openAdd = () => {
@@ -430,7 +343,7 @@ const openAdd = () => {
 const addSon = () => {
   form.StepItemList.push({
     SubItemName: "",
-    SubItem: "",
+    SubItem: 0,
     SubItemMethod: "",
     SubItemBasic: "",
     SubItemSolution: "",
@@ -443,29 +356,81 @@ const deleteSon = (index: any) => {
 };
 
 const addCancel = () => {
-  addVisible.value = false
+  addVisible.value = false;
+  form.StepItemList = [];
+  form.StepItemList[0] = {
+    SubItemName: "",
+    SubItem: 0,
+    SubItemMethod: "",
+    SubItemBasic: "",
+    SubItemSolution: "",
+    SubItemAim: "",
+    SubItemType: "",
+  }
+  addFrom.stepList = [];
+  addFrom.WorkSection = ""
   resetForm();
   // formRef.value.resetFields()
 };
 //添加确定
 const addSubmit = () => {
-  // console.log(form);
-  addFrom.StepList.push(form);
+  addFrom.StepList[0]=form
   InsertInspect(addFrom).then((res: any) => {
     // console.log(res);
     if (res.code == 100200) {
       ElNotification({
-        title: "添加成功",
-        // message: "取消操作",
+        title: "提示",
+        message: "添加成功",
         type: "success",
       });
-      getData()
+      getData();
       addVisible.value = false;
-      form.StepItemList =[]
+      // form.StepItemList = [];
     }
     resetForm();
+    form.StepItemList = [];
+    form.StepItemList[0] = {
+      SubItemName: "",
+      SubItem: 0,
+      SubItemMethod: "",
+      SubItemBasic: "",
+      SubItemSolution: "",
+      SubItemAim: "",
+      SubItemType: "",
+    }
     addFrom.stepList = [];
+    addFrom.WorkSection = ""
   });
+  
+  // console.log( addFrom.StepList);
+};
+const handleAdd = (row: any) => {
+  addVisible.value = true;
+  // console.log(row.SubItem);
+  // console.log(row);
+  if (row.SubItem) {
+    addFrom.WorkSection = row.WorkSection;
+    addFrom.Product = row.ProductName;
+    form.InspectContent = row.InspectContent;
+    form.Step = row.Step;
+    form.Name = row.StepName;
+    form.StepItemList[0] = { ...row };
+  } else {
+    addFrom.WorkSection = row.WorkSection;
+    addFrom.Product = row.ProductName;
+    // console.log(parseInt(row.step1),row.step1);
+    const regex = /\d+/g;
+    const matches = row.step1.match(regex);
+    const number = matches ? matches[0] : null;
+    // console.log(number);
+    if (number !== null) {
+      form.InspectContent = row.stepItemList[0].InspectContent;
+      form.Step = row.stepItemList[0].Step;
+      form.Name = row.stepItemList[0].StepName;
+    }
+
+    // form.StepItemList[0]=[...row.stepItemList[0]]
+  }
 };
 
 //编辑
@@ -473,32 +438,31 @@ const handleEdit = (row: any) => {
   eidtData(row);
   editVisible.value = true;
 };
+
 const eidtCancel = () => {
   editHear.stepList = [];
   editVisible.value = false;
 };
 const editSubmit = () => {
-  // console.log(editForm);
-  editHear.StepList.push(editForm);
+  editHear.StepList[0] = editForm;
   // console.log(JSON.stringify(editHear));
-  UpdateInspectData(editHear).then((res:any)=>{
+  UpdateInspectData(editHear).then((res: any) => {
     if (res.code == 100200) {
       ElNotification({
         title: "修改成功",
         // message: "取消操作",
         type: "success",
       });
-      getData()
+      getData();
       editVisible.value = false;
-
     }
     editHear.stepList = [];
-  })
+  });
 };
 
 const eidtData = (row: any) => {
-  editHear.Product=row.ProductName
-  editHear.WorkSection=row.WorkSection
+  editHear.Product = row.ProductName;
+  editHear.WorkSection = row.WorkSection;
   editForm.Status = row.Status;
   editForm.Step = row.Step;
   editForm.Name = row.StepName;
@@ -537,7 +501,6 @@ const handleDelete = (row: any) => {
             // message: "取消操作",
             type: "error",
           });
-
         }
       });
     })
@@ -557,30 +520,99 @@ const handleDelete = (row: any) => {
 //基础数据处理成树形结构
 const dispose = (data: any) => {
   const a: InstanceType<typeof FistTableData>[] = [];
+  // data.forEach((item: any) => {
+  //   let isExist = a.findIndex((ela: any) => ela.Name == item.Name);
+  //   if (isExist != -1) {
+  //     a[isExist].stepItemList.push({
+  //       ...item,
+  //       Step1: a[isExist].Step + "-" + item.SubItem,
+  //     });
+  //     a[isExist].SubItem1++;
+  //   } else {
+  //     const obj: InstanceType<typeof FistTableData> = {
+  //       Name: item.Name,
+  //       Step: item.Step,
+  //       InspectContent: item.InspectContent,
+  //       Step1: item.Step,
+  //       stepItemList: [],
+  //     };
+  //     obj.stepItemList.push({
+  //       ...item,
+  //       Step1: item.Step + "-" + item.SubItem,
+  //     });
+  //     a.push(obj);
+  //   }
+  // });
+  // tableData.value = a;
+  // if (tableData.value.length % pageSize.value == 0 && currentPage.value > 1) {
+  //   currentPage.value--;
+  // }
   data.forEach((item: any) => {
-    let isExist = a.findIndex((ela: any) => ela.StepName == item.StepName);
+    let isExist = a.findIndex((ela) => ela.WorkSection == item.WorkSection);
     if (isExist != -1) {
-      a[isExist].stepItemList.push({
-        ...item,
-        Step1: a[isExist].Step + "-" + item.SubItem,
-      });
-      a[isExist].SubItem1++;
+      let b = a[isExist].stepItemList.findIndex(
+        (t: any) => t.StepName == item.StepName
+      );
+      if (b != -1) {
+        a[isExist].stepItemList[b].stepItemList.push({
+          ...item,
+          step1:
+            item.WorkSection +
+            "-" +
+            item.Step +
+            "-" +
+            (a[isExist].stepItemList[b].stepItemList.length + 1),
+        });
+      } else {
+        a[isExist].stepItemList.push({
+          StepName: item.StepName,
+          Step: item.Step,
+          WorkSection: item.WorkSection,
+          InspectContent: item.InspectContent,
+          step1: item.WorkSection + "-" + item.Step,
+          stepItemList: [
+            {
+              ...item,
+              step1: item.WorkSection + "-" + item.Step + "-" + (isExist + 1),
+            },
+          ],
+        });
+      }
     } else {
-      const obj: InstanceType<typeof FistTableData> = {
-        StepName: item.StepName,
-        Step: item.Step,
-        InspectContent: item.InspectContent,
-        Step1: item.Step,
-        stepItemList: [],
+      let obj: InstanceType<typeof AllInspection> = {
+        ProductName: item.ProductName,
+        WorkSection: item.WorkSection,
+        step1: item.WorkSection,
+
+        stepItemList: [
+          {
+            StepName: item.StepName,
+            InspectContent: item.InspectContent,
+            Step: item.Step,
+            WorkSection: item.WorkSection,
+            step1: item.WorkSection + "-" + item.Step,
+            stepItemList: [],
+          },
+        ],
       };
-      obj.stepItemList.push({
+      obj.stepItemList[0].stepItemList.push({
         ...item,
-        Step1: item.Step + "-" + item.SubItem,
+        step1:
+          item.WorkSection +
+          "-" +
+          item.Step +
+          "-" +
+          (obj.stepItemList[0].stepItemList.length + 1),
       });
       a.push(obj);
     }
   });
   tableData.value = a;
+  // console.log(tableData.value);
+
+  tableData.value.sort((a, b) => {
+    return a.ProductName - b.ProductName;
+  });
   if (tableData.value.length % pageSize.value == 0 && currentPage.value > 1) {
     currentPage.value--;
   }
@@ -595,7 +627,7 @@ const handleCurrentChange = (val: any) => {
 };
 const getScreenHeight = () => {
   nextTick(() => {
-    tableHeight.value = window.innerHeight - 215;
+    tableHeight.value = window.innerHeight - 194;
   });
 };
 const resetForm = () => {
@@ -608,7 +640,7 @@ const resetForm = () => {
   // 重置 stepItemList，这里假设我们只重置第一个对象，或者你可以遍历它们
   form.StepItemList.forEach((item) => {
     item.SubItemName = "";
-    item.SubItem = "";
+    item.SubItem = 0;
     item.SubItemMethod = "";
     item.SubItemBasic = "";
     item.SubItemSolution = "";

@@ -120,7 +120,7 @@
       title="修改" width="50%">
       <el-form ref="eidtRef" :model="editForm" label-width="100px">
         <el-form-item label="工段" prop="WorkSection">
-          <el-input v-model="editHear.WorkSection" placeholder="工段"></el-input>
+          <el-input v-model="editHear.WorkSection" placeholder="工段" disabled></el-input>
         </el-form-item>
         <!-- <el-form-item label="产品编码" prop="Product">
             <el-input v-model="editHear.Product" placeholder="产品编码"></el-input>
@@ -128,7 +128,7 @@
         <el-row>
           <el-col :span="12">
             <el-form-item label="检验工序" prop="step">
-              <el-input v-model.number="editForm.Step" placeholder="检验工序"></el-input>
+              <el-input v-model.number="editForm.Step" placeholder="检验工序" disabled></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -145,7 +145,7 @@
         <el-row>
           <el-col :span="12">
             <el-form-item label="编号">
-              <el-input v-model.number="editForm.StepItemList[0].SubItem" placeholder="子项编号"></el-input>
+              <el-input v-model.number="editForm.StepItemList[0].SubItem" placeholder="子项编号" disabled></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -444,7 +444,7 @@ const eidtCancel = () => {
   editVisible.value = false;
 };
 const editSubmit = () => {
-  editHear.StepList.push(editForm);
+  editHear.StepList[0] = editForm;
   // console.log(JSON.stringify(editHear));
   UpdateInspectData(editHear).then((res: any) => {
     if (res.code == 100200) {
