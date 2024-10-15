@@ -548,7 +548,7 @@ const applyFor = () => {
   //   }
   // });
   OrderGoodMaterials(choiceList.value).then((res: any) => {
-    if (res.success) {
+    if (res && res.success) {
       ElNotification({
         title: '提示信息',
         message: res.msg,

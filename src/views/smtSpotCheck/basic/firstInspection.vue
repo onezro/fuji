@@ -19,8 +19,8 @@
         <!-- <el-table-column label="序号" width="60px" type="index" align="center" /> -->
         <el-table-column prop="WorkSection" label="工段"> </el-table-column>
         <el-table-column prop="ProductName" label="产品编码"> </el-table-column>
-        <el-table-column prop="Step" label="检验工序"> </el-table-column>
-        <el-table-column prop="StepName" label="检验设备"> </el-table-column>
+        <el-table-column prop="Step" label="编号"> </el-table-column>
+        <el-table-column prop="StepName" label="检验工序"> </el-table-column>
         <el-table-column prop="SubItem" label="检验编号"> </el-table-column>
         <el-table-column prop="SubItemName" label="检验名称"> </el-table-column>
         <el-table-column prop="SubItemAim" label="检验目标"> </el-table-column>
@@ -96,13 +96,13 @@
 
         <el-row :gutter="50">
           <el-col :span="12">
-            <el-form-item label="检验工序" prop="step">
+            <el-form-item label="编号" prop="step">
               <el-input v-model="form.Step" placeholder="工序" clearable />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="检验设备" prop="name">
-              <el-input v-model="form.Name" placeholder="检验设备"></el-input>
+            <el-form-item label="检验工序" prop="name">
+              <el-input v-model="form.Name" placeholder="检验工序"></el-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -230,19 +230,19 @@
         </el-form-item>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="检验工序" prop="step">
+            <el-form-item label="编号" prop="step">
               <el-input
                 v-model.number="editForm.Step"
-                placeholder="检验工序"
+                placeholder="编号"
                 disabled
               ></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="检验设备" prop="name">
+            <el-form-item label="检验工序" prop="name">
               <el-input
                 v-model="editForm.Name"
-                placeholder="检验设备"
+                placeholder="检验工序"
               ></el-input>
             </el-form-item>
           </el-col>
@@ -355,6 +355,7 @@ const currentPage = ref(1);
 const tableHeight = ref(0);
 const addVisible = ref(false);
 const editVisible = ref(false);
+const productIndex = ref(0)
 const formRef = ref();
 const getForm = reactive({
   Product: "*",
@@ -436,15 +437,23 @@ watch(
   () => form.Step,
   (newVal, oldVal) => {
     if (newVal !== oldVal) {
-      if (addFrom.WorkSection !== "") {
+      if (addFrom.WorkSection !== "" && addFrom.Product !== "") {
         const autoData = tableData.value.filter(
           (t: any) => addFrom.WorkSection === t.WorkSection
         );
         const data = cloneDeep(autoData[0]);
-        const inputData = data.stepItemList.find((d: any) => newVal == d.Step);
-        // console.log(inputData);
+        const wData = data.stepItemList.filter((t: any,i:any) => {
+          if (addFrom.Product === t.ProductName) {
+            productIndex.value = i
+            return true;
+          }
+          return false;
+        }
+        );
+        const workData = cloneDeep(wData[0]);
+        const inputData = workData.stepItemList.find((d: any) => newVal == d.Step);
+        console.log(inputData,workData);
         if (inputData !== undefined) {
-          // console.log(inputData);
           form.Name = inputData.StepName;
           form.StepItemList[0].SubItem = inputData.stepItemList.length + 1;
         } else {
@@ -510,6 +519,8 @@ const addCancel = () => {
   };
   addFrom.stepList = [];
   addFrom.WorkSection = "";
+  addFrom.PartName = "";
+  addFrom.Product = "";
   resetForm();
   // formRef.value.resetFields()
 };
@@ -756,7 +767,7 @@ const dispose = (data: any) => {
       );
       if (b != -1) {
         let c = a[isExist].stepItemList[b].stepItemList.findIndex(
-          (element: any) => element.StepName == item.StepName
+          (element: any) => element.Step == item.Step
         );
         if (c != -1) {
           a[isExist].stepItemList[b].stepItemList[c].stepItemList.push({
@@ -779,7 +790,7 @@ const dispose = (data: any) => {
           a[isExist].stepItemList[b].stepItemList.push({
             ProductName: item.ProductName,
             WorkSection: item.WorkSection,
-            StepName: item.StepName,
+            // StepName: item.StepName,
             InspectContent: item.InspectContent,
             Step: item.Step,
             step1:item.WorkSection + "-" + item.ProductName + "-" + item.Step + "-" + (isExist + 1),
@@ -808,7 +819,7 @@ const dispose = (data: any) => {
             {
               ProductName: item.ProductName,
               WorkSection: item.WorkSection,
-              StepName: item.StepName,
+              // StepName: item.StepName,
               InspectContent: item.InspectContent,
               Step: item.Step,
               step1:
@@ -837,7 +848,7 @@ const dispose = (data: any) => {
         // ProductName: item.ProductName,
         WorkSection: item.WorkSection,
         step1: item.WorkSection,
-
+        Step: item.Step,
         stepItemList: [
           {
             ProductName: item.ProductName,
@@ -850,7 +861,7 @@ const dispose = (data: any) => {
               {
                 ProductName: item.ProductName,
                 WorkSection: item.WorkSection,
-                StepName: item.StepName,
+                // StepName: item.StepName,
                 InspectContent: item.InspectContent,
                 Step: item.Step,
                 step1:

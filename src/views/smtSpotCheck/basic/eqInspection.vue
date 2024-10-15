@@ -9,8 +9,8 @@
         <!-- <el-table-column label="序号" width="60px" type="index" align="center" /> -->
         <el-table-column prop="WorkSection" label="工段"> </el-table-column>
         <!-- <el-table-column prop="ProductName" label="产品编码"> </el-table-column> -->
-        <el-table-column prop="Step" label="检验工序"> </el-table-column>
-        <el-table-column prop="StepName" label="检验设备"> </el-table-column>
+        <el-table-column prop="Step" label="编号"> </el-table-column>
+        <el-table-column prop="StepName" label="检验工序"> </el-table-column>
         <el-table-column prop="SubItem" label="检验编号"> </el-table-column>
         <el-table-column prop="SubItemName" label="检验名称"> </el-table-column>
         <el-table-column prop="SubItemAim" label="检验目标"> </el-table-column>
@@ -53,13 +53,13 @@
 
         <el-row :gutter="50">
           <el-col :span="12">
-            <el-form-item label="检验工序" prop="step">
+            <el-form-item label="编号" prop="step">
               <el-input v-model="form.Step" placeholder="工序" clearable />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="检验设备" prop="name">
-              <el-input v-model="form.Name" placeholder="检验设备"></el-input>
+            <el-form-item label="检验工序" prop="name">
+              <el-input v-model="form.Name" placeholder="检验工序"></el-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -127,13 +127,13 @@
           </el-form-item> -->
         <el-row>
           <el-col :span="12">
-            <el-form-item label="检验工序" prop="step">
-              <el-input v-model.number="editForm.Step" placeholder="检验工序" disabled></el-input>
+            <el-form-item label="编号" prop="step">
+              <el-input v-model.number="editForm.Step" placeholder="编号" disabled></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="检验设备" prop="name">
-              <el-input v-model="editForm.Name" placeholder="检验设备"></el-input>
+            <el-form-item label="检验工序" prop="name">
+              <el-input v-model="editForm.Name" placeholder="检验工序"></el-input>
             </el-form-item>
           </el-col>
         </el-row>
