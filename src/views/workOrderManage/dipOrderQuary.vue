@@ -87,7 +87,7 @@
     <el-dialog v-model="dialogVisible" width="80%" :title="'工单：' + orderName" align-center>
       <div class="w-full">
         <el-tabs v-model="activeName" type="border-card" class="demo-tabs" @tab-change="tabChange">
-          <el-tab-pane label="物料清单明细" name="物料清单明细" :stretch="true">
+          <el-tab-pane label="物料需求" name="物料清单明细" :stretch="true">
             <div class="flex-1" ref="tablebox">
               <el-table :data="feedTableData" default-expand-all size="small" stripe border fit :tooltip-effect="'dark'"
                 :height="400" row-key="MaterialName" :tree-props="{ children: 'children' }">

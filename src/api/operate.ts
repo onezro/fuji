@@ -215,6 +215,13 @@ export function QueryToolInfo(data: any) {
         data,
     });
 }
+export function QueryTools(data: any) {
+    return request({
+        url: "/api/Tools/QueryTools",
+        method: "post",
+        data,
+    });
+}
 //工治具上移
 export function SortTools(data: any) {
     return request({
