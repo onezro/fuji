@@ -61,6 +61,9 @@ export function GetFactoryModelList(){
         method: "post",
     });
 }
+//获取Combox的list
+
+
 //获取物料树
 export function findAllMaterialTree() {
     return request({

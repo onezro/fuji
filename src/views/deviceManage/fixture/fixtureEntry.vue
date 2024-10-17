@@ -84,7 +84,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="工治具编号" prop="compid">
-          <el-input v-model="form.compid" style="width: 240px" placeholder=""></el-input>
+          <el-input v-model.trim="form.compid" style="width: 240px" placeholder=""></el-input>
         </el-form-item>
         <!-- <el-form-item label="库位" prop="location">
           <el-input

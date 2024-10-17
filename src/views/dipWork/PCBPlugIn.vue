@@ -204,7 +204,7 @@
       </template>
 </el-dialog> -->
     <el-dialog v-model="detailVisible" title="上料明细" width="70%" align-center draggable :append-to-body="true"
-      :close-on-click-modal="false" :close-on-press-escape="false">
+      :close-on-click-modal="false" :close-on-press-escape="false" @close="detailVisible = false">
       <table-tem :showIndex="true" size="small" :tableData="detailsData" :tableHeight="400" :columnData="detailsColumn"
         :pageObj="detailsPageObj" @handleSizeChange="detailsSizeChange"
         @handleCurrentChange="detailsCurrentChange"></table-tem>
@@ -613,6 +613,10 @@ const openOver = () => {
 const opendetail = () => {
   detailVisible.value = true;
   QueryOrderMaterialRequired(getFeedForm.value).then((res: any) => {
+    if(res.content.length==0||res.content==null||res.content==undefined){
+      detailsData.value=[]
+      return
+    }
     detailsData.value = res.content;
   });
 };

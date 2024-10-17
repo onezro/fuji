@@ -44,7 +44,7 @@
                 @click.stop="radioChangeHandle($event, scope.row, scope.$index + 1)"></el-radio>
             </template>
           </el-table-column>
-          <el-table-column v-for="(item, index) in columns" :key="index + 'i'" :type="item.type" :label="item.label"
+          <el-table-column v-for="(item, index) in columns" :key="index" :type="item.type" :label="item.label"
             :prop="item.prop" :min-width="item['min-width'] || item.minWidth" :width="item.width"
             :align="item.align || 'center'" :fixed="item.fixed"
             v-bind="{ 'show-overflow-tooltip': true, ...item.bind, ...$attrs }">

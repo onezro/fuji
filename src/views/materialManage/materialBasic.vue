@@ -30,11 +30,12 @@
     <el-card shadow="always" :body-style="{ padding: '8px 8px 0 8px' }" class="flex-1">
       <el-form ref="formRef" size="small" :inline="true" :model="form" label-width="auto">
         <el-form-item label="物料编码" prop="MaterialCode" class="mb-2">
-          <el-input style="width: 150px" v-model.trim="form.ProductName"  clearable @clear="onSubmit"  @change="onSubmit"/>
+          <el-input style="width: 150px" v-model.trim="form.ProductName" clearable @clear="onSubmit"
+            @change="onSubmit" />
         </el-form-item>
         <el-form-item label="物料描述" prop="MaterialName" class="mb-2">
-          <el-input style="width: 150px" v-model.trim="form.ProductDescription"  clearable
-            @clear="onSubmit" @change="onSubmit" />
+          <el-input style="width: 150px" v-model.trim="form.ProductDescription" clearable @clear="onSubmit"
+            @change="onSubmit" />
         </el-form-item>
         <el-form-item label="物料类型" prop="QueryType" class="mb-2">
           <el-select v-model="form.QueryType" style="width: 150px" @change="onSubmit">
@@ -54,7 +55,7 @@
         @handleCurrentChange="handleCurrentChange" @handleSelectionChange="handleSelectionChange">
       </tableTem>
     </el-card>
-    <el-dialog v-model="editVisible" draggable title="修改物料属性" width="700px" :append-to-body="true"
+    <el-dialog v-model="editVisible" draggable title="修改物料属性" width="750px" :append-to-body="true"
       :close-on-click-modal="false" :close-on-press-escape="false" align-center>
       <div>
         <el-form-item label="物料编码" prop="ProductName">
@@ -70,6 +71,12 @@
             <el-form-item label="机型" prop="BD_ProductModel" class="flex items-center">
               <el-input v-model="editForm.BD_ProductModel" style="width: 250px" />
               <el-checkbox v-model="editForm.BD_IsICCID" label="ICCID物料" class="ml-3" />
+
+              <el-select v-model="editForm.BD_ICCIDType" placeholder=""  class="ml-3"  style="width: 150px"
+                :disabled="!editForm.BD_IsICCID">
+                <el-option  v-for="c in cardList" :label="c.Text" :value="c.Value" :key="c.Value"/>
+                
+              </el-select>
             </el-form-item>
             <el-form-item label="芯片类型" prop="BD_ChipType" class="flex items-center">
               <el-input v-model="editForm.BD_ChipType" style="width: 250px" />
@@ -92,8 +99,7 @@
                 active-text="是" inactive-text="否" @change="changeMsd" />
             </el-form-item>
             <el-form-item label="MSD等级" prop="MsdLevel">
-              <el-select v-model="msdForm.MsdLevel" placeholder="请选择" style="width: 200px"
-                :disabled="!msdForm.BD_IsMSD">
+              <el-select v-model="msdForm.MsdLevel" placeholder="" style="width: 200px" :disabled="!msdForm.BD_IsMSD">
                 <el-option v-for="l in levelList" :key="l.MsdLevel" :label="l.MsdLevel" :value="l.MsdLevel" />
               </el-select>
             </el-form-item>
@@ -128,8 +134,8 @@
       @onSubmit="editOnSubmit"
     ></formTem> -->
     <!-- 物料BOM明细 -->
-    <el-dialog v-model="bomVisible" draggable width="70%" title="产品BOM" :append-to-body="true" :close-on-click-modal="false"
-      :close-on-press-escape="false" align-center>
+    <el-dialog v-model="bomVisible" draggable width="70%" title="产品BOM" :append-to-body="true"
+      :close-on-click-modal="false" :close-on-press-escape="false" align-center>
       <tableTem size="small" :showIndex="true" :tableData="bomtableData" :tableHeight="450" :columnData="bomcolumnData"
         :pageObj="bompageObj" @handleSizeChange="handleSizeChange1" @handleCurrentChange="handleCurrentChange1">
       </tableTem>
@@ -150,6 +156,7 @@ import {
   findProductBOM,
   GetMSDLevel,
   UpdateMSDMaterialAttribute,
+  GetComboBoxList
 } from "@/api/operate";
 import tableTem from "@/components/tableTem/indexCopy.vue";
 import formTem from "@/components/formTem/index.vue";
@@ -285,6 +292,7 @@ const editForm = ref({
   BD_ChipType: "",
   BD_SoftVersion: "",
   BD_IsICCID: "",
+  BD_ICCIDType:"",
   BD_IsActivate: "",
 });
 const editFormHeader = reactive([
@@ -447,6 +455,7 @@ const packeForm = ref({
   zxrl: "",
   numType: "",
 });
+const cardList=ref<any[]>([])
 
 onBeforeMount(() => {
   getScreenHeight();
@@ -456,11 +465,17 @@ onMounted(() => {
   window.addEventListener("resize", getScreenHeight);
   getMaterialTree();
   getMsdLevel();
+  getCardData()
 });
 onBeforeUnmount(() => {
   window.addEventListener("resize", getScreenHeight);
 });
 
+const getCardData=()=>{
+  GetComboBoxList('ICCIDType').then((res:any)=>{
+    cardList.value=res.content
+  })
+}
 //
 const getMsdLevel = () => {
   GetMSDLevel().then((res: any) => {
@@ -519,6 +534,8 @@ const changeMsd = (val: any) => {
 const editOnSubmit = () => {
   // editFormRef.value.resetFields();
   if (activeName.value == "base") {
+    // console.log(editForm.value);
+    
     UpdateProductProperty(editForm.value).then((res: any) => {
       ElNotification({
         title: "提示信息",
@@ -529,25 +546,25 @@ const editOnSubmit = () => {
     });
   }
   if (activeName.value == "msd") {
-    
+
     if (msdForm.value.BD_IsMSD) {
-      if( msdForm.value.MsdLevel==""||msdForm.value.MsdLevel==null||msdForm.value.MsdLevel==undefined){
+      if (msdForm.value.MsdLevel == "" || msdForm.value.MsdLevel == null || msdForm.value.MsdLevel == undefined) {
         ElNotification({
           title: "提示信息",
           message: "MSD等级不能为空！！！",
           type: "warning",
         });
-      }else{
+      } else {
         UpdateMSDMaterialAttribute(msdForm.value).then((res: any) => {
-        ElNotification({
-          title: "提示信息",
-          message: res.msg,
-          type: "success",
+          ElNotification({
+            title: "提示信息",
+            message: res.msg,
+            type: "success",
+          });
+          onSubmit();
         });
-        onSubmit();
-      });
       }
-      
+
     } else {
       UpdateMSDMaterialAttribute(msdForm.value).then((res: any) => {
         ElNotification({
