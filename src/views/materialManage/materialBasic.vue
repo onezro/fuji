@@ -70,7 +70,7 @@
           <el-form ref="editFormRef" :model="editForm" label-width="auto" class="h-[200px]">
             <el-form-item label="机型" prop="BD_ProductModel" class="flex items-center">
               <el-input v-model="editForm.BD_ProductModel" style="width: 250px" />
-              <el-checkbox v-model="editForm.BD_IsICCID" label="ICCID物料" class="ml-3" />
+              <el-checkbox v-model="editForm.BD_IsICCID" label="ICCID物料" class="ml-3" @change="editForm.BD_ICCIDType = ''" />
 
               <el-select v-model="editForm.BD_ICCIDType" placeholder=""  class="ml-3"  style="width: 150px"
                 :disabled="!editForm.BD_IsICCID">
@@ -535,7 +535,14 @@ const editOnSubmit = () => {
   // editFormRef.value.resetFields();
   if (activeName.value == "base") {
     // console.log(editForm.value);
-    
+    if (editForm.value.BD_ICCIDType === '') {
+        ElNotification({
+          title: "提示信息",
+          message: "ICCID物料不能为空",
+          type: "warning",
+        });
+        return;
+    }
     UpdateProductProperty(editForm.value).then((res: any) => {
       ElNotification({
         title: "提示信息",

@@ -1,4 +1,5 @@
 import request from "@/utils/request";
+import request1 from "@/utils/plainTextApi";
 export function InsertInspect(data: any){
     return request({
         url: "/api/firstinspect/Insert_Inspect_Info",
@@ -102,6 +103,24 @@ export function UpdateMSDMaterialAttribute(data: any) {
         data
     })
 }
+
+//根据ERPBOMId查询产品BOM物料清单
+export function findERPBOMMaterialList(query: any) {
+    return request1({
+        url: "/api/product/findERPBOMMaterialList",
+        method: "post",
+        data:query
+    })
+}
+//查询产品BOM
+export function findERPBOM(data: any) {
+    return request({
+        url: "/api/product/findERPBOM",
+        method: "post",
+        data
+    })
+}
+
 //根据治具类型操作
 export function ToolsType(data: any) {
     return request({
