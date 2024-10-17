@@ -19,8 +19,8 @@
         <!-- <el-table-column label="序号" width="60px" type="index" align="center" /> -->
         <el-table-column prop="WorkSection" label="工段"> </el-table-column>
         <el-table-column prop="ProductName" label="产品编码"> </el-table-column>
-        <el-table-column prop="Step" label="编号"> </el-table-column>
         <el-table-column prop="StepName" label="检验工序"> </el-table-column>
+        <el-table-column prop="Step" label="编号"> </el-table-column>
         <el-table-column prop="SubItem" label="检验编号"> </el-table-column>
         <el-table-column prop="SubItemName" label="检验名称"> </el-table-column>
         <el-table-column prop="SubItemAim" label="检验目标"> </el-table-column>
@@ -102,7 +102,11 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="检验工序" prop="name">
-              <el-input v-model="form.Name" placeholder="检验工序"></el-input>
+              <el-input
+                v-model="form.Name"
+                placeholder="检验工序"
+                clearable
+              ></el-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -226,6 +230,7 @@
           <el-input
             v-model="editHear.Product"
             placeholder="产品编码"
+            disabled
           ></el-input>
         </el-form-item>
         <el-row>
@@ -355,7 +360,7 @@ const currentPage = ref(1);
 const tableHeight = ref(0);
 const addVisible = ref(false);
 const editVisible = ref(false);
-const productIndex = ref(0)
+const productIndex = ref(0);
 const formRef = ref();
 const getForm = reactive({
   Product: "*",
@@ -382,7 +387,7 @@ const getForm = reactive({
   ],
 });
 const form = reactive({
-  Step: "",
+  Step: 0,
   Status: "I",
   Name: "",
   InspectContent: "",
@@ -434,31 +439,40 @@ const deleteForm = reactive<InstanceType<typeof AllInspection>>({
 });
 
 watch(
-  () => form.Step,
+  () => form.Name,
   (newVal, oldVal) => {
     if (newVal !== oldVal) {
       if (addFrom.WorkSection !== "" && addFrom.Product !== "") {
-        const autoData = tableData.value.filter(
-          (t: any) => addFrom.WorkSection === t.WorkSection
-        );
-        const data = cloneDeep(autoData[0]);
-        const wData = data.stepItemList.filter((t: any,i:any) => {
-          if (addFrom.Product === t.ProductName) {
-            productIndex.value = i
-            return true;
-          }
-          return false;
+        const autoData: any = tableData.value.filter((t: any, index: any) => addFrom.WorkSection === t.WorkSection);
+        if (autoData.length === 0) {
+            form.Step = 1;
+            form.StepItemList[0].SubItem = 1;
+          return;
         }
+        const productData = autoData[0].stepItemList.filter(
+          (t: any, index: any) => {
+            if (addFrom.Product === t.ProductName) {
+              productIndex.value = index;
+              return true;
+            } else {
+              productIndex.value = 0;
+              return false;
+            }
+          }
         );
-        const workData = cloneDeep(wData[0]);
-        const inputData = workData.stepItemList.find((d: any) => newVal == d.Step);
-        console.log(inputData,workData);
-        if (inputData !== undefined) {
-          form.Name = inputData.StepName;
-          form.StepItemList[0].SubItem = inputData.stepItemList.length + 1;
-        } else {
-          form.Name = "";
-          form.StepItemList[0].SubItem = 1;
+        if (productData.length === 0) {
+            form.Step = 1;
+            form.StepItemList[0].SubItem = 1;
+          return
+        }
+        const stepData: any = productData[0].stepItemList.filter((t: any, index: any) => form.Name === t.StepName);
+        if (stepData.length > 0) {
+          
+          form.Step = stepData[0].stepItemList[0].Step;
+            form.StepItemList[0].SubItem = stepData[0].stepItemList.length + 1;
+        }else {
+            form.Step = 1;
+            form.StepItemList[0].SubItem = 1;
         }
       }
     }
@@ -579,6 +593,7 @@ const handleAdd = (row: any) => {
       form.InspectContent = row.stepItemList[0].InspectContent;
       form.Step = row.stepItemList[0].Step;
       form.Name = row.stepItemList[0].StepName;
+      console.log(form.Name);
     }
 
     // form.StepItemList[0]=[...row.stepItemList[0]]
@@ -767,7 +782,7 @@ const dispose = (data: any) => {
       );
       if (b != -1) {
         let c = a[isExist].stepItemList[b].stepItemList.findIndex(
-          (element: any) => element.Step == item.Step
+          (element: any) => element.StepName == item.StepName
         );
         if (c != -1) {
           a[isExist].stepItemList[b].stepItemList[c].stepItemList.push({
@@ -777,7 +792,8 @@ const dispose = (data: any) => {
               "-" +
               item.ProductName +
               "-" +
-              (a[isExist].stepItemList[b].stepItemList[c].stepItemList.length + 1),
+              (a[isExist].stepItemList[b].stepItemList[c].stepItemList.length +
+                1),
           });
         } else {
           // a[isExist].stepItemList[b].stepItemList.push({
@@ -790,19 +806,28 @@ const dispose = (data: any) => {
           a[isExist].stepItemList[b].stepItemList.push({
             ProductName: item.ProductName,
             WorkSection: item.WorkSection,
-            // StepName: item.StepName,
+            StepName: item.StepName,
             InspectContent: item.InspectContent,
-            Step: item.Step,
-            step1:item.WorkSection + "-" + item.ProductName + "-" + item.Step + "-" + (isExist + 1),
+            // Step: item.Step,
+            step1:
+              item.WorkSection +
+              "-" +
+              item.ProductName +
+              "-" +
+              item.Step +
+              "-" +
+              (isExist + 1),
             stepItemList: [
               {
                 ...item,
                 step1:
-                    item.WorkSection +
-                    "-" +
-                    item.Step +
-                    "-" +
-                    (a[isExist].stepItemList[b].stepItemList[0].stepItemList.length + 1),
+                  item.WorkSection +
+                  "-" +
+                  item.Step +
+                  "-" +
+                  (a[isExist].stepItemList[b].stepItemList[0].stepItemList
+                    .length +
+                    1),
               },
             ],
           });
@@ -819,15 +844,11 @@ const dispose = (data: any) => {
             {
               ProductName: item.ProductName,
               WorkSection: item.WorkSection,
-              // StepName: item.StepName,
+              StepName: item.StepName,
               InspectContent: item.InspectContent,
-              Step: item.Step,
+              // Step: item.Step,
               step1:
-                item.WorkSection +
-                "-" +
-                item.ProductName +
-                "-" +
-                (isExist + 1),
+                item.WorkSection + "-" + item.ProductName + "-" + (isExist + 1),
               stepItemList: [
                 {
                   ...item,
@@ -848,7 +869,7 @@ const dispose = (data: any) => {
         // ProductName: item.ProductName,
         WorkSection: item.WorkSection,
         step1: item.WorkSection,
-        Step: item.Step,
+        // Step: item.Step,
         stepItemList: [
           {
             ProductName: item.ProductName,
@@ -861,9 +882,9 @@ const dispose = (data: any) => {
               {
                 ProductName: item.ProductName,
                 WorkSection: item.WorkSection,
-                // StepName: item.StepName,
+                StepName: item.StepName,
                 InspectContent: item.InspectContent,
-                Step: item.Step,
+                // Step: item.Step,
                 step1:
                   item.WorkSection + "-" + item.ProductName + "-" + item.Step,
                 stepItemList: [],
@@ -884,7 +905,7 @@ const dispose = (data: any) => {
       a.push(obj);
     }
   });
-  // console.log(a);
+  console.log(a);
 
   tableData.value = a;
   // console.log(tableData.value);
@@ -910,7 +931,7 @@ const getScreenHeight = () => {
   });
 };
 const resetForm = () => {
-  form.Step = "";
+  form.Step = 1;
   form.Status = "I";
   form.Name = "";
   form.InspectContent = "";
