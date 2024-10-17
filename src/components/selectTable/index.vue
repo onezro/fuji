@@ -89,6 +89,20 @@ import {
 } from "vue";
 import { ElMessage } from "element-plus";
 import ClickOutside from "@/utils/clickOutside";
+interface Columns {
+  type: string;
+  prop: any;
+  label: string;
+  minWidth: any;
+  width: any;
+  align: string;
+  fixed: any;
+  render: any;
+  slotName: any
+  'min-width': any;
+  bind: any;
+
+}
 const props = defineProps({
   // input输入框的值（modelValue）
   inputValue: {

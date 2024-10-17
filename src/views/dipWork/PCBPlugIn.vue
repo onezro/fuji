@@ -204,7 +204,7 @@
       </template>
 </el-dialog> -->
     <el-dialog v-model="detailVisible" title="上料明细" width="70%" align-center draggable :append-to-body="true"
-      :close-on-click-modal="false" :close-on-press-escape="false">
+      :close-on-click-modal="false" :close-on-press-escape="false" @close="detailVisible = false">
       <table-tem :showIndex="true" size="small" :tableData="detailsData" :tableHeight="400" :columnData="detailsColumn"
         :pageObj="detailsPageObj" @handleSizeChange="detailsSizeChange"
         @handleCurrentChange="detailsCurrentChange"></table-tem>
@@ -214,7 +214,6 @@
         </span>
       </template>
     </el-dialog>
-
   </div>
 </template>
 
@@ -234,7 +233,7 @@ import {
   FindAllDevice,
   UpdateDevice,
   QueryMoveHistory,
-  QueryOrderMaterialRequired
+  QueryOrderMaterialRequired,
 } from "@/api/dipApi";
 import { QueryToolInfo, SortTools } from "@/api/operate";
 import {
@@ -389,7 +388,6 @@ const columnData1 = reactive([
     width: "",
     align: "1",
   },
-
 ]);
 const tableData1 = ref([]);
 const tableHeight = ref(0);
@@ -514,11 +512,11 @@ const getToolForm = ref({
 const defaultSelectVal = ref<string[]>([]);
 const checked = ref<string[]>([]);
 const leftBoxH = ref(0);
-const detailsData = ref([])
+const detailsData = ref([]);
 const detailsPageObj = ref({
   pageSize: 10,
   currentPage: 1,
-})
+});
 
 const detailsColumn = ref([
   {
@@ -527,7 +525,7 @@ const detailsColumn = ref([
     label: "物料编码",
     width: "",
     align: "1",
-    min: true
+    min: true,
   },
   {
     text: true,
@@ -585,17 +583,17 @@ const detailsColumn = ref([
     min: true,
     align: "1",
   },
-])
+]);
 const hisForm = ref({
   MfgOrderName: "",
-  workstationName: opui.station
-})
-const detailVisible = ref(false)
+  workstationName: opui.station,
+});
+const detailVisible = ref(false);
 const getFeedForm = ref({
-  MfgOrder: '',
+  MfgOrder: "",
   workstationName: opui.station,
   SpecName: "DIP-PlugIn",
-})
+});
 
 const changeCheck = (val: any) => {
   // console.log(val, checked.value);
@@ -613,11 +611,15 @@ const openOver = () => {
   getOverData();
 };
 const opendetail = () => {
-  detailVisible.value = true
+  detailVisible.value = true;
   QueryOrderMaterialRequired(getFeedForm.value).then((res: any) => {
-    detailsData.value = res.content
-  })
-}
+    if(res.content.length==0||res.content==null||res.content==undefined){
+      detailsData.value=[]
+      return
+    }
+    detailsData.value = res.content;
+  });
+};
 //获取过序
 const getOverData = () => {
   FindAllDevice({ WorkStation: opui.station }).then((res: any) => {
@@ -717,17 +719,14 @@ onBeforeMount(() => {
 onMounted(() => {
   window.addEventListener("resize", getScreenHeight);
   getOrderData();
-
 });
 onBeforeUnmount(() => {
   window.addEventListener("resize", getScreenHeight);
 });
 
-
-
 const getOrderData = () => {
   isLoding.value = "is-loading";
-  OrderQuery({ lineName: opui.line, OrderTypeName: 'DIP' }).then((res: any) => {
+  OrderQuery({ lineName: opui.line, OrderTypeName: "DIP" }).then((res: any) => {
     let data = res.content;
     orderTable.value.data[0] = data[0];
     let timer = setTimeout(() => {
@@ -739,16 +738,14 @@ const getOrderData = () => {
       let a = data[0].MfgOrderName;
       defaultSelectVal.value[0] = a;
     }
-
   });
 };
 //历史过站记录
 const getHisData = () => {
   QueryMoveHistory(hisForm.value).then((res: any) => {
-    tableData1.value = res.content
-  })
-}
-
+    tableData1.value = res.content;
+  });
+};
 
 //治具上移
 const moveUp = (val: any) => {
@@ -772,8 +769,22 @@ const getToolData = () => {
       return;
     }
     toolList.value = res.content;
-    stopsForm.value.tools = res.content[0].ToolName;
-    checked.value[0] = res.content[0].ToolName;
+    let isExitTool = toolList.value.findIndex(
+      (t: any) => t.ToolName == stopsForm.value.tools
+    );
+    if (isExitTool == -1) {
+      stopsForm.value.tools = res.content[0].ToolName;
+      checked.value[0] = res.content[0].ToolName;
+    } else {
+      if (msgType.value && res.content.length >= isExitTool + 1) {
+        stopsForm.value.tools = res.content[isExitTool + 1].ToolName;
+        checked.value[0] = res.content[isExitTool + 1].ToolName;
+      } else {
+        stopsForm.value.tools = res.content[0].ToolName;
+        checked.value[0] = res.content[0].ToolName;
+        return
+      }
+    }
   });
 };
 //获取光标
@@ -809,18 +820,17 @@ const radioChange = (args: any) => {
     form.PlannedStartDate = args[0].PlannedStartDate;
     form.PlannedCompletionDate = args[0].PlannedCompletionDate;
     form.Qty = args[0].Qty;
-    hisForm.value.MfgOrderName = args[0].MfgOrderName
+    hisForm.value.MfgOrderName = args[0].MfgOrderName;
     // console.log(args[0].MfgOrderName);
-    getFeedForm.value.MfgOrder = args[0].MfgOrderName
+    getFeedForm.value.MfgOrder = args[0].MfgOrderName;
 
     if (getToolForm.value.OrderNumber == args[0].MfgOrderName) {
       return;
     } else {
       getToolForm.value.OrderNumber = args[0].MfgOrderName;
-      getHisData()
+      getHisData();
       getToolData();
     }
-
   }
 };
 
@@ -912,7 +922,7 @@ const getChange = (val: any) => {
     stopsForm.value.ContainerName = "";
     barCode.value = "";
     getToolData();
-    getHisData()
+    getHisData();
     getFocus();
   });
 };

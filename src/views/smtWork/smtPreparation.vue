@@ -180,7 +180,7 @@
         </el-dialog>
         <el-dialog v-model="firstVisible" draggable title="首套亮灯" width="400px" :append-to-body="true"
             :close-on-click-modal="false" :close-on-press-escape="false" align-center @close="firstCancel">
-            <el-form ref="firstFormRef" :model="firstForm" :rules="firstRule" label-width="auto">
+            <el-form ref="firstFormRef" :model="firstForm"  label-width="auto">
 
                 <div class="flex justify-around border-2 border-dashed  border-red-600 mb-3">
                     <el-radio-group v-model="operateType">
@@ -217,7 +217,7 @@
           </el-select> -->
                 </el-form-item>
                 <el-form-item label="台车" prop="Station">
-                    <el-select v-model="firstForm.Station" placeholder="">
+                    <el-select v-model="firstForm.Station" placeholder="" clearable>
                         <el-option v-for="item in StationList" :key="item.Station" :label="item.Station"
                             :value="item.Station" />
                     </el-select>
@@ -442,15 +442,7 @@ const operateRule = reactive({
     ]
 })
 
-const firstRule = reactive({
-    Station: [
-        {
-            required: true,
-            message: "请选择台车",
-            trigger: "change",
-        },
-    ]
-})
+
 
 watch(
     () => operateForm.value.Status,
@@ -608,8 +600,6 @@ const orderConfirm = () => {
     // operateFormRef.value.clearValidate()
 };
 const getChange = () => {
-  
-    
     if (operateForm.value.OrderNumber == ""||operateForm.value.OrderNumber==undefined) {
         msgTitle.value = `工单不能为空`;
         msgType.value = false;

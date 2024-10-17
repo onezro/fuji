@@ -3,7 +3,7 @@
         <div class="h-[40px] pl-2 pr-2 flex justify-between items-center">
             <span class="text-[1.2rem]"> {{ opui.stationDec }} </span>
             <div>
-                <!-- <el-button type="primary" @click="openDialog">工装治具</el-button> -->
+                <el-button type="primary" @click="openDialog">工装治具</el-button>
                 <!-- <el-button type="primary" @click="openDialog">不良品登记</el-button> -->
             </div>
         </div>
@@ -15,22 +15,7 @@
                     </div>
                     <div class="p-[10px]">
                         <el-form class="inbound" ref="formRef" :model="form" label-width="auto">
-                            <!-- <el-form-item label="工单号">
-                                <selectTa ref="selectTable" :table="orderTable" :selectWidth="180"
-                                    :columns="orderColumns" :max-height="400" :tableWidth="700"
-                                    :defaultSelectVal="defaultSelectVal" :keywords="{
-                                        label: 'MfgOrderName',
-                                        value: 'MfgOrderName',
-                                    }" @radioChange="(...args: any) => radioChange(args)">
-                                </selectTa>
-                                <el-tooltip content="刷新" placement="top">
-                                    <el-icon class="ml-2" color="#777777" :class="isLoding" size="24"
-                                        @click="getOrderData">
-                                        <RefreshRight />
-                                    </el-icon>
-                                </el-tooltip>
-                            </el-form-item> -->
-                            <el-form-item v-for="f in formHeader" :key="f.value" :label="f.label">
+                            <el-form-item v-for="f in formHeader" :key="f.value" :label="f.label" :prop="f.value">
                                 <span class="font-bold text-lg leading-[30px]"
                                     :class="f.value == 'passNum' ? 'text-[#00B400]' : ''">
                                     {{ formText(f.value) }}</span>
@@ -46,7 +31,7 @@
                             <span class="ml-5"> 扫描条码</span>
                         </div>
                         <div class="h-[120px] p-5">
-                            <el-form class="inbound" ref="formRef" :inline="true" :model="form" label-width="auto"
+                            <el-form class="inbound" :inline="true" :model="form" label-width="auto"
                                 @submit.native.prevent>
                                 <el-form-item label="扫描条码">
                                     <el-input v-model="stopsForm.containerName" :autofocus="inputFocus" clearable
@@ -92,6 +77,16 @@
                 </div>
             </div>
         </div>
+        <el-dialog v-model="editVisible" title="工装治具" width="60%" :append-to-body="true" :close-on-click-modal="false"
+            :close-on-press-escape="false" align-center>
+            <table-tem :showIndex="true" :tableData="fixtureData" :tableHeight="tableHeight" :columnData="fixtureColumn"
+                :pageObj="fixturePageObj"></table-tem>
+            <template #footer>
+                <span class="dialog-footer">
+                    <el-button @click=" editVisible = false">关闭</el-button>
+                </span>
+            </template>
+        </el-dialog>
         <!-- <badInfoTem :visible="editVisible" :list="list" :formHeader="badFormHeader" :form="editForm" :badForm="badForm"
             :tableData="BadtableData" @cancel="editCancel" @submit="editSubmit" @deleteBad="deleteBad"
             @addBadData="addBadData" @openAddBad="openAddBad" /> -->
@@ -99,7 +94,7 @@
 </template>
 
 <script lang="ts" setup>
-import tableTem from "@/components/tableTem/index.vue";
+import tableTem from "@/components/tableTemp/index.vue";
 import badInfoTem from "@/components/badInfoTem/index.vue";
 import selectTa from "@/components/selectTable/index.vue";
 import { useAppStore } from "@/stores/modules/app";
@@ -115,7 +110,7 @@ import {
 } from "vue";
 import { ElMessage, ElMessageBox, ElNotification } from "element-plus";
 import { PCBASplitMoveStd, OrderQuery, QueryMoveHistory } from "@/api/dipApi";
-import { QueryToolInfo, SortTools } from "@/api/operate";
+import { QueryTools } from "@/api/operate";
 
 interface ToolList {
     WorkStationName: string;
@@ -296,7 +291,7 @@ const hisForm = ref({
 const getToolForm = ref({
     ToolName: "",
     OrderNumber: "",
-    OperateType: "",
+    OperateType: "3",
     CompName: "",
     workstationName: opui.station,
     userAccount: userStore.getUserInfo,
@@ -312,7 +307,6 @@ onMounted(() => {
     window.addEventListener("resize", getScreenHeight);
     // inputRef.value.focus();
     // getOrderData();
-
 });
 onBeforeUnmount(() => {
     window.addEventListener("resize", getScreenHeight);
@@ -352,14 +346,12 @@ const getOrderData = () => {
     });
 };
 const getToolData = () => {
-    QueryToolInfo(getToolForm.value).then((res: any) => {
+    QueryTools(getToolForm.value).then((res: any) => {
         if (res.content == null || res.content.length == 0) {
             toolList.value = [];
             return;
         }
         toolList.value = res.content;
-        // stopsForm.value.tools = res.content[0].ToolName;
-        // checked.value[0] = res.content[0].ToolName;
     });
 };
 
@@ -375,7 +367,9 @@ const getChange = () => {
             stopsForm.value.containerName = "";
             form.value = { ...res.content[0] };
             hisForm.value.MfgOrderName = res.content[0].MfgOrderName;
+            // getToolForm.value.OrderNumber = res.content[0].MfgOrderName;
             getHisData();
+
             // inputRef.value.focus();
             getFocus();
         } else {
@@ -426,8 +420,22 @@ const clear = () => {
 
 //打开不良登记
 const openDialog = () => {
+    toolList.value = [];
+
+    // if (
+    //     form.value.MfgOrderName == "" ||
+    //     form.value.MfgOrderName == undefined ||
+    //     form.value.MfgOrderName == null
+    // ) {
+    //     ElNotification({
+    //         title:'提示',
+    //         message:"缺少工单信息",
+    //         type:'error'
+    //     })
+    // }else{
+    getToolData();
     editVisible.value = true;
-    
+    // }
 };
 
 //分页

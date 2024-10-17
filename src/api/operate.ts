@@ -61,6 +61,9 @@ export function GetFactoryModelList(){
         method: "post",
     });
 }
+//获取Combox的list
+
+
 //获取物料树
 export function findAllMaterialTree() {
     return request({
@@ -211,6 +214,13 @@ export function QueryOrderToolsData(data:any) {
 export function QueryToolInfo(data: any) {
     return request({
         url: "/api/Tools/QueryToolInfo",
+        method: "post",
+        data,
+    });
+}
+export function QueryTools(data: any) {
+    return request({
+        url: "/api/Tools/QueryTools",
         method: "post",
         data,
     });
