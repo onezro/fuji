@@ -1,7 +1,7 @@
 <template>
   <div class="p-2">
     <el-card shadow="always" :body-style="{ padding: '8px' }">
-      <div class="flex justify-between">
+      <div class="flex justify-between items-center">
         <div class="flex">
           <!-- <el-input
             v-model="inputValue"
@@ -12,6 +12,7 @@
           <el-form ref="formRef" class="form" :inline="true" label-width="">
             <el-form-item label="时间" class="mb-2">
               <el-date-picker
+               size="small"
               :shortcuts="shortcuts"
                 v-model="dateValue"
                 type="daterange"
@@ -22,6 +23,7 @@
             </el-form-item>
             <el-form-item label="入库类型" class="mb-2">
               <el-select
+               size="small"
                 v-model="searchForm.Type"
                 filterable
                 style="width: 150px"
@@ -38,6 +40,7 @@
             </el-form-item>
             <el-form-item label="入库单号" class="mb-2">
               <el-input
+               size="small"
                 v-model="searchForm.InstockNo"
                 style="width: 240px"
                 placeholder=""
@@ -45,7 +48,7 @@
               ></el-input>
             </el-form-item>
             <el-form-item label="" class="mb-2">
-              <el-button class="ml-3" type="primary" @click="searchData"
+              <el-button class="ml-3" type="primary" @click="searchData" size="small"
                 >查询</el-button
               >
             </el-form-item>
@@ -54,9 +57,9 @@
                         <template #append>
                             <el-button type="primary" icon="Search" @click="serachData"></el-button> </template></el-input> -->
         </div>
-        <el-button
+        <el-button class="mb-2"
           type="primary"
-          @click="clearForm(), (addVisible = true), GetList()"
+          @click="clearForm(), (addVisible = true), GetList()" size="small"
           >新建入库单</el-button
         >
       </div>

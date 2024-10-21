@@ -9,18 +9,20 @@
           size="small"
           label-width="auto"
         >
-          <el-form-item label="组件编码" class="mb-2">
+          <el-form-item label="组件物料编码" class="mb-2">
             <el-input
+               style="width: 200px"
               v-model="historyForm.ProductName"
               placeholder=""
-              clearabled
+              clearable
             ></el-input>
           </el-form-item>
-          <el-form-item label="组件名称" class="mb-2">
+          <el-form-item label="组件物料名称" class="mb-2">
             <el-input
+               style="width: 200px"
               v-model="historyForm.ProductDescription"
               placeholder=""
-              clearabled
+              clearable
             ></el-input>
           </el-form-item>
           <el-form-item label="" class="mb-2">
@@ -309,7 +311,7 @@ const detailedTable = ref<any[]>([]);
 const detailedHeight = ref(0);
 const choiceID = ref("");
 const detailedPageObj = ref({
-  pageSize: 10,
+  pageSize: 1000000,
   currentPage: 1,
   isShow: -1,
 });
@@ -384,6 +386,7 @@ onMounted(() => {
 onBeforeUnmount(() => {
   window.addEventListener("resize", getScreenHeight);
 });
+
 //查询工单信息
 //   const findOrderData = () => {
 //     findOrder(findOrderForm).then((res: any) => {
@@ -426,42 +429,6 @@ const getHistory = () => {
     }
     historyTable.value = res.content;
   });
-};
-//根据工单获取物料信息
-const getFeedTableData = (ID: any) => {
-  findERPBOMMaterialList({ ID }).then((res: any) => {
-    // console.log(OrganData(res.content));
-    if (res.success) {
-      if (!res || res.content === null || res.content.length === 0) {
-        feedTableData.value = [];
-        return;
-      }
-      let data = cloneDeep(feedOrganData(res.content));
-      // console.log(data);
-
-      feedTableData.value = data;
-
-      // OrganData(res.content)
-    }
-  });
-};
-//处理父子结构
-const feedOrganData = (organizations: any) => {
-  const organizationMap = new Map();
-  organizations.forEach((org: any) => {
-    organizationMap.set(org.MaterialName, { ...org, children: [] });
-  });
-  organizations.forEach((org: any) => {
-    if (org.originalMaterialName !== org.MaterialName) {
-      const parentOrg = organizationMap.get(org.originalMaterialName);
-      if (parentOrg) {
-        parentOrg.children.push(organizationMap.get(org.MaterialName));
-      }
-    }
-  });
-  return Array.from(organizationMap.values()).filter(
-    (org) => org.originalMaterialName == org.MaterialName
-  );
 };
 
 const flexColumnWidth = (label: any, prop: any) => {
@@ -635,7 +602,7 @@ const columnData = reactive([
   {
     text: true,
     prop: "ERPBOMName",
-    label: "物件物料编码",
+    label: "组件物料编码",
     width: "",
     min: true,
     align: "center",
@@ -643,7 +610,7 @@ const columnData = reactive([
   {
     text: true,
     prop: "Description",
-    label: "物件物料名称",
+    label: "组件物料名称",
     width: "1100px",
     min: true,
     align: "left",

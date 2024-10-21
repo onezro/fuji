@@ -3,18 +3,19 @@
     <el-card shadow="always" :body-style="{ padding: '8px 8px 0 8px' }">
       <div class="pb-2 flex justify-between">
         <el-button
-          type="primary"
+          type="primary" size="small"
           @click="clearForm(), (addVisible = true), getClassList()"
           >添加</el-button
         >
         <div class="flex">
           <el-input
+           size="small"
             v-model="inputValue"
             style="width: 240px"
             placeholder="请输入"
             clearable
           ></el-input>
-          <el-button class="ml-3" type="primary" @click="serachData"
+          <el-button class="ml-3" type="primary" @click="serachData" size="small"
             >查询</el-button
           >
         </div>

@@ -4,27 +4,27 @@
       <div>
         <el-form ref="formRef" class="form" :inline="true" :model="getDataText">
           <el-form-item class="mb-2">
-            <el-select size="default" style="width: 100px" v-model="inquire" placeholder="检查类型">
+            <el-select size="small" style="width: 100px" v-model="inquire" placeholder="检查类型">
               <el-option v-for="item in inquireList" :key="item.value" :label="item.lable" :value="item.value">
               </el-option>
             </el-select>
           </el-form-item>
           <el-form-item class="mb-2">
-            <el-select size="default" style="width: 100px" v-model="getDataText.inspectType" placeholder="检查类型">
+            <el-select size="small" style="width: 100px" v-model="getDataText.inspectType" placeholder="检查类型">
               <el-option v-for="item in typeList" :key="item.value" :label="item.lable" :value="item.value"></el-option>
             </el-select></el-form-item>
           <el-form-item v-show="inquire == 'order'" class="mb-2">
-            <el-input size="default" placeholder="请输入单号" clearable v-model="getDataText.inspect" class="input-with-select"
+            <el-input size="small" placeholder="请输入单号" clearable v-model="getDataText.inspect" class="input-with-select"
               @change="getData()">
             </el-input>
           </el-form-item>
           <el-form-item v-show="inquire != 'order'" class="mb-2">
             <el-date-picker :shortcuts="shortcuts"  v-model="value1" format="YYYY-MM-DD" value-format="YYYY-MM-DD" type="daterange"
-              range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期">
+              range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" size="small">
             </el-date-picker>
           </el-form-item>
           <el-form-item class="mb-2">
-            <el-button type="primary" @click="getData()">查询</el-button>
+            <el-button type="primary" @click="getData()" size="small">查询</el-button>
           </el-form-item>
         </el-form>
       </div>

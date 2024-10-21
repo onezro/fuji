@@ -6,20 +6,20 @@
           <el-form-item label="计划开始时间" class="mb-2">
             <el-date-picker :shortcuts="shortcuts" v-model="getDataText.date" format="YYYY-MM-DD" :clearable="true" value-format="YYYY-MM-DD"
               type="daterange" range-separator="-"
-              style="width: 240px" />
+              style="width: 240px" size="small" />
           </el-form-item>
           <el-form-item label="面号" class="mb-2">
-            <el-select v-model="getDataText.Side" @clear="getData" clearable style="width: 180px">
+            <el-select v-model="getDataText.Side" @clear="getData" clearable style="width: 180px" size="small">
               <el-option v-for="s in sideList" :label="s.label" :value="s.value" />
             </el-select>
           </el-form-item>
 
           <el-form-item label="工单号" class="mb-2">
-            <el-input v-model="getDataText.OrderNumber" @clear="getData" clearable style="width: 180px" />
+            <el-input v-model="getDataText.OrderNumber" @clear="getData" clearable style="width: 180px" size="small" />
           </el-form-item>
           <el-form-item class="mb-2">
-            <el-button type="primary" @click="getData">查询</el-button>
-            <el-button @click="restData">重置</el-button>
+            <el-button type="primary" @click="getData" size="small">查询</el-button>
+            <el-button @click="restData" size="small">重置</el-button>
           </el-form-item>
         </el-form>
       </div>

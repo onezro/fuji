@@ -310,13 +310,14 @@ const headerRef = ref();
 const orderList = ref<any[]>([]);
 const feedTableData = ref<any>([]);
 const choiceList = ref<any[]>([]);
+const choiceId = ref("");
 const dialogVisible = ref(false);
 const historyTable = ref<any>([]);
 const date = ref<any[]>([]);
 const detailedTable = ref<any[]>([]);
 const detailedHeight = ref(0);
 const detailedPageObj = ref({
-  pageSize: 10,
+  pageSize: 1000000,
   currentPage: 1,
   isShow: -1,
 });
@@ -552,7 +553,7 @@ const handleSelectionChange = (data: any) => {
         OriginalMaterialName: item.OriginalMaterialName,
         SpecName: item.SpecName,
         ERPRouteName: item.ERPRouteName,
-        QtyRequired:item.QtyRequired
+        QtyRequired: item.QtyRequired,
       };
     });
   console.log(choiceList.value);
@@ -616,15 +617,18 @@ const selectable = (row: any) => {
 };
 
 const rowClick = (val: any) => {
-  QueryMaterialRequestDetail(val.isMaterialRequestTxnHistoryId).then(
-    (res: any) => {
-      if (!res || res.content === null || res.content.length === 0) {
-        detailedTable.value = [];
-        return;
+  if (choiceId.value !== val.isMaterialRequestTxnHistoryId) {
+    QueryMaterialRequestDetail(val.isMaterialRequestTxnHistoryId).then(
+      (res: any) => {
+        if (!res || res.content === null || res.content.length === 0) {
+          detailedTable.value = [];
+          return;
+        }
+        detailedTable.value = res.content;
       }
-      detailedTable.value = res.content;
-    }
-  );
+    );
+    choiceId.value = val.isMaterialRequestTxnHistoryId;
+  }
 };
 
 //判断请求数量是否大于需求量

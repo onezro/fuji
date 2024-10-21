@@ -10,6 +10,7 @@
             type="daterange"
             range-separator="-"
             style="width: 240px"
+            size="small"
             :clearable="true"
           />
         </el-form-item>
@@ -19,6 +20,7 @@
             placeholder=""
             style="width: 200px"
             clearable
+            size="small"
             @clear="getTableData"
           >
             <el-option
@@ -34,11 +36,13 @@
             v-model="getForm.ContainerName"
             style="width: 200px"
             clearable
+            size="small"
             @clear="getTableData"
           />
         </el-form-item>
         <el-form-item class="mb-2">
-          <el-button type="primary" @click="getTableData">查询</el-button>
+          <el-button type="primary" @click="getTableData"
+            size="small">查询</el-button>
         </el-form-item>
       </el-form>
       <table-tem

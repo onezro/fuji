@@ -2,11 +2,11 @@
   <div class="p-2">
     <el-card shadow="always" :body-style="{ padding: '8px 8px 0px 8px' }">
       <div class="pb-2 flex justify-between">
-        <el-button type="primary" @click="openAdd">添加</el-button>
+        <el-button type="primary" @click="openAdd" size="small">添加</el-button>
         <div class="flex">
-          <el-input v-model.trim="searchName" style="width: 300px" clearable placeholder="请输入">
+          <el-input v-model.trim="searchName" style="width: 300px" clearable placeholder="请输入" size="small">
             <template #append>
-              <el-button type="primary" icon="Search"></el-button> </template></el-input>
+              <el-button type="primary" icon="Search" size="small"></el-button> </template></el-input>
         </div>
       </div>
       <table-tem :show-index="true" size="small" :tableData="tableData1" :tableHeight="tableHeight"

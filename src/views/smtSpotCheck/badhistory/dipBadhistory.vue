@@ -11,6 +11,7 @@
             range-separator="-"
             style="width: 240px"
             :clearable="true"
+             size="small"
           />
         </el-form-item>
         <el-form-item label="工序" prop="Spec" class="mb-2">
@@ -20,6 +21,7 @@
             style="width: 200px"
             clearable
             @clear="getTableData"
+             size="small"
           >
             <el-option
               v-for="s in specList"
@@ -35,10 +37,11 @@
             style="width: 200px"
             clearable
             @clear="getTableData"
+             size="small"
           />
         </el-form-item>
         <el-form-item class="mb-2">
-          <el-button type="primary" @click="getTableData">查询</el-button>
+          <el-button type="primary" @click="getTableData" size="small">查询</el-button>
         </el-form-item>
       </el-form>
       <table-tem

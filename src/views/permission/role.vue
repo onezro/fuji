@@ -2,7 +2,7 @@
   <div class="p-2">
     <el-card shadow="always" :body-style="{ padding: '8px' }">
       <div class="mb-2">
-        <el-button type="primary" @click="openAdd">添加</el-button>
+        <el-button type="primary" @click="openAdd" size="small">添加</el-button>
       </div>
       <el-table size="small" :data="tableData.slice((currentPage - 1) * pageSize, currentPage * pageSize)
         " border :height="tableHeight" stripe>

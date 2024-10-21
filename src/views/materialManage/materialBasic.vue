@@ -46,8 +46,8 @@
           <el-button type="primary" @click="onSubmit">查询</el-button>
           <el-button type="warning" @click="onEditSubmit"
             :disabled="selectData.length === 1 ? false : true">修改物料属性</el-button>
-          <el-button type="info" @click="onQuerySubmit"
-            :disabled="selectData.length === 1 ? false : true">产品BOM</el-button>
+          <!-- <el-button type="info" @click="onQuerySubmit"
+            :disabled="selectData.length === 1 ? false : true">产品BOM</el-button> -->
         </el-form-item>
       </el-form>
       <tableTem size="small" :showIndex="true" :showSelect="true" :tableData="tableData" :tableHeight="tableHeight"
@@ -134,7 +134,7 @@
       @onSubmit="editOnSubmit"
     ></formTem> -->
     <!-- 物料BOM明细 -->
-    <el-dialog v-model="bomVisible" draggable width="70%" title="产品BOM" :append-to-body="true"
+    <!-- <el-dialog v-model="bomVisible" draggable width="70%" title="产品BOM" :append-to-body="true"
       :close-on-click-modal="false" :close-on-press-escape="false" align-center>
       <tableTem size="small" :showIndex="true" :tableData="bomtableData" :tableHeight="450" :columnData="bomcolumnData"
         :pageObj="bompageObj" @handleSizeChange="handleSizeChange1" @handleCurrentChange="handleCurrentChange1">
@@ -144,7 +144,7 @@
           <el-button @click="bomVisible = false">关闭</el-button>
         </span>
       </template>
-    </el-dialog>
+    </el-dialog> -->
   </div>
 </template>
 
@@ -538,7 +538,7 @@ const editOnSubmit = () => {
     if (editForm.value.BD_ICCIDType === '') {
         ElNotification({
           title: "提示信息",
-          message: "ICCID物料不能为空",
+          message: "ICCID物料类型不能为空",
           type: "warning",
         });
         return;
@@ -584,17 +584,18 @@ const editOnSubmit = () => {
     }
   }
 };
-const onQuerySubmit = () => {
-  let data = cloneDeep(selectData.value[0]);
-  findProductBOM(data.ProductName).then((res: any) => {
-    if (res.content.length == 0 || res.content == null) {
-      bomtableData.value = [];
-      return;
-    }
-    bomtableData.value = res.content;
-  });
-  bomVisible.value = true;
-};
+
+// const onQuerySubmit = () => {
+//   let data = cloneDeep(selectData.value[0]);
+//   findProductBOM(data.ProductName).then((res: any) => {
+//     if (res.content.length == 0 || res.content == null) {
+//       bomtableData.value = [];
+//       return;
+//     }
+//     bomtableData.value = res.content;
+//   });
+//   bomVisible.value = true;
+// };
 
 const handleSelectionChange = (val: any) => {
   let data = cloneDeep(val);
