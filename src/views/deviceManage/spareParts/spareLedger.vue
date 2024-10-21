@@ -15,7 +15,7 @@
                 v-model="dateValue"
                 type="daterange"
                 range-separator="-"
-                size=""
+                 size="small"
                 value-format="YYYY-MM-DD"
                 @change="dateChange"
               />
@@ -23,12 +23,12 @@
             <el-form-item label="备件名称" class="mb-2">
               <el-input
                 v-model="searchForm.PartName"
-                style="width: 240px"
+                style="width: 240px" size="small"
                 clearable
               ></el-input>
             </el-form-item>
             <el-form-item label="" class="mb-2">
-              <el-button class="ml-3" type="primary" @click="serachData"
+              <el-button class="ml-3" type="primary" @click="serachData" size="small"
                 >查询</el-button
               >
             </el-form-item>

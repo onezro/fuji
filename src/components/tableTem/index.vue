@@ -51,7 +51,7 @@
     <div class="mt-2 mb-2" v-if="pageObj.isShow == -1 ? false : true">
       <el-pagination :size="'default'" background @size-change="handleSizeChange"
         @current-change="handleCurrentChange" :pager-count="5" :current-page="pageObj.currentPage"
-        :page-size="pageObj.pageSize" :page-sizes="[10, 30, 50, 100, 150]" layout="total,sizes, prev, pager, next"
+        :page-size="pageObj.pageSize" :page-sizes="pageSizes ? pageSizes:[10, 30, 50, 100, 150]" layout="total,sizes, prev, pager, next"
         :total="tableData.length">
       </el-pagination>
     </div>
@@ -70,6 +70,7 @@ const props = defineProps([
   "showSelect",
   "size",
   "rowName",
+  'pageSizes'
 ]);
 const {
   tableData,
@@ -80,6 +81,7 @@ const {
   showSelect,
   size,
   rowName,
+  pageSizes
 } = toRefs(props);
 
 const multipleTableRef = ref();

@@ -303,8 +303,9 @@ const historyTable = ref<any>([]);
 const date = ref<any[]>([]);
 const detailedTable = ref<any[]>([]);
 const detailedHeight = ref(0);
+const choiceId = ref('');
 const detailedPageObj = ref({
-  pageSize: 10,
+  pageSize: 1000000,
   currentPage: 1,
   isShow: -1,
 });
@@ -579,6 +580,7 @@ const selectable = (row: any) => {
 };
 
 const rowClick = (val: any) => {
+  if (choiceId.value !== val.MaterialReturnHistoryId) {
   QueryMaterialReturnDetail(val.MaterialReturnHistoryId).then((res: any) => {
     if (!res || res.content === null || res.content.length === 0) {
       detailedTable.value = [];
@@ -586,6 +588,8 @@ const rowClick = (val: any) => {
     }
     detailedTable.value = res.content;
   });
+  choiceId.value = val.MaterialReturnHistoryId;
+  }
 };
 
 //判断请求数量是否大于需求量

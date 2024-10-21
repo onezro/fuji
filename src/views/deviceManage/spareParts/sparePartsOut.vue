@@ -1,7 +1,7 @@
 <template>
   <div class="p-2">
     <el-card shadow="always" :body-style="{ padding: '8px' }">
-      <div class="flex justify-between">
+      <div class="flex justify-between items-center">
         <div class="flex">
           <!-- <el-input
             v-model="inputValue"
@@ -16,13 +16,14 @@
                 v-model="dateValue"
                 type="daterange"
                 range-separator="到"
-                size=""
+                 size="small"
                 value-format="YYYY-MM-DD"
                 @change="dateChange"
               />
             </el-form-item>
             <el-form-item label="出库类型" class="mb-2">
               <el-select
+               size="small"
                 v-model="searchForm.Type"
                 filterable
                 style="width: 150px"
@@ -39,13 +40,14 @@
             </el-form-item>
             <el-form-item label="出库单号" class="mb-2">
               <el-input
+               size="small"
                 v-model="searchForm.OutstockNo"
                 style="width: 240px"
                 clearable
               ></el-input>
             </el-form-item>
             <el-form-item label="" class="mb-2">
-              <el-button class="ml-3" type="primary" @click="searchData"
+              <el-button class="ml-3" type="primary" @click="searchData" size="small"
                 >查询</el-button
               >
             </el-form-item>
@@ -54,7 +56,7 @@
                         <template #append>
                             <el-button type="primary" icon="Search" @click="serachData"></el-button> </template></el-input> -->
         </div>
-        <el-button type="primary" @click="clearForm(), (addVisible = true)"
+        <el-button class="mb-2" type="primary" @click="clearForm(), (addVisible = true)" size="small"
           >新建出库单</el-button
         >
       </div>

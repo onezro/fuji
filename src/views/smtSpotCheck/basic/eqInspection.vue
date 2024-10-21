@@ -2,7 +2,7 @@
   <div class="p-2">
     <el-card shadow="always" :body-style="{ padding: '8px' }">
       <div class="pb-2">
-        <el-button type="primary" @click="openAdd">添加</el-button>
+        <el-button type="primary" @click="openAdd" size="small">添加</el-button>
       </div>
       <el-table size="small" :data="tableData.slice((currentPage - 1) * pageSize, currentPage * pageSize)
         " stripe border fit :height="tableHeight" row-key="step1" :tree-props="{ children: 'stepItemList' }">
@@ -10,7 +10,7 @@
         <el-table-column prop="WorkSection" label="工段"> </el-table-column>
         <!-- <el-table-column prop="ProductName" label="产品编码"> </el-table-column> -->
         <el-table-column prop="Step" label="编号"> </el-table-column>
-        <el-table-column prop="StepName" label="检验工序"> </el-table-column>
+        <el-table-column prop="StepName" label="检验设备"> </el-table-column>
         <el-table-column prop="SubItem" label="检验编号"> </el-table-column>
         <el-table-column prop="SubItemName" label="检验名称"> </el-table-column>
         <el-table-column prop="SubItemAim" label="检验目标"> </el-table-column>
@@ -58,8 +58,8 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="检验工序" prop="name">
-              <el-input v-model="form.Name" placeholder="检验工序"></el-input>
+            <el-form-item label="检验设备" prop="name">
+              <el-input v-model="form.Name" placeholder="检验设备"></el-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -132,8 +132,8 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="检验工序" prop="name">
-              <el-input v-model="editForm.Name" placeholder="检验工序"></el-input>
+            <el-form-item label="检验设备" prop="name">
+              <el-input v-model="editForm.Name" placeholder="检验设备"></el-input>
             </el-form-item>
           </el-col>
         </el-row>

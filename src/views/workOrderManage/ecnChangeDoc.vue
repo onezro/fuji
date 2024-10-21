@@ -6,69 +6,152 @@
         <div>
           <el-form ref="formRef" :inline="true" :model="formData">
             <el-form-item label="ECN编码" class="mb-2" prop="ECN_NUMBER">
-              <el-input v-model="formData.ECN_NUMBER" @clear="getData" clearable style="width: 180px" />
+              <el-input
+                v-model="formData.ECN_NUMBER"
+                @clear="getData"
+                clearable
+                style="width: 180px"
+                size="small"
+              />
             </el-form-item>
             <el-form-item label="项目编码" class="mb-2" prop="TGIECOAttribute3">
-              <el-input v-model="formData.TGIECOAttribute3" @clear="getData" clearable style="width: 180px" />
+              <el-input
+                v-model="formData.TGIECOAttribute3"
+                @clear="getData"
+                clearable
+                style="width: 180px"
+                size="small"
+              />
             </el-form-item>
             <el-form-item label="更改时间" class="mb-2">
-              <el-date-picker  :shortcuts="shortcuts" v-model="searchDate" value-format="YYYY-MM-DD" type="daterange" range-separator="-"
-                style="width: 240px" clearable />
+              <el-date-picker
+                :shortcuts="shortcuts"
+                v-model="searchDate"
+                value-format="YYYY-MM-DD"
+                type="daterange"
+                range-separator="-"
+                style="width: 240px"
+                clearable
+                size="small"
+              />
             </el-form-item>
-        
+
             <el-form-item class="mb-2">
-              <el-button type="primary" @click="getData">查询</el-button>
-              <el-button @click="restData">重置</el-button>
+              <el-button type="primary" @click="getData" size="small">查询</el-button>
+              <el-button @click="restData" size="small">重置</el-button>
             </el-form-item>
           </el-form>
         </div>
       </div>
-      <table-tem size="small" :show-index="true" :tableData="tableData" :tableHeight="tableHeight"
-        :columnData="columnData" :pageObj="pageObj" @handleSizeChange="handleSizeChange"
-        @handleCurrentChange="handleCurrentChange"></table-tem>
+      <table-tem
+        size="small"
+        :show-index="true"
+        :tableData="tableData"
+        :tableHeight="tableHeight"
+        :columnData="columnData"
+        :pageObj="pageObj"
+        @handleSizeChange="handleSizeChange"
+        @handleCurrentChange="handleCurrentChange"
+      ></table-tem>
     </el-card>
-    <el-dialog v-model="detailsVisible" width="90%" title="ECN变更单" :append-to-body="true" :close-on-click-modal="false"
-      :close-on-press-escape="false" align-center>
-      <el-form ref="formRef" :model="addForm" label-width="auto" size="small" :inline="true">
+    <el-dialog
+      v-model="detailsVisible"
+      width="90%"
+      title="ECN变更单"
+      :append-to-body="true"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      align-center
+    >
+      <el-form
+        ref="formRef"
+        :model="addForm"
+        label-width="auto"
+        size="small"
+        :inline="true"
+      >
         <el-form-item label="ECN编码" prop="ECN_NUMBER" class="mb-[5px]">
           <el-input v-model="addForm.ECN_NUMBER" disabled />
         </el-form-item>
         <el-form-item label="ECN类型" prop="ECNType" class="mb-[5px]">
-          <el-input v-model="addForm.ECNType"  disabled />
+          <el-input v-model="addForm.ECNType" disabled />
         </el-form-item>
         <el-form-item label="客户名称" prop="TGIECOAttribute1" class="mb-[5px]">
           <el-input v-model="addForm.TGIECOAttribute1" disabled />
         </el-form-item>
         <el-form-item label="更改时间" prop="modified" class="mb-[5px]">
-          <el-input v-model="addForm.modified"  disabled />
+          <el-input v-model="addForm.modified" disabled />
         </el-form-item>
-        <el-form-item label="变更所处阶段" prop="TGIECOAttribute7" class="mb-[5px]">
-          <el-input v-model="addForm.TGIECOAttribute7"  disabled />
+        <el-form-item
+          label="变更所处阶段"
+          prop="TGIECOAttribute7"
+          class="mb-[5px]"
+        >
+          <el-input v-model="addForm.TGIECOAttribute7" disabled />
         </el-form-item>
-        <el-form-item label="切换方式" prop="BicvAddTGIECOAttribute3" class="mb-[5px]">
-          <el-input v-model="addForm.BicvAddTGIECOAttribute3"  disabled />
+        <el-form-item
+          label="切换方式"
+          prop="BicvAddTGIECOAttribute3"
+          class="mb-[5px]"
+        >
+          <el-input v-model="addForm.BicvAddTGIECOAttribute3" disabled />
         </el-form-item>
-        <el-form-item label="变更时间点" prop="BicvAddTGIECOAttribute4" class="mb-[5px]">
-          <el-input v-model="addForm.BicvAddTGIECOAttribute4"  disabled />
+        <el-form-item
+          label="变更时间点"
+          prop="BicvAddTGIECOAttribute4"
+          class="mb-[5px]"
+        >
+          <el-input v-model="addForm.BicvAddTGIECOAttribute4" disabled />
         </el-form-item>
         <el-form-item label="申请人" prop="Owner" class="mb-[5px]">
-          <el-input v-model="addForm.Owner"  disabled />
+          <el-input v-model="addForm.Owner" disabled />
         </el-form-item>
-        <el-form-item label="变更原因" prop="BicvECNChangeReason" class="mb-[5px]">
-          <el-input v-model="addForm.BicvECNChangeReason" style="width: 600px"  disabled />
+        <el-form-item
+          label="变更原因"
+          prop="BicvECNChangeReason"
+          class="mb-[5px]"
+        >
+          <el-input
+            v-model="addForm.BicvECNChangeReason"
+            style="width: 600px"
+            disabled
+          />
         </el-form-item>
-        <el-form-item label="受影响项目/产品" prop="TGIECOAttribute8" class="mb-[5px]">
-          <el-input v-model="addForm.TGIECOAttribute8" style="width: 600px"  disabled />
+        <el-form-item
+          label="受影响项目/产品"
+          prop="TGIECOAttribute8"
+          class="mb-[5px]"
+        >
+          <el-input
+            v-model="addForm.TGIECOAttribute8"
+            style="width: 600px"
+            disabled
+          />
         </el-form-item>
 
-        <el-form-item label="变更原因详述" prop="TGIECOAttribute4" class="mb-[5px]">
-          <el-input v-model="addForm.TGIECOAttribute4" style="width: 600px"  disabled
-            type="textarea" />
+        <el-form-item
+          label="变更原因详述"
+          prop="TGIECOAttribute4"
+          class="mb-[5px]"
+        >
+          <el-input
+            v-model="addForm.TGIECOAttribute4"
+            style="width: 600px"
+            disabled
+            type="textarea"
+          />
         </el-form-item>
       </el-form>
-      <table-tem size="small" :show-index="true" :tableData="detailsData" :tableHeight="400" :columnData="detailsColumn"
-        :pageObj="detailsPageObj" @handleSizeChange="detailsSizeChange"
-        @handleCurrentChange="detailsCurrentChange"></table-tem>
+      <table-tem
+        size="small"
+        :show-index="true"
+        :tableData="detailsData"
+        :tableHeight="400"
+        :columnData="detailsColumn"
+        :pageObj="detailsPageObj"
+        @handleSizeChange="detailsSizeChange"
+        @handleCurrentChange="detailsCurrentChange"
+      ></table-tem>
       <template #footer>
         <span class="dialog-footer">
           <el-button @click="detailsCancel">关闭</el-button>
@@ -90,7 +173,7 @@ import {
   nextTick,
 } from "vue";
 import tableTem from "@/components/tableTem/index.vue";
-import { shortcuts,setTodayDate,setLastDate } from "@/utils/dataMenu";
+import { shortcuts, setTodayDate, setLastDate } from "@/utils/dataMenu";
 const formData = ref({
   ECN_NUMBER: "",
   ECNType: "",
@@ -453,15 +536,13 @@ watch(
       formData.value.startModified = "";
       formData.value.EndModified = "";
       getData();
-      return 
+      return;
     }
     if (newVal !== oldVal) {
       formData.value.startModified = newVal[0];
       formData.value.EndModified = newVal[1];
       getData();
     }
-
-
   }
 );
 
@@ -493,8 +574,8 @@ const restData = () => {
   getData();
 };
 const detailsCancel = () => {
-  detailsVisible.value = false
-}
+  detailsVisible.value = false;
+};
 
 const detailsSizeChange = (val: any) => {
   detailsPageObj.value.currentPage = 1;

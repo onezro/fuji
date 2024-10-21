@@ -4,24 +4,24 @@
       <div class="flex">
         <el-form ref="formRef" :model="form" :inline="true">
           <el-form-item label="车间" prop="WorkCenterName" class="mb-2">
-            <el-select v-model="form.WorkCenterName" clearable placeholder="" style="width: 180px"
+            <el-select v-model="form.WorkCenterName" clearable placeholder="" style="width: 180px" size="small"
               @change="meunItem">
               <el-option v-for="item in option1" :key="item.Name" :label="item.Desc" :value="item.Name" />
             </el-select>
           </el-form-item>
           <el-form-item label="产线" prop="MfgLineName" class="mb-2">
-            <el-select v-model="form.MfgLineName" clearable placeholder="" style="width: 180px">
+            <el-select v-model="form.MfgLineName" clearable placeholder="" style="width: 180px" size="small">
               <el-option v-for="item in option2" :key="item.Name" :label="item.Desc" :value="item.Name" />
             </el-select>
           </el-form-item>
           <el-form-item label="设备类型" prop="EquipmentTypeName" class="mb-2">
-            <el-select v-model="form.EquipmentTypeName" clearable placeholder="" style="width: 180px">
+            <el-select v-model="form.EquipmentTypeName" clearable placeholder="" style="width: 180px" size="small">
               <el-option v-for="item in option3" :key="item.EquipmentTypeName" :label="item.EquipmentTypeDesc"
                 :value="item.EquipmentTypeName" />
             </el-select>
           </el-form-item>
-          <el-form-item class="mb-2"> <el-button type="primary" @click="submit"> 查询 </el-button></el-form-item>
-          <el-form-item class="mb-2">   <el-button @click="rest"> 重置 </el-button></el-form-item>
+          <el-form-item class="mb-2"> <el-button type="primary" @click="submit" size="small"> 查询 </el-button></el-form-item>
+          <el-form-item class="mb-2">   <el-button @click="rest" size="small"> 重置 </el-button></el-form-item>
         </el-form>
         <div>
 
