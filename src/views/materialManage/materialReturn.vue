@@ -80,9 +80,9 @@
             size="small"
             label-width="85px"
           >
-            <el-form-item label="物料条码">
+            <el-form-item label="工单号">
               <el-select
-                v-model="form.OrderID"
+                v-model="form.MfgOrderName"
                 placeholder=""
                 filterable
                 style="width: 152.4px"
@@ -90,56 +90,66 @@
               >
                 <el-option
                   v-for="item in orderList"
-                  :key="item.OrderID"
-                  :label="item.OrderID"
-                  :value="item.OrderID"
+                  :key="item.MfgOrderName"
+                  :label="item.MfgOrderName"
+                  :value="item.MfgOrderName"
                 />
               </el-select>
+            </el-form-item><el-form-item label="机型">
+              <el-input
+                v-model="form.BD_ProductModel"
+                class="input-with-select"
+                disabled
+              >
+              </el-input>
             </el-form-item>
-            <!-- <el-form-item label="物料编码">
-                <el-input
-                  v-model="form.CompName"
-                  class="input-with-select"
-                  disabled
-                >
-                </el-input>
-              </el-form-item>
-              <el-form-item label="工单号">
-                <el-input
-                  v-model="form.OrderID"
-                  class="input-with-select"
-                  disabled
-                >
-                </el-input>
-              </el-form-item>
-              <el-form-item label="初始数量">
-                <el-input v-model="form.Amount" class="input-with-select" disabled>
-                </el-input>
-              </el-form-item>
-              <el-form-item label="可退数量">
-                <el-input
-                  v-model="form.Qty"
-                  class="input-with-select"
-                  disabled
-                >
-                </el-input>
-              </el-form-item>
-              <el-form-item label="开封时间">
-                <el-input
-                  v-model="form.OpenTimeStamp"
-                  class="input-with-select"
-                  disabled
-                >
-                </el-input>
-              </el-form-item>
-              <el-form-item label="到料时间">
-                <el-input
-                  v-model="form.ReceiveDate"
-                  class="input-with-select"
-                  disabled
-                >
-                </el-input>
-              </el-form-item> -->
+            <el-form-item label="产品编码">
+              <el-input
+                v-model="form.ProductName"
+                class="input-with-select"
+                disabled
+              >
+              </el-input>
+            </el-form-item>
+            <el-form-item label="数量">
+              <el-input v-model="form.Qty" class="input-with-select" disabled>
+              </el-input>
+            </el-form-item>
+            <el-form-item label="产线">
+              <el-input
+                v-model="form.MfgLineDesc"
+                class="input-with-select"
+                disabled
+              >
+              </el-input>
+            </el-form-item>
+            <el-form-item label="计划开始时间">
+              <el-input
+                v-model="form.PlannedCompletionDate"
+                class="input-with-select"
+                disabled
+              >
+              </el-input>
+            </el-form-item>
+            <el-form-item label="车间">
+              <el-input
+                v-model="form.wcDescription"
+                class="input-with-select"
+                disabled
+              >
+              </el-input>
+            </el-form-item>
+            <br />
+            <el-form-item label="产品描述">
+              <el-input
+                style="width: 420px"
+                type="textarea"
+                v-model="form.ProductDesc"
+                class="input-with-select"
+                disabled
+              >
+              </el-input>
+            </el-form-item>
           </el-form>
         </div>
         <div class="table_container">
@@ -274,6 +284,7 @@ import {
   QueryMaterialReturnDetail,
   OrderGoodMaterials,
   QueryMaterialReturnApplyDetail,
+  findOrder
 } from "@/api/operate";
 import { cloneDeep } from "lodash-es";
 import {
@@ -321,14 +332,21 @@ const findOrderForm = {
 };
 
 interface formTS {
-  CompId: string;
-  CompName: string;
+  MfgOrderName: string;
+  PlannedStartDate: string;
+  PlannedCompletionDate: string;
   Qty: number;
-  amount: string;
-  OrderID: string;
-  OpenTimeStamp: string;
-  ReceiveDate: string;
-  Amount: number;
+  ProductName: string;
+  BD_ProjectNo: string | null;
+  BD_ProductModel: string;
+  ProductDesc: string;
+  UOMName: string;
+  OrderStatusName: string;
+  OrderStatusDesc: string;
+  MfgLineName: string;
+  MfgLineDesc: string;
+  WorkCenterName: string;
+  wcDescription: string;
 }
 
 interface historyFormTS {
@@ -338,14 +356,21 @@ interface historyFormTS {
 }
 
 const form = ref<formTS>({
-  CompId: "",
-  CompName: "",
+  MfgOrderName: "",
+  PlannedStartDate: "",
+  PlannedCompletionDate: "",
   Qty: 0,
-  amount: "",
-  OrderID: "",
-  OpenTimeStamp: "",
-  ReceiveDate: "",
-  Amount: 0,
+  ProductName: "",
+  BD_ProjectNo: null,
+  BD_ProductModel: "",
+  ProductDesc: "",
+  UOMName: "",
+  OrderStatusName: "",
+  OrderStatusDesc: "",
+  MfgLineName: "",
+  MfgLineDesc: "",
+  WorkCenterName: "",
+  wcDescription: "",
 });
 
 const historyForm = ref<historyFormTS>({
@@ -387,17 +412,24 @@ onBeforeUnmount(() => {
 //查询工单信息
 const findOrderData = () => {
   form.value = {
-    CompId: "",
-    CompName: "",
-    Qty: 0,
-    amount: "",
-    OrderID: "",
-    OpenTimeStamp: "",
-    ReceiveDate: "",
-    Amount: 0,
-  };
+  MfgOrderName: "",
+  PlannedStartDate: "",
+  PlannedCompletionDate: "",
+  Qty: 0,
+  ProductName: "",
+  BD_ProjectNo: null,
+  BD_ProductModel: "",
+  ProductDesc: "",
+  UOMName: "",
+  OrderStatusName: "",
+  OrderStatusDesc: "",
+  MfgLineName: "",
+  MfgLineDesc: "",
+  WorkCenterName: "",
+  wcDescription: "",
+};
   feedTableData.value = [];
-  QueryMaterialReturnApply({}).then((res: any) => {
+  findOrder({}).then((res: any) => {
     if (!res || res.content === null || res.content.length === 0) {
       orderList.value = [];
       return;
@@ -407,18 +439,26 @@ const findOrderData = () => {
 };
 //选中工单
 const orderChange = (data: any) => {
-  // orderList.value.forEach((item: any) => {
-  //   if (item.CompID === data) {
-  //     form.value.CompName = item.CompName;
-  //     form.value.OrderID = item.OrderID;
-  //     form.value.Amount = item.Amount;
-  //     form.value.Qty = item.Qty;
-  //     form.value.OpenTimeStamp = item.OpenTimeStamp;
-  //     form.value.ReceiveDate = item.ReceiveDate;
-  //   }
-  // });
+  orderList.value.forEach((item: any) => {
+    if (item.MfgOrderName === data) {
+      form.value.MfgOrderName = item.MfgOrderName;
+      form.value.PlannedStartDate = item.PlannedStartDate;
+      form.value.PlannedCompletionDate = item.PlannedCompletionDate;
+      form.value.Qty = item.Qty;
+      form.value.ProductName = item.ProductName;
+      form.value.BD_ProjectNo = item.BD_ProjectNo;
+      form.value.BD_ProductModel = item.BD_ProductModel;
+      form.value.ProductDesc = item.ProductDesc;
+      form.value.UOMName = item.UOMName;
+      form.value.OrderStatusName = item.OrderStatusName;
+      form.value.OrderStatusDesc = item.OrderStatusDesc;
+      form.value.MfgLineName = item.MfgLineName;
+      form.value.MfgLineDesc = item.MfgLineDesc;
+      form.value.WorkCenterName = item.WorkCenterName;
+      form.value.wcDescription = item.wcDescription;
+    }
+  });
   selectOrder.value = data;
-
   getFeedTableData(data);
 };
 //获取历史物料退料申请记录
