@@ -40,10 +40,17 @@
         </div>
         <template #dropdown>
           <el-dropdown-menu>
-            <el-dropdown-item @click.native="getSolw"><el-icon>
+            <el-dropdown-item @click.native="fullScreen"><el-icon v-if="!isFull">
+                <FullScreen />
+              </el-icon>
+              <el-icon v-if="isFull">
+                <Minus />
+              </el-icon>
+              {{isFull?"正常":"全屏"}}</el-dropdown-item>
+            <el-dropdown-item @click.native="getSolw"><el-icon >
                 <Warning />
               </el-icon>系统版本</el-dropdown-item>
-              
+            
             <el-dropdown-item @click.native="openUpdatePwd"><el-icon>
                 <Key />
               </el-icon>修改密码</el-dropdown-item>
@@ -304,6 +311,22 @@ const isOnlyChildren = (item: any) => {
     };
   }
 };
+// 全屏方法
+const isFull=ref(false)
+const fullScreen = () => {
+    // 是否全屏，否为null
+    let full = document.fullscreenElement
+    // console.log(full)
+    if (!full) {
+        // document自带的全屏方法
+        document.documentElement.requestFullscreen()
+        isFull.value=true
+    } else {
+        // document自带的推出全屏方法
+        document.exitFullscreen()
+        isFull.value=false
+    }
+}
 </script>
 <script lang="ts">
 import { ClickOutside } from "element-plus";

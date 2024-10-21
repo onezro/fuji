@@ -46,6 +46,7 @@
           <el-button type="primary" @click="onSubmit">查询</el-button>
           <el-button type="warning" @click="onEditSubmit"
             :disabled="selectData.length === 1 ? false : true">修改物料属性</el-button>
+            <!-- <input type="file" accept="image/*;capture=camera" @change="onFileChange">   -->
           <!-- <el-button type="info" @click="onQuerySubmit"
             :disabled="selectData.length === 1 ? false : true">产品BOM</el-button> -->
         </el-form-item>
@@ -622,6 +623,9 @@ const getScreenHeight = () => {
     tableHeight.value = window.innerHeight - 185;
   });
 };
+const onFileChange=()=>{
+  
+}
 </script>
 
 <style lang="scss">

@@ -262,6 +262,7 @@ const getChange = () => {
         form.value = { ...res.content[0] }
         stopsForm.value.result = "OK";
         hisForm.value.MfgOrderName=res.content[0].MfgOrderName
+        getFocus()
         getHisData()
       }
     );
