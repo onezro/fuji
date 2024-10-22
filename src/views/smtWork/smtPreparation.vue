@@ -13,7 +13,7 @@
                     <div class="p-2">
                         <el-form ref="formRef" class="myselect" :model="form" :rules="formRule" label-width="auto">
                             <el-form-item label="产线" prop="LineNumber">
-                                <el-select  v-model="form.LineNumber" clearable @change="changeLine">
+                                <el-select  v-model="form.LineNumber"  @change="changeLine">
                                     <el-option v-for="l in lineList" :label="l.LineDesc" :value="l.LineNumber"
                                         :key="l.LineNumber" />
                                 </el-select>
