@@ -3,231 +3,421 @@
     <el-card shadow="always" :body-style="{ padding: '8px 8px 0 8px' }">
       <div>
         <el-form ref="formRef" class="form" :inline="true" label-width="">
-          <el-form-item label="查询条件1" class="mb-2">
+          <el-form-item label="时间" class="mb-2">
+              <el-date-picker
+               size="small"
+              :shortcuts="shortcuts"
+                v-model="dateValue"
+                type="daterange"
+                range-separator="-"
+                value-format="YYYY-MM-DD"
+                @change="dateChange"
+                claerable
+              />
+            </el-form-item>
+          <el-form-item label="任务单号" class="mb-2">
             <el-input
-              v-model="form.lineName"
+              v-model="searchForm.TaskNo"
               style="width: 240px"
               size="small"
               placeholder="请输入"
+                claerable
             ></el-input>
           </el-form-item>
-          <el-form-item label="查询条件2" class="mb-2">
+          <el-form-item label="工单号" class="mb-2">
             <el-input
-              v-model="form.lineName"
+              v-model="searchForm.OrderNumber"
               style="width: 240px"
               size="small"
               placeholder="请输入"
+                claerable
             ></el-input>
           </el-form-item>
           <el-form-item label="" class="mb-2">
-            <el-button class="ml-3" type="primary" size="small">查询</el-button>
+            <el-button class="ml-3" type="primary" size="small" @click="getTaskList">查询</el-button>
           </el-form-item>
         </el-form>
-        <table-tem
-          size="small"
-          :show-index="true"
-          :tableData="tableData"
-          :tableHeight="tableHeight"
-          :columnData="columnData"
-          :pageObj="pageObj"
+      <el-table
+        border
+        size="small"
+        :data="
+          tableData.slice(
+            (pageObj.currentPage - 1) * pageObj.pageSize,
+            pageObj.currentPage * pageObj.pageSize
+          )
+        "
+        :height="tableHeight"
+        center
+        stripe
+      >
+        <el-table-column
+          prop="TaskNo"
+          align="center"
+          label="任务单号"
+          :min-width="flexColumnWidth('任务单号', 'TaskNo')"
         >
-        </table-tem>
+        </el-table-column>
+        <el-table-column
+          prop="TaskTime"
+          align="center"
+          label="任务创建时间"
+          :min-width="flexColumnWidth('任务创建时间', 'TaskTime')"
+        >
+        </el-table-column>
+        <el-table-column
+          prop="Shift"
+          align="center"
+          label="班次"
+          :min-width="flexColumnWidth('班次', 'Shift')"
+        >
+        </el-table-column>
+        <el-table-column
+          prop="OrderNumber"
+          align="center"
+          label="工单号"
+          :min-width="flexColumnWidth('工单号', 'OrderNumber')"
+        >
+        </el-table-column>
+        <el-table-column
+          prop="OrderQuantity"
+          align="center"
+          label="工单数量"
+          :min-width="flexColumnWidth('工单数量', 'OrderQuantity')"
+        >
+        </el-table-column>
+        <el-table-column
+          prop="Product"
+          align="center"
+          label="产品"
+          :min-width="flexColumnWidth('产品', 'Product')"
+        >
+        </el-table-column>
+        <el-table-column
+          prop="ProductModel"
+          align="center"
+          label="产品机型"
+          :min-width="flexColumnWidth('产品机型', 'ProductModel')"
+        >
+        </el-table-column>
+        <el-table-column prop="FirstStage" align="center" label="生产自检状态">
+          <template #default="scope">
+            <div v-if="scope.row.FirstStage === false">
+              <el-tag type="primary">未提交</el-tag>
+            </div>
+            <div v-if="scope.row.FirstStage === true">
+              <el-tag type="success">已提交</el-tag>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column prop="ReturnDate" align="center" label="设备自检状态">
+          <template #default="scope">
+            <div v-if="scope.row.SecondStage === false">
+              <el-tag type="primary">未提交</el-tag>
+            </div>
+            <div v-if="scope.row.SecondStage === true">
+              <el-tag type="success">已提交</el-tag>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column prop="ReturnDate" align="center" label="质量确认状态">
+          <template #default="scope">
+            <div v-if="scope.row.ThirdStage === false">
+              <el-tag type="primary">未提交</el-tag>
+            </div>
+            <div v-if="scope.row.ThirdStage === true">
+              <el-tag type="success">已提交</el-tag>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="InspectResult"
+          align="center"
+          label="检查结果"
+          :min-width="flexColumnWidth('创建时间', 'InspectResult')"
+        >
+        </el-table-column>
+        <el-table-column
+          prop="DocumentNo"
+          align="center"
+          label="文档编号"
+          :min-width="flexColumnWidth('文档编号', 'DocumentNo')"
+        >
+        </el-table-column>
+        <el-table-column
+          prop="DocumentVer"
+          align="center"
+          label="文档版本"
+          :min-width="flexColumnWidth('文档版本', 'DocumentVer')"
+        >
+        </el-table-column>
+        <el-table-column
+          prop="ReturnDate"
+          fixed="right"
+          align="center"
+          label="操作"
+          width="200"
+        >
+          <template #default="scope">
+            <div class="w-full">
+              <el-tooltip content="编辑" placement="top">
+                <el-button
+                  type="primary"
+                  icon="EditPen"
+                  size="small"
+                  @click="dialogVisible = true"
+                  :disabled="scope.row.SecondStage !== false"
+                ></el-button>
+              </el-tooltip>
+            </div>
+          </template>
+        </el-table-column>
+      </el-table>
+      <div class="my-2 flex items-center justify-around">
+        <el-pagination
+         
+          background
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page="pageObj.currentPage"
+          :page-size="pageObj.pageSize"
+          :page-sizes="[10, 30, 50, 100, 150]"
+          layout="total,sizes, prev, pager, next, jumper"
+          :total="tableData.length"
+        >
+        </el-pagination>
+      </div>
       </div>
     </el-card>
     <el-dialog
       v-model="dialogVisible"
-      title="生产自检"
+      title="设备自检"
       width="1100"
       :align-center="true"
       @closed="clearForm"
     >
       <div class="w-full">
-          <el-form ref="formRef" class="form" :inline="true" label-width="7rem">
-            <el-form-item label="波峰焊" class="mb-2">
-                <el-checkbox v-model="checkForm.lineName"></el-checkbox>
-            </el-form-item>
-            <el-form-item label="程序员" class="mb-2">
-              <el-input
-                v-model="form.lineName"
-                style="width: 180px"
-                size="small"
-                placeholder=""
-              ></el-input>
-            </el-form-item>
-            <div>设备关键设置确认:</div>
-            <el-form-item label="助焊剂喷雾流量" class="mb-2">
-              <el-input
-                v-model="form.lineName"
-                style="width: 180px"
-                size="small"
-                placeholder=""
-              ></el-input>
-            </el-form-item>
-            <el-form-item label="锡炉温度" class="mb-2">
-              <el-input
-                v-model="form.lineName"
-                style="width: 180px"
-                size="small"
-                placeholder=""
-              ></el-input>
-            </el-form-item>
-            <el-form-item label="链速" class="mb-2">
-              <el-input
-                v-model="form.lineName"
-                style="width: 180px"
-                size="small"
-                placeholder=""
-              ></el-input>
-            </el-form-item>
-            <el-form-item label="预热区温度1" class="mb-2">
-              <el-input
-                v-model="form.lineName"
-                style="width: 180px"
-                size="small"
-                placeholder=""
-              ></el-input>
-            </el-form-item>
-            <el-form-item label="预热区温度2" class="mb-2">
-              <el-input
-                v-model="form.lineName"
-                style="width: 180px"
-                size="small"
-                placeholder=""
-              ></el-input>
-            </el-form-item>
-            <el-form-item label="预热区温度3" class="mb-2">
-              <el-input
-                v-model="form.lineName"
-                style="width: 180px"
-                size="small"
-                placeholder=""
-              ></el-input>
-            </el-form-item>
-            <el-form-item label="预热区温度4" class="mb-2">
-              <el-input
-                v-model="form.lineName"
-                style="width: 180px"
-                size="small"
-                placeholder=""
-              ></el-input>
-            </el-form-item>
-            <el-form-item label="技术员" class="mb-2">
-              <el-input
-                v-model="form.lineName"
-                style="width: 180px"
-                size="small"
-                placeholder=""
-              ></el-input>
-            </el-form-item>
-            <br>
-            <el-form-item
+        <el-form ref="formRef" class="form" :inline="true" label-width="7rem">
+          <el-form-item label="波峰焊" class="mb-2">
+            <el-checkbox
+              v-model="checkForm.lineName"
+            ></el-checkbox>
+          </el-form-item>
+          <el-form-item label="程序员" class="mb-2">
+            <el-input
+              v-model="form.lineName"
+              style="width: 180px"
+              size="small"
+              placeholder=""
+            ></el-input>
+          </el-form-item>
+          <div>设备关键设置确认:</div>
+          <el-form-item label="助焊剂喷雾流量" class="mb-2">
+            <el-input
+              v-model="form.lineName"
+              style="width: 180px"
+              size="small"
+              placeholder=""
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="锡炉温度" class="mb-2">
+            <el-input
+              v-model="form.lineName"
+              style="width: 180px"
+              size="small"
+              placeholder=""
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="链速" class="mb-2">
+            <el-input
+              v-model="form.lineName"
+              style="width: 180px"
+              size="small"
+              placeholder=""
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="预热区温度1" class="mb-2">
+            <el-input
+              v-model="form.lineName"
+              style="width: 180px"
+              size="small"
+              placeholder=""
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="预热区温度2" class="mb-2">
+            <el-input
+              v-model="form.lineName"
+              style="width: 180px"
+              size="small"
+              placeholder=""
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="预热区温度3" class="mb-2">
+            <el-input
+              v-model="form.lineName"
+              style="width: 180px"
+              size="small"
+              placeholder=""
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="预热区温度4" class="mb-2">
+            <el-input
+              v-model="form.lineName"
+              style="width: 180px"
+              size="small"
+              placeholder=""
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="技术员" class="mb-2">
+            <el-input
+              v-model="form.lineName"
+              style="width: 180px"
+              size="small"
+              placeholder=""
+            ></el-input>
+          </el-form-item>
+          <br />
+          <el-form-item
             label-width="auto"
-              label="对炉温进行温度测试，符合SOP要求"
-              class="mb-0"
-            >
-              <el-checkbox v-model="checkForm.lineName"></el-checkbox>
-            </el-form-item>
-            <el-form-item
-            label-width="auto"
-              label="首件炉后焊接效果状态确认OK"
-              class="mb-0"
-            >
-              <el-checkbox v-model="checkForm.lineName"></el-checkbox>
-            </el-form-item>
-          </el-form>
-          <el-divider />
-          <el-form
-            ref="formRef"
-            class="form"
-            :inline="true"
-            label-width="7rem"
+            label="对炉温进行温度测试，符合SOP要求"
+            class="mb-0"
           >
-            <el-form-item label="助焊剂量" class="mb-2">
-              <el-input
-                v-model="form.lineName"
-                style="width: 180px"
-                size="small"
-                placeholder=""
-              ></el-input>
-            </el-form-item>
-            <el-form-item label="锡炉温度" class="mb-2">
-              <el-input
-                v-model="form.lineName"
-                style="width: 180px"
-                size="small"
-                placeholder=""
-              ></el-input>
-            </el-form-item>
-            <el-form-item label="预热时间" class="mb-2">
-              <el-input
-                v-model="form.lineName"
-                style="width: 180px"
-                size="small"
-                placeholder=""
-              ></el-input>
-            </el-form-item>
-            <el-form-item label="预热区温度" class="mb-2">
-              <el-input
-                v-model="form.lineName"
-                style="width: 180px"
-                size="small"
-                placeholder=""
-              ></el-input>
-            </el-form-item>
-            <el-form-item label="技术员" class="mb-2">
-              <el-input
-                v-model="form.lineName"
-                style="width: 180px"
-                size="small"
-                placeholder=""
-              ></el-input>
-            </el-form-item>
-            <br>
-            <el-form-item
+            <el-checkbox
+              v-model="checkForm.lineName"
+            ></el-checkbox>
+          </el-form-item>
+          <el-form-item
             label-width="auto"
-              label="对炉温进行温度测试，符合SOP要求"
-              class="mb-0"
-            >
-              <el-checkbox v-model="checkForm.lineName"></el-checkbox>
-            </el-form-item>
-            <el-form-item
+            label="首件炉后焊接效果状态确认OK"
+            class="mb-0"
+          >
+            <el-checkbox
+              v-model="checkForm.lineName"
+            ></el-checkbox>
+          </el-form-item>
+        </el-form>
+        <el-divider />
+        <el-form ref="formRef" class="form" :inline="true" label-width="7rem">
+          <el-form-item label="选择焊" class="mb-2">
+            <el-checkbox
+              v-model="checkForm.lineName"
+            ></el-checkbox>
+          </el-form-item>
+          <el-form-item label="程序员" class="mb-2">
+            <el-input
+              v-model="form.lineName"
+              style="width: 180px"
+              size="small"
+              placeholder=""
+            ></el-input>
+          </el-form-item>
+          <br>
+          <el-form-item label="助焊剂量" class="mb-2">
+            <el-input
+              v-model="form.lineName"
+              style="width: 180px"
+              size="small"
+              placeholder=""
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="锡炉温度" class="mb-2">
+            <el-input
+              v-model="form.lineName"
+              style="width: 180px"
+              size="small"
+              placeholder=""
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="预热时间" class="mb-2">
+            <el-input
+              v-model="form.lineName"
+              style="width: 180px"
+              size="small"
+              placeholder=""
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="预热区温度" class="mb-2">
+            <el-input
+              v-model="form.lineName"
+              style="width: 180px"
+              size="small"
+              placeholder=""
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="技术员" class="mb-2">
+            <el-input
+              v-model="form.lineName"
+              style="width: 180px"
+              size="small"
+              placeholder=""
+            ></el-input>
+          </el-form-item>
+          <br />
+          <el-form-item
             label-width="auto"
-              label="首件炉后焊接效果状态确认OK"
-              class="mb-0"
+            label="对炉温进行温度测试，符合SOP要求"
+            class="mb-0"
+          >
+            <el-checkbox
+              v-model="checkForm.lineName"
+            ></el-checkbox>
+          </el-form-item>
+          <el-form-item
+            label-width="auto"
+            label="首件炉后焊接效果状态确认OK"
+            class="mb-0"
+          >
+            <el-checkbox
+              v-model="checkForm.lineName"
+            ></el-checkbox>
+          </el-form-item>
+        </el-form>
+        <el-divider />
+        <div class="w-full h-full flex justify-between items-end">
+          <div class="w-[50%]">
+            <!-- <el-upload
+              v-model:file-list="fileList"
+              class="upload-demo"
+              action=""
+              :limit="1"
+              :on-exceed="handleExceed"
+              :before-upload="beforeUpload"
+              :on-success="handleSuccess"
+              :on-error="handleError"
+              list-type="picture-card"
+              :auto-upload="false"
             >
-              <el-checkbox v-model="checkForm.lineName"></el-checkbox>
-            </el-form-item>
-          </el-form>
-          <el-divider />
-          <div class="w-full h-full flex justify-between">
-            <div>
+              <el-button type="primary">Click to upload</el-button>
+            </el-upload> -->
             <el-upload
-    class="upload-demo"
-    drag
-    action=""
-    :multiple="false"
-    :limit="1"
-      :on-exceed="handleExceed"  
-      :before-upload="beforeUpload"  
-      :on-success="handleSuccess"  
-      :on-error="handleError"
-  >
-    <el-icon class="el-icon--upload"><upload-filled /></el-icon>
-    <div class="el-upload__text">
-      拖拽文件到此 或 <em>点击这里选择上传</em>
-    </div>
-    <template #tip>
-      <!-- <div class="el-upload__tip">
-        jpg/png
-      </div> -->
-      <div v-if="fileList.length" class="el-upload-list__item w-full">  
-        <span class="el-upload-list__file-name">{{ fileList[0].name }}</span>  
-      </div>  
-    </template>
-  </el-upload>
-            </div>
-            <div>1</div>
+              ref="upload"
+              action=""
+              :http-request="fakeUpload"
+              :before-upload="beforeUpload"
+              :on-change="handleChange"
+              :file-list="fileList"
+              :auto-upload="false"
+              :limit="3"
+              :on-exceed="handleExceed"
+              accept="image/*"
+              list-type="text"
+            >
+              <el-button type="primary">选择图片</el-button>
+            </el-upload>
+            <!-- <div v-for="(base64, index) in imageBase64List" :key="index">
+              <img
+                :src="base64"
+                :alt="'Image ' + (index + 1)"
+                style="width: 100px; height: 100px; margin: 10px"
+              />
+            </div> -->
           </div>
+          <div>
+            <el-button @click="dialogVisible = false">取消</el-button>
+            <el-button type="primary" @click="dialogVisible = false"
+              >提交</el-button
+            >
+          </div>
+        </div>
       </div>
     </el-dialog>
   </div>
@@ -242,6 +432,7 @@ import {
 } from "element-plus";
 import { Delete, Download, Plus, ZoomIn } from "@element-plus/icons-vue";
 import tableTem from "@/components/tableTem/index.vue";
+import { shortcuts, setTodayDate, setLastDate } from "@/utils/dataMenu";
 import {
   ref,
   unref,
@@ -253,6 +444,12 @@ import {
   onMounted,
   onBeforeUnmount,
 } from "vue";
+import {
+  GetInspectack,
+  FirstStage,
+  SecondStage,
+  ThirdStage,
+} from "@/api/operate";
 const tableHeight = ref(0);
 const dialogImageUrl = ref("");
 const disabled = ref(false);
@@ -262,12 +459,21 @@ const tableData = ref<any[]>([{}]);
 const pageObj = ref({
   pageSize: 10,
   currentPage: 1,
-  isShow: -1,
 });
+const dateValue = ref<any[]>([]);
 const fileList = ref<any[]>([]);
+const radio = ref(true);
 
 interface formTS {
   lineName: string;
+}
+
+interface searchFormTS {
+  StartTime: string;
+  EndTime: string;
+  TaskNo: string;
+  OrderNumber: string;
+  StageLevel: number;
 }
 
 interface checkFormTS {
@@ -282,17 +488,51 @@ const checkForm = ref<checkFormTS>({
   lineName: false,
 });
 
+const searchForm = ref<searchFormTS>({
+  StartTime: "",
+  EndTime: "",
+  TaskNo: "",
+  OrderNumber: "",
+  StageLevel: 2,
+});
+
 onBeforeMount(() => {
   getScreenHeight();
+  let end: string = setTodayDate();
+  let start: string = setLastDate();
+  dateValue.value = [start, end];
+  searchForm.value.StartTime = start;
+  searchForm.value.EndTime = end;
 });
 onMounted(() => {
+  getTaskList();
   window.addEventListener("resize", getScreenHeight);
 });
+
 onBeforeUnmount(() => {
   window.addEventListener("resize", getScreenHeight);
 });
 
+const getTaskList = () => {
+  GetInspectack(searchForm.value).then((res: any) => {
+    if (res && res.success) {
+      tableData.value = res.content;
+    }
+  });
+};
+
 const handleInput = () => {};
+
+//时间变化时候触发
+const dateChange = (data: any) => {
+  if (data !== null && data !== "") {
+    searchForm.value.StartTime = data[0];
+    searchForm.value.EndTime = data[1];
+  } else {
+    searchForm.value.StartTime = "";
+    searchForm.value.EndTime = "";
+  }
+};
 
 const addDetail = () => {
   detailsTableData.value.push({});
@@ -310,100 +550,56 @@ const clearForm = () => {
     lineName: false,
   };
   detailsTableData.value = [{}, {}, {}, {}, {}, {}];
-  fileList.value = [];
+  // fileList.value = [];
 };
 
-const handleExceed = (files: any, fileList: any) => {
-  console.log(`Limit of one file is exceeded.`);
-};
+const imageBase64List = ref<any[]>([]);
 
 const beforeUpload = (file: any) => {
   const isImage = file.type.startsWith("image/");
   if (!isImage) {
-    ElNotification({
-      title: "提示",
-      message: "只允许上传图片",
-      type: "warning",
-    });
+    console.log("上传文件只能是图片!");
     return false;
   }
-  // 假设文件验证通过，将文件添加到fileList中（实际上不需要，因为el-upload会自动管理）
-  // 但为了演示，我们在这里手动管理一下
-  fileList.value = [file];
-  // 返回false以阻止自动上传（因为我们可能要在其他地方处理上传逻辑）
-  return false;
+  // 不阻止上传，因为我们会在 handleChange 中处理文件
+  return true;
 };
 
-const handleSuccess = (response: any, file: any, fileList: any) => {
-  console.log(`File ${file.name} uploaded successfully.`);
+const handleChange = (file: any, List: any) => {
+  // 由于我们设置了 auto-upload="false"，所以文件不会自动上传
+  // 我们需要在 handleChange 中处理文件转换
+  // List.forEach((f: any) => {
+  //   if (!List.includes(f)) {
+  //     // 避免重复处理已存在的文件（理论上不应该发生，但为了安全起见）
+  //     const reader = new FileReader();
+  //     reader.onload = (e: any) => {
+  //       imageBase64List.value.push(e.target.result);
+  //     };
+  //     reader.readAsDataURL(f.raw);
+  //   }
+  // });
+  // 更新 fileList 以反映当前选择的文件（虽然在这个例子中我们没有直接使用它）
+  fileList.value = [...List]; // 注意：这里的 this.fileList 是因为我们在模板中绑定了 :file-list="fileList"，但这里应该使用 ref 的值，即 fileList.value。不过由于模板中的绑定，这里其实不需要手动更新。
+  console.log(imageBase64List);
+  
 };
 
-const handleError = (response: any, file: any, fileList: any) => {
-  console.log(`Failed to upload file ${file.name}.`);
+const handleExceed = (files: any, fileList: any) => {
+  console.log(
+    `当前限制选择 3 个文件，本次选择了 ${files.length} 个文件，共选择了 ${
+      files.length + fileList.length
+    } 个文件`
+  );
 };
 
-const columnData = reactive([
-  {
-    text: true,
-    prop: "BD_RequestNo",
-    label: "申请编号",
-    width: "",
-    min: true,
-    align: "center",
-  },
-  {
-    text: true,
-    prop: "RequestTypeName",
-    label: "申请类型",
-    width: "",
-    min: true,
-    align: "center",
-  },
-  {
-    text: true,
-    prop: "MfgOrderName",
-    label: "工单号",
-    width: "",
-    min: true,
-    align: "center",
-  },
-  {
-    text: true,
-    prop: "BD_ProductModel",
-    label: "机型",
-    width: "",
-    min: true,
-    align: "center",
-  },
-  {
-    text: true,
-    prop: "ProductName",
-    label: "产品编码",
-    width: "",
-    min: true,
-    align: "center",
-  },
-  {
-    isOperation: true,
-    label: "操作",
-    width: "60",
-    align: "center",
-    fixed: "right",
-    operation: [
-      {
-        type: "primary",
-        label: "自检",
-        icon: "Document",
-        buttonClick: () => {
-          dialogVisible.value = true;
-        },
-      },
-    ],
-  },
-]);
+const fakeUpload = (p: any) => {
+  // 这是一个假的上传函数，因为我们不实际上传文件到服务器
+  // 如果你需要上传 Base64 编码的图片到服务器，你可以在这里添加逻辑
+  p.onSuccess();
+};
 
 const flexColumnWidth = (label: any, prop: any) => {
-  const arr = detailsTableData?.value.map((x: { [x: string]: any }) => x[prop]);
+  const arr = tableData?.value.map((x: { [x: string]: any }) => x[prop]);
   arr.push(label); // 把每列的表头也加进去算
   // console.log(arr);
   return getMaxLength(arr) + 25 + "px";
@@ -441,8 +637,16 @@ const getTextWidth = (str: string) => {
 
 const getScreenHeight = () => {
   nextTick(() => {
-    tableHeight.value = window.innerHeight - 150;
+    tableHeight.value = window.innerHeight - 195;
   });
+};
+
+const handleSizeChange = (val: any) => {
+  pageObj.value.currentPage = 1;
+  pageObj.value.pageSize = val;
+};
+const handleCurrentChange = (val: any) => {
+  pageObj.value.currentPage = val;
 };
 </script>
 

@@ -455,3 +455,41 @@ export function addCalibrationRecord(data: any) {
         data
     });
 }
+
+//插件首检检查
+//获取检查任务列表
+export function GetInspectack(data:any) {
+    return request({
+        url: "/api/DIPFirstInspect/GetInspectack",
+        method: "post",
+        data
+    })
+}
+
+//第一阶段检查
+export function FirstStage(data:any) {
+    return request({
+        url: "/api/DIPFirstInspect/FirstStage",
+        method: "post",
+        data
+    })
+}
+
+//第二阶段检查
+export function SecondStage(data:any) {
+    return request({
+        url: "/api/DIPFirstInspect/SecondStage",
+        method: "post",
+        data
+    })
+}
+
+//第三阶段检查
+export function ThirdStage(data:any) {
+    return request({
+        url: "/api/DIPFirstInspect/ThirdStage",
+        method: "post",
+        data
+    })
+
+}
