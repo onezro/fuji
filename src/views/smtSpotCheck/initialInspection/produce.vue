@@ -618,7 +618,11 @@ const sumbitData = () => {
     //     item.usage ? item.usage : ""
     //   },${item.direction ? item.direction : ""}`,
     // });
-    if (index === detailsTableData.value.length) {
+    if (!item.number && !item.describe && !item.locationNumber && !item.usage && !item.direction
+     && item.number != '' && item.describe != '' && item.locationNumber != '' && item.usage != '' && item.direction != '') {
+      return;
+    }
+    if (index === detailsTableData.value.length - 1) {
       tableVal =
         tableVal +
         `${item.number ? item.number : ""},${
