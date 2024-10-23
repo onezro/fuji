@@ -93,6 +93,7 @@
     result: string;
     userAccount: string;
     txnDate: string;
+    tools:string
   }
   
   interface ToolList {
@@ -114,6 +115,7 @@
     workstationName: opui.station || "",
     userAccount: userStore.getUserInfo,
     txnDate: "",
+    tools:"",
     result: "OK",
   });
   
@@ -249,16 +251,16 @@
   //过站
   const getChange = () => {
     let barCodeData = barCode.value;
-    if (checkStringType(barCodeData) == "result") {
-      // console.log(badCodeData);
-      stopsForm.value.result = barCodeData;
-    } else {
-      stopsForm.value.containerName = barCodeData;
+    // if (checkStringType(barCodeData) == "result") {
+    //   // console.log(badCodeData);
+    //   stopsForm.value.result = barCodeData;
+    // } else {
+      stopsForm.value.tools = barCodeData;
       CWStationMoveOut(stopsForm.value).then(
         (res: any) => {
           msgTitle.value = res.msg;
           msgType.value = res.success;
-          stopsForm.value.containerName = "";
+          stopsForm.value.tools = "";
           form.value = { ...res.content[0] }
           stopsForm.value.result = "OK";
           hisForm.value.MfgOrderName=res.content[0].MfgOrderName
@@ -267,7 +269,7 @@
       );
     }
     barCode.value = "";
-  };
+  // };
   
   //分页
   const handleSizeChange = (val: any) => {
