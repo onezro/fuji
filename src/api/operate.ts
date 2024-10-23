@@ -493,3 +493,15 @@ export function ThirdStage(data:any) {
     })
 
 }
+
+//第三阶段检查
+export function InspecDetail(data:any) {
+    return request({
+        url: "/api/DIPFirstInspect/InspecDetail",
+        method: "post",
+        params:{
+            taskno:data
+        }
+    })
+
+}

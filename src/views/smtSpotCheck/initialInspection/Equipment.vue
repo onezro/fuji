@@ -99,36 +99,51 @@
           :min-width="flexColumnWidth('产品机型', 'ProductModel')"
         >
         </el-table-column>
-        <el-table-column prop="FirstStage" align="center" label="生产自检状态">
-          <template #default="scope">
-            <div v-if="scope.row.FirstStage === false">
-              <el-tag type="primary">未提交</el-tag>
-            </div>
-            <div v-if="scope.row.FirstStage === true">
-              <el-tag type="success">已提交</el-tag>
-            </div>
-          </template>
-        </el-table-column>
-        <el-table-column prop="ReturnDate" align="center" label="设备自检状态">
-          <template #default="scope">
-            <div v-if="scope.row.SecondStage === false">
-              <el-tag type="primary">未提交</el-tag>
-            </div>
-            <div v-if="scope.row.SecondStage === true">
-              <el-tag type="success">已提交</el-tag>
-            </div>
-          </template>
-        </el-table-column>
-        <el-table-column prop="ReturnDate" align="center" label="质量确认状态">
-          <template #default="scope">
-            <div v-if="scope.row.ThirdStage === false">
-              <el-tag type="primary">未提交</el-tag>
-            </div>
-            <div v-if="scope.row.ThirdStage === true">
-              <el-tag type="success">已提交</el-tag>
-            </div>
-          </template>
-        </el-table-column>
+          <el-table-column
+            prop="FirstStage"
+            align="center"
+            label="生产自检状态"
+            :min-width="flexColumnWidth('生产自检状态', 'FirstStage')"
+          >
+            <template #default="scope">
+              <div v-if="scope.row.FirstStage === false">
+                <el-tag type="primary">未提交</el-tag>
+              </div>
+              <div v-if="scope.row.FirstStage === true">
+                <el-tag type="success">已提交</el-tag>
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="ReturnDate"
+            align="center"
+            label="设备自检状态"
+            :min-width="flexColumnWidth('设备自检状态', 'ReturnDate')"
+          >
+            <template #default="scope">
+              <div v-if="scope.row.SecondStage === false">
+                <el-tag type="primary">未提交</el-tag>
+              </div>
+              <div v-if="scope.row.SecondStage === true">
+                <el-tag type="success">已提交</el-tag>
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="ReturnDate"
+            align="center"
+            label="质量确认状态"
+            :min-width="flexColumnWidth('质量确认状态', 'ReturnDate')"
+          >
+            <template #default="scope">
+              <div v-if="scope.row.ThirdStage === false">
+                <el-tag type="primary">未提交</el-tag>
+              </div>
+              <div v-if="scope.row.ThirdStage === true">
+                <el-tag type="success">已提交</el-tag>
+              </div>
+            </template>
+          </el-table-column>
         <el-table-column
           prop="InspectResult"
           align="center"
@@ -164,7 +179,7 @@
                   type="primary"
                   icon="EditPen"
                   size="small"
-                  @click="dialogVisible = true"
+                  @click="openDialogVisible(scope.row)"
                   :disabled="scope.row.SecondStage !== false"
                 ></el-button>
               </el-tooltip>
@@ -198,81 +213,88 @@
       <div class="w-full">
         <el-form ref="formRef" class="form" :inline="true" label-width="7rem">
           <el-form-item label="波峰焊" class="mb-2">
-            <el-checkbox
-              v-model="checkForm.lineName"
-            ></el-checkbox>
+            <el-radio v-model="choiceType" :label="true" @change="clearForm">波峰焊</el-radio>
           </el-form-item>
           <el-form-item label="程序员" class="mb-2">
             <el-input
-              v-model="form.lineName"
+              v-model="waveForm.programmer"
               style="width: 180px"
               size="small"
               placeholder=""
+              :disabled="!choiceType"
             ></el-input>
           </el-form-item>
           <div>设备关键设置确认:</div>
           <el-form-item label="助焊剂喷雾流量" class="mb-2">
             <el-input
-              v-model="form.lineName"
+              v-model="waveForm.sprayFlow"
               style="width: 180px"
               size="small"
               placeholder=""
+              :disabled="!choiceType"
             ></el-input>
           </el-form-item>
           <el-form-item label="锡炉温度" class="mb-2">
             <el-input
-              v-model="form.lineName"
+              v-model="waveForm.temperature"
               style="width: 180px"
               size="small"
               placeholder=""
+              :disabled="!choiceType"
             ></el-input>
           </el-form-item>
           <el-form-item label="链速" class="mb-2">
             <el-input
-              v-model="form.lineName"
+              v-model="waveForm.chainSpeed"
               style="width: 180px"
               size="small"
               placeholder=""
+              :disabled="!choiceType"
             ></el-input>
           </el-form-item>
           <el-form-item label="预热区温度1" class="mb-2">
             <el-input
-              v-model="form.lineName"
+              v-model="waveForm.preheat1"
               style="width: 180px"
               size="small"
               placeholder=""
+              :disabled="!choiceType"
             ></el-input>
           </el-form-item>
           <el-form-item label="预热区温度2" class="mb-2">
             <el-input
-              v-model="form.lineName"
+              v-model="waveForm.preheat2"
               style="width: 180px"
               size="small"
               placeholder=""
+              :disabled="!choiceType"
             ></el-input>
           </el-form-item>
           <el-form-item label="预热区温度3" class="mb-2">
             <el-input
-              v-model="form.lineName"
+              v-model="waveForm.preheat3"
               style="width: 180px"
               size="small"
               placeholder=""
+              :disabled="!choiceType"
             ></el-input>
           </el-form-item>
           <el-form-item label="预热区温度4" class="mb-2">
             <el-input
-              v-model="form.lineName"
+              v-model="waveForm.preheat4"
               style="width: 180px"
               size="small"
               placeholder=""
+              :disabled="!choiceType"
             ></el-input>
           </el-form-item>
           <el-form-item label="技术员" class="mb-2">
             <el-input
-              v-model="form.lineName"
+              v-model="waveForm.technician"
               style="width: 180px"
               size="small"
               placeholder=""
+              :disabled="!choiceType"
             ></el-input>
           </el-form-item>
           <br />
@@ -282,7 +304,8 @@
             class="mb-0"
           >
             <el-checkbox
-              v-model="checkForm.lineName"
+              v-model="waveForm.require"
+              :disabled="!choiceType"
             ></el-checkbox>
           </el-form-item>
           <el-form-item
@@ -291,64 +314,69 @@
             class="mb-0"
           >
             <el-checkbox
-              v-model="checkForm.lineName"
+              v-model="waveForm.confirm"
+              :disabled="!choiceType"
             ></el-checkbox>
           </el-form-item>
         </el-form>
         <el-divider />
         <el-form ref="formRef" class="form" :inline="true" label-width="7rem">
           <el-form-item label="选择焊" class="mb-2">
-            <el-checkbox
-              v-model="checkForm.lineName"
-            ></el-checkbox>
+            <el-radio v-model="choiceType" :label="false" @change="clearForm">选择焊</el-radio>
           </el-form-item>
           <el-form-item label="程序员" class="mb-2">
             <el-input
-              v-model="form.lineName"
+              v-model="chooseForm.programmer"
               style="width: 180px"
               size="small"
               placeholder=""
+              :disabled="choiceType"
             ></el-input>
           </el-form-item>
           <br>
           <el-form-item label="助焊剂量" class="mb-2">
             <el-input
-              v-model="form.lineName"
+              v-model="chooseForm.dose"
               style="width: 180px"
               size="small"
               placeholder=""
+              :disabled="choiceType"
             ></el-input>
           </el-form-item>
           <el-form-item label="锡炉温度" class="mb-2">
             <el-input
-              v-model="form.lineName"
+              v-model="chooseForm.temperature"
               style="width: 180px"
               size="small"
               placeholder=""
+              :disabled="choiceType"
             ></el-input>
           </el-form-item>
           <el-form-item label="预热时间" class="mb-2">
             <el-input
-              v-model="form.lineName"
+              v-model="chooseForm.preheatTime"
               style="width: 180px"
               size="small"
               placeholder=""
+              :disabled="choiceType"
             ></el-input>
           </el-form-item>
           <el-form-item label="预热区温度" class="mb-2">
             <el-input
-              v-model="form.lineName"
+              v-model="chooseForm.preheatTemperature"
               style="width: 180px"
               size="small"
               placeholder=""
+              :disabled="choiceType"
             ></el-input>
           </el-form-item>
           <el-form-item label="技术员" class="mb-2">
             <el-input
-              v-model="form.lineName"
+              v-model="chooseForm.technician"
               style="width: 180px"
               size="small"
               placeholder=""
+              :disabled="choiceType"
             ></el-input>
           </el-form-item>
           <br />
@@ -358,7 +386,8 @@
             class="mb-0"
           >
             <el-checkbox
-              v-model="checkForm.lineName"
+              v-model="chooseForm.require"
+              :disabled="choiceType"
             ></el-checkbox>
           </el-form-item>
           <el-form-item
@@ -367,7 +396,8 @@
             class="mb-0"
           >
             <el-checkbox
-              v-model="checkForm.lineName"
+              v-model="chooseForm.confirm"
+              :disabled="choiceType"
             ></el-checkbox>
           </el-form-item>
         </el-form>
@@ -388,7 +418,7 @@
             >
               <el-button type="primary">Click to upload</el-button>
             </el-upload> -->
-            <el-upload
+            <!-- <el-upload
               ref="upload"
               action=""
               :http-request="fakeUpload"
@@ -402,7 +432,7 @@
               list-type="text"
             >
               <el-button type="primary">选择图片</el-button>
-            </el-upload>
+            </el-upload> -->
             <!-- <div v-for="(base64, index) in imageBase64List" :key="index">
               <img
                 :src="base64"
@@ -413,7 +443,7 @@
           </div>
           <div>
             <el-button @click="dialogVisible = false">取消</el-button>
-            <el-button type="primary" @click="dialogVisible = false"
+            <el-button type="primary" @click="sumbitData"
               >提交</el-button
             >
           </div>
@@ -450,6 +480,7 @@ import {
   SecondStage,
   ThirdStage,
 } from "@/api/operate";
+import { useUserStoreWithOut } from "@/stores/modules/user";
 const tableHeight = ref(0);
 const dialogImageUrl = ref("");
 const disabled = ref(false);
@@ -463,9 +494,13 @@ const pageObj = ref({
 const dateValue = ref<any[]>([]);
 const fileList = ref<any[]>([]);
 const radio = ref(true);
+const choiceType = ref(true);
+const taskNO = ref("");
+const userStore = useUserStoreWithOut();
+const loginName = userStore.getUserInfo;
 
 interface formTS {
-  lineName: string;
+  InspectResult: string;
 }
 
 interface searchFormTS {
@@ -476,16 +511,58 @@ interface searchFormTS {
   StageLevel: number;
 }
 
-interface checkFormTS {
-  lineName: boolean;
+interface waveFormTS {
+  programmer: string;
+  sprayFlow: string;
+  temperature: string;
+  chainSpeed: string;
+  preheat1: string;
+  preheat2: string;
+  preheat3: string;
+  preheat4: string;
+  technician: string;
+  require: boolean;
+  confirm: boolean;
+}
+
+interface chooseFormTS {
+  programmer: string;
+  dose: string;
+  temperature: string;
+  preheatTime: string;
+  preheatTemperature: string;
+  technician: string;
+  require: boolean;
+  confirm: boolean;
 }
 
 const form = ref<formTS>({
-  lineName: "",
+  InspectResult: "",
 });
 
-const checkForm = ref<checkFormTS>({
-  lineName: false,
+const waveForm = ref<waveFormTS>({
+  programmer: '',
+  sprayFlow: '',
+  temperature: '',
+  chainSpeed: '',
+  preheat1: '',
+  preheat2: '',
+  preheat3: '',
+  preheat4: '',
+  technician: '',
+  require: false,
+  confirm: false
+});
+
+const chooseForm = ref<chooseFormTS>({
+  programmer: '',
+  dose: '',
+  temperature: '',
+  preheatTime: '',
+  preheatTemperature: '',
+  technician: '',
+  require: false,
+  confirm: false
 });
 
 const searchForm = ref<searchFormTS>({
@@ -521,6 +598,234 @@ const getTaskList = () => {
   });
 };
 
+const sumbitData = () => {
+  let data:any = {}
+  if (choiceType) {
+  // data = {
+  //   TaskNo: taskNO.value,
+  //   InspectBy: loginName,
+  //   InspectResult: form.value.InspectResult,
+  //   resultList: [
+  //     {
+  //       InspectItem: "波峰焊",
+  //       InspectValue: `${true}`,
+  //     },
+  //     {
+  //       InspectItem: "程序员",
+  //       InspectValue: waveForm.value.programmer,
+  //     },
+  //     {
+  //       InspectItem: "助焊剂喷雾流量",
+  //       InspectValue: waveForm.value.sprayFlow,
+  //     },
+  //     {
+  //       InspectItem: "锡炉温度",
+  //       InspectValue: waveForm.value.temperature,
+  //     },
+  //     {
+  //       InspectItem: "链速",
+  //       InspectValue: waveForm.value.chainSpeed,
+  //     },
+  //     {
+  //       InspectItem: "预热区温度1",
+  //       InspectValue: waveForm.value.preheat1,
+  //     },
+  //     {
+  //       InspectItem:
+  //         "预热区温度2",
+  //       InspectValue: waveForm.value.preheat2,
+  //     },
+  //     {
+  //       InspectItem:
+  //         "预热区温度3",
+  //       InspectValue: waveForm.value.preheat3,
+  //     },
+  //     {
+  //       InspectItem: "预热区温度4",
+  //       InspectValue: waveForm.value.preheat4,
+  //     },
+  //     {
+  //       InspectItem: "技术员",
+  //       InspectValue: waveForm.value.technician,
+  //     },
+  //     {
+  //       InspectItem: "对炉温进行温度测试，符合SOP要求",
+  //       InspectValue: waveForm.value.require,
+  //     },
+  //     {
+  //       InspectItem: "首件炉后焊接效果状态确认OK",
+  //       InspectValue: waveForm.value.confirm,
+  //     },
+  //   ],
+  // };
+  data = {
+    TaskNo: taskNO.value,
+    InspectBy: loginName,
+    InspectResult: form.value.InspectResult,
+    resultList: [
+      {
+        InspectItem: "solder",
+        InspectValue: `${true}`,
+      },
+      {
+        InspectItem: "programmer1",
+        InspectValue: waveForm.value.programmer,
+      },
+      {
+        InspectItem: "sprayFlow1",
+        InspectValue: waveForm.value.sprayFlow,
+      },
+      {
+        InspectItem: "temperature1",
+        InspectValue: waveForm.value.temperature,
+      },
+      {
+        InspectItem: "chainSpeed1",
+        InspectValue: waveForm.value.chainSpeed,
+      },
+      {
+        InspectItem: "preheat1",
+        InspectValue: waveForm.value.preheat1,
+      },
+      {
+        InspectItem:
+          "preheat2",
+        InspectValue: waveForm.value.preheat2,
+      },
+      {
+        InspectItem:
+          "preheat3",
+        InspectValue: waveForm.value.preheat3,
+      },
+      {
+        InspectItem: "preheat4",
+        InspectValue: waveForm.value.preheat4,
+      },
+      {
+        InspectItem: "technician1",
+        InspectValue: waveForm.value.technician,
+      },
+      {
+        InspectItem: "require1",
+        InspectValue: waveForm.value.require,
+      },
+      {
+        InspectItem: "confirm1",
+        InspectValue: waveForm.value.confirm,
+      },
+    ],
+  };
+}else {
+  // data = {
+  //   TaskNo: taskNO.value,
+  //   InspectBy: loginName,
+  //   InspectResult: form.value.InspectResult,
+  //   resultList: [
+  //     {
+  //       InspectItem: "选择焊",
+  //       InspectValue: `${true}`,
+  //     },
+  //     {
+  //       InspectItem: "程序员",
+  //       InspectValue: chooseForm.value.programmer,
+  //     },
+  //     {
+  //       InspectItem: "助焊剂量",
+  //       InspectValue: chooseForm.value.dose,
+  //     },
+  //     {
+  //       InspectItem: "锡炉温度",
+  //       InspectValue: chooseForm.value.temperature,
+  //     },
+  //     {
+  //       InspectItem: "预热时间",
+  //       InspectValue: chooseForm.value.preheatTime,
+  //     },
+  //     {
+  //       InspectItem: "预热区温度",
+  //       InspectValue: chooseForm.value.preheatTemperature,
+  //     },
+  //     {
+  //       InspectItem: "技术员",
+  //       InspectValue: chooseForm.value.technician,
+  //     },
+  //     {
+  //       InspectItem: "对炉温进行温度测试，符合SOP要求",
+  //       InspectValue: chooseForm.value.require,
+  //     },
+  //     {
+  //       InspectItem: "首件炉后焊接效果状态确认OK",
+  //       InspectValue: chooseForm.value.confirm,
+  //     },
+  //   ],
+  // };
+ 
+  data = {
+    TaskNo: taskNO.value,
+    InspectBy: loginName,
+    InspectResult: form.value.InspectResult,
+    resultList: [
+      {
+        InspectItem: "solder",
+        InspectValue: `${false}`,
+      },
+      {
+        InspectItem: "programmer2",
+        InspectValue: chooseForm.value.programmer,
+      },
+      {
+        InspectItem: "dose2",
+        InspectValue: chooseForm.value.dose,
+      },
+      {
+        InspectItem: "temperature2",
+        InspectValue: chooseForm.value.temperature,
+      },
+      {
+        InspectItem: "preheatTime2",
+        InspectValue: chooseForm.value.preheatTime,
+      },
+      {
+        InspectItem: "preheatTemperature2",
+        InspectValue: chooseForm.value.preheatTemperature,
+      },
+      {
+        InspectItem: "technician2",
+        InspectValue: chooseForm.value.technician,
+      },
+      {
+        InspectItem: "require2",
+        InspectValue: chooseForm.value.require,
+      },
+      {
+        InspectItem: "confirm2",
+        InspectValue: chooseForm.value.confirm,
+      },
+    ],
+  }; 
+}
+  
+  console.log(data);
+  SecondStage(data).then((res: any) => {
+    if (res && res.success) {
+      dialogVisible.value = false;
+      getTaskList()
+      ElNotification({
+        title: "提示",
+        message: "成功提交",
+        type: "success",
+      });
+    }
+  });
+};
+
+const openDialogVisible = (item: any) => {
+  dialogVisible.value = true;
+  taskNO.value = item.TaskNo;
+  form.value.InspectResult = item.InspectResult;
+  clearForm();
+};
+
 const handleInput = () => {};
 
 //时间变化时候触发
@@ -543,13 +848,30 @@ const handleDelete = (index: any) => {
 };
 
 const clearForm = () => {
-  form.value = {
-    lineName: "",
-  };
-  checkForm.value = {
-    lineName: false,
-  };
-  detailsTableData.value = [{}, {}, {}, {}, {}, {}];
+  chooseForm.value = {
+  programmer: '',
+  dose: '',
+  temperature: '',
+  preheatTime: '',
+  preheatTemperature: '',
+  technician: '',
+  require: false,
+  confirm: false
+};
+  waveForm.value ={
+  programmer: '',
+  sprayFlow: '',
+  temperature: '',
+  chainSpeed: '',
+  preheat1: '',
+  preheat2: '',
+  preheat3: '',
+  preheat4: '',
+  technician: '',
+  require: false,
+  confirm: false
+};
+  // detailsTableData.value = [{}, {}, {}, {}, {}, {}];
   // fileList.value = [];
 };
 
