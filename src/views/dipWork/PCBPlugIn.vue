@@ -673,8 +673,7 @@ const orderColumns = ref([
   { label: "状态", width: "", prop: "OrderStatusDesc" },
   { label: "计划开始", width: "", prop: "PlannedStartDate" },
   { label: "计划完成", width: "", prop: "PlannedCompletionDate" },
-  // { label: "工单号", width: "", prop: "MfgOrderName" },
-  // { label: "产品编码", width: "", prop: "ProductName" }
+
 ]);
 const feedVisible = ref(false);
 const feedForm = ref({

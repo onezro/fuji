@@ -418,6 +418,43 @@ export function QueryMaterialReturnApplyDetail(data: any) {
         data
     });
 }
+//量具
+export function GetGaugeToolList(data: any) {
+    return request({
+        url: "/api/GaugeTool/GetGaugeToolList",
+        method: "post",
+        data
+    });
+}
+export function addGaugeTool(data: any) {
+    return request({
+        url: "/api/GaugeTool/addGaugeTool",
+        method: "post",
+        data
+    });
+}
+export function updateGaugeTool(data: any) {
+    return request({
+        url: "/api/GaugeTool/updateGaugeTool",
+        method: "post",
+        data
+    });
+}
+//
+export function GetCalibrationRecordList(data: any) {
+    return request({
+        url: "/api/CalibrationRecord/GetCalibrationRecordList",
+        method: "post",
+        data
+    });
+}
+export function addCalibrationRecord(data: any) {
+    return request({
+        url: "/api/CalibrationRecord/addCalibrationRecord",
+        method: "post",
+        data
+    });
+}
 
 //插件首检检查
 //获取检查任务列表
@@ -454,4 +491,5 @@ export function ThirdStage(data:any) {
         method: "post",
         data
     })
+
 }

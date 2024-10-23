@@ -127,3 +127,12 @@ export function QueryOrderMaterialRequired(data:any) {
         data
     })
 }
+
+//选择焊
+export function CWStationMoveOut(data:any) {
+    return request({
+        url: "/api/choosewelding/CWStationMoveOut",
+        method: "post",
+        data
+    })
+}

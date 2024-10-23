@@ -2,28 +2,12 @@
   <div class="p-[10px]">
     <el-card shadow="always" :body-style="{ padding: '10px' }">
       <div ref="headerRef">
-        <el-form
-          ref="formRef"
-          class="form"
-          :inline="true"
-          size="small"
-          label-width="auto"
-        >
+        <el-form ref="formRef" class="form" :inline="true" size="small" label-width="auto">
           <el-form-item label="组件物料编码" class="mb-2">
-            <el-input
-               style="width: 200px"
-              v-model="historyForm.ProductName"
-              placeholder=""
-              clearable
-            ></el-input>
+            <el-input style="width: 200px" v-model="historyForm.ProductName" placeholder="" clearable></el-input>
           </el-form-item>
           <el-form-item label="组件物料名称" class="mb-2">
-            <el-input
-               style="width: 200px"
-              v-model="historyForm.ProductDescription"
-              placeholder=""
-              clearable
-            ></el-input>
+            <el-input style="width: 200px" v-model="historyForm.ProductDescription" placeholder="" clearable></el-input>
           </el-form-item>
           <el-form-item label="" class="mb-2">
             <el-button type="primary" @click="getHistory()">查询</el-button>
@@ -38,29 +22,14 @@
         </el-form>
       </div>
       <div class="table_container">
-        <table-tem
-          :show-index="true"
-          size="small"
-          :tableData="historyTable"
-          :tableHeight="hisHeight"
-          :columnData="columnData"
-          :pageObj="pageObjHis"
-          :pageSizes="[300,500,1000]"
-          @handleSizeChange="handleSizeChangeHis"
-          @handleCurrentChange="handleCurrentChangeHis"
-          @rowClick="rowClick"
-        >
+        <table-tem :show-index="true" size="small" :tableData="historyTable" :tableHeight="hisHeight"
+          :columnData="columnData" :pageObj="pageObjHis" :pageSizes="[300, 500, 1000]"
+          @handleSizeChange="handleSizeChangeHis" @handleCurrentChange="handleCurrentChangeHis" @rowClick="rowClick">
         </table-tem>
       </div>
       <div class="w-full">
-        <table-tem
-          size="small"
-          :show-index="true"
-          :tableData="detailedTable"
-          :tableHeight="detailedHeight"
-          :columnData="detailedData"
-          :pageObj="detailedPageObj"
-        >
+        <table-tem size="small" :show-index="true" :tableData="detailedTable" :tableHeight="detailedHeight"
+          :columnData="detailedData" :pageObj="detailedPageObj">
         </table-tem>
       </div>
     </el-card>
@@ -203,49 +172,26 @@
                     >否{{ `(${scope.row.originalMaterialName})` }}</span
                   >
                 </template>
-              </el-table-column>
-              <el-table-column
-                prop="SpecName"
-                label="工序编码"
-                align="center"
-                :min-width="flexColumnWidth('使用工序', 'SpecDesc')"
-              >
-              </el-table-column>
-              <el-table-column
-                prop="SpecDesc"
-                label="工序名称"
-                align="center"
-                :min-width="flexColumnWidth('使用工序', 'SpecDesc')"
-              >
-              </el-table-column>
-  
-              <el-table-column
-                prop="isLoadQueue"
-                align="center"
-                label="允许上料"
-                :min-width="flexColumnWidth('允许上料：（是否）', 'isLoadoueue')"
-              >
-                <template #default="scope">
+</el-table-column>
+<el-table-column prop="SpecName" label="工序编码" align="center" :min-width="flexColumnWidth('使用工序', 'SpecDesc')">
+</el-table-column>
+<el-table-column prop="SpecDesc" label="工序名称" align="center" :min-width="flexColumnWidth('使用工序', 'SpecDesc')">
+</el-table-column>
+
+<el-table-column prop="isLoadQueue" align="center" label="允许上料"
+  :min-width="flexColumnWidth('允许上料：（是否）', 'isLoadoueue')">
+  <template #default="scope">
                   <span v-if="scope.row.isLoadQueue === 1">是</span>
                   <span v-if="scope.row.isLoadQueue === 0">否</span>
                 </template>
-              </el-table-column>
-              <el-table-column
-                prop="QtyRequired"
-                align="center"
-                label="单件用量"
-                :min-width="flexColumnWidth('单件用量', 'QtyRequired')"
-              >
-              </el-table-column>
-              <el-table-column
-                prop="TotalQtyRequired"
-                align="center"
-                label="需求量"
-                :min-width="flexColumnWidth('需求量', 'TotalQtyRequired')"
-              >
-              </el-table-column>
-              <el-table-column prop="RequestQty" align="center" label="请求数量">
-                <template #default="scope">
+</el-table-column>
+<el-table-column prop="QtyRequired" align="center" label="单件用量" :min-width="flexColumnWidth('单件用量', 'QtyRequired')">
+</el-table-column>
+<el-table-column prop="TotalQtyRequired" align="center" label="需求量"
+  :min-width="flexColumnWidth('需求量', 'TotalQtyRequired')">
+</el-table-column>
+<el-table-column prop="RequestQty" align="center" label="请求数量">
+  <template #default="scope">
                   <el-input
                     v-model="scope.row.RequestQty"
                     v-if="scope.row.isLoadQueue === 1"
@@ -253,17 +199,17 @@
                   >
                   </el-input>
                 </template>
-              </el-table-column>
-            </el-table>
-          </div>
-        </div>
-        <template #footer>
+</el-table-column>
+</el-table>
+</div>
+</div>
+<template #footer>
           <div class="dialog-footer">
             <el-button type="" @click="dialogVisible = false">取消</el-button>
             <el-button type="primary" @click="applyFor">申请</el-button>
           </div>
         </template>
-      </el-dialog> -->
+</el-dialog> -->
   </div>
 </template>
 
@@ -375,7 +321,7 @@ const historyForm = ref<historyFormTS>({
 // watch(
 
 // );
-onBeforeMount(() => {});
+onBeforeMount(() => { });
 
 onMounted(() => {
   getHistory();
@@ -745,11 +691,11 @@ const handleSizeChangeHis = (val: any) => {
   pageObjHis.value.currentPage = 1;
   pageObjHis.value.pageSize = val;
   console.log(val);
-  
+
 };
 
 const handleCurrentChangeHis = (val: any) => {
-    console.log(val);
+  console.log(val);
   pageObjHis.value.currentPage = val;
 };
 

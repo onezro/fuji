@@ -404,6 +404,7 @@ const badSubmit = () => {
       changeList.value = [];
       badForm.value.DefectDetails = [];
       stopsForm.value.result = "OK";
+      getFocus()
     }
     ElNotification({
       title: "提示信息",
