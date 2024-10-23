@@ -109,6 +109,7 @@
             prop="FirstStage"
             align="center"
             label="生产自检状态"
+            :min-width="flexColumnWidth('生产自检状态', 'FirstStage')"
           >
             <template #default="scope">
               <div v-if="scope.row.FirstStage === false">
@@ -123,6 +124,7 @@
             prop="ReturnDate"
             align="center"
             label="设备自检状态"
+            :min-width="flexColumnWidth('设备自检状态', 'ReturnDate')"
           >
             <template #default="scope">
               <div v-if="scope.row.SecondStage === false">
@@ -137,6 +139,7 @@
             prop="ReturnDate"
             align="center"
             label="质量确认状态"
+            :min-width="flexColumnWidth('质量确认状态', 'ReturnDate')"
           >
             <template #default="scope">
               <div v-if="scope.row.ThirdStage === false">
@@ -633,51 +636,102 @@ const sumbitData = () => {
         },${item.direction ? item.direction : ""}|`;
     }
   });
+  
+  // const data = {
+  //   TaskNo: taskNO.value,
+  //   InspectBy: loginName,
+  //   InspectResult: form.value.InspectResult,
+  //   resultList: [
+  //     {
+  //       InspectItem: "组长",
+  //       InspectValue: submitForm.value.leader,
+  //     },
+  //     {
+  //       InspectItem: "拉长",
+  //       InspectValue: submitForm.value.stretch,
+  //     },
+  //     {
+  //       InspectItem: "是否对物料料号、物料规格、十五丝印进行一一核对",
+  //       InspectValue: `${submitForm.value.check1}`,
+  //     },
+  //     {
+  //       InspectItem: "插件方向及对应插件位置是否OK,元件出脚是否标准",
+  //       InspectValue: `${submitForm.value.check2}`,
+  //     },
+  //     {
+  //       InspectItem: "焊点是否饱满OK",
+  //       InspectValue: `${submitForm.value.check3}`,
+  //     },
+  //     {
+  //       InspectItem:
+  //         "元件螺丝是否漏锁、锁到位，元件是否漏打胶，屏蔽罩是否漏装、装到位",
+  //       InspectValue: `${submitForm.value.check4}`,
+  //     },
+  //     {
+  //       InspectItem:
+  //         "PCB板是否有损坏、异物、元件撞件，板边是否整洁，是否有毛刺、缺口",
+  //       InspectValue: `${submitForm.value.check5}`,
+  //     },
+  //     {
+  //       InspectItem: "SOP是否符合生产实际作业",
+  //       InspectValue: `${submitForm.value.check6}`,
+  //     },
+  //     {
+  //       InspectItem: "BOM文件编号",
+  //       InspectValue: submitForm.value.number,
+  //     },
+  //     {
+  //       InspectItem: "料号,物料规格描述,插件位置号,用量,方向与极性",
+  //       InspectValue: tableVal,
+  //     },
+  //   ],
+  // };
+  
   const data = {
     TaskNo: taskNO.value,
     InspectBy: loginName,
     InspectResult: form.value.InspectResult,
     resultList: [
       {
-        InspectItem: "组长",
+        InspectItem: "leader",
         InspectValue: submitForm.value.leader,
       },
       {
-        InspectItem: "拉长",
+        InspectItem: "stretch",
         InspectValue: submitForm.value.stretch,
       },
       {
-        InspectItem: "是否对物料料号、物料规格、十五丝印进行一一核对",
+        InspectItem: "check1",
         InspectValue: `${submitForm.value.check1}`,
       },
       {
-        InspectItem: "插件方向及对应插件位置是否OK,元件出脚是否标准",
+        InspectItem: "check2",
         InspectValue: `${submitForm.value.check2}`,
       },
       {
-        InspectItem: "焊点是否饱满OK",
+        InspectItem: "check3",
         InspectValue: `${submitForm.value.check3}`,
       },
       {
         InspectItem:
-          "元件螺丝是否漏锁、锁到位，元件是否漏打胶，屏蔽罩是否漏装、装到位",
+          "check4",
         InspectValue: `${submitForm.value.check4}`,
       },
       {
         InspectItem:
-          "PCB板是否有损坏、异物、元件撞件，板边是否整洁，是否有毛刺、缺口",
+          "check5",
         InspectValue: `${submitForm.value.check5}`,
       },
       {
-        InspectItem: "SOP是否符合生产实际作业",
+        InspectItem: "check6",
         InspectValue: `${submitForm.value.check6}`,
       },
       {
-        InspectItem: "BOM文件编号",
+        InspectItem: "number",
         InspectValue: submitForm.value.number,
       },
       {
-        InspectItem: "料号,物料规格描述,插件位置号,用量,方向与极性",
+        InspectItem: "table",
         InspectValue: tableVal,
       },
     ],
@@ -686,6 +740,7 @@ const sumbitData = () => {
   FirstStage(data).then((res: any) => {
     if (res && res.success) {
       dialogVisible.value = false;
+      getTaskList();
       ElNotification({
         title: "提示",
         message: "成功提交",

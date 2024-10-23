@@ -213,7 +213,7 @@
       :align-center="true"
       @closed="clearForm"
     >
-      <div class="w-full">
+      <div class="w-full h-[500px] overflow-x-hidden overflow-y-auto no-scrollbar">
         <el-form ref="formRef" class="form" :inline="true" label-width="7rem">
           <el-form-item
             label-width="auto"
@@ -317,7 +317,7 @@
           </el-row>
         </el-form>
         <el-divider />
-        <div class="w-full h-full flex justify-between items-end">
+        <!-- <div class="w-full h-full flex justify-between items-end">
           <div>
             <el-upload
               class="upload-demo"
@@ -349,8 +349,14 @@
               >提交</el-button
             >
           </div>
-        </div>
+        </div> -->
       </div>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button @click="dialogVisible = false">取消</el-button>
+          <el-button type="primary" @click=""> 提交 </el-button>
+        </div>
+      </template>
     </el-dialog>
   </div>
 </template>
@@ -565,4 +571,8 @@ const handleCurrentChange = (val: any) => {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.no-scrollbar::-webkit-scrollbar {  
+		display: none;  
+	}  
+</style>
