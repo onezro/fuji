@@ -619,8 +619,13 @@ const sumbitData = () => {
     //     item.usage ? item.usage : ""
     //   },${item.direction ? item.direction : ""}`,
     // });
-    if (!item.number && !item.describe && !item.locationNumber && !item.usage && !item.direction
-     && item.number != '' && item.describe != '' && item.locationNumber != '' && item.usage != '' && item.direction != '') {
+    if (
+      (!item.number || item.number === "") &&
+      (!item.describe || item.describe === "") &&
+      (!item.locationNumber || item.locationNumber === "") &&
+      (!item.usage || item.usage === "") &&
+      (!item.direction || item.direction === "")
+    ) {
       return;
     }
     if (index === detailsTableData.value.length - 1) {
@@ -641,7 +646,8 @@ const sumbitData = () => {
         },${item.direction ? item.direction : ""}|`;
     }
   });
-  
+  console.log(tableVal);
+
   // const data = {
   //   TaskNo: taskNO.value,
   //   InspectBy: loginName,
@@ -691,7 +697,7 @@ const sumbitData = () => {
   //     },
   //   ],
   // };
-  
+
   const data = {
     TaskNo: taskNO.value,
     InspectBy: loginName,
@@ -718,13 +724,11 @@ const sumbitData = () => {
         InspectValue: `${submitForm.value.check3}`,
       },
       {
-        InspectItem:
-          "check4",
+        InspectItem: "check4",
         InspectValue: `${submitForm.value.check4}`,
       },
       {
-        InspectItem:
-          "check5",
+        InspectItem: "check5",
         InspectValue: `${submitForm.value.check5}`,
       },
       {

@@ -215,7 +215,7 @@
       :align-center="true"
       @closed="clearForm"
     >
-      <div
+      <div ref="scrollRef"
         class="w-full h-[500px] overflow-x-hidden overflow-y-auto no-scrollbar"
       >
         <div class="text-2xl text-[#006487]">生产自检任务</div>
@@ -721,6 +721,7 @@ const InspectResult = ref<any[]>([]);
 const secondSolder = ref(true);
 const userStore = useUserStoreWithOut();
 const loginName = userStore.getUserInfo;
+const scrollRef = ref();
 
 interface formTS {
   time: string;
@@ -985,6 +986,9 @@ const openDialogVisible = (item: any) => {
   form.value.DocumentNo = item.DocumentNo;
   form.value.batch = item.OrderQuantity;
   form.value.InspectResult = item.InspectResult;
+  nextTick(()=> {
+    scrollRef.value.scrollTop = 0
+  })
   getAllData();
 };
 

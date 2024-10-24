@@ -178,10 +178,10 @@
           >
             <template #default="scope">
               <div class="w-full">
-                <el-tooltip content="编辑" placement="top">
+                <el-tooltip content="查看" placement="top">
                   <el-button
                     type="primary"
-                    icon="EditPen"
+                    icon="Search"
                     size="small"
                     @click="openDialogVisible(scope.row)"
                   ></el-button>
@@ -212,7 +212,7 @@
       :align-center="true"
       @closed="clearForm"
     >
-      <div
+      <div ref="scrollRef"
         class="w-full h-[500px] overflow-x-hidden overflow-y-auto no-scrollbar"
       >
         <div class="text-2xl text-[#006487]">生产自检任务</div>
@@ -764,6 +764,7 @@ const InspectResult = ref<any[]>([]);
 const secondSolder = ref(true);
 const userStore = useUserStoreWithOut();
 const loginName = userStore.getUserInfo;
+const scrollRef = ref();
 
 interface formTS {
   time: string;
@@ -948,6 +949,9 @@ const openDialogVisible = (item: any) => {
   form.value.DocumentNo = item.DocumentNo;
   form.value.batch = item.OrderQuantity;
   form.value.InspectResult = item.InspectResult;
+  nextTick(() => {
+    scrollRef.value.scrollTop = 0
+  })
   getAllData();
 };
 
@@ -969,6 +973,9 @@ const getAllData = () => {
           }
           let arr = item.InspectValue.split("|");
           arr.forEach((element: any) => {
+            if (element === '') {
+              return;
+            }
             detailsTableData.value.push({
               number: element.split(",")[0],
               describe: element.split(",")[1],
