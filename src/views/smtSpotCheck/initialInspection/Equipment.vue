@@ -171,7 +171,7 @@
           fixed="right"
           align="center"
           label="操作"
-          width="200"
+          width="80"
         >
           <template #default="scope">
             <div class="w-full">

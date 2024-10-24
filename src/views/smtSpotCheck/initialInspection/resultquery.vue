@@ -110,6 +110,7 @@
             prop="FirstStage"
             align="center"
             label="生产自检状态"
+            width="100"
           >
             <template #default="scope">
               <div v-if="scope.row.FirstStage === false">
@@ -124,6 +125,7 @@
             prop="ReturnDate"
             align="center"
             label="设备自检状态"
+            width="100"
           >
             <template #default="scope">
               <div v-if="scope.row.SecondStage === false">
@@ -138,6 +140,7 @@
             prop="ReturnDate"
             align="center"
             label="质量确认状态"
+            width="100"
           >
             <template #default="scope">
               <div v-if="scope.row.ThirdStage === false">
@@ -174,7 +177,7 @@
             fixed="right"
             align="center"
             label="操作"
-            width="200"
+            width="80"
           >
             <template #default="scope">
               <div class="w-full">

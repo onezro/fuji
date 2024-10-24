@@ -5,7 +5,7 @@
       pageObj.currentPage * pageObj.pageSize
     )
       " stripe border fit :height="tableHeight" :size="size || 'default'" :tooltip-effect="'dark'" style="width: 100%"
-      @selection-change="handleSelectionChange" @row-click="rowClick" ref="multipleTableRef">
+      @selection-change="handleSelectionChange" @row-click="rowClick" ref="multipleTableRef" highlight-current-row>
       <el-table-column type="selection" fixed width="55" align="center" v-if="showSelect" />
       <el-table-column type="index" align="center" fixed label="序号" :width="size == 'small' ? '50' : '60'"
         v-if="showIndex">
