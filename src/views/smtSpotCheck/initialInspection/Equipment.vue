@@ -8,6 +8,7 @@
                size="small"
               :shortcuts="shortcuts"
                 v-model="dateValue"
+              style="width: 15vw"
                 type="daterange"
                 range-separator="-"
                 value-format="YYYY-MM-DD"
@@ -18,7 +19,7 @@
           <el-form-item label="任务单号" class="mb-2">
             <el-input
               v-model="searchForm.TaskNo"
-              style="width: 240px"
+              style="width: 10vw"
               size="small"
               placeholder="请输入"
                 claerable
@@ -27,7 +28,7 @@
           <el-form-item label="工单号" class="mb-2">
             <el-input
               v-model="searchForm.OrderNumber"
-              style="width: 240px"
+              style="width: 10vw"
               size="small"
               placeholder="请输入"
                 claerable

@@ -7,6 +7,7 @@
             <el-date-picker
               size="small"
               :shortcuts="shortcuts"
+              style="width: 15vw"
               v-model="dateValue"
               type="daterange"
               range-separator="-"
@@ -18,7 +19,7 @@
           <el-form-item label="任务单号" class="mb-2">
             <el-input
               v-model="searchForm.TaskNo"
-              style="width: 240px"
+              style="width: 10vw"
               size="small"
               placeholder="请输入"
               claerable
@@ -27,7 +28,7 @@
           <el-form-item label="工单号" class="mb-2">
             <el-input
               v-model="searchForm.OrderNumber"
-              style="width: 240px"
+              style="width: 10vw"
               size="small"
               placeholder="请输入"
               claerable
@@ -618,8 +619,13 @@ const sumbitData = () => {
     //     item.usage ? item.usage : ""
     //   },${item.direction ? item.direction : ""}`,
     // });
-    if (!item.number && !item.describe && !item.locationNumber && !item.usage && !item.direction
-     && item.number != '' && item.describe != '' && item.locationNumber != '' && item.usage != '' && item.direction != '') {
+    if (
+      (!item.number || item.number === "") &&
+      (!item.describe || item.describe === "") &&
+      (!item.locationNumber || item.locationNumber === "") &&
+      (!item.usage || item.usage === "") &&
+      (!item.direction || item.direction === "")
+    ) {
       return;
     }
     if (index === detailsTableData.value.length - 1) {
@@ -640,7 +646,8 @@ const sumbitData = () => {
         },${item.direction ? item.direction : ""}|`;
     }
   });
-  
+  console.log(tableVal);
+
   // const data = {
   //   TaskNo: taskNO.value,
   //   InspectBy: loginName,
@@ -690,7 +697,7 @@ const sumbitData = () => {
   //     },
   //   ],
   // };
-  
+
   const data = {
     TaskNo: taskNO.value,
     InspectBy: loginName,
@@ -717,13 +724,11 @@ const sumbitData = () => {
         InspectValue: `${submitForm.value.check3}`,
       },
       {
-        InspectItem:
-          "check4",
+        InspectItem: "check4",
         InspectValue: `${submitForm.value.check4}`,
       },
       {
-        InspectItem:
-          "check5",
+        InspectItem: "check5",
         InspectValue: `${submitForm.value.check5}`,
       },
       {

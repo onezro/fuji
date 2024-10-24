@@ -8,6 +8,7 @@
               size="small"
               :shortcuts="shortcuts"
               v-model="dateValue"
+              style="width: 15vw"
               type="daterange"
               range-separator="-"
               value-format="YYYY-MM-DD"
@@ -18,7 +19,7 @@
           <el-form-item label="任务单号" class="mb-2">
             <el-input
               v-model="searchForm.TaskNo"
-              style="width: 240px"
+              style="width: 10vw"
               size="small"
               placeholder="请输入"
               claerable
@@ -27,7 +28,7 @@
           <el-form-item label="工单号" class="mb-2">
             <el-input
               v-model="searchForm.OrderNumber"
-              style="width: 240px"
+              style="width: 10vw"
               size="small"
               placeholder="请输入"
               claerable
@@ -210,11 +211,11 @@
     <el-dialog
       v-model="dialogVisible"
       title="质量自检确认"
-      width="1300"
+      width="800"
       :align-center="true"
       @closed="clearForm"
     >
-      <div
+      <div ref="scrollRef"
         class="w-full h-[500px] overflow-x-hidden overflow-y-auto no-scrollbar"
       >
         <div class="text-2xl text-[#006487]">生产自检任务</div>
@@ -609,7 +610,7 @@
               <el-input
                 class="ml-4"
                 v-model="submitForm.other"
-                style="width: 1000px"
+                style="width: 700px"
                 size="small"
                 placeholder="请输入"
                 :disabled="!submitForm.check9"
@@ -641,7 +642,7 @@
               <el-form-item label-width="auto" label="不良现象" class="mb-0">
                 <el-input
                   v-model="submitForm.feckless"
-                  style="width: 500px"
+                  style="width: 350px"
                   type="textarea"
                   size="small"
                   placeholder="请输入"
@@ -652,7 +653,7 @@
               <el-form-item label-width="auto" label="改善对策" class="mb-0">
                 <el-input
                   v-model="submitForm.countermeasure"
-                  style="width: 500px"
+                  style="width: 350px"
                   type="textarea"
                   size="small"
                   placeholder="请输入"
@@ -662,39 +663,6 @@
           </el-row>
         </el-form>
         <el-divider />
-        <!-- <div class="w-full h-full flex justify-between items-end">
-          <div>
-            <el-upload
-              class="upload-demo"
-              drag
-              action=""
-              :multiple="false"
-              :limit="1"
-              :on-exceed="handleExceed"
-              :before-upload="beforeUpload"
-              :on-success="handleSuccess"
-              :on-error="handleError"
-            >
-              <el-icon class="el-icon--upload"><upload-filled /></el-icon>
-              <div class="el-upload__text">
-                拖拽文件到此 或 <em>点击这里选择上传</em>
-              </div>
-              <template #tip>
-                <div v-if="fileList.length" class="el-upload-list__item w-full">
-                  <span class="el-upload-list__file-name">{{
-                    fileList[0].name
-                  }}</span>
-                </div>
-              </template>
-            </el-upload>
-          </div>
-          <div>
-            <el-button @click="dialogVisible = false">取消</el-button>
-            <el-button type="primary" @click="dialogVisible = false"
-              >提交</el-button
-            >
-          </div>
-        </div> -->
       </div>
       <template #footer>
         <div class="dialog-footer">
@@ -753,6 +721,7 @@ const InspectResult = ref<any[]>([]);
 const secondSolder = ref(true);
 const userStore = useUserStoreWithOut();
 const loginName = userStore.getUserInfo;
+const scrollRef = ref();
 
 interface formTS {
   time: string;
@@ -1017,6 +986,9 @@ const openDialogVisible = (item: any) => {
   form.value.DocumentNo = item.DocumentNo;
   form.value.batch = item.OrderQuantity;
   form.value.InspectResult = item.InspectResult;
+  nextTick(()=> {
+    scrollRef.value.scrollTop = 0
+  })
   getAllData();
 };
 

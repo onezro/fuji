@@ -8,6 +8,7 @@
               size="small"
               :shortcuts="shortcuts"
               v-model="dateValue"
+              style="width: 15vw"
               type="daterange"
               range-separator="-"
               value-format="YYYY-MM-DD"
@@ -18,7 +19,7 @@
           <el-form-item label="任务单号" class="mb-2">
             <el-input
               v-model="searchForm.TaskNo"
-              style="width: 240px"
+              style="width: 10vw"
               size="small"
               placeholder="请输入"
               claerable
@@ -27,7 +28,7 @@
           <el-form-item label="工单号" class="mb-2">
             <el-input
               v-model="searchForm.OrderNumber"
-              style="width: 240px"
+              style="width: 10vw"
               size="small"
               placeholder="请输入"
               claerable
@@ -177,10 +178,10 @@
           >
             <template #default="scope">
               <div class="w-full">
-                <el-tooltip content="编辑" placement="top">
+                <el-tooltip content="查看" placement="top">
                   <el-button
                     type="primary"
-                    icon="EditPen"
+                    icon="Search"
                     size="small"
                     @click="openDialogVisible(scope.row)"
                   ></el-button>
@@ -207,16 +208,16 @@
     <el-dialog
       v-model="dialogVisible"
       title="质量自检确认"
-      width="1300"
+      width="800"
       :align-center="true"
       @closed="clearForm"
     >
-      <div
+      <div ref="scrollRef"
         class="w-full h-[500px] overflow-x-hidden overflow-y-auto no-scrollbar"
       >
         <div class="text-2xl text-[#006487]">生产自检任务</div>
         <div class="w-full flex">
-          <div class="w-[80%]">
+          <div class="w-[100%]">
             <el-form
               ref="formRef"
               class="form"
@@ -362,8 +363,8 @@
               </el-form-item>
             </el-form>
           </div>
-          <div class="w-[20%] max-h-20">
-            <!-- <el-upload
+          <!-- <div class="w-[20%] max-h-20">
+            <el-upload
               action="#"
               list-type="text"
               :before-upload="beforeUpload"
@@ -376,8 +377,8 @@
             </el-upload>
             <el-image :src="base64Pic" class="" :preview-src-list="fileList">
 
-            </el-image> -->
-          </div>
+            </el-image>
+          </div> -->
         </div>
 
         <div class="w-full flex justify-between mt-2">
@@ -646,7 +647,7 @@
               <el-input
                 class="ml-4"
                 v-model="qualityForm.other"
-                style="width: 1000px"
+                style="width: 700px"
                 size="small"
                 placeholder="请输入"
                 disabled
@@ -679,7 +680,7 @@
               <el-form-item label-width="auto" label="不良现象" class="mb-0">
                 <el-input
                   v-model="qualityForm.feckless"
-                  style="width: 500px"
+                  style="width: 350px"
                   type="textarea"
                   size="small"
                   placeholder="请输入"
@@ -691,7 +692,7 @@
               <el-form-item label-width="auto" label="改善对策" class="mb-0">
                 <el-input
                   v-model="qualityForm.countermeasure"
-                  style="width: 500px"
+                  style="width: 350px"
                   type="textarea"
                   size="small"
                   placeholder="请输入"
@@ -763,6 +764,7 @@ const InspectResult = ref<any[]>([]);
 const secondSolder = ref(true);
 const userStore = useUserStoreWithOut();
 const loginName = userStore.getUserInfo;
+const scrollRef = ref();
 
 interface formTS {
   time: string;
@@ -778,7 +780,6 @@ interface searchFormTS {
   EndTime: string;
   TaskNo: string;
   OrderNumber: string;
-  StageLevel: number;
 }
 
 interface checkFormTS {
@@ -894,7 +895,6 @@ const searchForm = ref<searchFormTS>({
   EndTime: "",
   TaskNo: "",
   OrderNumber: "",
-  StageLevel: 3,
 });
 
 const qualityForm = ref<qualityFormTS>({
@@ -949,6 +949,9 @@ const openDialogVisible = (item: any) => {
   form.value.DocumentNo = item.DocumentNo;
   form.value.batch = item.OrderQuantity;
   form.value.InspectResult = item.InspectResult;
+  nextTick(() => {
+    scrollRef.value.scrollTop = 0
+  })
   getAllData();
 };
 
@@ -970,6 +973,9 @@ const getAllData = () => {
           }
           let arr = item.InspectValue.split("|");
           arr.forEach((element: any) => {
+            if (element === '') {
+              return;
+            }
             detailsTableData.value.push({
               number: element.split(",")[0],
               describe: element.split(",")[1],
