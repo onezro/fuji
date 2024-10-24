@@ -21,34 +21,6 @@
               :model="form"
               label-width="auto"
             >
-              <el-form-item label="工单" class="mb-[5px] flex">
-                <selectTa
-                  ref="selectTable"
-                  :table="orderTable"
-                  :selectWidth="220"
-                  :columns="orderColumns"
-                  :max-height="400"
-                  :tableWidth="700"
-                  :defaultSelectVal="defaultSelectVal"
-                  :keywords="{
-                    label: 'MfgOrderName',
-                    value: 'MfgOrderName',
-                  }"
-                  @radioChange="(...args: any) => radioChange(args)"
-                >
-                </selectTa>
-                <el-tooltip content="刷新" placement="top">
-                  <el-icon
-                    class="ml-2"
-                    color="#777777"
-                    :class="isLoding"
-                    size="24"
-                    @click="getOrderData"
-                  >
-                    <RefreshRight />
-                  </el-icon>
-                </el-tooltip>
-              </el-form-item>
               <el-form-item
                 v-for="f in formHeader"
                 :key="f.value"
@@ -93,26 +65,13 @@
                     @keyup.enter.native="getChange"
                   />
                 </el-form-item>
-                <div>
-                  <el-button
-                    :type="isAuto ? 'danger' : 'primary'"
-                    :disabled="form.MfgOrderName == ''"
-                    @click="autoPrint"
-                    >{{ isAuto ? "关闭自动打印" : "自动打印" }}</el-button
-                  >
-                  <el-button
-                    type="warning"
-                    :disabled="form.MfgOrderName == ''"
-                    @click="print"
-                    >手动打印</el-button
-                  >
-                </div>
+               
               </el-form>
               <div
                 class="text-xl font-bold text-[#00B400]"
                 v-show="msgType === true || msgTitle === ''"
               >
-                {{ msgTitle === "" ? "请扫描条码" : msgTitle }}
+                {{ msgTitle === "" ? "请扫描MES屏条码" : msgTitle }}
               </div>
               <div
                 class="text-xl font-bold text-[red]"
@@ -156,9 +115,8 @@ import { useUserStoreWithOut } from "@/stores/modules/user";
 import { checkStringType } from "@/utils/barcodeFormat";
 import type { Formspan, FormHeader, OrderData } from "@/typing";
 import { ElMessage, ElNotification, ElMessageBox } from "element-plus";
-import { QueryMoveHistory, OrderQuery } from "@/api/dipApi";
-import { CoverInstallPrint, CoverInstallStationMoveOut } from "@/api/Assembly";
-
+import { QueryMoveHistory } from "@/api/dipApi";
+import {PressingStationMoveOut } from "@/api/Assembly";
 import {
   ref,
   reactive,
@@ -167,7 +125,6 @@ import {
   computed,
   onBeforeMount,
   onBeforeUnmount,
-  watch,
 } from "vue";
 interface StopsForm {
   containerName: string;
@@ -208,13 +165,13 @@ const form = ref<InstanceType<typeof Formspan>>({
   PlannedCompletionDate: "",
 });
 const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
-  // {
-  //     label: "工单号",
-  //     value: "MfgOrderName",
-  //     disabled: true,
-  //     type: "input",
-  //     width: "",
-  // },
+  {
+    label: "工单号",
+    value: "MfgOrderName",
+    disabled: true,
+    type: "input",
+    width: "",
+  },
   {
     label: "产品编码",
     value: "ProductName",
@@ -255,17 +212,11 @@ const columnData1 = reactive([
   {
     text: true,
     prop: "ContainerName",
-    label: "PCB条码",
+    label: "MES屏条码",
     width: "",
     align: "1",
   },
-  {
-    text: true,
-    prop: "BD_Tools",
-    label: "工装治具",
-    width: "",
-    align: "1",
-  },
+
   {
     text: true,
     prop: "BD_EmployeeName",
@@ -294,31 +245,16 @@ const hisForm = ref({
   MfgOrderName: "",
   workstationName: opui.station,
 });
-const orderTable = ref<InstanceType<typeof OrderData>>({
-  data: [],
-});
-const orderColumns = ref([
-  { label: "工单号", width: "", prop: "MfgOrderName" },
-  { label: "产品编码", width: "", prop: "ProductName" },
-  { label: "产线", width: "", prop: "MfgLineDesc" },
-  { label: "状态", width: "", prop: "OrderStatusDesc" },
-  { label: "计划开始", width: "", prop: "PlannedStartDate" },
-  { label: "计划完成", width: "", prop: "PlannedCompletionDate" },
-]);
-const defaultSelectVal = ref<string[]>([]);
-const isLoding = ref("");
 
 onBeforeMount(() => {
-  clearInterval(timer.value);
   getScreenHeight();
 });
 onMounted(() => {
   window.addEventListener("resize", getScreenHeight);
-  getOrderData();
+  // getOrderData();
   getFocus();
 });
 onBeforeUnmount(() => {
-  clearInterval(timer.value);
   window.addEventListener("resize", getScreenHeight);
 });
 
@@ -345,139 +281,21 @@ const getHisData = () => {
 //过站
 const getChange = () => {
   let barCodeData = barCode.value;
-  stopsForm.value.containerName = barCodeData;
-  CoverInstallStationMoveOut(stopsForm.value).then((res: any) => {
-    msgTitle.value = res.msg;
-    msgType.value = res.success;
-    stopsForm.value.containerName = "";
-    form.value = { ...res.content[0] };
-    stopsForm.value.result = "OK";
-    //   hisForm.value.MfgOrderName = res.content[0].MfgOrderName;
-    getFocus();
-    //   getHisData();
-  });
+
+    stopsForm.value.containerName = barCodeData;
+    PressingStationMoveOut(stopsForm.value).then(
+      (res: any) => {
+        msgTitle.value = res.msg;
+        msgType.value = res.success;
+        stopsForm.value.containerName = "";
+        form.value = { ...res.content[0] };
+
+        // hisForm.value.MfgOrderName = res.content[0].MfgOrderName;
+        getFocus();
+        // getHisData();
+      }
+    );
   barCode.value = "";
-};
-const radioChange = (args: any) => {
-  isAuto.value = false;
-  if (args[1] == null) {
-    form.value.MfgOrderName = "";
-    form.value.ProductName = "";
-    form.value.ProductDesc = "";
-    form.value.PlannedStartDate = "";
-    form.value.BD_ProductModel = "";
-    form.value.BD_SoftVersion = "";
-    form.value.PlannedCompletionDate = "";
-    form.value.Qty = "";
-  } else {
-    // orderTable.value.data.forEach((v: any) => {
-    //   if (v.MfgOrderName == args[1]) {
-    form.value.MfgOrderName = args[0].MfgOrderName;
-    form.value.ProductName = args[0].ProductName;
-    form.value.ProductDesc = args[0].ProductDesc;
-    form.value.BD_ProductModel = args[0].BD_ProductModel;
-    form.value.BD_SoftVersion = args[0].BD_SoftVersion;
-    form.value.PlannedStartDate = args[0].PlannedStartDate;
-    form.value.PlannedCompletionDate = args[0].PlannedCompletionDate;
-    form.value.Qty = args[0].Qty;
-    // hisForm.value.MfgOrderName = args[0].MfgOrderName;
-    // console.log(args[0].MfgOrderName);
-    // getFeedForm.value.MfgOrder = args[0].MfgOrderName;
-
-    // if (getToolForm.value.OrderNumber == args[0].MfgOrderName) {
-    //   return;
-    // } else {
-    //   getToolForm.value.OrderNumber = args[0].MfgOrderName;
-    //   getHisData();
-    //   getToolData();
-    // }
-  }
-};
-const getOrderData = () => {
-  isAuto.value = false;
-  isLoding.value = "is-loading";
-  OrderQuery({ lineName: opui.line, OrderTypeName: "DIP" }).then((res: any) => {
-    let data = res.content;
-    let timer = setTimeout(() => {
-      isLoding.value = "";
-      clearTimeout(timer);
-    }, 2000);
-    if (data.length !== 0) {
-      orderTable.value.data[0] = data[0];
-    }
-    if (data.length == 1) {
-      // console.log(2111);
-      let a = data[0].MfgOrderName;
-      defaultSelectVal.value[0] = a;
-    }
-  });
-};
-
-const timer = ref();
-const isAuto = ref(false);
-
-watch(
-  () => isAuto.value,
-  (newVal) => {
-    if (newVal) {
-      //   console.log("开始自动打印");
-
-      clearInterval(timer.value);
-      timer.value = setInterval(() => {
-        console.log(131);
-      }, 5000);
-      ElNotification({
-        title: "提示信息",
-        message: "开始自动打印",
-        type: "success",
-      });
-    } else {
-        ElNotification({
-        title: "提示信息",
-        message: "关闭自动打印",
-        type: "warning",
-      });
-      clearInterval(timer.value);
-     
-    }
-  },
-  {
-    deep: true,
-  }
-);
-const autoPrint = () => {
-  isAuto.value = !isAuto.value;
-  //   clearInterval(timer.value);
-  //   timer.value = setInterval(() => {
-  //     console.log(131);
-  //   }, 5000);
-};
-const print = () => {
-  isAuto.value = false;
-  ElNotification({
-    title: "提示信息",
-    message: "开始手动打印",
-    type: "success",
-  });
-//   printData();
-};
-
-const printData = () => {
-  CoverInstallPrint(form.value.MfgOrderName).then((res: any) => {
-    if (res.success) {
-      //   ElNotification({
-      //     title: "提示信息",
-      //     message: "开始打印",
-      //     type: "success",
-      //   });
-    } else {
-      ElNotification({
-        title: "提示信息",
-        message: "打印失败",
-        type: "error",
-      });
-    }
-  });
 };
 
 //分页
