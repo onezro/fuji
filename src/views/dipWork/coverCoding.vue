@@ -1,65 +1,33 @@
 <template>
   <div class="flex flex-col w-full h-full">
-    <div
-      class="h-[40px] min-h-[40px] pl-2 pr-2 flex justify-between items-center"
-    >
+    <div class="h-[40px] min-h-[40px] pl-2 pr-2 flex justify-between items-center">
       <span class="text-[1.2rem]"> {{ opui.stationDec }} </span>
       <div></div>
     </div>
     <div class="w-full flex-1 flex">
       <div class="setwidth w-[350px]">
         <div class="w-full h-full box">
-          <div
-            class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]"
-          >
+          <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
             <span class="ml-5">基本信息</span>
           </div>
           <div class="p-[10px]">
-            <el-form
-              class="inbound"
-              ref="formRef"
-              :model="form"
-              label-width="auto"
-            >
+            <el-form class="inbound" ref="formRef" :model="form" label-width="auto">
               <el-form-item label="工单" class="mb-[5px] flex">
-                <selectTa
-                  ref="selectTable"
-                  :table="orderTable"
-                  :selectWidth="220"
-                  :columns="orderColumns"
-                  :max-height="400"
-                  :tableWidth="700"
-                  :defaultSelectVal="defaultSelectVal"
-                  :keywords="{
+                <selectTa ref="selectTable" :table="orderTable" :selectWidth="220" :columns="orderColumns"
+                  :max-height="400" :tableWidth="700" :defaultSelectVal="defaultSelectVal" :keywords="{
                     label: 'MfgOrderName',
                     value: 'MfgOrderName',
-                  }"
-                  @radioChange="(...args: any) => radioChange(args)"
-                >
+                  }" @radioChange="(...args: any) => radioChange(args)">
                 </selectTa>
                 <el-tooltip content="刷新" placement="top">
-                  <el-icon
-                    class="ml-2"
-                    color="#777777"
-                    :class="isLoding"
-                    size="24"
-                    @click="getOrderData"
-                  >
+                  <el-icon class="ml-2" color="#777777" :class="isLoding" size="24" @click="getOrderData">
                     <RefreshRight />
                   </el-icon>
                 </el-tooltip>
               </el-form-item>
-              <el-form-item
-                v-for="f in formHeader"
-                :key="f.value"
-                :label="f.label"
-              >
-                <span
-                  class="font-bold text-lg leading-[30px]"
-                  :class="f.value == 'passNum' ? 'text-[#00B400]' : ''"
-                >
-                  {{ formText(f.value) }}</span
-                >
+              <el-form-item v-for="f in formHeader" :key="f.value" :label="f.label">
+                <span class="font-bold text-lg leading-[30px]" :class="f.value == 'passNum' ? 'text-[#00B400]' : ''">
+                  {{ formText(f.value) }}</span>
               </el-form-item>
             </el-form>
           </div>
@@ -69,75 +37,38 @@
         <!-- <div class="w-full"> -->
         <div class="w-full h-full flex flex-col">
           <div>
-            <div
-              class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]"
-            >
+            <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
               <span class="ml-5"> 扫描条码</span>
             </div>
             <div class="h-[120px] pt-3 pr-5 pl-5">
-              <el-form
-                class="inbound"
-                ref="formRef"
-                :inline="true"
-                :model="form"
-                label-width="auto"
-                @submit.native.prevent
-              >
+              <el-form class="inbound" ref="formRef" :inline="true" :model="form" label-width="auto"
+                @submit.native.prevent>
                 <el-form-item label="扫描条码" class="mb-2">
-                  <el-input
-                    v-model.trim="barCode"
-                    ref="inputRef"
-                    :autofocus="inputFocus"
-                    style="width: 500px"
-                    placeholder="请扫描条码"
-                    @keyup.enter.native="getChange"
-                  />
+                  <el-input v-model.trim="barCode" ref="inputRef" :autofocus="inputFocus" style="width: 500px"
+                    placeholder="请扫描条码" @keyup.enter.native="getChange" />
                 </el-form-item>
                 <div>
-                  <el-button
-                    :type="isAuto ? 'danger' : 'primary'"
-                    :disabled="form.MfgOrderName == ''"
-                    @click="autoPrint"
-                    >{{ isAuto ? "关闭自动打印" : "自动打印" }}</el-button
-                  >
-                  <el-button
-                    type="warning"
-                    :disabled="form.MfgOrderName == ''"
-                    @click="print"
-                    >手动打印</el-button
-                  >
+                  <el-button :type="isAuto ? 'danger' : 'primary'" :disabled="form.MfgOrderName == ''"
+                    @click="autoPrint">{{ isAuto ? "关闭自动打印" : "自动打印" }}</el-button>
+                  <el-button type="warning" :disabled="form.MfgOrderName == ''" @click="print">手动打印</el-button>
                 </div>
               </el-form>
-              <div
-                class="text-xl font-bold text-[#00B400]"
-                v-show="msgType === true || msgTitle === ''"
-              >
+              <div class="text-xl font-bold text-[#00B400]" v-show="msgType === true || msgTitle === ''">
                 {{ msgTitle === "" ? "请扫描条码" : msgTitle }}
               </div>
-              <div
-                class="text-xl font-bold text-[red]"
-                v-show="msgType === false && msgTitle !== ''"
-              >
+              <div class="text-xl font-bold text-[red]" v-show="msgType === false && msgTitle !== ''">
                 {{ msgTitle }}
               </div>
             </div>
           </div>
 
           <div class="flex flex-col flex-1 tabs-css">
-            <div
-              class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]"
-            >
+            <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
               <span class="ml-5">历史过站记录</span>
             </div>
-            <table-tem
-              :showIndex="true"
-              :tableData="tableData1"
-              :tableHeight="tableHeight"
-              :columnData="columnData1"
-              :pageObj="pageObj"
-              @handleSizeChange="handleSizeChange"
-              @handleCurrentChange="handleCurrentChange"
-            ></table-tem>
+            <table-tem :showIndex="true" :tableData="tableData1" :tableHeight="tableHeight" :columnData="columnData1"
+              :pageObj="pageObj" @handleSizeChange="handleSizeChange"
+              @handleCurrentChange="handleCurrentChange"></table-tem>
           </div>
         </div>
       </div>
@@ -415,7 +346,7 @@ const getOrderData = () => {
 
 const timer = ref();
 const isAuto = ref(false);
-
+const setTime = ref(5000)
 watch(
   () => isAuto.value,
   (newVal) => {
@@ -424,21 +355,20 @@ watch(
 
       clearInterval(timer.value);
       timer.value = setInterval(() => {
-        console.log(131);
-      }, 5000);
+      }, setTime.value);
       ElNotification({
         title: "提示信息",
         message: "开始自动打印",
         type: "success",
       });
     } else {
-        ElNotification({
+      ElNotification({
         title: "提示信息",
         message: "关闭自动打印",
         type: "warning",
       });
       clearInterval(timer.value);
-     
+
     }
   },
   {
@@ -459,7 +389,7 @@ const print = () => {
     message: "开始手动打印",
     type: "success",
   });
-//   printData();
+  //   printData();
 };
 
 const printData = () => {
@@ -525,7 +455,7 @@ const getScreenHeight = () => {
   font-size: 1.1rem;
 }
 
-.tabs-css .el-tabs--border-card > .el-tabs__header .el-tabs__item {
+.tabs-css .el-tabs--border-card>.el-tabs__header .el-tabs__item {
   color: #fff;
   // padding: 0 !important;
 }
@@ -548,10 +478,7 @@ const getScreenHeight = () => {
   color: #ff4949;
 }
 
-.tabs-css
-  .el-tabs--border-card
-  > .el-tabs__header
-  .el-tabs__item:not(.is-disabled):hover {
+.tabs-css .el-tabs--border-card>.el-tabs__header .el-tabs__item:not(.is-disabled):hover {
   // color: #fff;
   // background-color: #fff;
   background-color: rgba($color: #fff, $alpha: 0.8);

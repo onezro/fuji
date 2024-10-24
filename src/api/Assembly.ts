@@ -1,7 +1,36 @@
 import request from "@/utils/AssemblyRequest";
+//扫码保存
 export function CleanCodeSave(data:any) {
     return request({
         url: "/api/clean/CleanCodeSave",
+        method: "post",
+        data
+    });
+}
+//清洗条码历史记录
+export function QueryCleanCodeRecord(data:any) {
+    return request({
+        url: "/api/clean/QueryCleanCodeRecord",
+        method: "post",
+        params:{
+            workstation:data.workstationName,
+            orderNumber:data.MfgOrderName
+        }
+    });
+}
+//重新清洗
+export function ReloadCleanCode(data:any) {
+    return request({
+        url: "/api/clean/ReloadCleanCode",
+        method: "post",
+        data
+    });
+}
+
+//点胶
+export function DispenseStationMoveOut(data:any) {
+    return request({
+        url: "/api/Dispense/DispenseStationMoveOut",
         method: "post",
         data
     });

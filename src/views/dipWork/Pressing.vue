@@ -116,7 +116,7 @@ import { checkStringType } from "@/utils/barcodeFormat";
 import type { Formspan, FormHeader, OrderData } from "@/typing";
 import { ElMessage, ElNotification, ElMessageBox } from "element-plus";
 import { QueryMoveHistory } from "@/api/dipApi";
-import {PressingStationMoveOut } from "@/api/Assembly";
+import {DispenseStationMoveOut } from "@/api/Assembly";
 import {
   ref,
   reactive,
@@ -283,7 +283,7 @@ const getChange = () => {
   let barCodeData = barCode.value;
 
     stopsForm.value.containerName = barCodeData;
-    PressingStationMoveOut(stopsForm.value).then(
+    DispenseStationMoveOut(stopsForm.value).then(
       (res: any) => {
         msgTitle.value = res.msg;
         msgType.value = res.success;

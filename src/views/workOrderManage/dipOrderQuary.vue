@@ -390,6 +390,7 @@ const columnData = reactive([
     // width: "",
     // min: true,
     // align: "center",
+    fixed:true,
     isOperation: true,
     label: "工单",
     width: "120",
