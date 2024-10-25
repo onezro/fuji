@@ -34,15 +34,6 @@
                   >
                 </el-form-item>
               </el-form>
-              <table-tem
-              :showIndex="true"
-              :tableData="materialTable"
-              :tableHeight="250"
-              :columnData="materialColumnData"
-              :pageObj="materialPageObj"
-              @handleSizeChange="materialSizeChange"
-              @handleCurrentChange="materialCurrentChange"
-            ></table-tem>
             </div>
           </div>
         </div>
@@ -70,7 +61,7 @@
                       ref="inputRef"
                       :autofocus="inputFocus"
                       style="width: 500px"
-                      placeholder="请扫描MES成品SN条码\产品版本二维码"
+                      placeholder="请扫描MES成品SN条码\MES屏条码或者屏预组装SMT组件条码"
                       @keyup.enter.native="getChange"
                     />
                   </el-form-item>
@@ -124,7 +115,7 @@
   import type { Formspan, FormHeader, OrderData } from "@/typing";
   import { ElMessage, ElNotification, ElMessageBox } from "element-plus";
   import { QueryMoveHistory } from "@/api/dipApi";
-  import { PressingStationMoveOut } from "@/api/asyApi";
+  import { PressingStationMoveOut } from "@/api/Assembly";
   import {
     ref,
     reactive,
@@ -230,7 +221,7 @@
     {
       text: true,
       prop: "BD_EmployeeName",
-      label: "产品版本二维码",
+      label: "MES屏条码\屏预组装SMT组件条码",
       width: "",
       align: "1",
     },
