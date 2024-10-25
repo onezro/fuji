@@ -1,4 +1,4 @@
-import request from "@/utils/AssemblyRequest";
+import request from "@/utils/asyRequest";
 //扫码保存
 export function CleanCodeSave(data:any) {
     return request({

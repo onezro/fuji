@@ -30,7 +30,7 @@ const hideLoading = () => {
 };
 // 基地址
 const service = axios.create({
-  baseURL: '/assembly',
+  baseURL: '/asyApi',
   // 5秒超时
   timeout: 5000 * 2,
 });

@@ -2,7 +2,9 @@
   <div class="flex flex-col w-full h-full">
     <div class="h-[40px] min-h-[40px] pl-2 pr-2 flex justify-between items-center">
       <span class="text-[1.2rem]"> {{ opui.stationDec }} </span>
-      <div></div>
+      <div>
+        <el-button type="info" class="ml-2" @click="openPrint">设定打印间隔</el-button>
+      </div>
     </div>
     <div class="w-full flex-1 flex">
       <div class="setwidth w-[350px]">
@@ -47,18 +49,28 @@
                   <el-input v-model.trim="barCode" ref="inputRef" :autofocus="inputFocus" style="width: 500px"
                     placeholder="请扫描条码" @keyup.enter.native="getChange" />
                 </el-form-item>
-                <div>
-                  <el-button :type="isAuto ? 'danger' : 'primary'" :disabled="form.MfgOrderName == ''"
-                    @click="autoPrint">{{ isAuto ? "关闭自动打印" : "自动打印" }}</el-button>
-                  <el-button type="warning" :disabled="form.MfgOrderName == ''" @click="print">手动打印</el-button>
-                </div>
+                <el-form-item class="mb-2" label="自动打印间隔">
+                 <span class="text-lg  font-bold pl-1 pr-1 bg-slate-300">{{ setTime }}S</span>
+              
+                </el-form-item>
+                <el-form-item class="mb-2">
+                 
+                </el-form-item>
+            
               </el-form>
+            
               <div class="text-xl font-bold text-[#00B400]" v-show="msgType === true || msgTitle === ''">
                 {{ msgTitle === "" ? "请扫描条码" : msgTitle }}
               </div>
               <div class="text-xl font-bold text-[red]" v-show="msgType === false && msgTitle !== ''">
                 {{ msgTitle }}
               </div>
+              <div>
+                   <el-button :type="isAuto ? 'danger' : 'primary'" :disabled="form.MfgOrderName == ''"
+                    @click="autoPrint">{{ isAuto ? "关闭自动打印" : "自动打印" }}</el-button>
+                  <el-button type="warning" :disabled="form.MfgOrderName == ''" @click="print">手动打印</el-button>
+                  <el-button type="success" :disabled="form.MfgOrderName == ''" @click="print">补打条码</el-button>
+                </div>
             </div>
           </div>
 
@@ -73,6 +85,20 @@
         </div>
       </div>
     </div>
+    <el-dialog v-model="showSetTime" draggable title="自动打印时间设定" width="300px"  :append-to-body="true"
+    :close-on-click-modal="false" :close-on-press-escape="false" @close="setCancel">
+      <el-form ref="formRef" :model="timeForm" label-width="auto"> 
+          <el-form-item label="间隔时间"  prop="time">
+            <el-input-number v-model="timeForm.setTime" :min="1"  />
+          </el-form-item>
+      </el-form>
+        <template #footer>
+            <span class="dialog-footer">
+                <el-button @click="setCancel">关闭</el-button>
+                <el-button type="primary" @click="setPrint"> 确定 </el-button>
+            </span>
+        </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -88,7 +114,7 @@ import { checkStringType } from "@/utils/barcodeFormat";
 import type { Formspan, FormHeader, OrderData } from "@/typing";
 import { ElMessage, ElNotification, ElMessageBox } from "element-plus";
 import { QueryMoveHistory, OrderQuery } from "@/api/dipApi";
-import { CoverInstallPrint, CoverInstallStationMoveOut } from "@/api/Assembly";
+import { CoverInstallPrint, CoverInstallStationMoveOut } from "@/api/asyApi";
 
 import {
   ref,
@@ -346,7 +372,24 @@ const getOrderData = () => {
 
 const timer = ref();
 const isAuto = ref(false);
-const setTime = ref(5000)
+const setTime = ref<any>(localStorage.getItem("SETTIME")||5)
+const timeForm=ref({
+  setTime:0
+})
+const showSetTime=ref(false)
+const openPrint=()=>{
+  showSetTime.value=true
+  timeForm.value.setTime=setTime.value
+}
+const setPrint=()=>{
+  let data=timeForm.value.setTime
+  setTime.value=data
+  showSetTime.value=false
+  localStorage.setItem('SETTIME',JSON.stringify(data))
+}
+const setCancel=()=>{
+  showSetTime.value=false
+}
 watch(
   () => isAuto.value,
   (newVal) => {
@@ -355,7 +398,7 @@ watch(
 
       clearInterval(timer.value);
       timer.value = setInterval(() => {
-      }, setTime.value);
+      }, setTime.value*1000);
       ElNotification({
         title: "提示信息",
         message: "开始自动打印",

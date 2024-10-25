@@ -4,7 +4,7 @@
         <formTemple ref="badFormRef" :visible="badVisible" :width="'400px'" :title="'添加不良信息'" :formHeader="formHeader1"
             :form="form1" @formCancel="addCancel" @onSubmit="onSubmit" @selectData="selectData" />
         <div>
-            <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
+            <div class="h-[30px] flex items-center text-base text-[#fff] bg-[#006487]">
                 <span class="ml-5">基本信息</span>
             </div>
             <el-form class="pt-2" ref="formRef" :inline="true" :model="form" label-width="auto">
@@ -184,34 +184,41 @@ defineExpose({
 
 </script>
 <style lang="scss">
- .el-tabs--border-card {
-    border-top: 1px solid #006487;
+// @import url(../../style/tab.css);
+//  .el-tabs--border-card {
+//     border-top: 1px solid #006487;
+// }
+
+.el-tabs--border-card {
+  border-top: 1px solid #006487;
 }
 
 .demo-tabs .el-tabs__header {
-    background-color: #006487 !important;
+  --el-tabs-header-height: 30px;
+  background-color: #006487 !important;
 }
 
-.demo-tabs.el-tabs__content {
-    padding: 5px 0px;
+.demo-tabs .el-tabs__content {
+  padding: 5px;
 }
 
-.demo-tabs .el-tabs__item {
-    font-size: 1.1rem;
-}
 
 .demo-tabs.el-tabs--border-card>.el-tabs__header .el-tabs__item {
-    color: #fff;
-    // padding: 0 !important;
+  color: #fff;
+  font-size: 1rem;
+  // padding: 0 !important;
 }
 
 .demo-tabs .el-tabs__item.is-active {
-    // color: #fff;
-    color: #006487 !important;
-    // font-weight: bold;
+  font-size: 1rem;
+  // color: #fff;
+  color: #006487 !important;
+  // font-weight: bold;
 }
- .el-tabs--border-card > .el-tabs__header .el-tabs__item:not(.is-disabled):hover {
-    color: #006487 !important;
-    background-color: rgba($color: #fff, $alpha: .8);
+
+.el-tabs--border-card>.el-tabs__header .el-tabs__item:not(.is-disabled):hover {
+  font-size: 1rem;
+  color: #006487 !important;
+  background-color: rgba($color: #fff, $alpha: 0.8);
 }
 </style>

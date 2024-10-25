@@ -722,7 +722,6 @@ const getScreenHeight = () => {
   padding: 5px;
 }
 
-.demo-tabs .el-tabs__item {}
 
 .demo-tabs.el-tabs--border-card>.el-tabs__header .el-tabs__item {
   color: #fff;
