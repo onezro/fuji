@@ -1,4 +1,4 @@
-import request from "@/utils/AssemblyRequest";
+import request from "@/utils/asyRequest";
 //扫码保存
 export function CleanCodeSave(data:any) {
     return request({
@@ -42,6 +42,7 @@ export function PressingStationMoveOut(data:any) {
         data
     });
 }
+//盖板过站
 export function CoverInstallStationMoveOut(data:any) {
     return request({
         url: "/api/CoverInstall/CoverInstallStationMoveOut",
@@ -49,6 +50,7 @@ export function CoverInstallStationMoveOut(data:any) {
         data
     });
 }
+//盖板打印
 export function CoverInstallPrint(data:any) {
     return request({
         url: "/api/CoverInstall/CoverInstallPrint",
@@ -58,3 +60,28 @@ export function CoverInstallPrint(data:any) {
         }
     });
 }
+//查询关键物料
+export function QueryKeyMaterial(data:any) {
+    return request({
+        url: "/api/SMTCompBind/QueryKeyMaterial",
+        method: "post",
+        data
+    });
+}
+//判断关键物料是否存在
+export function JudgeKeyMaterial(data:any) {
+    return request({
+        url: "/api/SMTCompBind/JudgeKeyMaterial",
+        method: "post",
+        data
+    });
+}
+//过站并扣料
+export function SMTCompBindMoveStd(data:any) {
+    return request({
+        url: "/api/SMTCompBind/SMTCompBindMoveStd",
+        method: "post",
+        data
+    });
+}
+

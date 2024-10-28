@@ -16,7 +16,7 @@
         <template #default="scope">
           <span v-if="c.text">{{ scope.row[c.prop] }}</span>
           <div v-if="c.tag === true">
-            <el-tag v-if="c.tagType === 'string'" :type="c.tagItem[scope.row[c.prop]]" effect="plain">
+            <el-tag v-if="c.tagType === 'string'" :type="c.tagItem[scope.row[c.prop]]" effect="light">
               {{ scope.row[c.prop] }}
             </el-tag>
             <el-tag v-if="c.tagType === 'boolean'" :type="scope.row[c.prop] ? c.tagItem[0].type : c.tagItem[1].type"
@@ -26,7 +26,7 @@
             <div v-for="item in c.tagItem">
               <el-tag v-if="
                 item.number == scope.row[c.prop] && c.tagType === 'number'
-              " :type="item.type" effect="plain">
+              " :type="item.type" effect="light">
                 {{ item.text }}
               </el-tag>
             </div>

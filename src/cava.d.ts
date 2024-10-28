@@ -34,3 +34,5 @@ declare module '../../public/config.ts'
 declare module 'af-table-column'
 declare module './useProps'
 declare module './useVirtualized'
+declare module '@/api/asyApi'
+

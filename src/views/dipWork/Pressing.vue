@@ -116,7 +116,7 @@ import { checkStringType } from "@/utils/barcodeFormat";
 import type { Formspan, FormHeader, OrderData } from "@/typing";
 import { ElMessage, ElNotification, ElMessageBox } from "element-plus";
 import { QueryMoveHistory } from "@/api/dipApi";
-import {DispenseStationMoveOut } from "@/api/Assembly";
+import {DispenseStationMoveOut } from "@/api/asyApi";
 import {
   ref,
   reactive,

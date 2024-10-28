@@ -46,10 +46,10 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/scrApi/, '') 
       },
-      '/assembly': {
-        target: 'http://192.168.9.50:12028',
+      '/asyApi': {
+        target: 'http://192.168.9.50:12021',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/assembly/, '') 
+        rewrite: (path) => path.replace(/^\/asyApi/, '') 
       },
       
     }
