@@ -505,3 +505,50 @@ export function InspecDetail(data:any) {
     })
 
 }
+//查询产品物料
+export function findProduct(data:any) {
+    return request({
+        url: "/api/spec/findProduct",
+        method: "post",
+        data
+    })
+
+}
+//
+export function findProductSpecWork(data:any) {
+    return request({
+        url: "/api/spec/findProductSpec",
+        method: "post",
+        params:{
+            productName:data
+        }
+    })
+
+}
+//查询工艺流程
+export function findWorkFlow(data:any) {
+    return request({
+        url: "/api/spec/findWorkFlow",
+        method: "post",
+        data
+    })
+}
+//修改物料工作流
+export function UpdateProductWorkflow(data:any) {
+    return request({
+        url: "/api/spec/UpdateProductWorkflow",
+        method: "post",
+        data
+    })
+}
+//根据产品查找工序
+export function findProductBOMMaterialList(data:any) {
+    return request({
+        url: "/api/spec/findProductBOMMaterialList",
+        method: "post",
+        params:{
+            productName:data
+        }
+    })
+
+}

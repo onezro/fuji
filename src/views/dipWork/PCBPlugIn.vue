@@ -727,7 +727,10 @@ const getOrderData = () => {
   isLoding.value = "is-loading";
   OrderQuery({ lineName: opui.line, OrderTypeName: "DIP" }).then((res: any) => {
     let data = res.content;
-    orderTable.value.data[0] = data[0];
+    if(data.length!==0){
+      orderTable.value.data[0] = data[0];
+    }
+ 
     let timer = setTimeout(() => {
       isLoding.value = "";
       clearTimeout(timer);

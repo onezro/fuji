@@ -129,7 +129,6 @@
   interface StopsForm {
     containerName: string;
     workstationName: string;
-    result: string;
     userAccount: string;
     txnDate: string;
   }
@@ -153,7 +152,6 @@
     workstationName: opui.station || "",
     userAccount: userStore.getUserInfo,
     txnDate: "",
-    result: "OK",
   });
   
   const form = ref<InstanceType<typeof Formspan>>({
@@ -181,7 +179,7 @@
     },
     {
       label: "产品描述",
-      value: "Description",
+      value: "ProductDesc",
       disabled: true,
       type: "textarea",
       width: 300,
