@@ -214,7 +214,7 @@
     <el-dialog
       v-model="dialogVisible"
       title="质量自检确认"
-      width="800"
+      width="1050"
       :align-center="true"
       @closed="clearForm"
     >
@@ -355,14 +355,14 @@
           :tableData="detailsTableData"
           :tableHeight="250"
           :columnData="columnData"
-          :pageObj="pageObj"
+          :pageObj="pageObj1"
         >
         </table-tem>
 
         <el-divider />
 
         <div class="text-2xl text-[#006487]">设备工程自检任务</div>
-        <el-form ref="formRef" class="form" :inline="true" label-width="7rem">
+        <el-form ref="formRef" class="form" :inline="true" label-width="7rem" v-if="secondSolder">
           <el-form-item label="波峰焊" class="mb-2">
             <el-radio v-model="secondSolder" :label="true" disabled
               >波峰焊</el-radio
@@ -472,8 +472,8 @@
             ></el-checkbox>
           </el-form-item>
         </el-form>
-        <el-divider />
-        <el-form ref="formRef" class="form" :inline="true" label-width="7rem">
+        <el-divider  v-if="secondSolder"/>
+        <el-form ref="formRef" class="form" :inline="true" label-width="7rem" v-if="!secondSolder">
           <el-form-item label="选择焊" class="mb-2">
             <el-radio v-model="secondSolder" :label="false" disabled
               >选择焊</el-radio
@@ -556,7 +556,7 @@
             ></el-checkbox>
           </el-form-item>
         </el-form>
-        <el-divider />
+        <el-divider  v-if="!secondSolder"/>
 
         <div class="text-2xl text-[#006487]">质量自检确认</div>
         <el-form ref="formRef" class="form" :inline="true" label-width="7rem">
@@ -713,6 +713,11 @@ const dialogVisible = ref(false);
 const detailsTableData = ref<any[]>([]);
 const tableData = ref<any[]>([{}]);
 const pageObj = ref({
+  pageSize: 10,
+  currentPage: 1,
+  isShow: -1,
+});
+const pageObj1 = ref({
   pageSize: 100000,
   currentPage: 1,
   isShow: -1,

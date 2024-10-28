@@ -211,11 +211,12 @@
     <el-dialog
       v-model="dialogVisible"
       title="质量自检确认"
-      width="800"
+      width="1050"
       :align-center="true"
       @closed="clearForm"
     >
-      <div ref="scrollRef"
+      <div
+        ref="scrollRef"
         class="w-full h-[500px] overflow-x-hidden overflow-y-auto no-scrollbar"
       >
         <div class="text-2xl text-[#006487]">生产自检任务</div>
@@ -364,6 +365,27 @@
                   disabled
                 ></el-input>
               </el-form-item>
+              <!-- <el-form-item label="图片" class="mb-0" label-width="atuo">
+                <div class="flex">
+                  <el-upload
+                    action="#"
+                    list-type="text"
+                    :before-upload="beforeUpload"
+                    :limit="1"
+                    :show-file-list="false"
+                  >
+                    <el-button slot="trigger" size="small" type="primary"
+                      >选取文件</el-button
+                    >
+                  </el-upload>
+                  <div @click="openImage" class="hover:cursor-pointer ml-4">
+                    {{ fileName + '(点击放大)'}}
+                  </div>
+            <el-image ref="picShow" :src="base64Pic" class="w-0 h-0" :preview-src-list="fileList">
+
+            </el-image>
+                </div>
+              </el-form-item> -->
             </el-form>
           </div>
           <!-- <div class="w-[20%] max-h-20">
@@ -395,17 +417,23 @@
           :tableData="detailsTableData"
           :tableHeight="250"
           :columnData="columnData"
-          :pageObj="pageObj"
+          :pageObj="pageObj1"
         >
         </table-tem>
 
         <el-divider />
 
         <div class="text-2xl text-[#006487]">设备工程自检任务</div>
-        <el-form ref="formRef" class="form" :inline="true" label-width="7rem">
+        <el-form
+          ref="formRef"
+          class="form"
+          :inline="true"
+          label-width="7rem"
+          v-if="secondSolder"
+        >
           <el-form-item label="波峰焊" class="mb-2">
             <el-radio v-model="secondSolder" :label="true" disabled
-              >波峰焊</el-radio
+              >波峰焊{{ secondSolder }}</el-radio
             >
           </el-form-item>
           <el-form-item label="程序员" class="mb-2">
@@ -512,8 +540,14 @@
             ></el-checkbox>
           </el-form-item>
         </el-form>
-        <el-divider />
-        <el-form ref="formRef" class="form" :inline="true" label-width="7rem">
+        <el-divider v-if="secondSolder" />
+        <el-form
+          ref="formRef"
+          class="form"
+          :inline="true"
+          label-width="7rem"
+          v-if="!secondSolder"
+        >
           <el-form-item label="选择焊" class="mb-2">
             <el-radio v-model="secondSolder" :label="false" disabled
               >选择焊</el-radio
@@ -596,7 +630,7 @@
             ></el-checkbox>
           </el-form-item>
         </el-form>
-        <el-divider />
+        <el-divider v-if="!secondSolder" />
 
         <div class="text-2xl text-[#006487]">质量自检确认</div>
         <el-form ref="formRef" class="form" :inline="true" label-width="7rem">
@@ -725,6 +759,7 @@ import {
   ElNotification,
   ElMessageBox,
   UploadFile,
+
 } from "element-plus";
 import { Delete, Download, Plus, ZoomIn } from "@element-plus/icons-vue";
 import tableTem from "@/components/tableTem/index.vue";
@@ -755,6 +790,11 @@ const dialogVisible = ref(false);
 const detailsTableData = ref<any[]>([]);
 const tableData = ref<any[]>([{}]);
 const pageObj = ref({
+  pageSize: 10,
+  currentPage: 1,
+  isShow: -1,
+});
+const pageObj1 = ref({
   pageSize: 100000,
   currentPage: 1,
   isShow: -1,
@@ -768,6 +808,8 @@ const secondSolder = ref(true);
 const userStore = useUserStoreWithOut();
 const loginName = userStore.getUserInfo;
 const scrollRef = ref();
+const fileName = ref("");
+const picShow = ref();
 
 interface formTS {
   time: string;
@@ -953,8 +995,8 @@ const openDialogVisible = (item: any) => {
   form.value.batch = item.OrderQuantity;
   form.value.InspectResult = item.InspectResult;
   nextTick(() => {
-    scrollRef.value.scrollTop = 0
-  })
+    scrollRef.value.scrollTop = 0;
+  });
   getAllData();
 };
 
@@ -976,7 +1018,7 @@ const getAllData = () => {
           }
           let arr = item.InspectValue.split("|");
           arr.forEach((element: any) => {
-            if (element === '') {
+            if (element === "") {
               return;
             }
             detailsTableData.value.push({
@@ -1162,23 +1204,6 @@ const clearForm = () => {
   fileList.value = [];
 };
 
-const handleChange = (file: any) => {
-  console.log(2);
-
-  const reader = new FileReader();
-
-  // 文件改变时的回调函数
-  reader.onload = (e: any) => {
-    // 输出Base64字符串
-    base64Pic.value = e.target.result;
-    console.log(e.target.result);
-  };
-
-  // 以Base64格式读取文件
-  reader.readAsDataURL(file.raw);
-  fileList.value = [{ name: file.name, url: "" }];
-};
-
 const beforeUpload = (file: any) => {
   // 检查文件是否为图片
   const isImage = file.type.startsWith("image/");
@@ -1193,8 +1218,8 @@ const beforeUpload = (file: any) => {
     // 输出Base64字符串
     base64Pic.value = e.target.result;
     fileList.value = [e.target.result];
+    fileName.value = file.name;
     console.log(fileList.value);
-    
   };
 
   // 以Base64格式读取文件
@@ -1204,9 +1229,8 @@ const beforeUpload = (file: any) => {
   return false;
 };
 
-const handleRemove = (file: any, fileList: any) => {
-  // 清除当前文件
-  fileList.value = [];
+const openImage = () => {
+  picShow.value.$el.children[0].click();
 };
 
 const columnData = reactive([
