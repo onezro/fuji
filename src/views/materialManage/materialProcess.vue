@@ -262,12 +262,13 @@ const openSpecWorK = () => {
 const updateSpecWork = () => {
     UpdateProductWorkflow(specWorkForm.value).then((res: any) => {
         specWorkVisible.value = false;
-        ElNotification({
+       
+        if (res.success) {
+            ElNotification({
             title: "提示信息",
             message: res.msg,
-            type: res.success ? "success" : "error",
+            type:  "success" ,
         });
-        if (res.success) {
             getSpecWorkData();
         }
     });
