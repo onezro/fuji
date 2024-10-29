@@ -77,11 +77,44 @@ export function JudgeKeyMaterial(data:any) {
     });
 }
 //过站并扣料
-export function SMTCompBindMoveStd(data:any) {
+export function ScreeSMTCompBindMoveStd(data:any) {
     return request({
-        url: "/api/SMTCompBind/SMTCompBindMoveStd",
+        url: "/api/SMTCompBind/ScreeSMTCompBindMoveStd",
         method: "post",
         data
     });
 }
+//盖板过站并扣料
+export function CoverSMTCompBindMoveStd(data:any) {
+    return request({
+        url: "/api/SMTCompBind/CoverSMTCompBindMoveStd",
+        method: "post",
+        data
+    });
+}
+//装配合成查询关键物料
+export function QueryAssemblyKeyMaterial(data:any) {
+    return request({
+        url: "/api/SMTCompBind/QueryAssemblyKeyMaterial",
+        method: "post",
+        data
+    });
+}
+//判断关键物料是否存在
+export function JudgeAssemblyKeyMaterial(data:any) {
+    return request({
+        url: "/api/SMTCompBind/JudgeAssemblyKeyMaterial",
+        method: "post",
+        data
+    });
+}
+//过站并扣料
+export function AssemblySynthesisMoveStd(data:any) {
+    return request({
+        url: "/api/SMTCompBind/AssemblySynthesisMoveStd",
+        method: "post",
+        data
+    });
+}
+
 
