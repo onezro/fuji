@@ -118,3 +118,11 @@ export function AssemblySynthesisMoveStd(data:any) {
 }
 
 
+//查询SN条码
+export function VibrationDetail(data:any) {
+    return request({
+        url: "/api/Vibration/VibrationDetail",
+        method: "post",
+        data
+    });
+}
