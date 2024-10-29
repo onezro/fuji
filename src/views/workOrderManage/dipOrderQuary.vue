@@ -181,12 +181,12 @@
               :value="item.MfgLineName" />
           </el-select>
         </el-form-item>
-        <el-form-item label="面号" prop="Side">
+        <!-- <el-form-item label="面号" prop="Side">
           <el-select v-model="orderOnlineForm.Side" placeholder="">
             <el-option label="BOT" value="BOT" />
             <el-option label="TOP" value="TOP" />
           </el-select>
-        </el-form-item>
+        </el-form-item> -->
         <!-- <el-form-item label="货架" prop="shelf_ids">
           <el-select v-model="orderOnlineForm.shelf_ids_list" multiple collapse-tags collapse-tags-tooltip
             :max-collapse-tags="3" placeholder="选择货架">
