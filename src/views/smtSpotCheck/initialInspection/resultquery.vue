@@ -433,7 +433,7 @@
         >
           <el-form-item label="波峰焊" class="mb-2">
             <el-radio v-model="secondSolder" :label="true" disabled
-              >波峰焊{{ secondSolder }}</el-radio
+              >波峰焊</el-radio
             >
           </el-form-item>
           <el-form-item label="程序员" class="mb-2">
