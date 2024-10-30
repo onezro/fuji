@@ -348,7 +348,13 @@ const getChange = () => {
       msgType.value = res.success;
       stopsForm.value.containerName = "";
       form.value = { ...res.content[0] };
-      tableData1.value.push(res.content2);
+      // tableData1.value.push(res.content2);
+      tableData1.value.unshift({
+        WorkStation: opui.station,
+        SN: barCode.value,
+        userAccount: loginName,
+        Date: formattedDate,
+      });
     } else {
       msgTitle.value = res.msg;
       msgType.value = res.success;
