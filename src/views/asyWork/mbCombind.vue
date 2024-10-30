@@ -2,9 +2,7 @@
   <div class="flex flex-col w-full h-full">
     <div class="h-[40px] min-h-[40px] pl-2 pr-2 flex justify-between items-center">
       <span class="text-[1.2rem]"> {{ opui.stationDec }} </span>
-      <div>
-        <el-button type="info" class="ml-2" @click="openPrint">设定打印间隔</el-button>
-      </div>
+      <div></div>
     </div>
     <div class="w-full flex-1 flex">
       <div class="setwidth w-[350px]">
@@ -42,35 +40,41 @@
             <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
               <span class="ml-5"> 扫描条码</span>
             </div>
-            <div class="h-[120px] pt-3 pr-5 pl-5">
-              <el-form class="inbound" ref="formRef" :inline="true" :model="form" 
-                @submit.native.prevent>
-                <el-form-item label="扫描条码" class="mb-2">
-                  <el-input v-model.trim="barCode" ref="inputRef" :autofocus="inputFocus" style="width: 500px"
-                    placeholder="请扫描条码" @keyup.enter.native="getChange" />
-                </el-form-item>
-                <el-form-item class="mb-2" label="自动打印间隔">
-                 <span class="text-lg  font-bold pl-1 pr-1 bg-slate-300">{{ setTime }}S</span>
-              
-                </el-form-item>
-                <el-form-item class="mb-2">
-                 
-                </el-form-item>
-            
-              </el-form>
-            
-              <div class="text-xl font-bold text-[#00B400]" v-show="msgType === true || msgTitle === ''">
-                {{ msgTitle === "" ? "请扫描条码" : msgTitle }}
-              </div>
-              <div class="text-xl font-bold text-[red]" v-show="msgType === false && msgTitle !== ''">
-                {{ msgTitle }}
+            <div class="h-[160px] pt-3 pr-5 pl-5 flex justify-between">
+              <div>
+                <el-form class="inbound" ref="formRef" :inline="true" :model="form" label-width="auto"
+                  @submit.native.prevent>
+                  <el-form-item label="扫描条码">
+                    <el-input v-model.trim="barCode" ref="inputRef" :autofocus="inputFocus" style="width: 500px"
+                      placeholder="请扫描条码" @keyup.enter.native="getChange" />
+                  </el-form-item>
+                  <div></div>
+                  <!-- <el-form-item>
+                    <el-button type="primary" :disabled="form.MfgOrderName == '' || tableData1.length == 0
+                      " @click="reWash">重新清洗</el-button>
+                  </el-form-item> -->
+                </el-form>
+                <div class="text-xl font-bold text-[#00B400]" v-show="msgType === true || msgTitle === ''">
+                  {{ msgTitle === "" ? "请扫描屏材料批次条码" : msgTitle }}
+                </div>
+                <div class="text-xl font-bold text-[red]" v-show="msgType === false && msgTitle !== ''">
+                  {{ msgTitle }}
+                </div>
               </div>
               <div>
-                   <el-button :type="isAuto ? 'danger' : 'primary'" :disabled="form.MfgOrderName == ''"
-                    @click="autoPrint">{{ isAuto ? "关闭自动打印" : "自动打印" }}</el-button>
-                  <el-button type="warning" :disabled="form.MfgOrderName == ''" @click="print">手动打印</el-button>
-                  <el-button type="success" :disabled="form.MfgOrderName == ''" @click="print">补打条码</el-button>
-                </div>
+                <el-table :data="barData" size="small" border :row-class-name="tableRowClassName">
+                  <el-table-column type="index" align="center" fixed label="序号" :width="'60'"></el-table-column>
+                  <el-table-column prop="MaterialName" label="物料编码" width="120" />
+                  <el-table-column prop="MaterialBarCode" label="物料" width="150">
+                    <template #default="scope">
+                      <el-input v-model="scope.row.MaterialBarCode" size="small" :ref="createInputRef(scope.$index)"
+                        @keyup.enter.native="getChange1(scope.$index,scope.row)">
+                      </el-input>
+                    </template>
+                  </el-table-column>
+                  <!-- <el-table-column prop="address" label="Address" /> -->
+                </el-table>
+              </div>
             </div>
           </div>
 
@@ -85,20 +89,6 @@
         </div>
       </div>
     </div>
-    <el-dialog v-model="showSetTime" draggable title="自动打印时间设定" width="300px"  :append-to-body="true"
-    :close-on-click-modal="false" :close-on-press-escape="false" @close="setCancel">
-      <el-form ref="formRef" :model="timeForm" label-width="auto"> 
-          <el-form-item label="间隔时间"  prop="time">
-            <el-input-number v-model="timeForm.setTime" :min="1"  />
-          </el-form-item>
-      </el-form>
-        <template #footer>
-            <span class="dialog-footer">
-                <el-button @click="setCancel">关闭</el-button>
-                <el-button type="primary" @click="setPrint"> 确定 </el-button>
-            </span>
-        </template>
-    </el-dialog>
   </div>
 </template>
 
@@ -113,8 +103,12 @@ import { useUserStoreWithOut } from "@/stores/modules/user";
 import { checkStringType } from "@/utils/barcodeFormat";
 import type { Formspan, FormHeader, OrderData } from "@/typing";
 import { ElMessage, ElNotification, ElMessageBox } from "element-plus";
-import { QueryMoveHistory, OrderQuery } from "@/api/dipApi";
-import { CoverInstallPrint, CoverInstallStationMoveOut } from "@/api/asyApi";
+import { OrderQuery } from "@/api/dipApi";
+import {
+  QueryKeyMaterial,
+  JudgeKeyMaterial,
+  CoverSMTCompBindMoveStd,
+} from "@/api/asyApi";
 
 import {
   ref,
@@ -124,14 +118,25 @@ import {
   computed,
   onBeforeMount,
   onBeforeUnmount,
-  watch,
 } from "vue";
+import { cloneDeep } from "lodash-es";
 interface StopsForm {
-  containerName: string;
+  //   containerName: string;
   workstationName: string;
-  result: string;
+  // result: string;
   userAccount: string;
   txnDate: string;
+  // Container: string;
+  OrderName: string;
+  tools: string;
+  BarCode: string;
+  keyMaterialList: Array<KeyMaterial>;
+}
+interface KeyMaterial {
+  MaterialBarCode: string;
+  MaterialName: string;
+  MfgOrderName:string;
+  QtyRequired:number
 }
 
 interface ToolList {
@@ -146,14 +151,16 @@ const appStore = useAppStore();
 const userStore = useUserStoreWithOut();
 const opui = appStore.getOPUIReal();
 const inputRef = ref();
-const inputFocus = ref(true);
+const inputFocus = ref(false);
 const barCode = ref("");
 const stopsForm = ref<StopsForm>({
-  containerName: "",
   workstationName: opui.station || "",
   userAccount: userStore.getUserInfo,
+  BarCode: "",
+  OrderName: "",
+  keyMaterialList: [],
+  tools: "",
   txnDate: "",
-  result: "OK",
 });
 
 const form = ref<InstanceType<typeof Formspan>>({
@@ -212,7 +219,14 @@ const columnData1 = reactive([
   {
     text: true,
     prop: "ContainerName",
-    label: "PCB条码",
+    label: "物料批次条码",
+    width: "",
+    align: "1",
+  },
+  {
+    text: true,
+    prop: "BD_Tools",
+    label: "物料编码",
     width: "",
     align: "1",
   },
@@ -257,18 +271,40 @@ const orderColumns = ref([
 ]);
 const defaultSelectVal = ref<string[]>([]);
 const isLoding = ref("");
+const barData = ref<KeyMaterial[]>([
+ 
+]);
+const keyForm = ref({
+  BarCode: "",
+  OrderName: "",
+  ProductName: "",
+  workstationName: opui.station,
+  tools: "",
+  userAccount: "",
+  txnDate: "",
+});
+const isKeyForm = ref({
+  BarCode: "",
+  OrderName: "",
+  ProductName: "",
+  workstationName: opui.station,
+  tools: "",
+  userAccount: userStore.getUserInfo,
+  txnDate: "",
+});
+const materialRef = ref();
+const inputRefs = ref<any[]>([]);
 
 onBeforeMount(() => {
-  clearInterval(timer.value);
   getScreenHeight();
 });
 onMounted(() => {
   window.addEventListener("resize", getScreenHeight);
   getOrderData();
-  getFocus();
+  // getFocus();
+
 });
 onBeforeUnmount(() => {
-  clearInterval(timer.value);
   window.addEventListener("resize", getScreenHeight);
 });
 
@@ -287,31 +323,74 @@ const formText = (data: string) => {
 
 //获取过站历史记录
 const getHisData = () => {
-  QueryMoveHistory(hisForm.value).then((res: any) => {
-    tableData1.value = res.content;
-  });
+  // QueryCleanCodeRecord(hisForm.value).then((res: any) => {
+  //   tableData1.value = res.content;
+  // });
 };
 
 //过站
 const getChange = () => {
   let barCodeData = barCode.value;
-  stopsForm.value.containerName = barCodeData;
-  msgTitle.value = "";
-  msgType.value = true;
-  CoverInstallStationMoveOut(stopsForm.value).then((res: any) => {
-    msgTitle.value = res.msg;
-    msgType.value = res.success;
-    stopsForm.value.containerName = "";
-    // form.value = { ...res.content[0] };
-    // stopsForm.value.result = "OK";
-    //   hisForm.value.MfgOrderName = res.content[0].MfgOrderName;
-    getFocus();
-    //   getHisData();
-  });
-  barCode.value = "";
+  // stopsForm.value.Container = barCodeData;
+  if (stopsForm.value.OrderName == "") {
+    msgTitle.value = "请先选择工单";
+    msgType.value = false;
+  } else {
+    msgTitle.value = "";
+    msgType.value = true;
+    isKeyForm.value.BarCode = barCodeData;
+    // if (stopsForm.value.keyMaterialList.length === 3) {
+      stopsForm.value.BarCode = barCodeData;
+      CoverSMTCompBindMoveStd(stopsForm.value).then((res: any) => {
+        msgTitle.value = res.msg;
+        msgType.value = res.success;
+        if (res.success) {
+          stopsForm.value.keyMaterialList = [];
+        }
+        stopsForm.value.BarCode = "";
+        barCode.value = "";
+        getKeyMaterial();
+      });
+    // }
+    // JudgeKeyMaterial(isKeyForm.value).then((res: any) => {
+    //   msgTitle.value = res.msg;
+    //   msgType.value = res.success;
+    //   if (res.success) {
+    // const findKeyMaterial = barData.value.find(
+    //   (x: any) => x.MaterialBarCode === barCodeData
+    // );
+    // if (findKeyMaterial !== undefined) {
+    //   stopsForm.value.keyMaterialList.push({
+    //     MaterialBarCode: findKeyMaterial.MaterialBarCode,
+    //     MaterialName: findKeyMaterial.MaterialName,
+    //   });
+    // }
+    //   }
+    // });
+  }
+
+  // barCode.value = "";
+  // getFocus();
+ 
 };
+
+const createInputRef = (val: any) => {
+  return (el: any) => {
+    if (el) {
+      inputRefs.value[val] = el;
+    }
+  };
+};
+const getChange1 = (val: any,data:any) => {
+  if (val + 1 < inputRefs.value.length) {
+    inputRefs.value[val + 1].focus();
+  } else {
+    inputRef.value.focus()
+  }
+  stopsForm.value.keyMaterialList.push(data)
+};
+
 const radioChange = (args: any) => {
-  isAuto.value = false;
   if (args[1] == null) {
     form.value.MfgOrderName = "";
     form.value.ProductName = "";
@@ -322,8 +401,6 @@ const radioChange = (args: any) => {
     form.value.PlannedCompletionDate = "";
     form.value.Qty = "";
   } else {
-    // orderTable.value.data.forEach((v: any) => {
-    //   if (v.MfgOrderName == args[1]) {
     form.value.MfgOrderName = args[0].MfgOrderName;
     form.value.ProductName = args[0].ProductName;
     form.value.ProductDesc = args[0].ProductDesc;
@@ -332,122 +409,94 @@ const radioChange = (args: any) => {
     form.value.PlannedStartDate = args[0].PlannedStartDate;
     form.value.PlannedCompletionDate = args[0].PlannedCompletionDate;
     form.value.Qty = args[0].Qty;
-    // hisForm.value.MfgOrderName = args[0].MfgOrderName;
-    // console.log(args[0].MfgOrderName);
-    // getFeedForm.value.MfgOrder = args[0].MfgOrderName;
-
-    // if (getToolForm.value.OrderNumber == args[0].MfgOrderName) {
-    //   return;
-    // } else {
-    //   getToolForm.value.OrderNumber = args[0].MfgOrderName;
-    //   getHisData();
-    //   getToolData();
-    // }
+    stopsForm.value.OrderName = args[0].MfgOrderName;
+    hisForm.value.MfgOrderName = args[0].MfgOrderName;
+    isKeyForm.value.OrderName = args[0].MfgOrderName;
+    keyForm.value.OrderName = args[0].MfgOrderName;
+    keyForm.value.ProductName = args[0].ProductName;
+    // nextTick(() => {
+    //   if (inputRefs.value.length > 0) {
+    //     inputRefs.value[0].focus();
+    //   }
+    // });
+    // getFocus();
+    getKeyMaterial();
+    // getHisData();
   }
+};
+const getKeyMaterial = () => {
+  QueryKeyMaterial(keyForm.value).then((res: any) => {
+    let data: KeyMaterial[]=[]
+    res.content.forEach((c:any)=>{
+      if(c.QtyRequired==1){
+        data.push(c)
+      }else{
+        for (let i = 0; i < c.QtyRequired; i++) {  
+          data.push({
+            MfgOrderName: c.MfgOrderName,
+            QtyRequired: 1,
+            MaterialName: c.MaterialName,
+            MaterialBarCode: ""
+          });  
+    }  
+      }
+    })
+    barData.value = data;
+    nextTick(() => {
+      if (inputRefs.value.length > 0) {
+        inputRefs.value[0].focus();
+      }
+    });
+  });
+};
+const tableRowClassName = (val: any) => {
+  // console.log(val.row);
+  const isExitCode = stopsForm.value.keyMaterialList.findIndex(
+    (k: any) => val.row.MaterialBarCode == k.MaterialBarCode
+  );
+  if (isExitCode !== -1) {
+    return "active-table";
+  }
+  return "";
 };
 const getOrderData = () => {
-  isAuto.value = false;
   isLoding.value = "is-loading";
-  OrderQuery({ lineName: opui.line, OrderTypeName: "Assembly" }).then((res: any) => {
-    let data = res.content;
-    let timer = setTimeout(() => {
-      isLoding.value = "";
-      clearTimeout(timer);
-    }, 2000);
-    if (data.length !== 0) {
-      orderTable.value.data[0] = data[0];
+  OrderQuery({ lineName: opui.line, OrderTypeName: "Assembly" }).then(
+    (res: any) => {
+      let data = res.content;
+      let timer = setTimeout(() => {
+        isLoding.value = "";
+        clearTimeout(timer);
+      }, 2000);
+      if (data.length !== 0) {
+        orderTable.value.data[0] = data[0];
+      }
+      if (data.length == 1) {
+        // console.log(2111);
+        let a = data[0].MfgOrderName;
+        defaultSelectVal.value[0] = a;
+      }
     }
-    if (data.length == 1) {
-      // console.log(2111);
-      let a = data[0].MfgOrderName;
-      defaultSelectVal.value[0] = a;
-    }
-  });
+  );
 };
-
-const timer = ref();
-const isAuto = ref(false);
-const setTime = ref<any>(localStorage.getItem("SETTIME")||5)
-const timeForm=ref({
-  setTime:0
-})
-const showSetTime=ref(false)
-const openPrint=()=>{
-  showSetTime.value=true
-  timeForm.value.setTime=setTime.value
-}
-const setPrint=()=>{
-  let data=timeForm.value.setTime
-  setTime.value=data
-  showSetTime.value=false
-  localStorage.setItem('SETTIME',JSON.stringify(data))
-}
-const setCancel=()=>{
-  showSetTime.value=false
-}
-watch(
-  () => isAuto.value,
-  (newVal) => {
-    if (newVal) {
-      //   console.log("开始自动打印");
-
-      clearInterval(timer.value);
-      timer.value = setInterval(() => {
-        printData();
-      }, setTime.value*1000);
-      ElNotification({
-        title: "提示信息",
-        message: "开始自动打印",
-        type: "success",
-      });
-    } else {
-      ElNotification({
-        title: "提示信息",
-        message: "关闭自动打印",
-        type: "warning",
-      });
-      clearInterval(timer.value);
-
-    }
-  },
-  {
-    deep: true,
-  }
-);
-const autoPrint = () => {
-  isAuto.value = !isAuto.value;
-  //   clearInterval(timer.value);
-  //   timer.value = setInterval(() => {
-  //     console.log(131);
-  //   }, 5000);
-};
-const print = () => {
-  isAuto.value = false;
-  // ElNotification({
-  //   title: "提示信息",
-  //   message: "开始手动打印",
-  //   type: "success",
-  // });
-    printData();
-};
-
-const printData = () => {
-  CoverInstallPrint(form.value.MfgOrderName).then((res: any) => {
-    if (res.success) {
-      //   ElNotification({
-      //     title: "提示信息",
-      //     message: "开始打印",
-      //     type: "success",
-      //   });
-    } else {
-      ElNotification({
-        title: "提示信息",
-        message: "打印失败",
-        type: "error",
-      });
-    }
-  });
-};
+// const reWash = () => {
+//   let data = cloneDeep(tableData1.value[0]);
+//   let reWashForm = {
+//     Container: data.Container,
+//     OrderName: form.value.MfgOrderName,
+//     ProductName: data.ProductName,
+//     workstationName: opui.station,
+//     tools: "",
+//     userAccount: userStore.getUserInfo,
+//   };
+//   ReloadCleanCode(reWashForm).then((res: any) => {
+//     msgTitle.value = res.msg;
+//     msgType.value = res.success;
+//     if (res.success) {
+//       getHisData();
+//     }
+//   });
+// };
 
 //分页
 const handleSizeChange = (val: any) => {
@@ -460,7 +509,7 @@ const handleCurrentChange = (val: any) => {
 
 const getScreenHeight = () => {
   nextTick(() => {
-    tableHeight.value = window.innerHeight - 360;
+    tableHeight.value = window.innerHeight - 400;
   });
 };
 </script>
@@ -532,5 +581,15 @@ const getScreenHeight = () => {
 // }
 .checked .el-checkbox {
   height: 14px;
+}
+</style>
+
+<style>
+.el-table .warning-row {
+  --el-table-tr-bg-color: var(--el-color-warning-light-9);
+}
+
+.el-table .active-table {
+  --el-table-tr-bg-color: var(--el-color-success-light-9);
 }
 </style>

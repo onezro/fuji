@@ -142,7 +142,7 @@ const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
   },
   {
     label: "产品描述",
-    value: "Description",
+    value: "ProductDesc",
     disabled: true,
     type: "textarea",
     width: 300,

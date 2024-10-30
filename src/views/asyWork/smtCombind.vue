@@ -1,65 +1,33 @@
 <template>
   <div class="flex flex-col w-full h-full">
-    <div
-      class="h-[40px] min-h-[40px] pl-2 pr-2 flex justify-between items-center"
-    >
+    <div class="h-[40px] min-h-[40px] pl-2 pr-2 flex justify-between items-center">
       <span class="text-[1.2rem]"> {{ opui.stationDec }} </span>
       <div></div>
     </div>
     <div class="w-full flex-1 flex">
       <div class="setwidth w-[350px]">
         <div class="w-full h-full box">
-          <div
-            class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]"
-          >
+          <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
             <span class="ml-5">基本信息</span>
           </div>
           <div class="p-[10px]">
-            <el-form
-              class="inbound"
-              ref="formRef"
-              :model="form"
-              label-width="auto"
-            >
+            <el-form class="inbound" ref="formRef" :model="form" label-width="auto">
               <el-form-item label="工单" class="mb-[5px] flex">
-                <selectTa
-                  ref="selectTable"
-                  :table="orderTable"
-                  :selectWidth="220"
-                  :columns="orderColumns"
-                  :max-height="400"
-                  :tableWidth="700"
-                  :defaultSelectVal="defaultSelectVal"
-                  :keywords="{
+                <selectTa ref="selectTable" :table="orderTable" :selectWidth="220" :columns="orderColumns"
+                  :max-height="400" :tableWidth="700" :defaultSelectVal="defaultSelectVal" :keywords="{
                     label: 'MfgOrderName',
                     value: 'MfgOrderName',
-                  }"
-                  @radioChange="(...args: any) => radioChange(args)"
-                >
+                  }" @radioChange="(...args: any) => radioChange(args)">
                 </selectTa>
                 <el-tooltip content="刷新" placement="top">
-                  <el-icon
-                    class="ml-2"
-                    color="#777777"
-                    :class="isLoding"
-                    size="24"
-                    @click="getOrderData"
-                  >
+                  <el-icon class="ml-2" color="#777777" :class="isLoding" size="24" @click="getOrderData">
                     <RefreshRight />
                   </el-icon>
                 </el-tooltip>
               </el-form-item>
-              <el-form-item
-                v-for="f in formHeader"
-                :key="f.value"
-                :label="f.label"
-              >
-                <span
-                  class="font-bold text-base leading-[30px]"
-                  :class="f.value == 'passNum' ? 'text-[#00B400]' : ''"
-                >
-                  {{ formText(f.value) }}</span
-                >
+              <el-form-item v-for="f in formHeader" :key="f.value" :label="f.label">
+                <span class="font-bold text-lg leading-[30px]" :class="f.value == 'passNum' ? 'text-[#00B400]' : ''">
+                  {{ formText(f.value) }}</span>
               </el-form-item>
             </el-form>
           </div>
@@ -69,30 +37,16 @@
         <!-- <div class="w-full"> -->
         <div class="w-full h-full flex flex-col">
           <div>
-            <div
-              class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]"
-            >
+            <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
               <span class="ml-5"> 扫描条码</span>
             </div>
             <div class="h-[160px] pt-3 pr-5 pl-5 flex justify-between">
               <div>
-                <el-form
-                  class="inbound"
-                  ref="formRef"
-                  :inline="true"
-                  :model="form"
-                  label-width="auto"
-                  @submit.native.prevent
-                >
+                <el-form class="inbound" ref="formRef" :inline="true" :model="form" label-width="auto"
+                  @submit.native.prevent>
                   <el-form-item label="扫描条码">
-                    <el-input
-                      v-model.trim="barCode"
-                      ref="inputRef"
-                      :autofocus="inputFocus"
-                      style="width: 500px"
-                      placeholder="请扫描条码"
-                      @keyup.enter.native="getChange"
-                    />
+                    <el-input v-model.trim="barCode" ref="inputRef" :autofocus="inputFocus" style="width: 500px"
+                      placeholder="请扫描条码" @keyup.enter.native="getChange" />
                   </el-form-item>
                   <div></div>
                   <!-- <el-form-item>
@@ -100,40 +54,24 @@
                       " @click="reWash">重新清洗</el-button>
                   </el-form-item> -->
                 </el-form>
-                <div
-                  class="text-xl font-bold text-[#00B400]"
-                  v-show="msgType === true || msgTitle === ''"
-                >
+                <div class="text-xl font-bold text-[#00B400]" v-show="msgType === true || msgTitle === ''">
                   {{ msgTitle === "" ? "请扫描屏材料批次条码" : msgTitle }}
                 </div>
-                <div
-                  class="text-xl font-bold text-[red]"
-                  v-show="msgType === false && msgTitle !== ''"
-                >
+                <div class="text-xl font-bold text-[red]" v-show="msgType === false && msgTitle !== ''">
                   {{ msgTitle }}
                 </div>
               </div>
               <div>
-                <el-table
-                  :data="barData"
-                  :style="{ width: '500px' }"
-                  border
-                  size="small"
-                  :row-class-name="tableRowClassName"
-                >
-                  <el-table-column
-                    type="index"
-                    align="center"
-                    fixed
-                    label="序号"
-                    :width="'50'"
-                  ></el-table-column>
-                  <el-table-column
-                    prop="MaterialBarCode"
-                    label="批次编码"
-                    width="120"
-                  />
-                  <el-table-column prop="MaterialName" label="批次描述" />
+                <el-table :data="barData" size="small" border :row-class-name="tableRowClassName">
+                  <el-table-column type="index" align="center" fixed label="序号" :width="'60'"></el-table-column>
+                  <el-table-column prop="MaterialName" label="物料编码" width="120" />
+                  <el-table-column prop="MaterialBarCode" label="物料" width="150">
+                    <template #default="scope">
+                      <el-input v-model="scope.row.MaterialBarCode" size="small" :ref="createInputRef(scope.$index)"
+                        @keyup.enter.native="getChange1(scope.$index,scope.row)">
+                      </el-input>
+                    </template>
+                  </el-table-column>
                   <!-- <el-table-column prop="address" label="Address" /> -->
                 </el-table>
               </div>
@@ -141,20 +79,12 @@
           </div>
 
           <div class="flex flex-col flex-1 tabs-css">
-            <div
-              class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]"
-            >
+            <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
               <span class="ml-5">历史过站记录</span>
             </div>
-            <table-tem
-              :showIndex="true"
-              :tableData="tableData1"
-              :tableHeight="tableHeight"
-              :columnData="columnData1"
-              :pageObj="pageObj"
-              @handleSizeChange="handleSizeChange"
-              @handleCurrentChange="handleCurrentChange"
-            ></table-tem>
+            <table-tem :showIndex="true" :tableData="tableData1" :tableHeight="tableHeight" :columnData="columnData1"
+              :pageObj="pageObj" @handleSizeChange="handleSizeChange"
+              @handleCurrentChange="handleCurrentChange"></table-tem>
           </div>
         </div>
       </div>
@@ -177,7 +107,7 @@ import { OrderQuery } from "@/api/dipApi";
 import {
   QueryKeyMaterial,
   JudgeKeyMaterial,
-  SMTCompBindMoveStd,
+  ScreeSMTCompBindMoveStd,
 } from "@/api/asyApi";
 
 import {
@@ -205,6 +135,8 @@ interface StopsForm {
 interface KeyMaterial {
   MaterialBarCode: string;
   MaterialName: string;
+  MfgOrderName:string;
+  QtyRequired:number
 }
 
 interface ToolList {
@@ -219,7 +151,7 @@ const appStore = useAppStore();
 const userStore = useUserStoreWithOut();
 const opui = appStore.getOPUIReal();
 const inputRef = ref();
-const inputFocus = ref(true);
+const inputFocus = ref(false);
 const barCode = ref("");
 const stopsForm = ref<StopsForm>({
   workstationName: opui.station || "",
@@ -357,9 +289,11 @@ const isKeyForm = ref({
   ProductName: "",
   workstationName: opui.station,
   tools: "",
-  userAccount:  userStore.getUserInfo,
+  userAccount: userStore.getUserInfo,
   txnDate: "",
 });
+const materialRef = ref();
+const inputRefs = ref<any[]>([]);
 
 onBeforeMount(() => {
   getScreenHeight();
@@ -367,7 +301,8 @@ onBeforeMount(() => {
 onMounted(() => {
   window.addEventListener("resize", getScreenHeight);
   getOrderData();
-  getFocus();
+  // getFocus();
+
 });
 onBeforeUnmount(() => {
   window.addEventListener("resize", getScreenHeight);
@@ -403,48 +338,58 @@ const getChange = () => {
   } else {
     msgTitle.value = "";
     msgType.value = true;
-    //   SMTCompBindMoveStd(stopsForm.value).then((res: any) => {
-    //     msgTitle.value = res.msg;
-    //     msgType.value = res.success;
-    //     stopsForm.value.Container = "";
-    //     // form.value = { ...res.content[0] };
-    //     stopsForm.value.result = "OK";
-    //     // hisForm.value.MfgOrderName = res.content[0].MfgOrderName;
-    //     // getFocus();
-    //     getHisData();
-    //   });
     isKeyForm.value.BarCode = barCodeData;
-    JudgeKeyMaterial(isKeyForm.value).then((res: any) => {
-      msgTitle.value = res.msg;
-      msgType.value = res.success;
-      if (res.success) {
-        const findKeyMaterial = barData.value.find(
-          (x: any) => x.MaterialBarCode === barCodeData
-        );
-        if (findKeyMaterial !== undefined) {
-          stopsForm.value.keyMaterialList.push({
-            MaterialBarCode: findKeyMaterial.MaterialBarCode,
-            MaterialName: findKeyMaterial.MaterialName,
-          });
-        }
-      }
-    });
-    if (stopsForm.value.keyMaterialList.length === 3) {
+    // if (stopsForm.value.keyMaterialList.length === 3) {
       stopsForm.value.BarCode = barCodeData;
-      SMTCompBindMoveStd(stopsForm.value).then((res: any) => {
+      ScreeSMTCompBindMoveStd(stopsForm.value).then((res: any) => {
         msgTitle.value = res.msg;
         msgType.value = res.success;
         if (res.success) {
           stopsForm.value.keyMaterialList = [];
         }
         stopsForm.value.BarCode = "";
+        barCode.value = "";
+        getKeyMaterial();
       });
-    }
+    // }
+    // JudgeKeyMaterial(isKeyForm.value).then((res: any) => {
+    //   msgTitle.value = res.msg;
+    //   msgType.value = res.success;
+    //   if (res.success) {
+    // const findKeyMaterial = barData.value.find(
+    //   (x: any) => x.MaterialBarCode === barCodeData
+    // );
+    // if (findKeyMaterial !== undefined) {
+    //   stopsForm.value.keyMaterialList.push({
+    //     MaterialBarCode: findKeyMaterial.MaterialBarCode,
+    //     MaterialName: findKeyMaterial.MaterialName,
+    //   });
+    // }
+    //   }
+    // });
   }
 
-  barCode.value = "";
-  getFocus();
+  // barCode.value = "";
+  // getFocus();
+ 
 };
+
+const createInputRef = (val: any) => {
+  return (el: any) => {
+    if (el) {
+      inputRefs.value[val] = el;
+    }
+  };
+};
+const getChange1 = (val: any,data:any) => {
+  if (val + 1 < inputRefs.value.length) {
+    inputRefs.value[val + 1].focus();
+  } else {
+    inputRef.value.focus()
+  }
+  stopsForm.value.keyMaterialList.push(data)
+};
+
 const radioChange = (args: any) => {
   if (args[1] == null) {
     form.value.MfgOrderName = "";
@@ -469,24 +414,50 @@ const radioChange = (args: any) => {
     isKeyForm.value.OrderName = args[0].MfgOrderName;
     keyForm.value.OrderName = args[0].MfgOrderName;
     keyForm.value.ProductName = args[0].ProductName;
-    getFocus();
+    // nextTick(() => {
+    //   if (inputRefs.value.length > 0) {
+    //     inputRefs.value[0].focus();
+    //   }
+    // });
+    // getFocus();
     getKeyMaterial();
     // getHisData();
   }
 };
 const getKeyMaterial = () => {
   QueryKeyMaterial(keyForm.value).then((res: any) => {
-    barData.value = res.content;
+    let data: KeyMaterial[]=[]
+    res.content.forEach((c:any)=>{
+      if(c.QtyRequired==1){
+        data.push(c)
+      }else{
+        for (let i = 0; i < c.QtyRequired; i++) {  
+          data.push({
+            MfgOrderName: c.MfgOrderName,
+            QtyRequired: 1,
+            MaterialName: c.MaterialName,
+            MaterialBarCode: ""
+          });  
+    }  
+      }
+    })
+    barData.value = data;
+    nextTick(() => {
+      if (inputRefs.value.length > 0) {
+        inputRefs.value[0].focus();
+      }
+    });
   });
 };
 const tableRowClassName = (val: any) => {
   // console.log(val.row);
-  const  isExitCode=stopsForm.value.keyMaterialList.findIndex((k:any)=>val.row.MaterialBarCode==k.MaterialBarCode)
-  if(isExitCode!==-1){
+  const isExitCode = stopsForm.value.keyMaterialList.findIndex(
+    (k: any) => val.row.MaterialBarCode == k.MaterialBarCode
+  );
+  if (isExitCode !== -1) {
     return "active-table";
   }
-  return ""
- 
+  return "";
 };
 const getOrderData = () => {
   isLoding.value = "is-loading";
@@ -572,7 +543,7 @@ const getScreenHeight = () => {
   font-size: 1.1rem;
 }
 
-.tabs-css .el-tabs--border-card > .el-tabs__header .el-tabs__item {
+.tabs-css .el-tabs--border-card>.el-tabs__header .el-tabs__item {
   color: #fff;
   // padding: 0 !important;
 }
@@ -595,10 +566,7 @@ const getScreenHeight = () => {
   color: #ff4949;
 }
 
-.tabs-css
-  .el-tabs--border-card
-  > .el-tabs__header
-  .el-tabs__item:not(.is-disabled):hover {
+.tabs-css .el-tabs--border-card>.el-tabs__header .el-tabs__item:not(.is-disabled):hover {
   // color: #fff;
   // background-color: #fff;
   background-color: rgba($color: #fff, $alpha: 0.8);
@@ -620,6 +588,7 @@ const getScreenHeight = () => {
 .el-table .warning-row {
   --el-table-tr-bg-color: var(--el-color-warning-light-9);
 }
+
 .el-table .active-table {
   --el-table-tr-bg-color: var(--el-color-success-light-9);
 }
