@@ -17,7 +17,7 @@
           <div class="p-[10px] overflow-auto custom-scrollbar-hidden" :style="{ height: formHeight + 'px' }">
             <el-form class="inbound" ref="formRef" :model="form" label-width="auto">
               <el-form-item size="default" v-for="f in formHeader" :key="f.value" :label="f.lable">
-                <span class="font-bold text-[18px] leading-[30px]">
+                <span class="font-bold text-lg leading-[30px]">
                   {{ formText(f.value) }}</span>
               </el-form-item>
             </el-form>
@@ -101,7 +101,7 @@
         <el-table-column prop="OrderStatusDesc" label="状态" width="100"  :min-width="100"  ></el-table-column>
         <el-table-column prop="PlannedStartDate" label="开始时间" width="180"  :min-width="180"  ></el-table-column>
         <el-table-column prop="PlannedCompletionDate" label="结束时间" width="180"  :min-width="180"  ></el-table-column>
-        <el-table-column prop="RMANumber" label="面号" width="80"  :min-width="80"  ></el-table-column>
+        <el-table-column prop="Side" label="面号" width="80"  :min-width="80"  ></el-table-column>
         <el-table-column prop="Qty" label="数量" width="100"  :min-width="100"  ></el-table-column>
         <!-- <el-table-column v-for="item in formHeader" :prop="item.value" :label="item.lable"
           :min-width="flexColumnWidth(item.lable, item.value)" /> -->
@@ -156,7 +156,7 @@ interface Form {
   PlannedStartDate: string;
   PlannedCompletionDate: string;
   Qty: number | string;
-  RMANumber: string;
+  Side: string;
 }
 interface FormHeader {
   lable: string;
@@ -202,7 +202,7 @@ const form = reactive<Form>({
   MfgOrderName: "",
   PlannedStartDate: "",
   PlannedCompletionDate: "",
-  RMANumber: "",
+  Side: "",
   Qty: "",
   ProductName: "",
   BD_ProductModel: "",
@@ -241,7 +241,7 @@ const formHeader = reactive<FormHeader[]>([
   },
   {
     lable: "面号",
-    value: "RMANumber",
+    value: "Side",
   },
   {
     lable: "工单数量",
@@ -537,7 +537,7 @@ const sureClick = () => {
   form.PlannedStartDate = choiceRow.value.PlannedStartDate;
   form.PlannedCompletionDate = choiceRow.value.PlannedCompletionDate;
   form.Qty = choiceRow.value.Qty;
-  form.RMANumber = choiceRow.value.RMANumber;
+  form.Side = choiceRow.value.Side;
   dialogVisible.value = false;
 };
 

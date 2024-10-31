@@ -163,9 +163,9 @@ interface StopsForm {
   txnDate: string;
 }
 interface Defect {
-  ES_Net1: string;
-  Comment: string;
-  isDefectMappingName: string;
+  isDefectLabel: string;
+
+  isDefectType:number|string
 }
 interface BadForm {
   containerName: string;
@@ -249,13 +249,13 @@ const columnData1 = reactive([
     width: "",
     align: "1",
   },
-  {
-    text: true,
-    prop: "BD_Tools",
-    label: "工装治具",
-    width: "",
-    align: "1",
-  },
+  // {
+  //   text: true,
+  //   prop: "BD_Tools",
+  //   label: "工装治具",
+  //   width: "",
+  //   align: "1",
+  // },
   {
     text: true,
     prop: "BD_EmployeeName",
@@ -389,9 +389,9 @@ const badCancel = () => {
 const badSubmit = () => {
   changeList.value.forEach((c: any) => {
     badForm.value.DefectDetails.push({
-      isDefectMappingName: "AOI",
-      ES_Net1: c.isDefectReasonName,
-      Comment: c.isDefectReasonDesc,
+      isDefectLabel: c.isDefectReasonName,
+
+      isDefectType:1
     });
   });
   // console.log(badForm.value);

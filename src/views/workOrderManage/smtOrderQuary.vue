@@ -440,6 +440,15 @@ const columnData = reactive([
   },
   {
     text: true,
+    prop: "Side",
+    label: "面号",
+    width: "",
+    min: true,
+    align: "center",
+  },
+
+  {
+    text: true,
     prop: "ProductName",
     label: "产品编码",
     width: "",

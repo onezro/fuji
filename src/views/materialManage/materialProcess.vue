@@ -64,10 +64,9 @@
                             <el-button type="primary" size="small">修改工序</el-button>
                         </div>
                         <el-table :data="productData" size="small" :height="tableHeight1" stripe border fit
-                            :tooltip-effect="'dark'" row-key="MaterialName"  
-                            :selectable="selectable"  >
-                            <el-table-column type="selection" width="50" ></el-table-column>
-                         
+                            :tooltip-effect="'dark'" row-key="MaterialName" :selectable="selectable">
+                            <el-table-column type="selection" width="50"></el-table-column>
+
                             <!-- <el-table-column type="index" align="center" fixed label="序号" width="50" /> -->
                             <el-table-column prop="MaterialName" label="物料编码" fixed width="120" />
                             <el-table-column prop="MaterialDesc" label="物料描述" :show-overflow-tooltip="true"
@@ -91,16 +90,47 @@
                 </div>
             </div>
         </el-card>
-        <el-dialog v-model="specWorkVisible" title="修改工艺路线" draggable width="400px" :append-to-body="true"
+        <el-dialog v-model="specWorkVisible" title="修改工艺路线" draggable width="970px" :append-to-body="true"
             :close-on-click-modal="false" :close-on-press-escape="false">
-            <el-form ref="formRef" :model="specWorkForm" label-width="auto">
+            <div class="flex gap-5">
+                <div class="w-[470px]">
+                    <el-table ref="singleTableRef" :data="workFlow" size="small" :height="tableHeight1"
+                        :tooltip-effect="'dark'" stripe border fit highlight-current-row
+                        @cell-click="cellWorkFlowClick">
+                        <el-table-column type="index" align="center" fixed label="序号" width="50" />
+                        <el-table-column prop="WorkflowName" label="工艺编码" :min-width="120" width="150">
+                        </el-table-column>
+                        <el-table-column prop="WorkflowDesc" label="工艺描述" :min-width="270" width="270">
+                        </el-table-column>
+                        <template #empty>
+                            <div class="flex items-center justify-center h-100%">
+                                <el-empty />
+                            </div>
+                        </template>
+                    </el-table>
+                </div>
+                <el-table :data="specWorkDecData" size="small" style="width: 100%;" :height="tableHeight1"
+                    :tooltip-effect="'dark'" stripe border fit>
+                    <el-table-column type="index" align="center" fixed label="序号" width="50" />
+                    <el-table-column prop="SpecName" label="工序编码" :min-width="180" width="180">
+                    </el-table-column>
+                    <el-table-column prop="SpecDesc" label="工序描述">
+                    </el-table-column>
+                    <template #empty>
+                        <div class="flex items-center justify-center h-100%">
+                            <el-empty />
+                        </div>
+                    </template>
+                </el-table>
+            </div>
+            <!-- <el-form ref="formRef" :model="specWorkForm" label-width="auto">
                 <el-form-item label="工艺路线" prop="WorkflowName">
                     <el-select v-model="specWorkForm.WorkflowName" placeholder="" style="width: 240px">
                         <el-option v-for="w in workFlow" :key="w.WorkflowName" :label="w.WorkflowName"
                             :value="w.WorkflowName" />
                     </el-select>
                 </el-form-item>
-            </el-form>
+            </el-form> -->
             <template #footer>
                 <span class="dialog-footer">
                     <el-button @click="specWorkVisible = false">取消</el-button>
@@ -202,6 +232,9 @@ const specWorkForm = ref({
 
 const workFlow = ref<any[]>([]);
 const ProductName = ref("");
+const specWorkDecData = ref([])
+const singleTableRef = ref()
+const currentRow = ref()
 
 onBeforeMount(() => {
     getScreenHeight();
@@ -257,26 +290,39 @@ const cellClick = (val: any) => {
 
 const openSpecWorK = () => {
     specWorkVisible.value = true;
+    const isHight = workFlow.value.find((w: any) => w.WorkflowName == specWork.value.WorkflowName)
+    nextTick(() => {
+        if (isHight !== undefined) {
+            specWorkForm.value.WorkflowName=specWork.value.WorkflowName
+            singleTableRef.value.setCurrentRow(isHight)
+        } else {
+            specWorkForm.value.WorkflowName=""
+            singleTableRef.value.setCurrentRow()
+        }
+    })
 };
 
 const updateSpecWork = () => {
+    // console.log(specWorkForm.value);
+    
     UpdateProductWorkflow(specWorkForm.value).then((res: any) => {
         specWorkVisible.value = false;
-       
         if (res.success) {
             ElNotification({
-            title: "提示信息",
-            message: res.msg,
-            type:  "success" ,
-        });
+                title: "提示信息",
+                message: res.msg,
+                type: "success",
+            });
             getSpecWorkData();
         }
     });
 };
+const cellWorkFlowClick = (row: any) => {
+    specWorkForm.value.WorkflowName=row.WorkflowName
+}
 
-const selectable=(row:any, selectedRows:any)=>{
+const selectable = (row: any, selectedRows: any) => {
     console.log(selectedRows);
-    
     return selectedRows.length < 1;
 }
 

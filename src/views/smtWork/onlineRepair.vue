@@ -279,14 +279,7 @@ const baseForm = ref({
 });
 const badData = ref([]);
 const badColumn = ref([
-  {
-    text: true,
-    prop: "ref_name",
-    label: "不良点位",
-    width: "",
-    min: true,
-    align: "1",
-  },
+
   {
     text: true,
     prop: "DefectCode",
@@ -305,12 +298,13 @@ const badColumn = ref([
   },
   {
     text: true,
-    prop: "ref_name1",
+    prop: "ref_name",
     label: "不良点位",
     width: "",
     min: true,
     align: "1",
   },
+
   {
     text: true,
     prop: "DefectCode1",
@@ -323,6 +317,14 @@ const badColumn = ref([
     text: true,
     prop: "DefectDesc1",
     label: "不良原因",
+    width: "",
+    min: true,
+    align: "1",
+  },
+  {
+    text: true,
+    prop: "ref_name1",
+    label: "不良点位",
     width: "",
     min: true,
     align: "1",
