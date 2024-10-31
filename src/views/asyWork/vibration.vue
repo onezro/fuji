@@ -180,6 +180,7 @@ const form = ref<InstanceType<typeof Formspan>>({
   PlannedStartDate: "",
   PlannedCompletionDate: "",
 });
+
 const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
   {
     label: "工单号",
@@ -196,6 +197,13 @@ const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
     width: "",
   },
   {
+    label: "机型",
+    value: "BD_ProductModel",
+    disabled: true,
+    type: "textarea",
+    width: 300,
+  },
+  {
     label: "产品描述",
     value: "Description",
     disabled: true,
@@ -205,13 +213,6 @@ const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
   {
     label: "工单数量",
     value: "QTY",
-    disabled: true,
-    type: "textarea",
-    width: 300,
-  },
-  {
-    label: "过站数量",
-    value: "产品描述",
     disabled: true,
     type: "textarea",
     width: 300,
@@ -346,7 +347,6 @@ const getChange = () => {
     if (res && res.success) {
       msgTitle.value = res.msg;
       msgType.value = res.success;
-      stopsForm.value.containerName = "";
       form.value = { ...res.content[0] };
       // tableData1.value.push(res.content2);
       tableData1.value.unshift({
@@ -355,6 +355,7 @@ const getChange = () => {
         userAccount: loginName,
         Date: formattedDate,
       });
+      stopsForm.value.containerName = "";
     } else {
       msgTitle.value = res.msg;
       msgType.value = res.success;

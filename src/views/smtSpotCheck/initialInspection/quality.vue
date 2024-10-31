@@ -187,7 +187,11 @@
                     icon="EditPen"
                     size="small"
                     @click="openDialogVisible(scope.row)"
-                    :disabled="scope.row.FirstStage === false || scope.row.SecondStage === false || scope.row.ThirdStage === true"
+                    :disabled="
+                      scope.row.FirstStage === false ||
+                      scope.row.SecondStage === false ||
+                      scope.row.ThirdStage === true
+                    "
                   ></el-button>
 
                   <!-- :disabled="scope.row.FirstStage !== false" -->
@@ -218,7 +222,8 @@
       :align-center="true"
       @closed="clearForm"
     >
-      <div ref="scrollRef"
+      <div
+        ref="scrollRef"
         class="w-full h-[500px] overflow-x-hidden overflow-y-auto no-scrollbar"
       >
         <div class="text-2xl text-[#006487]">生产自检任务</div>
@@ -362,7 +367,13 @@
         <el-divider />
 
         <div class="text-2xl text-[#006487]">设备工程自检任务</div>
-        <el-form ref="formRef" class="form" :inline="true" label-width="7rem" v-if="secondSolder">
+        <el-form
+          ref="formRef"
+          class="form"
+          :inline="true"
+          label-width="7rem"
+          v-if="secondSolder"
+        >
           <el-form-item label="波峰焊" class="mb-2">
             <el-radio v-model="secondSolder" :label="true" disabled
               >波峰焊</el-radio
@@ -472,8 +483,14 @@
             ></el-checkbox>
           </el-form-item>
         </el-form>
-        <el-divider  v-if="secondSolder"/>
-        <el-form ref="formRef" class="form" :inline="true" label-width="7rem" v-if="!secondSolder">
+        <el-divider v-if="secondSolder" />
+        <el-form
+          ref="formRef"
+          class="form"
+          :inline="true"
+          label-width="7rem"
+          v-if="!secondSolder"
+        >
           <el-form-item label="选择焊" class="mb-2">
             <el-radio v-model="secondSolder" :label="false" disabled
               >选择焊</el-radio
@@ -556,7 +573,7 @@
             ></el-checkbox>
           </el-form-item>
         </el-form>
-        <el-divider  v-if="!secondSolder"/>
+        <el-divider v-if="!secondSolder" />
 
         <div class="text-2xl text-[#006487]">质量自检确认</div>
         <el-form ref="formRef" class="form" :inline="true" label-width="7rem">
@@ -994,9 +1011,9 @@ const openDialogVisible = (item: any) => {
   form.value.DocumentNo = item.DocumentNo;
   form.value.batch = item.OrderQuantity;
   form.value.InspectResult = item.InspectResult;
-  nextTick(()=> {
-    scrollRef.value.scrollTop = 0
-  })
+  nextTick(() => {
+    scrollRef.value.scrollTop = 0;
+  });
   getAllData();
 };
 
@@ -1013,7 +1030,7 @@ const getAllData = () => {
       if (item.StageLevel === 1) {
         //处理第一部分表格
         if (item.InspectItem === "table") {
-          if (item.InspectValue === '') {
+          if (item.InspectValue === "") {
             return;
           }
           let arr = item.InspectValue.split("|");
