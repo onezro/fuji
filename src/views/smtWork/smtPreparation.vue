@@ -40,7 +40,7 @@
                             </div>
                         </el-form>
                         <div class="flex justify-center pt-2">
-                            <el-button type="primary"> 备料历史查询</el-button>
+                            <!-- <el-button type="primary"> 备料历史查询</el-button> -->
                             <!-- <el-button type="primary"> 接料亮灯(人工/自动)</el-button> -->
                         </div>
                     </div>
@@ -114,9 +114,11 @@
                         <div class="h-[30px] flex items-center text-base text-[#fff] bg-[#006487]">
                             <span class="ml-5">工单物料明细</span>
                         </div>
-                        <table-tem :showIndex="true" :tableData="tableData" :tableHeight="tableHeight"
+                        <!-- <table-tem :showIndex="true" :tableData="tableData" :tableHeight="tableHeight"
                             :columnData="columnData" :pageObj="pageObj" @handleSizeChange="handleSizeChange"
-                            @handleCurrentChange="handleCurrentChange"></table-tem>
+                            @handleCurrentChange="handleCurrentChange"></table-tem> -->
+                        <table-temp :showIndex="true" :tableData="tableData" :tableHeight="tableHeight"
+                            :columnData="columnData" ></table-temp>
                     </div>
                 </div>
             </div>
@@ -257,6 +259,7 @@ import {
 import { useAppStore } from "@/stores/modules/app";
 import { useUserStoreWithOut } from "@/stores/modules/user";
 import tableTem from "@/components/tableTem/index.vue";
+import tableTemp from "@/components/tableTemp/index.vue";
 const appStore = useAppStore();
 const userStore = useUserStoreWithOut();
 const opui = appStore.getOPUIReal();
@@ -327,8 +330,8 @@ const columnData = reactive([
         text: true,
         prop: "MaterialDescription",
         label: "物料描述",
-        width: "",
-        min: true,
+        width: "250",
+        // min: true,
         align: "1",
     },
     {
@@ -777,7 +780,7 @@ const handleCurrentChange = (val: any) => {
 
 const getScreenHeight = () => {
     nextTick(() => {
-        tableHeight.value = window.innerHeight - 360;
+        tableHeight.value = window.innerHeight - 310;//360
     });
 };
 </script>

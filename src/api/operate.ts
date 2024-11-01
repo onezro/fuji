@@ -552,3 +552,15 @@ export function findProductBOMMaterialList(data:any) {
     })
 
 }
+
+//查询工艺流程的工序
+export function findWorkflowSpec(data:any) {
+    return request({
+        url: "/api/spec/findWorkflowSpec",
+        method: "post",
+        params:{
+            WorkflowName:data
+        }
+    })
+
+}
