@@ -56,6 +56,17 @@ export interface Formspan {
     PlannedCompletionDate:string,
     passNum: string
 }
+
+export interface registrationFormTS {
+    SN: string;
+    MfgOrderName: string;
+    ProductName: string;
+    ProductDesc: string;
+    Qty: string;
+    PlannedStartDate: string;
+    PlannedCompletionDate: string;
+    station: string;
+}
 export interface FormHeader {
     label: string,
     value: string,
