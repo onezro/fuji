@@ -54,7 +54,7 @@ export interface Formspan {
     Qty: number,
     PlannedStartDate:string,
     PlannedCompletionDate:string,
-    passNum: string
+    passNum: string|number
 }
 export interface FormHeader {
     label: string,

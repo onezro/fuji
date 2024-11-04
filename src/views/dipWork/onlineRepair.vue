@@ -142,7 +142,7 @@ import {
   SaveRepairRecord,
   QueryRepairRecord,
   QueryRepairAction,
-} from "@/api/smtApi";
+} from "@/api/dipApi";
 import tableTem from "@/components/tableTem/index.vue";
 import tableTemp from "@/components/tableTemp/index.vue";
 import { useAppStoreWithOut } from "@/stores/modules/app";

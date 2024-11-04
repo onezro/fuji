@@ -536,7 +536,7 @@ const editOnSubmit = () => {
   // editFormRef.value.resetFields();
   if (activeName.value == "base") {
     // console.log(editForm.value);
-    if (editForm.value.BD_ICCIDType === '') {
+    if (editForm.value.BD_IsICCID&&editForm.value.BD_ICCIDType === '') {
         ElNotification({
           title: "提示信息",
           message: "ICCID物料类型不能为空",
