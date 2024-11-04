@@ -28,13 +28,13 @@
                     </el-tooltip>
                   </div>
                   <!-- </el-form-item> -->
-                  <el-row :gutter="20">
-                    <el-col :span="12">
+                  <el-row :gutter="10">
+                    <el-col :span="14">
                       <el-form-item label="类型" class="mb-[5px]">
                         <span>{{ t.MaterialName }}</span>
                       </el-form-item>
                     </el-col>
-                    <el-col :span="12">
+                    <el-col :span="10">
                       <el-form-item label="序号" class="mb-[5px]">
                         <el-tag type="warning" class="pl-3 pr-3 text-sm" effect="dark"
                           v-if="t.ToolName == checked[0]">{{ t.sort }}</el-tag>

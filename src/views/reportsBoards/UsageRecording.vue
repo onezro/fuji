@@ -51,6 +51,7 @@
           :height="tableHeight"
           center
           stripe
+          highlight-current-row
           @row-click="rowClick"
         >
           <el-table-column type="index" width="50" />

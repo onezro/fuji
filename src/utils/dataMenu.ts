@@ -77,11 +77,14 @@ export  const OrganData = (organizations: any) => {
     return formattedDate;
   };
   export const setLastDate = () => {
-    // 获取当前日期
-    const now = new Date();
-    // 格式化日期为YYYY-MM-DD
-    const formattedDate = `${now.getFullYear()}-${String(
-      now.getMonth() + 1
-    ).padStart(2, "0")}-${String(now.getDate() - 7).padStart(2, "0")}`;
-    return formattedDate;
+     // 获取当前日期  
+  const now = new Date();  
+  // 设置日期为七天前  
+  now.setDate(now.getDate() - 7);  
+  // 格式化日期为YYYY-MM-DD  
+  const formattedDate = `${now.getFullYear()}-${String(  
+    now.getMonth() + 1  
+  ).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;  
+  return formattedDate; 
+
   };
