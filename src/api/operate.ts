@@ -564,3 +564,59 @@ export function findWorkflowSpec(data:any) {
     })
 
 }
+//获取标签模板
+export function GetBarCodeTemplate(data:any) {
+    return request({
+        url: "/api/BarCodeTemplate/GetBarCodeTemplate",
+        method: "post",
+        data
+    })
+}
+//获取物料
+export function GetBarCodeTemplatePartNumberContent(data:any) {
+    return request({
+        url: "/api/BarCodeTemplate/GetBarCodeTemplatePartNumberContent",
+        method: "post",
+        data
+    })
+}
+//添加标签模板
+export function InsertBarCodeTemplate(data:any) {
+    return request({
+        url: "/api/BarCodeTemplate/InsertBarCodeTemplate",
+        method: "post",
+        data
+    })
+}
+//修改标签模板
+export function UpdateBarCodeTemplate(data:any) {
+    return request({
+        url: "/api/BarCodeTemplate/UpdateBarCodeTemplate",
+        method: "post",
+        data
+    })
+}
+//删除标签模板
+export function DeleteBarCodeTemplate(data:any) {
+    return request({
+        url: "/api/BarCodeTemplate/DeleteBarCodeTemplate",
+        method: "post",
+        data
+    })
+}
+//新增模板物料
+export function InsertBarCodeRuleTempPartNumContent(data:any) {
+    return request({
+        url: "/api/BarCodeTemplate/InsertBarCodeRuleTempPartNumContent",
+        method: "post",
+        data
+    })
+}
+//删除模板物料
+export function DeleteBarCodeRuleTempPartNumContent(data:any) {
+    return request({
+        url: "/api/BarCodeTemplate/DeleteBarCodeRuleTempPartNumContent",
+        method: "post",
+        data
+    })
+}

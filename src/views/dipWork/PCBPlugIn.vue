@@ -124,7 +124,7 @@
                     <el-input v-model="form.ProductName" style="width: 160px" disabled /> </el-form-item></el-col>
                 <el-col :span="10">
                   <el-form-item class="mb-[5px]" label="产品描述">
-                    <el-input v-model="form.ProductDesc" style="width: 320px" disabled />
+                    <el-input v-model="form.ProductDesc" style="width: 340px" disabled />
                   </el-form-item>
                 </el-col>
               </el-row>
@@ -139,9 +139,15 @@
                     <el-input v-model="form.PlannedCompletionDate" style="width: 160px" disabled />
                   </el-form-item>
                 </el-col>
-                <el-col :span="10">
+                <el-col :span="5">
                   <el-form-item class="mb-[5px]" label="工单数量">
-                    <el-input v-model="form.Qty" style="width: 160px" disabled />
+                    <el-input v-model="form.Qty" style="width: 100px" disabled />
+                  </el-form-item>
+                </el-col>
+                <el-col :span="5">
+                  <el-form-item class="mb-[5px]" label="过站数量">
+                    <span class="text-lg font-bold  text-[#00B400]">{{ form.passNum }}</span>
+                    <!-- <el-input v-model="form.passNum" style="width: 100px" disabled /> -->
                   </el-form-item>
                 </el-col>
               </el-row>
@@ -284,6 +290,7 @@ const form = reactive<InstanceType<typeof Formspan>>({
   Qty: "",
   PlannedStartDate: "",
   PlannedCompletionDate: "",
+  passNum:""
 });
 const editForm = ref({
   order: "1213434",
@@ -746,6 +753,7 @@ const getOrderData = () => {
 const getHisData = () => {
   QueryMoveHistory(hisForm.value).then((res: any) => {
     tableData1.value = res.content;
+    form.passNum= tableData1.value.length
   });
 };
 

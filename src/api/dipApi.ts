@@ -83,13 +83,28 @@ export function CWgStationMoveOut(data: any) {
     });
 }
 //目检过站
-export function InspectionStationMoveOut(data: any,result:any) {
+export function InspectionStationMoveOut(data: any) {
     return request({
         url: "/api/inspection/InspectionStationMoveOut",
         method: "post",
-        data,
-        params:{
-            status:result
+        data
+    });
+}
+//目检提交不良登记信息
+export function DefectProductRecord(data: any) {
+    return request({
+        url: "/api/inspection/DefectProductRecord",
+        method: "post",
+        data
+    });
+}
+//目检通过PCB条码查询不良原因
+export function QueryDefectCodeInspection(data: any) {
+    return request({
+        url: "/api/inspection/QueryDefectCode",
+        method: "post",
+        params: {
+            containerName: data
         }
     });
 }
@@ -136,3 +151,51 @@ export function CWStationMoveOut(data:any) {
         data
     })
 }
+//返修登记
+export function QuerySMTDefectRecordDetail(data: any) {
+    return request({
+      url: "/api/repair/QuerySMTDefectRecordDetail",
+      method: "post",
+      params: {
+        ContainerName: data,
+      },
+    });
+  }
+  //返修工序
+  export function QueryWorkflowList(data: any) {
+    return request({
+      url: "/api/repair/QueryWorkflowList",
+      method: "post",
+      params: {
+        workflowName: data,
+      },
+    });
+  }
+  //提交返修登记
+  export function SaveRepairRecord(data: any) {
+    return request({
+      url: "/api/repair/SaveRepairRecord",
+      method: "post",
+      data,
+    });
+  }
+  //查询返修修操作
+  export function QueryRepairAction(data: any) {
+    return request({
+      url: "/api/repair/QueryRepairAction",
+      method: "post",
+      params: {
+        operationName: data,
+      },
+    });
+  }
+  //根据工序查询不良记录
+  export function QueryRepairRecord(data: any) {
+    return request({
+      url: "/api/repair/QueryRepairRecord",
+      method: "post",
+      params: {
+        workStaion: data,
+      },
+    });
+  }

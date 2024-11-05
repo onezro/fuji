@@ -74,7 +74,7 @@
                   <el-input v-model="baseForm.ProductName" style="width: 200px" disabled /> </el-form-item></el-col>
               <el-col :span="11">
                 <el-form-item class="mb-[5px]" label="产品描述">
-                  <el-input v-model="baseForm.ProductDesc" style="width: 200px" disabled />
+                  <el-input v-model="baseForm.ProductDesc" style="width: 300px" disabled />
                 </el-form-item>
               </el-col>
             </el-row>
@@ -129,6 +129,82 @@
         <span class="dialog-footer">
           <el-button @click="repairCancel">取消</el-button>
           <el-button type="primary" @click="repairSubmit"> 确定 </el-button>
+        </span>
+      </template>
+    </el-dialog>
+    <el-dialog v-model="hopOffVisible" width="80%" :fullscreen="false" :append-to-body="true"
+      :close-on-click-modal="false" :close-on-press-escape="false" align-center title="返修跳站" @close="hopOffCancel">
+      <div class="flex flex-col border-solid border-1 border-[#bdbdbd]">
+        <div>
+          <div class="h-[30px] pl-3 flex items-center text-base text-[#fff] bg-[#006487]">
+            基本信息
+          </div>
+          <el-form ref="baseFormRef" :model="baseForm" label-width="auto" class="pt-[5px]">
+            <el-row>
+              <el-col :span="8">
+                <el-form-item label="PCB条码" class="mb-[5px] flex" prop="ContainerName">
+                  <el-input v-model="baseForm.ContainerName" style="width: 200px" disabled />
+                </el-form-item>
+              </el-col>
+              <el-col :span="11">
+                <el-form-item label="工单" class="mb-[5px] flex" prop="MfgOrderName">
+                  <el-input v-model="baseForm.MfgOrderName" style="width: 200px" disabled />
+                </el-form-item>
+              </el-col>
+            </el-row>
+            <el-row>
+              <el-col :span="8">
+                <el-form-item class="mb-[5px]" label="产品编码" prop="ProductName">
+                  <el-input v-model="baseForm.ProductName" style="width: 200px" disabled /> </el-form-item></el-col>
+              <el-col :span="11">
+                <el-form-item class="mb-[5px]" label="产品描述">
+                  <el-input v-model="baseForm.ProductDesc" style="width: 300px" disabled />
+                </el-form-item>
+              </el-col>
+            </el-row>
+            <el-row>
+              <el-col :span="8">
+                <el-form-item class="mb-[5px]" label="工序编码" prop="SpecName">
+                  <el-input v-model="baseForm.SpecName" style="width: 200px" disabled /> </el-form-item></el-col>
+              <el-col :span="11">
+                <el-form-item class="mb-[5px]" label="工序描述" prop="SpecDesc">
+                  <el-input v-model="baseForm.SpecDesc" style="width: 200px" disabled />
+                </el-form-item>
+              </el-col>
+            </el-row>
+          </el-form>
+        </div>
+        <div>
+          <div class="h-[30px] pl-3 flex items-center text-base text-[#fff] bg-[#006487]">
+            返修跳站
+          </div>
+          <el-form ref="repairFormRef" :model="repairForm" :inline="true" class="pt-2">
+            <div class="flex items-start">
+              <!-- <el-form-item label="返修操作" prop="RepairAction">
+                <el-select v-model="repairForm.RepairAction" placeholder="请选择" style="width: 200px">
+                  <el-option v-for="item in actionList" :key="item.isRepairActionName" :label="item.Description"
+                    :value="item.isRepairActionName" />
+                </el-select>
+              </el-form-item> -->
+              <el-form-item label="跳站工序" prop="WorkFlowStep">
+                <el-select v-model="repairForm.WorkFlowStep" placeholder="请选择" style="width: 200px"
+                 >
+                  <el-option v-for="item in specList" :key="item.WorkflowStepName" :label="item.WorkflowStepName"
+                    :value="item.WorkflowStepName" />
+                </el-select>
+              </el-form-item>
+              <!-- <el-form-item label="返修原因" prop="Remark">
+                <el-input v-model="repairForm.RepairRemark" :rows="3" style="width: 350px" type="textarea"
+                  placeholder="请输入" />
+              </el-form-item> -->
+            </div>
+          </el-form>
+        </div>
+      </div>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="hopOffCancel">取消</el-button>
+          <el-button type="primary" @click="hopOffSubmit"> 确定 </el-button>
         </span>
       </template>
     </el-dialog>
@@ -279,7 +355,6 @@ const baseForm = ref({
 });
 const badData = ref([]);
 const badColumn = ref([
-
   {
     text: true,
     prop: "DefectCode",
@@ -343,12 +418,14 @@ const repairForm = ref({
   CreatedBy: userStore.getUserInfo,
   WorkFlowStep: "",
   WorkFlow: "",
+  Result:""
 });
 const specList = ref<Spec[]>([]);
 const baseFormRef = ref();
 const repairFormRef = ref();
 const actionList = ref<ActionList[]>([]);
 const isAction = ref(true);
+const hopOffVisible = ref(false);
 
 watch(
   () => repairForm.value.RepairAction,
@@ -403,7 +480,12 @@ const getChange = () => {
     }
     // msgTitle.value = res.msg;
     //   msgType.value = res.success;
-    badVisible.value = true;
+    if (res.content2 == "NG") {
+      badVisible.value = true;
+    } else {
+      hopOffVisible.value = true
+    }
+
     baseForm.value.ContainerName = res.content.ContainerName;
     baseForm.value.ProductDesc = res.content.ProductDesc;
     baseForm.value.MfgOrderName = res.content.MfgOrderName;
@@ -414,6 +496,7 @@ const getChange = () => {
     repairForm.value.WorkFlow = res.content.WorkflowName;
     repairForm.value.IsDefectHistoryId = res.content.isDefectHistoryId;
     repairForm.value.ContainerName = res.content.ContainerName;
+    repairForm.value.Result=res.content2
     getWorkflowList(res.content.WorkflowName);
     getActionList(res.content.OperationName);
   });
@@ -444,7 +527,7 @@ const getActionList = (data: any) => {
   });
 };
 const repairCancel = () => {
-  badVisible.value = false;
+
   badData.value = [];
   baseFormRef.value.resetFields();
   repairFormRef.value.resetFields();
@@ -454,16 +537,10 @@ const repairCancel = () => {
   barCode.value = "";
   msgTitle.value = "";
   msgType.value = true;
+  badVisible.value = false;
 };
 const repairSubmit = () => {
-  // console.log(repairForm.value);
-
   SaveRepairRecord(repairForm.value).then((res: any) => {
-    // ElNotification({
-    //   title: "提示信息",
-    //   message: res.msg,
-    //   type: res.success ? "success" : "error",
-    // });
     if (res.success) {
       ElNotification({
         title: "提示信息",
@@ -474,6 +551,35 @@ const repairSubmit = () => {
       getFocus();
       barCode.value = "";
       badVisible.value = false;
+    }
+    getHisData();
+  });
+};
+const hopOffCancel = () => {
+ 
+  baseFormRef.value.resetFields();
+  repairFormRef.value.resetFields();
+  repairForm.value.IsDefectHistoryId = "";
+  repairForm.value.ContainerName = "";
+  repairForm.value.RepairRemark = "";
+  barCode.value = "";
+  msgTitle.value = "";
+  msgType.value = true;
+  hopOffVisible.value=false
+};
+const hopOffSubmit = () => {
+  SaveRepairRecord(repairForm.value).then((res: any) => {
+    if (res.success) {
+      ElNotification({
+        title: "提示信息",
+        message: res.msg,
+        type: "success",
+      });
+      baseFormRef.value.resetFields();
+      repairFormRef.value.resetFields();
+      getFocus();
+      barCode.value = "";
+      hopOffVisible.value = false;
     }
     getHisData();
   });

@@ -212,7 +212,7 @@ const columnData1 = reactive([
   {
     text: true,
     prop: "ContainerName",
-    label: "PCB条码",
+    label: "成品SN条码",
     width: "",
     align: "1",
   },

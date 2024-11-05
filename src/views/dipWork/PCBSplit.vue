@@ -159,6 +159,7 @@ const form = ref<InstanceType<typeof Formspan>>({
     Qty: "",
     PlannedStartDate: "",
     PlannedCompletionDate: "",
+     passNum:""
 });
 
 const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
@@ -204,6 +205,13 @@ const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
         type: "input",
         width: "",
     },
+    {
+    label: "过站数量",
+    value: "passNum",
+    disabled: true,
+    type: "input",
+    width: "",
+  },
 ]);
 
 const hisColumn = reactive([
@@ -324,6 +332,7 @@ const getFocus = () => {
 const getHisData = () => {
     QueryMoveHistory(hisForm.value).then((res: any) => {
         tableData1.value = res.content;
+        form.value.passNum= tableData1.value.length
     });
 };
 

@@ -55,28 +55,95 @@
             <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
               <span class="ml-5">历史过站记录</span>
             </div>
-            <table-tem :showIndex="true" :tableData="tableData1" :tableHeight="tableHeight" :columnData="columnData1"
+            <table-tem :showIndex="true" :tableData="tableData" :tableHeight="tableHeight" :columnData="columnData1"
               :pageObj="pageObj" @handleSizeChange="handleSizeChange"
               @handleCurrentChange="handleCurrentChange"></table-tem>
           </div>
         </div>
       </div>
     </div>
+    <el-dialog v-model="badVisible" title="不良登记" width="60%" :append-to-body="true" :close-on-click-modal="false"
+      :close-on-press-escape="false" align-center @close="badCancel">
+      <div>
+        <div>
+          <div class="h-[30px] pl-3 flex items-center text-base text-[#fff] bg-[#006487]">
+            基本信息
+          </div>
+          <el-form ref="badFormRef" :model="badheadForm" label-width="auto">
+            <el-form-item label="PCB条码" class="mb-[5px] flex">
+              <el-input v-model="badForm.containerName" style="width: 160px" disabled />
+            </el-form-item>
+            <el-row>
+              <el-col :span="8">
+                <el-form-item label="工单" class="mb-[5px] flex">
+                  <el-input v-model="badheadForm.MfgOrderName" style="width: 160px" disabled />
+                </el-form-item>
+              </el-col>
+              <el-col :span="6">
+                <el-form-item class="mb-[5px]" label="产品编码">
+                  <el-input v-model="badheadForm.ProductName" style="width: 160px" disabled /> </el-form-item></el-col>
+              <el-col :span="10">
+                <el-form-item class="mb-[5px]" label="产品描述">
+                  <el-input v-model="badheadForm.ProductDesc" style="width: 320px" disabled />
+                </el-form-item>
+              </el-col>
+            </el-row>
+            <!-- <el-row>
+              <el-col :span="8">
+                <el-form-item class="mb-[5px]" label="计划开始时间">
+                  <el-input v-model="badheadForm.PlannedStartDate" style="width: 160px" disabled />
+                </el-form-item>
+              </el-col>
+              <el-col :span="6">
+                <el-form-item class="mb-[5px]" label="计划完成时间">
+                  <el-input v-model="badheadForm.PlannedCompletionDate" style="width: 160px" disabled />
+                </el-form-item>
+              </el-col>
+              <el-col :span="10">
+                <el-form-item class="mb-[5px]" label="工单数量">
+                  <el-input v-model="badheadForm.Qty" style="width: 160px" disabled />
+                </el-form-item>
+              </el-col>
+            </el-row> -->
+          </el-form>
+        </div>
+        <div>
+          <div class="h-[30px] pl-3 flex items-center text-base text-[#fff] bg-[#006487]">
+            不良原因
+          </div>
+          <table-temp :showIndex="true" :show-select="true" :tableData="BadtableData" :tableHeight="300"
+            :columnData="badColumn" :pageObj="badpageObj" @handleSelectionChange="handleSelectionChange"></table-temp>
+        </div>
+      </div>
+
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="badCancel">取消</el-button>
+          <el-button type="primary" @click="badSubmit"> 确定 </el-button>
+        </span>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
 <script lang="ts" setup>
+import tableTemp from "@/components/tableTemp/index.vue";
 import tableTem from "@/components/tableTem/index.vue";
-import badInfoTem from "@/components/badInfoTem/index.vue";
-import formTem from "@/components/formTem/index.vue";
-import feedTemp from "@/components/feedTemp/index.vue";
-import selectTa from "@/components/selectTable/index.vue";
+// import badInfoTem from "@/components/badInfoTem/index.vue";
+// import formTem from "@/components/formTem/index.vue";
+// import feedTemp from "@/components/feedTemp/index.vue";
+// import selectTa from "@/components/selectTable/index.vue";
 import { useAppStore } from "@/stores/modules/app";
 import { useUserStoreWithOut } from "@/stores/modules/user";
 import { checkStringType } from "@/utils/barcodeFormat";
 import type { Formspan, FormHeader, OrderData } from "@/typing";
 import { ElMessage, ElNotification, ElMessageBox } from "element-plus";
-import { InspectionStationMoveOut ,QueryMoveHistory} from "@/api/dipApi";
+import {
+  InspectionStationMoveOut,
+  DefectProductRecord,
+  QueryDefectCodeInspection,
+  QueryMoveHistory
+} from "@/api/dipApi";
 
 import {
   ref,
@@ -86,7 +153,9 @@ import {
   computed,
   onBeforeMount,
   onBeforeUnmount,
+  watch,
 } from "vue";
+import { cloneDeep } from "lodash-es";
 interface StopsForm {
   containerName: string;
   workstationName: string;
@@ -94,14 +163,16 @@ interface StopsForm {
   userAccount: string;
   txnDate: string;
 }
+interface Defect {
+  isDefectLabel: string;
 
-interface ToolList {
-  WorkStationName: string;
-  OrderNumber: string;
-  ToolName: string;
-  sort: number;
-  MaterialName: string;
-  CompName: string;
+  isDefectType:number|string
+}
+interface BadForm {
+  containerName: string;
+  DefectDetails: Array<Defect>;
+  workstationName: string;
+  userAccount: string;
 }
 const appStore = useAppStore();
 const userStore = useUserStoreWithOut();
@@ -117,6 +188,7 @@ const stopsForm = ref<StopsForm>({
   result: "OK",
 });
 
+const badVisible = ref(false);
 const form = ref<InstanceType<typeof Formspan>>({
   MfgOrderName: "",
   ProductName: "",
@@ -124,6 +196,7 @@ const form = ref<InstanceType<typeof Formspan>>({
   Qty: "",
   PlannedStartDate: "",
   PlannedCompletionDate: "",
+  passNum:""
 });
 const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
   {
@@ -168,22 +241,30 @@ const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
     type: "input",
     width: "",
   },
-]);
-const columnData1 = reactive([
   {
+    label: "过站数量",
+    value: "passNum",
+    disabled: true,
+    type: "input",
+    width: "",
+  },
+]);
+
+const columnData1 = reactive([
+{
     text: true,
     prop: "ContainerName",
     label: "PCB条码",
     width: "",
     align: "1",
   },
-  {
-    text: true,
-    prop: "BD_Tools",
-    label: "工装治具",
-    width: "",
-    align: "1",
-  },
+  // {
+  //   text: true,
+  //   prop: "BD_Tools",
+  //   label: "工装治具",
+  //   width: "",
+  //   align: "1",
+  // },
   {
     text: true,
     prop: "BD_EmployeeName",
@@ -198,17 +279,60 @@ const columnData1 = reactive([
     width: "",
     align: "1",
   }
-
 ]);
-const tableData1 = ref([]);
+const tableData = ref([]);
 const tableHeight = ref(0);
 const pageObj = ref({
   pageSize: 10,
   currentPage: 1,
 });
+const badheadForm = ref<InstanceType<typeof Formspan>>({
+  MfgOrderName: "",
+  ProductName: "",
+  ProductDesc: "",
+  Qty: "",
+  PlannedStartDate: "",
+  PlannedCompletionDate: "",
+});
+const badForm = ref<BadForm>({
+  containerName: "",
+  DefectDetails: [],
+  workstationName: opui.station || "",
+  userAccount: userStore.getUserInfo,
+});
+//不良信息table
+const BadtableData = ref([
+  //   {
+  //     isDefectReasonName: "s004",
+  //     isDefectReasonDesc: "少件",
+  //   },
+]);
 
+const badpageObj = ref({
+  pageSize: 10,
+  currentPage: 1,
+  isShow: -1,
+});
+const badColumn = reactive([
+  {
+    text: true,
+    prop: "isDefectReasonName",
+    label: "不良代码",
+    width: "100",
+    align: "1",
+  },
+  {
+    text: true,
+    prop: "isDefectReasonDesc",
+    label: "不良原因",
+    width: "100",
+    align: "1",
+  },
+]);
+const changeList = ref([]);
 const msgTitle = ref("");
 const msgType = ref(true);
+const leftBoxH = ref(0);
 const hisForm = ref({
   MfgOrderName: "",
   workstationName: opui.station
@@ -226,6 +350,18 @@ onBeforeUnmount(() => {
   window.addEventListener("resize", getScreenHeight);
 });
 
+
+watch(
+  () => stopsForm.value.result,
+  (newVal, oldVal) => {
+    if (newVal !== oldVal) {
+      msgTitle.value = "";
+      msgType.value = true;
+    }
+  },
+  { deep: true, immediate: true }
+);
+
 //获取光标
 const getFocus = () => {
   inputFocus.value = false;
@@ -233,18 +369,60 @@ const getFocus = () => {
     inputFocus.value = true;
   }, 100);
 };
+//获取过站历史记录
+const getHisData=()=>{
+  QueryMoveHistory(hisForm.value).then((res:any)=>{
+    tableData.value=res.content
+    form.value.passNum= tableData.value.length
+  })
+}
 
 const formText = (data: string) => {
   let key = data as keyof typeof form;
   return form.value[key];
 };
 
-//获取过站历史记录
-const getHisData=()=>{
-  QueryMoveHistory(hisForm.value).then((res:any)=>{
-    tableData1.value=res.content
-  })
-}
+const handleSelectionChange = (data: any) => {
+  let content = cloneDeep(data);
+  changeList.value = content;
+};
+
+//不良登记取消
+const badCancel = () => {
+  badVisible.value = false;
+  BadtableData.value = [];
+  changeList.value = [];
+  badForm.value.DefectDetails = [];
+  stopsForm.value.result = "OK";
+};
+//不良登记提交
+const badSubmit = () => {
+  changeList.value.forEach((c: any) => {
+    badForm.value.DefectDetails.push({
+      isDefectLabel: c.isDefectReasonName,
+      isDefectType:1
+    });
+  });
+  DefectProductRecord(badForm.value).then((res: any) => {
+    msgTitle.value = "";
+    msgType.value = true;
+    if (res.success) {
+      badVisible.value = false;
+      BadtableData.value = [];
+      changeList.value = [];
+      badForm.value.DefectDetails = [];
+      stopsForm.value.result = "OK";
+      getFocus()
+    }
+    ElNotification({
+      title: "提示信息",
+      message: res.msg,
+      type: res.success ? "success" : "error",
+    });
+
+    // console.log(res);
+  });
+};
 
 //过站
 const getChange = () => {
@@ -254,18 +432,40 @@ const getChange = () => {
     stopsForm.value.result = barCodeData;
   } else {
     stopsForm.value.containerName = barCodeData;
-    InspectionStationMoveOut(stopsForm.value, stopsForm.value.result).then(
-      (res: any) => {
+    // console.log(stopsForm.value.result);
+    if (stopsForm.value.result == "OK") {
+      InspectionStationMoveOut(stopsForm.value).then((res: any) => {
         msgTitle.value = res.msg;
         msgType.value = res.success;
         stopsForm.value.containerName = "";
-        form.value = { ...res.content[0] }
-        stopsForm.value.result = "OK";
+        form.value = {...res.content[0]};
         hisForm.value.MfgOrderName=res.content[0].MfgOrderName
-        getFocus()
         getHisData()
-      }
-    );
+        getFocus()
+        // if (res.success) {
+        stopsForm.value.result = "OK";
+      });
+    } else {
+      badForm.value.containerName = barCodeData;
+      // badVisible.value = true;
+      QueryDefectCodeInspection(stopsForm.value.containerName).then((res: any) => {
+        //   console.log(res);
+        if (!res.success) {
+          msgTitle.value = res.msg;
+          msgType.value = res.success;
+          return;
+        }
+        badheadForm.value.MfgOrderName = res.content.MfgOrderName;
+        badheadForm.value.ProductName = res.content.ProductName;
+        badheadForm.value.ProductDesc = res.content.ProductDesc;
+        badheadForm.value.Qty = res.content.Qty;
+        badheadForm.value.PlannedstartDate = res.content.PlannedstartDate;
+        badheadForm.value.PlannedCompletionDate =
+          res.content.PlannedCompletionDate;
+        BadtableData.value = res.content.defectCode;
+        badVisible.value = true;
+      });
+    }
   }
   barCode.value = "";
 };
@@ -281,6 +481,7 @@ const handleCurrentChange = (val: any) => {
 
 const getScreenHeight = () => {
   nextTick(() => {
+    leftBoxH.value = window.innerHeight - 155;
     tableHeight.value = window.innerHeight - 360;
   });
 };
@@ -325,6 +526,7 @@ const getScreenHeight = () => {
   color: #006487 !important;
   // font-weight: bold;
 }
+
 .el-switch__label {
   font-weight: bold;
 }
