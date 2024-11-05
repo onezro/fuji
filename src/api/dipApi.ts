@@ -83,13 +83,28 @@ export function CWgStationMoveOut(data: any) {
     });
 }
 //目检过站
-export function InspectionStationMoveOut(data: any,result:any) {
+export function InspectionStationMoveOut(data: any) {
     return request({
         url: "/api/inspection/InspectionStationMoveOut",
         method: "post",
-        data,
-        params:{
-            status:result
+        data
+    });
+}
+//目检提交不良登记信息
+export function DefectProductRecord(data: any) {
+    return request({
+        url: "/api/inspection/DefectProductRecord",
+        method: "post",
+        data
+    });
+}
+//目检通过PCB条码查询不良原因
+export function QueryDefectCodeInspection(data: any) {
+    return request({
+        url: "/api/inspection/QueryDefectCode",
+        method: "post",
+        params: {
+            containerName: data
         }
     });
 }

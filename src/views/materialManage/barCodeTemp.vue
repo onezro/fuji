@@ -96,7 +96,7 @@
                     type="primary"
                     icon="EditPen"
                     size="small"
-                    @click.prevent="handleEdit(scope.row)"
+                    @click.stop="handleEdit(scope.row)"
                   ></el-button>
                 </el-tooltip>
                 <el-tooltip content="删除" placement="top">
@@ -104,7 +104,7 @@
                     type="danger"
                     icon="Delete"
                     size="small"
-                    @click.prevent="handleDelete(scope.row)"
+                    @click.stop="handleDelete(scope.row)"
                   ></el-button>
                 </el-tooltip>
               </template>
@@ -118,7 +118,9 @@
         </div>
         <div class="w-[400px]">
           <div class="mb-2">
-            <el-button type="primary" size="small">添加</el-button>
+            <el-button type="primary" size="small" @click="openAddMater"
+              >添加</el-button
+            >
           </div>
           <el-table
             :data="materialData"
@@ -135,6 +137,26 @@
               label="组件描述"
               :show-overflow-tooltip="true"
             />
+            <el-table-column
+              label="操作"
+              width="120"
+              fixed="right"
+              align="center"
+            >
+              <template #default="scope">
+                <!-- <el-tooltip content="编辑" placement="top">
+                  <el-button type="primary" icon="EditPen" size="small" @click.stop="handleEdit(scope.row)"></el-button>
+                </el-tooltip> -->
+                <el-tooltip content="删除" placement="top">
+                  <el-button
+                    type="danger"
+                    icon="Delete"
+                    size="small"
+                    @click.stop="deleteMater(scope.row)"
+                  ></el-button>
+                </el-tooltip>
+              </template>
+            </el-table-column>
             <template #empty>
               <div class="flex items-center justify-center h-100%">
                 <el-empty />
@@ -240,6 +262,32 @@
         </span>
       </template>
     </el-dialog>
+    <el-dialog
+      v-model="addMaterVisible"
+      title="修改模板"
+      draggable
+      width="500px"
+      :append-to-body="true"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      align-center
+      @close="addMaterCancel"
+    >
+      <el-form ref="addMaterRef" :model="addMaterForm" label-width="auto">
+        <!-- <el-form-item label="模板名称" prop="TemplateName" >
+          <el-input v-model="addMaterForm.TemplateName" style="width: 240px" />
+        </el-form-item> -->
+        <el-form-item label="物料编码" prop="PartNumber">
+          <el-input v-model="addMaterForm.PartNumber" style="width: 240px" />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="addMaterCancel">取消</el-button>
+          <el-button type="primary" @click="addMaterConfirm"> 确定 </el-button>
+        </span>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -307,6 +355,14 @@ const editTempForm = ref({
   Template_File: "",
   UserNo: userStore.getUserInfo,
 });
+const addMaterRef = ref();
+const addMaterVisible = ref(false);
+const addMaterForm = ref({
+  TemplateName: "",
+  PartNumber: "",
+  UserNo: userStore.getUserInfo,
+});
+const TemplateName = ref("");
 
 onBeforeMount(() => {
   getScreenHeight();
@@ -323,6 +379,13 @@ const getData = () => {
   GetBarCodeTemplate(getForm.value).then((res: any) => {
     // console.log(res.content);
     tableData.value = res.content;
+  });
+};
+const getTemplatePart = () => {
+  GetBarCodeTemplatePartNumberContent({
+    TemplateName: TemplateName.value,
+  }).then((res: any) => {
+    materialData.value = res.content;
   });
 };
 const openAddTemp = () => {
@@ -348,10 +411,9 @@ const addConfirm = () => {
   });
 };
 
-const cellClick = (row:any) => {
-    GetBarCodeTemplatePartNumberContent({TemplateName:row.Template_Name}).then((res:any)=>{
-        materialData.value = res.content;
-    })
+const cellClick = (row: any) => {
+  TemplateName.value = row.Template_Name;
+  getTemplatePart();
 };
 const handleEdit = (row: any) => {
   editTempForm.value.TemplateName = row.Template_Name;
@@ -408,6 +470,58 @@ const handleDelete = (row: any) => {
       });
     });
 };
+
+const openAddMater = () => {
+  addMaterVisible.value = true;
+};
+const addMaterCancel = () => {
+  addMaterRef.value.resetFields();
+  addMaterVisible.value = false;
+};
+const addMaterConfirm = () => {
+  InsertBarCodeRuleTempPartNumContent(addMaterForm.value).then((res: any) => {
+    if (res.success) {
+      ElNotification({
+        title: "提示信息",
+        message: res.msg,
+        type: "success",
+      });
+      addMaterRef.value.resetFields();
+      getTemplatePart();
+      addMaterVisible.value = false;
+    }
+  });
+};
+
+const deleteMater = (row: any) => {
+  ElMessageBox.confirm("确定删除", "确认操作", {
+    confirmButtonText: "确定",
+    cancelButtonText: "取消",
+    type: "warning",
+  })
+    .then(() => {
+      DeleteBarCodeRuleTempPartNumContent({
+        TemplateName: TemplateName.value,
+        PartNumber: row.PartNumber,
+      }).then((res: any) => {
+        if (res.success) {
+          ElNotification({
+            title: "提示信息",
+            message: "删除成功",
+            type: "success",
+          });
+        }
+      });
+    })
+    .catch(() => {
+      ElNotification({
+        title: "提示",
+        message: "取消操作",
+        type: "info",
+      });
+    });
+};
+
 const handleSizeChange = (val: any) => {
   pageObj.value.currentPage = 1;
   pageObj.value.pageSize = val;

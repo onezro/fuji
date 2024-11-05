@@ -111,8 +111,8 @@
           <div class="h-[30px] pl-3 flex items-center text-base text-[#fff] bg-[#006487]">
             不良原因
           </div>
-          <table-tem :showIndex="true" :show-select="true" :tableData="BadtableData" :tableHeight="300"
-            :columnData="badColumn" :pageObj="badpageObj" @handleSelectionChange="handleSelectionChange"></table-tem>
+          <table-temp :showIndex="true" :show-select="true" :tableData="BadtableData" :tableHeight="300"
+            :columnData="badColumn" :pageObj="badpageObj" @handleSelectionChange="handleSelectionChange"></table-temp>
         </div>
       </div>
 
@@ -127,6 +127,7 @@
 </template>
 
 <script lang="ts" setup>
+import tableTemp from "@/components/tableTemp/index.vue";
 import tableTem from "@/components/tableTem/index.vue";
 // import badInfoTem from "@/components/badInfoTem/index.vue";
 // import formTem from "@/components/formTem/index.vue";
@@ -399,11 +400,9 @@ const badSubmit = () => {
   changeList.value.forEach((c: any) => {
     badForm.value.DefectDetails.push({
       isDefectLabel: c.isDefectReasonName,
-
       isDefectType:1
     });
   });
-  // console.log(badForm.value);
   VIDefectProductRecord(badForm.value).then((res: any) => {
     msgTitle.value = "";
     msgType.value = true;
