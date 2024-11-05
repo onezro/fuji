@@ -34,6 +34,13 @@
                     <el-input v-model.trim="barCode" ref="inputRef" :autofocus="inputFocus" style="width: 500px"
                       placeholder="请扫描MES屏条码或供应商条码" @keyup.enter.native="getChange" />
                   </el-form-item>
+                <el-form-item :class="[stopsForm.result == 'OK' ? 'switchok' : 'switchng']" class="mb-2">
+                  <el-switch v-model="stopsForm.result" size="large" style="
+                      zoom: 1.2;
+                      --el-switch-on-color: #ff4949;
+                      --el-switch-off-color: #13ce66;
+                    " :active-value="'NG'" :inactive-value="'OK'" active-text="NG" inactive-text="OK" />
+                </el-form-item>
                 </el-form>
                 <div class="text-xl font-bold text-[#00B400]" v-show="msgType === true || msgTitle === ''">
                   {{ msgTitle === "" ? "请扫描MES屏条码" : msgTitle }}
@@ -463,7 +470,6 @@
   //过站
   const getChange = () => {
     let barCodeData = barCode.value;
-  
     stopsForm.value.containerName = barCodeData;
     PressingStationMoveOut(stopsForm.value).then((res: any) => {
       msgTitle.value = res.msg;
