@@ -790,12 +790,12 @@ const dialogVisible = ref(false);
 const detailsTableData = ref<any[]>([]);
 const tableData = ref<any[]>([{}]);
 const pageObj = ref({
-  pageSize: 10,
+  pageSize: 100,
   currentPage: 1,
   isShow: -1,
 });
 const pageObj1 = ref({
-  pageSize: 100000,
+  pageSize: 1000000,
   currentPage: 1,
   isShow: -1,
 });

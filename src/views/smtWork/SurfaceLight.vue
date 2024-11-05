@@ -254,7 +254,7 @@ const selectList = ref<any[]>([]);
 const lightTable = ref();
 const code = ref('');
 const pageObj = ref({
-  pageSize: 10,
+  pageSize: 100,
   currentPage: 1,
 });
 

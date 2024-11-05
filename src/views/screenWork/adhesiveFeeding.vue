@@ -346,11 +346,11 @@
   ]);
   
   const pageObj = ref({
-    pageSize: 10,
+    pageSize: 100,
     currentPage: 1,
   });
   const pageObj1 = ref({
-    pageSize: 10,
+    pageSize: 100,
     currentPage: 1,
   });
   

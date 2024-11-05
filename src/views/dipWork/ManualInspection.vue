@@ -13,7 +13,7 @@
           <div class="p-[10px]">
             <el-form class="inbound" ref="formRef" :model="form" label-width="auto">
               <el-form-item v-for="f in formHeader" :key="f.value" :label="f.label">
-                <span class="font-bold text-lg leading-[30px]" :class="f.value == 'passNum' ? 'text-[#00B400]' : ''">
+                <span class="font-bold text-lg leading-[30px]" :class="f.value == 'TodayNum' ? 'text-[#00B400]' : ''">
                   {{ formText(f.value) }}</span>
               </el-form-item>
             </el-form>
@@ -242,8 +242,15 @@ const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
     width: "",
   },
   {
-    label: "过站数量",
-    value: "passNum",
+    label: "过站总数",
+    value: "AllNum",
+    disabled: true,
+    type: "input",
+    width: "",
+  },
+  {
+    label: "实时过站",
+    value: "TodayNum",
     disabled: true,
     type: "input",
     width: "",
@@ -283,7 +290,7 @@ const columnData1 = reactive([
 const tableData = ref([]);
 const tableHeight = ref(0);
 const pageObj = ref({
-  pageSize: 10,
+  pageSize: 100,
   currentPage: 1,
 });
 const badheadForm = ref<InstanceType<typeof Formspan>>({
@@ -309,7 +316,7 @@ const BadtableData = ref([
 ]);
 
 const badpageObj = ref({
-  pageSize: 10,
+  pageSize: 100,
   currentPage: 1,
   isShow: -1,
 });

@@ -17,7 +17,7 @@
                         <el-form class="inbound" ref="formRef" :model="form" label-width="auto">
                             <el-form-item v-for="f in formHeader" :key="f.value" :label="f.label" :prop="f.value">
                                 <span class="font-bold text-lg leading-[30px]"
-                                    :class="f.value == 'passNum' ? 'text-[#00B400]' : ''">
+                                    :class="f.value == 'TodayNum' ? 'text-[#00B400]' : ''">
                                     {{ formText(f.value) }}</span>
                             </el-form-item>
                         </el-form>
@@ -83,7 +83,7 @@
                 :pageObj="fixturePageObj"></table-tem>
             <template #footer>
                 <span class="dialog-footer">
-                    <el-button @click=" editVisible = false">关闭</el-button>
+                    <el-button @click="editVisible = false">关闭</el-button>
                 </span>
             </template>
         </el-dialog>
@@ -159,7 +159,7 @@ const form = ref<InstanceType<typeof Formspan>>({
     Qty: "",
     PlannedStartDate: "",
     PlannedCompletionDate: "",
-     passNum:""
+    passNum: "",
 });
 
 const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
@@ -206,12 +206,19 @@ const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
         width: "",
     },
     {
-    label: "过站数量",
-    value: "passNum",
-    disabled: true,
-    type: "input",
-    width: "",
-  },
+        label: "过站总数",
+        value: "AllNum",
+        disabled: true,
+        type: "input",
+        width: "",
+    },
+    {
+        label: "实时过站",
+        value: "TodayNum",
+        disabled: true,
+        type: "input",
+        width: "",
+    },
 ]);
 
 const hisColumn = reactive([
@@ -247,7 +254,7 @@ const hisColumn = reactive([
 const tableData1 = ref([]);
 const tableHeight = ref(0);
 const pageObj = ref({
-    pageSize: 10,
+    pageSize: 100,
     currentPage: 1,
 });
 
@@ -289,7 +296,7 @@ const fixtureColumn = reactive([
 const fixtureData = ref([]);
 
 const fixturePageObj = ref({
-    pageSize: 10,
+    pageSize: 100,
     currentPage: 1,
 });
 const hisForm = ref({
@@ -332,7 +339,7 @@ const getFocus = () => {
 const getHisData = () => {
     QueryMoveHistory(hisForm.value).then((res: any) => {
         tableData1.value = res.content;
-        form.value.passNum= tableData1.value.length
+        form.value.passNum = tableData1.value.length;
     });
 };
 

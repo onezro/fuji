@@ -300,7 +300,7 @@ const radioChange = (args: any) => {
 const tableData1 = ref([]);
 const tableHeight = ref(0);
 const pageObj = ref({
-  pageSize: 10,
+  pageSize: 100,
   currentPage: 1,
 });
 const badForm = ref({

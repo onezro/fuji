@@ -564,6 +564,15 @@ export function findWorkflowSpec(data:any) {
     })
 
 }
+
+//修改工序
+export function UpdateProductBOMMaterialList(data:any) {
+    return request({
+        url: "/api/spec/UpdateProductBOMMaterialList",
+        method: "post",
+        data
+    })
+}
 //获取标签模板
 export function GetBarCodeTemplate(data:any) {
     return request({
