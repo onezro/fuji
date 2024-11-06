@@ -83,9 +83,9 @@
                     inactive-text="OK"
                   />
                 </el-form-item>
-                <el-form-item label="当前扫描治具" class="mb-2">
+                <!-- <el-form-item label="当前扫描治具" class="mb-2">
                   <el-input v-model.trim="ToolName" disabled />
-                </el-form-item>
+                </el-form-item> -->
               </el-form>
               <div
                 class="text-xl font-bold text-[#00B400]"
@@ -145,13 +145,13 @@
           <el-form ref="badFormRef" :model="badheadForm" label-width="auto">
             <el-row>
               <el-col :span="6">
-            <el-form-item label="MES屏条码" class="mb-[5px] flex">
-              <el-input
-                v-model="badForm.containerName"
-                style="width: 160px"
-                disabled
-              />
-            </el-form-item>
+                <el-form-item label="MES屏条码" class="mb-[5px] flex">
+                  <el-input
+                    v-model="badForm.containerName"
+                    style="width: 160px"
+                    disabled
+                  />
+                </el-form-item>
               </el-col>
               <el-col :span="6">
                 <el-form-item label="工单" class="mb-[5px] flex">
@@ -177,8 +177,8 @@
                     v-model="badheadForm.ProductName"
                     style="width: 160px"
                     disabled
-                  /> </el-form-item
-              >
+                  />
+                </el-form-item>
               </el-col>
             </el-row>
             <el-row>
@@ -191,11 +191,11 @@
                   />
                 </el-form-item>
               </el-col>
-              <el-col :span="6">
+              <!-- <el-col :span="6">
                 <el-form-item class="mb-[5px]" label="不良工位">
                   <el-input v-model="opui.station" style="width: 160px" disabled />
                 </el-form-item>
-              </el-col>
+              </el-col> -->
             </el-row>
           </el-form>
         </div>
@@ -205,7 +205,7 @@
           >
             不良原因
           </div>
-          <table-tem
+          <!-- <table-tem
             :showIndex="true"
             :show-select="true"
             :tableData="BadtableData"
@@ -213,7 +213,26 @@
             :columnData="badColumn"
             :pageObj="badpageObj"
             @handleSelectionChange="handleSelectionChange"
-          ></table-tem>
+          ></table-tem> -->
+          <el-table
+            :data="BadtableData"
+            size="small"
+            :height="300"
+            :tooltip-effect="'dark'"
+            border
+            fit
+            highlight-current-row
+            @selection-change="handleSelectionChange"
+          >
+            <el-table-column type="selection" width="55" />
+            <el-table-column prop="isDefectReasonName" label="不良代码" />
+            <el-table-column prop="isDefectReasonDesc" label="不良描述" />
+            <el-table-column prop="Comment" label="备注">
+              <template #default="scope">
+                <el-input v-model="scope.row.Comment"></el-input>
+              </template>
+            </el-table-column>
+          </el-table>
         </div>
       </div>
 
@@ -264,11 +283,12 @@ interface StopsForm {
   txnDate: string;
 }
 interface Defect {
-  isDefectLabel: string;
-
+  isDefectReason: string;
+  Comment:string;
   isDefectType: number | string;
 }
 interface BadForm {
+  tools: string;
   containerName: string;
   DefectDetails: Array<Defect>;
   workstationName: string;
@@ -421,7 +441,7 @@ const badheadForm = ref<InstanceType<typeof Formspan>>({
   PlannedCompletionDate: "",
 });
 const badForm = ref<BadForm>({
-  
+  tools: "",
   containerName: "",
   DefectDetails: [],
   workstationName: opui.station || "",
@@ -542,12 +562,12 @@ const badCancel = () => {
 const badSubmit = () => {
   changeList.value.forEach((c: any) => {
     badForm.value.DefectDetails.push({
-      isDefectLabel: c.isDefectReasonName,
-
+      isDefectReason: c.isDefectReasonName,
+      Comment:c.Comment,
       isDefectType: 1,
     });
   });
-  // console.log(badForm.value);
+  console.log(badForm.value);
   OqcIpTefectProductRecord(badForm.value).then((res: any) => {
     msgTitle.value = "";
     msgType.value = true;
@@ -557,7 +577,7 @@ const badSubmit = () => {
       changeList.value = [];
       badForm.value.DefectDetails = [];
       stopsForm.value.result = "OK";
-      getFocus()
+      getFocus();
     }
     ElNotification({
       title: "提示信息",
@@ -569,11 +589,8 @@ const badSubmit = () => {
 
 //过站
 const getChange = () => {
-  badVisible.value = true;
   let barCodeData = barCode.value;
-  if (checkStringType(barCodeData) == "tool") {
-    // console.log(badCodeData);
-    // stopsForm.value.result = barCodeData;
+  if (barCodeData.startsWith("BICV")) {
     ToolOnline({
       ToolName: barCodeData,
       workstationName: opui.station,
@@ -583,8 +600,14 @@ const getChange = () => {
       msgType.value = res.success;
       ToolName.value = barCodeData;
       barCode.value = "";
+      badForm.value.tools = barCodeData;
     });
   } else {
+    if (ToolName.value === '') {
+      msgTitle.value = '请先扫描治具条码';
+      msgType.value = false;
+    return;
+    }
     stopsForm.value.containerName = barCodeData;
     // console.log(stopsForm.value.result);
     if (stopsForm.value.result == "OK") {
@@ -600,10 +623,10 @@ const getChange = () => {
         form.value = { ...res.content[0] };
         hisForm.value.MfgOrderName = res.content[0].MfgOrderName;
         tableData.value.unshift({
-          ContainerName:barCodeData,
-          TxnDate:getDate(),
-          userAccount: loginName
-        })
+          ContainerName: barCodeData,
+          TxnDate: getDate(),
+          userAccount: loginName,
+        });
         getHisData();
         getFocus();
         // if (res.success) {
@@ -635,7 +658,6 @@ const getChange = () => {
 };
 
 const getDate = () => {
-  
   const now = new Date();
 
   const formattedDate =
@@ -646,8 +668,8 @@ const getDate = () => {
     `${String(now.getHours()).padStart(2, "0")}:${String(
       now.getMinutes()
     ).padStart(2, "0")}:${String(now.getSeconds()).padStart(2, "0")}`;
-    return formattedDate;
-}
+  return formattedDate;
+};
 
 //分页
 const handleSizeChange = (val: any) => {
