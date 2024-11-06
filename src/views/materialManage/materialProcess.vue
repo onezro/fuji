@@ -78,7 +78,7 @@
               </el-table-column>
               <el-table-column prop="QtyRequired" label="单件用量" flexible />
               <el-table-column prop="UOMName" label="单位" flexible />
-              <el-table-column prop="IssueControlType" label="消耗类型" flexible />
+              <el-table-column prop="IssueControlType" label="组件类型" flexible />
               <template #empty>
                 <div class="flex items-center justify-center h-100%">
                   <el-empty />

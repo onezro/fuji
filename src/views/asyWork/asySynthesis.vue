@@ -68,7 +68,9 @@
                   <el-table-column prop="MaterialBarCode" label="物料编码" width="150">
                     <template #default="scope">
                       <el-input v-model="scope.row.MaterialBarCode" size="small" :ref="createInputRef(scope.$index)"
-                        @keyup.enter.native="getChange1(scope.$index, scope.row)">
+                        @keyup.enter.native="
+                          getChange1(scope.$index, scope.row)
+                          ">
                       </el-input>
                     </template>
                   </el-table-column>
@@ -79,10 +81,17 @@
           </div>
 
           <div class="flex flex-col flex-1 tabs-css">
-            <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
+            <div class="h-[35px] flex items-center justify-between text-lg text-[#fff] bg-[#006487]">
               <span class="ml-5">历史过站记录</span>
+              <div class="mr-5">
+                <el-checkbox-group v-model="checkedHis" class="laser-table-filter">
+                  <el-checkbox v-for="c in checkedHisList" :label="`${c.label}(${changeDataLength(c.value)})`" :value="c.value"
+                    @change="changeHis(c.value)">
+                  </el-checkbox>
+                </el-checkbox-group>
+              </div>
             </div>
-            <table-tem :showIndex="true" :tableData="tableData1" :tableHeight="tableHeight" :columnData="columnData1"
+            <table-tem :showIndex="true" :tableData="changeData" :tableHeight="tableHeight" :columnData="columnData1"
               :pageObj="pageObj" @handleSizeChange="handleSizeChange"
               @handleCurrentChange="handleCurrentChange"></table-tem>
           </div>
@@ -138,7 +147,7 @@ interface KeyMaterial {
   MaterialBarCode: string;
   MaterialName: string;
   MfgOrderName: string;
-  QtyRequired: number
+  QtyRequired: number;
 }
 
 interface ToolList {
@@ -172,8 +181,8 @@ const form = ref<InstanceType<typeof Formspan>>({
   Qty: "",
   PlannedStartDate: "",
   PlannedCompletionDate: "",
-    AllNum:"",
-  TodayNum:""
+  AllNum: "",
+  TodayNum: "",
 });
 const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
   // {
@@ -218,23 +227,23 @@ const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
     type: "input",
     width: "",
   },
-  {
-    label: "过站总数",
-    value: "AllNum",
-    disabled: true,
-    type: "input",
-    width: "",
-  },
-  {
-    label: "实时过站",
-    value: "TodayNum",
-    disabled: true,
-    type: "input",
-    width: "",
-  },
+  // {
+  //   label: "过站总数",
+  //   value: "AllNum",
+  //   disabled: true,
+  //   type: "input",
+  //   width: "",
+  // },
+  // {
+  //   label: "实时过站",
+  //   value: "TodayNum",
+  //   disabled: true,
+  //   type: "input",
+  //   width: "",
+  // },
 ]);
 const columnData1 = reactive([
-{
+  {
     text: true,
     prop: "ContainerName",
     label: "成品SN条码",
@@ -282,9 +291,7 @@ const orderColumns = ref([
 ]);
 const defaultSelectVal = ref<string[]>([]);
 const isLoding = ref("");
-const barData = ref<KeyMaterial[]>([
-
-]);
+const barData = ref<KeyMaterial[]>([]);
 const keyForm = ref({
   BarCode: "",
   OrderName: "",
@@ -305,6 +312,17 @@ const isKeyForm = ref({
 });
 const materialRef = ref();
 const inputRefs = ref<any[]>([]);
+const checkedHis = ref(["today"]);
+const checkedHisList = ref([
+  {
+    value: "today",
+    label: "今天",
+  },
+  {
+    value: "all",
+    label: "所有",
+  },
+]);
 
 onBeforeMount(() => {
   getScreenHeight();
@@ -313,7 +331,6 @@ onMounted(() => {
   window.addEventListener("resize", getScreenHeight);
   getOrderData();
   // getFocus();
-
 });
 onBeforeUnmount(() => {
   window.addEventListener("resize", getScreenHeight);
@@ -339,6 +356,41 @@ const getHisData = () => {
   });
 };
 
+const changeHis = (val: any) => {
+  if (checkedHis.value.length == 0) {
+    checkedHis.value = [];
+  } else {
+    checkedHis.value = [];
+    checkedHis.value[0] = val;
+  }
+};
+const changeData = computed(() => {
+  if (checkedHis.value[0] == "today") {
+    return geTodayData()
+  } else {
+    return tableData1.value;
+  }
+});
+const changeDataLength =(val: any) => {
+  if (val == "today") {
+    let dataLength=geTodayData()
+    return dataLength.length
+  } else {
+     return tableData1.value.length
+  }
+}
+const geTodayData = () => {
+  const today = new Date();
+  const todayString = today.toISOString().split("T")[0];
+  function getDateFromDateTimeString(dateTimeString: any) {
+    return dateTimeString.split(" ")[0];
+  }
+  const todayDataArray = tableData1.value.filter((item: any) => {
+    return getDateFromDateTimeString(item.TxnDate) === todayString;
+  });
+  return todayDataArray
+};
+
 //过站
 const getChange = () => {
   let barCodeData = barCode.value;
@@ -351,18 +403,18 @@ const getChange = () => {
     msgType.value = true;
     isKeyForm.value.BarCode = barCodeData;
     // if (stopsForm.value.keyMaterialList.length === 3) {
-      stopsForm.value.BarCode = barCodeData;
-      AssemblySynthesisMoveStd(stopsForm.value).then((res: any) => {
-        msgTitle.value = res.msg;
-        msgType.value = res.success;
-        if (res.success) {
-          stopsForm.value.keyMaterialList = [];
-        }
-        stopsForm.value.BarCode = "";
-        barCode.value = "";
-        getKeyMaterial();
-        getHisData()
-      });
+    stopsForm.value.BarCode = barCodeData;
+    AssemblySynthesisMoveStd(stopsForm.value).then((res: any) => {
+      msgTitle.value = res.msg;
+      msgType.value = res.success;
+      if (res.success) {
+        stopsForm.value.keyMaterialList = [];
+      }
+      stopsForm.value.BarCode = "";
+      barCode.value = "";
+      getKeyMaterial();
+      getHisData();
+    });
     // }
     // JudgeAssemblyKeyMaterial(isKeyForm.value).then((res: any) => {
     //   msgTitle.value = res.msg;
@@ -383,7 +435,6 @@ const getChange = () => {
     //   barCode.value=""
     // });
   }
-
 };
 
 const createInputRef = (val: any) => {
@@ -394,12 +445,29 @@ const createInputRef = (val: any) => {
   };
 };
 const getChange1 = (val: any, data: any) => {
-  if (val + 1 < inputRefs.value.length) {
-    inputRefs.value[val + 1].focus();
-  } else {
-    inputRef.value.focus()
-  }
-  stopsForm.value.keyMaterialList.push(data)
+  let data1 = {
+    BarCode: data.MaterialBarCode,
+    OrderName: data.MfgOrderName,
+    ProductName: data.MaterialName,
+  };
+  JudgeAssemblyKeyMaterial(data1).then((res: any) => {
+    msgTitle.value = res.msg;
+    msgType.value = res.success;
+    if (res.success) {
+      if (val + 1 < inputRefs.value.length) {
+        inputRefs.value[val + 1].focus();
+      } else {
+        inputRef.value.focus();
+      }
+      stopsForm.value.keyMaterialList.push({
+        ...data,
+        VirtualCode:res.content==null?"":res.content
+      });
+
+    } else {
+      inputRefs.value[val].clear();
+    }
+  });
 };
 
 const radioChange = (args: any) => {
@@ -440,21 +508,21 @@ const radioChange = (args: any) => {
 };
 const getKeyMaterial = () => {
   QueryAssemblyKeyMaterial(keyForm.value).then((res: any) => {
-    let data: KeyMaterial[] = []
+    let data: KeyMaterial[] = [];
     res.content.forEach((c: any) => {
       if (c.QtyRequired == 1) {
-        data.push(c)
+        data.push(c);
       } else {
         for (let i = 0; i < c.QtyRequired; i++) {
           data.push({
             MfgOrderName: c.MfgOrderName,
             QtyRequired: 1,
             MaterialName: c.MaterialName,
-            MaterialBarCode: ""
+            MaterialBarCode: "",
           });
         }
       }
-    })
+    });
     barData.value = data;
     nextTick(() => {
       if (inputRefs.value.length > 0) {
@@ -464,7 +532,6 @@ const getKeyMaterial = () => {
   });
 };
 const tableRowClassName = (val: any) => {
-  // console.log(val.row);
   const isExitCode = stopsForm.value.keyMaterialList.findIndex(
     (k: any) => val.row.MaterialBarCode == k.MaterialBarCode
   );
@@ -475,25 +542,25 @@ const tableRowClassName = (val: any) => {
 };
 const getOrderData = () => {
   isLoding.value = "is-loading";
-  OrderQuery({ lineName: opui.line, OrderTypeName: "Assembly",WorkStationName:opui.station }).then(
-    (res: any) => {
-      let data = res.content;
-      let timer = setTimeout(() => {
-        isLoding.value = "";
-        clearTimeout(timer);
-      }, 2000);
-      if (data !== null && data.length !== 0) {
-        orderTable.value.data[0] = data[0];
-        if (data.length == 1) {
-          let a = data[0].MfgOrderName;
-          defaultSelectVal.value[0] = a;
-        }
+  OrderQuery({
+    lineName: opui.line,
+    OrderTypeName: "Assembly",
+    WorkStationName: opui.station,
+  }).then((res: any) => {
+    let data = res.content;
+    let timer = setTimeout(() => {
+      isLoding.value = "";
+      clearTimeout(timer);
+    }, 2000);
+    if (data !== null && data.length !== 0) {
+      orderTable.value.data[0] = data[0];
+      if (data.length == 1) {
+        let a = data[0].MfgOrderName;
+        defaultSelectVal.value[0] = a;
       }
-
     }
-  );
+  });
 };
-
 
 //分页
 const handleSizeChange = (val: any) => {
@@ -588,5 +655,18 @@ const getScreenHeight = () => {
 
 .el-table .active-table {
   --el-table-tr-bg-color: var(--el-color-success-light-9);
+}
+</style>
+<style lang="scss" scoped>
+::v-deep .laser-table-filter .el-checkbox__inner {
+  /* 你的样式 */
+  background-color: #409eff !important;
+  /* 使用 !important，但请谨慎 */
+  color: white !important;
+}
+
+::v-deep .laser-table-filter .el-checkbox__label {
+  /* 你的样式 */
+  color: white !important;
 }
 </style>

@@ -52,10 +52,17 @@
           </div>
 
           <div class="flex flex-col flex-1 tabs-css">
-            <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
+            <div class="h-[35px] flex items-center justify-between text-lg text-[#fff] bg-[#006487]">
               <span class="ml-5">历史过站记录</span>
+              <div class="mr-5">
+                <el-checkbox-group v-model="checkedHis" class="laser-table-filter">
+                  <el-checkbox v-for="c in checkedHisList" :label="`${c.label}(${changeDataLength(c.value)})`" :value="c.value"
+                    @change="changeHis(c.value)">
+                  </el-checkbox>
+                </el-checkbox-group>
+              </div>
             </div>
-            <table-tem :showIndex="true" :tableData="tableData" :tableHeight="tableHeight" :columnData="columnData1"
+            <table-tem :showIndex="true" :tableData="changeData" :tableHeight="tableHeight" :columnData="columnData1"
               :pageObj="pageObj" @handleSizeChange="handleSizeChange"
               @handleCurrentChange="handleCurrentChange"></table-tem>
           </div>
@@ -166,7 +173,7 @@ interface StopsForm {
 interface Defect {
   isDefectLabel: string;
 
-  isDefectType:number|string
+  isDefectType: number | string
 }
 interface BadForm {
   containerName: string;
@@ -196,7 +203,8 @@ const form = ref<InstanceType<typeof Formspan>>({
   Qty: "",
   PlannedStartDate: "",
   PlannedCompletionDate: "",
-  passNum:""
+  AllNum: "",
+  TodayNum: "",
 });
 const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
   {
@@ -241,24 +249,24 @@ const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
     type: "input",
     width: "",
   },
-  {
-    label: "过站总数",
-    value: "AllNum",
-    disabled: true,
-    type: "input",
-    width: "",
-  },
-  {
-    label: "实时过站",
-    value: "TodayNum",
-    disabled: true,
-    type: "input",
-    width: "",
-  },
+   // {
+  //   label: "过站总数",
+  //   value: "AllNum",
+  //   disabled: true,
+  //   type: "input",
+  //   width: "",
+  // },
+  // {
+  //   label: "实时过站",
+  //   value: "TodayNum",
+  //   disabled: true,
+  //   type: "input",
+  //   width: "",
+  // },
 ]);
 
 const columnData1 = reactive([
-{
+  {
     text: true,
     prop: "ContainerName",
     label: "PCB条码",
@@ -344,6 +352,17 @@ const hisForm = ref({
   MfgOrderName: "",
   workstationName: opui.station
 })
+const checkedHis = ref(["today"]);
+const checkedHisList = ref([
+  {
+    value: "today",
+    label: "今天",
+  },
+  {
+    value: "all",
+    label: "所有",
+  },
+]);
 
 onBeforeMount(() => {
   getScreenHeight();
@@ -377,12 +396,45 @@ const getFocus = () => {
   }, 100);
 };
 //获取过站历史记录
-const getHisData=()=>{
-  QueryMoveHistory(hisForm.value).then((res:any)=>{
-    tableData.value=res.content
-    form.value.passNum= tableData.value.length
+const getHisData = () => {
+  QueryMoveHistory(hisForm.value).then((res: any) => {
+    tableData.value = res.content
   })
 }
+const changeHis = (val: any) => {
+  if (checkedHis.value.length == 0) {
+    checkedHis.value = [];
+  } else {
+    checkedHis.value = [];
+    checkedHis.value[0] = val;
+  }
+};
+const changeData = computed(() => {
+  if (checkedHis.value[0] == "today") {
+    return geTodayData()
+  } else {
+    return tableData.value;
+  }
+});
+const changeDataLength =(val: any) => {
+  if (val == "today") {
+    let dataLength=geTodayData()
+    return dataLength.length
+  } else {
+     return tableData.value.length
+  }
+}
+const geTodayData = () => {
+  const today = new Date();
+  const todayString = today.toISOString().split("T")[0];
+  function getDateFromDateTimeString(dateTimeString: any) {
+    return dateTimeString.split(" ")[0];
+  }
+  const todayDataArray = tableData.value.filter((item: any) => {
+    return getDateFromDateTimeString(item.TxnDate) === todayString;
+  });
+  return todayDataArray
+};
 
 const formText = (data: string) => {
   let key = data as keyof typeof form;
@@ -407,7 +459,7 @@ const badSubmit = () => {
   changeList.value.forEach((c: any) => {
     badForm.value.DefectDetails.push({
       isDefectLabel: c.isDefectReasonName,
-      isDefectType:1
+      isDefectType: 1
     });
   });
   DefectProductRecord(badForm.value).then((res: any) => {
@@ -445,8 +497,8 @@ const getChange = () => {
         msgTitle.value = res.msg;
         msgType.value = res.success;
         stopsForm.value.containerName = "";
-        form.value = {...res.content[0]};
-        hisForm.value.MfgOrderName=res.content[0].MfgOrderName
+        form.value = { ...res.content[0] };
+        hisForm.value.MfgOrderName = res.content[0].MfgOrderName
         getHisData()
         getFocus()
         // if (res.success) {
@@ -561,5 +613,18 @@ const getScreenHeight = () => {
 // }
 .checked .el-checkbox {
   height: 14px;
+}
+</style>
+<style lang="scss" scoped>
+::v-deep .laser-table-filter .el-checkbox__inner {
+  /* 你的样式 */
+  background-color: #409eff !important;
+  /* 使用 !important，但请谨慎 */
+  color: white !important;
+}
+
+::v-deep .laser-table-filter .el-checkbox__label {
+  /* 你的样式 */
+  color: white !important;
 }
 </style>

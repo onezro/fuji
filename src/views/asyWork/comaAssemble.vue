@@ -202,20 +202,20 @@ const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
     type: "input",
     width: "",
   },
-  {
-    label: "过站总数",
-    value: "AllNum",
-    disabled: true,
-    type: "input",
-    width: "",
-  },
-  {
-    label: "实时过站",
-    value: "TodayNum",
-    disabled: true,
-    type: "input",
-    width: "",
-  },
+   // {
+  //   label: "过站总数",
+  //   value: "AllNum",
+  //   disabled: true,
+  //   type: "input",
+  //   width: "",
+  // },
+  // {
+  //   label: "实时过站",
+  //   value: "TodayNum",
+  //   disabled: true,
+  //   type: "input",
+  //   width: "",
+  // },
 ]);
 const columnData1 = reactive([
   {

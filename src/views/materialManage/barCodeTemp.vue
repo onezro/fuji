@@ -3,48 +3,20 @@
     <el-card shadow="always" :body-style="{ padding: '8px' }">
       <div class="flex gap-10">
         <div>
-          <el-button type="primary" size="small" @click="openAddTemp"
-            >添加</el-button
-          >
+          <el-button type="primary" size="small" @click="openAddTemp">添加</el-button>
         </div>
-        <el-form
-          ref="formRef"
-          size="small"
-          :model="getForm"
-          label-width="auto"
-          :inline="true"
-        >
+        <el-form ref="formRef" size="small" :model="getForm" label-width="auto" :inline="true">
           <el-form-item label="模板名称" prop="ProductName" class="mb-2">
-            <el-input
-              v-model="getForm.TemplateName"
-              style="width: 160px"
-              clearable
-              @clear="getData"
-              @change="getData"
-            />
+            <el-input v-model="getForm.TemplateName" style="width: 160px" clearable @clear="getData"
+              @change="getData" />
           </el-form-item>
           <el-form-item label="物料编码" prop="ProductDescription" class="mb-2">
-            <el-input
-              v-model="getForm.TemplatePartNum"
-              style="width: 160px"
-              clearable
-              @clear="getData"
-              @change="getData"
-            />
+            <el-input v-model="getForm.TemplatePartNum" style="width: 160px" clearable @clear="getData"
+              @change="getData" />
           </el-form-item>
           <el-form-item label="启用" prop="ProductDescription" class="mb-2">
-            <el-select
-              v-model="getForm.TemplateEnable"
-              style="width: 150px"
-              @change="getData"
-              placeholder=""
-            >
-              <el-option
-                v-for="item in typeList"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-              />
+            <el-select v-model="getForm.TemplateEnable" style="width: 150px" @change="getData" placeholder="">
+              <el-option v-for="item in typeList" :key="item.value" :label="item.label" :value="item.value" />
             </el-select>
           </el-form-item>
           <el-form-item class="mb-2">
@@ -52,60 +24,35 @@
           </el-form-item>
         </el-form>
       </div>
-      <div class="flex gap-2">
-        <div>
-          <el-table
-            :data="tableData"
-            size="small"
-            :style="{ width: '100%' }"
-            :height="tableHeight"
-            :tooltip-effect="'dark'"
-            border
-            fit
-            highlight-current-row
-            @cell-click="cellClick"
-          >
-            <el-table-column
-              prop="Template_Name"
-              label="模板名称"
-              width="180"
-              :show-overflow-tooltip="true"
-            />
-            <el-table-column
-              prop="Template_EnableExternal"
-              label="是否启用外部码"
-              width="120"
-            />
-            <el-table-column
-              prop="Template_UpdateOn"
-              label="更新时间"
-              width="180"
-            />
+      <div class="flex">
+        <div class="w-[calc(100%-408px)]">
+          <el-table :data="tableData" size="small" :style="{ width: '100%' }" :height="tableHeight"
+            :tooltip-effect="'dark'" border fit highlight-current-row @cell-click="cellClick">
+            <el-table-column prop="Template_Name" label="模板名称" width="180" :show-overflow-tooltip="true" />
+            <el-table-column prop="Template_EnableExternal" label="是否启用外部码" width="120" align="center">
+              <template #default="scope">
+             
+             <el-tag    effect="plain" :type="scope.row.Template_EnableExternal?'primary':'info'">{{scope.row.Template_EnableExternal?'是':'否' }}</el-tag>
+            
+           </template>
+            </el-table-column>
+            <el-table-column prop="Template_UpdateOn" label="更新时间" width="180" />
             <el-table-column prop="Template_UpdateBy" label="更新人" />
-            <el-table-column prop="Template_Remark" label="备注" />
-            <el-table-column prop="Template_Enable" label="是否启用" />
-            <el-table-column
-              label="操作"
-              width="120"
-              fixed="right"
-              align="center"
-            >
+            <el-table-column prop="Template_Remark" label="备注" :show-overflow-tooltip="true" min-width="180"/>
+            <el-table-column prop="Template_Enable" label="是否启用" width="120" align="center">
+              <template #default="scope">
+             
+                <el-tag  :type="scope.row.Template_Enable?'primary':'info'">{{scope.row.Template_Enable?'是':'否' }}</el-tag>
+               
+              </template>
+            </el-table-column>
+            <el-table-column label="操作" width="120" fixed="right" align="center">
               <template #default="scope">
                 <el-tooltip content="编辑" placement="top">
-                  <el-button
-                    type="primary"
-                    icon="EditPen"
-                    size="small"
-                    @click.stop="handleEdit(scope.row)"
-                  ></el-button>
+                  <el-button type="primary" icon="EditPen" size="small" @click.stop="handleEdit(scope.row)"></el-button>
                 </el-tooltip>
                 <el-tooltip content="删除" placement="top">
-                  <el-button
-                    type="danger"
-                    icon="Delete"
-                    size="small"
-                    @click.stop="handleDelete(scope.row)"
-                  ></el-button>
+                  <el-button type="danger" icon="Delete" size="small" @click.stop="handleDelete(scope.row)"></el-button>
                 </el-tooltip>
               </template>
             </el-table-column>
@@ -116,44 +63,21 @@
             </template>
           </el-table>
         </div>
-        <div class="w-[400px]">
+        <div class="w-[400px] ml-2">
           <div class="mb-2">
-            <el-button type="primary" size="small" @click="openAddMater"
-              >添加</el-button
-            >
+            <el-button type="primary" size="small" @click="openAddMater">添加</el-button>
           </div>
-          <el-table
-            :data="materialData"
-            size="small"
-            :style="{ width: '100%' }"
-            :height="tableHeight1"
-            :tooltip-effect="'dark'"
-            border
-            fit
-          >
+          <el-table :data="materialData" size="small" :style="{ width: '100%' }" :height="tableHeight1"
+            :tooltip-effect="'dark'" border fit>
             <el-table-column prop="ProductName" label="组件编码" width="120" />
-            <el-table-column
-              prop="ProductDesc"
-              label="组件描述"
-              :show-overflow-tooltip="true"
-            />
-            <el-table-column
-              label="操作"
-              width="120"
-              fixed="right"
-              align="center"
-            >
+            <el-table-column prop="ProductDesc" label="组件描述" :show-overflow-tooltip="true" />
+            <el-table-column label="操作" width="120" fixed="right" align="center">
               <template #default="scope">
                 <!-- <el-tooltip content="编辑" placement="top">
                   <el-button type="primary" icon="EditPen" size="small" @click.stop="handleEdit(scope.row)"></el-button>
                 </el-tooltip> -->
                 <el-tooltip content="删除" placement="top">
-                  <el-button
-                    type="danger"
-                    icon="Delete"
-                    size="small"
-                    @click.stop="deleteMater(scope.row)"
-                  ></el-button>
+                  <el-button type="danger" icon="Delete" size="small" @click.stop="deleteMater(scope.row)"></el-button>
                 </el-tooltip>
               </template>
             </el-table-column>
@@ -166,45 +90,20 @@
         </div>
       </div>
     </el-card>
-    <el-dialog
-      v-model="addVisible"
-      title="添加模板"
-      draggable
-      width="500px"
-      :append-to-body="true"
-      :close-on-click-modal="false"
-      :close-on-press-escape="false"
-      align-center
-      @close="addCancel"
-    >
+    <el-dialog v-model="addVisible" title="添加模板" draggable width="500px" :append-to-body="true"
+      :close-on-click-modal="false" :close-on-press-escape="false" align-center @close="addCancel">
       <el-form ref="addTempRef" :model="addTempForm" label-width="auto">
-        <el-form-item
-          label="模板名称"
-          prop="TemplateName"
-          class="flex items-center"
-        >
+        <el-form-item label="模板名称" prop="TemplateName" class="flex items-center">
           <el-input v-model="addTempForm.TemplateName" style="width: 240px" />
-          <el-checkbox
-            v-model="addTempForm.TemplateEnable"
-            label="是否启用"
-            class="ml-3"
-          />
+          <el-checkbox v-model="addTempForm.TemplateEnable" label="是否启用" class="ml-3" />
         </el-form-item>
         <el-form-item label="模板文件" prop="Template_File">
           <el-input v-model="addTempForm.Template_File" style="width: 240px" />
-          <el-checkbox
-            v-model="addTempForm.TemplateEnableExternal"
-            label="是否启用外部码"
-            class="ml-3"
-          />
+          <el-checkbox v-model="addTempForm.TemplateEnableExternal" label="是否启用外部码" class="ml-3" />
         </el-form-item>
         <el-form-item label="备注" prop="TemplateRemark">
-          <el-input
-            v-model="addTempForm.TemplateRemark"
-            type="textarea"
-            style="width: 240px"
-            :autoSize="{ minRows: 4, maxRows: 6 }"
-          />
+          <el-input v-model="addTempForm.TemplateRemark" type="textarea" style="width: 240px"
+            :autoSize="{ minRows: 4, maxRows: 6 }" />
         </el-form-item>
       </el-form>
       <template #footer>
@@ -214,45 +113,20 @@
         </span>
       </template>
     </el-dialog>
-    <el-dialog
-      v-model="editVisible"
-      title="修改模板"
-      draggable
-      width="500px"
-      :append-to-body="true"
-      :close-on-click-modal="false"
-      :close-on-press-escape="false"
-      align-center
-      @close="editCancel"
-    >
+    <el-dialog v-model="editVisible" title="修改模板" draggable width="500px" :append-to-body="true"
+      :close-on-click-modal="false" :close-on-press-escape="false" align-center @close="editCancel">
       <el-form ref="editTempRef" :model="editTempForm" label-width="auto">
-        <el-form-item
-          label="模板名称"
-          prop="TemplateName"
-          class="flex items-center"
-        >
+        <el-form-item label="模板名称" prop="TemplateName" class="flex items-center">
           <el-input v-model="editTempForm.TemplateName" style="width: 240px" />
-          <el-checkbox
-            v-model="editTempForm.TemplateEnable"
-            label="是否启用"
-            class="ml-3"
-          />
+          <el-checkbox v-model="editTempForm.TemplateEnable" label="是否启用" class="ml-3" />
         </el-form-item>
         <el-form-item label="模板文件" prop="Template_File">
           <el-input v-model="editTempForm.Template_File" style="width: 240px" />
-          <el-checkbox
-            v-model="editTempForm.TemplateEnableExternal"
-            label="是否启用外部码"
-            class="ml-3"
-          />
+          <el-checkbox v-model="editTempForm.TemplateEnableExternal" label="是否启用外部码" class="ml-3" />
         </el-form-item>
         <el-form-item label="备注" prop="TemplateRemark">
-          <el-input
-            v-model="editTempForm.TemplateRemark"
-            type="textarea"
-            style="width: 240px"
-            :autoSize="{ minRows: 4, maxRows: 6 }"
-          />
+          <el-input v-model="editTempForm.TemplateRemark" type="textarea" style="width: 240px"
+            :autoSize="{ minRows: 4, maxRows: 6 }" />
         </el-form-item>
       </el-form>
       <template #footer>
@@ -262,17 +136,8 @@
         </span>
       </template>
     </el-dialog>
-    <el-dialog
-      v-model="addMaterVisible"
-      title="修改模板"
-      draggable
-      width="500px"
-      :append-to-body="true"
-      :close-on-click-modal="false"
-      :close-on-press-escape="false"
-      align-center
-      @close="addMaterCancel"
-    >
+    <el-dialog v-model="addMaterVisible" title="修改模板" draggable width="500px" :append-to-body="true"
+      :close-on-click-modal="false" :close-on-press-escape="false" align-center @close="addMaterCancel">
       <el-form ref="addMaterRef" :model="addMaterForm" label-width="auto">
         <!-- <el-form-item label="模板名称" prop="TemplateName" >
           <el-input v-model="addMaterForm.TemplateName" style="width: 240px" />
