@@ -28,7 +28,7 @@
                 >
                   <span
                     class="font-bold text-lg leading-[30px]"
-                    :class="f.value == 'passNum' ? 'text-[#00B400]' : ''"
+                    :class="f.value == 'TodayNum' ? 'text-[#00B400]' : ''"
                   >
                     {{ formText(f.value) }}</span
                   >
@@ -115,8 +115,8 @@
   import { checkStringType } from "@/utils/barcodeFormat";
   import type { Formspan, FormHeader, OrderData } from "@/typing";
   import { ElMessage, ElNotification, ElMessageBox } from "element-plus";
-  import { QueryMoveHistory } from "@/api/dipApi";
-  import {DispenseStationMoveOut } from "@/api/asyApi";
+  // import { QueryMoveHistory } from "@/api/dipApi";
+  import {DispenseStationMoveOut,QueryMoveHistory } from "@/api/asyApi";
   import {
     ref,
     reactive,
@@ -205,6 +205,20 @@
       type: "input",
       width: "",
     },
+    {
+    label: "过站总数",
+    value: "AllNum",
+    disabled: true,
+    type: "input",
+    width: "",
+  },
+  {
+    label: "实时过站",
+    value: "TodayNum",
+    disabled: true,
+    type: "input",
+    width: "",
+  },
   ]);
   const columnData1 = reactive([
     {
@@ -233,7 +247,7 @@
   const tableData1 = ref([]);
   const tableHeight = ref(0);
   const pageObj = ref({
-    pageSize: 10,
+    pageSize: 100,
     currentPage: 1,
   });
   
@@ -288,9 +302,9 @@
           stopsForm.value.containerName = "";
           form.value = { ...res.content[0] };
   
-          // hisForm.value.MfgOrderName = res.content[0].MfgOrderName;
+          hisForm.value.MfgOrderName = res.content[0].MfgOrderName;
           getFocus();
-          // getHisData();
+          getHisData();
         }
       );
     barCode.value = "";

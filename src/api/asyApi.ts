@@ -126,3 +126,20 @@ export function VibrationDetail(data:any) {
         data
     });
 }
+
+// //工单查询
+export function OrderQuery(data:any) {
+    return request({
+        url: "/api/workstation/OrderQuery",
+        method: "post",
+        data
+    })
+}
+//历史过站记录
+export function QueryMoveHistory(data:any) {
+    return request({
+        url: "/api/workstation/QueryMoveHistory",
+        method: "post",
+        data
+    })
+}

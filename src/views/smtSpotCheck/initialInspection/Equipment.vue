@@ -489,7 +489,7 @@ const dialogVisible = ref(false);
 const detailsTableData = ref<any[]>([{}, {}, {}, {}, {}, {}]);
 const tableData = ref<any[]>([{}]);
 const pageObj = ref({
-  pageSize: 10,
+  pageSize: 100,
   currentPage: 1,
 });
 const dateValue = ref<any[]>([]);

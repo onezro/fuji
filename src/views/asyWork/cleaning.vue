@@ -1,65 +1,33 @@
 <template>
   <div class="flex flex-col w-full h-full">
-    <div
-      class="h-[40px] min-h-[40px] pl-2 pr-2 flex justify-between items-center"
-    >
+    <div class="h-[40px] min-h-[40px] pl-2 pr-2 flex justify-between items-center">
       <span class="text-[1.2rem]"> {{ opui.stationDec }} </span>
       <div></div>
     </div>
     <div class="w-full flex-1 flex">
       <div class="setwidth w-[350px]">
         <div class="w-full h-full box">
-          <div
-            class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]"
-          >
+          <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
             <span class="ml-5">基本信息</span>
           </div>
           <div class="p-[10px]">
-            <el-form
-              class="inbound"
-              ref="formRef"
-              :model="form"
-              label-width="auto"
-            >
+            <el-form class="inbound" ref="formRef" :model="form" label-width="auto">
               <el-form-item label="工单" class="mb-[5px] flex">
-                <selectTa
-                  ref="selectTable"
-                  :table="orderTable"
-                  :selectWidth="220"
-                  :columns="orderColumns"
-                  :max-height="400"
-                  :tableWidth="700"
-                  :defaultSelectVal="defaultSelectVal"
-                  :keywords="{
+                <selectTa ref="selectTable" :table="orderTable" :selectWidth="220" :columns="orderColumns"
+                  :max-height="400" :tableWidth="700" :defaultSelectVal="defaultSelectVal" :keywords="{
                     label: 'MfgOrderName',
                     value: 'MfgOrderName',
-                  }"
-                  @radioChange="(...args: any) => radioChange(args)"
-                >
+                  }" @radioChange="(...args: any) => radioChange(args)">
                 </selectTa>
                 <el-tooltip content="刷新" placement="top">
-                  <el-icon
-                    class="ml-2"
-                    color="#777777"
-                    :class="isLoding"
-                    size="24"
-                    @click="getOrderData"
-                  >
+                  <el-icon class="ml-2" color="#777777" :class="isLoding" size="24" @click="getOrderData">
                     <RefreshRight />
                   </el-icon>
                 </el-tooltip>
               </el-form-item>
-              <el-form-item
-                v-for="f in formHeader"
-                :key="f.value"
-                :label="f.label"
-              >
-                <span
-                  class="font-bold text-lg leading-[30px]"
-                  :class="f.value == 'passNum' ? 'text-[#00B400]' : ''"
-                >
-                  {{ formText(f.value) }}</span
-                >
+              <el-form-item v-for="f in formHeader" :key="f.value" :label="f.label">
+                <span class="font-bold text-lg leading-[30px]" :class="f.value == 'passNum' ? 'text-[#00B400]' : ''">
+                  {{ formText(f.value) }}</span>
               </el-form-item>
             </el-form>
           </div>
@@ -69,71 +37,37 @@
         <!-- <div class="w-full"> -->
         <div class="w-full h-full flex flex-col">
           <div>
-            <div
-              class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]"
-            >
+            <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
               <span class="ml-5"> 扫描条码</span>
             </div>
             <div class="h-[120px] pt-3 pr-5 pl-5">
-              <el-form
-                class="inbound"
-                ref="formRef"
-                :inline="true"
-                :model="form"
-                label-width="auto"
-                @submit.native.prevent
-              >
+              <el-form class="inbound" ref="formRef" :inline="true" :model="form" label-width="auto"
+                @submit.native.prevent>
                 <el-form-item label="扫描条码">
-                  <el-input
-                    v-model.trim="barCode"
-                    ref="inputRef"
-                    :autofocus="inputFocus"
-                    style="width: 500px"
-                    placeholder="请扫描条码"
-                    @keyup.enter.native="getChange"
-                  />
+                  <el-input v-model.trim="barCode" ref="inputRef" :autofocus="inputFocus" style="width: 500px"
+                    placeholder="请扫描条码" @keyup.enter.native="getChange" />
                 </el-form-item>
                 <el-form-item>
-                  <el-button
-                    type="primary"
-                    :disabled="
-                      form.MfgOrderName == '' || tableData1.length == 0
-                    "
-                    @click="reWash"
-                    >重新清洗</el-button
-                  >
+                  <el-button type="primary" :disabled="form.MfgOrderName == '' || tableData1.length == 0
+                    " @click="reWash">重新清洗</el-button>
                 </el-form-item>
               </el-form>
-              <div
-                class="text-xl font-bold text-[#00B400]"
-                v-show="msgType === true || msgTitle === ''"
-              >
+              <div class="text-xl font-bold text-[#00B400]" v-show="msgType === true || msgTitle === ''">
                 {{ msgTitle === "" ? "请扫描屏材料批次条码" : msgTitle }}
               </div>
-              <div
-                class="text-xl font-bold text-[red]"
-                v-show="msgType === false && msgTitle !== ''"
-              >
+              <div class="text-xl font-bold text-[red]" v-show="msgType === false && msgTitle !== ''">
                 {{ msgTitle }}
               </div>
             </div>
           </div>
 
           <div class="flex flex-col flex-1 tabs-css">
-            <div
-              class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]"
-            >
+            <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
               <span class="ml-5">历史过站记录</span>
             </div>
-            <table-tem
-              :showIndex="true"
-              :tableData="tableData1"
-              :tableHeight="tableHeight"
-              :columnData="columnData1"
-              :pageObj="pageObj"
-              @handleSizeChange="handleSizeChange"
-              @handleCurrentChange="handleCurrentChange"
-            ></table-tem>
+            <table-tem :showIndex="true" :tableData="tableData1" :tableHeight="tableHeight" :columnData="columnData1"
+              :pageObj="pageObj" @handleSizeChange="handleSizeChange"
+              @handleCurrentChange="handleCurrentChange"></table-tem>
           </div>
         </div>
       </div>
@@ -152,8 +86,8 @@ import { useUserStoreWithOut } from "@/stores/modules/user";
 import { checkStringType } from "@/utils/barcodeFormat";
 import type { Formspan, FormHeader, OrderData } from "@/typing";
 import { ElMessage, ElNotification, ElMessageBox } from "element-plus";
-import { OrderQuery } from "@/api/dipApi";
 import {
+  OrderQuery,
   CleanCodeSave,
   QueryCleanCodeRecord,
   ReloadCleanCode,
@@ -211,6 +145,8 @@ const form = ref<InstanceType<typeof Formspan>>({
   Qty: "",
   PlannedStartDate: "",
   PlannedCompletionDate: "",
+  AllNum: "",
+  TodayNum: ""
 });
 const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
   // {
@@ -255,6 +191,20 @@ const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
     type: "input",
     width: "",
   },
+  {
+    label: "过站总数",
+    value: "AllNum",
+    disabled: true,
+    type: "input",
+    width: "",
+  },
+  {
+    label: "实时过站",
+    value: "TodayNum",
+    disabled: true,
+    type: "input",
+    width: "",
+  },
 ]);
 const columnData1 = reactive([
   {
@@ -289,7 +239,7 @@ const columnData1 = reactive([
 const tableData1 = ref([]);
 const tableHeight = ref(0);
 const pageObj = ref({
-  pageSize: 10,
+  pageSize: 100,
   currentPage: 1,
 });
 
@@ -389,6 +339,8 @@ const radioChange = (args: any) => {
     form.value.PlannedStartDate = args[0].PlannedStartDate;
     form.value.PlannedCompletionDate = args[0].PlannedCompletionDate;
     form.value.Qty = args[0].Qty;
+    form.value.AllNum = args[0].AllNum;
+    form.value.TodayNum = args[0].TodayNum;
     stopsForm.value.OrderName = args[0].MfgOrderName;
     stopsForm.value.ProductName = args[0].ProductName;
     hisForm.value.MfgOrderName = args[0].MfgOrderName;
@@ -404,13 +356,12 @@ const getOrderData = () => {
         isLoding.value = "";
         clearTimeout(timer);
       }, 2000);
-      if (data.length !== 0) {
+      if (data !== null && data.length !== 0) {
         orderTable.value.data[0] = data[0];
-      }
-      if (data.length == 1) {
-        // console.log(2111);
-        let a = data[0].MfgOrderName;
-        defaultSelectVal.value[0] = a;
+        if (data.length == 1) {
+          let a = data[0].MfgOrderName;
+          defaultSelectVal.value[0] = a;
+        }
       }
     }
   );
@@ -480,7 +431,7 @@ const getScreenHeight = () => {
   font-size: 1.1rem;
 }
 
-.tabs-css .el-tabs--border-card > .el-tabs__header .el-tabs__item {
+.tabs-css .el-tabs--border-card>.el-tabs__header .el-tabs__item {
   color: #fff;
   // padding: 0 !important;
 }
@@ -503,10 +454,7 @@ const getScreenHeight = () => {
   color: #ff4949;
 }
 
-.tabs-css
-  .el-tabs--border-card
-  > .el-tabs__header
-  .el-tabs__item:not(.is-disabled):hover {
+.tabs-css .el-tabs--border-card>.el-tabs__header .el-tabs__item:not(.is-disabled):hover {
   // color: #fff;
   // background-color: #fff;
   background-color: rgba($color: #fff, $alpha: 0.8);

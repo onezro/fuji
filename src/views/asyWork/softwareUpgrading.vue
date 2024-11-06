@@ -392,11 +392,20 @@ const getChange = () => {
     form.value = { ...res.content[0] };
 
     // hisForm.value.MfgOrderName = res.content[0].MfgOrderName;
+  })
+}
+
+  
+  
+  onBeforeMount(() => {
+    getScreenHeight();
+  });
+  onMounted(() => {
+    window.addEventListener("resize", getScreenHeight);
+    // getOrderData();
     getFocus();
     // getHisData();
   });
-  barCode.value = "";
-};
 
 //分页
 const handleSizeChange = (val: any) => {

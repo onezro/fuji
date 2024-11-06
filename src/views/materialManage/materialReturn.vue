@@ -316,7 +316,7 @@ const detailedTable = ref<any[]>([]);
 const detailedHeight = ref(0);
 const choiceId = ref('');
 const detailedPageObj = ref({
-  pageSize: 1000000,
+  pageSize: 10000000,
   currentPage: 1,
   isShow: -1,
 });
@@ -657,7 +657,7 @@ const handleCurrentChange = (val: any) => {
 };
 
 const pageObjHis = ref({
-  pageSize: 10,
+  pageSize: 100,
   currentPage: 1,
 });
 

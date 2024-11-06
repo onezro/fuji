@@ -104,7 +104,7 @@
           <div class="p-2">
             <el-form class="inbound" size="default" ref="formRef" :model="form" :inline="true" label-width="auto">
               <el-row>
-                <el-col :span="8">
+                <el-col :span="7">
                   <el-form-item label="工单" class="mb-[5px] flex">
                     <selectTa ref="selectTable" :table="orderTable" :selectWidth="160" :columns="orderColumns"
                       :max-height="400" :tableWidth="700" :defaultSelectVal="defaultSelectVal" :keywords="{
@@ -130,23 +130,29 @@
               </el-row>
               <el-row>
                 <el-col :span="8">
-                  <el-form-item class="mb-[5px]" label="计划开始时间">
+                  <el-form-item class="mb-[5px]" label="计划开始">
                     <el-input v-model="form.PlannedStartDate" style="width: 160px" disabled />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">
-                  <el-form-item class="mb-[5px]" label="计划完成时间">
+                  <el-form-item class="mb-[5px]" label="计划完成">
                     <el-input v-model="form.PlannedCompletionDate" style="width: 160px" disabled />
                   </el-form-item>
                 </el-col>
-                <el-col :span="5">
+                <el-col :span="4">
                   <el-form-item class="mb-[5px]" label="工单数量">
                     <el-input v-model="form.Qty" style="width: 100px" disabled />
                   </el-form-item>
                 </el-col>
-                <el-col :span="5">
-                  <el-form-item class="mb-[5px]" label="过站数量">
-                    <span class="text-lg font-bold  text-[#00B400]">{{ form.passNum }}</span>
+                <el-col :span="3">
+                  <el-form-item class="mb-[5px]" label="过站总数">
+                    <span class="text-lg font-bold ">{{ form.AllNum }}</span>
+                    <!-- <el-input v-model="form.passNum" style="width: 100px" disabled /> -->
+                  </el-form-item>
+                </el-col>
+                <el-col :span="3">
+                  <el-form-item class="mb-[5px]" label="实时过站">
+                    <span class="text-lg font-bold  text-[#00B400]">{{ form.TodayNum }}</span>
                     <!-- <el-input v-model="form.passNum" style="width: 100px" disabled /> -->
                   </el-form-item>
                 </el-col>
@@ -160,55 +166,14 @@
             <table-tem :showIndex="true" :tableData="tableData1" :tableHeight="tableHeight" :columnData="columnData1"
               :pageObj="pageObj" @handleSizeChange="handleSizeChange"
               @handleCurrentChange="handleCurrentChange"></table-tem>
-            <!-- <el-tabs v-model="tabsValue" type="border-card" class="demo-tabs" @tab-click="tabClick">
-              <el-tab-pane label="历史过站记录" name="history">
-                <table-tem :showIndex="true" :tableData="tableData1" :tableHeight="tableHeight"
-                  :columnData="columnData1" :pageObj="pageObj" @handleSizeChange="handleSizeChange"
-                  @handleCurrentChange="handleCurrentChange"></table-tem>
-              </el-tab-pane>
-              <el-tab-pane label="物料上料明细" name="details">
-                <table-tem :showIndex="true" :tableData="detailsData" :tableHeight="tableHeight"
-                  :columnData="detailsColumn" :pageObj="detailsPageObj" @handleSizeChange="detailsSizeChange"
-                  @handleCurrentChange="detailsCurrentChange"></table-tem>
-              </el-tab-pane>
-            </el-tabs> -->
+          
           </div>
         </div>
       </div>
     </div>
-    <!-- <badInfoTem
-      :visible="editVisible"
-      :list="list"
-      :formHeader="formHeader1"
-      :form="editForm"
-      :badForm="badForm"
-      :tableData="BadtableData"
-      @cancel="editCancel"
-      @submit="editSubmit"
-      @deleteBad="deleteBad"
-      @addBadData="addBadData"
-      @openAddBad="openAddBad"
-    /> -->
+   
     <formTem ref="addOverRef" :width="'400px'" :visible="overAddVisible" :title="'波峰焊过序设置'" :form="overAddForm"
       :formHeader="overHeader" @formCancel="addOverCancel" @onSubmit="addOveronSubmit"></formTem>
-    <!-- <el-dialog
-      v-model="feedVisible"
-      title="物料上料"
-      width="90%"
-      align-center
-      draggable
-      class="saveAsDialog"
-      :append-to-body="true"
-      :close-on-click-modal="false"
-      :close-on-press-escape="false"
-    >
-      <feedTemp :form="feedForm" :form-header="FeedHeader" />
-      <template #footer>
-        <span class="dialog-footer">
-          <el-button @click="feedCancel">关闭</el-button>
-        </span>
-      </template>
-</el-dialog> -->
     <el-dialog v-model="detailVisible" title="上料明细" width="70%" align-center draggable :append-to-body="true"
       :close-on-click-modal="false" :close-on-press-escape="false" @close="detailVisible = false">
       <table-tem :showIndex="true" size="small" :tableData="detailsData" :tableHeight="400" :columnData="detailsColumn"
@@ -290,7 +255,8 @@ const form = reactive<InstanceType<typeof Formspan>>({
   Qty: "",
   PlannedStartDate: "",
   PlannedCompletionDate: "",
-  passNum:""
+  AllNum:"",
+  TodayNum:""
 });
 const editForm = ref({
   order: "1213434",
@@ -399,7 +365,7 @@ const columnData1 = reactive([
 const tableData1 = ref([]);
 const tableHeight = ref(0);
 const pageObj = ref({
-  pageSize: 10,
+  pageSize: 100,
   currentPage: 1,
 });
 const badForm = ref({
@@ -521,7 +487,7 @@ const checked = ref<string[]>([]);
 const leftBoxH = ref(0);
 const detailsData = ref([]);
 const detailsPageObj = ref({
-  pageSize: 10,
+  pageSize: 100,
   currentPage: 1,
 });
 
@@ -732,28 +698,27 @@ onBeforeUnmount(() => {
 
 const getOrderData = () => {
   isLoding.value = "is-loading";
-  OrderQuery({ lineName: opui.line, OrderTypeName: "DIP" }).then((res: any) => {
+  OrderQuery({ lineName: opui.line, OrderTypeName: "DIP",WorkStationName:opui.station }).then((res: any) => {
     let data = res.content;
-    if(data.length!==0){
-      orderTable.value.data[0] = data[0];
-    }
+  
  
     let timer = setTimeout(() => {
       isLoding.value = "";
       clearTimeout(timer);
     }, 2000);
-    if (data.length == 1) {
-      // console.log(2111);
-      let a = data[0].MfgOrderName;
-      defaultSelectVal.value[0] = a;
-    }
+    if (data !== null && data.length !== 0) {
+        orderTable.value.data[0] = data[0];
+        if (data.length == 1) {
+          let a = data[0].MfgOrderName;
+          defaultSelectVal.value[0] = a;
+        }
+      }
   });
 };
 //历史过站记录
 const getHisData = () => {
   QueryMoveHistory(hisForm.value).then((res: any) => {
     tableData1.value = res.content;
-    form.passNum= tableData1.value.length
   });
 };
 
@@ -830,6 +795,8 @@ const radioChange = (args: any) => {
     form.PlannedStartDate = args[0].PlannedStartDate;
     form.PlannedCompletionDate = args[0].PlannedCompletionDate;
     form.Qty = args[0].Qty;
+    form.AllNum = args[0].AllNum;
+    form.TodayNum = args[0].TodayNum;
     hisForm.value.MfgOrderName = args[0].MfgOrderName;
     // console.log(args[0].MfgOrderName);
     getFeedForm.value.MfgOrder = args[0].MfgOrderName;

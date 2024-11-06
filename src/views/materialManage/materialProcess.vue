@@ -63,11 +63,11 @@
           </div>
           <div class="w-full">
             <div class="mb-1">
-              <el-button type="primary" size="small" @click="openSpecIssue">修改工序</el-button>
+              <el-button type="primary" size="small" @click="openSpecIssue" :disabled="specWork.WorkflowName==''||selectData.length==0">修改工序</el-button>
             </div>
             <el-table :data="productData" size="small" :height="tableHeight1" stripe border fit :tooltip-effect="'dark'"
-              row-key="MaterialName" :selectable="selectable">
-              <el-table-column type="selection" width="50"></el-table-column>
+              row-key="MaterialName" @selection-change="handleSelectionChange">
+              <el-table-column type="selection" align="center" width="50"></el-table-column>
 
               <!-- <el-table-column type="index" align="center" fixed label="序号" width="50" /> -->
               <el-table-column prop="MaterialName" label="物料编码" fixed width="120" />
@@ -128,19 +128,19 @@
       </template>
     </el-dialog>
     <el-dialog v-model="specVisible" title="修改工序" draggable width="400px" :append-to-body="true"
-      :close-on-click-modal="false" :close-on-press-escape="false" align-center @click="specIssueCancel">
-      <el-form ref="speContFormRef" :model="speContForm" label-width="auto"> 
-          <el-form-item label="工序" prop="SpecName">
-            <el-select v-model="speContForm.SpecName" style="width: 150px" >
-              <el-option v-for="item in specWorkData" :key="item.SpecName" :label="item.SpecDesc" :value="item.SpecName" />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="消耗类型" prop="IssueControl">
-            <el-select v-model="speContForm.IssueControl" style="width: 150px">
-              <el-option v-for="item in issueList" :key="item.value" :label="item.label" :value="item.value" />
-            </el-select>
-          </el-form-item>
-          
+      :close-on-click-modal="false" :close-on-press-escape="false" align-center @close="specIssueCancel">
+      <el-form ref="speContFormRef" :model="speContForm" label-width="auto">
+        <el-form-item label="工序" prop="SpecName">
+          <el-select v-model="speContForm.SpecName" style="width: 240px">
+            <el-option v-for="item in specWorkData" :key="item.SpecName" :label="item.SpecDesc"
+              :value="item.SpecName" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="消耗类型" prop="IssueControl">
+          <el-select v-model="speContForm.IssueControl" style="width: 240px">
+            <el-option v-for="item in issueList" :key="item.value" :label="item.label" :value="item.value" />
+          </el-select>
+        </el-form-item>
       </el-form>
       <template #footer>
         <span class="dialog-footer">
@@ -160,6 +160,7 @@ import {
   UpdateProductWorkflow,
   findProductBOMMaterialList,
   findWorkflowSpec,
+  UpdateProductBOMMaterialList,
 } from "@/api/operate";
 import {
   ref,
@@ -170,11 +171,12 @@ import {
   reactive,
 } from "vue";
 import { ElNotification } from "element-plus";
+import Index from "@/layout/index.vue";
 
 interface SpecForm {
   ProductName: string;
   ProductDescription: string;
-  materialList: Array<any>
+  materialList: Array<any>;
 }
 const form = ref({
   MaterialCode: "",
@@ -253,30 +255,31 @@ const ProductName = ref("");
 const specWorkDecData = ref<any[]>([]);
 const singleTableRef = ref();
 const specVisible = ref(false);
-const speContFormRef=ref()
+const speContFormRef = ref();
 const specForm = ref<SpecForm>({
   ProductName: "",
   ProductDescription: "",
   materialList: [],
 });
-const speContForm=ref({
-  SpecName:"",
-  IssueControl:"6"
-})
-const issueList=ref([
+const speContForm = ref({
+  SpecName: "",
+  IssueControl: "6",
+});
+const issueList = ref([
   {
-    value:"2",
-    label:"批次"
+    value: "2",
+    label: "批次",
   },
   {
-    value:"1",
-    label:"单件"
+    value: "1",
+    label: "单件",
   },
   {
-    value:"6",
-    label:"仅显示"
-  }
-])
+    value: "6",
+    label: "仅显示",
+  },
+]);
+const selectData = ref([]);
 
 onBeforeMount(() => {
   getScreenHeight();
@@ -324,15 +327,13 @@ const getSpecWorkData = () => {
       };
     }
     specWorkData.value = res.content;
-    console.log(    specWorkData.value );
-    
   });
 };
 
 const cellClick = (val: any) => {
   specWorkForm.value = { ...val };
   ProductName.value = val.ProductName;
-  specForm.value.ProductName=val.ProductName
+  specForm.value.ProductName = val.ProductName;
   getSpecWorkData();
   getProductList();
 };
@@ -379,20 +380,45 @@ const getWorkFlowSpec = (val: any) => {
   });
 };
 
-const openSpecIssue=()=>{
-  specVisible.value=true
-}
+const openSpecIssue = () => {
+  specVisible.value = true;
+};
 
-const specIssueCancel=()=>{
-  speContForm.value.SpecName=""
-  speContForm.value.IssueControl="6"
-  specVisible.value=false
-}
+const specIssueCancel = () => {
+  speContForm.value.SpecName = "";
+  speContForm.value.IssueControl = "6";
+  specVisible.value = false;
+};
 
-const updateSpecIssue=()=>{
-console.log( speContForm.value);
-
-}
+const updateSpecIssue = () => {
+  let data = selectData.value.map((s: any) => {
+    return {
+      Index: s.RN,
+      ...speContForm.value,
+    };
+  });
+  specForm.value.materialList = data;
+  // console.log( specForm.value);
+  UpdateProductBOMMaterialList(specForm.value).then(
+    (res: any) => {
+      if (res.success) {
+        ElNotification({
+        title: "提示信息",
+        message: res.msg,
+        type: "success",
+      });
+        speContForm.value.SpecName = "";
+        speContForm.value.IssueControl = "6";
+        specForm.value.materialList=[]
+        specVisible.value = false;
+        getProductList();
+      }
+    }
+  );
+};
+const handleSelectionChange = (row: any) => {
+  selectData.value = row;
+};
 
 const selectable = (row: any, selectedRows: any) => {
   console.log(selectedRows);

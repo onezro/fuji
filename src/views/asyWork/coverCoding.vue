@@ -28,7 +28,7 @@
                 </el-tooltip>
               </el-form-item>
               <el-form-item v-for="f in formHeader" :key="f.value" :label="f.label">
-                <span class="font-bold text-lg leading-[30px]" :class="f.value == 'passNum' ? 'text-[#00B400]' : ''">
+                <span class="font-bold text-lg leading-[30px]" :class="f.value == 'TodayNum' ? 'text-[#00B400]' : ''">
                   {{ formText(f.value) }}</span>
               </el-form-item>
             </el-form>
@@ -163,6 +163,8 @@ const form = ref<InstanceType<typeof Formspan>>({
   Qty: "",
   PlannedStartDate: "",
   PlannedCompletionDate: "",
+     AllNum:"",
+  TodayNum:""
 });
 const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
   // {
@@ -207,6 +209,20 @@ const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
     type: "input",
     width: "",
   },
+  {
+    label: "过站总数",
+    value: "AllNum",
+    disabled: true,
+    type: "input",
+    width: "",
+  },
+  {
+    label: "实时过站",
+    value: "TodayNum",
+    disabled: true,
+    type: "input",
+    width: "",
+  },
 ]);
 const columnData1 = reactive([
   {
@@ -234,7 +250,7 @@ const columnData1 = reactive([
 const tableData1 = ref([]);
 const tableHeight = ref(0);
 const pageObj = ref({
-  pageSize: 10,
+  pageSize: 100,
   currentPage: 1,
 });
 
@@ -306,7 +322,7 @@ const getChange = () => {
     // stopsForm.value.result = "OK";
     //   hisForm.value.MfgOrderName = res.content[0].MfgOrderName;
     getFocus();
-    //   getHisData();
+      getHisData();
   });
   barCode.value = "";
 };
@@ -332,7 +348,9 @@ const radioChange = (args: any) => {
     form.value.PlannedStartDate = args[0].PlannedStartDate;
     form.value.PlannedCompletionDate = args[0].PlannedCompletionDate;
     form.value.Qty = args[0].Qty;
-    // hisForm.value.MfgOrderName = args[0].MfgOrderName;
+    form.value.AllNum = args[0].AllNum;
+    form.value.TodayNum = args[0].TodayNum;
+    hisForm.value.MfgOrderName = args[0].MfgOrderName;
     // console.log(args[0].MfgOrderName);
     // getFeedForm.value.MfgOrder = args[0].MfgOrderName;
 
@@ -340,7 +358,7 @@ const radioChange = (args: any) => {
     //   return;
     // } else {
     //   getToolForm.value.OrderNumber = args[0].MfgOrderName;
-    //   getHisData();
+      getHisData();
     //   getToolData();
     // }
   }
@@ -348,7 +366,7 @@ const radioChange = (args: any) => {
 const getOrderData = () => {
   isAuto.value = false;
   isLoding.value = "is-loading";
-  OrderQuery({ lineName: opui.line, OrderTypeName: "Assembly" }).then((res: any) => {
+  OrderQuery({ lineName: opui.line, OrderTypeName: "Assembly",WorkStationName:opui.station }).then((res: any) => {
     let data = res.content;
     let timer = setTimeout(() => {
       isLoding.value = "";

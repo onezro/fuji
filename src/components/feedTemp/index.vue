@@ -271,7 +271,7 @@ const columnData = reactive([
   },
 ]);
 const pageObj = ref({
-  pageSize: 10,
+  pageSize: 100,
   currentPage: 1,
 });
 const detailForm = ref({
@@ -401,7 +401,7 @@ const detailcolumnData = ref([
   },
 ]);
 const detailpageObj = ref({
-  pageSize: 10,
+  pageSize: 100,
   currentPage: 1,
 });
 //更新需求清单

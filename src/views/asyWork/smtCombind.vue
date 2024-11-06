@@ -26,7 +26,7 @@
                 </el-tooltip>
               </el-form-item>
               <el-form-item v-for="f in formHeader" :key="f.value" :label="f.label">
-                <span class="font-bold text-lg leading-[30px]" :class="f.value == 'passNum' ? 'text-[#00B400]' : ''">
+                <span class="font-bold text-lg leading-[30px]" :class="f.value == 'TodayNum' ? 'text-[#00B400]' : ''">
                   {{ formText(f.value) }}</span>
               </el-form-item>
             </el-form>
@@ -64,8 +64,8 @@
               <div>
                 <el-table :data="barData" size="small" border :row-class-name="tableRowClassName">
                   <el-table-column type="index" align="center" fixed label="序号" :width="'60'"></el-table-column>
-                  <el-table-column prop="MaterialName" label="物料编码" width="120" />
-                  <el-table-column prop="MaterialBarCode" label="物料" width="150">
+                  <el-table-column prop="MaterialName" label="产品编码" width="120" />
+                  <el-table-column prop="MaterialBarCode" label="物料编码" width="150">
                     <template #default="scope">
                       <el-input v-model="scope.row.MaterialBarCode" size="small" :ref="createInputRef(scope.$index)"
                         @keyup.enter.native="getChange1(scope.$index,scope.row)">
@@ -103,8 +103,10 @@ import { useUserStoreWithOut } from "@/stores/modules/user";
 import { checkStringType } from "@/utils/barcodeFormat";
 import type { Formspan, FormHeader, OrderData } from "@/typing";
 import { ElMessage, ElNotification, ElMessageBox } from "element-plus";
-import { OrderQuery } from "@/api/dipApi";
+
 import {
+  OrderQuery,
+  QueryMoveHistory,
   QueryKeyMaterial,
   JudgeKeyMaterial,
   ScreeSMTCompBindMoveStd,
@@ -214,19 +216,26 @@ const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
     type: "input",
     width: "",
   },
-]);
-const columnData1 = reactive([
   {
-    text: true,
-    prop: "ContainerName",
-    label: "物料批次条码",
+    label: "过站总数",
+    value: "AllNum",
+    disabled: true,
+    type: "input",
     width: "",
-    align: "1",
   },
   {
+    label: "实时过站",
+    value: "TodayNum",
+    disabled: true,
+    type: "input",
+    width: "",
+  }
+]);
+const columnData1 = reactive([
+{
     text: true,
-    prop: "BD_Tools",
-    label: "物料编码",
+    prop: "ContainerName",
+    label: "成品SN条码",
     width: "",
     align: "1",
   },
@@ -248,7 +257,7 @@ const columnData1 = reactive([
 const tableData1 = ref([]);
 const tableHeight = ref(0);
 const pageObj = ref({
-  pageSize: 10,
+  pageSize: 100,
   currentPage: 1,
 });
 
@@ -323,9 +332,9 @@ const formText = (data: string) => {
 
 //获取过站历史记录
 const getHisData = () => {
-  // QueryCleanCodeRecord(hisForm.value).then((res: any) => {
-  //   tableData1.value = res.content;
-  // });
+  QueryMoveHistory(hisForm.value).then((res: any) => {
+    tableData1.value = res.content;
+  });
 };
 
 //过站
@@ -349,6 +358,7 @@ const getChange = () => {
         }
         stopsForm.value.BarCode = "";
         barCode.value = "";
+        getHisData()
         getKeyMaterial();
       });
     // }
@@ -409,6 +419,8 @@ const radioChange = (args: any) => {
     form.value.PlannedStartDate = args[0].PlannedStartDate;
     form.value.PlannedCompletionDate = args[0].PlannedCompletionDate;
     form.value.Qty = args[0].Qty;
+    form.value.AllNum = args[0].AllNum;
+    form.value.TodayNum = args[0].TodayNum;
     stopsForm.value.OrderName = args[0].MfgOrderName;
     hisForm.value.MfgOrderName = args[0].MfgOrderName;
     isKeyForm.value.OrderName = args[0].MfgOrderName;
@@ -421,7 +433,7 @@ const radioChange = (args: any) => {
     // });
     // getFocus();
     getKeyMaterial();
-    // getHisData();
+    getHisData();
   }
 };
 const getKeyMaterial = () => {
@@ -461,7 +473,7 @@ const tableRowClassName = (val: any) => {
 };
 const getOrderData = () => {
   isLoding.value = "is-loading";
-  OrderQuery({ lineName: opui.line, OrderTypeName: "Assembly" }).then(
+  OrderQuery({ lineName: opui.line, OrderTypeName: "Assembly",WorkStationName:opui.station  }).then(
     (res: any) => {
       let data = res.content;
       let timer = setTimeout(() => {
