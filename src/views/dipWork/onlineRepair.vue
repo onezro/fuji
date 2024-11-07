@@ -63,7 +63,7 @@
                 </el-form-item>
               </el-col>
               <el-col :span="11">
-                <el-form-item label="工单" class="mb-[5px] flex" prop="MfgOrderName">
+                <el-form-item label="生产计划号" class="mb-[5px] flex" prop="MfgOrderName">
                   <el-input v-model="baseForm.MfgOrderName" style="width: 200px" disabled />
                 </el-form-item>
               </el-col>

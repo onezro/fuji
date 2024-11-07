@@ -20,7 +20,7 @@
               @change="getTableData" class="input-with-select">
             </el-input>
           </el-form-item>
-          <el-form-item label="工单号" class="mb-[5px]">
+          <el-form-item label="生产计划号" class="mb-[5px]">
             <el-input v-model="searchForm.orderName" clearable @clear="getTableData" @change="getTableData"
               style="width: 150px" class="input-with-select">
             </el-input>
@@ -40,7 +40,7 @@
               type="warning"
               :disabled="onlineData.length === 1 ? false : true"
               @click="orderOnline"
-              >工单上线</el-button
+              >生产计划号上线</el-button
             >
           </el-form-item>
           <el-form-item class="mb-[5px]">
@@ -70,7 +70,7 @@
         </el-form>
         <div class="mb-[5px]">
           <el-button type="warning" size="small" :disabled="onlineData.length === 1 ? false : true"
-            @click="openOrderOnline">工单上线</el-button>
+            @click="openOrderOnline">生产计划号上线</el-button>
           <el-button type="info" size="small" icon="Lock" :disabled="onlineData.length === 1 ? false : true"
             @click="orderLock">锁定</el-button>
           <el-button color="#409eff" size="small" style="color: #fff" icon="Unlock"
@@ -84,7 +84,7 @@
       </div>
     </el-card>
 
-    <el-dialog v-model="dialogVisible" width="80%" :title="'工单：' + orderName" align-center>
+    <el-dialog v-model="dialogVisible" width="80%" :title="'生产计划号：' + orderName" align-center>
       <div class="w-full">
         <el-tabs v-model="activeName" type="border-card" class="demo-tabs" @tab-change="tabChange">
           <el-tab-pane label="物料需求" name="物料清单明细" :stretch="true">
@@ -149,7 +149,7 @@
               </el-table-column>
               <el-table-column prop="WorkStationName" label="工位编码" :min-width="180" align="center">
               </el-table-column>
-              <!-- <el-table-column prop="OrderNumber" label="工单" :min-width="180" align="center">
+              <!-- <el-table-column prop="OrderNumber" label="生产计划号" :min-width="180" align="center">
                 </el-table-column> -->
               <el-table-column prop="ToolName" label="工治具编码" :min-width="180" align="center">
               </el-table-column>
@@ -169,10 +169,10 @@
         </div>
       </template>
     </el-dialog>
-    <el-dialog v-model="orderOnlineVisible" title="工单上线" width="400px" align-center :append-to-body="true"
+    <el-dialog v-model="orderOnlineVisible" title="生产计划号上线" width="400px" align-center :append-to-body="true"
       :close-on-click-modal="false" :close-on-press-escape="false" @close="closeOnline">
       <el-form ref="orderFormRef" :model="orderOnlineForm" label-width="auto">
-        <el-form-item label="工单号" prop="OrderNumber">
+        <el-form-item label="生产计划号" prop="OrderNumber">
           <el-input v-model="orderOnlineForm.OrderNumber" disabled />
         </el-form-item>
         <el-form-item label="产线" prop="LineNumber">
@@ -319,7 +319,7 @@ const dialogVisible = ref(false);
 const onlineData = ref([]);
 const orderOnlineVisible = ref(false);
 const orderOnlineForm = ref({
-  OrderNumber: "", //工单号
+  OrderNumber: "", //生产计划号
   Side: "", //AB面
   LineNumber: "", //线体
   LineNameDesc: "",
@@ -386,13 +386,13 @@ const columnData = reactive([
   {
     // text: true,
     // prop: "MfgOrderName",
-    // label: "工单",
+    // label: "生产计划号",
     // width: "",
     // min: true,
     // align: "center",
     fixed:true,
     isOperation: true,
-    label: "工单",
+    label: "生产计划号",
     width: "120",
     align: "center",
     operation: [
@@ -434,7 +434,7 @@ const columnData = reactive([
   {
     text: true,
     prop: "BD_ProductModel",
-    label: "机型",
+    label: "产品机型",
     width: "",
     min: true,
     align: "center",
@@ -567,7 +567,7 @@ const feedOrganData = (organizations: any) => {
 const tabChange = (name: any) => {
   if (orderChoice.value === "") {
     // ElMessage({
-    //   message: "请选择工单",
+    //   message: "请选择生产计划号",
     //   type: "warning",
     // });
     return;
@@ -620,7 +620,7 @@ const handleSelectionChange = (val: any) => {
   onlineData.value = cloneDeep(val);
   // console.log(onlineData.value);
 };
-//打开工单上线
+//打开生产计划号上线
 const openOrderOnline = () => {
   orderOnlineVisible.value = true;
   let data = cloneDeep(onlineData.value);
@@ -633,12 +633,12 @@ const openOrderOnline = () => {
     shelfList.value = res.content;
   });
 };
-//关闭工单上线
+//关闭生产计划号上线
 const closeOnline = () => {
   orderOnlineVisible.value = false;
   orderFormRef.value.resetFields();
 };
-//工单上线
+//生产计划号上线
 const orderOnline = () => {
   orderOnlineForm.value.shelf_ids =
     orderOnlineForm.value.shelf_ids_list.toString();

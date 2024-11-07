@@ -1,12 +1,12 @@
 <template>
   <div class="flex">
-    <div class="w-[350px] border-solid border-r-2 border-[#cbcbcb]">
+    <div class="w-[400px] border-solid border-r-2 border-[#cbcbcb]">
       <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
         <span class="ml-5">基本信息</span>
       </div>
       <div class="p-2">
         <el-form class="inbound" size="default" ref="formRef" :model="OrderForm" label-width="auto">
-          <el-form-item label="工单">
+          <el-form-item label="生产计划号">
             <div class="flex items-center">
               <selectTa ref="selectTable" :table="orderTable" :columns="orderColumns" :selectWidth="220"
                 :max-height="400" :tableWidth="700" :keywords="{ label: 'MfgOrderName', value: 'MfgOrderName' }"
@@ -26,7 +26,7 @@
         </el-form>
       </div>
     </div>
-    <div class="w-[calc(100%-350px)] pt-[5px]">
+    <div class="w-[calc(100%-400px)] pt-[5px]">
       <div>
         <div class="ml-2">
           <el-form ref="formRef" :inline="true" size="default" :model="form" label-width="auto">
@@ -34,8 +34,8 @@
               <el-date-picker :shortcuts="shortcuts" v-model="form.date" type="daterange" range-separator="-" start-placeholder="开始时间"
                 format="YYYY-MM-DD" :clearable="false" value-format="YYYY-MM-DD" end-placeholder="结束时间" />
             </el-form-item>
-            <el-form-item label="工单号" prop="workOrder" class="mb-2"><el-input v-model="form.OrderNum"
-                style="width: 180px" placeholder="请输入工单号" clearable /></el-form-item>
+            <el-form-item label="生产计划号" prop="workOrder" class="mb-2"><el-input v-model="form.OrderNum"
+                style="width: 180px" placeholder="请输入生产计划号" clearable /></el-form-item>
             <el-form-item label="条码" prop="barCode" class="mb-2"><el-input style="width: 180px" clearable
                 v-model="form.BarCode" placeholder="请输入条码" /></el-form-item>
           </el-form>
@@ -140,11 +140,11 @@ const lineOption = ref([
 ]);
 
 const orderColumns = ref([
-  { label: "工单号", width: "", prop: "MfgOrderName", fixed: true },
+  { label: "生产计划号", width: "", prop: "MfgOrderName", fixed: true },
   { label: "产品编码", width: "", prop: "ProductName", fixed: true },
   { label: "状态", width: "", prop: "OrderStatusDesc" },
   { label: "产品描述", width: "", prop: "ProductDesc" },
-  { label: "机型", width: "", prop: "BD_ProductModel" },
+  { label: "产品机型", width: "", prop: "BD_ProductModel" },
   { label: "软件版本", width: "", prop: "BD_SoftVersion" },
   { label: "计划开始", width: "", prop: "PlannedStartDate" },
   { label: "计划完成", width: "", prop: "PlannedCompletionDate" },
@@ -181,7 +181,7 @@ const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
     width: "",
   },
   {
-    label: "机型",
+    label: "产品机型",
     value: "BD_ProductModel",
     disabled: true,
     type: "input",
@@ -209,7 +209,7 @@ const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
     width: "",
   },
   {
-    label: "工单数量",
+    label: "生产计划数量",
     value: "Qty",
     disabled: true,
     type: "input",
@@ -287,7 +287,7 @@ const columnData = reactive([
   {
     text: true,
     prop: "MfgOrderName",
-    label: "工单号",
+    label: "生产计划号",
     width: "",
     min: true,
     align: "1",
@@ -320,7 +320,7 @@ const RawmaterialFeeding = () => {
   // console.log(OrderForm.MfgOrderName);
   if (OrderForm.MfgOrderName === "") {
     ElMessage({
-      message: `请选择工单`,
+      message: `请选择生产计划号`,
       type: "warning",
     });
     return;
@@ -373,12 +373,12 @@ const FeedHeader = reactive([
     prop: "eqInfo",
   },
   {
-    label: "工单号",
+    label: "生产计划号",
     prop: "MfgOrderName",
   },
 
   {
-    label: "机型",
+    label: "产品机型",
     prop: "type",
   },
   {
@@ -390,7 +390,7 @@ const FeedHeader = reactive([
     prop: "ProductDesc",
   },
   {
-    label: "工单数量",
+    label: "生产计划号数量",
     prop: "Qty",
   },
 ]);

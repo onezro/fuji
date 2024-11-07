@@ -1,13 +1,13 @@
 import request from "@/utils/dipRequest";
 
-//获取插件工单信息
+//获取插件生产计划号信息
 export function QueryWorkOrderInfo() {
     return request({
         url: "/api/plugin/QueryWorkOrderInfo",
         method: "post",
     });
 }
-// //工单查询
+// //生产计划号查询
 export function OrderQuery(data:any) {
     return request({
         url: "/api/workstation/OrderQuery",

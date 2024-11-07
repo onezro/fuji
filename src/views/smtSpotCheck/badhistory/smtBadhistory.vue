@@ -33,7 +33,7 @@
           <el-form ref="baseFormRef" :model="detailForm" label-width="auto" class="pt-[5px]">
             <el-row>
               <el-col :span="7">
-                <el-form-item label="工单" class="mb-[5px] flex" prop="MfgOrderName">
+                <el-form-item label="生产计划号" class="mb-[5px] flex" prop="MfgOrderName">
                   <el-input v-model="detailForm.MfgOrderName" style="width: 150px" disabled />
                 </el-form-item>
               </el-col>

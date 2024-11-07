@@ -12,7 +12,7 @@
                     </div>
                     <div class="p-[10px]">
                         <el-form class="inbound" ref="formRef" :model="form" label-width="auto">
-                            <el-form-item label="工单" class="mb-[5px] flex">
+                            <el-form-item label="生产计划号" class="mb-[5px] flex">
                                 <selectTa ref="selectTable" :table="orderTable" :selectWidth="220"
                                     :columns="orderColumns" :max-height="400" :tableWidth="700"
                                     :defaultSelectVal="defaultSelectVal" :keywords="{
@@ -163,7 +163,7 @@ const form = ref<InstanceType<typeof Formspan>>({
 });
 const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
     // {
-    //     label: "工单号",
+    //     label: "生产计划号",
     //     value: "MfgOrderName",
     //     disabled: true,
     //     type: "input",
@@ -198,7 +198,7 @@ const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
         width: "",
     },
     {
-        label: "工单数量",
+        label: "生产计划号数量",
         value: "Qty",
         disabled: true,
         type: "input",
@@ -287,7 +287,7 @@ const orderTable = ref<InstanceType<typeof OrderData>>({
     data: [],
 });
 const orderColumns = ref([
-    { label: "工单号", width: "", prop: "MfgOrderName" },
+    { label: "生产计划号", width: "", prop: "MfgOrderName" },
     { label: "产品编码", width: "", prop: "ProductName" },
     { label: "产线", width: "", prop: "MfgLineDesc" },
     { label: "状态", width: "", prop: "OrderStatusDesc" },
@@ -344,7 +344,7 @@ const getChange = () => {
     let barCodeData = barCode.value;
     stopsForm.value.Container = barCodeData;
     if (stopsForm.value.OrderName == "") {
-        msgTitle.value = "请先选择工单";
+        msgTitle.value = "请先选择生产计划号";
         msgType.value = false;
     } else {
         CleanCodeSave(stopsForm.value).then((res: any) => {

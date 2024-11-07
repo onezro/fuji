@@ -25,7 +25,7 @@
                 claerable
             ></el-input>
           </el-form-item>
-          <el-form-item label="工单号" class="mb-2">
+          <el-form-item label="生产计划号" class="mb-2">
             <el-input
               v-model="searchForm.OrderNumber"
               style="width: 10vw"
@@ -75,15 +75,15 @@
         <el-table-column
           prop="OrderNumber"
           align="center"
-          label="工单号"
-          :min-width="flexColumnWidth('工单号', 'OrderNumber')"
+          label="生产计划号"
+          :min-width="flexColumnWidth('生产计划号', 'OrderNumber')"
         >
         </el-table-column>
         <el-table-column
           prop="OrderQuantity"
           align="center"
-          label="工单数量"
-          :min-width="flexColumnWidth('工单数量', 'OrderQuantity')"
+          label="生产计划号数量"
+          :min-width="flexColumnWidth('生产计划号数量', 'OrderQuantity')"
         >
         </el-table-column>
         <el-table-column

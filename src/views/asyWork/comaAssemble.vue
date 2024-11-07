@@ -62,7 +62,7 @@
           <div class="text-white ml-4">基本信息</div>
         </div>
         <el-form :inline="true" label-width="80px">
-          <el-form-item label="工单号" class="mb-2">
+          <el-form-item label="生产计划号" class="mb-2">
             <el-input v-model.trim="barCode" ref="inputRef" :autofocus="inputFocus" style="width: 180px"
               @keyup.enter.native="getChange" />
           </el-form-item>
@@ -161,7 +161,7 @@ const form = ref<InstanceType<typeof Formspan>>({
 });
 const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
   {
-    label: "工单号",
+    label: "生产计划号",
     value: "MfgOrderName",
     disabled: true,
     type: "input",
@@ -189,7 +189,7 @@ const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
     width: 300,
   },
   {
-    label: "工单数量",
+    label: "生产计划号数量",
     value: "Qty",
     disabled: true,
     type: "input",
@@ -202,20 +202,20 @@ const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
     type: "input",
     width: "",
   },
-  {
-    label: "过站总数",
-    value: "AllNum",
-    disabled: true,
-    type: "input",
-    width: "",
-  },
-  {
-    label: "实时过站",
-    value: "TodayNum",
-    disabled: true,
-    type: "input",
-    width: "",
-  },
+   // {
+  //   label: "过站总数",
+  //   value: "AllNum",
+  //   disabled: true,
+  //   type: "input",
+  //   width: "",
+  // },
+  // {
+  //   label: "实时过站",
+  //   value: "TodayNum",
+  //   disabled: true,
+  //   type: "input",
+  //   width: "",
+  // },
 ]);
 const columnData1 = reactive([
   {

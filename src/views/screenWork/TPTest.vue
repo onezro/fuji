@@ -154,7 +154,7 @@
                 </el-form-item>
               </el-col>
               <el-col :span="6">
-                <el-form-item label="工单" class="mb-[5px] flex">
+                <el-form-item label="生产计划号" class="mb-[5px] flex">
                   <el-input
                     v-model="badheadForm.MfgOrderName"
                     style="width: 160px"
@@ -163,7 +163,7 @@
                 </el-form-item>
               </el-col>
               <!-- <el-col :span="6">
-                <el-form-item class="mb-[5px]" label="机型">
+                <el-form-item class="mb-[5px]" label="产品机型">
                   <el-input
                     v-model="badheadForm.ProductName"
                     style="width: 160px"
@@ -323,7 +323,7 @@ const form = ref<InstanceType<typeof Formspan>>({
 });
 const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
   {
-    label: "工单号",
+    label: "生产计划号",
     value: "MfgOrderName",
     disabled: true,
     type: "input",
@@ -358,7 +358,7 @@ const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
     width: "",
   },
   {
-    label: "工单数量",
+    label: "生产计划号数量",
     value: "Qty",
     disabled: true,
     type: "input",

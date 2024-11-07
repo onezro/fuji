@@ -12,7 +12,7 @@
           :model="OrderForm"
           label-width="auto"
         >
-          <el-form-item label="工单">
+          <el-form-item label="生产计划号">
             <div class="flex items-center">
               <selectTa
                 ref="selectTable"
@@ -85,11 +85,11 @@
                 />
               </el-select>
             </el-form-item> -->
-            <el-form-item label="工单号" prop="workOrder" class="mb-2"
+            <el-form-item label="生产计划号" prop="workOrder" class="mb-2"
               ><el-input
                 v-model="form.OrderNum"
                 style="width: 180px"
-                placeholder="请输入工单号"
+                placeholder="请输入生产计划号"
                 clearable
             /></el-form-item>
             <el-form-item label="条码" prop="barCode" class="mb-2"
@@ -232,11 +232,11 @@ const lineOption = ref([
 ]);
 
 const orderColumns = ref([
-  { label: "工单号", width: "", prop: "MfgOrderName", fixed: true },
+  { label: "生产计划号", width: "", prop: "MfgOrderName", fixed: true },
   { label: "产品编码", width: "", prop: "ProductName", fixed: true },
   { label: "状态", width: "", prop: "OrderStatusDesc" },
   { label: "产品描述", width: "", prop: "ProductDesc" },
-  { label: "机型", width: "", prop: "BD_ProductModel" },
+  { label: "产品机型", width: "", prop: "BD_ProductModel" },
   { label: "软件版本", width: "", prop: "BD_SoftVersion" },
   { label: "计划开始", width: "", prop: "PlannedStartDate" },
   { label: "计划完成", width: "", prop: "PlannedCompletionDate" },
@@ -273,7 +273,7 @@ const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
     width: "",
   },
   {
-    label: "机型",
+    label: "产品机型",
     value: "BD_ProductModel",
     disabled: true,
     type: "input",
@@ -301,7 +301,7 @@ const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
     width: "",
   },
   {
-    label: "工单数量",
+    label: "生产计划号数量",
     value: "Qty",
     disabled: true,
     type: "input",
@@ -360,7 +360,7 @@ const columnData = reactive([
   {
     text: true,
     prop: "MfgOrderName",
-    label: "工单号",
+    label: "生产计划号",
     width: "",
     min: true,
     align: "1",
@@ -379,7 +379,7 @@ const burnPrint = () => {
   // if (!hasDuplicateValue(BurnTableData.value,'OrderNum')) {
   //   ElMessage({
   //     showClose: true,
-  //     message: '不可选重复工单打印',
+  //     message: '不可选重复生产计划号打印',
   //     type: "warning",
   //   });
   //   return;
@@ -401,7 +401,7 @@ const RawmaterialFeeding = () => {
   // console.log(OrderForm.MfgOrderName);
   if (OrderForm.MfgOrderName === "") {
     ElMessage({
-      message: `请选择工单`,
+      message: `请选择生产计划号`,
       type: "warning",
     });
     return;
@@ -455,12 +455,12 @@ const FeedHeader = reactive([
     prop: "eqInfo",
   },
   {
-    label: "工单号",
+    label: "生产计划号",
     prop: "MfgOrderName",
   },
 
   {
-    label: "机型",
+    label: "产品机型",
     prop: "type",
   },
   {
@@ -472,7 +472,7 @@ const FeedHeader = reactive([
     prop: "ProductDesc",
   },
   {
-    label: "工单数量",
+    label: "生产计划号数量",
     prop: "Qty",
   },
 ]);

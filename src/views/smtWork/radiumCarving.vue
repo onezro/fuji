@@ -3,13 +3,13 @@
     <div class="h-[40px] min-h-[40px] pl-2 pr-2 flex justify-between items-center">
       <span class="text-[1.2rem]">{{ opui.stationDec }}</span>
       <div>
-        <el-button type="primary" @click="dialogVisible = true, getOrderList()">工单开工</el-button>
+        <el-button type="primary" @click="dialogVisible = true, getOrderList()">生产计划号开工</el-button>
         <!-- <el-button type="warning" @click="openFeed">物料上料</el-button> -->
-        <!-- <el-button type="primary">条码转工单</el-button> -->
+        <!-- <el-button type="primary">条码转生产计划号</el-button> -->
       </div>
     </div>
     <div class="w-full flex-1 flex">
-      <div class="setwidth w-[320px]">
+      <div class="setwidth w-[400px]">
         <div class="w-full h-full box">
           <div class="h-[35px] flex items-center text-xl text-[#fff] bg-[#006487]">
             <span class="ml-5">基本信息</span>
@@ -24,7 +24,7 @@
           </div>
         </div>
       </div>
-      <div class="w-[calc(100%-320px)]">
+      <div class="w-[calc(100%-400px)]">
         <div class="w-full h-full ">
           <div>
             <div class="h-[35px] flex items-center text-xl text-[#fff] bg-[#006487]">
@@ -68,10 +68,10 @@
         </div>
       </div>
     </div>
-    <el-dialog v-model="dialogVisible" title="工单开工" width="90%" align-center>
+    <el-dialog v-model="dialogVisible" title="生产计划号开工" width="90%" align-center>
       <template #header>
         <div class="custom-dialog-title flex items-center justify-between">
-          <div>工单列表</div>
+          <div>生产计划号列表</div>
           <!-- 在标题右侧插入一个按钮 -->
           <el-input v-model="workOrderInput" style="width: 400px" placeholder="请输入">
             <template #append>
@@ -94,7 +94,7 @@
       <el-table ref="taskTableRef" class="test"  :header-cell-class-name="cellClass" stripe border :data="workOrderList1"
         style="width: 100%" :height="'50vh'" @select="selectClick" :tooltip-effect="'dark'">
         <el-table-column type="selection" width="55" />
-        <el-table-column prop="MfgOrderName" label="工单号" width="100" :min-width="100" ></el-table-column>
+        <el-table-column prop="MfgOrderName" label="生产计划号" width="100" :min-width="100" ></el-table-column>
         <el-table-column prop="ProductName" label="产品编码" width="150" :min-width="150" ></el-table-column>
         <el-table-column prop="ProductDesc" label="产品描述" :show-overflow-tooltip="true"  :min-width="flexColumnWidth('产品描述', 'ProductDesc')" ></el-table-column>
         <el-table-column prop="MfgLineDesc" label="产线" width="150"  :min-width="150"  ></el-table-column>
@@ -212,7 +212,7 @@ const form = reactive<Form>({
 });
 const formHeader = reactive<FormHeader[]>([
   {
-    lable: "工单号",
+    lable: "生产计划号",
     value: "MfgOrderName",
   },
   {
@@ -244,7 +244,7 @@ const formHeader = reactive<FormHeader[]>([
     value: "Side",
   },
   {
-    lable: "工单数量",
+    lable: "生产计划号数量",
     value: "Qty",
   },
 ]);
@@ -332,12 +332,12 @@ const FeedHeader = reactive([
     prop: 'eqInfo'
   },
   {
-    label: '工单号',
+    label: '生产计划号',
     prop: 'MfgOrderName'
   },
 
   {
-    label: '机型',
+    label: '产品机型',
     prop: 'type'
   },
   {
@@ -349,7 +349,7 @@ const FeedHeader = reactive([
     prop: 'ProductDesc'
   },
   {
-    label: '工单数量',
+    label: '生产计划号数量',
     prop: 'Qty'
   },
 
@@ -400,7 +400,7 @@ onBeforeUnmount(() => {
 const openFeed = () => {
   if (form.MfgOrderName === "") {
     ElMessage({
-      message: "请选择工单",
+      message: "请选择生产计划号",
       type: "warning",
     });
     barCode.value = "";
@@ -456,7 +456,7 @@ const getOrderList = () => {
 const choiceOrder = () => {
   if (form.MfgOrderName === "") {
     ElMessage({
-      message: "请选择工单",
+      message: "请选择生产计划号",
       type: "warning",
     });
     barCode.value = "";
@@ -508,7 +508,7 @@ const selectClick = (selection: any, row: any) => {
 const sureClick = () => {
   if (!choiceRow.value || !choiceRow.value.MfgOrderName) {
     ElMessage({
-      message: "请选择工单",
+      message: "请选择生产计划号",
       type: "warning",
     });
     return;
@@ -607,7 +607,7 @@ console.log(getMaxLength(arr) + 25 + "px");
 }
 
 .setwidth {
-  flex: 0 0 320px;
+  flex: 0 0 400px;
 }
 
 .box {

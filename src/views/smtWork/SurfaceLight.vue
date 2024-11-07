@@ -98,7 +98,7 @@
             <div
               class="h-[30px] flex items-center text-base text-[#fff] bg-[#006487]"
             >
-              <span class="ml-5"> 生产工单信息</span>
+              <span class="ml-5"> 生产生产计划号信息</span>
             </div>
             <div class="h-[130px] pt-3 pr-5 pl-5">
               <el-form
@@ -107,7 +107,7 @@
                 :inline="true"
                 label-width="auto"
               >
-                <el-form-item label="工单号" class="mb-2">
+                <el-form-item label="生产计划号" class="mb-2">
                   <el-input
                     v-model="operateForm.MfgOrderName"
                     style="width: 200px"
@@ -121,14 +121,14 @@
                     disabled
                   />
                 </el-form-item>
-                <el-form-item label="工单数量" class="mb-2">
+                <el-form-item label="生产计划号数量" class="mb-2">
                   <el-input
                     v-model="operateForm.Qty"
                     style="width: 200px"
                     disabled
                   />
                 </el-form-item>
-                <el-form-item label="工单状态" class="mb-2">
+                <el-form-item label="生产计划号状态" class="mb-2">
                   <el-input
                     v-model="operateForm.OrderStatusDesc"
                     style="width: 180px"

@@ -108,7 +108,7 @@
           </el-col>
           <el-col :span="6">
             <el-form-item
-              label="工单号"
+              label="生产计划号"
               label-width="100px"
               prop="WorkOrderNumber"
             >
@@ -415,7 +415,7 @@ const columnData = reactive([
   {
     text: true,
     prop: "WorkOrderNumber",
-    label: "工单号",
+    label: "生产计划号",
     min: true,
     align: "1",
   },

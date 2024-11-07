@@ -185,7 +185,7 @@ export function findProductBOM(data: any) {
         }
     })
 }
-//查询工单状态
+//查询生产计划号状态
 export function findOrderStatus() {
     return request({
         url: "/api/order/findOrderStatus",
@@ -193,7 +193,7 @@ export function findOrderStatus() {
     })
 }
 
-//查询工单信息
+//查询生产计划号信息
 export function findOrder(data:any) {
     return request({
         url: "/api/order/OrderQuery",
@@ -201,7 +201,7 @@ export function findOrder(data:any) {
         data
     })
 }
-//修改工单状态
+//修改生产计划号状态
 export function UpdateOrderStatus(data:any) {
     return request({
         url: "/api/order/UpdateOrderStatus",
@@ -210,7 +210,7 @@ export function UpdateOrderStatus(data:any) {
     })
 }
 
-//查询工单明细
+//查询生产计划号明细
 export function QueryOrderMaterialRequired(data:any) {
     return request({
         url: "/api/order/QueryOrderMaterialRequired",
@@ -219,7 +219,7 @@ export function QueryOrderMaterialRequired(data:any) {
     })
 }
 
-//查询工单明细
+//查询生产计划号明细
 export function QueryOrderToolsData(data:any) {
     return request({
         url: "/api/order/QueryOrderToolsData",
@@ -263,7 +263,7 @@ export function GetComboBoxList(data: any) {
     });
 }
 
-//查询工单任务详情
+//查询生产计划号任务详情
 export function findTaskToolsDetail(data: any) {
     return request({
         url: "/api/Tools/findTaskToolsDetail",
@@ -317,7 +317,7 @@ export function QueryOrderLine(data: any) {
         }
     });
 }
-//工单上线
+//生产计划号上线
 export function OrderOnline(data: any) {
     return request({
         url: "/api/order/OrderOnline",
@@ -372,7 +372,7 @@ export function QuerySpec(data: any) {
     });
 }
 
-//查询物料退料可申请工单
+//查询物料退料可申请生产计划号
 export function QueryMaterialReturnApply(data: any) {
     return request({
         url: "/api/order/QueryMaterialReturnApply",
@@ -401,7 +401,7 @@ export function QueryMaterialReturnDetail(data: any) {
     });
 }
 
-//工单良品退料
+//生产计划号良品退料
 export function OrderGoodMaterials(data: any) {
     return request({
         url: "/api/order/OrderGoodMaterials",
@@ -410,7 +410,7 @@ export function OrderGoodMaterials(data: any) {
     });
 }
 
-//查询物料退料可申请工单
+//查询物料退料可申请生产计划号
 export function QueryMaterialReturnApplyDetail(data: any) {
     return request({
         url: "/api/order/QueryMaterialReturnApplyDetail",

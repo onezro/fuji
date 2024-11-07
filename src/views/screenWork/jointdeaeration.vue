@@ -21,7 +21,7 @@
               :model="form"
               label-width="auto"
             >
-              <el-form-item size="large" label="工单">
+              <el-form-item size="large" label="生产计划号">
                 <selectTa
                   ref="selectTable"
                   :table="orderTable"
@@ -134,14 +134,14 @@ const form = reactive<InstanceType<typeof Formspan>>({
 });
 const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
   // {
-  //   label: "工单号",
+  //   label: "生产计划号",
   //   value: "order",
   //   disabled: true,
   //   type: "input",
   //   width: "",
   // },
   {
-    label: "机型",
+    label: "产品机型",
     value: "models",
     disabled: true,
     type: "input",
@@ -162,7 +162,7 @@ const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
     width: 300,
   },
   {
-    label: "工单数量",
+    label: "生产计划号数量",
     value: "orderNum",
     disabled: true,
     type: "input",
@@ -178,14 +178,14 @@ const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
 ]);
 const formHeader1 = reactive<InstanceType<typeof FormHeader>[]>([
   {
-    label: "工单号",
+    label: "生产计划号",
     value: "order",
     disabled: true,
     type: "input",
     width: "",
   },
   {
-    label: "机型",
+    label: "产品机型",
     value: "models",
     disabled: true,
     type: "input",
@@ -206,7 +206,7 @@ const formHeader1 = reactive<InstanceType<typeof FormHeader>[]>([
     width: 300,
   },
   {
-    label: "工单数量",
+    label: "生产计划号数量",
     value: "orderNum",
     disabled: true,
     type: "input",
@@ -276,11 +276,11 @@ const orderTable = ref<OrderData>({
 });
 
 const orderColumns = ref([
-  { label: "工单", width: "", prop: "order" },
-  { label: "机型", width: "", prop: "models" },
+  { label: "生产计划号", width: "", prop: "order" },
+  { label: "产品机型", width: "", prop: "models" },
   { label: "产品编码", width: "", prop: "productCode" },
   { label: "产品描述", width: "", prop: "productDes" },
-  { label: "工单描述", width: "", prop: "orderNum" },
+  { label: "生产计划号描述", width: "", prop: "orderNum" },
 ]);
 
 const radioChange = (args: any) => {
@@ -387,7 +387,7 @@ const keyUp = () => {
   // }
   if (barCode.value !== "1213434") {
     inputRef.value.select();
-    msgTitle.value = "未搜索到此工单";
+    msgTitle.value = "未搜索到此生产计划号";
     return;
   } else {
     msgTitle.value = "成功";

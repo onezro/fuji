@@ -167,7 +167,7 @@
   });
   const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
     {
-      label: "工单号",
+      label: "生产计划号",
       value: "MfgOrderName",
       disabled: true,
       type: "input",
@@ -195,7 +195,7 @@
       width: 300,
     },
     {
-      label: "工单数量",
+      label: "生产计划号数量",
       value: "Qty",
       disabled: true,
       type: "input",

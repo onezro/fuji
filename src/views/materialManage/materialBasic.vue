@@ -69,7 +69,7 @@
       <el-tabs v-model="activeName" type="border-card" class="demo-tabs">
         <el-tab-pane label="物料基本属性" name="base">
           <el-form ref="editFormRef" :model="editForm" label-width="auto" class="h-[200px]">
-            <el-form-item label="机型" prop="BD_ProductModel" class="flex items-center">
+            <el-form-item label="产品机型" prop="BD_ProductModel" class="flex items-center">
               <el-input v-model="editForm.BD_ProductModel" style="width: 250px" />
               <el-checkbox v-model="editForm.BD_IsICCID" label="ICCID物料" class="ml-3" @change="editForm.BD_ICCIDType = ''" />
 
@@ -218,7 +218,7 @@ const columnData = reactive([
   {
     text: true,
     prop: "BD_ProductModel",
-    label: "机型名称",
+    label: "产品机型",
     width: "150",
     // min: true,
     align: "1",

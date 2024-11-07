@@ -9,7 +9,7 @@
           :tree-props="{ children: 'childMenu' }">
 
           <el-table-column prop="title" label="菜单名称"> </el-table-column>
-          <el-table-column prop="icon" label="图标">
+          <el-table-column prop="icon" label="图标" align="center" width="60">
             <template #default="scope">
               <el-icon :size="20" v-if="scope.row.icon">
                 <component :is="scope.row.icon" />
@@ -17,8 +17,15 @@
             </template>
           </el-table-column>
           <el-table-column prop="path" label="PATH路径"> </el-table-column>
+          <el-table-column prop="MenuName" label="组件名称"> </el-table-column>
           <el-table-column prop="component" label="组件"> </el-table-column>
-          <el-table-column prop="sortId" label="排序" width="65" align="center"> </el-table-column>
+          
+          <el-table-column prop="sortId" label="排序" width="60" align="center">
+            <!-- <template #default="scope">
+              <el-input-number :min="0" size="small" style="width: 100px;" controls-position="right"
+            v-model="scope.row.sortId" @change="changeSortd" />
+              </template> -->
+          </el-table-column>
           <el-table-column fixed="right" label="操作" width="180" align="center">
             <template #default="scope">
               <el-tooltip content="复制" placement="top" v-if="
@@ -426,6 +433,29 @@ const editSubmit = () => {
     getData();
   });
 };
+const changeSortd=(row:any)=>{
+  console.log(row);
+  
+  // editForm.MenuFID = row.MenuFID;
+  // editForm.MenuLevel = row.MenuLevel;
+  // editForm.MenuName = row.MenuName;
+  // editForm.component = row.component;
+  // editForm.icon = row.icon;
+  // editForm.path = row.path;
+  // editForm.title = row.title;
+  // editForm.redirect = row.redirect;
+  // editForm.id = row.id;
+  // editForm.sortId = row.sortId;
+  // editForm.MenuType = row.MenuType
+  // if (row.MenuFID != null) {
+  //   findNameById(row.MenuFID, tableData.value);
+  // }
+  // updateMeun(editForm).then((res) => {
+  //   // console.log(res);
+  //   editVisible.value = false;
+  //   getData();
+  // });
+}
 const findNameById = (id: any, data: any) => {
   data.forEach((x: any, i: any) => {
     if (data[i].id == id) {

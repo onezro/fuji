@@ -9,7 +9,7 @@
           size="small"
           label-width="auto"
         >
-          <el-form-item label="工单" class="mb-2">
+          <el-form-item label="生产计划号" class="mb-2">
             <el-input v-model="historyForm.orderNmae" placeholder=""></el-input>
           </el-form-item>
           <el-form-item label="日期" class="mb-2">
@@ -79,7 +79,7 @@
           >
             <!-- <div>
               </div> -->
-            <el-form-item label="工单号">
+            <el-form-item label="生产计划号">
               <el-select
                 v-model="form.MfgOrderName"
                 placeholder=""
@@ -94,7 +94,7 @@
                 />
               </el-select>
             </el-form-item>
-            <el-form-item label="机型">
+            <el-form-item label="产品机型">
               <el-input
                 v-model="form.BD_ProductModel"
                 class="input-with-select"
@@ -410,7 +410,7 @@ onMounted(() => {
 onBeforeUnmount(() => {
   window.addEventListener("resize", getScreenHeight);
 });
-//查询工单信息
+//查询生产计划号信息
 const findOrderData = () => {
   findOrder(findOrderForm).then((res: any) => {
     if (!res || res.content === null || res.content.length === 0) {
@@ -420,7 +420,7 @@ const findOrderData = () => {
     orderList.value = res.content;
   });
 };
-//选中工单
+//选中生产计划号
 const orderChange = (data: any) => {
   orderList.value.forEach((item: any) => {
     if (item.MfgOrderName === data) {
@@ -453,7 +453,7 @@ const getHistory = () => {
     historyTable.value = res.content;
   });
 };
-//根据工单获取物料信息
+//根据生产计划号获取物料信息
 const getFeedTableData = (order: any) => {
   QueryOrderMaterialRequired({
     MfgOrder: order,
@@ -680,7 +680,7 @@ const columnData = reactive([
   {
     text: true,
     prop: "MfgOrderName",
-    label: "工单号",
+    label: "生产计划号",
     width: "",
     min: true,
     align: "center",
@@ -688,7 +688,7 @@ const columnData = reactive([
   {
     text: true,
     prop: "BD_ProductModel",
-    label: "机型",
+    label: "产品机型",
     width: "",
     min: true,
     align: "center",
@@ -712,7 +712,7 @@ const columnData = reactive([
   {
     text: true,
     prop: "Qty",
-    label: "工单数量",
+    label: "生产计划号数量",
     width: "",
     min: true,
     align: "center",

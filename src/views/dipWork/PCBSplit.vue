@@ -53,10 +53,17 @@
                         </div>
                     </div>
                     <div class="flex flex-col flex-1 tabs-css">
-                        <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
+                        <div class="h-[35px] flex items-center justify-between text-lg text-[#fff] bg-[#006487]">
                             <span class="ml-5">历史过站记录</span>
+                            <div class="mr-5">
+                                <el-checkbox-group v-model="checkedHis" class="laser-table-filter">
+                   <el-checkbox v-for="c in checkedHisList" :label="`${c.label}(${changeDataLength(c.value)})`" :value="c.value"
+                    @change="changeHis(c.value)">
+                  </el-checkbox>
+                </el-checkbox-group>
+                            </div>
                         </div>
-                        <table-tem :showIndex="true" :tableData="tableData1" :tableHeight="tableHeight"
+                        <table-tem :showIndex="true" :tableData="changeData" :tableHeight="tableHeight"
                             :columnData="hisColumn" :pageObj="pageObj" @handleSizeChange="handleSizeChange"
                             @handleCurrentChange="handleCurrentChange"></table-tem>
 
@@ -107,6 +114,7 @@ import {
     nextTick,
     onBeforeMount,
     onBeforeUnmount,
+    computed,
 } from "vue";
 import { ElMessage, ElMessageBox, ElNotification } from "element-plus";
 import { PCBASplitMoveStd, OrderQuery, QueryMoveHistory } from "@/api/dipApi";
@@ -159,12 +167,13 @@ const form = ref<InstanceType<typeof Formspan>>({
     Qty: "",
     PlannedStartDate: "",
     PlannedCompletionDate: "",
-    passNum: "",
+    AllNum: "",
+    TodayNum: "",
 });
 
 const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
     {
-        label: "工单号",
+        label: "生产计划号",
         value: "MfgOrderName",
         disabled: true,
         type: "input",
@@ -199,7 +208,7 @@ const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
         width: "",
     },
     {
-        label: "工单数量",
+        label: "生产计划号数量",
         value: "Qty",
         disabled: true,
         type: "input",
@@ -251,7 +260,7 @@ const hisColumn = reactive([
         align: "1",
     },
 ]);
-const tableData1 = ref([]);
+const tableData = ref([]);
 const tableHeight = ref(0);
 const pageObj = ref({
     pageSize: 100,
@@ -262,7 +271,7 @@ const orderTable = ref<InstanceType<typeof OrderData>>({
     data: [],
 });
 const orderColumns = ref([
-    { label: "工单号", width: "", prop: "MfgOrderName" },
+    { label: "生产计划号", width: "", prop: "MfgOrderName" },
     { label: "产品编码", width: "", prop: "ProductName" },
     { label: "产线", width: "", prop: "MfgLineDesc" },
     { label: "状态", width: "", prop: "OrderStatusDesc" },
@@ -315,6 +324,19 @@ const toolList = ref<ToolList[]>([]);
 const isLoding = ref("");
 const defaultSelectVal = ref<string[]>([]);
 const inputFocus = ref(true);
+const checkedHis = ref(["today"]);
+const checkedHisList = ref([
+    {
+        value: "today",
+        label: "今天",
+    },
+    {
+        value: "all",
+        label: "所有",
+    },
+]);
+
+
 onBeforeMount(() => {
     getScreenHeight();
 });
@@ -339,8 +361,42 @@ const getFocus = () => {
 const getHisData = () => {
     QueryMoveHistory(hisForm.value).then((res: any) => {
         tableData1.value = res.content;
-        form.value.passNum = tableData1.value.length;
+
     });
+};
+const changeHis = (val: any) => {
+    if (checkedHis.value.length == 0) {
+        checkedHis.value = [];
+    } else {
+        checkedHis.value = [];
+        checkedHis.value[0] = val;
+    }
+};
+const changeData = computed(() => {
+  if (checkedHis.value[0] == "today") {
+    return geTodayData()
+  } else {
+    return tableData.value;
+  }
+});
+const changeDataLength =(val: any) => {
+  if (val == "today") {
+    let dataLength=geTodayData()
+    return dataLength.length
+  } else {
+     return tableData.value.length
+  }
+}
+const geTodayData = () => {
+  const today = new Date();
+  const todayString = today.toISOString().split("T")[0];
+  function getDateFromDateTimeString(dateTimeString: any) {
+    return dateTimeString.split(" ")[0];
+  }
+  const todayDataArray = tableData.value.filter((item: any) => {
+    return getDateFromDateTimeString(item.TxnDate) === todayString;
+  });
+  return todayDataArray
 };
 
 const getOrderData = () => {
@@ -445,7 +501,7 @@ const openDialog = () => {
     // ) {
     //     ElNotification({
     //         title:'提示',
-    //         message:"缺少工单信息",
+    //         message:"缺少生产计划号信息",
     //         type:'error'
     //     })
     // }else{
@@ -526,5 +582,18 @@ const getScreenHeight = () => {
 
 .el-table th.el-table__cell .el-checkbox {
     display: none;
+}
+</style>
+<style lang="scss" scoped>
+::v-deep .laser-table-filter .el-checkbox__inner {
+    /* 你的样式 */
+    background-color: #409eff !important;
+    /* 使用 !important，但请谨慎 */
+    color: white !important;
+}
+
+::v-deep .laser-table-filter .el-checkbox__label {
+    /* 你的样式 */
+    color: white !important;
 }
 </style>

@@ -12,7 +12,7 @@
           </div>
           <div class="p-[10px]">
             <el-form class="inbound" ref="formRef" :model="form" label-width="auto">
-              <el-form-item label="工单" class="mb-[5px] flex">
+              <el-form-item label="生产计划号" class="mb-[5px] flex">
                 <selectTa ref="selectTable" :table="orderTable" :selectWidth="220" :columns="orderColumns"
                   :max-height="400" :tableWidth="700" :defaultSelectVal="defaultSelectVal" :keywords="{
                     label: 'MfgOrderName',
@@ -26,7 +26,7 @@
                 </el-tooltip>
               </el-form-item>
               <el-form-item v-for="f in formHeader" :key="f.value" :label="f.label">
-                <span class="font-bold text-lg leading-[30px]" :class="f.value == 'passNum' ? 'text-[#00B400]' : ''">
+                <span class="font-bold text-lg leading-[30px]" :class="f.value == 'TodayNum' ? 'text-[#00B400]' : ''">
                   {{ formText(f.value) }}</span>
               </el-form-item>
             </el-form>
@@ -62,10 +62,17 @@
           </div>
 
           <div class="flex flex-col flex-1 tabs-css">
-            <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
+            <div class="h-[35px] flex items-center justify-between text-lg text-[#fff] bg-[#006487]">
               <span class="ml-5">历史过站记录</span>
+              <div class="mr-5">
+                <el-checkbox-group v-model="checkedHis" class="laser-table-filter">
+                   <el-checkbox v-for="c in checkedHisList" :label="`${c.label}(${changeDataLength(c.value)})`" :value="c.value"
+                    @change="changeHis(c.value)">
+                  </el-checkbox>
+                </el-checkbox-group>
+              </div>
             </div>
-            <table-tem :showIndex="true" :tableData="tableData1" :tableHeight="tableHeight" :columnData="columnData1"
+            <table-tem :showIndex="true" :tableData="changeData" :tableHeight="tableHeight" :columnData="columnData1"
               :pageObj="pageObj" @handleSizeChange="handleSizeChange"
               @handleCurrentChange="handleCurrentChange"></table-tem>
           </div>
@@ -150,7 +157,7 @@ const form = ref<InstanceType<typeof Formspan>>({
 });
 const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
   // {
-  //     label: "工单号",
+  //     label: "生产计划号",
   //     value: "MfgOrderName",
   //     disabled: true,
   //     type: "input",
@@ -185,31 +192,31 @@ const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
     width: "",
   },
   {
-    label: "工单数量",
+    label: "生产计划号数量",
     value: "Qty",
     disabled: true,
     type: "input",
     width: "",
   },
-  {
-    label: "过站总数",
-    value: "AllNum",
-    disabled: true,
-    type: "input",
-    width: "",
-  },
-  {
-    label: "实时过站",
-    value: "TodayNum",
-    disabled: true,
-    type: "input",
-    width: "",
-  },
+   // {
+  //   label: "过站总数",
+  //   value: "AllNum",
+  //   disabled: true,
+  //   type: "input",
+  //   width: "",
+  // },
+  // {
+  //   label: "实时过站",
+  //   value: "TodayNum",
+  //   disabled: true,
+  //   type: "input",
+  //   width: "",
+  // },
 ]);
 const columnData1 = reactive([
   {
     text: true,
-    prop: "Container",
+    prop: "VirtualContainer",
     label: "物料条码",
     width: "",
     align: "1",
@@ -253,7 +260,7 @@ const orderTable = ref<InstanceType<typeof OrderData>>({
   data: [],
 });
 const orderColumns = ref([
-  { label: "工单号", width: "", prop: "MfgOrderName" },
+  { label: "生产计划号", width: "", prop: "MfgOrderName" },
   { label: "产品编码", width: "", prop: "ProductName" },
   { label: "产线", width: "", prop: "MfgLineDesc" },
   { label: "状态", width: "", prop: "OrderStatusDesc" },
@@ -262,7 +269,17 @@ const orderColumns = ref([
 ]);
 const defaultSelectVal = ref<string[]>([]);
 const isLoding = ref("");
-
+const checkedHis = ref(["today"]);
+const checkedHisList = ref([
+  {
+    value: "today",
+    label: "当日过序",
+  },
+  {
+    value: "all",
+    label: "工序汇总",
+  },
+]);
 onBeforeMount(() => {
   getScreenHeight();
 });
@@ -295,12 +312,48 @@ const getHisData = () => {
   });
 };
 
+const changeHis = (val: any) => {
+  if (checkedHis.value.length == 0) {
+    checkedHis.value = [];
+  } else {
+    checkedHis.value = [];
+    checkedHis.value[0] = val;
+  }
+};
+const changeData = computed(() => {
+  if (checkedHis.value[0] == "today") {
+    return geTodayData()
+  } else {
+    return tableData1.value;
+  }
+});
+const changeDataLength =(val: any) => {
+  if (val == "today") {
+    let dataLength=geTodayData()
+    return dataLength.length
+  } else {
+     return tableData1.value.length
+  }
+}
+const geTodayData = () => {
+  const today = new Date();
+  const todayString = today.toISOString().split("T")[0];
+  function getDateFromDateTimeString(dateTimeString: any) {
+    return dateTimeString.split(" ")[0];
+  }
+  const todayDataArray = tableData1.value.filter((item: any) => {
+    return getDateFromDateTimeString(item.CreatedOn) === todayString;
+  });
+  return todayDataArray
+};
+
+
 //过站
 const getChange = () => {
   let barCodeData = barCode.value;
   stopsForm.value.BarCode = barCodeData;
   if (stopsForm.value.OrderName == "") {
-    msgTitle.value = "请先选择工单";
+    msgTitle.value = "请先选择生产计划号";
     msgType.value = false;
   } else {
     CleanCodeSave(stopsForm.value).then((res: any) => {
@@ -369,7 +422,7 @@ const getOrderData = () => {
 const reWash = () => {
   let data = cloneDeep(tableData1.value[0]);
   let reWashForm = {
-    BarCode: data.Container,
+    BarCode: data.VirtualContainer,
     OrderName: form.value.MfgOrderName,
     ProductName: data.ProductName,
     workstationName: opui.station,
@@ -469,5 +522,18 @@ const getScreenHeight = () => {
 // }
 .checked .el-checkbox {
   height: 14px;
+}
+</style>
+<style lang="scss" scoped>
+::v-deep .laser-table-filter .el-checkbox__inner {
+  /* 你的样式 */
+  background-color: #409eff !important;
+  /* 使用 !important，但请谨慎 */
+  color: white !important;
+}
+
+::v-deep .laser-table-filter .el-checkbox__label {
+  /* 你的样式 */
+  color: white !important;
 }
 </style>

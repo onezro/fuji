@@ -12,7 +12,7 @@
           </div>
           <div class="p-[10px]">
             <el-form class="inbound" ref="formRef" :model="form" label-width="auto">
-              <el-form-item label="工单" class="mb-[5px] flex">
+              <el-form-item label="生产计划号" class="mb-[5px] flex">
                 <selectTa ref="selectTable" :table="orderTable" :selectWidth="220" :columns="orderColumns"
                   :max-height="400" :tableWidth="700" :defaultSelectVal="defaultSelectVal" :keywords="{
                     label: 'MfgOrderName',
@@ -49,10 +49,6 @@
                       placeholder="请扫描条码" @keyup.enter.native="getChange" />
                   </el-form-item>
                   <div></div>
-                  <!-- <el-form-item>
-                    <el-button type="primary" :disabled="form.MfgOrderName == '' || tableData1.length == 0
-                      " @click="reWash">重新清洗</el-button>
-                  </el-form-item> -->
                 </el-form>
                 <div class="text-xl font-bold text-[#00B400]" v-show="msgType === true || msgTitle === ''">
                   {{ msgTitle === "" ? "请扫描屏材料批次条码" : msgTitle }}
@@ -62,9 +58,10 @@
                 </div>
               </div>
               <div>
-                <el-table :data="barData" size="small" border :row-class-name="tableRowClassName">
+                <el-table :data="barData" size="small" border :row-class-name="tableRowClassName" :height="'100%'">
                   <el-table-column type="index" align="center" fixed label="序号" :width="'60'"></el-table-column>
                   <el-table-column prop="MaterialName" label="产品编码" width="120" />
+                  <el-table-column prop="QtyRequired" label="需求量" width="120" />
                   <el-table-column prop="MaterialBarCode" label="物料编码" width="150">
                     <template #default="scope">
                       <el-input v-model="scope.row.MaterialBarCode" size="small" :ref="createInputRef(scope.$index)"
@@ -79,10 +76,17 @@
           </div>
 
           <div class="flex flex-col flex-1 tabs-css">
-            <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
+            <div class="h-[35px] flex items-center justify-between text-lg text-[#fff] bg-[#006487]">
               <span class="ml-5">历史过站记录</span>
+              <div class="mr-5">
+                <el-checkbox-group v-model="checkedHis" class="laser-table-filter">
+                   <el-checkbox v-for="c in checkedHisList" :label="`${c.label}(${changeDataLength(c.value)})`" :value="c.value"
+                    @change="changeHis(c.value)">
+                  </el-checkbox>
+                </el-checkbox-group>
+              </div>
             </div>
-            <table-tem :showIndex="true" :tableData="tableData1" :tableHeight="tableHeight" :columnData="columnData1"
+            <table-tem :showIndex="true" :tableData="changeData" :tableHeight="tableHeight" :columnData="columnData1"
               :pageObj="pageObj" @handleSizeChange="handleSizeChange"
               @handleCurrentChange="handleCurrentChange"></table-tem>
           </div>
@@ -172,10 +176,12 @@ const form = ref<InstanceType<typeof Formspan>>({
   Qty: "",
   PlannedStartDate: "",
   PlannedCompletionDate: "",
+  AllNum: "",
+  TodayNum: "",
 });
 const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
   // {
-  //     label: "工单号",
+  //     label: "生产计划号",
   //     value: "MfgOrderName",
   //     disabled: true,
   //     type: "input",
@@ -210,26 +216,26 @@ const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
     width: "",
   },
   {
-    label: "工单数量",
+    label: "生产计划号数量",
     value: "Qty",
     disabled: true,
     type: "input",
     width: "",
   },
-  {
-    label: "过站总数",
-    value: "AllNum",
-    disabled: true,
-    type: "input",
-    width: "",
-  },
-  {
-    label: "实时过站",
-    value: "TodayNum",
-    disabled: true,
-    type: "input",
-    width: "",
-  }
+  // {
+  //   label: "过站总数",
+  //   value: "AllNum",
+  //   disabled: true,
+  //   type: "input",
+  //   width: "",
+  // },
+  // {
+  //   label: "实时过站",
+  //   value: "TodayNum",
+  //   disabled: true,
+  //   type: "input",
+  //   width: "",
+  // }
 ]);
 const columnData1 = reactive([
 {
@@ -271,7 +277,7 @@ const orderTable = ref<InstanceType<typeof OrderData>>({
   data: [],
 });
 const orderColumns = ref([
-  { label: "工单号", width: "", prop: "MfgOrderName" },
+  { label: "生产计划号", width: "", prop: "MfgOrderName" },
   { label: "产品编码", width: "", prop: "ProductName" },
   { label: "产线", width: "", prop: "MfgLineDesc" },
   { label: "状态", width: "", prop: "OrderStatusDesc" },
@@ -303,7 +309,17 @@ const isKeyForm = ref({
 });
 const materialRef = ref();
 const inputRefs = ref<any[]>([]);
-
+  const checkedHis = ref(["today"]);
+const checkedHisList = ref([
+  {
+    value: "today",
+    label: "当日过序",
+  },
+  {
+    value: "all",
+    label: "工序汇总",
+  },
+]);
 onBeforeMount(() => {
   getScreenHeight();
 });
@@ -336,13 +352,47 @@ const getHisData = () => {
     tableData1.value = res.content;
   });
 };
+const changeHis = (val: any) => {
+  if (checkedHis.value.length == 0) {
+    checkedHis.value = [];
+  } else {
+    checkedHis.value = [];
+    checkedHis.value[0] = val;
+  }
+};
+const changeData = computed(() => {
+  if (checkedHis.value[0] == "today") {
+    return geTodayData()
+  } else {
+    return tableData1.value;
+  }
+});
+const changeDataLength =(val: any) => {
+  if (val == "today") {
+    let dataLength=geTodayData()
+    return dataLength.length
+  } else {
+     return tableData1.value.length
+  }
+}
+const geTodayData = () => {
+  const today = new Date();
+  const todayString = today.toISOString().split("T")[0];
+  function getDateFromDateTimeString(dateTimeString: any) {
+    return dateTimeString.split(" ")[0];
+  }
+  const todayDataArray = tableData1.value.filter((item: any) => {
+    return getDateFromDateTimeString(item.TxnDate) === todayString;
+  });
+  return todayDataArray
+};
 
 //过站
 const getChange = () => {
   let barCodeData = barCode.value;
   // stopsForm.value.Container = barCodeData;
   if (stopsForm.value.OrderName == "") {
-    msgTitle.value = "请先选择工单";
+    msgTitle.value = "请先选择生产计划号";
     msgType.value = false;
   } else {
     msgTitle.value = "";
@@ -392,12 +442,34 @@ const createInputRef = (val: any) => {
   };
 };
 const getChange1 = (val: any,data:any) => {
-  if (val + 1 < inputRefs.value.length) {
-    inputRefs.value[val + 1].focus();
-  } else {
-    inputRef.value.focus()
-  }
-  stopsForm.value.keyMaterialList.push(data)
+  // if (val + 1 < inputRefs.value.length) {
+  //   inputRefs.value[val + 1].focus();
+  // } else {
+  //   inputRef.value.focus()
+  // }
+  // stopsForm.value.keyMaterialList.push(data)
+  let data1 = {
+    BarCode: data.MaterialBarCode,
+    OrderName: data.MfgOrderName,
+    ProductName: data.MaterialName,
+  };
+  JudgeKeyMaterial(data1).then((res: any) => {
+    msgTitle.value = res.msg;
+    msgType.value = res.success;
+    if (res.success) {
+      if (val + 1 < inputRefs.value.length) {
+        inputRefs.value[val + 1].focus();
+      } else {
+        inputRef.value.focus();
+      }
+      stopsForm.value.keyMaterialList.push({
+        ...data,
+        VirtualCode:res.content==null?"":res.content
+      });
+    } else {
+      inputRefs.value[val].clear();
+    }
+  });
 };
 
 const radioChange = (args: any) => {
@@ -603,5 +675,18 @@ const getScreenHeight = () => {
 
 .el-table .active-table {
   --el-table-tr-bg-color: var(--el-color-success-light-9);
+}
+</style>
+<style lang="scss" scoped>
+::v-deep .laser-table-filter .el-checkbox__inner {
+  /* 你的样式 */
+  background-color: #409eff !important;
+  /* 使用 !important，但请谨慎 */
+  color: white !important;
+}
+
+::v-deep .laser-table-filter .el-checkbox__label {
+  /* 你的样式 */
+  color: white !important;
 }
 </style>
