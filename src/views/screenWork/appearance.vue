@@ -411,7 +411,6 @@
       align: "1",
     },
     {
-<<<<<<< HEAD
       text: true,
       prop: "TxnDate",
       label: "扫描时间",
@@ -502,25 +501,8 @@
     MfgOrderName: "",
     workstationName: opui.station,
   });
-  
-  onBeforeMount(() => {
-=======
-        text: true,
-        prop: "level",
-        label: "检验时间",
-        width: "",
-        align: "1",
-    }
-
-
-])
 const tablebox = ref()
-const pageObj = ref({
-    pageSize: 100,
-    currentPage: 1
-})
 onBeforeMount(() => {
->>>>>>> 73dfd0b213a356291cb330f212b636d6e7be5035
     getScreenHeight();
   });
   onMounted(() => {
