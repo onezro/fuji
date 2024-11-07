@@ -104,7 +104,7 @@
           <span class="ml-5">基本信息</span>
         </div>
         <el-form class="pt-2 pl-2" ref="formRef" :inline="true" :model="detailForm" label-width="auto">
-          <el-form-item class="mb-2" label="工单号" prop="order">
+          <el-form-item class="mb-2" label="生产计划号" prop="order">
             <el-input v-model="detailForm.MfgOrderName" disabled /></el-form-item>
           <el-form-item class="mb-2" label="需求量" prop="order">
             <el-input v-model="detailForm.TotalQtyRequired" disabled /></el-form-item>
@@ -199,7 +199,7 @@ const columnData = reactive([
   {
     text: true,
     prop: "MfgOrderName",
-    label: "工单号",
+    label: "生产计划号",
     width: "",
     min: true,
     align: "1",

@@ -242,7 +242,7 @@
   });
   const formHeader = reactive<FormHeader[]>([
     {
-      lable: "工单号",
+      lable: "生产计划号",
       value: "MfgOrderName",
     },
     // {

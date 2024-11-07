@@ -80,7 +80,7 @@
             size="small"
             label-width="85px"
           >
-            <el-form-item label="工单号">
+            <el-form-item label="生产计划号">
               <el-select
                 v-model="form.MfgOrderName"
                 placeholder=""
@@ -681,7 +681,7 @@ const columnData = reactive([
   {
     text: true,
     prop: "MfgOrderName",
-    label: "工单号",
+    label: "生产计划号",
     width: "",
     min: true,
     align: "center",

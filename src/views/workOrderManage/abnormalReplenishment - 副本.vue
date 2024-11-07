@@ -11,7 +11,7 @@
         >
           <!-- <div>
             </div> -->
-          <el-form-item label="工单号">
+          <el-form-item label="生产计划号">
             <el-input v-model="testValue" class="input-with-select"> </el-input>
           </el-form-item>
           <el-form-item label="领料单">
@@ -113,7 +113,7 @@
           <el-table-column prop="Result" label="上个结存工单">
           </el-table-column>
           <el-table-column prop="Result" label="产品型号"> </el-table-column>
-          <el-table-column prop="Result" label="工单号"> </el-table-column>
+          <el-table-column prop="Result" label="生产计划号"> </el-table-column>
           <el-table-column prop="Result" label="领料单"> </el-table-column>
           <el-table-column prop="Result" label="出库单"> </el-table-column>
           <el-table-column prop="Result" label="状态"> </el-table-column>

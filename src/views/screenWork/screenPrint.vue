@@ -85,11 +85,11 @@
                 />
               </el-select>
             </el-form-item> -->
-            <el-form-item label="工单号" prop="workOrder" class="mb-2"
+            <el-form-item label="生产计划号" prop="workOrder" class="mb-2"
               ><el-input
                 v-model="form.OrderNum"
                 style="width: 180px"
-                placeholder="请输入工单号"
+                placeholder="请输入生产计划号"
                 clearable
             /></el-form-item>
             <el-form-item label="条码" prop="barCode" class="mb-2"
@@ -232,7 +232,7 @@ const lineOption = ref([
 ]);
 
 const orderColumns = ref([
-  { label: "工单号", width: "", prop: "MfgOrderName", fixed: true },
+  { label: "生产计划号", width: "", prop: "MfgOrderName", fixed: true },
   { label: "产品编码", width: "", prop: "ProductName", fixed: true },
   { label: "状态", width: "", prop: "OrderStatusDesc" },
   { label: "产品描述", width: "", prop: "ProductDesc" },
@@ -360,7 +360,7 @@ const columnData = reactive([
   {
     text: true,
     prop: "MfgOrderName",
-    label: "工单号",
+    label: "生产计划号",
     width: "",
     min: true,
     align: "1",
@@ -455,7 +455,7 @@ const FeedHeader = reactive([
     prop: "eqInfo",
   },
   {
-    label: "工单号",
+    label: "生产计划号",
     prop: "MfgOrderName",
   },
 

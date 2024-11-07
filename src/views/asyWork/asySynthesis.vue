@@ -62,9 +62,10 @@
                 </div>
               </div>
               <div>
-                <el-table :data="barData" size="small" border :row-class-name="tableRowClassName">
+                <el-table :data="barData" size="small" border :row-class-name="tableRowClassName" :height="'100%'">
                   <el-table-column type="index" align="center" fixed label="序号" :width="'60'"></el-table-column>
                   <el-table-column prop="MaterialName" label="产品编码" width="120" />
+                  <el-table-column prop="QtyRequired" label="需求量" width="120" />
                   <el-table-column prop="MaterialBarCode" label="物料编码" width="150">
                     <template #default="scope">
                       <el-input v-model="scope.row.MaterialBarCode" size="small" :ref="createInputRef(scope.$index)"
@@ -186,7 +187,7 @@ const form = ref<InstanceType<typeof Formspan>>({
 });
 const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
   // {
-  //     label: "工单号",
+  //     label: "生产计划号",
   //     value: "MfgOrderName",
   //     disabled: true,
   //     type: "input",
@@ -282,7 +283,7 @@ const orderTable = ref<InstanceType<typeof OrderData>>({
   data: [],
 });
 const orderColumns = ref([
-  { label: "工单号", width: "", prop: "MfgOrderName" },
+  { label: "生产计划号", width: "", prop: "MfgOrderName" },
   { label: "产品编码", width: "", prop: "ProductName" },
   { label: "产线", width: "", prop: "MfgLineDesc" },
   { label: "状态", width: "", prop: "OrderStatusDesc" },

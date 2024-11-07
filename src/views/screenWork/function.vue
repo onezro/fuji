@@ -105,7 +105,7 @@ const form = reactive<InstanceType<typeof Formspan>>({
 });
 const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
     {
-        label: "工单号",
+        label: "生产计划号",
         value: "order",
         disabled: true,
         type: "input",
@@ -149,7 +149,7 @@ const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
 ]);
 const formHeader1 = reactive<InstanceType<typeof FormHeader>[]>([
     {
-        label: "工单号",
+        label: "生产计划号",
         value: "order",
         disabled: true,
         type: "input",

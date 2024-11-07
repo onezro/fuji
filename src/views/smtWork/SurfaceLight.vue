@@ -107,7 +107,7 @@
                 :inline="true"
                 label-width="auto"
               >
-                <el-form-item label="工单号" class="mb-2">
+                <el-form-item label="生产计划号" class="mb-2">
                   <el-input
                     v-model="operateForm.MfgOrderName"
                     style="width: 200px"

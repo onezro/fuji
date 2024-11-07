@@ -163,7 +163,7 @@ const form = ref<InstanceType<typeof Formspan>>({
 });
 const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
     // {
-    //     label: "工单号",
+    //     label: "生产计划号",
     //     value: "MfgOrderName",
     //     disabled: true,
     //     type: "input",
@@ -287,7 +287,7 @@ const orderTable = ref<InstanceType<typeof OrderData>>({
     data: [],
 });
 const orderColumns = ref([
-    { label: "工单号", width: "", prop: "MfgOrderName" },
+    { label: "生产计划号", width: "", prop: "MfgOrderName" },
     { label: "产品编码", width: "", prop: "ProductName" },
     { label: "产线", width: "", prop: "MfgLineDesc" },
     { label: "状态", width: "", prop: "OrderStatusDesc" },

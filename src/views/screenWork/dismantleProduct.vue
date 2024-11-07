@@ -15,8 +15,8 @@
                             <el-form-item label="MES屏条码" prop="scrBarCode">
                                 <el-input v-model="form.scrBarCode" placeholder="请输入MES屏条码" />
                             </el-form-item>
-                            <el-form-item label="工单号" prop="order">
-                                <el-input v-model="form.order" placeholder="请输入工单号" />
+                            <el-form-item label="生产计划号" prop="order">
+                                <el-input v-model="form.order" placeholder="请输入生产计划号" />
                             </el-form-item>
                             <!-- <el-form-item label="机型" prop="models">C</el-form-item> -->
                             <el-form-item label="产品编码" prop="productCode">
@@ -82,7 +82,7 @@
                                     <el-form-item label="MES屏条码" prop="scrBarCode">
                                         <el-input v-model="qtyForm.scrBarCode" placeholder="请输入" disabled />
                                     </el-form-item>
-                                    <el-form-item label="工单号" prop="order">
+                                    <el-form-item label="生产计划号" prop="order">
                                         <el-input v-model="qtyForm.order" placeholder="请输入" disabled />
                                     </el-form-item>
                                     <el-form-item label="产品编码" prop="productCode">
@@ -200,7 +200,7 @@ const columnData = reactive([
     {
         text: true,
         prop: "order",
-        label: "工单号",
+        label: "生产计划号",
         width: "",
         min: true,
         align: "1",
@@ -290,7 +290,7 @@ const qtycolumnData = reactive([
     {
         text: true,
         prop: "order",
-        label: "工单号",
+        label: "生产计划号",
         width: "",
         min: true,
         align: "1",

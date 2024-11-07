@@ -109,7 +109,7 @@
     <el-dialog v-model="editVisible" draggable title="修改备料" width="400px" :append-to-body="true"
       :close-on-click-modal="false" :close-on-press-escape="false" align-center @close="editCancel">
       <el-form ref="editFormRef" :model="editForm" label-width="auto">
-        <el-form-item label="工单号" prop="OrderNumber">
+        <el-form-item label="生产计划号" prop="OrderNumber">
           <el-input v-model="editForm.OrderNumber" disabled />
         </el-form-item>
 
@@ -216,7 +216,7 @@ const pageObj = ref({
 const tableHeight = ref(0);
 const editVisible = ref(false);
 const editForm = ref({
-  OrderNumber: "", //工单号
+  OrderNumber: "", //生产计划号
   Side: "", //AB面
   LineNumber: "", //线体
   LineNameDesc: "",

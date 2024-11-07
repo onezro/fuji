@@ -66,7 +66,7 @@
                         </div>
                         <div class="h-[130px] pt-3 pr-2 pl-2 overflow-auto">
                             <el-form ref="operateFormRef" :model="operateForm" :inline="true" label-width="auto">
-                                <el-form-item label="工单号" class="mb-2" prop="OrderNumber">
+                                <el-form-item label="生产计划号" class="mb-2" prop="OrderNumber">
                                     <el-input v-model="operateForm.OrderNumber" style="width: 200px"
                                         @keyup.enter.native="getChange" />
                                 </el-form-item>

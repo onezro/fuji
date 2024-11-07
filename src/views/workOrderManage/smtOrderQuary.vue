@@ -20,7 +20,7 @@
               @change="getTableData" class="input-with-select">
             </el-input>
           </el-form-item>
-          <el-form-item label="工单号" class="mb-[5px]">
+          <el-form-item label="生产计划号" class="mb-[5px]">
             <el-input v-model="searchForm.orderName" clearable @clear="getTableData" @change="getTableData"
               style="width: 150px" class="input-with-select">
             </el-input>
@@ -172,7 +172,7 @@
     <el-dialog v-model="orderOnlineVisible" title="工单上线" width="400px" align-center :append-to-body="true"
       :close-on-click-modal="false" :close-on-press-escape="false" @close="closeOnline">
       <el-form ref="orderFormRef" :model="orderOnlineForm" label-width="auto">
-        <el-form-item label="工单号" prop="OrderNumber">
+        <el-form-item label="生产计划号" prop="OrderNumber">
           <el-input v-model="orderOnlineForm.OrderNumber" disabled />
         </el-form-item>
         <el-form-item label="产线" prop="LineNumber">
@@ -319,7 +319,7 @@ const dialogVisible = ref(false);
 const onlineData = ref([]);
 const orderOnlineVisible = ref(false);
 const orderOnlineForm = ref({
-  OrderNumber: "", //工单号
+  OrderNumber: "", //生产计划号
   Side: "", //AB面
   LineNumber: "", //线体
   LineNameDesc: "",

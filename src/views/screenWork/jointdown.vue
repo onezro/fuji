@@ -360,7 +360,7 @@ const FeedHeader = reactive([
     prop: "eqInfo",
   },
   {
-    label: "工单号",
+    label: "生产计划号",
     prop: "MfgOrderName",
   },
 

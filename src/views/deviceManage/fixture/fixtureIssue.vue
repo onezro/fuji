@@ -14,7 +14,7 @@
             </el-select>
           </el-form-item>
 
-          <el-form-item label="工单号" class="mb-2">
+          <el-form-item label="生产计划号" class="mb-2">
             <el-input v-model="getDataText.OrderNumber" @clear="getData" clearable style="width: 180px" size="small" />
           </el-form-item>
           <el-form-item class="mb-2">
@@ -36,7 +36,7 @@
           </el-table-column>
           <el-table-column prop="LineName" label="产线" :min-width="flexColumnWidth('产线', 'LineName')">
           </el-table-column>
-          <el-table-column prop="OrderNumber" label="工单号" :min-width="flexColumnWidth('工单号', 'OrderNumber')">
+          <el-table-column prop="OrderNumber" label="生产计划号" :min-width="flexColumnWidth('生产计划号', 'OrderNumber')">
           </el-table-column>
           <el-table-column prop="Side" align="center" label="面号" :min-width="flexColumnWidth('面号', 'Side')">
           </el-table-column>
@@ -153,7 +153,7 @@ const columnData = reactive([
   {
     text: true,
     prop: "WorkOrderNumber",
-    label: "工单号",
+    label: "生产计划号",
     min: true,
     align: "1",
   },
