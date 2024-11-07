@@ -208,7 +208,7 @@ const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
         width: "",
     },
     {
-        label: "工单数量",
+        label: "生产计划号数量",
         value: "Qty",
         disabled: true,
         type: "input",
@@ -501,7 +501,7 @@ const openDialog = () => {
     // ) {
     //     ElNotification({
     //         title:'提示',
-    //         message:"缺少工单信息",
+    //         message:"缺少生产计划号信息",
     //         type:'error'
     //     })
     // }else{

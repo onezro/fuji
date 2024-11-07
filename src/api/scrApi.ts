@@ -34,7 +34,7 @@ export function OqcIpTestOut(data: any){
     });
 }
 
-//查询不良代码及工单信息
+//查询不良代码及生产计划号信息
 export function QueryDefectCode(data: any){
     return request({
         url: "/api/OqcIpTest/QueryDefectCode",
@@ -74,7 +74,7 @@ export function FTQueryDefectCode(data: any){
     });
 }
 
-//查询不良代码及工单信息
+//查询不良代码及生产计划号信息
 export function FTToolOnline(data: any){
     return request({
         url: "/api/OqcFunctionTest/ToolOnline",
@@ -103,7 +103,7 @@ export function TPOqcIpTestOut(data: any){
     });
 }
 
-//查询外观不良代码及工单信息
+//查询外观不良代码及生产计划号信息
 export function TPQueryDefectCode(data: any){
     return request({
         url: "/api/OqcIpAppearance/QueryDefectCode",

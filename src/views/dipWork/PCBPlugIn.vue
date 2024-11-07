@@ -3,8 +3,8 @@
     <div class="h-[40px] pl-2 pr-2 flex justify-between items-center">
       <span class="text-[1.2rem]"> {{ opui.stationDec }} </span>
       <div>
-        <el-button type="warning" @click="opendetail">上料明细</el-button>
-        <el-button type="primary" @click="openOver">波峰焊设置</el-button>
+        <el-button type="warning" @click="opendetail">工单物料明细</el-button>
+        <!-- <el-button type="primary" @click="openOver">波峰焊设置</el-button> -->
       </div>
     </div>
     <div class="w-full flex-1 flex">
@@ -23,9 +23,9 @@
                     <div class="checked">
                       <el-checkbox :value="t.ToolName" @change="changeCheck(t.ToolName)" />
                     </div>
-                    <el-tooltip effect="dark" content="上移" placement="top-start">
+                    <!-- <el-tooltip effect="dark" content="上移" placement="top-start">
                       <el-button icon="Top" circle :disabled="t.sort == 1" @click="moveUp(t)" />
-                    </el-tooltip>
+                    </el-tooltip> -->
                   </div>
                   <!-- </el-form-item> -->
                   <el-row :gutter="10">
@@ -36,7 +36,7 @@
                     </el-col>
                     <el-col :span="10">
                       <el-form-item label="序号" class="mb-[5px]">
-                        <el-tag type="warning" class="pl-3 pr-3 text-sm" effect="dark"
+                        <el-tag type="warning" class="pl-3 pr-3 text-xs" effect="dark"
                           v-if="t.ToolName == checked[0]">{{ t.sort }}</el-tag>
                         <el-tag type="primary" class="pl-3 pr-3" v-if="t.ToolName !== checked[0]">{{ t.sort }}</el-tag>
                         <!-- <span class="text-base">{{ t.sort }}</span> -->
@@ -90,7 +90,7 @@
                 @submit.native.prevent>
                 <el-form-item label="扫描条码">
                   <el-input v-model.trim="barCode" ref="inputRef" :autofocus="inputFocus" style="width: 500px"
-                    placeholder="请扫描条码" @keyup.enter.native="getChange" />
+                    placeholder="请扫描PCB条码或治具编码" @keyup.enter.native="getChange" />
                 </el-form-item>
               </el-form>
               <div class="text-xl font-bold text-[#00B400]" v-show="msgType === true || msgTitle === ''">
@@ -104,8 +104,8 @@
           <div class="p-2">
             <el-form class="inbound" size="default" ref="formRef" :model="form" :inline="true" label-width="auto">
               <el-row>
-                <el-col :span="7">
-                  <el-form-item label="工单" class="mb-[5px] flex">
+                <el-col :span="8">
+                  <el-form-item label="生产计划号" class="mb-[5px] flex">
                     <selectTa ref="selectTable" :table="orderTable" :selectWidth="160" :columns="orderColumns"
                       :max-height="400" :tableWidth="700" :defaultSelectVal="defaultSelectVal" :keywords="{
                         label: 'MfgOrderName',
@@ -122,14 +122,14 @@
                 <el-col :span="7">
                   <el-form-item class="mb-[5px]" label="产品编码">
                     <el-input v-model="form.ProductName" style="width: 160px" disabled /> </el-form-item></el-col>
-                <el-col :span="10">
+                <el-col :span="9">
                   <el-form-item class="mb-[5px]" label="产品描述">
                     <el-input v-model="form.ProductDesc" style="width: 340px" disabled />
                   </el-form-item>
                 </el-col>
               </el-row>
               <el-row>
-                <el-col :span="7">
+                <el-col :span="8">
                   <el-form-item class="mb-[5px]" label="计划开始">
                     <el-input v-model="form.PlannedStartDate" style="width: 160px" disabled />
                   </el-form-item>
@@ -139,8 +139,8 @@
                     <el-input v-model="form.PlannedCompletionDate" style="width: 160px" disabled />
                   </el-form-item>
                 </el-col>
-                <el-col :span="4">
-                  <el-form-item class="mb-[5px]" label="工单数量">
+                <el-col :span="9">
+                  <el-form-item class="mb-[5px]" label="生产计划号数量">
                     <el-input v-model="form.Qty" style="width: 100px" disabled />
                   </el-form-item>
                 </el-col>
@@ -304,7 +304,7 @@ const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
     width: "",
   },
   {
-    label: "工单数量",
+    label: "生产计划号数量",
     value: "Qty",
     disabled: true,
     type: "input",
@@ -320,7 +320,7 @@ const formHeader1 = reactive<InstanceType<typeof FormHeader>[]>([
     width: "",
   },
   {
-    label: "机型",
+    label: "产品机型",
     value: "models",
     disabled: true,
     type: "input",
@@ -352,7 +352,7 @@ const columnData1 = reactive([
   {
     text: true,
     prop: "BD_Tools",
-    label: "工装治具",
+    label: "治具编码",
     width: "",
     align: "1",
   },
@@ -580,14 +580,13 @@ const checkedHis = ref(["today"]);
 const checkedHisList = ref([
   {
     value: "today",
-    label: "今天",
+    label: "当日过序",
   },
   {
     value: "all",
-    label: "所有",
+    label: "工序汇总",
   },
 ]);
-
 const changeCheck = (val: any) => {
   // console.log(val, checked.value);
   if (checked.value.length == 0) {
@@ -687,7 +686,7 @@ const FeedHeader = reactive([
     prop: "order",
   },
   {
-    label: "机型",
+    label: "产品机型",
     prop: "type",
   },
   {
@@ -699,7 +698,7 @@ const FeedHeader = reactive([
     prop: "productDes",
   },
   {
-    label: "工单数量",
+    label: "生产计划号数量",
     prop: "orderNum",
   },
   {
@@ -806,22 +805,22 @@ const getToolData = () => {
       return;
     }
     toolList.value = res.content;
-    let isExitTool = toolList.value.findIndex(
-      (t: any) => t.ToolName == stopsForm.value.tools
-    );
-    if (isExitTool == -1) {
-      stopsForm.value.tools = res.content[0].ToolName;
-      checked.value[0] = res.content[0].ToolName;
-    } else {
-      if (msgType.value && res.content.length >= isExitTool + 1) {
-        stopsForm.value.tools = res.content[isExitTool + 1].ToolName;
-        checked.value[0] = res.content[isExitTool + 1].ToolName;
-      } else {
-        stopsForm.value.tools = res.content[0].ToolName;
-        checked.value[0] = res.content[0].ToolName;
-        return;
-      }
-    }
+    // let isExitTool = toolList.value.findIndex(
+    //   (t: any) => t.ToolName == stopsForm.value.tools
+    // );
+    // if (isExitTool == -1) {
+    //   stopsForm.value.tools = res.content[0].ToolName;
+    //   checked.value[0] = res.content[0].ToolName;
+    // } else {
+    //   if (msgType.value && res.content.length >= isExitTool + 1) {
+    //     stopsForm.value.tools = res.content[isExitTool + 1].ToolName;
+    //     checked.value[0] = res.content[isExitTool + 1].ToolName;
+    //   } else {
+    //     stopsForm.value.tools = res.content[0].ToolName;
+    //     checked.value[0] = res.content[0].ToolName;
+    //     return;
+    //   }
+    // }
   });
 };
 //获取光标
@@ -846,6 +845,8 @@ const radioChange = (args: any) => {
     form.BD_SoftVersion = "";
     form.PlannedCompletionDate = "";
     form.Qty = "";
+    tableData1.value=[]
+    toolList.value=[]
   } else {
     // orderTable.value.data.forEach((v: any) => {
     //   if (v.MfgOrderName == args[1]) {
@@ -925,7 +926,7 @@ const tabClick = (pane: any) => {
 const getChange = (val: any) => {
   if (form.MfgOrderName.trim() == "") {
     ElNotification({
-      title: "请选择工单",
+      title: "请选择生产计划号",
       type: "error",
     });
     // stopsForm.value.ContainerName = "";

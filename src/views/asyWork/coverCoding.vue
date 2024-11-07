@@ -14,7 +14,7 @@
           </div>
           <div class="p-[10px]">
             <el-form class="inbound" ref="formRef" :model="form" label-width="auto">
-              <el-form-item label="工单" class="mb-[5px] flex">
+              <el-form-item label="生产计划号" class="mb-[5px] flex">
                 <selectTa ref="selectTable" :table="orderTable" :selectWidth="220" :columns="orderColumns"
                   :max-height="400" :tableWidth="700" :defaultSelectVal="defaultSelectVal" :keywords="{
                     label: 'MfgOrderName',
@@ -210,7 +210,7 @@ const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
     width: "",
   },
   {
-    label: "工单数量",
+    label: "生产计划号数量",
     value: "Qty",
     disabled: true,
     type: "input",
@@ -284,14 +284,13 @@ const checkedHis = ref(["today"]);
 const checkedHisList = ref([
   {
     value: "today",
-    label: "今天",
+    label: "当日过序",
   },
   {
     value: "all",
-    label: "所有",
+    label: "工序汇总",
   },
 ]);
-
 onBeforeMount(() => {
   clearInterval(timer.value);
   getScreenHeight();

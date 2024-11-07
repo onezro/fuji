@@ -109,8 +109,8 @@
           </el-table-column>
           <el-table-column prop="PadID" label="单据类型"> </el-table-column>
           <el-table-column prop="Result" label="生产线"> </el-table-column>
-          <el-table-column prop="Result" label="工单合并组"> </el-table-column>
-          <el-table-column prop="Result" label="上个结存工单">
+          <el-table-column prop="Result" label="生产计划号合并组"> </el-table-column>
+          <el-table-column prop="Result" label="上个结存生产计划号">
           </el-table-column>
           <el-table-column prop="Result" label="产品型号"> </el-table-column>
           <el-table-column prop="Result" label="生产计划号"> </el-table-column>
@@ -141,7 +141,7 @@
           row-key="step1"
           style="width: 100%"
         >
-          <el-table-column prop="BarCode" label="工单" width="180">
+          <el-table-column prop="BarCode" label="生产计划号" width="180">
           </el-table-column>
           <el-table-column prop="PadID" label="领料单"> </el-table-column>
           <el-table-column prop="Result" label="行项号"> </el-table-column>
@@ -311,7 +311,7 @@
         <el-form-item label="JIT配套数量" prop="">
           <el-input v-model="testValue" class="input-with-select"> </el-input>
         </el-form-item>
-        <el-form-item label="工单组" prop="">
+        <el-form-item label="生产计划号组" prop="">
           <el-input v-model="testValue" class="input-with-select"> </el-input>
         </el-form-item>
         <el-row>
@@ -596,7 +596,7 @@ const pmnTypeList = reactive([{
   label:'生产补料单'
 },{
   value:10,
-  label:'工单'
+  label:'生产计划号'
 },{
   value:11,
   label:'产品出货申请单'

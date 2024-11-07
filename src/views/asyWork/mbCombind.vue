@@ -12,7 +12,7 @@
           </div>
           <div class="p-[10px]">
             <el-form class="inbound" ref="formRef" :model="form" label-width="auto">
-              <el-form-item label="工单" class="mb-[5px] flex">
+              <el-form-item label="生产计划号" class="mb-[5px] flex">
                 <selectTa ref="selectTable" :table="orderTable" :selectWidth="220" :columns="orderColumns"
                   :max-height="400" :tableWidth="700" :defaultSelectVal="defaultSelectVal" :keywords="{
                     label: 'MfgOrderName',
@@ -210,7 +210,7 @@ const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
     width: "",
   },
   {
-    label: "工单数量",
+    label: "生产计划号数量",
     value: "Qty",
     disabled: true,
     type: "input",
@@ -349,7 +349,7 @@ const getChange = () => {
   let barCodeData = barCode.value;
   // stopsForm.value.Container = barCodeData;
   if (stopsForm.value.OrderName == "") {
-    msgTitle.value = "请先选择工单";
+    msgTitle.value = "请先选择生产计划号";
     msgType.value = false;
   } else {
     msgTitle.value = "";

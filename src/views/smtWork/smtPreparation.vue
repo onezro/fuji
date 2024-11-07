@@ -62,7 +62,7 @@
                 <div class="w-full h-full flex flex-col">
                     <div>
                         <div class="h-[30px] flex items-center text-base text-[#fff] bg-[#006487]">
-                            <span class="ml-5"> 工单备料操作</span>
+                            <span class="ml-5"> 生产计划号备料操作</span>
                         </div>
                         <div class="h-[130px] pt-3 pr-2 pl-2 overflow-auto">
                             <el-form ref="operateFormRef" :model="operateForm" :inline="true" label-width="auto">
@@ -81,7 +81,7 @@
                                 <el-form-item label="产线" class="mb-2" prop="LineNumber">
                                     <el-input v-model="operateForm.LineNumber" style="width: 200px" disabled />
                                 </el-form-item>
-                                <el-form-item label="工单数量" class="mb-2" prop="OrderPlanedQty">
+                                <el-form-item label="生产计划号数量" class="mb-2" prop="OrderPlanedQty">
                                     <el-input v-model="operateForm.OrderPlanedQty" style="width: 180px" disabled />
                                 </el-form-item>
                                 <el-form-item label="产品编码" class="mb-2" prop="ProductNumber">
@@ -112,7 +112,7 @@
 
                     <div class="flex flex-col flex-1 tabs-css">
                         <div class="h-[30px] flex items-center text-base text-[#fff] bg-[#006487]">
-                            <span class="ml-5">工单物料明细</span>
+                            <span class="ml-5">生产计划号物料明细</span>
                         </div>
                         <!-- <table-tem :showIndex="true" :tableData="tableData" :tableHeight="tableHeight"
                             :columnData="columnData" :pageObj="pageObj" @handleSizeChange="handleSizeChange"
@@ -123,17 +123,17 @@
                 </div>
             </div>
         </div>
-        <el-dialog v-model="orderVisiable" draggable title="选择备料工单" width="70%" :append-to-body="true"
+        <el-dialog v-model="orderVisiable" draggable title="选择备料生产计划号" width="70%" :append-to-body="true"
             :close-on-click-modal="false" :close-on-press-escape="false" align-center @close="orderCancel">
             <el-table :data="orderData" size="small" :height="'400'" border fit :tooltip-effect="'dark'"
                 highlight-current-row @cell-click="cellClick" @cell-dblclick="celldblclick">
                 <el-table-column type="index" align="center" fixed label="序号" width="50" />
-                <el-table-column prop="OrderNumber" label="工单" fixed width="100" />
+                <el-table-column prop="OrderNumber" label="生产计划号" fixed width="100" />
                 <el-table-column prop="Side" label="面号" fixed width="60" />
                 <el-table-column prop="LineNumber" label="产线" min-width="150" />
                 <el-table-column prop="ProductNumber" label="产品编码" min-width="120" />
                 <el-table-column prop="ProductDesc" :show-overflow-tooltip="true" label="产品描述" width="180" />
-                <el-table-column prop="OrderPlanedQty" label="工单数量" align="center" width="80" />
+                <el-table-column prop="OrderPlanedQty" label="生产计划号数量" align="center" width="80" />
                 <el-table-column prop="StartTime" label="计划开始时间" width="140" />
                 <el-table-column prop="EndTime" label="计划完成时间" width="140" />
             </el-table>
@@ -147,7 +147,7 @@
         <el-dialog v-model="startVisible" draggable title="开始备料" width="400px" :append-to-body="true"
             :close-on-click-modal="false" :close-on-press-escape="false" align-center @close="startCancel">
             <el-form ref="startFormRef" :model="startForm" :rules="formRule" label-width="auto">
-                <el-form-item label="工单" prop="OrderNumber" v-if="false">
+                <el-form-item label="生产计划号" prop="OrderNumber" v-if="false">
                     <el-input v-model="startForm.OrderNumber" disabled />
                 </el-form-item>
                 <el-form-item label="产线" prop="LineNumber" v-if="false">
@@ -201,7 +201,7 @@
                         <el-radio :value="6">青</el-radio>
                     </el-radio-group>
                 </el-form-item>
-                <el-form-item label="工单" prop="OrderNumber">
+                <el-form-item label="生产计划号" prop="OrderNumber">
                     <el-input v-model="firstForm.OrderNumber" disabled />
                 </el-form-item>
                 <el-form-item label="产线" prop="LineNumber" v-if="false">
@@ -439,7 +439,7 @@ const operateRule = reactive({
     OrderNumber: [
         {
             required: true,
-            message: "工单不能为空",
+            message: "生产计划号不能为空",
             trigger: "blur",
         }
     ]
@@ -604,7 +604,7 @@ const orderConfirm = () => {
 };
 const getChange = () => {
     if (operateForm.value.OrderNumber == ""||operateForm.value.OrderNumber==undefined) {
-        msgTitle.value = `工单不能为空`;
+        msgTitle.value = `生产计划号不能为空`;
         msgType.value = false;
         tableData.value = [];
         operateForm.value.Status=""
@@ -619,7 +619,7 @@ const getChange = () => {
             LineNumber: form.value.LineNumber,
         }).then((res: any) => {
             if (res.content.length == 0) {
-                msgTitle.value = `未找到${operateForm.value.OrderNumber}工单信息`;
+                msgTitle.value = `未找到${operateForm.value.OrderNumber}生产计划号信息`;
                 msgType.value = false;
                 tableData.value = [];
                 //   operateForm.value.Status=""

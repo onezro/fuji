@@ -18,7 +18,7 @@
                             <el-form-item label="生产计划号" prop="order">
                                 <el-input v-model="form.order" placeholder="请输入生产计划号" />
                             </el-form-item>
-                            <!-- <el-form-item label="机型" prop="models">C</el-form-item> -->
+                            <!-- <el-form-item label="产品机型" prop="models">C</el-form-item> -->
                             <el-form-item label="产品编码" prop="productCode">
                                 <el-input v-model="form.productCode" placeholder="请输入产品编码" />
                             </el-form-item>

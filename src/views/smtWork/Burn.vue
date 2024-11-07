@@ -1,12 +1,12 @@
 <template>
   <div class="flex">
-    <div class="w-[350px] border-solid border-r-2 border-[#cbcbcb]">
+    <div class="w-[400px] border-solid border-r-2 border-[#cbcbcb]">
       <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
         <span class="ml-5">基本信息</span>
       </div>
       <div class="p-2">
         <el-form class="inbound" size="default" ref="formRef" :model="OrderForm" label-width="auto">
-          <el-form-item label="工单">
+          <el-form-item label="生产计划号">
             <div class="flex items-center">
               <selectTa ref="selectTable" :table="orderTable" :columns="orderColumns" :selectWidth="220"
                 :max-height="400" :tableWidth="700" :keywords="{ label: 'MfgOrderName', value: 'MfgOrderName' }"
@@ -26,7 +26,7 @@
         </el-form>
       </div>
     </div>
-    <div class="w-[calc(100%-350px)] pt-[5px]">
+    <div class="w-[calc(100%-400px)] pt-[5px]">
       <div>
         <div class="ml-2">
           <el-form ref="formRef" :inline="true" size="default" :model="form" label-width="auto">
@@ -144,7 +144,7 @@ const orderColumns = ref([
   { label: "产品编码", width: "", prop: "ProductName", fixed: true },
   { label: "状态", width: "", prop: "OrderStatusDesc" },
   { label: "产品描述", width: "", prop: "ProductDesc" },
-  { label: "机型", width: "", prop: "BD_ProductModel" },
+  { label: "产品机型", width: "", prop: "BD_ProductModel" },
   { label: "软件版本", width: "", prop: "BD_SoftVersion" },
   { label: "计划开始", width: "", prop: "PlannedStartDate" },
   { label: "计划完成", width: "", prop: "PlannedCompletionDate" },
@@ -181,7 +181,7 @@ const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
     width: "",
   },
   {
-    label: "机型",
+    label: "产品机型",
     value: "BD_ProductModel",
     disabled: true,
     type: "input",
@@ -209,7 +209,7 @@ const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
     width: "",
   },
   {
-    label: "工单数量",
+    label: "生产计划数量",
     value: "Qty",
     disabled: true,
     type: "input",
@@ -320,7 +320,7 @@ const RawmaterialFeeding = () => {
   // console.log(OrderForm.MfgOrderName);
   if (OrderForm.MfgOrderName === "") {
     ElMessage({
-      message: `请选择工单`,
+      message: `请选择生产计划号`,
       type: "warning",
     });
     return;
@@ -378,7 +378,7 @@ const FeedHeader = reactive([
   },
 
   {
-    label: "机型",
+    label: "产品机型",
     prop: "type",
   },
   {
@@ -390,7 +390,7 @@ const FeedHeader = reactive([
     prop: "ProductDesc",
   },
   {
-    label: "工单数量",
+    label: "生产计划号数量",
     prop: "Qty",
   },
 ]);

@@ -218,7 +218,7 @@
       width: "",
     },
     {
-      label: "机型",
+      label: "产品机型",
       value: "BD_ProductModel",
       disabled: true,
       type: "input",
@@ -239,7 +239,7 @@
       width: 300,
     },
     {
-      label: "工单数量",
+      label: "生产计划号数量",
       value: "Qty",
       disabled: true,
       type: "input",
@@ -308,7 +308,7 @@
       width: "",
     },
     {
-      label: "机型",
+      label: "产品机型",
       value: "models",
       disabled: true,
       type: "input",

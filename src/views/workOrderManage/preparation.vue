@@ -6,8 +6,8 @@
           <el-date-picker :shortcuts="shortcuts" v-model="getForm.timePeriod" value-format="YYYY-MM-DD" type="daterange"
             range-separator="-" style="width: 240px" :clearable="true" />
         </el-form-item>
-        <el-form-item label="工单" class="mb-2">
-          <el-input v-model="getForm.OrderNumber" placeholder="请输入工单" @change="getData" clearable @clear="getData" />
+        <el-form-item label="生产计划号" class="mb-2">
+          <el-input v-model="getForm.OrderNumber" placeholder="请输入生产计划号" @change="getData" clearable @clear="getData" />
         </el-form-item>
         <el-form-item label="面号" class="mb-2">
           <el-select v-model="getForm.Side" clearable style="width: 150px" @change="getData">
@@ -25,7 +25,7 @@
       )
         " :height="tableHeight" stripe>
         <el-table-column type="index" align="center" fixed label="序号" />
-        <el-table-column prop="OrderNumber" align="center" fixed label="工单" flexible>
+        <el-table-column prop="OrderNumber" align="center" fixed label="生产计划号" flexible>
         </el-table-column>
         <el-table-column prop="Side" align="center" label="面号" fixed flexible>
         </el-table-column>
@@ -40,8 +40,8 @@
         <el-table-column prop="ProductNumber" align="center" label="产品编码"
           :min-width="flexColumnWidth('产品编码', 'ProductNumber')">
         </el-table-column>
-        <el-table-column prop="OrderPlanedQty" align="center" label="工单数量"
-          :min-width="flexColumnWidth('工单数量', 'OrderPlanedQty')">
+        <el-table-column prop="OrderPlanedQty" align="center" label="生产计划号数量"
+          :min-width="flexColumnWidth('生产计划号数量', 'OrderPlanedQty')">
         </el-table-column>
         <el-table-column prop="ReturnDate" align="center" label="状态" width="100">
           <template #default="scope">
@@ -271,7 +271,7 @@ const columnData = reactive([
   {
     text: true,
     prop: "OrderNumber",
-    label: "工单",
+    label: "生产计划号",
     width: "",
     min: true,
     align: "center",
@@ -322,7 +322,7 @@ const columnData = reactive([
   {
     text: true,
     prop: "OrderPlanedQty",
-    label: "工单数量",
+    label: "生产计划号数量",
     width: "",
     min: true,
     align: "center",

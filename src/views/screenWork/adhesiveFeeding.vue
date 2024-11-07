@@ -6,9 +6,9 @@
         <span class="text-[1.2rem]">{{ title.stationDec }}</span>
         <div>
           <el-button type="primary" @click="dialogVisible = true"
-            >工单开工</el-button
+            >生产计划号开工</el-button
           >
-          <!-- <el-button type="primary">条码转工单</el-button> -->
+          <!-- <el-button type="primary">条码转生产计划号</el-button> -->
         </div>
       </div>
       <div class="w-full flex-1 flex">
@@ -97,13 +97,13 @@
       </div>
       <el-dialog
         v-model="dialogVisible"
-        title="工单开工"
+        title="生产计划号开工"
         width="90%"
         align-center
       >
         <template #header>
           <div class="custom-dialog-title flex items-center justify-between">
-            <div>工单列表</div>
+            <div>生产计划号列表</div>
             <!-- 在标题右侧插入一个按钮 -->
             <el-input
               v-model="workOrderInput"
@@ -246,7 +246,7 @@
       value: "MfgOrderName",
     },
     // {
-    //   lable: "机型",
+    //   lable: "产品机型",
     //   value: "BD_ProductModel",
     // },
     {
@@ -278,7 +278,7 @@
       value: "RMANumber",
     },
     {
-      lable: "工单数量",
+      lable: "生产计划号数量",
       value: "Qty",
     }
   ]);
@@ -297,7 +297,7 @@
     // {
     //   text: true,
     //   prop: "OrderNumber",
-    //   label: "工单",
+    //   label: "生产计划号",
     //   width: "",
     //   align: "1",
     // },
@@ -416,7 +416,7 @@
   const choiceOrder = () => {
     if (form.MfgOrderName === '') {
       ElMessage({
-        message: "请选择工单",
+        message: "请选择生产计划号",
         type: "warning",
       });
       barCode.value = '';
@@ -464,7 +464,7 @@
   const sureClick = () => {
     if (!choiceRow.value || !choiceRow.value.MfgOrderName) {
       ElMessage({
-        message: "请选择工单",
+        message: "请选择生产计划号",
         type: "warning",
       });
       return;

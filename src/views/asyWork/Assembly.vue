@@ -195,7 +195,7 @@
       width: 300,
     },
     {
-      label: "工单数量",
+      label: "生产计划号数量",
       value: "Qty",
       disabled: true,
       type: "input",

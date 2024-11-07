@@ -38,7 +38,7 @@
         </div>
         <div class="flex flex-col flex-1">
           <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
-            <span class="ml-5">工单物料需求清单</span>
+            <span class="ml-5">生产计划号物料需求清单</span>
           </div>
           <div class="flex-1" ref="tablebox">
             <el-table :data="tableData.slice(
@@ -207,7 +207,7 @@ const columnData = reactive([
   {
     text: true,
     prop: "OrderQty",
-    label: "工单数量",
+    label: "生产计划号数量",
     width: "",
     min: true,
     align: "1",

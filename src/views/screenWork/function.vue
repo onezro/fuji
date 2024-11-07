@@ -112,7 +112,7 @@ const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
         width: "",
     },
     {
-        label: "机型",
+        label: "产品机型",
         value: "models",
         disabled: true,
         type: "input",
@@ -133,7 +133,7 @@ const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
         width: 300,
     },
     {
-        label: "工单数量",
+        label: "生产计划号数量",
         value: "orderNum",
         disabled: true,
         type: "input",
@@ -156,7 +156,7 @@ const formHeader1 = reactive<InstanceType<typeof FormHeader>[]>([
         width: "",
     },
     {
-        label: "机型",
+        label: "产品机型",
         value: "models",
         disabled: true,
         type: "input",
@@ -177,7 +177,7 @@ const formHeader1 = reactive<InstanceType<typeof FormHeader>[]>([
         width: 300,
     },
     {
-        label: "工单数量",
+        label: "生产计划号数量",
         value: "orderNum",
         disabled: true,
         type: "input",

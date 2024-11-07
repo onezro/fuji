@@ -161,7 +161,7 @@ const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
     width: "",
   },
   {
-    label: "工单数量",
+    label: "生产计划号数量",
     value: "Qty",
     disabled: true,
     type: "input",
@@ -223,14 +223,13 @@ const checkedHis = ref(["today"]);
 const checkedHisList = ref([
   {
     value: "today",
-    label: "今天",
+    label: "当日过序",
   },
   {
     value: "all",
-    label: "所有",
+    label: "工序汇总",
   },
 ]);
-
 onBeforeMount(() => {
   getScreenHeight();
 });

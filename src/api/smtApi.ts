@@ -92,7 +92,7 @@ export function PrintBurnModel(data: any) {
     data,
   });
 }
-//烧录工单
+//烧录生产计划号
 // export function OrderQuery() {
 //     return request({
 //         url: "/api/Burn/OrderQuery",
@@ -152,7 +152,7 @@ export function isDefects(data: any) {
     data,
   });
 }
-//工单查询
+//生产计划号查询
 export function OrderQuery(data: any) {
   return request({
     url: "/api/workstation/OrderQuery",
@@ -208,7 +208,7 @@ export function QueryRepairRecord(data: any) {
     },
   });
 }
-//获取SMT工单数据
+//获取SMT生产计划号数据
 // export function GetSMTPreparationOrderList(data:any) {
 //     return request({
 //         url: "/api/smtpreparation/GetSMTPreparationOrderList",
@@ -223,7 +223,7 @@ export function GetSMTLineList() {
     method: "post",
   });
 }
-//获取SMT工单数据
+//获取SMT生产计划号数据
 export function GetSMTPreparationOrderList(data: any) {
   return request({
     url: "/api/smtreadymaterial/GetSMTPreparationOrderList",
@@ -231,7 +231,7 @@ export function GetSMTPreparationOrderList(data: any) {
     data,
   });
 }
-//获取SMT工单BoM数据
+//获取SMT生产计划号BoM数据
 export function GetOrderSMTBom(data: any) {
   return request({
     url: "/api/smtreadymaterial/GetOrderSMTBom",

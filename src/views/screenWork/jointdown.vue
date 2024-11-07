@@ -22,7 +22,7 @@
               :model="form"
               label-width="auto"
             >
-              <el-form-item label="工单">
+              <el-form-item label="生产计划号">
                 <!-- <selectTa
                   ref="selectTable"
                   :table="orderTable"
@@ -222,7 +222,7 @@ const form = reactive<InstanceType<typeof Formspan>>({
 });
 const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
   {
-    label: "机型",
+    label: "产品机型",
     value: "models",
     disabled: true,
     type: "input",
@@ -243,7 +243,7 @@ const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
     width: 300,
   },
   {
-    label: "工单数量",
+    label: "生产计划号数量",
     value: "orderNum",
     disabled: true,
     type: "input",
@@ -304,11 +304,11 @@ const orderTable = ref<OrderData>({
 });
 
 const orderColumns = ref([
-  { label: "工单", width: "", prop: "order" },
-  { label: "机型", width: "", prop: "models" },
+  { label: "生产计划号", width: "", prop: "order" },
+  { label: "产品机型", width: "", prop: "models" },
   { label: "产品编码", width: "", prop: "productCode" },
   { label: "产品描述", width: "", prop: "productDes" },
-  { label: "工单描述", width: "", prop: "orderNum" },
+  { label: "生产计划号描述", width: "", prop: "orderNum" },
 ]);
 
 const radioChange = (args: any) => {
@@ -365,7 +365,7 @@ const FeedHeader = reactive([
   },
 
   {
-    label: "机型",
+    label: "产品机型",
     prop: "type",
   },
   {
@@ -377,7 +377,7 @@ const FeedHeader = reactive([
     prop: "ProductDesc",
   },
   {
-    label: "工单数量",
+    label: "生产计划号数量",
     prop: "Qty",
   },
 ]);

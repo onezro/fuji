@@ -64,7 +64,7 @@
                   />
                 </el-select>
               </el-form-item>
-              <el-form-item label="机型">
+              <el-form-item label="产品机型">
                 <el-input
                   v-model="form.BD_ProductModel"
                   class="input-with-select"
@@ -333,7 +333,7 @@ onBeforeUnmount(() => {
   window.addEventListener("resize", getScreenHeight);
 });
 
-//查询工单信息
+//查询生产计划号信息
 //   const findOrderData = () => {
 //     findOrder(findOrderForm).then((res: any) => {
 //       if (!res || res.content === null || res.content.length === 0) {
@@ -343,7 +343,7 @@ onBeforeUnmount(() => {
 //       orderList.value = res.content;
 //     });
 //   };
-//选中工单
+//选中生产计划号
 //   const orderChange = (data: any) => {
 //     orderList.value.forEach((item: any) => {
 //       if (item.MfgOrderName === data) {
@@ -572,7 +572,7 @@ const columnData = reactive([
   // {
   //   text: true,
   //   prop: "BD_ProductModel",
-  //   label: "机型",
+  //   label: "产品机型",
   //   width: "",
   //   min: true,
   //   align: "center",
@@ -596,7 +596,7 @@ const columnData = reactive([
   // {
   //   text: true,
   //   prop: "Qty",
-  //   label: "工单数量",
+  //   label: "生产计划号数量",
   //   width: "",
   //   min: true,
   //   align: "center",

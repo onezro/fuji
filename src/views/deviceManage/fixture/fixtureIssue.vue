@@ -65,7 +65,7 @@
               <el-tag type="success" size="small" v-if="scope.row.Status=='已完成'">{{ scope.row.Status }}</el-tag>
             </template>
           </el-table-column>
-          <!-- <el-table-column prop="Quantity" label="工单数量">
+          <!-- <el-table-column prop="Quantity" label="生产计划号数量">
           </el-table-column> -->
          
 

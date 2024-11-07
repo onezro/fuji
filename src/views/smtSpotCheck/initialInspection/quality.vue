@@ -88,8 +88,8 @@
           <el-table-column
             prop="OrderQuantity"
             align="center"
-            label="工单数量"
-            :min-width="flexColumnWidth('工单数量', 'OrderQuantity')"
+            label="生产计划号数量"
+            :min-width="flexColumnWidth('生产计划号数量', 'OrderQuantity')"
           >
           </el-table-column>
           <el-table-column
@@ -246,7 +246,7 @@
               disabled
             ></el-input>
           </el-form-item>
-          <el-form-item label="生产工单" class="mb-2">
+          <el-form-item label="生产生产计划号" class="mb-2">
             <el-input
               v-model="form.orderNo"
               style="width: 220px"

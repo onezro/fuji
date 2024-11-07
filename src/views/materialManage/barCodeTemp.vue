@@ -136,7 +136,7 @@
         </span>
       </template>
     </el-dialog>
-    <el-dialog v-model="addMaterVisible" title="修改模板" draggable width="500px" :append-to-body="true"
+    <el-dialog v-model="addMaterVisible" title="添加模板物料" draggable width="500px" :append-to-body="true"
       :close-on-click-modal="false" :close-on-press-escape="false" align-center @close="addMaterCancel">
       <el-form ref="addMaterRef" :model="addMaterForm" label-width="auto">
         <!-- <el-form-item label="模板名称" prop="TemplateName" >

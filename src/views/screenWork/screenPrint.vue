@@ -12,7 +12,7 @@
           :model="OrderForm"
           label-width="auto"
         >
-          <el-form-item label="工单">
+          <el-form-item label="生产计划号">
             <div class="flex items-center">
               <selectTa
                 ref="selectTable"
@@ -236,7 +236,7 @@ const orderColumns = ref([
   { label: "产品编码", width: "", prop: "ProductName", fixed: true },
   { label: "状态", width: "", prop: "OrderStatusDesc" },
   { label: "产品描述", width: "", prop: "ProductDesc" },
-  { label: "机型", width: "", prop: "BD_ProductModel" },
+  { label: "产品机型", width: "", prop: "BD_ProductModel" },
   { label: "软件版本", width: "", prop: "BD_SoftVersion" },
   { label: "计划开始", width: "", prop: "PlannedStartDate" },
   { label: "计划完成", width: "", prop: "PlannedCompletionDate" },
@@ -273,7 +273,7 @@ const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
     width: "",
   },
   {
-    label: "机型",
+    label: "产品机型",
     value: "BD_ProductModel",
     disabled: true,
     type: "input",
@@ -301,7 +301,7 @@ const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
     width: "",
   },
   {
-    label: "工单数量",
+    label: "生产计划号数量",
     value: "Qty",
     disabled: true,
     type: "input",
@@ -379,7 +379,7 @@ const burnPrint = () => {
   // if (!hasDuplicateValue(BurnTableData.value,'OrderNum')) {
   //   ElMessage({
   //     showClose: true,
-  //     message: '不可选重复工单打印',
+  //     message: '不可选重复生产计划号打印',
   //     type: "warning",
   //   });
   //   return;
@@ -401,7 +401,7 @@ const RawmaterialFeeding = () => {
   // console.log(OrderForm.MfgOrderName);
   if (OrderForm.MfgOrderName === "") {
     ElMessage({
-      message: `请选择工单`,
+      message: `请选择生产计划号`,
       type: "warning",
     });
     return;
@@ -460,7 +460,7 @@ const FeedHeader = reactive([
   },
 
   {
-    label: "机型",
+    label: "产品机型",
     prop: "type",
   },
   {
@@ -472,7 +472,7 @@ const FeedHeader = reactive([
     prop: "ProductDesc",
   },
   {
-    label: "工单数量",
+    label: "生产计划号数量",
     prop: "Qty",
   },
 ]);
