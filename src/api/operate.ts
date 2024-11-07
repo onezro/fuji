@@ -629,28 +629,3 @@ export function DeleteBarCodeRuleTempPartNumContent(data:any) {
         data
     })
 }
-
-//贴合外观过站
-export function FitsTheLookMoveOut(data:any) {
-    return request({
-        url: "/api/FitsTheLook/FitsTheLookMoveOut",
-        method: "post",
-        data
-    })
-}
-//不良品记录
-export function FTLDefectProductRecord(data:any) {
-    return request({
-        url: "/api/FitsTheLook/FTLDefectProductRecord",
-        method: "post",
-        data
-    })
-}
-//查询不良代码及工单信息
-export function MAQueryDefectCode(data:any) {
-    return request({
-        url: "/api/FitsTheLook/QueryDefectCode",
-        method: "post",
-        data
-    })
-}
