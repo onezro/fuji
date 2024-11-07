@@ -17,7 +17,7 @@
           </el-form-item>
           <el-form-item label="日期" class="mb-2">
             <el-date-picker
-            :shortcuts="shortcuts"
+              :shortcuts="shortcuts"
               v-model="date"
               value-format="YYYY-MM-DD"
               type="daterange"
@@ -94,8 +94,8 @@
                   :label="item.MfgOrderName"
                   :value="item.MfgOrderName"
                 />
-              </el-select>
-            </el-form-item><el-form-item label="产品机型">
+              </el-select> </el-form-item
+            ><el-form-item label="产品机型">
               <el-input
                 v-model="form.BD_ProductModel"
                 class="input-with-select"
@@ -111,7 +111,7 @@
               >
               </el-input>
             </el-form-item>
-            <el-form-item label="数量">
+            <el-form-item label="计划数量">
               <el-input v-model="form.Qty" class="input-with-select" disabled>
               </el-input>
             </el-form-item>
@@ -126,14 +126,6 @@
             <el-form-item label="计划开始时间">
               <el-input
                 v-model="form.PlannedCompletionDate"
-                class="input-with-select"
-                disabled
-              >
-              </el-input>
-            </el-form-item>
-            <el-form-item label="车间">
-              <el-input
-                v-model="form.wcDescription"
                 class="input-with-select"
                 disabled
               >
@@ -229,7 +221,7 @@
                   <span v-if="scope.row.isLoadQueue === 0">否</span>
                 </template>
               </el-table-column> -->
-            <el-table-column
+            <!-- <el-table-column
               prop="OpenTimeStamp"
               align="center"
               label="开封时间"
@@ -242,15 +234,33 @@
               label="到料时间"
               :min-width="flexColumnWidth('到料时间', 'ReceiveDate')"
             >
-            </el-table-column>
+            </el-table-column> -->
             <el-table-column prop="RequestQty" align="center" label="请求数量">
               <template #default="scope">
                 <el-input
+                style="width: 150px;"
                   v-model="scope.row.RequestQty"
                   @input="handleInput(scope.row)"
                 >
                   <!-- v-if="scope.row.isLoadQueue === 1" -->
                 </el-input>
+              </template>
+            </el-table-column>
+            <el-table-column prop="QualityIsGood" align="center" label="是否良品">
+              <template #default="scope">
+                <el-select
+                  v-model="scope.row.QualityIsGood"
+                  placeholder="Select"
+                  size="large"
+                  style="width: 150px"
+                >
+                  <el-option
+                    v-for="item in [{label:'良品',value:1},{label:'不良品',value:2},{label:'未知',value:0},]"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                  />
+                </el-select>
               </template>
             </el-table-column>
           </el-table>
@@ -267,7 +277,7 @@
 </template>
 
 <script lang="ts" setup>
-import {shortcuts} from "@/utils/dataMenu"
+import { shortcuts } from "@/utils/dataMenu";
 import { getCheckResults } from "@/api/operate";
 import type { InspectionResult } from "@/typing";
 import {
@@ -284,7 +294,7 @@ import {
   QueryMaterialReturnDetail,
   OrderGoodMaterials,
   QueryMaterialReturnApplyDetail,
-  findOrder
+  findOrder,
 } from "@/api/operate";
 import { cloneDeep } from "lodash-es";
 import {
@@ -314,7 +324,7 @@ const historyTable = ref<any>([]);
 const date = ref<any[]>([]);
 const detailedTable = ref<any[]>([]);
 const detailedHeight = ref(0);
-const choiceId = ref('');
+const choiceId = ref("");
 const detailedPageObj = ref({
   pageSize: 10000000,
   currentPage: 1,
@@ -412,22 +422,22 @@ onBeforeUnmount(() => {
 //查询生产计划号信息
 const findOrderData = () => {
   form.value = {
-  MfgOrderName: "",
-  PlannedStartDate: "",
-  PlannedCompletionDate: "",
-  Qty: 0,
-  ProductName: "",
-  BD_ProjectNo: null,
-  BD_ProductModel: "",
-  ProductDesc: "",
-  UOMName: "",
-  OrderStatusName: "",
-  OrderStatusDesc: "",
-  MfgLineName: "",
-  MfgLineDesc: "",
-  WorkCenterName: "",
-  wcDescription: "",
-};
+    MfgOrderName: "",
+    PlannedStartDate: "",
+    PlannedCompletionDate: "",
+    Qty: 0,
+    ProductName: "",
+    BD_ProjectNo: null,
+    BD_ProductModel: "",
+    ProductDesc: "",
+    UOMName: "",
+    OrderStatusName: "",
+    OrderStatusDesc: "",
+    MfgLineName: "",
+    MfgLineDesc: "",
+    WorkCenterName: "",
+    wcDescription: "",
+  };
   feedTableData.value = [];
   findOrder({}).then((res: any) => {
     if (!res || res.content === null || res.content.length === 0) {
@@ -485,7 +495,12 @@ const getFeedTableData = (order: any) => {
       // let data = cloneDeep(feedOrganData(res.content));
       // console.log(data);
 
-      feedTableData.value = res.content;
+      feedTableData.value = res.content.map((item:any) => {
+        return {
+          ...item,
+          QualityIsGood:1
+        }
+      });
 
       // OrganData(res.content)
     }
@@ -588,10 +603,11 @@ const applyFor = () => {
   //     return;
   //   }
   // });
+  console.log(choiceList.value);
   OrderGoodMaterials(choiceList.value).then((res: any) => {
     if (res && res.success) {
       ElNotification({
-        title: '提示信息',
+        title: "提示信息",
         message: res.msg,
         type: "success",
       });
@@ -621,14 +637,14 @@ const selectable = (row: any) => {
 
 const rowClick = (val: any) => {
   if (choiceId.value !== val.MaterialReturnHistoryId) {
-  QueryMaterialReturnDetail(val.MaterialReturnHistoryId).then((res: any) => {
-    if (!res || res.content === null || res.content.length === 0) {
-      detailedTable.value = [];
-      return;
-    }
-    detailedTable.value = res.content;
-  });
-  choiceId.value = val.MaterialReturnHistoryId;
+    QueryMaterialReturnDetail(val.MaterialReturnHistoryId).then((res: any) => {
+      if (!res || res.content === null || res.content.length === 0) {
+        detailedTable.value = [];
+        return;
+      }
+      detailedTable.value = res.content;
+    });
+    choiceId.value = val.MaterialReturnHistoryId;
   }
 };
 
@@ -640,7 +656,7 @@ const handleInput = (data: any) => {
     if (num > data.Qty) {
       data.RequestQty = "";
       ElNotification({
-        title: '提示信息',
+        title: "提示信息",
         message: `不得超过可退数量${data.Qty}`,
         type: "error",
       });
@@ -729,7 +745,7 @@ const columnData = reactive([
   {
     text: true,
     prop: "Qty",
-    label: "生产计划号数量",
+    label: "生产计划数量",
     width: "",
     min: true,
     align: "center",
@@ -806,6 +822,14 @@ const detailedData = reactive([
     text: true,
     prop: "Qty",
     label: "退料数量",
+    width: "",
+    min: true,
+    align: "center",
+  },
+  {
+    text: true,
+    prop: "QualityIsGood",
+    label: "是否不良",
     width: "",
     min: true,
     align: "center",

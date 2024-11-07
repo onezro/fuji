@@ -140,7 +140,7 @@
                   </el-form-item>
                 </el-col>
                 <el-col :span="9">
-                  <el-form-item class="mb-[5px]" label="生产计划号数量">
+                  <el-form-item class="mb-[5px]" label="生产计划数量">
                     <el-input v-model="form.Qty" style="width: 100px" disabled />
                   </el-form-item>
                 </el-col>
@@ -187,11 +187,11 @@
       <table-tem :showIndex="true" size="small" :tableData="detailsData" :tableHeight="400" :columnData="detailsColumn"
         :pageObj="detailsPageObj" @handleSizeChange="detailsSizeChange"
         @handleCurrentChange="detailsCurrentChange"></table-tem>
-      <template #footer>
+      <!-- <template #footer>
         <span class="dialog-footer">
           <el-button @click="detailVisible = false">关闭</el-button>
         </span>
-      </template>
+      </template> -->
     </el-dialog>
   </div>
 </template>
@@ -304,7 +304,7 @@ const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
     width: "",
   },
   {
-    label: "生产计划号数量",
+    label: "生产计划数量",
     value: "Qty",
     disabled: true,
     type: "input",
@@ -698,7 +698,7 @@ const FeedHeader = reactive([
     prop: "productDes",
   },
   {
-    label: "生产计划号数量",
+    label: "生产计划数量",
     prop: "orderNum",
   },
   {
@@ -845,6 +845,9 @@ const radioChange = (args: any) => {
     form.BD_SoftVersion = "";
     form.PlannedCompletionDate = "";
     form.Qty = "";
+    hisForm.value.MfgOrderName = "";
+    getFeedForm.value.MfgOrder = "";
+    getToolForm.value.OrderNumber = "";
     tableData1.value=[]
     toolList.value=[]
   } else {
@@ -860,13 +863,11 @@ const radioChange = (args: any) => {
     form.Qty = args[0].Qty;
     form.AllNum = args[0].AllNum;
     form.TodayNum = args[0].TodayNum;
-    hisForm.value.MfgOrderName = args[0].MfgOrderName;
-    // console.log(args[0].MfgOrderName);
     getFeedForm.value.MfgOrder = args[0].MfgOrderName;
-
     if (getToolForm.value.OrderNumber == args[0].MfgOrderName) {
       return;
     } else {
+      hisForm.value.MfgOrderName = args[0].MfgOrderName;
       getToolForm.value.OrderNumber = args[0].MfgOrderName;
       getHisData();
       getToolData();

@@ -278,7 +278,7 @@
       value: "RMANumber",
     },
     {
-      lable: "生产计划号数量",
+      lable: "生产计划数量",
       value: "Qty",
     }
   ]);

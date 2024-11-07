@@ -203,7 +203,7 @@ const opui = appStore.getOPUIReal();
 const inputRef = ref();
 const inputFocus = ref(true);
 const barCode = ref("");
-const currentCode = ref("5342345");
+const currentCode = ref("");
 const dialogVisible = ref(false);
 const materialTable = ref<any[]>([]);
 const boxHeight = ref(0);
@@ -255,7 +255,7 @@ const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
     width: 300,
   },
   {
-    label: "生产计划号数量",
+    label: "生产计划数量",
     value: "Qty",
     disabled: true,
     type: "input",

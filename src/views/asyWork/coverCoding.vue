@@ -7,7 +7,7 @@
       </div>
     </div>
     <div class="w-full flex-1 flex">
-      <div class="setwidth w-[350px]">
+      <div class="setwidth w-[400px]">
         <div class="w-full h-full box">
           <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
             <span class="ml-5">基本信息</span>
@@ -35,7 +35,7 @@
           </div>
         </div>
       </div>
-      <div class="w-[calc(100%-350px)]">
+      <div class="w-[calc(100%-400px)]">
         <!-- <div class="w-full"> -->
         <div class="w-full h-full flex flex-col">
           <div>
@@ -210,7 +210,7 @@ const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
     width: "",
   },
   {
-    label: "生产计划号数量",
+    label: "生产计划数量",
     value: "Qty",
     disabled: true,
     type: "input",
@@ -540,7 +540,7 @@ const getScreenHeight = () => {
 }
 
 .setwidth {
-  flex: 0 0 350px;
+  flex: 0 0 400px;
 }
 
 .box {

@@ -1,11 +1,11 @@
 <template>
   <div class="p-2">
     <el-card shadow="always" :body-style="{ padding: '8px' }">
-      <div class="flex gap-10">
+      <div class="flex justify-between">
         <div>
           <el-button type="primary" size="small" @click="openAddTemp">添加</el-button>
         </div>
-        <el-form ref="formRef" size="small" :model="getForm" label-width="auto" :inline="true">
+        <el-form ref="formRef" size="small" :model="getForm" label-width="auto" :inline="true" >
           <el-form-item label="模板名称" prop="ProductName" class="mb-2">
             <el-input v-model="getForm.TemplateName" style="width: 160px" clearable @clear="getData"
               @change="getData" />

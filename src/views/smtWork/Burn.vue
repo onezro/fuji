@@ -390,7 +390,7 @@ const FeedHeader = reactive([
     prop: "ProductDesc",
   },
   {
-    label: "生产计划号数量",
+    label: "生产计划数量",
     prop: "Qty",
   },
 ]);

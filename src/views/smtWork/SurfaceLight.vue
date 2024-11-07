@@ -121,7 +121,7 @@
                     disabled
                   />
                 </el-form-item>
-                <el-form-item label="生产计划号数量" class="mb-2">
+                <el-form-item label="生产计划数量" class="mb-2">
                   <el-input
                     v-model="operateForm.Qty"
                     style="width: 200px"

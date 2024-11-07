@@ -1,6 +1,6 @@
 import request from "@/utils/request";
 import request1 from "@/utils/plainTextApi";
-export function InsertInspect(data: any){
+export function InsertInspect(data: any) {
     return request({
         url: "/api/firstinspect/Insert_Inspect_Info",
         method: "post",
@@ -8,7 +8,7 @@ export function InsertInspect(data: any){
     });
 }
 
-export function GetInspectData(data: any){
+export function GetInspectData(data: any) {
     return request({
         url: "/api/firstinspect/Query_Inspect_Info",
         method: "post",
@@ -16,7 +16,7 @@ export function GetInspectData(data: any){
     });
 }
 ///api/firstinspect/Update_Inspect_Info
-export function UpdateInspectData(data: any){
+export function UpdateInspectData(data: any) {
     return request({
         url: "/api/firstinspect/Update_Inspect_Info",
         method: "post",
@@ -24,7 +24,7 @@ export function UpdateInspectData(data: any){
     });
 }
 
-export function DeleteInspectData(data: any){
+export function DeleteInspectData(data: any) {
     return request({
         url: "/api/firstinspect/Delete_Inspect_Info",
         method: "post",
@@ -32,7 +32,7 @@ export function DeleteInspectData(data: any){
     });
 }
 
-export function getCheckResults(data: any){
+export function getCheckResults(data: any) {
     return request({
         url: "/api/firstinspect/Quert_Inspect_History_Info",
         method: "post",
@@ -41,14 +41,14 @@ export function getCheckResults(data: any){
 }
 
 //设备台账  获取设备类型
-export function GetEquipmentTypeList(){
+export function GetEquipmentTypeList() {
     return request({
         url: "/api/resource/GetEquipmentTypeList",
         method: "post",
     });
 }
 //获取设备台账  
-export function GetEquipmentList(data:any){
+export function GetEquipmentList(data: any) {
     return request({
         url: "/api/resource/GetEquipmentList",
         method: "post",
@@ -56,7 +56,7 @@ export function GetEquipmentList(data:any){
     });
 }
 //台账获取 车间 产线
-export function GetFactoryModelList(){
+export function GetFactoryModelList() {
     return request({
         url: "/api/system/GetFactoryModelList",
         method: "post",
@@ -109,7 +109,7 @@ export function findERPBOMMaterialList(query: any) {
     return request1({
         url: "/api/product/findERPBOMMaterialList",
         method: "post",
-        data:query
+        data: query
     })
 }
 //查询产品BOM
@@ -166,12 +166,12 @@ export function findPdMaterial() {
 }
 
 //根据产品查询产品工序
-export function findProductSpec(data:any) {
+export function findProductSpec(data: any) {
     return request({
         url: "/api/Tools/findProductSpec",
         method: "post",
         params: {
-            productName:data
+            productName: data
         }
     })
 }
@@ -180,8 +180,8 @@ export function findProductBOM(data: any) {
     return request({
         url: "/api/product/findProductBOM",
         method: "post",
-        data:{
-            ProductName:data
+        data: {
+            ProductName: data
         }
     })
 }
@@ -194,7 +194,7 @@ export function findOrderStatus() {
 }
 
 //查询生产计划号信息
-export function findOrder(data:any) {
+export function findOrder(data: any) {
     return request({
         url: "/api/order/OrderQuery",
         method: "post",
@@ -202,7 +202,7 @@ export function findOrder(data:any) {
     })
 }
 //修改生产计划号状态
-export function UpdateOrderStatus(data:any) {
+export function UpdateOrderStatus(data: any) {
     return request({
         url: "/api/order/UpdateOrderStatus",
         method: "post",
@@ -211,7 +211,7 @@ export function UpdateOrderStatus(data:any) {
 }
 
 //查询生产计划号明细
-export function QueryOrderMaterialRequired(data:any) {
+export function QueryOrderMaterialRequired(data: any) {
     return request({
         url: "/api/order/QueryOrderMaterialRequired",
         method: "post",
@@ -220,12 +220,12 @@ export function QueryOrderMaterialRequired(data:any) {
 }
 
 //查询生产计划号明细
-export function QueryOrderToolsData(data:any) {
+export function QueryOrderToolsData(data: any) {
     return request({
         url: "/api/order/QueryOrderToolsData",
         method: "post",
         params: {
-            orderNumber:data
+            orderNumber: data
         }
     })
 }
@@ -258,7 +258,7 @@ export function GetComboBoxList(data: any) {
         url: "/api/system/GetComboBoxList",
         method: "post",
         params: {
-            UserConstantName:data
+            UserConstantName: data
         }
     });
 }
@@ -296,7 +296,7 @@ export function QueryMaterialRequestDetail(data: any) {
         url: "/api/order/QueryMaterialRequestDetail",
         method: "post",
         params: {
-            historyId:data
+            historyId: data
         }
     });
 }
@@ -313,7 +313,7 @@ export function QueryOrderLine(data: any) {
         url: "/api/order/QueryOrderLine",
         method: "post",
         params: {
-            orderType:data
+            orderType: data
         }
     });
 }
@@ -339,7 +339,7 @@ export function GetECNOrderitem(data: any) {
         url: "/api/ECNOrder/GetECNOrderItem",
         method: "post",
         params: {
-            ECNOrderId:data
+            ECNOrderId: data
         }
     });
 }
@@ -356,9 +356,9 @@ export function QueryDefectCodeDetail(data: any) {
     return request({
         url: "/api/Defect/QueryDefectCodeDetail",
         method: "post",
-        params:{
-            ContainerName:data
-           }
+        params: {
+            ContainerName: data
+        }
     });
 }
 //查询工序
@@ -366,9 +366,9 @@ export function QuerySpec(data: any) {
     return request({
         url: "/api/Defect/QuerySpec",
         method: "post",
-       params:{
-        spec:data
-       }
+        params: {
+            spec: data
+        }
     });
 }
 
@@ -395,8 +395,8 @@ export function QueryMaterialReturnDetail(data: any) {
     return request({
         url: "/api/order/QueryMaterialReturnDetail",
         method: "post",
-        params:{
-            historyId:data
+        params: {
+            historyId: data
         }
     });
 }
@@ -458,7 +458,7 @@ export function addCalibrationRecord(data: any) {
 
 //插件首检检查
 //获取检查任务列表
-export function GetInspectack(data:any) {
+export function GetInspectack(data: any) {
     return request({
         url: "/api/DIPFirstInspect/GetInspectack",
         method: "post",
@@ -467,7 +467,7 @@ export function GetInspectack(data:any) {
 }
 
 //第一阶段检查
-export function FirstStage(data:any) {
+export function FirstStage(data: any) {
     return request({
         url: "/api/DIPFirstInspect/FirstStage",
         method: "post",
@@ -476,7 +476,7 @@ export function FirstStage(data:any) {
 }
 
 //第二阶段检查
-export function SecondStage(data:any) {
+export function SecondStage(data: any) {
     return request({
         url: "/api/DIPFirstInspect/SecondStage",
         method: "post",
@@ -485,7 +485,7 @@ export function SecondStage(data:any) {
 }
 
 //第三阶段检查
-export function ThirdStage(data:any) {
+export function ThirdStage(data: any) {
     return request({
         url: "/api/DIPFirstInspect/ThirdStage",
         method: "post",
@@ -495,18 +495,18 @@ export function ThirdStage(data:any) {
 }
 
 //第三阶段检查
-export function InspecDetail(data:any) {
+export function InspecDetail(data: any) {
     return request({
         url: "/api/DIPFirstInspect/InspecDetail",
         method: "post",
-        params:{
-            taskno:data
+        params: {
+            taskno: data
         }
     })
 
 }
 //查询产品物料
-export function findProduct(data:any) {
+export function findProduct(data: any) {
     return request({
         url: "/api/spec/findProduct",
         method: "post",
@@ -515,18 +515,18 @@ export function findProduct(data:any) {
 
 }
 //
-export function findProductSpecWork(data:any) {
+export function findProductSpecWork(data: any) {
     return request({
         url: "/api/spec/findProductSpec",
         method: "post",
-        params:{
-            productName:data
+        params: {
+            productName: data
         }
     })
 
 }
 //查询工艺流程
-export function findWorkFlow(data:any) {
+export function findWorkFlow(data: any) {
     return request({
         url: "/api/spec/findWorkFlow",
         method: "post",
@@ -534,7 +534,7 @@ export function findWorkFlow(data:any) {
     })
 }
 //修改物料工作流
-export function UpdateProductWorkflow(data:any) {
+export function UpdateProductWorkflow(data: any) {
     return request({
         url: "/api/spec/UpdateProductWorkflow",
         method: "post",
@@ -542,31 +542,31 @@ export function UpdateProductWorkflow(data:any) {
     })
 }
 //根据产品查找工序
-export function findProductBOMMaterialList(data:any) {
+export function findProductBOMMaterialList(data: any) {
     return request({
         url: "/api/spec/findProductBOMMaterialList",
         method: "post",
-        params:{
-            productName:data
+        params: {
+            productName: data
         }
     })
 
 }
 
 //查询工艺流程的工序
-export function findWorkflowSpec(data:any) {
+export function findWorkflowSpec(data: any) {
     return request({
         url: "/api/spec/findWorkflowSpec",
         method: "post",
-        params:{
-            WorkflowName:data
+        params: {
+            WorkflowName: data
         }
     })
 
 }
 
 //修改工序
-export function UpdateProductBOMMaterialList(data:any) {
+export function UpdateProductBOMMaterialList(data: any) {
     return request({
         url: "/api/spec/UpdateProductBOMMaterialList",
         method: "post",
@@ -574,7 +574,7 @@ export function UpdateProductBOMMaterialList(data:any) {
     })
 }
 //获取标签模板
-export function GetBarCodeTemplate(data:any) {
+export function GetBarCodeTemplate(data: any) {
     return request({
         url: "/api/BarCodeTemplate/GetBarCodeTemplate",
         method: "post",
@@ -582,7 +582,7 @@ export function GetBarCodeTemplate(data:any) {
     })
 }
 //获取物料
-export function GetBarCodeTemplatePartNumberContent(data:any) {
+export function GetBarCodeTemplatePartNumberContent(data: any) {
     return request({
         url: "/api/BarCodeTemplate/GetBarCodeTemplatePartNumberContent",
         method: "post",
@@ -590,7 +590,7 @@ export function GetBarCodeTemplatePartNumberContent(data:any) {
     })
 }
 //添加标签模板
-export function InsertBarCodeTemplate(data:any) {
+export function InsertBarCodeTemplate(data: any) {
     return request({
         url: "/api/BarCodeTemplate/InsertBarCodeTemplate",
         method: "post",
@@ -598,7 +598,7 @@ export function InsertBarCodeTemplate(data:any) {
     })
 }
 //修改标签模板
-export function UpdateBarCodeTemplate(data:any) {
+export function UpdateBarCodeTemplate(data: any) {
     return request({
         url: "/api/BarCodeTemplate/UpdateBarCodeTemplate",
         method: "post",
@@ -606,7 +606,7 @@ export function UpdateBarCodeTemplate(data:any) {
     })
 }
 //删除标签模板
-export function DeleteBarCodeTemplate(data:any) {
+export function DeleteBarCodeTemplate(data: any) {
     return request({
         url: "/api/BarCodeTemplate/DeleteBarCodeTemplate",
         method: "post",
@@ -614,7 +614,7 @@ export function DeleteBarCodeTemplate(data:any) {
     })
 }
 //新增模板物料
-export function InsertBarCodeRuleTempPartNumContent(data:any) {
+export function InsertBarCodeRuleTempPartNumContent(data: any) {
     return request({
         url: "/api/BarCodeTemplate/InsertBarCodeRuleTempPartNumContent",
         method: "post",
@@ -622,9 +622,99 @@ export function InsertBarCodeRuleTempPartNumContent(data:any) {
     })
 }
 //删除模板物料
-export function DeleteBarCodeRuleTempPartNumContent(data:any) {
+export function DeleteBarCodeRuleTempPartNumContent(data: any) {
     return request({
         url: "/api/BarCodeTemplate/DeleteBarCodeRuleTempPartNumContent",
+        method: "post",
+        data
+    })
+}
+//获取MES的物料信
+export function QueryBarCodeRuleTemplatePartNum(data: any) {
+    return request({
+        url: "/api/BarCodeTemplate/QueryBarCodeRuleTemplatePartNum",
+        method: "post",
+        data
+    })
+}
+
+//获取MES的物料信
+export function QueryMESProductNameNews(data: any) {
+    return request({
+        url: "/api/BarCodeTemplate/QueryMESProductNameNews",
+        method: "post",
+        data
+    })
+}
+
+//获取物料模板内容明细
+export function QueryBarCodeRule_TemContentRule(data: any) {
+    return request({
+        url: "/api/BarCodeTemplate/QueryBarCodeRule_TemContentRule",
+        method: "post",
+        data
+    })
+}
+//获取有模板的物料信息
+export function QueryTeplateExistProductNameNews(data: any) {
+    return request({
+        url: "/api/BarCodeTemplate/QueryTeplateExistProductNameNews",
+        method: "post",
+        data
+    })
+}
+//新增物料模板内容明细
+export function InsertBarCodeRule_TemContentRules(data: any) {
+    return request({
+        url: "/api/BarCodeTemplate/InsertBarCodeRule_TemContentRules",
+        method: "post",
+        data
+    })
+}
+//修改物料模板内容明细
+export function UpdateBarCodeRule_TemContentRule(data: any) {
+    return request({
+        url: "/api/BarCodeTemplate/UpdateBarCodeRule_TemContentRule",
+        method: "post",
+        data
+    })
+}
+//删除物料模板内容明细
+export function DeleteCodeRuleTemplatePartNum(data: any) {
+    return request({
+        url: "/api/BarCodeTemplate/DeleteCodeRuleTemplatePartNum",
+        method: "post",
+        data
+    })
+}
+//获取该物料绑定的模板
+export function QueryProductNameTemplateName(data: any) {
+    return request({
+        url: "/api/BarCodeTemplate/QueryProductNameTemplateName",
+        method: "post",
+        data
+    })
+}
+//获取模板内容参数
+export function QueryBarCodeRuleTemplatePara(data: any) {
+    return request({
+        url: "/api/BarCodeTemplate/QueryBarCodeRuleTemplatePara",
+        method: "post",
+        data
+    })
+}
+//添加模板内容参数
+export function InsertBarCodeRuleTemplatePara(data: any) {
+    return request({
+        url: "/api/BarCodeTemplate/InsertBarCodeRuleTemplatePara",
+        method: "post",
+        data
+    })
+}
+//删除模板内容参数
+export function DeleteBarCodeRuleTemplatePara(data: any) {
+    return request({
+        url: "/api/BarCodeTemplate/DeleteBarCodeRuleTemplatePara",
         method: "post",
         data
     })

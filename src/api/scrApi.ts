@@ -97,9 +97,7 @@ export function TPOqcIpTestOut(data: any){
     return request({
         url: "/api/OqcIpAppearance/OqcIpTestOut",
         method: "post",
-        params:{
-            containerName:data
-        }
+        data
     });
 }
 
@@ -108,7 +106,9 @@ export function TPQueryDefectCode(data: any){
     return request({
         url: "/api/OqcIpAppearance/QueryDefectCode",
         method: "post",
-        data
+        params:{
+            containerName:data
+        }
     });
 }
 

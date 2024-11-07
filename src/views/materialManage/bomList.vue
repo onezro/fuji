@@ -596,7 +596,7 @@ const columnData = reactive([
   // {
   //   text: true,
   //   prop: "Qty",
-  //   label: "生产计划号数量",
+  //   label: "生产计划数量",
   //   width: "",
   //   min: true,
   //   align: "center",

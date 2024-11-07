@@ -8,7 +8,7 @@
             </div>
         </div>
         <div class="w-full flex-1 flex">
-            <div class="setwidth w-[320px]">
+            <div class="setwidth w-[350px]">
                 <div class="w-full h-full box">
                     <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
                         <span class="ml-5">基本信息</span>
@@ -24,7 +24,7 @@
                     </div>
                 </div>
             </div>
-            <div class="w-[calc(100%-320px)]">
+            <div class="w-[calc(100%-350px)]">
                 <div class="w-full h-full flex flex-col">
                     <div>
                         <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
@@ -57,10 +57,11 @@
                             <span class="ml-5">历史过站记录</span>
                             <div class="mr-5">
                                 <el-checkbox-group v-model="checkedHis" class="laser-table-filter">
-                   <el-checkbox v-for="c in checkedHisList" :label="`${c.label}(${changeDataLength(c.value)})`" :value="c.value"
-                    @change="changeHis(c.value)">
-                  </el-checkbox>
-                </el-checkbox-group>
+                                    <el-checkbox v-for="c in checkedHisList"
+                                        :label="`${c.label}(${changeDataLength(c.value)})`" :value="c.value"
+                                        @change="changeHis(c.value)">
+                                    </el-checkbox>
+                                </el-checkbox-group>
                             </div>
                         </div>
                         <table-tem :showIndex="true" :tableData="changeData" :tableHeight="tableHeight"
@@ -208,26 +209,12 @@ const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
         width: "",
     },
     {
-        label: "生产计划号数量",
+        label: "生产计划数量",
         value: "Qty",
         disabled: true,
         type: "input",
         width: "",
-    },
-    {
-        label: "过站总数",
-        value: "AllNum",
-        disabled: true,
-        type: "input",
-        width: "",
-    },
-    {
-        label: "实时过站",
-        value: "TodayNum",
-        disabled: true,
-        type: "input",
-        width: "",
-    },
+    }
 ]);
 
 const hisColumn = reactive([
@@ -241,7 +228,7 @@ const hisColumn = reactive([
     {
         text: true,
         prop: "BD_Tools",
-        label: "工装治具",
+        label: "治具编码",
         width: "",
         align: "1",
     },
@@ -328,11 +315,11 @@ const checkedHis = ref(["today"]);
 const checkedHisList = ref([
     {
         value: "today",
-        label: "今天",
+        label: "当日过序",
     },
     {
         value: "all",
-        label: "所有",
+        label: "工序汇总",
     },
 ]);
 
@@ -360,8 +347,7 @@ const getFocus = () => {
 //历史过站记录
 const getHisData = () => {
     QueryMoveHistory(hisForm.value).then((res: any) => {
-        tableData1.value = res.content;
-
+        tableData.value = res.content;
     });
 };
 const changeHis = (val: any) => {
@@ -373,30 +359,30 @@ const changeHis = (val: any) => {
     }
 };
 const changeData = computed(() => {
-  if (checkedHis.value[0] == "today") {
-    return geTodayData()
-  } else {
-    return tableData.value;
-  }
+    if (checkedHis.value[0] == "today") {
+        return geTodayData()
+    } else {
+        return tableData.value;
+    }
 });
-const changeDataLength =(val: any) => {
-  if (val == "today") {
-    let dataLength=geTodayData()
-    return dataLength.length
-  } else {
-     return tableData.value.length
-  }
+const changeDataLength = (val: any) => {
+    if (val == "today") {
+        let dataLength = geTodayData()
+        return dataLength.length
+    } else {
+        return tableData.value.length
+    }
 }
 const geTodayData = () => {
-  const today = new Date();
-  const todayString = today.toISOString().split("T")[0];
-  function getDateFromDateTimeString(dateTimeString: any) {
-    return dateTimeString.split(" ")[0];
-  }
-  const todayDataArray = tableData.value.filter((item: any) => {
-    return getDateFromDateTimeString(item.TxnDate) === todayString;
-  });
-  return todayDataArray
+    const today = new Date();
+    const todayString = today.toISOString().split("T")[0];
+    function getDateFromDateTimeString(dateTimeString: any) {
+        return dateTimeString.split(" ")[0];
+    }
+    const todayDataArray = tableData.value.filter((item: any) => {
+        return getDateFromDateTimeString(item.TxnDate) === todayString;
+    });
+    return todayDataArray
 };
 
 const getOrderData = () => {
@@ -539,7 +525,7 @@ const getScreenHeight = () => {
 }
 
 .setwidth {
-    flex: 0 0 320px;
+    flex: 0 0 350px;
 }
 
 .box {

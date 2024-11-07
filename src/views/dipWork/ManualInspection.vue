@@ -107,7 +107,7 @@
                 </el-form-item>
               </el-col>
               <el-col :span="10">
-                <el-form-item class="mb-[5px]" label="生产计划号数量">
+                <el-form-item class="mb-[5px]" label="生产计划数量">
                   <el-input v-model="badheadForm.Qty" style="width: 160px" disabled />
                 </el-form-item>
               </el-col>
@@ -242,7 +242,7 @@ const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
     width: "",
   },
   {
-    label: "生产计划号数量",
+    label: "生产计划数量",
     value: "Qty",
     disabled: true,
     type: "input",

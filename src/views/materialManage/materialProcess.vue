@@ -24,6 +24,7 @@
         <div class="setwidth w-[400px]">
           <el-table :data="tableData" size="small" :height="tableHeight" :tooltip-effect="'dark'" border fit
             highlight-current-row @cell-click="cellClick">
+             <el-table-column type="index" align="center" fixed label="序号" width="50" />
             <el-table-column prop="ProductName" label="组件编码" width="120" />
             <el-table-column prop="ProductDesc" label="组件描述" :show-overflow-tooltip="true" />
             <template #empty>
@@ -69,7 +70,11 @@
               row-key="MaterialName" @selection-change="handleSelectionChange">
               <el-table-column type="selection" align="center" width="50"></el-table-column>
 
-              <!-- <el-table-column type="index" align="center" fixed label="序号" width="50" /> -->
+              <el-table-column  align="center" fixed label="序号" width="50">
+                <template #default="scope">
+                  {{ scope.$index+1 }}
+                </template>
+              </el-table-column>
               <el-table-column prop="MaterialName" label="物料编码" fixed width="120" />
               <el-table-column prop="MaterialDesc" label="物料描述" :show-overflow-tooltip="true" width="250" />
               <el-table-column prop="SpecName" label="工序编码" flexible>
@@ -171,7 +176,6 @@ import {
   reactive,
 } from "vue";
 import { ElNotification } from "element-plus";
-import Index from "@/layout/index.vue";
 
 interface SpecForm {
   ProductName: string;
@@ -296,6 +300,12 @@ onBeforeUnmount(() => {
 const getData = () => {
   findProduct(getForm.value).then((res: any) => {
     tableData.value = res.content;
+    specWorkData.value=[]
+    productData.value=[]
+    specWork.value = {
+        WorkflowDesc: "",
+        WorkflowName: "",
+      };
   });
 };
 const getProductList = () => {

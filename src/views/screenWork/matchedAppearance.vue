@@ -154,7 +154,7 @@
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">
-                  <el-form-item label="生产计划号" class="mb-[5px] flex">
+                  <el-form-item label="工单" class="mb-[5px] flex">
                     <el-input
                       v-model="badheadForm.MfgOrderName"
                       style="width: 160px"
@@ -163,7 +163,7 @@
                   </el-form-item>
                 </el-col>
                 <!-- <el-col :span="6">
-                  <el-form-item class="mb-[5px]" label="产品机型">
+                  <el-form-item class="mb-[5px]" label="机型">
                     <el-input
                       v-model="badheadForm.ProductName"
                       style="width: 160px"
@@ -258,10 +258,10 @@
   import type { Formspan, FormHeader, OrderData } from "@/typing";
   import { ElMessage, ElNotification, ElMessageBox } from "element-plus";
   import {
-    TPOqcIpTestOut,
-    TPQueryDefectCode,
-    TPOqcIpTefectProductRecord
-  } from "@/api/scrApi";
+    FitsTheLookMoveOut,
+    FTLDefectProductRecord,
+    MAQueryDefectCode
+  } from "@/api/operate";
   
   import {
     ref,
@@ -322,7 +322,7 @@
   });
   const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
     {
-      label: "生产计划号",
+      label: "工单号",
       value: "MfgOrderName",
       disabled: true,
       type: "input",
@@ -357,7 +357,7 @@
       width: "",
     },
     {
-      label: "生产计划数量",
+      label: "工单数量",
       value: "Qty",
       disabled: true,
       type: "input",
@@ -567,7 +567,7 @@ onBeforeMount(() => {
       });
     });
     console.log(badForm.value);
-    TPOqcIpTefectProductRecord({...badForm.value,tools:'A001-2402103001493',workstationName:'BICV-ZZYB-SB-YSJ-001'}).then((res: any) => {
+    FTLDefectProductRecord(badForm.value).then((res: any) => {
       msgTitle.value = "";
       msgType.value = true;
       if (res.success) {
@@ -592,7 +592,7 @@ onBeforeMount(() => {
       stopsForm.value.containerName = barCodeData;
       // console.log(stopsForm.value.result);
       if (stopsForm.value.result == "OK") {
-        TPOqcIpTestOut({
+        FitsTheLookMoveOut({
           containerName: barCodeData,
           workstationName: opui.station,
           tools: ToolName.value,
@@ -616,7 +616,7 @@ onBeforeMount(() => {
       } else {
         badForm.value.containerName = barCodeData;
         // badVisible.value = true;
-        TPQueryDefectCode(stopsForm.value.containerName).then((res: any) => {
+        MAQueryDefectCode(stopsForm.value.containerName).then((res: any) => {
           //   console.log(res);
           if (!res.success) {
             msgTitle.value = res.msg;
@@ -628,8 +628,7 @@ onBeforeMount(() => {
           badheadForm.value.ProductDesc = res.content.ProductDesc;
           badheadForm.value.Qty = res.content.Qty;
           badheadForm.value.PlannedstartDate = res.content.PlannedstartDate;
-          badheadForm.value.PlannedCompletionDate =
-            res.content.PlannedCompletionDate;
+          badheadForm.value.PlannedCompletionDate = res.content.PlannedCompletionDate;
           BadtableData.value = res.content.defectCode;
           badVisible.value = true;
         });
