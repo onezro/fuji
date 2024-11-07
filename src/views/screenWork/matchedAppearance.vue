@@ -1,3 +1,4 @@
+
 <template>
     <div class="flex flex-col w-full h-full">
       <div
@@ -261,7 +262,7 @@
     FitsTheLookMoveOut,
     FTLDefectProductRecord,
     MAQueryDefectCode
-  } from "@/api/operate";
+  } from "@/api/asyApi";
   
   import {
     ref,
@@ -739,4 +740,3 @@ onBeforeMount(() => {
     height: 14px;
   }
   </style>
-  
