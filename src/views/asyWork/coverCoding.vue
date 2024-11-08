@@ -168,6 +168,7 @@ const form = ref<InstanceType<typeof Formspan>>({
   ProductName: "",
   ProductDesc: "",
   Qty: "",
+  ERPOrder:"",
   PlannedStartDate: "",
   PlannedCompletionDate: "",
      AllNum:"",
@@ -181,6 +182,28 @@ const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
   //     type: "input",
   //     width: "",
   // },
+
+  {
+    label: "产品机型",
+    value: "BD_ProductModel",
+    disabled: true,
+    type: "input",
+    width: "",
+  },
+  {
+    label: "工单号",
+    value: "ERPOrder",
+    disabled: true,
+    type: "input",
+    width: "",
+  },
+  {
+    label: "计划数量",
+    value: "Qty",
+    disabled: true,
+    type: "input",
+    width: "",
+  },
   {
     label: "产品编码",
     value: "ProductName",
@@ -194,27 +217,6 @@ const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
     disabled: true,
     type: "textarea",
     width: 300,
-  },
-  {
-    label: "计划开始",
-    value: "PlannedStartDate",
-    disabled: true,
-    type: "input",
-    width: "",
-  },
-  {
-    label: "计划完成",
-    value: "PlannedCompletionDate",
-    disabled: true,
-    type: "input",
-    width: "",
-  },
-  {
-    label: "生产计划数量",
-    value: "Qty",
-    disabled: true,
-    type: "input",
-    width: "",
   },
    // {
   //   label: "过站总数",
@@ -388,6 +390,7 @@ const radioChange = (args: any) => {
     form.value.BD_SoftVersion = "";
     form.value.PlannedCompletionDate = "";
     form.value.Qty = "";
+    form.value.ERPOrder = "";
   } else {
     // orderTable.value.data.forEach((v: any) => {
     //   if (v.MfgOrderName == args[1]) {
@@ -401,6 +404,7 @@ const radioChange = (args: any) => {
     form.value.Qty = args[0].Qty;
     form.value.AllNum = args[0].AllNum;
     form.value.TodayNum = args[0].TodayNum;
+    form.value.ERPOrder = args[0].ERPOrder;
     hisForm.value.MfgOrderName = args[0].MfgOrderName;
     // console.log(args[0].MfgOrderName);
     // getFeedForm.value.MfgOrder = args[0].MfgOrderName;

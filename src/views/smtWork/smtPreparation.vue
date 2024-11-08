@@ -81,7 +81,7 @@
                                 <el-form-item label="产线" class="mb-2" prop="LineNumber">
                                     <el-input v-model="operateForm.LineNumber" style="width: 200px" disabled />
                                 </el-form-item>
-                                <el-form-item label="生产计划数量" class="mb-2" prop="OrderPlanedQty">
+                                <el-form-item label="计划数量" class="mb-2" prop="OrderPlanedQty">
                                     <el-input v-model="operateForm.OrderPlanedQty" style="width: 180px" disabled />
                                 </el-form-item>
                                 <el-form-item label="产品编码" class="mb-2" prop="ProductNumber">
@@ -133,7 +133,7 @@
                 <el-table-column prop="LineNumber" label="产线" min-width="150" />
                 <el-table-column prop="ProductNumber" label="产品编码" min-width="120" />
                 <el-table-column prop="ProductDesc" :show-overflow-tooltip="true" label="产品描述" width="180" />
-                <el-table-column prop="OrderPlanedQty" label="生产计划数量" align="center" width="80" />
+                <el-table-column prop="OrderPlanedQty" label="计划数量" align="center" width="80" />
                 <el-table-column prop="StartTime" label="计划开始时间" width="140" />
                 <el-table-column prop="EndTime" label="计划完成时间" width="140" />
             </el-table>

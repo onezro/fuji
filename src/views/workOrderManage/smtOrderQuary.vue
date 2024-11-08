@@ -421,23 +421,6 @@ const columnData = reactive([
     min: true,
     align: "center",
   },
-
-  {
-    text: true,
-    prop: "MfgLineDesc",
-    label: "产线",
-    width: "",
-    min: true,
-    align: "center",
-  },
-  {
-    text: true,
-    prop: "BD_ProductModel",
-    label: "产品机型",
-    width: "",
-    min: true,
-    align: "center",
-  },
   {
     text: true,
     prop: "Side",
@@ -446,22 +429,13 @@ const columnData = reactive([
     min: true,
     align: "center",
   },
-
   {
     text: true,
-    prop: "ProductName",
-    label: "产品编码",
+    prop: "ERPOrder",
+    label: "工单号",
     width: "",
     min: true,
     align: "center",
-  },
-  {
-    text: true,
-    prop: "ProductDesc",
-    label: "产品描述",
-    width: "250",
-    min: true,
-    align: "1",
   },
   {
     text: true,
@@ -471,6 +445,41 @@ const columnData = reactive([
     min: true,
     align: "center",
   },
+  {
+    text: true,
+    prop: "MfgLineDesc",
+    label: "产线",
+    width: "",
+    min: true,
+    align: "1",
+  },
+  {
+    text: true,
+    prop: "BD_ProductModel",
+    label: "产品机型",
+    width: "",
+    min: true,
+    align: "1",
+  },
+ 
+
+  {
+    text: true,
+    prop: "ProductName",
+    label: "产品编码",
+    width: "",
+    min: true,
+    align: "1",
+  },
+  {
+    text: true,
+    prop: "ProductDesc",
+    label: "产品描述",
+    width: "250",
+    min: true,
+    align: "1",
+  },
+
   {
     text: true,
     prop: "UOMName",

@@ -107,7 +107,7 @@
                 </el-form-item>
               </el-col>
               <el-col :span="10">
-                <el-form-item class="mb-[5px]" label="生产计划数量">
+                <el-form-item class="mb-[5px]" label="计划数量">
                   <el-input v-model="badheadForm.Qty" style="width: 160px" disabled />
                 </el-form-item>
               </el-col>
@@ -215,6 +215,27 @@ const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
     width: "",
   },
   {
+    label: "产品机型",
+    value: "BD_ProductModel",
+    disabled: true,
+    type: "input",
+    width: "",
+  },
+  {
+    label: "工单号",
+    value: "ERPOrder",
+    disabled: true,
+    type: "input",
+    width: "",
+  },
+  {
+    label: "计划数量",
+    value: "Qty",
+    disabled: true,
+    type: "input",
+    width: "",
+  },
+  {
     label: "产品编码",
     value: "ProductName",
     disabled: true,
@@ -228,27 +249,8 @@ const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
     type: "textarea",
     width: 300,
   },
-  {
-    label: "计划开始",
-    value: "PlannedStartDate",
-    disabled: true,
-    type: "input",
-    width: "",
-  },
-  {
-    label: "计划完成",
-    value: "PlannedCompletionDate",
-    disabled: true,
-    type: "input",
-    width: "",
-  },
-  {
-    label: "生产计划数量",
-    value: "Qty",
-    disabled: true,
-    type: "input",
-    width: "",
-  },
+
+
    // {
   //   label: "过站总数",
   //   value: "AllNum",

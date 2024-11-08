@@ -40,8 +40,8 @@
         <el-table-column prop="ProductNumber" align="center" label="产品编码"
           :min-width="flexColumnWidth('产品编码', 'ProductNumber')">
         </el-table-column>
-        <el-table-column prop="OrderPlanedQty" align="center" label="生产计划数量"
-          :min-width="flexColumnWidth('生产计划数量', 'OrderPlanedQty')">
+        <el-table-column prop="OrderPlanedQty" align="center" label="计划数量"
+          :min-width="flexColumnWidth('计划数量', 'OrderPlanedQty')">
         </el-table-column>
         <el-table-column prop="ReturnDate" align="center" label="状态" width="100">
           <template #default="scope">
@@ -322,7 +322,7 @@ const columnData = reactive([
   {
     text: true,
     prop: "OrderPlanedQty",
-    label: "生产计划数量",
+    label: "计划数量",
     width: "",
     min: true,
     align: "center",

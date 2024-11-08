@@ -5,7 +5,7 @@
         <div></div>
       </div>
       <div class="w-full flex-1 flex">
-        <div class="setwidth w-[350px]">
+        <div class="setwidth w-[400px]">
           <div class="w-full h-full box">
             <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
               <span class="ml-5">基本信息</span>
@@ -20,7 +20,7 @@
             </div>
           </div>
         </div>
-        <div class="w-[calc(100%-350px)]">
+        <div class="w-[calc(100%-400px)]">
           <!-- <div class="w-full"> -->
           <div class="w-full h-full flex flex-col">
             <div>
@@ -43,7 +43,7 @@
                   </el-form-item> -->
                 </el-form>
                 <div class="text-xl font-bold text-[#00B400]" v-show="msgType === true || msgTitle === ''">
-                  {{ msgTitle === "" ? "请扫描PCB条码" : msgTitle }}
+                  {{ msgTitle === "" ? "请扫描治具编码" : msgTitle }}
                 </div>
                 <div class="text-xl font-bold text-[red]" v-show="msgType === false && msgTitle !== ''">
                   {{ msgTitle }}
@@ -138,47 +138,47 @@
   });
   const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
     {
-      label: "生产计划号",
-      value: "MfgOrderName",
-      disabled: true,
-      type: "input",
-      width: "",
-    },
-    {
-      label: "产品编码",
-      value: "ProductName",
-      disabled: true,
-      type: "input",
-      width: "",
-    },
-    {
-      label: "产品描述",
-      value: "ProductDesc",
-      disabled: true,
-      type: "textarea",
-    //   width: 300,
-    },
-    {
-      label: "计划开始",
-      value: "PlannedStartDate",
-      disabled: true,
-      type: "input",
-      width: "",
-    },
-    {
-      label: "计划完成",
-      value: "PlannedCompletionDate",
-      disabled: true,
-      type: "input",
-      width: "",
-    },
-    {
-      label: "生产计划数量",
-      value: "Qty",
-      disabled: true,
-      type: "input",
-      width: "",
-    },
+    label: "生产计划号",
+    value: "MfgOrderName",
+    disabled: true,
+    type: "input",
+    width: "",
+  },
+  {
+    label: "产品机型",
+    value: "BD_ProductModel",
+    disabled: true,
+    type: "input",
+    width: "",
+  },
+  {
+    label: "工单号",
+    value: "ERPOrder",
+    disabled: true,
+    type: "input",
+    width: "",
+  },
+  {
+    label: "计划数量",
+    value: "Qty",
+    disabled: true,
+    type: "input",
+    width: "",
+  },
+  {
+    label: "产品编码",
+    value: "ProductName",
+    disabled: true,
+    type: "input",
+    width: "",
+  },
+  {
+    label: "产品描述",
+    value: "ProductDesc",
+    disabled: true,
+    type: "textarea",
+    width: 300,
+  }
      // {
   //   label: "过站总数",
   //   value: "AllNum",
@@ -202,13 +202,13 @@
       width: "",
       align: "1",
     },
-    // {
-    //   text: true,
-    //   prop: "BD_Tools",
-    //   label: "工装治具",
-    //   width: "",
-    //   align: "1",
-    // },
+    {
+      text: true,
+      prop: "BD_Tools",
+      label: "治具编码",
+      width: "",
+      align: "1",
+    },
     {
       text: true,
       prop: "BD_EmployeeName",
@@ -360,7 +360,7 @@ const geTodayData = () => {
   }
   
   .setwidth {
-    flex: 0 0 350px;
+    flex: 0 0 400px;
   }
   
   .box {
