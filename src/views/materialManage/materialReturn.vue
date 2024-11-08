@@ -166,20 +166,20 @@
               type="selection"
               width="55"
               :selectable="selectable"
+              :min-width="flexColumnWidth('选择', 'CompID')"
             />
             <el-table-column
               prop="CompID"
               fixed
               label="物料条码"
-              :min-width="150"
-              width="150"
+              :min-width="flexColumnWidth('物料条码', 'CompID')"
             >
             </el-table-column>
             <el-table-column
               prop="CompName"
               label="物料编码"
               :show-overflow-tooltip="true"
-              width="200"
+              :min-width="flexColumnWidth('物料编码', 'CompName')"
             >
             </el-table-column>
 
@@ -235,7 +235,8 @@
               :min-width="flexColumnWidth('到料时间', 'ReceiveDate')"
             >
             </el-table-column> -->
-            <el-table-column prop="RequestQty" align="center" label="请求数量">
+            <el-table-column prop="RequestQty" align="center" label="请求数量"
+              :min-width="flexColumnWidth('请求数量请求数量', 'Qty')">
               <template #default="scope">
                 <el-input
                 style="width: 150px;"
@@ -246,7 +247,8 @@
                 </el-input>
               </template>
             </el-table-column>
-            <el-table-column prop="QualityIsGood" align="center" label="是否良品">
+            <el-table-column prop="QualityIsGood" align="center" label="是否良品"
+              :min-width="flexColumnWidth('是否良品是否良品', 'QualityIsGood')">
               <template #default="scope">
                 <el-select
                   v-model="scope.row.QualityIsGood"
