@@ -10,19 +10,26 @@
     <div class="w-full flex-1 flex">
       <div class="setwidth w-[350px]">
         <div class="w-full h-full box">
-          <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
+          <div
+            class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]"
+          >
             <span class="ml-5">工装治具</span>
           </div>
           <div class="p-3 overflow-auto" :style="{ height: leftBoxH + 'px' }">
             <el-checkbox-group v-model="checked">
-              <el-card shadow="always" class="mb-2" :body-style="{ padding: '8px' }" v-for="t in toolList"
-                :key="t.ToolName">
+              <el-card
+                shadow="always"
+                class="mb-2"
+                :body-style="{ padding: '8px' }"
+                v-for="t in toolList"
+                :key="t.ToolName"
+              >
                 <el-form ref="formRef" :model="t" label-width="auto">
                   <!-- <el-form-item class="mb-[5px]"> -->
                   <div class="flex justify-between items-center">
-                    <div class="checked">
+                    <!-- <div class="checked">
                       <el-checkbox :value="t.ToolName" @change="changeCheck(t.ToolName)" />
-                    </div>
+                    </div> -->
                     <!-- <el-tooltip effect="dark" content="上移" placement="top-start">
                       <el-button icon="Top" circle :disabled="t.sort == 1" @click="moveUp(t)" />
                     </el-tooltip> -->
@@ -36,9 +43,19 @@
                     </el-col>
                     <el-col :span="10">
                       <el-form-item label="序号" class="mb-[5px]">
-                        <el-tag type="warning" class="pl-3 pr-3 text-xs" effect="dark"
-                          v-if="t.ToolName == checked[0]">{{ t.sort }}</el-tag>
-                        <el-tag type="primary" class="pl-3 pr-3" v-if="t.ToolName !== checked[0]">{{ t.sort }}</el-tag>
+                        <el-tag
+                          type="warning"
+                          class="pl-3 pr-3 text-xs"
+                          effect="dark"
+                          v-if="t.ToolName == checked[0]"
+                          >{{ t.sort }}</el-tag
+                        >
+                        <el-tag
+                          type="primary"
+                          class="pl-3 pr-3"
+                          v-if="t.ToolName !== checked[0]"
+                          >{{ t.sort }}</el-tag
+                        >
                         <!-- <span class="text-base">{{ t.sort }}</span> -->
                       </el-form-item>
                     </el-col>
@@ -82,38 +99,80 @@
       <div class="w-[calc(100%-350px)]">
         <div class="w-full h-full flex flex-col">
           <div>
-            <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
+            <div
+              class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]"
+            >
               <span class="ml-5"> 扫描条码</span>
             </div>
             <div class="h-[100px] pt-3 pr-5 pl-5">
-              <el-form class="inbound" ref="formRef" :inline="true" :model="form" label-width="auto"
-                @submit.native.prevent>
+              <el-form
+                class="inbound"
+                ref="formRef"
+                :inline="true"
+                :model="form"
+                label-width="auto"
+                @submit.native.prevent
+              >
                 <el-form-item label="扫描条码">
-                  <el-input v-model.trim="barCode" ref="inputRef" :autofocus="inputFocus" style="width: 500px"
-                    placeholder="请扫描PCB条码或治具编码" @keyup.enter.native="getChange" />
+                  <el-input
+                    v-model.trim="barCode"
+                    ref="inputRef"
+                    :autofocus="inputFocus"
+                    style="width: 500px"
+                    placeholder="请扫描PCB条码或治具编码"
+                    @keyup.enter.native="getChange"
+                  />
                 </el-form-item>
               </el-form>
-              <div class="text-xl font-bold text-[#00B400]" v-show="msgType === true || msgTitle === ''">
+              <div
+                class="text-xl font-bold text-[#00B400]"
+                v-show="msgType === true || msgTitle === ''"
+              >
                 {{ msgTitle === "" ? "请扫描PCB条码" : msgTitle }}
               </div>
-              <div class="text-xl font-bold text-[red]" v-show="msgType === false && msgTitle !== ''">
+              <div
+                class="text-xl font-bold text-[red]"
+                v-show="msgType === false && msgTitle !== ''"
+              >
                 {{ msgTitle }}
               </div>
             </div>
           </div>
           <div class="p-2">
-            <el-form class="inbound" size="default" ref="formRef" :model="form" :inline="true" label-width="auto">
+            <el-form
+              class="inbound"
+              size="default"
+              ref="formRef"
+              :model="form"
+              :inline="true"
+              label-width="auto"
+            >
               <el-row>
                 <el-col :span="8">
                   <el-form-item label="生产计划号" class="mb-[5px] flex">
-                    <selectTa ref="selectTable" :table="orderTable" :selectWidth="160" :columns="orderColumns"
-                      :max-height="400" :tableWidth="700" :defaultSelectVal="defaultSelectVal" :keywords="{
+                    <selectTa
+                      ref="selectTable"
+                      :table="orderTable"
+                      :selectWidth="160"
+                      :columns="orderColumns"
+                      :max-height="400"
+                      :tableWidth="700"
+                      :defaultSelectVal="defaultSelectVal"
+                      :keywords="{
                         label: 'MfgOrderName',
                         value: 'MfgOrderName',
-                      }" @radioChange="(...args: any) => radioChange(args)">
+                      }"
+                      @radioChange="(...args: any) => radioChange(args)"
+                    >
                     </selectTa>
                     <el-tooltip content="刷新" placement="top">
-                      <el-icon class="ml-2" color="#777777" :class="isLoding" size="24" @click="getOrderData">
+                      <el-icon
+                        class="ml-2"
+                        color="#777777"
+                        :class="isLoding"
+                        size="24"
+                        @click="getOrderData"
+                      >
                         <RefreshRight />
                       </el-icon>
                     </el-tooltip>
@@ -121,27 +180,48 @@
                 </el-col>
                 <el-col :span="7">
                   <el-form-item class="mb-[5px]" label="产品编码">
-                    <el-input v-model="form.ProductName" style="width: 160px" disabled /> </el-form-item></el-col>
+                    <el-input
+                      v-model="form.ProductName"
+                      style="width: 160px"
+                      disabled
+                    /> </el-form-item
+                ></el-col>
                 <el-col :span="9">
                   <el-form-item class="mb-[5px]" label="产品描述">
-                    <el-input v-model="form.ProductDesc" style="width: 340px" disabled />
+                    <el-input
+                      v-model="form.ProductDesc"
+                      style="width: 340px"
+                      disabled
+                    />
                   </el-form-item>
                 </el-col>
               </el-row>
               <el-row>
                 <el-col :span="8">
                   <el-form-item class="mb-[5px]" label="计划开始">
-                    <el-input v-model="form.PlannedStartDate" style="width: 160px" disabled />
+                    <el-input
+                      v-model="form.PlannedStartDate"
+                      style="width: 160px"
+                      disabled
+                    />
                   </el-form-item>
                 </el-col>
                 <el-col :span="7">
                   <el-form-item class="mb-[5px]" label="计划完成">
-                    <el-input v-model="form.PlannedCompletionDate" style="width: 160px" disabled />
+                    <el-input
+                      v-model="form.PlannedCompletionDate"
+                      style="width: 160px"
+                      disabled
+                    />
                   </el-form-item>
                 </el-col>
                 <el-col :span="9">
                   <el-form-item class="mb-[5px]" label="生产计划数量">
-                    <el-input v-model="form.Qty" style="width: 100px" disabled />
+                    <el-input
+                      v-model="form.Qty"
+                      style="width: 100px"
+                      disabled
+                    />
                   </el-form-item>
                 </el-col>
                 <!-- <el-col :span="3">
@@ -162,31 +242,70 @@
             </el-form>
           </div>
           <div class="flex flex-col flex-1 tabs-css">
-            <div class="h-[35px] flex items-center justify-between text-lg text-[#fff] bg-[#006487]">
+            <div
+              class="h-[35px] flex items-center justify-between text-lg text-[#fff] bg-[#006487]"
+            >
               <span class="ml-5">历史过站记录</span>
               <div class="mr-5">
-                <el-checkbox-group v-model="checkedHis" class="laser-table-filter">
-                   <el-checkbox v-for="c in checkedHisList" :label="`${c.label}(${changeDataLength(c.value)})`" :value="c.value"
-                    @change="changeHis(c.value)">
+                <el-checkbox-group
+                  v-model="checkedHis"
+                  class="laser-table-filter"
+                >
+                  <el-checkbox
+                    v-for="c in checkedHisList"
+                    :label="`${c.label}(${changeDataLength(c.value)})`"
+                    :value="c.value"
+                    @change="changeHis(c.value)"
+                  >
                   </el-checkbox>
                 </el-checkbox-group>
               </div>
             </div>
-            <table-tem :showIndex="true" :tableData="changeData" :tableHeight="tableHeight" :columnData="columnData1"
-              :pageObj="pageObj" @handleSizeChange="handleSizeChange"
-              @handleCurrentChange="handleCurrentChange"></table-tem>
+            <table-tem
+              :showIndex="true"
+              :tableData="changeData"
+              :tableHeight="tableHeight"
+              :columnData="columnData1"
+              :pageObj="pageObj"
+              @handleSizeChange="handleSizeChange"
+              @handleCurrentChange="handleCurrentChange"
+            ></table-tem>
           </div>
         </div>
       </div>
     </div>
 
-    <formTem ref="addOverRef" :width="'400px'" :visible="overAddVisible" :title="'波峰焊过序设置'" :form="overAddForm"
-      :formHeader="overHeader" @formCancel="addOverCancel" @onSubmit="addOveronSubmit"></formTem>
-    <el-dialog v-model="detailVisible" title="上料明细" width="70%" align-center draggable :append-to-body="true"
-      :close-on-click-modal="false" :close-on-press-escape="false" @close="detailVisible = false">
-      <table-tem :showIndex="true" size="small" :tableData="detailsData" :tableHeight="400" :columnData="detailsColumn"
-        :pageObj="detailsPageObj" @handleSizeChange="detailsSizeChange"
-        @handleCurrentChange="detailsCurrentChange"></table-tem>
+    <formTem
+      ref="addOverRef"
+      :width="'400px'"
+      :visible="overAddVisible"
+      :title="'波峰焊过序设置'"
+      :form="overAddForm"
+      :formHeader="overHeader"
+      @formCancel="addOverCancel"
+      @onSubmit="addOveronSubmit"
+    ></formTem>
+    <el-dialog
+      v-model="detailVisible"
+      title="上料明细"
+      width="70%"
+      align-center
+      draggable
+      :append-to-body="true"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      @close="detailVisible = false"
+    >
+      <table-tem
+        :showIndex="true"
+        size="small"
+        :tableData="detailsData"
+        :tableHeight="400"
+        :columnData="detailsColumn"
+        :pageObj="detailsPageObj"
+        @handleSizeChange="detailsSizeChange"
+        @handleCurrentChange="detailsCurrentChange"
+      ></table-tem>
       <!-- <template #footer>
         <span class="dialog-footer">
           <el-button @click="detailVisible = false">关闭</el-button>
@@ -587,17 +706,17 @@ const checkedHisList = ref([
     label: "工序汇总",
   },
 ]);
-const changeCheck = (val: any) => {
-  // console.log(val, checked.value);
-  if (checked.value.length == 0) {
-    checked.value = [];
-    stopsForm.value.tools = "";
-  } else {
-    checked.value = [];
-    checked.value[0] = val;
-    stopsForm.value.tools = val;
-  }
-};
+// const changeCheck = (val: any) => {
+
+//   if (checked.value.length == 0) {
+//     checked.value = [];
+//     stopsForm.value.tools = "";
+//   } else {
+//     checked.value = [];
+//     checked.value[0] = val;
+//     stopsForm.value.tools = val;
+//   }
+// };
 const openOver = () => {
   overAddVisible.value = true;
   getOverData();
@@ -757,19 +876,19 @@ const changeHis = (val: any) => {
 };
 const changeData = computed(() => {
   if (checkedHis.value[0] == "today") {
-    return geTodayData()
+    return geTodayData();
   } else {
     return tableData1.value;
   }
 });
-const changeDataLength =(val: any) => {
+const changeDataLength = (val: any) => {
   if (val == "today") {
-    let dataLength=geTodayData()
-    return dataLength.length
+    let dataLength = geTodayData();
+    return dataLength.length;
   } else {
-     return tableData1.value.length
+    return tableData1.value.length;
   }
-}
+};
 const geTodayData = () => {
   const today = new Date();
   const todayString = today.toISOString().split("T")[0];
@@ -779,9 +898,8 @@ const geTodayData = () => {
   const todayDataArray = tableData1.value.filter((item: any) => {
     return getDateFromDateTimeString(item.TxnDate) === todayString;
   });
-  return todayDataArray
+  return todayDataArray;
 };
-
 
 //治具上移
 const moveUp = (val: any) => {
@@ -848,8 +966,8 @@ const radioChange = (args: any) => {
     hisForm.value.MfgOrderName = "";
     getFeedForm.value.MfgOrder = "";
     getToolForm.value.OrderNumber = "";
-    tableData1.value=[]
-    toolList.value=[]
+    tableData1.value = [];
+    toolList.value = [];
   } else {
     // orderTable.value.data.forEach((v: any) => {
     //   if (v.MfgOrderName == args[1]) {
@@ -942,30 +1060,42 @@ const getChange = (val: any) => {
       // moveUp(toolList.value[toolData])
       stopsForm.value.tools = toolList.value[toolData].ToolName;
       checked.value[0] = toolList.value[toolData].ToolName;
-      barCode.value = "";
-      return;
+      // barCode.value = "";
     } else {
-      // stopsForm.value.ContainerName = barCodeVal;
+      stopsForm.value.ContainerName = barCodeVal;
+    }
+    barCode.value = "";
+    if(stopsForm.value.ContainerName!==""&& stopsForm.value.tools!==""){
       // PluginStationMoveOut(stopsForm.value).then((res: any) => {
       //   msgTitle.value = res.msg;
       //   msgType.value = res.success;
       //   stopsForm.value.ContainerName = "";
       //   barCode.value = "";
-      //   getToolData();
-      //   getFocus();
+      //   if (res.success) {
+          // stopsForm.value.tools = "";
+          // checked.value = [];
+      //     getToolData();
+      //     getHisData();
+      //   }
+        console.log(stopsForm.value.tools);
       // });
     }
+     getFocus();
   }
-  stopsForm.value.ContainerName = barCodeVal;
-  PluginStationMoveOut(stopsForm.value).then((res: any) => {
-    msgTitle.value = res.msg;
-    msgType.value = res.success;
-    stopsForm.value.ContainerName = "";
-    barCode.value = "";
-    getToolData();
-    getHisData();
-    getFocus();
-  });
+  // stopsForm.value.ContainerName = barCodeVal;
+  // PluginStationMoveOut(stopsForm.value).then((res: any) => {
+  //   msgTitle.value = res.msg;
+  //   msgType.value = res.success;
+  //   stopsForm.value.ContainerName = "";
+  //   barCode.value = "";
+  //   if (res.success) {
+  //     stopsForm.value.tools = "";
+  //     checked.value = [];
+  //     getToolData();
+  //     getHisData();
+  //   }
+  //   getFocus();
+  // });
 };
 
 //分页
@@ -1022,7 +1152,7 @@ const getScreenHeight = () => {
   font-size: 1.1rem;
 }
 
-.tabs-css .el-tabs--border-card>.el-tabs__header .el-tabs__item {
+.tabs-css .el-tabs--border-card > .el-tabs__header .el-tabs__item {
   color: #fff;
   // padding: 0 !important;
 }
@@ -1041,7 +1171,10 @@ const getScreenHeight = () => {
   color: #ff4949;
 }
 
-.tabs-css .el-tabs--border-card>.el-tabs__header .el-tabs__item:not(.is-disabled):hover {
+.tabs-css
+  .el-tabs--border-card
+  > .el-tabs__header
+  .el-tabs__item:not(.is-disabled):hover {
   // color: #fff;
   // background-color: #fff;
   background-color: rgba($color: #fff, $alpha: 0.8);

@@ -258,11 +258,11 @@
   import { checkStringType } from "@/utils/barcodeFormat";
   import type { Formspan, FormHeader, OrderData } from "@/typing";
   import { ElMessage, ElNotification, ElMessageBox } from "element-plus";
-  import {
-    FitsTheLookMoveOut,
-    FTLDefectProductRecord,
-    MAQueryDefectCode
-  } from "@/api/asyApi";
+  // import {
+  //   FitsTheLookMoveOut,
+  //   FTLDefectProductRecord,
+  //   MAQueryDefectCode
+  // } from "@/api/asyApi";
   
   import {
     ref,
@@ -568,23 +568,23 @@ onBeforeMount(() => {
       });
     });
     console.log(badForm.value);
-    FTLDefectProductRecord(badForm.value).then((res: any) => {
-      msgTitle.value = "";
-      msgType.value = true;
-      if (res.success) {
-        badVisible.value = false;
-        BadtableData.value = [];
-        changeList.value = [];
-        badForm.value.DefectDetails = [];
-        stopsForm.value.result = "OK";
-        getFocus();
-      }
-      ElNotification({
-        title: "提示信息",
-        message: res.msg,
-        type: res.success ? "success" : "error",
-      });
-    });
+    // FTLDefectProductRecord(badForm.value).then((res: any) => {
+    //   msgTitle.value = "";
+    //   msgType.value = true;
+    //   if (res.success) {
+    //     badVisible.value = false;
+    //     BadtableData.value = [];
+    //     changeList.value = [];
+    //     badForm.value.DefectDetails = [];
+    //     stopsForm.value.result = "OK";
+    //     getFocus();
+    //   }
+    //   ElNotification({
+    //     title: "提示信息",
+    //     message: res.msg,
+    //     type: res.success ? "success" : "error",
+    //   });
+    // });
   };
   
   //过站
@@ -593,46 +593,46 @@ onBeforeMount(() => {
       stopsForm.value.containerName = barCodeData;
       // console.log(stopsForm.value.result);
       if (stopsForm.value.result == "OK") {
-        FitsTheLookMoveOut({
-          containerName: barCodeData,
-          workstationName: opui.station,
-          tools: ToolName.value,
-          userAccount: loginName,
-        }).then((res: any) => {
-          msgTitle.value = res.msg;
-          msgType.value = res.success;
-          stopsForm.value.containerName = "";
-          form.value = { ...res.content[0] };
-          hisForm.value.MfgOrderName = res.content[0].MfgOrderName;
-          tableData.value.unshift({
-            ContainerName: barCodeData,
-            TxnDate: getDate(),
-            userAccount: loginName,
-          });
-          getHisData();
-          getFocus();
-          // if (res.success) {
-          stopsForm.value.result = "OK";
-        });
+        // FitsTheLookMoveOut({
+        //   containerName: barCodeData,
+        //   workstationName: opui.station,
+        //   tools: ToolName.value,
+        //   userAccount: loginName,
+        // }).then((res: any) => {
+        //   msgTitle.value = res.msg;
+        //   msgType.value = res.success;
+        //   stopsForm.value.containerName = "";
+        //   form.value = { ...res.content[0] };
+        //   hisForm.value.MfgOrderName = res.content[0].MfgOrderName;
+        //   tableData.value.unshift({
+        //     ContainerName: barCodeData,
+        //     TxnDate: getDate(),
+        //     userAccount: loginName,
+        //   });
+        //   getHisData();
+        //   getFocus();
+        //   // if (res.success) {
+        //   stopsForm.value.result = "OK";
+        // });
       } else {
         badForm.value.containerName = barCodeData;
         // badVisible.value = true;
-        MAQueryDefectCode(stopsForm.value.containerName).then((res: any) => {
-          //   console.log(res);
-          if (!res.success) {
-            msgTitle.value = res.msg;
-            msgType.value = res.success;
-            return;
-          }
-          badheadForm.value.MfgOrderName = res.content.MfgOrderName;
-          badheadForm.value.ProductName = res.content.ProductName;
-          badheadForm.value.ProductDesc = res.content.ProductDesc;
-          badheadForm.value.Qty = res.content.Qty;
-          badheadForm.value.PlannedstartDate = res.content.PlannedstartDate;
-          badheadForm.value.PlannedCompletionDate = res.content.PlannedCompletionDate;
-          BadtableData.value = res.content.defectCode;
-          badVisible.value = true;
-        });
+        // MAQueryDefectCode(stopsForm.value.containerName).then((res: any) => {
+        //   //   console.log(res);
+        //   if (!res.success) {
+        //     msgTitle.value = res.msg;
+        //     msgType.value = res.success;
+        //     return;
+        //   }
+        //   badheadForm.value.MfgOrderName = res.content.MfgOrderName;
+        //   badheadForm.value.ProductName = res.content.ProductName;
+        //   badheadForm.value.ProductDesc = res.content.ProductDesc;
+        //   badheadForm.value.Qty = res.content.Qty;
+        //   badheadForm.value.PlannedstartDate = res.content.PlannedstartDate;
+        //   badheadForm.value.PlannedCompletionDate = res.content.PlannedCompletionDate;
+        //   BadtableData.value = res.content.defectCode;
+        //   badVisible.value = true;
+        // });
       };
     barCode.value = "";
   };

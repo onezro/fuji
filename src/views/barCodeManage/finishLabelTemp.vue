@@ -28,18 +28,21 @@
                 @handleCurrentChange="handleCurrentChange"></tableTemp>
         </el-card>
         <el-dialog v-model="addTempVisible" title="添加成品包装模板标签" draggable width="900px" :append-to-body="true"
-            :close-on-click-modal="false" size="small" :close-on-press-escape="false" align-center
+            :close-on-click-modal="false"  :close-on-press-escape="false" align-center
             @close="addTempCancel">
-            <el-form ref="formRef" :model="addForm" :inline="true">
+            <el-form ref="formRef" size="small" :model="addForm" :inline="true">
                 <el-form-item label="名称" prop="RuleName">
                     <el-input v-model="addForm.RuleName" />
                 </el-form-item>
                 <el-form-item label="物料编码" prop="ProductName">
                     <el-select-v2 v-model="addForm.ProductName" :options="materData" filterable :props="props"
-                        style="width: 180px" @change="getBasMaterialData"/>
+                        style="width: 180px" @change="getBasMaterialData" />
                 </el-form-item>
                 <el-form-item label="物料描述" prop="ProductDescript">
-                    <el-input v-model="addForm.ProductDescript" />
+                    <el-input v-model="ProductDescript" disabled style="width: 240px;"/>
+                </el-form-item>
+                <el-form-item label="备注" prop="TemplateRemark">
+                    <el-input v-model="addForm.TemplateRemark" disabled style="width: 240px;"/>
                 </el-form-item>
             </el-form>
             <template #footer>
@@ -77,6 +80,7 @@ import {
 } from "vue";
 import { ElNotification, ElMessageBox } from "element-plus";
 import { useUserStoreWithOut } from "@/stores/modules/user";
+import { find } from "lodash-es";
 const userStore = useUserStoreWithOut();
 const getForm = ref({
     RuleName: "",
@@ -187,7 +191,6 @@ const addForm = ref({
     RuleName: "",
     ProductName: "",
     TemplateRemark: "",
-    ProductDescript:""
 });
 
 const materData = ref([]);
@@ -195,6 +198,7 @@ const props = ref({
     label: "ProductName",
     value: "ProductName",
 });
+const ProductDescript = ref("");
 onBeforeMount(() => {
     getScreenHeight();
 });
@@ -210,7 +214,6 @@ onBeforeUnmount(() => {
 const getData = () => {
     QueryBarCodeRuleTemplatePartNum(getForm.value).then((res: any) => {
         tableData.value = res.content;
-        // console.log(res.content);
     });
 };
 const getMesData = () => {
@@ -225,9 +228,12 @@ const openAddTemp = () => {
 };
 const addTempCancel = () => { };
 const addTempConfirm = () => { };
-const getBasMaterialData=(val:any)=>{
-
-}
+const getBasMaterialData = (val: any) => {
+    let data: any = materData.value.find((m: any) => m.ProductName === val);
+    if (data != undefined) {
+        ProductDescript.value = data.Description;
+    }
+};
 const handleSizeChange = (val: any) => {
     pageObj.value.currentPage = 1;
     pageObj.value.pageSize = val;

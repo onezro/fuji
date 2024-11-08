@@ -70,8 +70,8 @@
           <el-table :data="materialData" size="small" :style="{ width: '100%' }" :height="tableHeight1"
             :tooltip-effect="'dark'" border fit>
             <el-table-column prop="ProductName" label="组件编码" width="120" />
-            <el-table-column prop="ProductDesc" label="组件描述" :show-overflow-tooltip="true" />
-            <el-table-column label="操作" width="120" fixed="right" align="center">
+            <el-table-column prop="Description" label="组件描述" :show-overflow-tooltip="true" />
+            <el-table-column label="操作" width="80" fixed="right" align="center">
               <template #default="scope">
                 <!-- <el-tooltip content="编辑" placement="top">
                   <el-button type="primary" icon="EditPen" size="small" @click.stop="handleEdit(scope.row)"></el-button>
