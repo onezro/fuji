@@ -70,7 +70,7 @@
         </el-form>
         <div class="mb-[5px]">
           <el-button type="warning" size="small" :disabled="onlineData.length === 1 ? false : true"
-            @click="openOrderOnline">生产计划号上线</el-button>
+            @click="openOrderOnline">计划上线</el-button>
           <el-button type="info" size="small" icon="Lock" :disabled="onlineData.length === 1 ? false : true"
             @click="orderLock">锁定</el-button>
           <el-button color="#409eff" size="small" style="color: #fff" icon="Unlock"
@@ -391,7 +391,7 @@ const columnData = reactive([
     fixed:true,
     isOperation: true,
     label: "生产计划号",
-    width: "120",
+    width: "150",
     align: "center",
     
     operation: [

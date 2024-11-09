@@ -49,16 +49,17 @@
                             <!-- <el-input v-model="addForm.TemplateBox" style="width: 150px" /> -->
                             <el-select-v2 v-model="addForm.TemplateBox" :options="tempList" filterable
                                 :props="tempProps" style="width: 150px" />
+                                <span>特殊规则:[yyM]/[yyMM]/[yyyyMM]年月;[yyWW]年周;[yyMMdd]年月日;[SN:长度:起始流水]流水号:长度:起始流水</span>
                         </el-form-item>
                         <div class="flex">
                             <el-form ref="formRef" size="small" :model="form" :inline="true" label-width="auto">
                                 <el-form-item label="规则名称" prop="TempRlueName">
                                     <el-select-v2 v-model="form.TempRlueName" :options="ruleData" filterable
-                                    :props="ruleProps" style="width: 150px" />
+                                        :props="ruleProps" style="width: 150px" />
                                     <!-- <el-input v-model="form.TempRlueName" style="width: 150px" /> -->
                                 </el-form-item>
-                                <el-form-item label="条码格式" prop="TempRlueFormat">
-                                    <el-input v-model="form.TempRlueFormat" disabled style="width: 150px" />
+                                <el-form-item label="条码格式" prop="barFormat">
+                                    <el-input v-model="barFormat" disabled style="width: 150px" />
                                 </el-form-item>
                                 <el-form-item label="条码预览" prop="TempRlueFormat">
                                     <el-input v-model="form.TempRlueFormat" disabled style="width: 150px" />
@@ -86,7 +87,7 @@
                             </el-form>
                             <div class="flex flex-col justify-around items-center">
                                 <div>
-                                    <el-button type="primary" size="large">添加</el-button>
+                                    <el-button type="primary" size="large" @click="addItem">添加</el-button>
                                 </div>
                                 <div>
                                     <el-button type="danger" size="large">删除</el-button>
@@ -160,10 +161,39 @@ import {
     onBeforeUnmount,
     nextTick,
     reactive,
+    computed,
 } from "vue";
 import { ElNotification, ElMessageBox } from "element-plus";
 import { useUserStoreWithOut } from "@/stores/modules/user";
-import { find } from "lodash-es";
+interface AddForm{
+    RuleName: string,
+    ProductName: string;
+    TemplateRemark: string,
+    TemplateBox: string,
+    TemplateFuselage: string,
+    Template01: string,
+    Template02:string,
+    Template03: string,
+    tempcontent01: Array<Tempcontent>,
+    tempcontent02: Array<Tempcontent>,
+    tempcontent03: Array<Tempcontent>,
+    tempcontent04: Array<Tempcontent>,
+    tempcontent05: Array<Tempcontent>,
+    tempcontent06: Array<Tempcontent>,
+}
+interface  Tempcontent{
+    TempRlueName: string,
+    TempRlueFormat: string,
+    TempRluePrefixSuffix01:string,
+    TempRluePrefixSuffix02:string,
+    TempRluePrefixSuffix03:string,
+    TempRluePrefixSuffix04:string,
+    TempRluePrefixSuffix05:string,
+    TempRluePrefixSuffix06:string,
+    TempRlueEnable1: boolean,
+    TempRlueEnable2: boolean,
+    TempRlueEnable3: boolean,
+}
 const userStore = useUserStoreWithOut();
 const getForm = ref({
     RuleName: "",
@@ -270,7 +300,7 @@ const columnData = ref([
     //   },
 ]);
 const addTempVisible = ref(false);
-const addForm = ref({
+const addForm = ref<AddForm>({
     RuleName: "",
     ProductName: "",
     TemplateRemark: "",
@@ -298,8 +328,8 @@ const tempProps = ref({
     label: "Template_Name",
     value: "Template_Name",
 });
-const ruleData=ref([])
-const ruleProps=ref({
+const ruleData = ref([])
+const ruleProps = ref({
     label: "Temppara_Name",
     value: "Temppara_No",
 })
@@ -319,7 +349,14 @@ const form = ref({
 });
 const addFormRef = ref();
 const formRef = ref();
+const barFormat = computed(() => {
+    const barCodeFormat=form.value.TempRluePrefixSuffix01 + form.value.TempRluePrefixSuffix02 + form.value.TempRluePrefixSuffix03 + form.value.TempRluePrefixSuffix04 + form.value.TempRluePrefixSuffix05 + form.value.TempRluePrefixSuffix06
+    form.value.TempRlueFormat=barCodeFormat
+    return barCodeFormat
+})
+const barPreview=computed(()=>{
 
+})
 
 onBeforeMount(() => {
     getScreenHeight();
@@ -349,10 +386,15 @@ const openAddTemp = () => {
     addTempVisible.value = true;
     QueryBarCodeRuleTemplatePara({
         Temppara_No: "",
-    }).then((res: any) => { 
-        ruleData.value=res.content
+    }).then((res: any) => {
+        ruleData.value = res.content
     });
 };
+const addItem=()=>{
+    if(activeName.value=="TemplateBox"){
+        addForm.value.tempcontent01.push(form.value)
+    }
+}
 //添加取消
 const addTempCancel = () => {
     addFormRef.value.resetFields();
@@ -360,7 +402,10 @@ const addTempCancel = () => {
     addTempVisible.value = false;
 };
 //添加保存
-const addTempConfirm = () => { };
+const addTempConfirm = () => { 
+    console.log(addForm.value);
+    
+};
 const getBasMaterialData = (val: any) => {
     let data: any = materData.value.find((m: any) => m.ProductName === val);
     if (data != undefined) {

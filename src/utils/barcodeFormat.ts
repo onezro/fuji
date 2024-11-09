@@ -5,7 +5,7 @@ const regexResult = /^(OK|NG)$/i; // OK NG
 
 export  const checkStringType=(str:string)=> {  
   if (regexPcb.test(str)) {  
-    return 'pcb';  
+    return 'PCB';  
   } else if (regexTool.test(str)) {  
     return 'tool';  
   } else if (regexResult.test(str)) {  

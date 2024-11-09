@@ -433,6 +433,7 @@ const geTodayData = () => {
   ::v-deep .laser-table-filter .el-checkbox__label {
     /* 你的样式 */
     color: white !important;
+    font-size: 1.1rem;
   }
   </style>
   
