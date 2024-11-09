@@ -82,8 +82,8 @@
         <el-table-column
           prop="OrderQuantity"
           align="center"
-          label="生产计划数量"
-          :min-width="flexColumnWidth('生产计划数量', 'OrderQuantity')"
+          label="计划数量"
+          :min-width="flexColumnWidth('计划数量', 'OrderQuantity')"
         >
         </el-table-column>
         <el-table-column

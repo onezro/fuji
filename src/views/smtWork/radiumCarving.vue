@@ -244,7 +244,7 @@ const formHeader = reactive<FormHeader[]>([
     value: "Side",
   },
   {
-    lable: "生产计划数量",
+    lable: "计划数量",
     value: "Qty",
   },
 ]);
@@ -349,7 +349,7 @@ const FeedHeader = reactive([
     prop: 'ProductDesc'
   },
   {
-    label: '生产计划数量',
+    label: '计划数量',
     prop: 'Qty'
   },
 
