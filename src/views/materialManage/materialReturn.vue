@@ -20,6 +20,7 @@
                   v-model="historyForm.QualityIsGood"
                   placeholder=""
                   style="width: 150px"
+                  clearable
                 >
                   <el-option
                     v-for="item in returnTypeList"
@@ -520,7 +521,7 @@ const orderChange = (data: any) => {
 const getTypeList = () => {
   GetComboBoxList('ReturnType').then((res:any) => {
     iReturnTypeList.value = res.content;
-    returnTypeList.value = [{Text:'全部',Value:''},...res.content];
+    returnTypeList.value = res.content;
   })
 }
 
