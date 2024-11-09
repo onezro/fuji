@@ -12,6 +12,20 @@
           <el-form-item label="生产计划号" class="mb-2">
             <el-input v-model="historyForm.orderNmae" placeholder=""></el-input>
           </el-form-item>
+          <el-form-item label="申请类型" class="mb-2">
+              <el-select
+                  v-model="historyForm.RequestType"
+                  placeholder=""
+                  style="width: 150px"
+                >
+                  <el-option
+                    v-for="item in applyTypeList"
+                    :key="item.Value"
+                    :label="item.Text"
+                    :value="item.Value"
+                  />
+                </el-select>
+          </el-form-item>
           <el-form-item label="日期" class="mb-2">
             <el-date-picker
               :shortcuts="shortcuts"
@@ -20,6 +34,7 @@
               type="daterange"
               range-separator="到"
               size="small"
+              style="width: 250px"
               @change="dateChange"
             />
           </el-form-item>
@@ -65,7 +80,7 @@
     <el-dialog
       v-model="dialogVisible"
       width="80%"
-      title="生产补料申请"
+      title="物料申请"
       align-center
     >
       <div class="w-full">
@@ -80,7 +95,7 @@
             <!-- <div>
               </div> -->
             <el-form-item label="生产计划号">
-              <el-select
+              <!-- <el-select
                 v-model="form.MfgOrderName"
                 placeholder=""
                 style="width: 152.4px"
@@ -92,7 +107,13 @@
                   :label="item.MfgOrderName"
                   :value="item.MfgOrderName"
                 />
-              </el-select>
+              </el-select> -->
+              <el-input
+                v-model="form.MfgOrderName"
+                class="input-with-select"
+                @keyup.enter.native="orderChange(form.MfgOrderName)"
+              >
+              </el-input>
             </el-form-item>
             <el-form-item label="产品机型">
               <el-input
@@ -137,6 +158,19 @@
                 disabled
               >
               </el-input>
+            </el-form-item>
+            <el-form-item label="申请类型">
+              <el-select
+                  v-model="applyType"
+                  style="width: 150px"
+                >
+                  <el-option
+                    v-for="item in iApplyTypeList"
+                    :key="item.Value"
+                    :label="item.Text"
+                    :value="item.Value"
+                  />
+                </el-select>
             </el-form-item>
             <br />
             <el-form-item label="产品描述">
@@ -183,6 +217,20 @@
               width="150"
             >
             </el-table-column>
+            <el-form-item label="申请类型">
+              <el-select
+                  v-model="applyType"
+                  placeholder="Select"
+                  style="width: 150px"
+                >
+                  <el-option
+                    v-for="item in applyTypeList"
+                    :key="item.value"
+                    :label="item.text"
+                    :value="item.value"
+                  />
+                </el-select>
+            </el-form-item>
             <el-table-column
               prop="MaterialDesc"
               label="物料描述"
@@ -284,6 +332,7 @@ import {
   SubmitMaterialRequest,
   QueryMaterialRequest,
   QueryMaterialRequestDetail,
+  GetComboBoxList
 } from "@/api/operate";
 import { cloneDeep } from "lodash-es";
 import {
@@ -316,6 +365,9 @@ const historyTable = ref<any>([]);
 const date = ref<any[]>([]);
 const detailedTable = ref<any[]>([]);
 const detailedHeight = ref(0);
+const applyType = ref('1');
+const applyTypeList = ref<any[]>();
+const iApplyTypeList = ref<any[]>();
 const detailedPageObj = ref({
   pageSize: 10000000,
   currentPage: 1,
@@ -348,9 +400,11 @@ interface formTS {
   MfgLineDesc: string;
   WorkCenterName: string;
   wcDescription: string;
+  RequestTypeName: string;
 }
 
 interface historyFormTS {
+  RequestType: string;
   orderNmae: string;
   requestStartDate: string;
   requestEndDate: string;
@@ -372,9 +426,11 @@ const form = ref<formTS>({
   MfgLineDesc: "",
   WorkCenterName: "",
   wcDescription: "",
+  RequestTypeName: ""
 });
 
 const historyForm = ref<historyFormTS>({
+  RequestType: "",
   orderNmae: "",
   requestStartDate: "",
   requestEndDate: "",
@@ -383,7 +439,8 @@ const historyForm = ref<historyFormTS>({
 // watch(
 
 // );
-onBeforeMount(() => {});
+onBeforeMount(() => {
+});
 
 onMounted(() => {
   const today = new Date();
@@ -403,6 +460,7 @@ onMounted(() => {
   historyForm.value.requestEndDate = formattedTodayDate;
   date.value = [formattedDate, formattedTodayDate];
   getHistory();
+  getTypeList();
   getScreenHeight();
   findOrderData();
   window.addEventListener("resize", getScreenHeight);
@@ -422,8 +480,18 @@ const findOrderData = () => {
 };
 //选中生产计划号
 const orderChange = (data: any) => {
+  console.log(data);
+  
+  if (!orderList.value.some(obj => obj.MfgOrderName === data)) {
+      ElNotification({
+        title: "提示信息",
+        message: '未找到此生产计划号',
+        type: "warning",
+      });
+      return
+  }
   orderList.value.forEach((item: any) => {
-    if (item.MfgOrderName === data) {
+    if (item.MfgOrderName === form.value.MfgOrderName) {
       form.value.MfgOrderName = item.MfgOrderName;
       form.value.PlannedStartDate = item.PlannedStartDate;
       form.value.PlannedCompletionDate = item.PlannedCompletionDate;
@@ -439,6 +507,7 @@ const orderChange = (data: any) => {
       form.value.MfgLineDesc = item.MfgLineDesc;
       form.value.WorkCenterName = item.WorkCenterName;
       form.value.wcDescription = item.wcDescription;
+      form.value.RequestTypeName = item.RequestTypeName;
       getFeedTableData(data);
     }
   });
@@ -513,6 +582,14 @@ const getMaxLength = (arr: any) => {
   }, 0);
 };
 
+//根据名称获取配置值
+const getTypeList = () => {
+  GetComboBoxList('RequestType').then((res:any) => {
+    iApplyTypeList.value = res.content;
+    applyTypeList.value = [{Text:'全部',Value:''},...res.content];
+  })
+}
+
 const getTextWidth = (str: string) => {
   let width = 0;
   const html = document.createElement("span");
@@ -554,6 +631,7 @@ const handleSelectionChange = (data: any) => {
         SpecName: item.SpecName,
         ERPRouteName: item.ERPRouteName,
         QtyRequired: item.QtyRequired,
+        
       };
     });
   console.log(choiceList.value);
@@ -577,7 +655,7 @@ const applyFor = () => {
     }
   });
   SubmitMaterialRequest({
-    RequestType: "5",
+    RequestType: applyType.value,
     MfgOrderName: form.value.MfgOrderName,
     MaterialList: choiceList.value,
     ProductName: form.value.ProductName,

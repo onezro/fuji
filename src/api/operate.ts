@@ -272,7 +272,7 @@ export function findTaskToolsDetail(data: any) {
     });
 }
 
-//获取工治具型号维护类型
+//工单物料申请
 export function SubmitMaterialRequest(data: any) {
     return request({
         url: "/api/order/SubmitMaterialRequest",
