@@ -17,6 +17,7 @@
                   v-model="historyForm.RequestType"
                   placeholder=""
                   style="width: 150px"
+                  clearable
                 >
                   <el-option
                     v-for="item in applyTypeList"
@@ -586,7 +587,7 @@ const getMaxLength = (arr: any) => {
 const getTypeList = () => {
   GetComboBoxList('RequestType').then((res:any) => {
     iApplyTypeList.value = res.content;
-    applyTypeList.value = [{Text:'全部',Value:''},...res.content];
+    applyTypeList.value = res.content;
   })
 }
 
