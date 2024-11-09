@@ -15,6 +15,20 @@
               placeholder=""
             ></el-input>
           </el-form-item>
+            <el-form-item label="退料类型" class="mb-2">
+              <el-select
+                  v-model="historyForm.QualityIsGood"
+                  placeholder=""
+                  style="width: 150px"
+                >
+                  <el-option
+                    v-for="item in returnTypeList"
+                    :key="item.Value"
+                    :label="item.Text"
+                    :value="item.Value"
+                  />
+                </el-select>
+            </el-form-item>
           <el-form-item label="日期" class="mb-2">
             <el-date-picker
               :shortcuts="shortcuts"
@@ -23,6 +37,7 @@
               type="daterange"
               range-separator="到"
               size="small"
+              style="width: 250px"
               @change="dateChange"
             />
           </el-form-item>
@@ -68,7 +83,7 @@
     <el-dialog
       v-model="dialogVisible"
       width="80%"
-      title="生产退料申请"
+      title="退料申请"
       align-center
     >
       <div class="w-full">
@@ -81,7 +96,7 @@
             label-width="85px"
           >
             <el-form-item label="生产计划号">
-              <el-select
+              <!-- <el-select
                 v-model="form.MfgOrderName"
                 placeholder=""
                 filterable
@@ -94,8 +109,15 @@
                   :label="item.MfgOrderName"
                   :value="item.MfgOrderName"
                 />
-              </el-select> </el-form-item
-            ><el-form-item label="产品机型">
+              </el-select>  -->
+              <el-input
+                v-model="form.MfgOrderName"
+                class="input-with-select"
+                @keyup.enter.native="orderChange(form.MfgOrderName)"
+              >
+              </el-input>
+              </el-form-item>
+              <el-form-item label="产品机型">
               <el-input
                 v-model="form.BD_ProductModel"
                 class="input-with-select"
@@ -131,6 +153,20 @@
               >
               </el-input>
             </el-form-item>
+            <el-form-item label="退料类型">
+              <el-select
+                  v-model="returnType"
+                  placeholder="Select"
+                  style="width: 150px"
+                >
+                  <el-option
+                    v-for="item in iReturnTypeList"
+                    :key="item.Value"
+                    :label="item.Text"
+                    :value="item.Value"
+                  />
+                </el-select>
+            </el-form-item>
             <br />
             <el-form-item label="产品描述">
               <el-input
@@ -165,7 +201,6 @@
             <el-table-column
               type="selection"
               width="55"
-              :selectable="selectable"
               :min-width="flexColumnWidth('选择', 'CompID')"
             />
             <el-table-column
@@ -221,33 +256,25 @@
                   <span v-if="scope.row.isLoadQueue === 0">否</span>
                 </template>
               </el-table-column> -->
-            <!-- <el-table-column
-              prop="OpenTimeStamp"
+            <el-table-column
+              prop="Qty"
               align="center"
-              label="开封时间"
-              :min-width="flexColumnWidth('开封时间', 'OpenTimeStamp')"
+              label="请求退料数量"
+              :min-width="flexColumnWidth('请求数量', 'Qty')"
             >
             </el-table-column>
-            <el-table-column
-              prop="ReceiveDate"
-              align="center"
-              label="到料时间"
-              :min-width="flexColumnWidth('到料时间', 'ReceiveDate')"
-            >
-            </el-table-column> -->
-            <el-table-column prop="RequestQty" align="center" label="请求数量"
+            <!-- <el-table-column prop="RequestQty" align="center" label="请求数量"
               :min-width="flexColumnWidth('请求数量请求数量', 'Qty')">
               <template #default="scope">
                 <el-input
                 style="width: 150px;"
-                  v-model="scope.row.RequestQty"
+                  v-model="scope.row."
                   @input="handleInput(scope.row)"
                 >
-                  <!-- v-if="scope.row.isLoadQueue === 1" -->
                 </el-input>
               </template>
-            </el-table-column>
-            <el-table-column prop="QualityIsGood" align="center" label="是否良品"
+            </el-table-column> -->
+            <!-- <el-table-column prop="QualityIsGood" align="center" label="是否良品"
               :min-width="flexColumnWidth('是否良品是否良品', 'QualityIsGood')">
               <template #default="scope">
                 <el-select
@@ -264,7 +291,7 @@
                   />
                 </el-select>
               </template>
-            </el-table-column>
+            </el-table-column> -->
           </el-table>
         </div>
       </div>
@@ -297,6 +324,7 @@ import {
   OrderGoodMaterials,
   QueryMaterialReturnApplyDetail,
   findOrder,
+  GetComboBoxList
 } from "@/api/operate";
 import { cloneDeep } from "lodash-es";
 import {
@@ -327,6 +355,9 @@ const date = ref<any[]>([]);
 const detailedTable = ref<any[]>([]);
 const detailedHeight = ref(0);
 const choiceId = ref("");
+const returnType = ref("1");
+const returnTypeList = ref<any[]>();
+const iReturnTypeList = ref<any[]>();
 const detailedPageObj = ref({
   pageSize: 10000000,
   currentPage: 1,
@@ -365,6 +396,7 @@ interface historyFormTS {
   MfgOrderName: string;
   requestStartDate: string;
   requestEndDate: string;
+  QualityIsGood: string;
 }
 
 const form = ref<formTS>({
@@ -389,6 +421,7 @@ const historyForm = ref<historyFormTS>({
   MfgOrderName: "",
   requestStartDate: "",
   requestEndDate: "",
+  QualityIsGood: ""
 });
 
 // watch(
@@ -414,6 +447,7 @@ onMounted(() => {
   historyForm.value.requestEndDate = formattedTodayDate;
   date.value = [formattedDate, formattedTodayDate];
   getHistory();
+  getTypeList();
   getScreenHeight();
   findOrderData();
   window.addEventListener("resize", getScreenHeight);
@@ -451,6 +485,14 @@ const findOrderData = () => {
 };
 //选中生产计划号
 const orderChange = (data: any) => {
+  if (!orderList.value.some(obj => obj.MfgOrderName === data)) {
+      ElNotification({
+        title: "提示信息",
+        message: '未找到此生产计划号',
+        type: "warning",
+      });
+      return;
+  }
   orderList.value.forEach((item: any) => {
     if (item.MfgOrderName === data) {
       form.value.MfgOrderName = item.MfgOrderName;
@@ -468,11 +510,20 @@ const orderChange = (data: any) => {
       form.value.MfgLineDesc = item.MfgLineDesc;
       form.value.WorkCenterName = item.WorkCenterName;
       form.value.wcDescription = item.wcDescription;
+      getFeedTableData(data);
     }
   });
   selectOrder.value = data;
-  getFeedTableData(data);
 };
+
+//根据名称获取配置值
+const getTypeList = () => {
+  GetComboBoxList('ReturnType').then((res:any) => {
+    iReturnTypeList.value = res.content;
+    returnTypeList.value = [{Text:'全部',Value:''},...res.content];
+  })
+}
+
 //获取历史物料退料申请记录
 const getHistory = () => {
   QueryMaterialReturn(historyForm.value).then((res: any) => {
@@ -496,13 +547,14 @@ const getFeedTableData = (order: any) => {
       }
       // let data = cloneDeep(feedOrganData(res.content));
       // console.log(data);
+      feedTableData.value = res.content
 
-      feedTableData.value = res.content.map((item:any) => {
-        return {
-          ...item,
-          QualityIsGood:1
-        }
-      });
+      // feedTableData.value = res.content.map((item:any) => {
+      //   return {
+      //     ...item,
+      //     QualityIsGood:1
+      //   }
+      // });
 
       // OrganData(res.content)
     }
@@ -575,14 +627,15 @@ const handleSelectionChange = (data: any) => {
   //   };
   // });
   choiceList.value = data
-    .filter((item: any) => item.RequestQty && item.RequestQty != 0)
+    .filter((item: any) => item.Qty && item.Qty != 0)
     .map((item: any) => {
       return {
         mfgOrder: item.OrderID,
-        Qty: item.RequestQty ? item.RequestQty : 0,
+        Qty: item.Qty,
         ContainerName: item.CompID,
         materialName: item.CompName,
         EmployeeName: loginName,
+        QualityIsGood: returnType.value
       };
     });
   console.log(choiceList.value);
@@ -688,18 +741,18 @@ const columnData = reactive([
   //   min: true,
   //   align: "center",
   // },
-  // {
-  //   text: true,
-  //   prop: "RequestTypeName",
-  //   label: "申请类型",
-  //   width: "",
-  //   min: true,
-  //   align: "center",
-  // },
   {
     text: true,
     prop: "MfgOrderName",
     label: "生产计划号",
+    width: "",
+    min: true,
+    align: "center",
+  },
+  {
+    text: true,
+    prop: "QualityIsGood",
+    label: "申请类型",
     width: "",
     min: true,
     align: "center",
