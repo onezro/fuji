@@ -195,10 +195,12 @@
                 <el-form-item label="灯色" prop="issue_color">
                     <!-- <el-input v-model="firstForm.issue_color" /> -->
                     <el-radio-group v-model="firstForm.issue_color"  :disabled="operateType == 1">
-                        <el-radio :value="3">蓝</el-radio>
-                        <el-radio :value="4">黄</el-radio>
-                        <el-radio :value="5">紫</el-radio>
-                        <el-radio :value="6">青</el-radio>
+                        <el-radio :value="1">蓝</el-radio>
+                        <el-radio :value="2">绿</el-radio>
+                        <el-radio :value="4">青</el-radio>
+                        <el-radio :value="5">黄</el-radio>
+                        <el-radio :value="6">紫</el-radio>
+                        <el-radio :value="7">白</el-radio>
                     </el-radio-group>
                 </el-form-item>
                 <el-form-item label="生产计划号" prop="OrderNumber">

@@ -113,7 +113,7 @@ import {
   QueryMoveHistory,
   QueryKeyMaterial,
   JudgeKeyMaterial,
-  ScreeSMTCompBindMoveStd,
+  CoverSMTCompBindMoveStd,
 } from "@/api/asyApi";
 
 import {
@@ -408,7 +408,7 @@ const getChange = () => {
     isKeyForm.value.BarCode = barCodeData;
     // if (stopsForm.value.keyMaterialList.length === 3) {
       stopsForm.value.BarCode = barCodeData;
-      ScreeSMTCompBindMoveStd(stopsForm.value).then((res: any) => {
+      CoverSMTCompBindMoveStd(stopsForm.value).then((res: any) => {
         msgTitle.value = res.msg;
         msgType.value = res.success;
         if (res.success) {
@@ -460,6 +460,7 @@ const getChange1 = (val: any,data:any) => {
     BarCode: data.MaterialBarCode,
     OrderName: data.MfgOrderName,
     ProductName: data.MaterialName,
+    workstationName: opui.station,
   };
   JudgeKeyMaterial(data1).then((res: any) => {
     msgTitle.value = res.msg;
@@ -519,6 +520,7 @@ const radioChange = (args: any) => {
   }
 };
 const getKeyMaterial = () => {
+  barData.value=[]
   QueryKeyMaterial(keyForm.value).then((res: any) => {
     let data: KeyMaterial[]=[]
     res.content.forEach((c:any)=>{

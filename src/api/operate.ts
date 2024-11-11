@@ -666,7 +666,7 @@ export function QueryTeplateExistProductNameNews(data: any) {
 //新增物料模板内容明细
 export function InsertBarCodeRule_TemContentRules(data: any) {
     return request({
-        url: "/api/BarCodeTemplate/InsertBarCodeRule_TemContentRules",
+        url: "/api/BarCodeTemplate/InsertBarCodeRule_TemContentRule",
         method: "post",
         data
     })

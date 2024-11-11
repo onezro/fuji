@@ -3,27 +3,20 @@
     <div class="h-[40px] pl-2 pr-2 flex justify-between items-center">
       <span class="text-[1.2rem]"> {{ opui.stationDec }} </span>
       <div>
-        <el-button type="warning" @click="opendetail">工单物料明细</el-button>
+        <!-- <el-button type="warning" @click="opendetail">工单物料明细</el-button> -->
         <!-- <el-button type="primary" @click="openOver">波峰焊设置</el-button> -->
       </div>
     </div>
     <div class="w-full flex-1 flex">
       <div class="setwidth w-[350px]">
         <div class="w-full h-full box">
-          <div
-            class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]"
-          >
+          <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
             <span class="ml-5">工装治具</span>
           </div>
           <div class="p-3 overflow-auto" :style="{ height: leftBoxH + 'px' }">
             <el-checkbox-group v-model="checked">
-              <el-card
-                shadow="always"
-                class="mb-2"
-                :body-style="{ padding: '8px' }"
-                v-for="t in toolList"
-                :key="t.ToolName"
-              >
+              <el-card shadow="always" class="mb-2" :body-style="{ padding: '8px' }" v-for="t in toolList"
+                :key="t.ToolName">
                 <el-form ref="formRef" :model="t" label-width="auto">
                   <!-- <el-form-item class="mb-[5px]"> -->
                   <div class="flex justify-between items-center">
@@ -43,19 +36,9 @@
                     </el-col>
                     <el-col :span="10">
                       <el-form-item label="序号" class="mb-[5px]">
-                        <el-tag
-                          type="warning"
-                          class="pl-3 pr-3 text-xs"
-                          effect="dark"
-                          v-if="t.ToolName == checked[0]"
-                          >{{ t.sort }}</el-tag
-                        >
-                        <el-tag
-                          type="primary"
-                          class="pl-3 pr-3"
-                          v-if="t.ToolName !== checked[0]"
-                          >{{ t.sort }}</el-tag
-                        >
+                        <el-tag type="warning" class="pl-3 pr-3 text-xs" effect="dark"
+                          v-if="t.ToolName == checked[0]">{{ t.sort }}</el-tag>
+                        <el-tag type="primary" class="pl-3 pr-3" v-if="t.ToolName !== checked[0]">{{ t.sort }}</el-tag>
                         <!-- <span class="text-base">{{ t.sort }}</span> -->
                       </el-form-item>
                     </el-col>
@@ -99,215 +82,115 @@
       <div class="w-[calc(100%-350px)]">
         <div class="w-full h-full flex flex-col">
           <div>
-            <div
-              class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]"
-            >
+            <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
               <span class="ml-5"> 扫描条码</span>
             </div>
-            <div class="h-[100px] pt-3 pr-5 pl-5">
-              <el-form
-                class="inbound"
-                ref="formRef"
-                :inline="true"
-                :model="form"
-                label-width="auto"
-                @submit.native.prevent
-              >
+            <div class="h-[150px] pt-3 pr-5 pl-5 flex">
+              <div>
+              <el-form class="inbound" ref="formRef" :inline="true" :model="form" label-width="auto"
+                @submit.native.prevent>
                 <el-form-item label="扫描条码">
-                  <el-input
-                    v-model.trim="barCode"
-                    ref="inputRef"
-                    :autofocus="inputFocus"
-                    style="width: 500px"
-                    placeholder="请扫描PCB条码或治具编码"
-                    @keyup.enter.native="getChange"
-                  />
+                  <el-input v-model.trim="barCode" ref="inputRef" :autofocus="inputFocus" style="width: 500px"
+                    placeholder="请扫描PCB条码或治具编码" @keyup.enter.native="getChange" />
                 </el-form-item>
               </el-form>
-              <div
-                class="text-xl font-bold text-[#00B400]"
-                v-show="msgType === true || msgTitle === ''"
-              >
+              <div class="text-xl font-bold text-[#00B400]" v-show="msgType === true || msgTitle === ''">
                 {{ msgTitle === "" ? "请扫描PCB条码或治具编码" : msgTitle }}
               </div>
-              <div
-                class="text-xl font-bold text-[red]"
-                v-show="msgType === false && msgTitle !== ''"
-              >
+              <div class="text-xl font-bold text-[red]" v-show="msgType === false && msgTitle !== ''">
                 {{ msgTitle }}
               </div>
             </div>
-          </div>
-          <div class="p-2">
-            <el-form
-              class="inbound"
-              size="default"
-              ref="formRef"
-              :model="form"
-              :inline="true"
-              label-width="auto"
-            >
-              <el-row>
-                <el-col :span="8">
-                  <el-form-item label="生产计划号" class="mb-[5px] flex">
-                    <selectTa
-                      ref="selectTable"
-                      :table="orderTable"
-                      :selectWidth="160"
-                      :columns="orderColumns"
-                      :max-height="400"
-                      :tableWidth="700"
-                      :defaultSelectVal="defaultSelectVal"
-                      :keywords="{
-                        label: 'MfgOrderName',
-                        value: 'MfgOrderName',
-                      }"
-                      @radioChange="(...args: any) => radioChange(args)"
-                    >
-                    </selectTa>
-                    <el-tooltip content="刷新" placement="top">
-                      <el-icon
-                        class="ml-2"
-                        color="#777777"
-                        :class="isLoding"
-                        size="24"
-                        @click="getOrderData"
-                      >
-                        <RefreshRight />
-                      </el-icon>
-                    </el-tooltip>
-                  </el-form-item>
-                </el-col>
-                <el-col :span="7">
-                  <el-form-item class="mb-[5px]" label="产品机型">
-                    <el-input
-                      v-model="form.BD_ProductModel"
-                      style="width: 160px"
-                      disabled
-                    />
-                  </el-form-item>
-                </el-col>
-                <el-col :span="9">
-                  <el-form-item class="mb-[5px]" label="工单号">
-                    <el-input
-                      v-model="form.ERPOrder"
-                      style="width: 160px"
-                      disabled
-                    />
-                  </el-form-item>
-                </el-col>
-              </el-row>
-              <el-row>
-                <el-col :span="8">
-                  <el-form-item class="mb-[5px]" label="计划数量">
-                    <el-input
-                      v-model="form.Qty"
-                      style="width: 160px"
-                      disabled
-                    />
-                  </el-form-item>
-                </el-col>
-                <el-col :span="7">
-                  <el-form-item class="mb-[5px]" label="产品编码">
-                    <el-input
-                      v-model="form.ProductName"
-                      style="width: 160px"
-                      disabled
-                    />
-                  </el-form-item>
-                </el-col>
-                <el-col :span="9">
-                  <el-form-item class="mb-[5px]" label="产品描述">
-                    <el-input
-                      v-model="form.ProductDesc"
-                      style="width: 340px"
-                      disabled
-                    />
-                  </el-form-item>
-                </el-col>
-                <!-- <el-col :span="3">
-                  <el-form-item class="mb-[5px]" label="过站总数">
-                    <span class="text-lg font-bold">{{ form.AllNum }}</span>
-                   
-                  </el-form-item>
-                </el-col>
-                <el-col :span="3">
-                  <el-form-item class="mb-[5px]" label="实时过站">
-                    <span class="text-lg font-bold text-[#00B400]">{{
-                      form.TodayNum
-                    }}</span>
-                 
-                  </el-form-item>
-                </el-col> -->
-              </el-row>
-            </el-form>
+            <div>
+              <tableTemp size="small" :showIndex="true" :tableData="detailsData" :tableHeight="140" :columnData="detailsColumn"><</tableTemp>
+            </div>
+            </div>
+            <div class="p-1 pl-1">
+              <el-form class="inbound" size="default" ref="formRef" :model="form" :inline="true" label-width="auto">
+                <el-row>
+                  <el-col :span="8">
+                    <el-form-item label="生产计划号" class="mb-[5px]">
+                      <div class="flex items-center">
+                        <selectTa ref="selectTable" :table="orderTable" :selectWidth="150" :columns="orderColumns"
+                          :max-height="400" :tableWidth="700" :defaultSelectVal="defaultSelectVal" :keywords="{
+                            label: 'MfgOrderName',
+                            value: 'MfgOrderName',
+                          }" @radioChange="(...args: any) => radioChange(args)">
+                        </selectTa>
+                        <el-tooltip content="刷新" placement="top">
+                          <el-icon class="ml-2" color="#777777" :class="isLoding" size="24" @click="getOrderData">
+                            <RefreshRight />
+                          </el-icon>
+                        </el-tooltip>
+                      </div>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="6">
+                    <el-form-item class="mb-[5px]" label="产品机型">
+                      <span class="text-base font-bold">{{ form.BD_ProductModel }}</span>
+                      <!-- <el-input v-model="form.BD_ProductModel" style="width: 160px" disabled /> -->
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="10">
+                    <el-form-item class="mb-[5px]" label="工单号">
+                      <span class="text-base font-bold">{{ form.ERPOrder }}</span>
+                      <!-- <el-input v-model="form.ERPOrder" style="width: 160px" disabled /> -->
+                    </el-form-item>
+                  </el-col>
+                </el-row>
+                <el-row>
+                  <el-col :span="8">
+                    <el-form-item class="mb-[5px]" label="计划数量">
+                      <span class="text-base font-bold">{{ form.Qty }}</span>
+                      <!-- <el-input v-model="form.Qty" style="width: 160px" disabled /> -->
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="6">
+                    <el-form-item class="mb-[5px]" label="产品编码">
+                      <span class="text-base font-bold">{{ form.ProductName }}</span>
+                      <!-- <el-input v-model="form.ProductName" style="width: 160px" disabled /> -->
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="10">
+                    <el-form-item class="mb-[5px]" label="产品描述">
+                      <span class="text-base font-bold">{{ form.ProductDesc }}</span>
+                      <!-- <el-input v-model="form.ProductDesc" style="width: 340px" disabled /> -->
+                    </el-form-item>
+                  </el-col>
+                </el-row>
+                <!-- <el-form-item class="mb-[5px]" label="产品描述">
+                          <span class="text-base">{{ form.ProductDesc }}</span>
+                        </el-form-item> -->
+              </el-form>
+            </div>
+
           </div>
           <div class="flex flex-col flex-1 tabs-css">
-            <div
-              class="h-[35px] flex items-center justify-between text-lg text-[#fff] bg-[#006487]"
-            >
+            <div class="h-[35px] flex items-center justify-between text-lg text-[#fff] bg-[#006487]">
               <span class="ml-5">历史过站记录</span>
               <div class="mr-5">
-                <el-checkbox-group
-                  v-model="checkedHis"
-                  class="laser-table-filter"
-                >
-                  <el-checkbox
-                    v-for="c in checkedHisList"
-                  
-                    :label="`${c.label}(${changeDataLength(c.value)})`"
-                    :value="c.value"
-                    @change="changeHis(c.value)"
-                  >
+                <el-checkbox-group v-model="checkedHis" class="laser-table-filter">
+                  <el-checkbox v-for="c in checkedHisList" :label="`${c.label}(${changeDataLength(c.value)})`"
+                    :value="c.value" @change="changeHis(c.value)">
                   </el-checkbox>
                 </el-checkbox-group>
               </div>
             </div>
-            <table-tem
-              :showIndex="true"
-              :tableData="changeData"
-              :tableHeight="tableHeight"
-              :columnData="columnData1"
-              :pageObj="pageObj"
-              @handleSizeChange="handleSizeChange"
-              @handleCurrentChange="handleCurrentChange"
-            ></table-tem>
+            <table-tem :showIndex="true" :tableData="changeData" :tableHeight="tableHeight" :columnData="columnData1"
+              :pageObj="pageObj" @handleSizeChange="handleSizeChange"
+              @handleCurrentChange="handleCurrentChange"></table-tem>
           </div>
         </div>
       </div>
     </div>
 
-    <formTem
-      ref="addOverRef"
-      :width="'400px'"
-      :visible="overAddVisible"
-      :title="'波峰焊过序设置'"
-      :form="overAddForm"
-      :formHeader="overHeader"
-      @formCancel="addOverCancel"
-      @onSubmit="addOveronSubmit"
-    ></formTem>
-    <el-dialog
-      v-model="detailVisible"
-      title="上料明细"
-      width="70%"
-      align-center
-      draggable
-      :append-to-body="true"
-      :close-on-click-modal="false"
-      :close-on-press-escape="false"
-      @close="detailVisible = false"
-    >
-      <table-tem
-        :showIndex="true"
-        size="small"
-        :tableData="detailsData"
-        :tableHeight="400"
-        :columnData="detailsColumn"
-        :pageObj="detailsPageObj"
-        @handleSizeChange="detailsSizeChange"
-        @handleCurrentChange="detailsCurrentChange"
-      ></table-tem>
+    <formTem ref="addOverRef" :width="'400px'" :visible="overAddVisible" :title="'波峰焊过序设置'" :form="overAddForm"
+      :formHeader="overHeader" @formCancel="addOverCancel" @onSubmit="addOveronSubmit"></formTem>
+    <el-dialog v-model="detailVisible" title="上料明细" width="70%" align-center draggable :append-to-body="true"
+      :close-on-click-modal="false" :close-on-press-escape="false" @close="detailVisible = false">
+      <table-tem :showIndex="true" size="small" :tableData="detailsData" :tableHeight="400" :columnData="detailsColumn"
+        :pageObj="detailsPageObj" @handleSizeChange="detailsSizeChange"
+        @handleCurrentChange="detailsCurrentChange"></table-tem>
       <!-- <template #footer>
         <span class="dialog-footer">
           <el-button @click="detailVisible = false">关闭</el-button>
@@ -319,6 +202,7 @@
 
 <script lang="ts" setup>
 import tableTem from "@/components/tableTem/index.vue";
+import tableTemp from "@/components/tableTemp/index.vue";
 import badInfoTem from "@/components/badInfoTem/index.vue";
 import formTem from "@/components/formTem/index.vue";
 import feedTemp from "@/components/feedTemp/index.vue";
@@ -334,8 +218,18 @@ import {
   FindAllDevice,
   UpdateDevice,
   QueryMoveHistory,
-  QueryOrderMaterialRequired,
+  // QueryOrderMaterialRequired,
 } from "@/api/dipApi";
+import {
+  // OrderQuery,
+  // PluginStationMoveOut,
+  // FindAllDevice,
+  // UpdateDevice,
+  // QueryMoveHistory,
+  QueryOrderMaterialRequired,
+} from "@/api/smtApi";
+
+
 import { QueryToolInfo, SortTools } from "@/api/operate";
 import {
   ref,
@@ -641,14 +535,14 @@ const detailsColumn = ref([
     min: true,
     align: "1",
   },
-  {
-    text: true,
-    prop: "QtyRequired",
-    label: "单量用量",
-    width: "",
-    min: true,
-    align: "1",
-  },
+  // {
+  //   text: true,
+  //   prop: "QtyRequired",
+  //   label: "单量用量",
+  //   width: "",
+  //   min: true,
+  //   align: "1",
+  // },
   {
     text: true,
     prop: "LoadQueueQty",
@@ -657,14 +551,14 @@ const detailsColumn = ref([
     min: true,
     align: "1",
   },
-  {
-    text: true,
-    prop: "level",
-    label: "已使用数量",
-    width: "",
-    min: true,
-    align: "1",
-  },
+  // {
+  //   text: true,
+  //   prop: "level",
+  //   label: "已使用数量",
+  //   width: "",
+  //   min: true,
+  //   align: "1",
+  // },
   {
     text: true,
     prop: "level",
@@ -673,22 +567,22 @@ const detailsColumn = ref([
     min: true,
     align: "1",
   },
-  {
-    text: true,
-    prop: "level",
-    label: "最后上料时间",
-    width: "",
-    min: true,
-    align: "1",
-  },
-  {
-    text: true,
-    prop: "level",
-    label: "最后上料人",
-    width: "",
-    min: true,
-    align: "1",
-  },
+  // {
+  //   text: true,
+  //   prop: "level",
+  //   label: "最后上料时间",
+  //   width: "",
+  //   min: true,
+  //   align: "1",
+  // },
+  // {
+  //   text: true,
+  //   prop: "level",
+  //   label: "最后上料人",
+  //   width: "",
+  //   min: true,
+  //   align: "1",
+  // },
 ]);
 const hisForm = ref({
   MfgOrderName: "",
@@ -726,8 +620,7 @@ const openOver = () => {
   overAddVisible.value = true;
   getOverData();
 };
-const opendetail = () => {
-  detailVisible.value = true;
+const getMaterialRequired=()=>{
   QueryOrderMaterialRequired(getFeedForm.value).then((res: any) => {
     if (
       res.content.length == 0 ||
@@ -739,6 +632,10 @@ const opendetail = () => {
     }
     detailsData.value = res.content;
   });
+}
+const opendetail = () => {
+  detailVisible.value = true;
+  
 };
 //获取过序
 const getOverData = () => {
@@ -996,6 +893,7 @@ const radioChange = (args: any) => {
       getToolForm.value.OrderNumber = args[0].MfgOrderName;
       getHisData();
       getToolData();
+      getMaterialRequired()
     }
   }
 };
@@ -1078,7 +976,7 @@ const getChange = (val: any) => {
           msgTitle.value = `已扫描PCB条码:${stopsForm.value.ContainerName},请扫描治具编码`;
           msgType.value = true;
         }
-      }else{
+      } else {
         msgTitle.value = `错误，请重新扫描已上线的治具`;
         msgType.value = false;
         barCode.value = "";
@@ -1097,6 +995,7 @@ const getChange = (val: any) => {
           checked.value = [];
           getToolData();
           getHisData();
+          getMaterialRequired()
         }
         // console.log(stopsForm.value);
       });
@@ -1142,7 +1041,7 @@ const detailsCurrentChange = (val: any) => {
 const getScreenHeight = () => {
   nextTick(() => {
     leftBoxH.value = window.innerHeight - 155;
-    tableHeight.value = window.innerHeight - 428; //428
+    tableHeight.value = window.innerHeight - 468; //428
   });
 };
 </script>
@@ -1177,7 +1076,7 @@ const getScreenHeight = () => {
   font-size: 1.1rem;
 }
 
-.tabs-css .el-tabs--border-card > .el-tabs__header .el-tabs__item {
+.tabs-css .el-tabs--border-card>.el-tabs__header .el-tabs__item {
   color: #fff;
   // padding: 0 !important;
 }
@@ -1196,10 +1095,7 @@ const getScreenHeight = () => {
   color: #ff4949;
 }
 
-.tabs-css
-  .el-tabs--border-card
-  > .el-tabs__header
-  .el-tabs__item:not(.is-disabled):hover {
+.tabs-css .el-tabs--border-card>.el-tabs__header .el-tabs__item:not(.is-disabled):hover {
   // color: #fff;
   // background-color: #fff;
   background-color: rgba($color: #fff, $alpha: 0.8);

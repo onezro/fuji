@@ -169,7 +169,7 @@
         </div>
       </template>
     </el-dialog>
-    <el-dialog v-model="orderOnlineVisible" title="生产计划号上线" width="400px" align-center :append-to-body="true"
+    <el-dialog v-model="orderOnlineVisible" title="计划上线" width="400px" align-center :append-to-body="true"
       :close-on-click-modal="false" :close-on-press-escape="false" @close="closeOnline">
       <el-form ref="orderFormRef" :model="orderOnlineForm" label-width="auto">
         <el-form-item label="生产计划号" prop="OrderNumber">
