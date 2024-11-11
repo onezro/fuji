@@ -62,7 +62,8 @@
                     :autofocus="inputFocus"
                     style="width: 500px"
                     placeholder="请扫描MES条码"
-                    @keyup.enter.native="getChange"
+                    :disabled="SoftwareStatus === '2'"
+                    @keyup.enter.native="scan"
                   />
                 </el-form-item>
                 <el-form-item label="" class="mb-2">
@@ -89,7 +90,7 @@
               class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487] justify-between"
             >
               <span class="ml-5">软件信息</span>
-              <el-button type="warning" :disabled="!btnType">人工确认提交</el-button>
+              <el-button type="warning" :disabled="SoftwareStatus === '1'">人工确认提交</el-button>
             </div>
             <table-tem
              class="my-table"
@@ -123,7 +124,7 @@
             >
               <el-form-item label="" class="mb-2">
                 <el-input
-                  class="custom-input"
+                  class="custom-input custom-input-class"
                   v-model.trim="currentCode"
                   ref="inputRef"
                   style="width: 300px"
@@ -170,7 +171,7 @@ import { checkStringType } from "@/utils/barcodeFormat";
 import type { Formspan, FormHeader, OrderData } from "@/typing";
 import { ElMessage, ElNotification, ElMessageBox } from "element-plus";
 import { QueryMoveHistory } from "@/api/dipApi";
-import { PressingStationMoveOut } from "@/api/asyApi";
+import { QueryOrderSoftwareInfo } from "@/api/asyApi";
 import {
   ref,
   reactive,
@@ -203,12 +204,13 @@ const opui = appStore.getOPUIReal();
 const inputRef = ref();
 const inputFocus = ref(true);
 const barCode = ref("");
-const currentCode = ref("");
+const currentCode = ref("12124");
 const dialogVisible = ref(false);
 const materialTable = ref<any[]>([]);
 const boxHeight = ref(0);
 const changeList = ref([]);
-const btnType = ref(false)
+const btnType = ref(false);
+const SoftwareStatus = ref("1")
 const stopsForm = ref<StopsForm>({
   containerName: "",
   workstationName: opui.station || "",
@@ -218,24 +220,24 @@ const stopsForm = ref<StopsForm>({
 });
 
 const form = ref<InstanceType<typeof Formspan>>({
-  MfgOrderName: "",
+  PlanNo: "",
+  ProductModel: "",
   ProductName: "",
   ProductDesc: "",
   Qty: "",
-  PlannedStartDate: "",
-  PlannedCompletionDate: "",
+  TotalNum: ""
 });
 const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
   {
     label: "生产计划号",
-    value: "MfgOrderName",
+    value: "PlanNo",
     disabled: true,
     type: "input",
     width: "",
   },
   {
     label: "产品机型",
-    value: "BD_ProductModel",
+    value: "ProductModel",
     disabled: true,
     type: "input",
     width: "",
@@ -249,7 +251,7 @@ const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
   },
   {
     label: "产品描述",
-    value: "Description",
+    value: "ProductDesc",
     disabled: true,
     type: "textarea",
     width: 300,
@@ -263,7 +265,7 @@ const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
   },
   {
     label: "过站数量",
-    value: "Qty",
+    value: "TotalNum",
     disabled: true,
     type: "input",
     width: "",
@@ -272,7 +274,7 @@ const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
 const columnData1 = reactive([
   {
     text: true,
-    prop: "ContainerName",
+    prop: "SoftwareName",
     label: "成品SN条码",
     width: "200px",
     align: "1",
@@ -280,7 +282,7 @@ const columnData1 = reactive([
 
   {
     text: true,
-    prop: "BD_EmployeeName",
+    prop: "SoftwareVersion",
     label: "产品版本二维码",
     width: "",
     align: "1",
@@ -290,7 +292,7 @@ const columnData1 = reactive([
 const materialColumnData = reactive([
   {
     text: true,
-    prop: "ContainerName",
+    prop: "SoftwareName",
     label: "版本信息",
     width: "",
     align: "1",
@@ -298,7 +300,7 @@ const materialColumnData = reactive([
 
   {
     text: true,
-    prop: "BD_EmployeeName",
+    prop: "SoftwareVersion",
     label: "对比结果",
     width: "",
     align: "1",
@@ -380,19 +382,32 @@ const getHisData = () => {
   });
 };
 
+//扫描条码
+const scan = () => {
+  if (SoftwareStatus.value === "1") {
+    QueryOrderSoftwareInfo({containerName:barCode.value,workstationName:opui.station}).then((res:any) => {
+      currentCode.value = barCode.value;
+      barCode.value = '';
+      SoftwareStatus.value = res.content.SoftwareStatus;
+      form.value.PlanNo = res.content.PlanNo;
+      form.value.ProductModel = res.content.ProductModel;
+      form.value.ProductName = res.content.ProductName;
+      form.value.ProductDesc = res.content.ProductDesc;
+      form.value.Qty = res.content.Qty;
+      form.value.TotalNum = res.content.TotalNum;
+      tableData1.value = res.content.SoftwareList
+    })
+  }else {
+
+  }
+}
+
 //过站
 const getChange = () => {
   let barCodeData = barCode.value;
 
   stopsForm.value.containerName = barCodeData;
-  PressingStationMoveOut(stopsForm.value).then((res: any) => {
-    msgTitle.value = res.msg;
-    msgType.value = res.success;
-    stopsForm.value.containerName = "";
-    form.value = { ...res.content[0] };
-
-    // hisForm.value.MfgOrderName = res.content[0].MfgOrderName;
-  })
+  
 }
 
   
@@ -509,12 +524,11 @@ const getScreenHeight = () => {
   font-weight: bold;
 }
 
-.el-input.is-disabled .el-input__wrapper  {
+.custom-input-class.el-input.is-disabled .el-input__wrapper  {
   background-color:rgba($color: #000000, $alpha: 0);
   color: black;
 }
-
-.el-input.is-disabled .el-input__inner {
+.custom-input-class.el-input.is-disabled .el-input__inner {
   color:black;
   -webkit-text-fill-color:black;
   font-size: large;

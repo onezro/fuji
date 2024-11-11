@@ -189,10 +189,7 @@
         <div class="table_container">
           <el-table
             :data="
-              feedTableData.slice(
-                (currentPage - 1) * pageSize,
-                currentPage * pageSize
-              )
+              feedTableData
             "
             size="small"
             stripe

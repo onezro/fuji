@@ -143,3 +143,12 @@ export function QueryMoveHistory(data:any) {
         data
     })
 }
+
+//查询工单软件信息
+export function QueryOrderSoftwareInfo(data:any) {
+    return request({
+        url: "/api/SoftwareUpgrade/QueryOrderSoftwareInfo",
+        method: "post",
+        data
+    })
+}
