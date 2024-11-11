@@ -55,7 +55,7 @@
         </el-form>
       </div>
       <div class="table_container">
-        <table-tem
+        <!-- <table-tem
           :show-index="true"
           size="small"
           :tableData="historyTable"
@@ -66,7 +66,91 @@
           @handleCurrentChange="handleCurrentChangeHis"
           @rowClick="rowClick"
         >
-        </table-tem>
+        </table-tem> -->
+          <el-table
+            :data="
+              historyTable.slice(
+                (pageObjHis.currentPage - 1) * pageObjHis.pageSize,
+                pageObjHis.currentPage * pageObjHis.pageSize
+              )
+            "
+            size="small"
+            stripe
+            border
+            fit
+            :tooltip-effect="'dark'"
+            :height="hisHeight"
+            row-key="MaterialName"
+            @selection-change="handleSelectionChange"
+            @rowClick="rowClick"
+          >
+            <el-table-column
+              prop="MfgOrderName"
+              label="生产计划号"
+              :min-width="flexColumnWidthHis('生产计划号', 'MfgOrderName')"
+            ></el-table-column>
+            <el-table-column
+              prop="QualityIsGood"
+              label="申请类型"
+              :min-width="flexColumnWidthHis('申请类型', 'QualityIsGood')"
+            >
+            <template #default="scope">
+                <div>{{ returnTypeText(scope.row.QualityIsGood) }}</div>
+              </template>
+          </el-table-column>
+            <el-table-column
+              prop="ApplyNo"
+              label="退料单号"
+              :min-width="flexColumnWidthHis('退料单号', 'ApplyNo')"
+            ></el-table-column>
+            <el-table-column
+              prop="BD_ProductModel"
+              label="产品机型"
+              :min-width="flexColumnWidthHis('产品机型', 'BD_ProductModel')"
+            ></el-table-column>
+            <el-table-column
+              prop="ProductName"
+              label="产品编码"
+              :min-width="flexColumnWidthHis('产品编码', 'ProductName')"
+            ></el-table-column>
+            <el-table-column
+              prop="ProductDesc"
+              label="产品描述"
+              :min-width="flexColumnWidthHis('产品描述', 'ProductDesc')"
+            ></el-table-column>
+            <el-table-column
+              prop="OrderStatusDesc"
+              label="生产计划号状态"
+              :min-width="flexColumnWidthHis('生产计划号状态', 'OrderStatusDesc')"
+            ></el-table-column>
+            <el-table-column
+              prop="Qty"
+              label="计划数量"
+              :min-width="flexColumnWidthHis('计划数量', 'Qty')"
+            ></el-table-column>
+            <el-table-column
+              prop="PlannedStartDate"
+              label="计划开始时间"
+              :min-width="flexColumnWidthHis('计划开始时间', 'PlannedStartDate')"
+            ></el-table-column>
+            <el-table-column
+              prop="ApplyTime"
+              label="申请时间"
+              :min-width="flexColumnWidthHis('申请时间', 'ApplyTime')"
+            ></el-table-column>
+            <el-table-column
+              prop="Applicant"
+              label="申请人"
+              :min-width="flexColumnWidthHis('申请人', 'Applicant')"
+            ></el-table-column>
+          </el-table>
+    <div class="mt-2 mb-2">
+      <el-pagination :size="'default'" background @size-change="handleSizeChangeHis"
+        @current-change="handleCurrentChangeHis" :pager-count="5" :current-page="pageObjHis.currentPage"
+        :page-size="pageObjHis.pageSize" :page-sizes="[30, 50, 100, 200,300]" layout="total,sizes, prev, pager, next"
+        :total="historyTable.length">
+      </el-pagination>
+    </div>
       </div>
       <div class="w-full">
         <table-tem
@@ -184,10 +268,7 @@
         <div class="table_container">
           <el-table
             :data="
-              feedTableData.slice(
-                (currentPage - 1) * pageSize,
-                currentPage * pageSize
-              )
+              feedTableData
             "
             size="small"
             stripe
@@ -357,8 +438,8 @@ const detailedTable = ref<any[]>([]);
 const detailedHeight = ref(0);
 const choiceId = ref("");
 const returnType = ref("1");
-const returnTypeList = ref<any[]>();
-const iReturnTypeList = ref<any[]>();
+const returnTypeList = ref<any[]>([]);
+const iReturnTypeList = ref<any[]>([]);
 const detailedPageObj = ref({
   pageSize: 10000000,
   currentPage: 1,
@@ -525,6 +606,17 @@ const getTypeList = () => {
   })
 }
 
+//根据名称值获取名称
+const returnTypeText = (data:any) => {
+  let text = ''
+  returnTypeList.value.forEach((item:any) => {
+    if (item.Value === data) {
+      text = item.Text
+    }
+  })
+  return text;
+}
+
 //获取历史物料退料申请记录
 const getHistory = () => {
   QueryMaterialReturn(historyForm.value).then((res: any) => {
@@ -580,6 +672,7 @@ const feedOrganData = (organizations: any) => {
   );
 };
 
+//退料页面表格宽度分配
 const flexColumnWidth = (label: any, prop: any) => {
   const arr = feedTableData?.value.map((x: { [x: string]: any }) => x[prop]);
   arr.push(label); // 把每列的表头也加进去算
@@ -602,6 +695,44 @@ const getMaxLength = (arr: any) => {
 };
 
 const getTextWidth = (str: string) => {
+  let width = 0;
+  const html = document.createElement("span");
+  html.style.cssText = `padding: 0; margin: 0; border: 0; line-height: 1; font-size: ${16}px; font-family: Arial, sans-serif;`;
+  html.innerText = str; // 去除字符串前后的空白字符
+  document.body?.appendChild(html);
+
+  const spanElement = html; // 无需再次查询，直接使用创建的元素
+  if (spanElement) {
+    width = spanElement.offsetWidth;
+    spanElement.remove();
+  }
+  // console.log(width);
+  return width;
+};
+
+//退料查询页面表格宽度分配
+const flexColumnWidthHis = (label: any, prop: any) => {
+  const arr = historyTable?.value.map((x: { [x: string]: any }) => x[prop]);
+  arr.push(label); // 把每列的表头也加进去算
+  // console.log(arr);
+  return getMaxLength(arr) + 25 + "px";
+};
+
+const getMaxLengthHis = (arr: any) => {
+  return arr.reduce((acc: any, item: any) => {
+    if (item) {
+      // console.log(acc,item);
+      const calcLen = getTextWidth(item);
+
+      if (acc < calcLen) {
+        acc = calcLen;
+      }
+    }
+    return acc;
+  }, 0);
+};
+
+const getTextWidthHis = (str: string) => {
   let width = 0;
   const html = document.createElement("span");
   html.style.cssText = `padding: 0; margin: 0; border: 0; line-height: 1; font-size: ${16}px; font-family: Arial, sans-serif;`;

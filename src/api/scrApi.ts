@@ -137,6 +137,60 @@ export function FTLDefectProductRecord(data:any) {
         data
     })
 }
+//不良处理列表
+export function DefectiveDisposalList(data:any) {
+    return request({
+        url: "/api/DefectiveProductsDisposal/DefectiveDisposalList",
+        method: "post",
+        data
+    })
+}
+
+//快检
+export function DefectiveQuickTest(data:any) {
+    return request({
+        url: "/api/DefectiveProductsDisposal/DefectiveQuickTest",
+        method: "post",
+        data
+    })
+}
+
+//拆解
+export function DefectiveDismantle(data:any) {
+    return request({
+        url: "/api/DefectiveProductsDisposal/DefectiveDismantle",
+        method: "post",
+        data
+    })
+}
+
+//解绑
+export function DefectiveUnbinding(data:any) {
+    return request({
+        url: "/api/DefectiveProductsDisposal/DefectiveUnbinding",
+        method: "post",
+        data
+    })
+}
+
+//报废
+export function DefectiveScrap(data:any) {
+    return request({
+        url: "/api/DefectiveProductsDisposal/DefectiveScrap",
+        method: "post",
+        data
+    })
+}
+
+//查询条码绑定的供应商条码
+export function DefectiveComponentBindHistory(data:any) {
+    return request({
+        url: "/api/DefectiveProductsDisposal/DefectiveComponentBindHistory",
+        method: "post",
+        data
+    })
+}
+
 //查询不良代码及工单信息
 export function MAQueryDefectCode(data:any) {
     return request({
