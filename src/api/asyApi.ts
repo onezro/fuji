@@ -152,3 +152,22 @@ export function QueryOrderSoftwareInfo(data:any) {
         data
     })
 }
+
+//比对软件信息并过站(自动)
+export function AutoComparisonInfoMovestd(data:any) {
+    return request({
+        url: "/api/SoftwareUpgrade/AutoComparisonInfoMovestd",
+        method: "post",
+        data
+    })
+}
+
+//比对软件信息并过站(手动)
+export function ManualComparisonInfoMovestd(data:any) {
+    return request({
+        url: "/api/SoftwareUpgrade/ManualComparisonInfoMovestd",
+        method: "post",
+        data
+    })
+}
+
