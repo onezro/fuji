@@ -102,7 +102,18 @@
               </div>
             </div>
             <div>
-              <tableTemp size="small" :showIndex="true" :tableData="detailsData" :tableHeight="140" :columnData="detailsColumn"><</tableTemp>
+              <el-table :data="detailsData" stripe border fit size="small" :height="140" :style="{ width: '100%' }"  >
+                <el-table-column  label="序号" width="50" type="index" align="center"/>
+                  <el-table-column prop="MaterialNamete" label="物料编码" width="150" />
+                  <el-table-column prop="MaterialDesc" label="物料描述" width="250" />
+                
+                  <el-table-column  label="剩余数量"  width="100">
+                    <template  #default="scope">
+                      <span>{{ scope.row.LoadQueueQty- scope.row.issueQty}}</span>
+                    </template>
+                  </el-table-column>
+              </el-table>
+              <!-- <tableTemp size="small" :showIndex="true" :tableData="detailsData" :tableHeight="140" :columnData="detailsColumn"><</tableTemp> -->
             </div>
             </div>
             <div class="p-1 pl-1">
