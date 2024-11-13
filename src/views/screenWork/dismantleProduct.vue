@@ -105,7 +105,7 @@
                 <span class="ml-5">不良品拆解</span>
               </div>
               <div class="flex-1" ref="tablebox">
-                <table-tem
+                <!-- <table-tem
                   :showIndex="true"
                   :tableData="tableData"
                   :tableHeight="tableHeight"
@@ -113,7 +113,98 @@
                   :pageObj="pageObj"
                   @handleSizeChange="handleSizeChange"
                   @handleCurrentChange="handleCurrentChange"
-                ></table-tem>
+                ></table-tem> -->
+                <el-table
+                  ref="taskTableRef"
+                  class="test"
+                  stripe
+                  border
+                  :data="
+                    tableData.slice(
+                      (pageObj.currentPage - 1) * pageObj.pageSize,
+                      pageObj.currentPage * pageObj.pageSize
+                    )
+                  "
+                  style="width: 100%"
+                  :height="tableHeight"
+                >
+                  <el-table-column
+                    prop="ContainerName"
+                    align="center"
+                    label="MES屏条码"
+                    :min-width="flexColumnWidth('MES屏条码', 'ContainerName')"
+                  >
+                  </el-table-column>
+                  <el-table-column
+                    prop="mfgorderName"
+                    align="center"
+                    label="生产计划号"
+                    :min-width="flexColumnWidth('生产计划号', 'mfgorderName')"
+                  >
+                  </el-table-column>
+                  <el-table-column
+                    prop="TxnDate"
+                    align="center"
+                    label="不良录入时间"
+                    :min-width="flexColumnWidth('不良录入时间', 'TxnDate')"
+                  >
+                  </el-table-column>
+                  <el-table-column
+                    prop="DismantlestartTime"
+                    align="center"
+                    label="拆解开始时间"
+                    :min-width="
+                      flexColumnWidth('拆解开始时间', 'DismantlestartTime')
+                    "
+                  >
+                  </el-table-column>
+                  <el-table-column
+                    prop="DismantleEndTime"
+                    align="center"
+                    label="拆解完成时间"
+                    :min-width="
+                      flexColumnWidth('拆解完成时间', 'DismantleEndTime')
+                    "
+                  >
+                  </el-table-column>
+                  <el-table-column
+                    prop="DismantleStatus"
+                    align="center"
+                    label="状态"
+                    :min-width="flexColumnWidth('状态状态', 'DismantleStatus')"
+                  >
+                    <template #default="scope">
+                      <div v-if="!scope.row.DismantlestartTime">
+                        <div>未开始</div>
+                      </div>
+                      <div
+                        v-if="
+                          scope.row.DismantlestartTime &&
+                          !scope.row.DismantleEndTime
+                        "
+                      >
+                        <div>拆解中</div>
+                      </div>
+                      <div v-if="scope.row.DismantleEndTime">
+                        <div>拆解完成</div>
+                      </div>
+                    </template>
+                  </el-table-column>
+                </el-table>
+                <div class="w-full mt-3 flex justify-around">
+                  <el-pagination
+                    size="large"
+                    background
+                    @size-change="handleSizeChange"
+                    @current-change="handleCurrentChange"
+                    :current-page="pageObj.currentPage"
+                    :page-size="pageObj.pageSize"
+                    :page-sizes="[100, 300, 500, 1000]"
+                    layout="total,sizes, prev, pager, next, jumper"
+                    :total="tableData.length"
+                  >
+                  </el-pagination>
+                </div>
               </div>
             </div>
             <el-dialog
@@ -176,7 +267,7 @@
                 >
                   <span class="ml-5">不良品拆解</span>
                 </div>
-                <!-- <table-tem
+                <table-tem
                   :showIndex="true"
                   :tableData="qtytableData"
                   :tableHeight="'300'"
@@ -184,73 +275,84 @@
                   :pageObj="qtypageObj"
                   @handleSizeChange="handleSizeChange1"
                   @handleCurrentChange="handleCurrentChange1"
-                ></table-tem> -->
-                <el-table
+                ></table-tem>
+                <!-- <el-table
                   ref="taskTableRef"
                   class="test"
                   stripe
                   border
-                  :data="qtytableData.slice(
-            (qtypageObj.currentPage - 1) * qtypageObj.pageSize,
-            qtypageObj.currentPage * qtypageObj.pageSize
-          )"
+                  :data="
+                    qtytableData.slice(
+                      (qtypageObj.currentPage - 1) * qtypageObj.pageSize,
+                      qtypageObj.currentPage * qtypageObj.pageSize
+                    )
+                  "
                   style="width: 100%"
                   :height="'300'"
                 >
-                <el-table-column
-          prop="ContainerName"
-          align="center"
-          label="MES屏条码"
-          :min-width="flexColumnWidth('MES屏条码', 'ContainerName')"
-        >
-        </el-table-column>
-                <el-table-column
-          prop="mfgorderName"
-          align="center"
-          label="生产计划号"
-          :min-width="flexColumnWidth('生产计划号', 'mfgorderName')"
-        >
-        </el-table-column>
-                <el-table-column
-          prop="TxnDate"
-          align="center"
-          label="不良录入时间"
-          :min-width="flexColumnWidth('不良录入时间', 'TxnDate')"
-        >
-        </el-table-column>
-                <el-table-column
-          prop="DismantlestartTime"
-          align="center"
-          label="拆解开始时间"
-          :min-width="flexColumnWidth('拆解开始时间', 'DismantlestartTime')"
-        >
-        </el-table-column>
-                <el-table-column
-          prop="DismantleEndTime"
-          align="center"
-          label="拆解完成时间"
-          :min-width="flexColumnWidth('拆解完成时间', 'DismantleEndTime')"
-        >
-        </el-table-column>
-        <el-table-column
-          prop="DismantleStatus"
-          align="center"
-          label="状态"
-          :min-width="flexColumnWidth('状态', 'DismantleStatus')"
-        >
-          <template #default="scope">
-            <div>{{ scope.row.DismantlestartTime }}</div>
-            <div v-if="scope.row.DismantlestartTime === null">
-              <div>未开始</div>
-            </div>
-            <div v-if="scope.row.DismantlestartTime === null && scope.row.DismantleEndTime === null">
-              <div>拆解中</div>
-            </div>
-            <div v-if="scope.row.DismantleEndTime === null">
-              <div>拆解完成</div>
-            </div>
-          </template>
-        </el-table-column>
+                  <el-table-column
+                    prop="ContainerName"
+                    align="center"
+                    label="MES屏条码"
+                    :min-width="flexColumnWidth('MES屏条码', 'ContainerName')"
+                  >
+                  </el-table-column>
+                  <el-table-column
+                    prop="mfgorderName"
+                    align="center"
+                    label="生产计划号"
+                    :min-width="flexColumnWidth('生产计划号', 'mfgorderName')"
+                  >
+                  </el-table-column>
+                  <el-table-column
+                    prop="TxnDate"
+                    align="center"
+                    label="不良录入时间"
+                    :min-width="flexColumnWidth('不良录入时间', 'TxnDate')"
+                  >
+                  </el-table-column>
+                  <el-table-column
+                    prop="DismantlestartTime"
+                    align="center"
+                    label="拆解开始时间"
+                    :min-width="
+                      flexColumnWidth('拆解开始时间', 'DismantlestartTime')
+                    "
+                  >
+                  </el-table-column>
+                  <el-table-column
+                    prop="DismantleEndTime"
+                    align="center"
+                    label="拆解完成时间"
+                    :min-width="
+                      flexColumnWidth('拆解完成时间', 'DismantleEndTime')
+                    "
+                  >
+                  </el-table-column>
+                  <el-table-column
+                    prop="DismantleStatus"
+                    align="center"
+                    label="状态"
+                    :min-width="flexColumnWidth('状态', 'DismantleStatus')"
+                  >
+                    <template #default="scope">
+                      <div>{{ scope.row.DismantlestartTime }}</div>
+                      <div v-if="scope.row.DismantlestartTime === null">
+                        <div>未开始</div>
+                      </div>
+                      <div
+                        v-if="
+                          scope.row.DismantlestartTime === null &&
+                          scope.row.DismantleEndTime === null
+                        "
+                      >
+                        <div>拆解中</div>
+                      </div>
+                      <div v-if="scope.row.DismantleEndTime === null">
+                        <div>拆解完成</div>
+                      </div>
+                    </template>
+                  </el-table-column>
                 </el-table>
                 <div class="w-full mt-3 flex justify-around">
                   <el-pagination
@@ -265,7 +367,7 @@
                     :total="qtytableData.length"
                   >
                   </el-pagination>
-                </div>
+                </div> -->
               </div>
               <template #footer>
                 <span class="dialog-footer">
@@ -500,6 +602,9 @@ onBeforeUnmount(() => {
 
 //获得选择数据
 const getToData = () => {
+  if (projectStore.getFectivekList.length === 0) {
+    return;
+  }
   let arr: any = [];
   projectStore.getFectivekList.forEach((item: any) => {
     arr.push(item.ContainerName);

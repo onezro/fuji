@@ -17,22 +17,13 @@
           <div class="p-[10px]">
             <el-form ref="formRef" :model="form" label-width="auto">
               <el-form-item label="MES屏条码" prop="scrBarCode">
-                <el-input
-                  v-model="form.ContainerName"
-                  placeholder=""
-                />
+                <el-input v-model="form.ContainerName" placeholder="" />
               </el-form-item>
               <el-form-item label="生产计划号" prop="order">
-                <el-input
-                  v-model="form.MfgOrderName"
-                  placeholder=""
-                />
+                <el-input v-model="form.MfgOrderName" placeholder="" />
               </el-form-item>
               <el-form-item label="机型" prop="productCode">
-                <el-input
-                  v-model="form.productmodel"
-                  placeholder=""
-                />
+                <el-input v-model="form.productmodel" placeholder="" />
               </el-form-item>
               <el-form-item label="起始时间" prop="startTime">
                 <el-date-picker
@@ -53,7 +44,11 @@
                 />
               </el-form-item>
               <el-form-item label="不良工位" prop="station">
-                <el-select v-model="form.WorkStation" placeholder="选择工位" clearable>
+                <el-select
+                  v-model="form.WorkStation"
+                  placeholder="选择工位"
+                  clearable
+                >
                   <el-option
                     v-for="item in options"
                     :key="item.value"
@@ -78,7 +73,9 @@
               <span class="ml-5"> 不良品处置列表</span>
             </div>
             <div class="p-2">
-              <el-button type="primary" @click="disassembly">批量拆解</el-button>
+              <el-button type="primary" @click="disassembly"
+                >批量拆解</el-button
+              >
             </div>
             <el-table
               :data="tableData"
@@ -111,7 +108,7 @@
                       :icon="o.icon"
                       size="small"
                       :type="o.type"
-                      @click="handleEdit"
+                      @click="repairSubmit(scope.row)"
                     />
                   </el-tooltip>
                 </template>
@@ -155,8 +152,8 @@ import {
   onBeforeMount,
   onBeforeUnmount,
 } from "vue";
-import { useRouter } from 'vue-router';
-import { useProjectStoreWithOut } from '@/stores/modules/projectData'
+import { useRouter } from "vue-router";
+import { useProjectStoreWithOut } from "@/stores/modules/projectData";
 import { DefectiveDisposalList, DefectiveQuickTest } from "@/api/scrApi";
 const appStore = useAppStoreWithOut();
 const userStore = useUserStoreWithOut();
@@ -168,7 +165,7 @@ const badVisible = ref(false);
 const inputRef = ref();
 const msgTitle = ref("");
 const router = useRouter();
-const projectStore:any = useProjectStoreWithOut();
+const projectStore: any = useProjectStoreWithOut();
 const stopsForm = ref({
   ContainerName: "", //PCB
   result: "OK", //工装治具
@@ -185,6 +182,13 @@ const form = ref({
   productmodel: "",
 });
 
+const repairForm = ref({
+  iContainerName: "string",
+  iSpecName: "string",
+  WorkstationName: "string",
+  EmployeeName: "string",
+});
+
 const options = ref([
   {
     value: "12341234",
@@ -195,8 +199,95 @@ const options = ref([
     label: "贴合下料",
   },
 ]);
-const tableData = ref([
-]);
+const tableData = ref([]);
+const selectTable = ref([]);
+
+interface orderArr {
+  order: string;
+  models: string;
+  productCode: string;
+  productDes: string;
+  orderNum: string;
+}
+
+interface OrderData {
+  data: Array<orderArr>;
+}
+
+const tableData1 = ref([]);
+const tableHeight = ref(0);
+const pageObj = ref({
+  pageSize: 100,
+  currentPage: 1,
+});
+
+onBeforeMount(() => {
+  getScreenHeight();
+});
+onMounted(() => {
+  window.addEventListener("resize", getScreenHeight);
+  // console.log(appStore.getOpuiData.stationDec);
+});
+onBeforeUnmount(() => {
+  window.addEventListener("resize", getScreenHeight);
+});
+
+//查询
+const onSubmit = () => {
+  DefectiveDisposalList({
+    ...form.value,
+    ContainerName: [form.value.ContainerName],
+  }).then((res: any) => {
+    if (res.content) {
+      tableData.value = res.content;
+    }
+  });
+};
+
+//批量拆卸
+const disassembly = () => {
+  if (selectTable.value.length === 0) {
+    return;
+  }
+  projectStore.setFectivekList(selectTable.value);
+  router.push({ name: "BICV-SCN-0005" });
+};
+
+//快修
+const repairSubmit = (row: any) => {
+  repairForm.value.EmployeeName = userStore.getUserInfo;
+  repairForm.value.WorkstationName = opui.station;
+  repairForm.value.iContainerName = row.ContainerName;
+  repairForm.value.iSpecName = row.SpecName;
+  console.log(repairForm.value);
+  
+  ElMessageBox.confirm("确认快修", "确认操作", {
+    confirmButtonText: "确定",
+    cancelButtonText: "取消",
+    type: "warning",
+  })
+    .then(() => {
+      DefectiveQuickTest(repairForm.value).then(
+        (data: any) => {
+          if (!data) {
+            return;
+          }
+          ElNotification({
+            type: "success",
+            title: "提示信息",
+            message: data.msg,
+          });
+          onSubmit();
+        }
+      );
+    })
+    .catch(() => {
+      ElNotification({
+        type: "info",
+        message: "取消操作",
+      });
+    });
+};
 
 const formHeader1 = reactive<InstanceType<typeof FormHeader>[]>([
   {
@@ -287,56 +378,11 @@ const columnData = reactive([
         type: "primary",
         label: "快修",
         icon: "Position",
+        buttonClick: repairSubmit
       },
     ],
   },
 ]);
-const selectTable = ref([]);
-
-interface orderArr {
-  order: string;
-  models: string;
-  productCode: string;
-  productDes: string;
-  orderNum: string;
-}
-
-interface OrderData {
-  data: Array<orderArr>;
-}
-
-const tableData1 = ref([]);
-const tableHeight = ref(0);
-const pageObj = ref({
-  pageSize: 100,
-  currentPage: 1,
-});
-
-onBeforeMount(() => {
-  getScreenHeight();
-});
-onMounted(() => {
-  window.addEventListener("resize", getScreenHeight);
-  // console.log(appStore.getOpuiData.stationDec);
-});
-onBeforeUnmount(() => {
-  window.addEventListener("resize", getScreenHeight);
-});
-
-//查询
-const onSubmit = () => {
-    DefectiveDisposalList(({...form.value,ContainerName:[form.value.ContainerName]})).then((res:any) =>{
-        if(res.content) {
-            tableData.value = res.content
-        }
-    })
-};
-
-//批量拆卸
-const disassembly = () => {
-    projectStore.setFectivekList(selectTable.value);
-    router.push({ name: 'BICV-SCN-0005' });
-}
 
 const handleSelectionChange = (val: any) => {
   let data = cloneDeep(val);

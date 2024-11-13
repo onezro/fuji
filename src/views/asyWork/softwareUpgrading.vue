@@ -90,10 +90,18 @@
               class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487] justify-between"
             >
               <span class="ml-5">软件信息</span>
-              <el-button type="warning" :disabled="SoftwareStatus === '1'">人工确认提交</el-button>
+              <el-button
+                type="warning"
+                :disabled="
+                  SoftwareStatus === '1' ||
+                  changeList.length !== tableData1.length
+                "
+                @click="ManualSubmit"
+                >人工确认提交</el-button
+              >
             </div>
             <table-tem
-             class="my-table"
+              class="my-table"
               :show-select="true"
               :tableData="tableData1"
               :tableHeight="tableHeight"
@@ -150,8 +158,8 @@
               :style="{ height: `${boxHeight}px` }"
               class="m-2 border border-solid border-[#cbcbcb]"
             >
-            {{ msgTitle }}
-          </div>
+              {{ msgTitle }}
+            </div>
           </div>
         </div>
       </div>
@@ -171,7 +179,11 @@ import { checkStringType } from "@/utils/barcodeFormat";
 import type { Formspan, FormHeader, OrderData } from "@/typing";
 import { ElMessage, ElNotification, ElMessageBox } from "element-plus";
 import { QueryMoveHistory } from "@/api/dipApi";
-import { QueryOrderSoftwareInfo } from "@/api/asyApi";
+import {
+  QueryOrderSoftwareInfo,
+  AutoComparisonInfoMovestd,
+  ManualComparisonInfoMovestd,
+} from "@/api/asyApi";
 import {
   ref,
   reactive,
@@ -204,13 +216,13 @@ const opui = appStore.getOPUIReal();
 const inputRef = ref();
 const inputFocus = ref(true);
 const barCode = ref("");
-const currentCode = ref("12124");
+const currentCode = ref("");
 const dialogVisible = ref(false);
 const materialTable = ref<any[]>([]);
 const boxHeight = ref(0);
 const changeList = ref([]);
 const btnType = ref(false);
-const SoftwareStatus = ref("1")
+const SoftwareStatus = ref("1");
 const stopsForm = ref<StopsForm>({
   containerName: "",
   workstationName: opui.station || "",
@@ -225,7 +237,7 @@ const form = ref<InstanceType<typeof Formspan>>({
   ProductName: "",
   ProductDesc: "",
   Qty: "",
-  TotalNum: ""
+  TotalNum: "",
 });
 const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
   {
@@ -310,9 +322,9 @@ const materialColumnData = reactive([
 const tableData1 = ref([]);
 const tableHeight = ref(0);
 const pageObj = ref({
-  pageSize: 100,
+  pageSize: 10000,
   currentPage: 1,
-  isShow:-1
+  isShow: -1,
 });
 
 const materialPageObj = ref({
@@ -365,8 +377,10 @@ const reset = () => {
   };
   tableData1.value = [];
   currentCode.value = "";
-  msgType.value = true;
-  msgTitle.value = "";
+  // msgType.value = true;
+  // msgTitle.value = "";
+  barCode.value = "";
+  SoftwareStatus.value = "1";
 };
 
 //选中
@@ -384,43 +398,69 @@ const getHisData = () => {
 
 //扫描条码
 const scan = () => {
-  if (SoftwareStatus.value === "1") {
-    QueryOrderSoftwareInfo({containerName:barCode.value,workstationName:opui.station}).then((res:any) => {
-      currentCode.value = barCode.value;
-      barCode.value = '';
-      SoftwareStatus.value = res.content.SoftwareStatus;
-      form.value.PlanNo = res.content.PlanNo;
-      form.value.ProductModel = res.content.ProductModel;
-      form.value.ProductName = res.content.ProductName;
-      form.value.ProductDesc = res.content.ProductDesc;
-      form.value.Qty = res.content.Qty;
-      form.value.TotalNum = res.content.TotalNum;
-      tableData1.value = res.content.SoftwareList
-    })
-  }else {
-
+  if (currentCode.value === "") {
+    QueryOrderSoftwareInfo({
+      containerName: barCode.value,
+      workstationName: opui.station,
+    }).then((res: any) => {
+      msgType.value = res.success;
+      msgTitle.value = res.msg;
+      if (res && res.success) {
+        currentCode.value = barCode.value;
+        SoftwareStatus.value = res.content.SoftwareStatus;
+        form.value.PlanNo = res.content.PlanNo;
+        form.value.ProductModel = res.content.ProductModel;
+        form.value.ProductName = res.content.ProductName;
+        form.value.ProductDesc = res.content.ProductDesc;
+        form.value.Qty = res.content.Qty;
+        form.value.TotalNum = res.content.TotalNum;
+        tableData1.value = res.content.SoftwareList;
+      }
+      barCode.value = "";
+    });
+  } else {
+    AutoComparisonInfoMovestd({
+      ContainerName: currentCode.value,
+      SoftwareCode: barCode.value,
+      SoftwareInfo: tableData1.value,
+      workstationName: opui.station,
+      userAccount: userStore.getUserInfo,
+    }).then((res: any) => {
+      msgType.value = res.success;
+      msgTitle.value = res.msg;
+      reset();
+    });
   }
-}
+};
+
+const ManualSubmit = () => {
+  ManualComparisonInfoMovestd({
+    containerName: currentCode.value,
+    workstationName: opui.station,
+    userAccount: userStore.getUserInfo,
+  }).then((res: any) => {
+    msgType.value = res.success;
+    msgTitle.value = res.msg;
+    reset();
+  });
+};
 
 //过站
 const getChange = () => {
   let barCodeData = barCode.value;
 
   stopsForm.value.containerName = barCodeData;
-  
-}
+};
 
-  
-  
-  onBeforeMount(() => {
-    getScreenHeight();
-  });
-  onMounted(() => {
-    window.addEventListener("resize", getScreenHeight);
-    // getOrderData();
-    getFocus();
-    // getHisData();
-  });
+onBeforeMount(() => {
+  getScreenHeight();
+});
+onMounted(() => {
+  window.addEventListener("resize", getScreenHeight);
+  // getOrderData();
+  getFocus();
+  // getHisData();
+});
 
 //分页
 const handleSizeChange = (val: any) => {
@@ -524,13 +564,13 @@ const getScreenHeight = () => {
   font-weight: bold;
 }
 
-.custom-input-class.el-input.is-disabled .el-input__wrapper  {
-  background-color:rgba($color: #000000, $alpha: 0);
+.custom-input-class.el-input.is-disabled .el-input__wrapper {
+  background-color: rgba($color: #000000, $alpha: 0);
   color: black;
 }
 .custom-input-class.el-input.is-disabled .el-input__inner {
-  color:black;
-  -webkit-text-fill-color:black;
+  color: black;
+  -webkit-text-fill-color: black;
   font-size: large;
 }
 
