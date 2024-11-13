@@ -132,7 +132,7 @@
               >
               </el-input>
             </el-form-item>
-            <el-form-item label="数量">
+            <el-form-item label="计划数量">
               <el-input v-model="form.Qty" class="input-with-select" disabled>
               </el-input>
             </el-form-item>
@@ -152,9 +152,9 @@
               >
               </el-input>
             </el-form-item>
-            <el-form-item label="车间">
+            <el-form-item label="工单">
               <el-input
-                v-model="form.wcDescription"
+                v-model="form.ERPOrder"
                 class="input-with-select"
                 disabled
               >
@@ -397,7 +397,7 @@ interface formTS {
   MfgLineName: string;
   MfgLineDesc: string;
   WorkCenterName: string;
-  wcDescription: string;
+  ERPOrder: string;
   RequestTypeName: string;
 }
 
@@ -423,7 +423,7 @@ const form = ref<formTS>({
   MfgLineName: "",
   MfgLineDesc: "",
   WorkCenterName: "",
-  wcDescription: "",
+  ERPOrder: "",
   RequestTypeName: ""
 });
 
@@ -504,7 +504,7 @@ const orderChange = (data: any) => {
       form.value.MfgLineName = item.MfgLineName;
       form.value.MfgLineDesc = item.MfgLineDesc;
       form.value.WorkCenterName = item.WorkCenterName;
-      form.value.wcDescription = item.wcDescription;
+      form.value.ERPOrder = item.ERPOrder;
       form.value.RequestTypeName = item.RequestTypeName;
       getFeedTableData(data);
     }

@@ -187,7 +187,9 @@ export function DefectiveComponentBindHistory(data:any) {
     return request({
         url: "/api/DefectiveProductsDisposal/DefectiveComponentBindHistory",
         method: "post",
-        data
+        params:{
+            containerName:data
+        }
     })
 }
 
