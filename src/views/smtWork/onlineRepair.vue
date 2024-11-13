@@ -526,6 +526,7 @@ const repairCancel = () => {
   msgTitle.value = "";
   msgType.value = true;
   badVisible.value = false;
+  getFocus();
 };
 const repairSubmit = () => {
   SaveRepairRecord(repairForm.value).then((res: any) => {

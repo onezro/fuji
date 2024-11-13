@@ -22,7 +22,9 @@
       </div>
       <div class="w-full flex">
         <div class="setwidth w-[400px]">
-          <el-table :data="tableData" size="small" :height="tableHeight" :tooltip-effect="'dark'" border fit
+          <el-table-v2 :columns="columns" :data="tableData" :height="tableHeight" border fit fixed highlight-current-row
+            @cell-click="cellClick" />
+          <!-- <el-table :data="tableData" size="small" :height="tableHeight" :tooltip-effect="'dark'" border fit
             highlight-current-row @cell-click="cellClick">
              <el-table-column type="index" align="center" fixed label="序号" width="50" />
             <el-table-column prop="ProductName" label="组件编码" width="120" />
@@ -32,7 +34,7 @@
                 <el-empty />
               </div>
             </template>
-          </el-table>
+</el-table> -->
         </div>
         <div class="w-[calc(100%-408px)] ml-2">
           <div class="mb-1 w-full">
@@ -64,15 +66,16 @@
           </div>
           <div class="w-full">
             <div class="mb-1">
-              <el-button type="primary" size="small" @click="openSpecIssue" :disabled="specWork.WorkflowName==''||selectData.length==0">修改工序</el-button>
+              <el-button type="primary" size="small" @click="openSpecIssue" :disabled="specWork.WorkflowName == '' || selectData.length == 0
+                ">修改工序</el-button>
             </div>
             <el-table :data="productData" size="small" :height="tableHeight1" stripe border fit :tooltip-effect="'dark'"
               row-key="MaterialName" @selection-change="handleSelectionChange">
               <el-table-column type="selection" align="center" width="50"></el-table-column>
 
-              <el-table-column  align="center" fixed label="序号" width="50">
+              <el-table-column align="center" fixed label="序号" width="50">
                 <template #default="scope">
-                  {{ scope.$index+1 }}
+                  {{ scope.$index + 1 }}
                 </template>
               </el-table-column>
               <el-table-column prop="MaterialName" label="物料编码" fixed width="120" />
@@ -284,6 +287,20 @@ const issueList = ref([
   },
 ]);
 const selectData = ref([]);
+const columns = ref([
+  {
+    key: "ProductName",
+    title: "组件编码",
+    dataKey: "ProductName",
+    width: 120,
+  },
+  {
+    key: "ProductDesc",
+    title: "组件描述",
+    dataKey: "ProductDesc",
+    // width: 150,
+  },
+]);
 
 onBeforeMount(() => {
   getScreenHeight();
@@ -300,12 +317,12 @@ onBeforeUnmount(() => {
 const getData = () => {
   findProduct(getForm.value).then((res: any) => {
     tableData.value = res.content;
-    specWorkData.value=[]
-    productData.value=[]
+    specWorkData.value = [];
+    productData.value = [];
     specWork.value = {
-        WorkflowDesc: "",
-        WorkflowName: "",
-      };
+      WorkflowDesc: "",
+      WorkflowName: "",
+    };
   });
 };
 const getProductList = () => {
@@ -409,22 +426,20 @@ const updateSpecIssue = () => {
   });
   specForm.value.materialList = data;
   // console.log( specForm.value);
-  UpdateProductBOMMaterialList(specForm.value).then(
-    (res: any) => {
-      if (res.success) {
-        ElNotification({
+  UpdateProductBOMMaterialList(specForm.value).then((res: any) => {
+    if (res.success) {
+      ElNotification({
         title: "提示信息",
         message: res.msg,
         type: "success",
       });
-        speContForm.value.SpecName = "";
-        speContForm.value.IssueControl = "6";
-        specForm.value.materialList=[]
-        specVisible.value = false;
-        getProductList();
-      }
+      speContForm.value.SpecName = "";
+      speContForm.value.IssueControl = "6";
+      specForm.value.materialList = [];
+      specVisible.value = false;
+      getProductList();
     }
-  );
+  });
 };
 const handleSelectionChange = (row: any) => {
   selectData.value = row;

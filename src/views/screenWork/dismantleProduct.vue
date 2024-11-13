@@ -174,7 +174,7 @@
                 <div
                   class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]"
                 >
-                  <span class="ml-5">不良品拆解1</span>
+                  <span class="ml-5">不良品拆解</span>
                 </div>
                 <!-- <table-tem
                   :showIndex="true"

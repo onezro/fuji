@@ -244,9 +244,10 @@ import {
 interface StopsForm {
   tools: string;
   ContainerName: string;
-  OrderNumber: string;
+  // OrderNumber: string;
   workstationName: string;
   userAccount: string;
+  orderName:string;
 }
 
 interface ToolList {
@@ -266,7 +267,8 @@ const barCode = ref("");
 const stopsForm = ref<StopsForm>({
   tools: "",
   ContainerName: "",
-  OrderNumber: "",
+  // OrderNumber: "",
+  orderName:"",
   workstationName: opui.station || "",
   userAccount: userStore.getUserInfo,
 });
@@ -367,13 +369,13 @@ const columnData1 = reactive([
     width: "",
     align: "1",
   },
-  {
-    text: true,
-    prop: "BD_Tools",
-    label: "治具编码",
-    width: "",
-    align: "1",
-  },
+  // {
+  //   text: true,
+  //   prop: "BD_Tools",
+  //   label: "治具编码",
+  //   width: "",
+  //   align: "1",
+  // },
   {
     text: true,
     prop: "BD_EmployeeName",
@@ -874,6 +876,7 @@ const radioChange = (args: any) => {
   } else {
     // orderTable.value.data.forEach((v: any) => {
     //   if (v.MfgOrderName == args[1]) {
+    stopsForm.value.orderName=args[0].ERPOrder
     form.MfgOrderName = args[0].MfgOrderName;
     form.ProductName = args[0].ProductName;
     form.ProductDesc = args[0].ProductDesc;
@@ -977,7 +980,7 @@ const getChange = (val: any) => {
           msgType.value = true;
         }
       } else {
-        msgTitle.value = `错误，请重新扫描已上线的治具`;
+        msgTitle.value = `错误，请重新扫描PCB条码`;
         msgType.value = false;
         barCode.value = "";
         getFocus();

@@ -60,9 +60,9 @@
               <div>
                 <el-table :data="barData" size="small" border :row-class-name="tableRowClassName" :height="'100%'">
                   <el-table-column type="index" align="center" fixed label="序号" :width="'60'"></el-table-column>
-                  <el-table-column prop="MaterialName" label="产品编码" width="120" />
+                  <el-table-column prop="MaterialName" label="物料编码" width="120" />
                   <el-table-column prop="QtyRequired" label="需求量" width="120" />
-                  <el-table-column prop="MaterialBarCode" label="物料编码" width="150">
+                  <el-table-column prop="MaterialBarCode" label="批次条码" width="150">
                     <template #default="scope">
                       <el-input v-model="scope.row.MaterialBarCode" size="small" :ref="createInputRef(scope.$index)"
                         @keyup.enter.native="getChange1(scope.$index,scope.row)">
