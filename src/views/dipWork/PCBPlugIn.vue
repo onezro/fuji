@@ -876,7 +876,7 @@ const radioChange = (args: any) => {
   } else {
     // orderTable.value.data.forEach((v: any) => {
     //   if (v.MfgOrderName == args[1]) {
-    stopsForm.value.orderName=args[0].ERPOrder
+    stopsForm.value.orderName=args[0].MfgOrderName
     form.MfgOrderName = args[0].MfgOrderName;
     form.ProductName = args[0].ProductName;
     form.ProductDesc = args[0].ProductDesc;
