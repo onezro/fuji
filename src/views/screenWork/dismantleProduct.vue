@@ -17,41 +17,38 @@
           <div class="p-[10px]">
             <el-form ref="formRef" :model="form" label-width="auto">
               <el-form-item label="MES屏条码" prop="scrBarCode">
-                <el-input
-                  v-model="form.scrBarCode"
-                  placeholder="请输入MES屏条码"
-                />
+                <el-input v-model="form.ContainerName" placeholder="" />
               </el-form-item>
               <el-form-item label="生产计划号" prop="order">
-                <el-input v-model="form.order" placeholder="请输入生产计划号" />
+                <el-input v-model="form.MfgOrderName" placeholder="" />
               </el-form-item>
-              <!-- <el-form-item label="产品机型" prop="models">C</el-form-item> -->
-              <el-form-item label="产品编码" prop="productCode">
-                <el-input
-                  v-model="form.productCode"
-                  placeholder="请输入产品编码"
-                />
+              <el-form-item label="机型" prop="productCode">
+                <el-input v-model="form.productmodel" placeholder="" />
               </el-form-item>
               <el-form-item label="起始时间" prop="startTime">
                 <el-date-picker
-                  v-model="form.startTime"
+                  v-model="form.StartTime"
                   type="date"
-                  placeholder="选择起始时间"
+                  placeholder=""
                   format="YYYY-MM-DD"
                   value-format="YYYY-MM-DD"
                 />
               </el-form-item>
               <el-form-item label="结束时间" prop="endTime">
                 <el-date-picker
-                  v-model="form.endTime"
+                  v-model="form.EndTime"
                   type="date"
-                  placeholder="选择结束时间"
+                  placeholder=""
                   format="YYYY-MM-DD"
                   value-format="YYYY-MM-DD"
                 />
               </el-form-item>
-              <el-form-item label="状态" prop="station">
-                <el-select v-model="form.station" placeholder="选择状态">
+              <el-form-item label="不良工位" prop="station">
+                <el-select
+                  v-model="form.WorkStation"
+                  placeholder="选择工位"
+                  clearable
+                >
                   <el-option
                     v-for="item in options"
                     :key="item.value"
@@ -182,6 +179,7 @@
                           scope.row.DismantlestartTime &&
                           !scope.row.DismantleEndTime
                         "
+                        @click="openVisible(scope.row.ContainerName)"
                       >
                         <div>拆解中</div>
                       </div>
@@ -231,33 +229,51 @@
                 >
                   <el-form-item label="MES屏条码" prop="scrBarCode">
                     <el-input
-                      v-model="qtyForm.scrBarCode"
+                      v-model="qtyForm.ContainerName"
                       placeholder="请输入"
                       disabled
                     />
                   </el-form-item>
                   <el-form-item label="生产计划号" prop="order">
                     <el-input
-                      v-model="qtyForm.order"
+                      v-model="qtyForm.MfgOrderName"
                       placeholder="请输入"
                       disabled
                     />
                   </el-form-item>
                   <el-form-item label="产品编码" prop="productCode">
                     <el-input
-                      v-model="qtyForm.productCode"
+                      v-model="qtyForm.ProductName"
                       placeholder="请输入"
                       disabled
                     />
                   </el-form-item>
                   <el-form-item label="产品描述" prop="productDec">
                     <el-input
-                      v-model="qtyForm.productDec"
+                      v-model="qtyForm.Description"
                       type="textarea"
                       style="width: 500px"
                       placeholder="请输入"
                       disabled
                     />
+                  </el-form-item>
+                  <el-form-item label="返修类型" prop="productCode">
+                    <el-select v-model="unbindType" style="width: 100px">
+                      <el-option
+                        v-for="item in [
+                          { value: 'R' },
+                          { value: 'L' },
+                          { value: 'S' },
+                          { value: 'Z' },
+                        ]"
+                        :key="item.value"
+                        :label="item.value"
+                        :value="item.value"
+                      />
+                    </el-select>
+                  </el-form-item>
+                  <el-form-item label="" prop="order">
+                    <el-button @click="unbind" type="primary">解绑</el-button>
                   </el-form-item>
                 </el-form>
               </div>
@@ -276,98 +292,6 @@
                   @handleSizeChange="handleSizeChange1"
                   @handleCurrentChange="handleCurrentChange1"
                 ></table-tem>
-                <!-- <el-table
-                  ref="taskTableRef"
-                  class="test"
-                  stripe
-                  border
-                  :data="
-                    qtytableData.slice(
-                      (qtypageObj.currentPage - 1) * qtypageObj.pageSize,
-                      qtypageObj.currentPage * qtypageObj.pageSize
-                    )
-                  "
-                  style="width: 100%"
-                  :height="'300'"
-                >
-                  <el-table-column
-                    prop="ContainerName"
-                    align="center"
-                    label="MES屏条码"
-                    :min-width="flexColumnWidth('MES屏条码', 'ContainerName')"
-                  >
-                  </el-table-column>
-                  <el-table-column
-                    prop="mfgorderName"
-                    align="center"
-                    label="生产计划号"
-                    :min-width="flexColumnWidth('生产计划号', 'mfgorderName')"
-                  >
-                  </el-table-column>
-                  <el-table-column
-                    prop="TxnDate"
-                    align="center"
-                    label="不良录入时间"
-                    :min-width="flexColumnWidth('不良录入时间', 'TxnDate')"
-                  >
-                  </el-table-column>
-                  <el-table-column
-                    prop="DismantlestartTime"
-                    align="center"
-                    label="拆解开始时间"
-                    :min-width="
-                      flexColumnWidth('拆解开始时间', 'DismantlestartTime')
-                    "
-                  >
-                  </el-table-column>
-                  <el-table-column
-                    prop="DismantleEndTime"
-                    align="center"
-                    label="拆解完成时间"
-                    :min-width="
-                      flexColumnWidth('拆解完成时间', 'DismantleEndTime')
-                    "
-                  >
-                  </el-table-column>
-                  <el-table-column
-                    prop="DismantleStatus"
-                    align="center"
-                    label="状态"
-                    :min-width="flexColumnWidth('状态', 'DismantleStatus')"
-                  >
-                    <template #default="scope">
-                      <div>{{ scope.row.DismantlestartTime }}</div>
-                      <div v-if="scope.row.DismantlestartTime === null">
-                        <div>未开始</div>
-                      </div>
-                      <div
-                        v-if="
-                          scope.row.DismantlestartTime === null &&
-                          scope.row.DismantleEndTime === null
-                        "
-                      >
-                        <div>拆解中</div>
-                      </div>
-                      <div v-if="scope.row.DismantleEndTime === null">
-                        <div>拆解完成</div>
-                      </div>
-                    </template>
-                  </el-table-column>
-                </el-table>
-                <div class="w-full mt-3 flex justify-around">
-                  <el-pagination
-                    size="large"
-                    background
-                    @size-change="handleSizeChange1"
-                    @current-change="handleCurrentChange1"
-                    :current-page="qtypageObj.currentPage"
-                    :page-size="qtypageObj.pageSize"
-                    :page-sizes="[5, 10, 20, 50, 100]"
-                    layout="total,sizes, prev, pager, next, jumper"
-                    :total="qtytableData.length"
-                  >
-                  </el-pagination>
-                </div> -->
               </div>
               <template #footer>
                 <span class="dialog-footer">
@@ -401,7 +325,13 @@ import {
   onBeforeUnmount,
 } from "vue";
 import { useProjectStoreWithOut } from "@/stores/modules/projectData";
-import { DefectiveDisposalList, DefectiveQuickTest } from "@/api/scrApi";
+import {
+  DefectiveDisposalList,
+  DefectiveComponentBindHistory,
+  DefectiveScrap,
+  DefectiveUnbinding,
+  DefectiveDismantle,
+} from "@/api/scrApi";
 const appStore = useAppStoreWithOut();
 const userStore = useUserStoreWithOut();
 const opui = appStore.getOPUIReal();
@@ -411,6 +341,7 @@ const qtyVisible = ref(false);
 const badVisible = ref(false);
 const inputRef = ref();
 const msgTitle = ref("");
+const unbindType = ref("R");
 const projectStore: any = useProjectStoreWithOut();
 const stopsForm = ref({
   ContainerName: "", //PCB
@@ -420,13 +351,12 @@ const stopsForm = ref({
   EmployeeName: userStore.getUserInfo, //用户
 });
 const form = ref({
-  order: "",
-  scrBarCode: "",
-  // models: "",
-  productCode: "",
-  startTime: "",
-  endTime: "",
-  station: "",
+  ContainerName: "",
+  StartTime: "",
+  EndTime: "",
+  WorkStation: "",
+  MfgOrderName: "",
+  productmodel: "",
 });
 
 const options = ref([
@@ -498,11 +428,10 @@ const pageObj = ref({
 });
 
 const qtyForm = ref({
-  order: "",
-  scrBarCode: "",
-  // models: "",
-  productCode: "",
-  productDec: "",
+  ContainerName: "",
+  MfgOrderName: "",
+  ProductName: "",
+  Description: "",
 });
 const qtytableData = ref([
   {
@@ -518,68 +447,6 @@ const qtytableData = ref([
     productCode: "234234",
     time: "241243",
     station: "234234",
-  },
-]);
-
-const qtycolumnData = reactive([
-  {
-    text: true,
-    prop: "scrBarCode",
-    label: "MES屏条码",
-    width: "",
-    min: true,
-    align: "1",
-  },
-  {
-    text: true,
-    prop: "order",
-    label: "生产计划号",
-    width: "",
-    min: true,
-    align: "1",
-  },
-  {
-    text: true,
-    prop: "productCode",
-    label: "条码类型",
-    width: "",
-    min: true,
-    align: "1",
-  },
-  {
-    text: true,
-    prop: "productCode",
-    label: "供应商条码",
-    width: "",
-    min: true,
-    align: "1",
-  },
-  {
-    text: true,
-    prop: "time",
-    label: "检查结果",
-    width: "",
-    min: true,
-    align: "1",
-  },
-  {
-    isOperation: true,
-    label: "操作",
-    width: "120",
-    align: "center",
-    fixed: "right",
-    operation: [
-      {
-        type: "primary",
-        label: "解绑",
-        icon: "DocumentRemove",
-      },
-      {
-        type: "danger",
-        label: "报废",
-        icon: "Delete",
-      },
-    ],
   },
 ]);
 
@@ -614,17 +481,157 @@ const getToData = () => {
   });
 };
 
-const onSubmit = () => {
-  console.log(form.value);
+//打开不良品拆解页面
+const openVisible = (code: any) => {
+  DefectiveComponentBindHistory(code).then((res: any) => {
+    qtyForm.value.ContainerName = code;
+    qtyForm.value.Description = res.content2[0].Description;
+    qtyForm.value.MfgOrderName = res.content2[0].MfgOrderName;
+    qtyForm.value.ProductName = res.content2[0].ProductName;
+    qtytableData.value = res.content;
+    qtyVisible.value = true;
+  });
+  barCode.value = "";
 };
 
+//报废
+const scrap = (row: any) => {
+  ElMessageBox.confirm("确认快修", "确认操作", {
+    confirmButtonText: "确定",
+    cancelButtonText: "取消",
+    type: "warning",
+  })
+    .then(() => {
+      DefectiveScrap({
+        containerName: row.ContainerName,
+        BindContainerName: row.BindContainerName,
+        MaterialName: row.MaterialName,
+        MfgOrderName: row.MfgOrderName,
+      }).then((data: any) => {
+        if (!data) {
+          return;
+        }
+        if (data.success) {
+          ElNotification({
+            type: "success",
+            title: "提示信息",
+            message: data.msg,
+          });
+          qtyVisible.value = false;
+        }
+        onSubmit();
+      });
+    })
+    .catch(() => {
+      ElNotification({
+        type: "info",
+        message: "取消操作",
+      });
+    });
+};
+
+//查询
+const onSubmit = () => {
+  let arr = [];
+  if (form.value.ContainerName !== "") {
+    arr.push(form.value.ContainerName);
+  }
+  DefectiveDisposalList({
+    ...form.value,
+    ContainerName: arr,
+  }).then((res: any) => {
+    if (res.content) {
+      tableData.value = res.content;
+      projectStore.setFectivekList([]);
+    }
+  });
+};
+
+//解绑
+const unbind = () => {
+  DefectiveUnbinding({
+    containerName: qtyForm.value.ContainerName,
+    containerType: unbindType.value,
+    productName: qtyForm.value.ProductName,
+  }).then((res: any) => {
+    if (res.success) {
+      ElNotification({
+        type: "success",
+        title: "提示信息",
+        message: res.msg,
+      });
+    }
+    qtyVisible.value = false;
+    if (projectStore.getFectivekList.length === 0) {
+      onSubmit();
+    } else {
+      getToData();
+    }
+  });
+};
+
+//拆解
 const getChange = () => {
-  qtyVisible.value = true;
+  DefectiveDismantle({ ContainerName: barCode.value }).then((res: any) => {
+    if (projectStore.getFectivekList.length === 0) {
+      onSubmit();
+    } else {
+      getToData();
+    }
+    openVisible(barCode.value);
+  });
 };
 
 const qtyCancel = () => {
   qtyVisible.value = false;
 };
+
+const qtycolumnData = reactive([
+  {
+    text: true,
+    prop: "ContainerName",
+    label: "MES屏条码",
+    width: "",
+    min: true,
+    align: "1",
+  },
+  {
+    text: true,
+    prop: "MfgOrderName",
+    label: "生产计划号",
+    width: "",
+    min: true,
+    align: "1",
+  },
+  {
+    text: true,
+    prop: "BindContainerName",
+    label: "供应商条码",
+    width: "",
+    min: true,
+    align: "1",
+  },
+  {
+    isOperation: true,
+    label: "操作",
+    width: "120",
+    align: "center",
+    fixed: "right",
+    operation: [
+      // {
+      //   type: "primary",
+      //   label: "解绑",
+      //   icon: "DocumentRemove",
+      // },
+      {
+        type: "danger",
+        label: "报废",
+        icon: "Delete",
+        buttonClick: scrap,
+      },
+    ],
+  },
+]);
 
 //分页
 const handleSizeChange = (val: any) => {

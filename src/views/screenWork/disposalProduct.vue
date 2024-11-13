@@ -234,9 +234,13 @@ onBeforeUnmount(() => {
 
 //查询
 const onSubmit = () => {
+  let arr = [];
+  if (form.value.ContainerName !== "") {
+    arr.push(form.value.ContainerName);
+  }
   DefectiveDisposalList({
     ...form.value,
-    ContainerName: [form.value.ContainerName],
+    ContainerName: arr,
   }).then((res: any) => {
     if (res.content) {
       tableData.value = res.content;
