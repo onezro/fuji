@@ -22,9 +22,9 @@
       </div>
       <div class="w-full flex">
         <div class="setwidth w-[400px]">
-          <el-table-v2 :columns="columns" :data="tableData" :height="tableHeight" border fit fixed highlight-current-row
-            @cell-click="cellClick" />
-          <!-- <el-table :data="tableData" size="small" :height="tableHeight" :tooltip-effect="'dark'" border fit
+          <!-- <el-table-v2 :columns="columns" :data="tableData" :height="tableHeight" border fit fixed highlight-current-row
+            @cell-click="cellClick" /> -->
+          <el-table :data="tableData" size="small" :height="tableHeight" :tooltip-effect="'dark'" border fit
             highlight-current-row @cell-click="cellClick">
              <el-table-column type="index" align="center" fixed label="序号" width="50" />
             <el-table-column prop="ProductName" label="组件编码" width="120" />
@@ -34,7 +34,7 @@
                 <el-empty />
               </div>
             </template>
-</el-table> -->
+</el-table>
         </div>
         <div class="w-[calc(100%-408px)] ml-2">
           <div class="mb-1 w-full">
