@@ -68,7 +68,7 @@
       </div>
       <el-tabs v-model="activeName" type="border-card" class="demo-tabs">
         <el-tab-pane label="物料基本属性" name="base">
-          <el-form ref="editFormRef" :model="editForm" label-width="auto" class="h-[200px]">
+          <el-form ref="editFormRef" :model="editForm" label-width="auto" class="h-[240px]">
             <el-form-item label="产品机型" prop="BD_ProductModel" class="flex items-center">
               <el-input v-model="editForm.BD_ProductModel" style="width: 250px" />
               <el-checkbox v-model="editForm.BD_IsICCID" label="ICCID物料" class="ml-3" @change="editForm.BD_ICCIDType = ''" />
@@ -90,10 +90,13 @@
             <el-form-item label="校验和" prop="BD_CheckSum">
               <el-input v-model="editForm.BD_CheckSum" style="width: 250px" />
             </el-form-item>
+            <el-form-item label="拼板数" prop="BD_CheckSum">
+              <el-input v-model="editForm.ES_PinCount" style="width: 250px" />
+            </el-form-item>
           </el-form>
         </el-tab-pane>
         <el-tab-pane label="MSD物料属性" name="msd">
-          <el-form ref="editFormRef" :model="msdForm" label-width="auto" class="h-[200px]">
+          <el-form ref="editFormRef" :model="msdForm" label-width="auto" class="h-[240px]">
             <el-form-item label="MSD物料" prop="BD_IsMSD">
               <!-- <el-checkbox v-model="msdForm.BD_IsMSD"/> -->
               <el-switch v-model="msdForm.BD_IsMSD" inline-prompt :active-value="true" :inactive-value="false"
@@ -295,6 +298,7 @@ const editForm = ref({
   BD_IsICCID: "",
   BD_ICCIDType:"",
   BD_IsActivate: "",
+  ES_PinCount:""
 });
 const editFormHeader = reactive([
   {

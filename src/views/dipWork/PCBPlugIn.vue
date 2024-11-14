@@ -3,7 +3,7 @@
     <div class="h-[40px] pl-2 pr-2 flex justify-between items-center">
       <span class="text-[1.2rem]"> {{ opui.stationDec }} </span>
       <div>
-        <el-button type="warning" @click="opendetail">工单物料明细</el-button>
+        <!-- <el-button type="warning" @click="opendetail">工单物料明细</el-button> -->
         <!-- <el-button type="primary" @click="openOver">波峰焊设置</el-button> -->
       </div>
     </div>
@@ -85,7 +85,8 @@
             <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
               <span class="ml-5"> 扫描条码</span>
             </div>
-            <div class="h-[100px] pt-3 pr-5 pl-5">
+            <div class="h-[150px] pt-3 pr-5 pl-5 flex">
+              <div>
               <el-form class="inbound" ref="formRef" :inline="true" :model="form" label-width="auto"
                 @submit.native.prevent>
                 <el-form-item label="扫描条码">
@@ -100,69 +101,80 @@
                 {{ msgTitle }}
               </div>
             </div>
-          </div>
-          <div class="p-2">
-            <el-form class="inbound" size="default" ref="formRef" :model="form" :inline="true" label-width="auto">
-              <el-row>
-                <el-col :span="8">
-                  <el-form-item label="生产计划号" class="mb-[5px] flex">
-                    <selectTa ref="selectTable" :table="orderTable" :selectWidth="160" :columns="orderColumns"
-                      :max-height="400" :tableWidth="700" :defaultSelectVal="defaultSelectVal" :keywords="{
-                        label: 'MfgOrderName',
-                        value: 'MfgOrderName',
-                      }" @radioChange="(...args: any) => radioChange(args)">
-                    </selectTa>
-                    <el-tooltip content="刷新" placement="top">
-                      <el-icon class="ml-2" color="#777777" :class="isLoding" size="24" @click="getOrderData">
-                        <RefreshRight />
-                      </el-icon>
-                    </el-tooltip>
-                  </el-form-item>
-                </el-col>
-                <el-col :span="7">
-                  <el-form-item class="mb-[5px]" label="产品机型">
-                    <el-input v-model="form.BD_ProductModel" style="width: 160px" disabled />
-                  </el-form-item>
-                </el-col>
-                <el-col :span="9">
-                  <el-form-item class="mb-[5px]" label="工单号">
-                    <el-input v-model="form.ERPOrder" style="width: 160px" disabled />
-                  </el-form-item>
-                </el-col>
-              </el-row>
-              <el-row>
-                <el-col :span="8">
-                  <el-form-item class="mb-[5px]" label="计划数量">
-                    <el-input v-model="form.Qty" style="width: 160px" disabled />
-                  </el-form-item>
-               
-                </el-col>
-                <el-col :span="7">
-                  <el-form-item class="mb-[5px]" label="产品编码">
-                    <el-input v-model="form.ProductName" style="width: 160px" disabled /> </el-form-item>
-                </el-col>
-                <el-col :span="9">
-               
-                  <el-form-item class="mb-[5px]" label="产品描述">
-                    <el-input v-model="form.ProductDesc" style="width: 340px" disabled />
-                  </el-form-item>
-                </el-col>
-                <!-- <el-col :span="3">
-                  <el-form-item class="mb-[5px]" label="过站总数">
-                    <span class="text-lg font-bold">{{ form.AllNum }}</span>
-                   
-                  </el-form-item>
-                </el-col>
-                <el-col :span="3">
-                  <el-form-item class="mb-[5px]" label="实时过站">
-                    <span class="text-lg font-bold text-[#00B400]">{{
-                      form.TodayNum
-                    }}</span>
-                 
-                  </el-form-item>
-                </el-col> -->
-              </el-row>
-            </el-form>
+            <div>
+              <el-table :data="detailsData" stripe border fit size="small" :height="140" :style="{ width: '100%' }"  >
+                <el-table-column  label="序号" width="50" type="index" align="center"/>
+                  <el-table-column prop="MaterialNamete" label="物料编码" width="150" />
+                  <el-table-column prop="MaterialDesc" label="物料描述" width="250" />
+                
+                  <el-table-column  label="剩余数量"  width="100">
+                    <template  #default="scope">
+                      <span>{{ scope.row.LoadQueueQty- scope.row.issueQty}}</span>
+                    </template>
+                  </el-table-column>
+              </el-table>
+              <!-- <tableTemp size="small" :showIndex="true" :tableData="detailsData" :tableHeight="140" :columnData="detailsColumn"><</tableTemp> -->
+            </div>
+            </div>
+            <div class="p-1 pl-1">
+              <el-form class="inbound" size="default" ref="formRef" :model="form" :inline="true" label-width="auto">
+                <el-row>
+                  <el-col :span="8">
+                    <el-form-item label="生产计划号" class="mb-[5px]">
+                      <div class="flex items-center">
+                        <selectTa ref="selectTable" :table="orderTable" :selectWidth="150" :columns="orderColumns"
+                          :max-height="400" :tableWidth="700" :defaultSelectVal="defaultSelectVal" :keywords="{
+                            label: 'MfgOrderName',
+                            value: 'MfgOrderName',
+                          }" @radioChange="(...args: any) => radioChange(args)">
+                        </selectTa>
+                        <el-tooltip content="刷新" placement="top">
+                          <el-icon class="ml-2" color="#777777" :class="isLoding" size="24" @click="getOrderData">
+                            <RefreshRight />
+                          </el-icon>
+                        </el-tooltip>
+                      </div>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="6">
+                    <el-form-item class="mb-[5px]" label="产品机型">
+                      <span class="text-base font-bold">{{ form.BD_ProductModel }}</span>
+                      <!-- <el-input v-model="form.BD_ProductModel" style="width: 160px" disabled /> -->
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="10">
+                    <el-form-item class="mb-[5px]" label="工单号">
+                      <span class="text-base font-bold">{{ form.ERPOrder }}</span>
+                      <!-- <el-input v-model="form.ERPOrder" style="width: 160px" disabled /> -->
+                    </el-form-item>
+                  </el-col>
+                </el-row>
+                <el-row>
+                  <el-col :span="8">
+                    <el-form-item class="mb-[5px]" label="计划数量">
+                      <span class="text-base font-bold">{{ form.Qty }}</span>
+                      <!-- <el-input v-model="form.Qty" style="width: 160px" disabled /> -->
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="6">
+                    <el-form-item class="mb-[5px]" label="产品编码">
+                      <span class="text-base font-bold">{{ form.ProductName }}</span>
+                      <!-- <el-input v-model="form.ProductName" style="width: 160px" disabled /> -->
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="10">
+                    <el-form-item class="mb-[5px]" label="产品描述">
+                      <span class="text-base font-bold">{{ form.ProductDesc }}</span>
+                      <!-- <el-input v-model="form.ProductDesc" style="width: 340px" disabled /> -->
+                    </el-form-item>
+                  </el-col>
+                </el-row>
+                <!-- <el-form-item class="mb-[5px]" label="产品描述">
+                          <span class="text-base">{{ form.ProductDesc }}</span>
+                        </el-form-item> -->
+              </el-form>
+            </div>
+
           </div>
           <div class="flex flex-col flex-1 tabs-css">
             <div class="h-[35px] flex items-center justify-between text-lg text-[#fff] bg-[#006487]">
@@ -201,6 +213,7 @@
 
 <script lang="ts" setup>
 import tableTem from "@/components/tableTem/index.vue";
+import tableTemp from "@/components/tableTemp/index.vue";
 import badInfoTem from "@/components/badInfoTem/index.vue";
 import formTem from "@/components/formTem/index.vue";
 import feedTemp from "@/components/feedTemp/index.vue";
@@ -208,6 +221,7 @@ import selectTa from "@/components/selectTable/index.vue";
 import { useAppStore } from "@/stores/modules/app";
 import { useUserStoreWithOut } from "@/stores/modules/user";
 import type { Formspan, FormHeader, OrderData } from "@/typing";
+import { checkStringType } from "@/utils/barcodeFormat";
 import { ElMessage, ElNotification, ElMessageBox } from "element-plus";
 import {
   OrderQuery,
@@ -215,8 +229,18 @@ import {
   FindAllDevice,
   UpdateDevice,
   QueryMoveHistory,
-  QueryOrderMaterialRequired,
+  // QueryOrderMaterialRequired,
 } from "@/api/dipApi";
+import {
+  // OrderQuery,
+  // PluginStationMoveOut,
+  // FindAllDevice,
+  // UpdateDevice,
+  // QueryMoveHistory,
+  QueryOrderMaterialRequired,
+} from "@/api/smtApi";
+
+
 import { QueryToolInfo, SortTools } from "@/api/operate";
 import {
   ref,
@@ -231,9 +255,10 @@ import {
 interface StopsForm {
   tools: string;
   ContainerName: string;
-  OrderNumber: string;
+  // OrderNumber: string;
   workstationName: string;
   userAccount: string;
+  orderName:string;
 }
 
 interface ToolList {
@@ -253,7 +278,8 @@ const barCode = ref("");
 const stopsForm = ref<StopsForm>({
   tools: "",
   ContainerName: "",
-  OrderNumber: "",
+  // OrderNumber: "",
+  orderName:"",
   workstationName: opui.station || "",
   userAccount: userStore.getUserInfo,
 });
@@ -267,8 +293,8 @@ const form = reactive<InstanceType<typeof Formspan>>({
   Qty: "",
   PlannedStartDate: "",
   PlannedCompletionDate: "",
-  ERPOrder:"",
-  BD_ProductModel:""
+  ERPOrder: "",
+  BD_ProductModel: "",
   // AllNum: "",
   // TodayNum: "",
 });
@@ -354,13 +380,13 @@ const columnData1 = reactive([
     width: "",
     align: "1",
   },
-  {
-    text: true,
-    prop: "BD_Tools",
-    label: "治具编码",
-    width: "",
-    align: "1",
-  },
+  // {
+  //   text: true,
+  //   prop: "BD_Tools",
+  //   label: "治具编码",
+  //   width: "",
+  //   align: "1",
+  // },
   {
     text: true,
     prop: "BD_EmployeeName",
@@ -522,14 +548,14 @@ const detailsColumn = ref([
     min: true,
     align: "1",
   },
-  {
-    text: true,
-    prop: "QtyRequired",
-    label: "单量用量",
-    width: "",
-    min: true,
-    align: "1",
-  },
+  // {
+  //   text: true,
+  //   prop: "QtyRequired",
+  //   label: "单量用量",
+  //   width: "",
+  //   min: true,
+  //   align: "1",
+  // },
   {
     text: true,
     prop: "LoadQueueQty",
@@ -538,14 +564,14 @@ const detailsColumn = ref([
     min: true,
     align: "1",
   },
-  {
-    text: true,
-    prop: "level",
-    label: "已使用数量",
-    width: "",
-    min: true,
-    align: "1",
-  },
+  // {
+  //   text: true,
+  //   prop: "level",
+  //   label: "已使用数量",
+  //   width: "",
+  //   min: true,
+  //   align: "1",
+  // },
   {
     text: true,
     prop: "level",
@@ -554,22 +580,22 @@ const detailsColumn = ref([
     min: true,
     align: "1",
   },
-  {
-    text: true,
-    prop: "level",
-    label: "最后上料时间",
-    width: "",
-    min: true,
-    align: "1",
-  },
-  {
-    text: true,
-    prop: "level",
-    label: "最后上料人",
-    width: "",
-    min: true,
-    align: "1",
-  },
+  // {
+  //   text: true,
+  //   prop: "level",
+  //   label: "最后上料时间",
+  //   width: "",
+  //   min: true,
+  //   align: "1",
+  // },
+  // {
+  //   text: true,
+  //   prop: "level",
+  //   label: "最后上料人",
+  //   width: "",
+  //   min: true,
+  //   align: "1",
+  // },
 ]);
 const hisForm = ref({
   MfgOrderName: "",
@@ -607,8 +633,7 @@ const openOver = () => {
   overAddVisible.value = true;
   getOverData();
 };
-const opendetail = () => {
-  detailVisible.value = true;
+const getMaterialRequired=()=>{
   QueryOrderMaterialRequired(getFeedForm.value).then((res: any) => {
     if (
       res.content.length == 0 ||
@@ -620,6 +645,10 @@ const opendetail = () => {
     }
     detailsData.value = res.content;
   });
+}
+const opendetail = () => {
+  detailVisible.value = true;
+  
 };
 //获取过序
 const getOverData = () => {
@@ -858,6 +887,7 @@ const radioChange = (args: any) => {
   } else {
     // orderTable.value.data.forEach((v: any) => {
     //   if (v.MfgOrderName == args[1]) {
+    stopsForm.value.orderName=args[0].MfgOrderName
     form.MfgOrderName = args[0].MfgOrderName;
     form.ProductName = args[0].ProductName;
     form.ProductDesc = args[0].ProductDesc;
@@ -865,7 +895,7 @@ const radioChange = (args: any) => {
     form.BD_SoftVersion = args[0].BD_SoftVersion;
     form.PlannedStartDate = args[0].PlannedStartDate;
     form.PlannedCompletionDate = args[0].PlannedCompletionDate;
-    form.ERPOrder = args[0].ERPOrder
+    form.ERPOrder = args[0].ERPOrder;
     form.Qty = args[0].Qty;
     form.AllNum = args[0].AllNum;
     form.TodayNum = args[0].TodayNum;
@@ -877,6 +907,7 @@ const radioChange = (args: any) => {
       getToolForm.value.OrderNumber = args[0].MfgOrderName;
       getHisData();
       getToolData();
+      getMaterialRequired()
     }
   }
 };
@@ -948,16 +979,22 @@ const getChange = (val: any) => {
       // moveUp(toolList.value[toolData])
       stopsForm.value.tools = toolList.value[toolData].ToolName;
       checked.value[0] = toolList.value[toolData].ToolName;
-      // barCode.value = "";
       if (stopsForm.value.ContainerName == "") {
-        msgTitle.value = "请扫描PCB条码"
-        msgType.value = true
+        msgTitle.value = "请扫描PCB条码";
+        msgType.value = true;
       }
     } else {
-      stopsForm.value.ContainerName = barCodeVal;
-      if (stopsForm.value.tools == "") {
-        msgTitle.value = `已扫描PCB条码${stopsForm.value.ContainerName},请扫描治具编码`
-        msgType.value = true
+      if (checkStringType(barCodeVal) == "PCB") {
+        stopsForm.value.ContainerName = barCodeVal;
+        if (stopsForm.value.tools == "") {
+          msgTitle.value = `已扫描PCB条码:${stopsForm.value.ContainerName},请扫描治具编码`;
+          msgType.value = true;
+        }
+      } else {
+        msgTitle.value = `错误，请重新扫描PCB条码`;
+        msgType.value = false;
+        barCode.value = "";
+        getFocus();
       }
     }
     barCode.value = "";
@@ -972,16 +1009,16 @@ const getChange = (val: any) => {
           checked.value = [];
           getToolData();
           getHisData();
+          getMaterialRequired()
         }
-        console.log(stopsForm.value);
-
+        // console.log(stopsForm.value);
       });
     }
     getFocus();
-  }else{
+  } else {
     barCode.value = "";
     msgTitle.value = "请先进行工装治具上线";
-    msgType.value =false
+    msgType.value = false;
   }
   // stopsForm.value.ContainerName = barCodeVal;
   // PluginStationMoveOut(stopsForm.value).then((res: any) => {
@@ -1018,7 +1055,7 @@ const detailsCurrentChange = (val: any) => {
 const getScreenHeight = () => {
   nextTick(() => {
     leftBoxH.value = window.innerHeight - 155;
-    tableHeight.value = window.innerHeight - 428; //428
+    tableHeight.value = window.innerHeight - 468; //428
   });
 };
 </script>
@@ -1100,5 +1137,6 @@ const getScreenHeight = () => {
 ::v-deep .laser-table-filter .el-checkbox__label {
   /* 你的样式 */
   color: white !important;
+  font-size: 1.1rem;
 }
 </style>

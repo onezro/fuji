@@ -93,15 +93,7 @@ const handleDelete = (row: any) => {
         });
 };
 const columnData = ref([
-    {
-        text: true,
-        prop: "Temppara_Name",
-        label: "规则名称",
-        width: "",
-        // min: true,
-        align: "1",
-    },
-    {
+{
         text: true,
         prop: "Temppara_No",
         label: "规则编码",
@@ -109,6 +101,15 @@ const columnData = ref([
         // min: true,
         align: "1",
     },
+    {
+        text: true,
+        prop: "Temppara_Name",
+        label: "规则描述",
+        width: "",
+        // min: true,
+        align: "1",
+    },
+   
     {
         isOperation: true,
         label: "删除",

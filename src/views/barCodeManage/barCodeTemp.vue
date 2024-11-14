@@ -39,7 +39,7 @@
             <el-table-column prop="Template_UpdateOn" label="更新时间" width="180" />
             <el-table-column prop="Template_UpdateBy" label="更新人" />
             <el-table-column prop="Template_Remark" label="备注" :show-overflow-tooltip="true" min-width="180"/>
-            <el-table-column prop="Template_Enable" label="是否启用" width="120" align="center">
+            <el-table-column prop="Template_Enable" label="是否启用" width="80" align="center">
               <template #default="scope">
              
                 <el-tag  :type="scope.row.Template_Enable?'primary':'info'">{{scope.row.Template_Enable?'是':'否' }}</el-tag>
@@ -65,7 +65,7 @@
         </div>
         <div class="w-[400px] ml-2">
           <div class="mb-2">
-            <el-button type="primary" size="small" @click="openAddMater">添加</el-button>
+            <el-button type="primary" size="small" @click="openAddMater" :disabled="TemplateName==''" >添加</el-button>
           </div>
           <el-table :data="materialData" size="small" :style="{ width: '100%' }" :height="tableHeight1"
             :tooltip-effect="'dark'" border fit>
@@ -263,7 +263,7 @@ const addCancel = () => {
 };
 
 const addConfirm = () => {
-  InsertBarCodeTemplate(editTempForm.value).then((res: any) => {
+  InsertBarCodeTemplate(addTempForm.value).then((res: any) => {
     if (res.success) {
       ElNotification({
         title: "提示信息",
@@ -279,6 +279,7 @@ const addConfirm = () => {
 
 const cellClick = (row: any) => {
   TemplateName.value = row.Template_Name;
+  addMaterForm.value.TemplateName=row.Template_Name
   getTemplatePart();
 };
 const handleEdit = (row: any) => {
@@ -360,6 +361,8 @@ const addMaterConfirm = () => {
 };
 
 const deleteMater = (row: any) => {
+
+  
   ElMessageBox.confirm("确定删除", "确认操作", {
     confirmButtonText: "确定",
     cancelButtonText: "取消",
@@ -368,7 +371,7 @@ const deleteMater = (row: any) => {
     .then(() => {
       DeleteBarCodeRuleTempPartNumContent({
         TemplateName: TemplateName.value,
-        PartNumber: row.PartNumber,
+        PartNumber: row.ProductName,
       }).then((res: any) => {
         if (res.success) {
           ElNotification({
@@ -376,8 +379,10 @@ const deleteMater = (row: any) => {
             message: "删除成功",
             type: "success",
           });
+          getTemplatePart();
         }
       });
+
     })
     .catch(() => {
       ElNotification({

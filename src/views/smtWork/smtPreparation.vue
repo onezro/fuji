@@ -62,7 +62,7 @@
                 <div class="w-full h-full flex flex-col">
                     <div>
                         <div class="h-[30px] flex items-center text-base text-[#fff] bg-[#006487]">
-                            <span class="ml-5"> 生产计划号备料操作</span>
+                            <span class="ml-5"> 生产计划备料操作</span>
                         </div>
                         <div class="h-[130px] pt-3 pr-2 pl-2 overflow-auto">
                             <el-form ref="operateFormRef" :model="operateForm" :inline="true" label-width="auto">
@@ -112,7 +112,7 @@
 
                     <div class="flex flex-col flex-1 tabs-css">
                         <div class="h-[30px] flex items-center text-base text-[#fff] bg-[#006487]">
-                            <span class="ml-5">生产计划号物料明细</span>
+                            <span class="ml-5">生产计划物料明细</span>
                         </div>
                         <!-- <table-tem :showIndex="true" :tableData="tableData" :tableHeight="tableHeight"
                             :columnData="columnData" :pageObj="pageObj" @handleSizeChange="handleSizeChange"
@@ -123,19 +123,19 @@
                 </div>
             </div>
         </div>
-        <el-dialog v-model="orderVisiable" draggable title="选择备料生产计划号" width="70%" :append-to-body="true"
+        <el-dialog v-model="orderVisiable" draggable title="选择备料生产计划号" width="75%" :append-to-body="true"
             :close-on-click-modal="false" :close-on-press-escape="false" align-center @close="orderCancel">
             <el-table :data="orderData" size="small" :height="'400'" border fit :tooltip-effect="'dark'"
                 highlight-current-row @cell-click="cellClick" @cell-dblclick="celldblclick">
                 <el-table-column type="index" align="center" fixed label="序号" width="50" />
-                <el-table-column prop="OrderNumber" label="生产计划号" fixed width="100" />
+                <el-table-column prop="OrderNumber" label="生产计划号" fixed width="150" />
                 <el-table-column prop="Side" label="面号" fixed width="60" />
                 <el-table-column prop="LineNumber" label="产线" min-width="150" />
                 <el-table-column prop="ProductNumber" label="产品编码" min-width="120" />
                 <el-table-column prop="ProductDesc" :show-overflow-tooltip="true" label="产品描述" width="180" />
                 <el-table-column prop="OrderPlanedQty" label="计划数量" align="center" width="80" />
-                <el-table-column prop="StartTime" label="计划开始时间" width="140" />
-                <el-table-column prop="EndTime" label="计划完成时间" width="140" />
+                <el-table-column prop="PlanedStartTime" label="计划开始时间" width="140" />
+                <el-table-column prop="PlanedEndTime" label="计划完成时间" width="140" />
             </el-table>
             <template #footer>
                 <span class="dialog-footer">
@@ -195,10 +195,12 @@
                 <el-form-item label="灯色" prop="issue_color">
                     <!-- <el-input v-model="firstForm.issue_color" /> -->
                     <el-radio-group v-model="firstForm.issue_color"  :disabled="operateType == 1">
-                        <el-radio :value="3">蓝</el-radio>
-                        <el-radio :value="4">黄</el-radio>
-                        <el-radio :value="5">紫</el-radio>
-                        <el-radio :value="6">青</el-radio>
+                        <el-radio :value="1">蓝</el-radio>
+                        <el-radio :value="2">绿</el-radio>
+                        <el-radio :value="4">青</el-radio>
+                        <el-radio :value="5">黄</el-radio>
+                        <el-radio :value="6">紫</el-radio>
+                        <el-radio :value="7">白</el-radio>
                     </el-radio-group>
                 </el-form-item>
                 <el-form-item label="生产计划号" prop="OrderNumber">
@@ -472,7 +474,7 @@ watch(
         if (newVal == 1 && oldVal != newVal) {
             firstForm.value.issue_color = 0;
         } else {
-            firstForm.value.issue_color = 3;
+            firstForm.value.issue_color = 1;
         }
     },
     {

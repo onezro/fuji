@@ -3,7 +3,7 @@
     <div class="h-[40px] min-h-[40px] pl-2 pr-2 flex justify-between items-center">
       <span class="text-[1.2rem]">{{ opui.stationDec }}</span>
       <div>
-        <el-button type="primary" @click="dialogVisible = true, getOrderList()">生产计划号开工</el-button>
+        <el-button type="primary" @click="dialogVisible = true, getOrderList()">计划开工</el-button>
         <!-- <el-button type="warning" @click="openFeed">物料上料</el-button> -->
         <!-- <el-button type="primary">条码转生产计划号</el-button> -->
       </div>
@@ -157,6 +157,7 @@ interface Form {
   PlannedCompletionDate: string;
   Qty: number | string;
   Side: string;
+  ERPOrder:string
 }
 interface FormHeader {
   lable: string;
@@ -209,6 +210,7 @@ const form = reactive<Form>({
   ProductDesc: "",
   OrderStatusDesc: "",
   MfgLineDesc: "",
+  ERPOrder:""
 });
 const formHeader = reactive<FormHeader[]>([
   {
@@ -216,13 +218,15 @@ const formHeader = reactive<FormHeader[]>([
     value: "MfgOrderName",
   },
   {
-    lable: "产品编码",
-    value: "ProductName",
+    lable: "产品机型",
+    value: "BD_ProductModel",
   },
   {
-    lable: "产品描述",
-    value: "ProductDesc",
+    lable: "工单号",
+    value: "ERPOrder",
+ 
   },
+  
   {
     lable: "产线",
     value: "MfgLineDesc",
@@ -231,14 +235,14 @@ const formHeader = reactive<FormHeader[]>([
     lable: "状态",
     value: "OrderStatusDesc",
   },
-  {
-    lable: "开始时间",
-    value: "PlannedStartDate",
-  },
-  {
-    lable: "结束时间",
-    value: "PlannedCompletionDate",
-  },
+  // {
+  //   lable: "开始时间",
+  //   value: "PlannedStartDate",
+  // },
+  // {
+  //   lable: "结束时间",
+  //   value: "PlannedCompletionDate",
+  // },
   {
     lable: "面号",
     value: "Side",
@@ -246,6 +250,14 @@ const formHeader = reactive<FormHeader[]>([
   {
     lable: "计划数量",
     value: "Qty",
+  },
+  {
+    lable: "产品编码",
+    value: "ProductName",
+  },
+  {
+    lable: "产品描述",
+    value: "ProductDesc",
   },
 ]);
 const tableData = ref<any[]>([]);
@@ -538,6 +550,7 @@ const sureClick = () => {
   form.PlannedCompletionDate = choiceRow.value.PlannedCompletionDate;
   form.Qty = choiceRow.value.Qty;
   form.Side = choiceRow.value.Side;
+  form.ERPOrder = choiceRow.value.Side;
   dialogVisible.value = false;
 };
 
@@ -667,6 +680,7 @@ console.log(getMaxLength(arr) + 25 + "px");
 ::v-deep .laser-table-filter .el-checkbox__label {
   /* 你的样式 */
   color: white !important;
+  font-size: 1.1rem;
 }
 
 .saveAsDialog {

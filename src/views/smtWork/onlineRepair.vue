@@ -500,19 +500,7 @@ const getChange = () => {
     getWorkflowList(res.content.WorkflowName);
     getActionList(res.content.OperationName);
   });
-  // inputFocus.value = false;
-  // SubmitPcbToPacking(form.value).then((res: any) => {
-  //   msgTitle.value = res.msg;
-  //   msgType.value = res.success;
-  //   form.value.PcbNumber = "";
-  //   if (res.success) {
-  //     tableData.value = res.content;
-  //     msgTitle.value = res.msg + "周转箱列表已更新";
-  //   } else {
-  //     tableData.value = [];
-  //   }
-  //   inputFocus.value = true;
-  // });
+
 };
 //获取返修工序
 const getWorkflowList = (data: any) => {
@@ -538,6 +526,7 @@ const repairCancel = () => {
   msgTitle.value = "";
   msgType.value = true;
   badVisible.value = false;
+  getFocus();
 };
 const repairSubmit = () => {
   SaveRepairRecord(repairForm.value).then((res: any) => {
