@@ -57,6 +57,13 @@ export function PCBASplitMoveStd(data: any) {
         data,
     });
 }
+export function PIQueryMoveHistory(data: any) {
+    return request({
+        url: "/api/plugin/PIQueryMoveHistory",
+        method: "post",
+        data,
+    });
+}
 
 //人工目检过站,点胶，
 // export function MoveStd(data: any) {

@@ -59,13 +59,17 @@
               </div>
               <div>
                 <el-table :data="barData" size="small" border :row-class-name="tableRowClassName" :height="'100%'">
-                  <el-table-column type="index" align="center" fixed label="序号" :width="'60'"></el-table-column>
+                  <el-table-column type="index" align="center" fixed label="序号" :width="'50'"></el-table-column>
                   <el-table-column prop="MaterialName" label="物料编码" width="120" />
-                  <el-table-column prop="QtyRequired" label="需求量" width="120" />
+                  <el-table-column prop="QtyRequired" label="剩余数量" width="120">
+                    <template #default="scope">
+                      <span>{{ scope.row.LoadQueueQty - scope.row.issueqty }}</span>
+                    </template>
+                  </el-table-column>
                   <el-table-column prop="MaterialBarCode" label="批次条码" width="150">
                     <template #default="scope">
                       <el-input v-model="scope.row.MaterialBarCode" size="small" :ref="createInputRef(scope.$index)"
-                        @keyup.enter.native="getChange1(scope.$index,scope.row)">
+                        @keyup.enter.native="getChange1(scope.$index, scope.row)">
                       </el-input>
                     </template>
                   </el-table-column>
@@ -80,8 +84,8 @@
               <span class="ml-5">历史过站记录</span>
               <div class="mr-5">
                 <el-checkbox-group v-model="checkedHis" class="laser-table-filter">
-                   <el-checkbox v-for="c in checkedHisList" :label="`${c.label}(${changeDataLength(c.value)})`" :value="c.value"
-                    @change="changeHis(c.value)">
+                  <el-checkbox v-for="c in checkedHisList" :label="`${c.label}(${changeDataLength(c.value)})`"
+                    :value="c.value" @change="changeHis(c.value)">
                   </el-checkbox>
                 </el-checkbox-group>
               </div>
@@ -141,8 +145,8 @@ interface StopsForm {
 interface KeyMaterial {
   MaterialBarCode: string;
   MaterialName: string;
-  MfgOrderName:string;
-  QtyRequired:number
+  MfgOrderName: string;
+  QtyRequired: number
 }
 
 interface ToolList {
@@ -178,7 +182,7 @@ const form = ref<InstanceType<typeof Formspan>>({
   PlannedCompletionDate: "",
   AllNum: "",
   TodayNum: "",
-  ERPOrder:"",
+  ERPOrder: "",
 });
 const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
   // {
@@ -246,7 +250,7 @@ const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
   // }
 ]);
 const columnData1 = reactive([
-{
+  {
     text: true,
     prop: "ContainerName",
     label: "成品SN条码",
@@ -295,7 +299,7 @@ const orderColumns = ref([
 const defaultSelectVal = ref<string[]>([]);
 const isLoding = ref("");
 const barData = ref<KeyMaterial[]>([
- 
+
 ]);
 const keyForm = ref({
   BarCode: "",
@@ -317,7 +321,7 @@ const isKeyForm = ref({
 });
 const materialRef = ref();
 const inputRefs = ref<any[]>([]);
-  const checkedHis = ref(["today"]);
+const checkedHis = ref(["today"]);
 const checkedHisList = ref([
   {
     value: "today",
@@ -375,12 +379,12 @@ const changeData = computed(() => {
     return tableData1.value;
   }
 });
-const changeDataLength =(val: any) => {
+const changeDataLength = (val: any) => {
   if (val == "today") {
-    let dataLength=geTodayData()
+    let dataLength = geTodayData()
     return dataLength.length
   } else {
-     return tableData1.value.length
+    return tableData1.value.length
   }
 }
 const geTodayData = () => {
@@ -407,18 +411,18 @@ const getChange = () => {
     msgType.value = true;
     isKeyForm.value.BarCode = barCodeData;
     // if (stopsForm.value.keyMaterialList.length === 3) {
-      stopsForm.value.BarCode = barCodeData;
-      ScreeSMTCompBindMoveStd(stopsForm.value).then((res: any) => {
-        msgTitle.value = res.msg;
-        msgType.value = res.success;
-        if (res.success) {
-          stopsForm.value.keyMaterialList = [];
-        }
-        stopsForm.value.BarCode = "";
-        barCode.value = "";
-        getHisData()
-        getKeyMaterial();
-      });
+    stopsForm.value.BarCode = barCodeData;
+    ScreeSMTCompBindMoveStd(stopsForm.value).then((res: any) => {
+      msgTitle.value = res.msg;
+      msgType.value = res.success;
+      // if (res.success) {
+      stopsForm.value.keyMaterialList = [];
+      // }
+      stopsForm.value.BarCode = "";
+      barCode.value = "";
+      getHisData()
+      getKeyMaterial();
+    });
     // }
     // JudgeKeyMaterial(isKeyForm.value).then((res: any) => {
     //   msgTitle.value = res.msg;
@@ -439,7 +443,7 @@ const getChange = () => {
 
   // barCode.value = "";
   // getFocus();
- 
+
 };
 
 const createInputRef = (val: any) => {
@@ -449,7 +453,7 @@ const createInputRef = (val: any) => {
     }
   };
 };
-const getChange1 = (val: any,data:any) => {
+const getChange1 = (val: any, data: any) => {
   // if (val + 1 < inputRefs.value.length) {
   //   inputRefs.value[val + 1].focus();
   // } else {
@@ -463,7 +467,7 @@ const getChange1 = (val: any,data:any) => {
     workstationName: opui.station,
   };
   JudgeKeyMaterial(data1).then((res: any) => {
-    
+
     msgTitle.value = res.msg;
     msgType.value = res.success;
     if (res.success) {
@@ -474,7 +478,7 @@ const getChange1 = (val: any,data:any) => {
       }
       stopsForm.value.keyMaterialList.push({
         ...data,
-        VirtualCode:res.content==null?"":res.content
+        VirtualCode: res.content == null ? "" : res.content
       });
     } else {
       inputRefs.value[val].clear();
@@ -521,24 +525,25 @@ const radioChange = (args: any) => {
   }
 };
 const getKeyMaterial = () => {
-  barData.value=[]
+  barData.value = []
   QueryKeyMaterial(keyForm.value).then((res: any) => {
-    let data: KeyMaterial[]=[]
-    res.content.forEach((c:any)=>{
-      if(c.QtyRequired==1){
-        data.push(c)
-      }else{
-        for (let i = 0; i < c.QtyRequired; i++) {  
-          data.push({
-            MfgOrderName: c.MfgOrderName,
-            QtyRequired: 1,
-            MaterialName: c.MaterialName,
-            MaterialBarCode: ""
-          });  
-    }  
-      }
-    })
-    barData.value = data;
+    // let data: KeyMaterial[] = []
+    // res.content.forEach((c: any) => {
+    //   if (c.QtyRequired == 1) {
+    //     data.push(c)
+    //   } else {
+    //     for (let i = 0; i < c.QtyRequired; i++) {
+    //       data.push({
+    //         MfgOrderName: c.MfgOrderName,
+    //         QtyRequired: 1,
+    //         MaterialName: c.MaterialName,
+    //         MaterialBarCode: ""
+    //       });
+    //     }
+    //   }
+    // })
+    // barData.value = data;
+    barData.value =res.content
     nextTick(() => {
       if (inputRefs.value.length > 0) {
         inputRefs.value[0].focus();
@@ -558,7 +563,7 @@ const tableRowClassName = (val: any) => {
 };
 const getOrderData = () => {
   isLoding.value = "is-loading";
-  OrderQuery({ lineName: opui.line, OrderTypeName: "Assembly",WorkStationName:opui.station  }).then(
+  OrderQuery({ lineName: opui.line, OrderTypeName: "Assembly", WorkStationName: opui.station }).then(
     (res: any) => {
       let data = res.content;
       let timer = setTimeout(() => {

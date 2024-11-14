@@ -228,7 +228,7 @@ import {
   PluginStationMoveOut,
   FindAllDevice,
   UpdateDevice,
-  QueryMoveHistory,
+  PIQueryMoveHistory,
   // QueryOrderMaterialRequired,
 } from "@/api/dipApi";
 import {
@@ -380,13 +380,13 @@ const columnData1 = reactive([
     width: "",
     align: "1",
   },
-  // {
-  //   text: true,
-  //   prop: "BD_Tools",
-  //   label: "治具编码",
-  //   width: "",
-  //   align: "1",
-  // },
+  {
+    text: true,
+    prop: "Tool",
+    label: "治具编码",
+    width: "",
+    align: "1",
+  },
   {
     text: true,
     prop: "BD_EmployeeName",
@@ -776,7 +776,7 @@ const getOrderData = () => {
 };
 //历史过站记录
 const getHisData = () => {
-  QueryMoveHistory(hisForm.value).then((res: any) => {
+  PIQueryMoveHistory(hisForm.value).then((res: any) => {
     tableData1.value = res.content;
   });
 };

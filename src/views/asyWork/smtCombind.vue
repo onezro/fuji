@@ -61,7 +61,11 @@
                 <el-table :data="barData" size="small" border :row-class-name="tableRowClassName" :height="'100%'">
                   <el-table-column type="index" align="center" fixed label="序号" :width="'60'"></el-table-column>
                   <el-table-column prop="MaterialName" label="产品编码" width="120" />
-                  <el-table-column prop="QtyRequired" label="需求量" width="120" />
+                  <el-table-column prop="QtyRequired" label="剩余数量" width="120">
+                    <template  #default="scope">
+                      <span>{{ scope.row.LoadQueueQty- scope.row.issueqty}}</span>
+                    </template>
+                  </el-table-column>
                   <el-table-column prop="MaterialBarCode" label="物料编码" width="150">
                     <template #default="scope">
                       <el-input v-model="scope.row.MaterialBarCode" size="small" :ref="createInputRef(scope.$index)"
@@ -411,9 +415,9 @@ const getChange = () => {
       CoverSMTCompBindMoveStd(stopsForm.value).then((res: any) => {
         msgTitle.value = res.msg;
         msgType.value = res.success;
-        if (res.success) {
+        // if (res.success) {
           stopsForm.value.keyMaterialList = [];
-        }
+        // }
         stopsForm.value.BarCode = "";
         barCode.value = "";
         getHisData()
@@ -522,22 +526,23 @@ const radioChange = (args: any) => {
 const getKeyMaterial = () => {
   barData.value=[]
   QueryKeyMaterial(keyForm.value).then((res: any) => {
-    let data: KeyMaterial[]=[]
-    res.content.forEach((c:any)=>{
-      if(c.QtyRequired==1){
-        data.push(c)
-      }else{
-        for (let i = 0; i < c.QtyRequired; i++) {  
-          data.push({
-            MfgOrderName: c.MfgOrderName,
-            QtyRequired: 1,
-            MaterialName: c.MaterialName,
-            MaterialBarCode: ""
-          });  
-    }  
-      }
-    })
-    barData.value = data;
+    // let data: KeyMaterial[]=[]
+    // res.content.forEach((c:any)=>{
+    //   if(c.QtyRequired==1){
+    //     data.push(c)
+    //   }else{
+    //     for (let i = 0; i < c.QtyRequired; i++) {  
+    //       data.push({
+    //         MfgOrderName: c.MfgOrderName,
+    //         QtyRequired: 1,
+    //         MaterialName: c.MaterialName,
+    //         MaterialBarCode: ""
+    //       });  
+    // }  
+    //   }
+    // })
+    // barData.value = data;
+    barData.value =res.content
     nextTick(() => {
       if (inputRefs.value.length > 0) {
         inputRefs.value[0].focus();

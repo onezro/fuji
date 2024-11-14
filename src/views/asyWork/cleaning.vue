@@ -1,65 +1,33 @@
 <template>
   <div class="flex flex-col w-full h-full">
-    <div
-      class="h-[40px] min-h-[40px] pl-2 pr-2 flex justify-between items-center"
-    >
+    <div class="h-[40px] min-h-[40px] pl-2 pr-2 flex justify-between items-center">
       <span class="text-[1.2rem]"> {{ opui.stationDec }} </span>
       <div></div>
     </div>
     <div class="w-full flex-1 flex">
       <div class="setwidth w-[400px]">
         <div class="w-full h-full box">
-          <div
-            class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]"
-          >
+          <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
             <span class="ml-5">基本信息</span>
           </div>
           <div class="p-[10px]">
-            <el-form
-              class="inbound"
-              ref="formRef"
-              :model="form"
-              label-width="auto"
-            >
+            <el-form class="inbound" ref="formRef" :model="form" label-width="auto">
               <el-form-item label="生产计划号" class="mb-[5px] flex">
-                <selectTa
-                  ref="selectTable"
-                  :table="orderTable"
-                  :selectWidth="220"
-                  :columns="orderColumns"
-                  :max-height="400"
-                  :tableWidth="700"
-                  :defaultSelectVal="defaultSelectVal"
-                  :keywords="{
+                <selectTa ref="selectTable" :table="orderTable" :selectWidth="220" :columns="orderColumns"
+                  :max-height="400" :tableWidth="700" :defaultSelectVal="defaultSelectVal" :keywords="{
                     label: 'MfgOrderName',
                     value: 'MfgOrderName',
-                  }"
-                  @radioChange="(...args: any) => radioChange(args)"
-                >
+                  }" @radioChange="(...args: any) => radioChange(args)">
                 </selectTa>
                 <el-tooltip content="刷新" placement="top">
-                  <el-icon
-                    class="ml-2"
-                    color="#777777"
-                    :class="isLoding"
-                    size="24"
-                    @click="getOrderData"
-                  >
+                  <el-icon class="ml-2" color="#777777" :class="isLoding" size="24" @click="getOrderData">
                     <RefreshRight />
                   </el-icon>
                 </el-tooltip>
               </el-form-item>
-              <el-form-item
-                v-for="f in formHeader"
-                :key="f.value"
-                :label="f.label"
-              >
-                <span
-                  class="font-bold text-lg leading-[30px]"
-                  :class="f.value == 'TodayNum' ? 'text-[#00B400]' : ''"
-                >
-                  {{ formText(f.value) }}</span
-                >
+              <el-form-item v-for="f in formHeader" :key="f.value" :label="f.label">
+                <span class="font-bold text-lg leading-[30px]" :class="f.value == 'TodayNum' ? 'text-[#00B400]' : ''">
+                  {{ formText(f.value) }}</span>
               </el-form-item>
             </el-form>
           </div>
@@ -69,104 +37,69 @@
         <!-- <div class="w-full"> -->
         <div class="w-full h-full flex flex-col">
           <div>
-            <div
-              class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]"
-            >
+            <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
               <span class="ml-5"> 扫描条码</span>
             </div>
             <div class="h-[150px] pt-3 pr-5 pl-5 flex">
               <div>
                 <div>
-                  <el-form
-                    class="inbound"
-                    ref="formRef"
-                    :inline="true"
-                    :model="form"
-                    label-width="auto"
-                    @submit.native.prevent
-                  >
+                  <el-form class="inbound" ref="formRef" :inline="true" :model="form" label-width="auto"
+                    @submit.native.prevent>
                     <el-form-item label="扫描条码">
-                      <el-input
-                        v-model.trim="barCode"
-                        ref="inputRef"
-                        :autofocus="inputFocus"
-                        style="width: 500px"
-                        placeholder="请扫描条码"
-                        @keyup.enter.native="getChange"
-                      />
+                      <el-input v-model.trim="barCode" ref="inputRef" :autofocus="inputFocus" style="width: 500px"
+                        placeholder="请扫描条码" @keyup.enter.native="getChange" />
                     </el-form-item>
                     <!-- <el-form-item>
                   <el-button type="primary" :disabled="form.MfgOrderName == '' || tableData1.length == 0
                     " @click="reWash">重新清洗</el-button>
                 </el-form-item> -->
                   </el-form>
-                  <div
-                    class="text-xl font-bold text-[#00B400]"
-                    v-show="msgType === true || msgTitle === ''"
-                  >
+                  <div class="text-xl font-bold text-[#00B400]" v-show="msgType === true || msgTitle === ''">
                     {{ msgTitle === "" ? "请扫描屏材料批次条码" : msgTitle }}
                   </div>
-                  <div
-                    class="text-xl font-bold text-[red]"
-                    v-show="msgType === false && msgTitle !== ''"
-                  >
+                  <div class="text-xl font-bold text-[red]" v-show="msgType === false && msgTitle !== ''">
                     {{ msgTitle }}
                   </div>
                 </div>
                 <div class="pt-2">
-                  <el-button
-                    type="primary"
-                    :disabled="
-                      form.MfgOrderName == '' || tableData1.length == 0
-                    "
-                    @click="reWash"
-                    >重新清洗</el-button
-                  >
+                  <el-button type="primary" :disabled="form.MfgOrderName == '' || tableData1.length == 0
+                    " @click="reWash">重新清洗</el-button>
                 </div>
               </div>
               <div>
-                <tableTemp
-                  size="small"
-                  :showIndex="true"
-                  :tableData="detailsData"
-                  :tableHeight="130"
-                  :columnData="detailsColumn"
-                >
-                </tableTemp>
+                <el-table :data="detailsData" stripe border fit size="small" :height="130" :style="{ width: '100%' }"  >
+                <el-table-column  label="序号" width="50" type="index" align="center"/>
+                  <el-table-column prop="MaterialNamete" label="物料编码" width="150" />
+                  <el-table-column prop="MaterialDesc" label="物料描述" width="250" />
+                
+                  <el-table-column  label="剩余数量"  width="100">
+                    <template  #default="scope">
+                      <span>{{ scope.row.LoadQueueQty- scope.row.issueQty}}</span>
+                    </template>
+                  </el-table-column>
+              </el-table>
+              
+                <!-- <tableTemp size="small" :showIndex="true" :tableData="detailsData" :tableHeight="130"
+                  :columnData="detailsColumn">
+                </tableTemp> -->
               </div>
             </div>
           </div>
 
           <div class="flex flex-col flex-1 tabs-css">
-            <div
-              class="h-[35px] flex items-center justify-between text-lg text-[#fff] bg-[#006487]"
-            >
+            <div class="h-[35px] flex items-center justify-between text-lg text-[#fff] bg-[#006487]">
               <span class="ml-5">历史过站记录</span>
               <div class="mr-5">
-                <el-checkbox-group
-                  v-model="checkedHis"
-                  class="laser-table-filter"
-                >
-                  <el-checkbox
-                    v-for="c in checkedHisList"
-                    :label="`${c.label}(${changeDataLength(c.value)})`"
-                    :value="c.value"
-                    @change="changeHis(c.value)"
-                  >
+                <el-checkbox-group v-model="checkedHis" class="laser-table-filter">
+                  <el-checkbox v-for="c in checkedHisList" :label="`${c.label}(${changeDataLength(c.value)})`"
+                    :value="c.value" @change="changeHis(c.value)">
                   </el-checkbox>
                 </el-checkbox-group>
               </div>
             </div>
-            <table-tem
-              :showIndex="true"
-              :tableData="changeData"
-              :tableHeight="tableHeight"
-              :columnData="columnData1"
-              :pageObj="pageObj"
-              @handleSizeChange="handleSizeChange"
-              @handleCurrentChange="handleCurrentChange"
-              @row-click="rowClick"
-            ></table-tem>
+            <table-tem :showIndex="true" :tableData="changeData" :tableHeight="tableHeight" :columnData="columnData1"
+              :pageObj="pageObj" @handleSizeChange="handleSizeChange" @handleCurrentChange="handleCurrentChange"
+              @row-click="rowClick"></table-tem>
           </div>
         </div>
       </div>
@@ -414,7 +347,7 @@ interface RowData {
   OrderNumber: string;
   ProductName: string;
   Container: string;
-  VirtualContainer:string;
+  VirtualContainer: string;
   CreatedBy: string;
   CreatedOn: string;
 }
@@ -646,7 +579,7 @@ const getScreenHeight = () => {
   font-size: 1.1rem;
 }
 
-.tabs-css .el-tabs--border-card > .el-tabs__header .el-tabs__item {
+.tabs-css .el-tabs--border-card>.el-tabs__header .el-tabs__item {
   color: #fff;
   // padding: 0 !important;
 }
@@ -669,10 +602,7 @@ const getScreenHeight = () => {
   color: #ff4949;
 }
 
-.tabs-css
-  .el-tabs--border-card
-  > .el-tabs__header
-  .el-tabs__item:not(.is-disabled):hover {
+.tabs-css .el-tabs--border-card>.el-tabs__header .el-tabs__item:not(.is-disabled):hover {
   // color: #fff;
   // background-color: #fff;
   background-color: rgba($color: #fff, $alpha: 0.8);
