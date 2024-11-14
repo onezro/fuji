@@ -68,7 +68,7 @@
         </div>
       </div>
     </div>
-    <el-dialog v-model="dialogVisible" title="生产计划号开工" width="90%" align-center>
+    <el-dialog v-model="dialogVisible" title="生产计划号列表" width="90%" align-center>
       <template #header>
         <div class="custom-dialog-title flex items-center justify-between">
           <div>生产计划号列表</div>
@@ -94,7 +94,7 @@
       <el-table ref="taskTableRef" class="test"  :header-cell-class-name="cellClass" stripe border :data="workOrderList1"
         style="width: 100%" :height="'50vh'" @select="selectClick" :tooltip-effect="'dark'">
         <el-table-column type="selection" width="55" />
-        <el-table-column prop="MfgOrderName" label="生产计划号" width="100" :min-width="100" ></el-table-column>
+        <el-table-column prop="MfgOrderName" label="生产计划号" width="150" :min-width="100" ></el-table-column>
         <el-table-column prop="ProductName" label="产品编码" width="150" :min-width="150" ></el-table-column>
         <el-table-column prop="ProductDesc" label="产品描述" :show-overflow-tooltip="true"  :min-width="flexColumnWidth('产品描述', 'ProductDesc')" ></el-table-column>
         <el-table-column prop="MfgLineDesc" label="产线" width="150"  :min-width="150"  ></el-table-column>
@@ -556,7 +556,7 @@ const sureClick = () => {
 
 const refreshClick = () => {
   OrderSNQuery({
-    OrderID: form.MfgOrderName,
+    orderName: form.MfgOrderName
   }).then((data: any) => {
     Completed.value = [];
     awaitLaser.value = [];
