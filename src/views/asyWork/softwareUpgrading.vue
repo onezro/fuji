@@ -62,7 +62,7 @@
                     :autofocus="inputFocus"
                     style="width: 500px"
                     placeholder="请扫描MES条码"
-                    :disabled="SoftwareStatus === '2'"
+                    :disabled="!SoftwareStatus"
                     @keyup.enter.native="scan"
                   />
                 </el-form-item>
@@ -93,7 +93,7 @@
               <el-button
                 type="warning"
                 :disabled="
-                  SoftwareStatus === '1' ||
+                  SoftwareStatus ||
                   changeList.length !== tableData1.length
                 "
                 @click="ManualSubmit"
@@ -222,7 +222,7 @@ const materialTable = ref<any[]>([]);
 const boxHeight = ref(0);
 const changeList = ref([]);
 const btnType = ref(false);
-const SoftwareStatus = ref("1");
+const SoftwareStatus = ref(true);
 const stopsForm = ref<StopsForm>({
   containerName: "",
   workstationName: opui.station || "",
@@ -380,7 +380,7 @@ const reset = () => {
   // msgType.value = true;
   // msgTitle.value = "";
   barCode.value = "";
-  SoftwareStatus.value = "1";
+  SoftwareStatus.value = true;
 };
 
 //选中

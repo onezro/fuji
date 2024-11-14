@@ -561,23 +561,39 @@ const unbind = () => {
         message: res.msg,
       });
     }
+    DefectiveDisposalList({
+      ContainerName: qtyForm.value.ContainerName,
+    }).then((res: any) => {
+      if (res.content) {
+        tableData.value = res.content;
+        projectStore.setFectivekList([]);
+      }
+    });
     qtyVisible.value = false;
-    if (projectStore.getFectivekList.length === 0) {
-      onSubmit();
-    } else {
-      getToData();
-    }
+    // if (projectStore.getFectivekList.length === 0) {
+    //   onSubmit();
+    // } else {
+    //   getToData();
+    // }
   });
 };
 
 //拆解
 const getChange = () => {
   DefectiveDismantle({ ContainerName: barCode.value }).then((res: any) => {
-    if (projectStore.getFectivekList.length === 0) {
-      onSubmit();
-    } else {
-      getToData();
-    }
+    // if (projectStore.getFectivekList.length === 0) {
+    //   onSubmit();
+    // } else {
+    //   getToData();
+    // }
+    DefectiveDisposalList({
+      ContainerName: qtyForm.value.ContainerName,
+    }).then((res: any) => {
+      if (res.content) {
+        tableData.value = res.content;
+        projectStore.setFectivekList([]);
+      }
+    });
     openVisible(barCode.value);
   });
 };
