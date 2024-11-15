@@ -824,18 +824,18 @@ const applyFor = () => {
   //   }
   // });
   console.log(choiceList.value);
-  // OrderGoodMaterials(choiceList.value).then((res: any) => {
-  //   if (res && res.success) {
-  //     ElNotification({
-  //       title: "提示信息",
-  //       message: res.msg,
-  //       type: "success",
-  //     });
-  //     // findOrderData();
-  //     getFeedTableData(selectOrder.value);
-  //     dialogVisible.value = true;
-  //   }
-  // });
+  OrderGoodMaterials(choiceList.value).then((res: any) => {
+    if (res && res.success) {
+      ElNotification({
+        title: "提示信息",
+        message: res.msg,
+        type: "success",
+      });
+      // findOrderData();
+      getFeedTableData(selectOrder.value);
+      dialogVisible.value = true;
+    }
+  });
 };
 
 const dateChange = () => {
