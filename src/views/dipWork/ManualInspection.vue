@@ -56,8 +56,8 @@
               <span class="ml-5">历史过站记录</span>
               <div class="mr-5">
                 <el-checkbox-group v-model="checkedHis" class="laser-table-filter">
-                  <el-checkbox v-for="c in checkedHisList" :label="`${c.label}(${changeDataLength(c.value)})`" :value="c.value"
-                    @change="changeHis(c.value)">
+                  <el-checkbox v-for="c in checkedHisList" :label="`${c.label}(${changeDataLength(c.value)})`"
+                    :value="c.value" @change="changeHis(c.value)">
                   </el-checkbox>
                 </el-checkbox-group>
               </div>
@@ -401,12 +401,12 @@ const changeData = computed(() => {
     return tableData.value;
   }
 });
-const changeDataLength =(val: any) => {
+const changeDataLength = (val: any) => {
   if (val == "today") {
-    let dataLength=geTodayData()
+    let dataLength = geTodayData()
     return dataLength.length
   } else {
-     return tableData.value.length
+    return tableData.value.length
   }
 }
 const geTodayData = () => {
@@ -472,8 +472,13 @@ const badSubmit = () => {
 const getChange = () => {
   let barCodeData = barCode.value;
   if (checkStringType(barCodeData) == "result") {
-    // console.log(badCodeData);
-    stopsForm.value.result = barCodeData;
+    // console.log(barCodeData);
+    if (barCodeData == "ng" || barCodeData == "NG") {
+      stopsForm.value.result = "NG"
+    } else {
+      stopsForm.value.result = "OK"
+    }
+
   } else {
     stopsForm.value.containerName = barCodeData;
     // console.log(stopsForm.value.result);

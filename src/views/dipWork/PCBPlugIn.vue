@@ -991,7 +991,7 @@ const getChange = (val: any) => {
           msgType.value = true;
         }
       } else {
-        msgTitle.value = `错误，请重新扫描PCB条码`;
+        msgTitle.value = `条码有误，该治具未上线或PCB条码有误`;
         msgType.value = false;
         barCode.value = "";
         getFocus();

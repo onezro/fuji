@@ -1,6 +1,7 @@
 const regexPcb = /^P\d+$/; // PCB
 const regexTool = /^SA\d+$/; // 工装治具
 const regexResult = /^(OK|NG)$/i; // OK NG  
+const regexBDY =  /^BDY\d+$/; // BDY
   
 
 export  const checkStringType=(str:string)=> {  
@@ -10,7 +11,10 @@ export  const checkStringType=(str:string)=> {
     return 'tool';  
   } else if (regexResult.test(str)) {  
     return 'result';  
-  } else {  
+  } 
+  else if (regexBDY.test(str)) {  
+    return 'BDY';  
+  }else {  
     return 'none';  
   }  
 } 

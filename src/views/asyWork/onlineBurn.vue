@@ -299,7 +299,13 @@
   //过站
   const getChange = () => {
     let barCodeData = barCode.value;
-  
+
+    if (checkStringType(barCodeData) == "BDY") {
+console.log(barCodeData);
+
+    }else{
+
+    }
     // stopsForm.value.containerName = barCodeData;
     // DispenseStationMoveOut(stopsForm.value).then(
     //   (res: any) => {
