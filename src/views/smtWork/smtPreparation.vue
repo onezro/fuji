@@ -624,11 +624,8 @@ const getChange = () => {
                 msgTitle.value = `未找到${operateForm.value.OrderNumber}生产计划号信息`;
                 msgType.value = false;
                 tableData.value = [];
-                //   operateForm.value.Status=""
-                // operateFormRef.value.resetFields();
             }
             operateForm.value = { ...res.content[0] };
-            // console.log(res.content);
             let StatusDec = "";
             if (res.content[0].Status == 0) {
                 StatusDec = "待备料";
