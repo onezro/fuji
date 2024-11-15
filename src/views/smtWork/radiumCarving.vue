@@ -68,10 +68,10 @@
         </div>
       </div>
     </div>
-    <el-dialog v-model="dialogVisible" title="生产计划号列表" width="90%" align-center>
+    <el-dialog v-model="dialogVisible" title="生产计划列表" width="90%" align-center>
       <template #header>
         <div class="custom-dialog-title flex items-center justify-between">
-          <div>生产计划号列表</div>
+          <div>生产计划列表</div>
           <!-- 在标题右侧插入一个按钮 -->
           <el-input v-model="workOrderInput" style="width: 400px" placeholder="请输入">
             <template #append>

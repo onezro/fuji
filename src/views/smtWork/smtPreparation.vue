@@ -72,7 +72,7 @@
                                 </el-form-item>
                                 <el-form-item label="面号" class="mb-2" prop="Side">
                                     <el-select v-model="operateForm.Side" placeholder="" style="width: 150px"
-                                        @change="getChange">
+                                        @change="getChange" disabled>
                                         <el-option v-for="item in sideList" :key="item" :label="item.label"
                                             :value="item.value" />
                                     </el-select>
@@ -617,18 +617,15 @@ const getChange = () => {
         msgType.value = true;
         GetSMTPreparationOrderList({
             OrderNumber: operateForm.value.OrderNumber,
-            Side: operateForm.value.Side,
+            // Side: operateForm.value.Side,
             LineNumber: form.value.LineNumber,
         }).then((res: any) => {
             if (res.content.length == 0) {
                 msgTitle.value = `未找到${operateForm.value.OrderNumber}生产计划号信息`;
                 msgType.value = false;
                 tableData.value = [];
-                //   operateForm.value.Status=""
-                // operateFormRef.value.resetFields();
             }
             operateForm.value = { ...res.content[0] };
-            // console.log(res.content);
             let StatusDec = "";
             if (res.content[0].Status == 0) {
                 StatusDec = "待备料";

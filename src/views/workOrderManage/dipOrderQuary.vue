@@ -176,7 +176,7 @@
           <el-input v-model="orderOnlineForm.OrderNumber" disabled />
         </el-form-item>
         <el-form-item label="产线" prop="LineNumber">
-          <el-select v-model="orderOnlineForm.LineNumber" placeholder="" clearable>
+          <el-select v-model="orderOnlineForm.LineNumber" placeholder="" >
             <el-option v-for="item in onlineList" :key="item.MfgLineName" :label="item.Description"
               :value="item.MfgLineName" />
           </el-select>
@@ -325,7 +325,7 @@ const orderOnlineForm = ref({
   LineNameDesc: "",
   shelf_ids: "", //货位
   shelf_ids_list: [],
-  IsFirstArticle: true, //是否首检
+  IsFirstArticle: false, //是否首检
   Remark: "", //备注
   CreatedBy: userStore.getUserInfo,
   UpdatedBy: userStore.getUserInfo,
@@ -636,7 +636,7 @@ const openOrderOnline = () => {
   orderOnlineVisible.value = true;
   let data = cloneDeep(onlineData.value);
   orderOnlineForm.value.OrderNumber = data[0].MfgOrderName;
-
+  orderOnlineForm.value.LineNumber=data[0].MfgLineName
   QueryOrderLine(data[0].OrderTypeName).then((res: any) => {
     onlineList.value = res.content;
   });

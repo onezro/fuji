@@ -488,8 +488,12 @@ const badSubmit = () => {
 const getChange = () => {
   let barCodeData = barCode.value;
   if (checkStringType(barCodeData) == "result") {
-    // console.log(badCodeData);
-    stopsForm.value.result = barCodeData;
+    // stopsForm.value.result = barCodeData;
+    if (barCodeData == "ng" || barCodeData == "NG") {
+      stopsForm.value.result = "NG"
+    } else {
+      stopsForm.value.result = "OK"
+    }
   } else {
     stopsForm.value.containerName = barCodeData;
     // console.log(stopsForm.value.result);
