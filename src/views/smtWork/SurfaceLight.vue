@@ -97,7 +97,7 @@
             <div
               class="h-[30px] flex items-center text-base text-[#fff] bg-[#006487]"
             >
-              <span class="ml-5"> 生产生产计划号信息</span>
+              <span class="ml-5"> 生产计划号信息</span>
             </div>
             <div class="h-[130px] pt-3 pr-5 pl-5">
               <el-form
@@ -217,16 +217,15 @@
       :close-on-click-modal="false"
       v-model="viewVisible"
       @close=""
-      title="货架物料"
-      width="60%"
+      title="货架物料明细"
+      width="70%"
     >
       <table-tem
         ref="lightTable"
-        :showSelect="true"
         :showIndex="true"
         :tableData="viewTableData"
-        :tableHeight="viewTableHeight"
-        :columnData="columnData"
+        :tableHeight="300"
+        :columnData="viewColumnData"
         :pageObj="pageObj"
         @handleSizeChange="viewSizeChange"
         @handleCurrentChange="viewCurrentChange"
@@ -399,7 +398,7 @@ const viewColumnData = reactive([
     label: "物料描述",
     width: "",
     min: true,
-    align: "center",
+    align: "left",
   },{
     text: true,
     prop: "Shelf_id",
