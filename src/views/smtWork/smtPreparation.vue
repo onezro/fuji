@@ -112,7 +112,7 @@
 
                     <div class="flex flex-col flex-1 tabs-css">
                         <div class="h-[30px] flex items-center text-base text-[#fff] bg-[#006487]">
-                            <span class="ml-5">生产计划物料明细</span>
+                            <span class="ml-5">站位物料明细</span>
                         </div>
                         <!-- <table-tem :showIndex="true" :tableData="tableData" :tableHeight="tableHeight"
                             :columnData="columnData" :pageObj="pageObj" @handleSizeChange="handleSizeChange"
