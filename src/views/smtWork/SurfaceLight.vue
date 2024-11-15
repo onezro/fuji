@@ -26,10 +26,9 @@
                       {{ opui.lineDec }}
                     </div>
                     <div class="flex h-4 items-center">
-                      <el-checkbox
-                        v-model="selectBox"
-                        @change="AutoSplicing"
-                      >    自动亮灯</el-checkbox>
+                      <el-checkbox v-model="selectBox" @change="AutoSplicing">
+                        自动亮灯</el-checkbox
+                      >
                     </div>
                   </div>
                 </div>
@@ -110,49 +109,49 @@
                 <el-form-item label="生产计划号" class="mb-2">
                   <el-input
                     v-model="operateForm.MfgOrderName"
-                    style="width: calc((100vw - 850px)/4)"
+                    style="width: calc((100vw - 850px) / 4)"
                     disabled
                   />
                 </el-form-item>
                 <el-form-item label="面别" class="mb-2">
                   <el-input
                     v-model="operateForm.Side"
-                    style="width: calc((100vw - 850px)/4)"
+                    style="width: calc((100vw - 850px) / 4)"
                     disabled
                   />
                 </el-form-item>
                 <el-form-item label="计划数量" class="mb-2">
                   <el-input
                     v-model="operateForm.Qty"
-                    style="width: calc((100vw - 850px)/4)"
+                    style="width: calc((100vw - 850px) / 4)"
                     disabled
                   />
                 </el-form-item>
                 <el-form-item label="计划状态" class="mb-2">
                   <el-input
                     v-model="operateForm.OrderStatusDesc"
-                    style="width: calc((100vw - 850px)/4)"
+                    style="width: calc((100vw - 850px) / 4)"
                     disabled
                   />
                 </el-form-item>
                 <el-form-item label="产品编码" class="mb-2">
                   <el-input
                     v-model="operateForm.ProductName"
-                    style="width: calc((100vw - 850px)/4)"
+                    style="width: calc((100vw - 850px) / 4)"
                     disabled
                   />
                 </el-form-item>
                 <el-form-item label="产品描述" class="mb-2">
                   <el-input
                     v-model="operateForm.ProductDesc"
-                    style="width: calc((100vw - 650px)/2)"
+                    style="width: calc((100vw - 650px) / 2)"
                     disabled
                   />
                 </el-form-item>
                 <el-form-item label="料架" class="mb-2">
                   <el-input
                     v-model="operateForm.shelf_ids"
-                    style="width: calc((100vw - 850px)/4)"
+                    style="width: calc((100vw - 850px) / 4)"
                     disabled
                   />
                 </el-form-item>
@@ -161,20 +160,29 @@
                 <el-button type="primary" @click="getOrderQuery"
                   >刷新</el-button
                 >
-                <el-button type="warning" @click="lightUp" :disabled="selectList.length === 0"
+                <el-button
+                  type="warning"
+                  @click="lightUp"
+                  :disabled="selectList.length === 0"
                   >亮灯</el-button
                 >
-                <el-button type="info" @click="lightOut" :disabled="selectList.length === 0"
+                <el-button
+                  type="info"
+                  @click="lightOut"
+                  :disabled="selectList.length === 0"
                   >取消亮灯</el-button
                 >
+                <el-button @click="materialView"
+                  >货架物料查看</el-button
+                >
                 <div class="text-[#606266] ml-[2rem] mr-2">扫描接料条码</div>
-                  <el-input
+                <el-input
                   class="code-input"
                   sise="small"
-                    v-model.trim="code"
-                    style="width: 450px"
-                    @keydown.enter="keydown"
-                  />
+                  v-model.trim="code"
+                  style="width: 450px"
+                  @keydown.enter="keydown"
+                />
                 <!-- <el-button type="warning">首套亮灯</el-button> -->
               </div>
             </div>
@@ -187,12 +195,12 @@
               <span class="ml-5">机台物料清单</span>
             </div>
             <table-tem
-            ref="lightTable"
+              ref="lightTable"
               :showSelect="true"
               :showIndex="true"
               :tableData="tableData"
               :tableHeight="tableHeight"
-              :columnData="columnData"
+              :columnData="viewColumnData"
               :pageObj="pageObj"
               @handleSizeChange="handleSizeChange"
               @handleCurrentChange="handleCurrentChange"
@@ -202,6 +210,35 @@
         </div>
       </div>
     </div>
+
+    <el-dialog
+      align-center
+      :append-to-body="true"
+      :close-on-click-modal="false"
+      v-model="viewVisible"
+      @close=""
+      title="货架物料"
+      width="60%"
+    >
+      <table-tem
+        ref="lightTable"
+        :showSelect="true"
+        :showIndex="true"
+        :tableData="viewTableData"
+        :tableHeight="viewTableHeight"
+        :columnData="columnData"
+        :pageObj="pageObj"
+        @handleSizeChange="viewSizeChange"
+        @handleCurrentChange="viewCurrentChange"
+      ></table-tem>
+
+      <!-- <template #footer>
+        <span class="dialog-footer">
+          <el-button @click=""> 取消 </el-button>
+          <el-button type="primary" @click=""> 确定 </el-button>
+        </span>
+      </template> -->
+    </el-dialog>
   </div>
 </template>
 
@@ -227,6 +264,7 @@ import {
   CancelOneLine,
   UpdateMfgLineAutoSplicing,
   AutoOnlineRack,
+  QueryRackLightMaterials,
 } from "@/api/smtApi";
 const appStore = useAppStore();
 const userStore = useUserStoreWithOut();
@@ -248,12 +286,19 @@ const operateForm = ref({
   Side: "",
 });
 const selectBox = ref(false);
+const viewVisible = ref(false);
+const viewTableData = ref([]);
 const tableData = ref([]);
 const tableHeight = ref(0);
+const viewTableHeight = ref(0);
 const selectList = ref<any[]>([]);
 const lightTable = ref();
-const code = ref('');
+const code = ref("");
 const pageObj = ref({
+  pageSize: 100,
+  currentPage: 1,
+});
+const viewPageObj = ref({
   pageSize: 100,
   currentPage: 1,
 });
@@ -313,6 +358,59 @@ const columnData = reactive([
     text: true,
     prop: "Description",
     label: "物料描述",
+    width: "",
+    min: true,
+    align: "center",
+  },
+]);
+
+const viewColumnData = reactive([
+  {
+    text: true,
+    prop: "Reel_id",
+    label: "物料批次条码",
+    width: "",
+    min: true,
+    align: "center",
+  },{
+    text: true,
+    prop: "Amount",
+    label: "数量",
+    width: "",
+    min: true,
+    align: "center",
+  },{
+    text: true,
+    prop: "Unit",
+    label: "单位",
+    width: "",
+    min: true,
+    align: "center",
+  },{
+    text: true,
+    prop: "MaterialName",
+    label: "物料编码",
+    width: "",
+    min: true,
+    align: "center",
+  },{
+    text: true,
+    prop: "MaterialDesc",
+    label: "物料描述",
+    width: "",
+    min: true,
+    align: "center",
+  },{
+    text: true,
+    prop: "Shelf_id",
+    label: "货架号",
+    width: "",
+    min: true,
+    align: "center",
+  },{
+    text: true,
+    prop: "Position_info",
+    label: "储位编号",
     width: "",
     min: true,
     align: "center",
@@ -384,9 +482,18 @@ const handleSelectionChange = (e: any) => {
       Slot: item.Slot,
       SubSlot: item.SubSlot,
       MaterialName: item.CompName,
-      CompID:item.CompID
+      CompID: item.CompID,
     };
   });
+};
+
+const materialView = () => {
+  QueryRackLightMaterials({OrderNumber:operateForm.value.MfgOrderName,shelf_ids:operateForm.value.shelf_ids}).then((res:any) => {
+    if (res && res.success) {
+      viewVisible.value = true;
+      viewTableData.value = res.content;
+    }
+  })
 };
 
 const lightUp = (e: any) => {
@@ -412,32 +519,36 @@ const lightOut = (e: any) => {
 };
 
 const keydown = () => {
-  const rowToSelect = tableData.value.find((row:any,index) => row.CompID === code.value);
+  const rowToSelect = tableData.value.find(
+    (row: any, index) => row.CompID === code.value
+  );
   if (rowToSelect) {
-    const exist = selectList.value.find((item:any) => item.CompID === code.value)
+    const exist = selectList.value.find(
+      (item: any) => item.CompID === code.value
+    );
     if (exist) {
-        ElNotification({
-          title: "提示",
-          message: '此条码已选中',
-          type: "warning",
-        });
-    }else {
+      ElNotification({
+        title: "提示",
+        message: "此条码已选中",
+        type: "warning",
+      });
+    } else {
       lightTable.value.toggleSelection([rowToSelect]);
     }
-  }else {
-        ElNotification({
-          title: "提示",
-          message: '未搜索到此批次号',
-          type: "warning",
-        });
+  } else {
+    ElNotification({
+      title: "提示",
+      message: "未搜索到此批次号",
+      type: "warning",
+    });
   }
-  code.value = ''
-}
+  code.value = "";
+};
 
 const codeSelect = () => {
-  const rowToSelect = tableData.value.find((row,index) => index === 0);
-  lightTable.value.toggleSelection([rowToSelect])
-}
+  const rowToSelect = tableData.value.find((row, index) => index === 0);
+  lightTable.value.toggleSelection([rowToSelect]);
+};
 
 onBeforeMount(() => {
   getScreenHeight();
@@ -462,6 +573,13 @@ const handleSizeChange = (val: any) => {
 const handleCurrentChange = (val: any) => {
   pageObj.value.currentPage = val;
 };
+const viewSizeChange = (val: any) => {
+  viewPageObj.value.currentPage = 1;
+  viewPageObj.value.pageSize = val;
+};
+const viewCurrentChange = (val: any) => {
+  viewPageObj.value.currentPage = val;
+};
 
 const getScreenHeight = () => {
   nextTick(() => {
@@ -470,12 +588,12 @@ const getScreenHeight = () => {
 };
 </script>
 
-<style lang="scss" >
+<style lang="scss">
 .setwidth {
   flex: 0 0 300px;
 }
 
-.code-input  .el-input__wrapper {
+.code-input .el-input__wrapper {
   background-color: rgb(252.5, 245.7, 235.5);
 }
 </style>

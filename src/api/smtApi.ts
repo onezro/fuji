@@ -339,3 +339,12 @@ export function AutoOnlineRack(data: any) {
     data
   })
 }
+
+//MES架料物料清单
+export function QueryRackLightMaterials(data: any) {
+  return request({
+    url: "/api/smtOnlineRack/QueryRackLightMaterials",
+    method: "post",
+    data
+  })
+}

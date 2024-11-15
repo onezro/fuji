@@ -20,7 +20,7 @@
                   clearable
                 >
                   <el-option
-                    v-for="item in applyTypeList"
+                    v-for="item in iApplyTypeList"
                     :key="item.Value"
                     :label="item.Text"
                     :value="item.Value"
@@ -166,7 +166,7 @@
                   style="width: 150px"
                 >
                   <el-option
-                    v-for="item in iApplyTypeList"
+                    v-for="item in applyTypeList"
                     :key="item.Value"
                     :label="item.Text"
                     :value="item.Value"
@@ -215,7 +215,7 @@
               width="150"
             >
             </el-table-column>
-            <el-form-item label="申请类型">
+            <!-- <el-form-item label="申请类型">
               <el-select
                   v-model="applyType"
                   placeholder="Select"
@@ -228,7 +228,7 @@
                     :value="item.value"
                   />
                 </el-select>
-            </el-form-item>
+            </el-form-item> -->
             <el-table-column
               prop="MaterialDesc"
               label="物料描述"
@@ -363,7 +363,7 @@ const historyTable = ref<any>([]);
 const date = ref<any[]>([]);
 const detailedTable = ref<any[]>([]);
 const detailedHeight = ref(0);
-const applyType = ref('1');
+const applyType = ref('4');
 const applyTypeList = ref<any[]>();
 const iApplyTypeList = ref<any[]>();
 const detailedPageObj = ref({
@@ -584,7 +584,7 @@ const getMaxLength = (arr: any) => {
 const getTypeList = () => {
   GetComboBoxList('RequestType').then((res:any) => {
     iApplyTypeList.value = res.content;
-    applyTypeList.value = res.content;
+    applyTypeList.value = [res.content[1],res.content[2]];
   })
 }
 
@@ -661,6 +661,7 @@ const applyFor = () => {
     MfgOrderQty: form.value.Qty,
     MfgLineName: form.value.MfgLineName,
     userAccount: loginName,
+    ERPOrder: form.value.ERPOrder
   }).then((res: any) => {
     if (res.success) {
       ElNotification({
@@ -670,6 +671,7 @@ const applyFor = () => {
       });
       // findOrderData();
       getFeedTableData(form.value.MfgOrderName);
+      dialogVisible.value = true;
     }
   });
 };

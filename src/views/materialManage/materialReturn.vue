@@ -15,21 +15,21 @@
               placeholder=""
             ></el-input>
           </el-form-item>
-            <el-form-item label="退料类型" class="mb-2">
-              <el-select
-                  v-model="historyForm.QualityIsGood"
-                  placeholder=""
-                  style="width: 150px"
-                  clearable
-                >
-                  <el-option
-                    v-for="item in returnTypeList"
-                    :key="item.Value"
-                    :label="item.Text"
-                    :value="item.Value"
-                  />
-                </el-select>
-            </el-form-item>
+          <el-form-item label="退料类型" class="mb-2">
+            <el-select
+              v-model="historyForm.QualityIsGood"
+              placeholder=""
+              style="width: 150px"
+              clearable
+            >
+              <el-option
+                v-for="item in returnTypeList"
+                :key="item.Value"
+                :label="item.Text"
+                :value="item.Value"
+              />
+            </el-select>
+          </el-form-item>
           <el-form-item label="日期" class="mb-2">
             <el-date-picker
               :shortcuts="shortcuts"
@@ -67,90 +67,98 @@
           @rowClick="rowClick"
         >
         </table-tem> -->
-          <el-table
-            :data="
-              historyTable.slice(
-                (pageObjHis.currentPage - 1) * pageObjHis.pageSize,
-                pageObjHis.currentPage * pageObjHis.pageSize
-              )
-            "
-            size="small"
-            stripe
-            border
-            fit
-            :tooltip-effect="'dark'"
-            :height="hisHeight"
-            row-key="MaterialName"
-            @selection-change="handleSelectionChange"
-            @rowClick="rowClick"
+        <el-table
+          :data="
+            historyTable.slice(
+              (pageObjHis.currentPage - 1) * pageObjHis.pageSize,
+              pageObjHis.currentPage * pageObjHis.pageSize
+            )
+          "
+          size="small"
+          stripe
+          border
+          fit
+          :tooltip-effect="'dark'"
+          :height="hisHeight"
+          row-key="MaterialName"
+          @selection-change="handleSelectionChange"
+          @rowClick="rowClick"
+        >
+          <el-table-column
+            prop="MfgOrderName"
+            label="生产计划号"
+            :min-width="flexColumnWidthHis('生产计划号', 'MfgOrderName')"
+          ></el-table-column>
+          <el-table-column
+            prop="QualityIsGood"
+            label="申请类型"
+            :min-width="flexColumnWidthHis('申请类型', 'QualityIsGood')"
           >
-            <el-table-column
-              prop="MfgOrderName"
-              label="生产计划号"
-              :min-width="flexColumnWidthHis('生产计划号', 'MfgOrderName')"
-            ></el-table-column>
-            <el-table-column
-              prop="QualityIsGood"
-              label="申请类型"
-              :min-width="flexColumnWidthHis('申请类型', 'QualityIsGood')"
-            >
             <template #default="scope">
-                <div>{{ returnTypeText(scope.row.QualityIsGood) }}</div>
-              </template>
+              <div>{{ returnTypeText(scope.row.QualityIsGood) }}</div>
+            </template>
           </el-table-column>
-            <el-table-column
-              prop="ApplyNo"
-              label="退料单号"
-              :min-width="flexColumnWidthHis('退料单号', 'ApplyNo')"
-            ></el-table-column>
-            <el-table-column
-              prop="BD_ProductModel"
-              label="产品机型"
-              :min-width="flexColumnWidthHis('产品机型', 'BD_ProductModel')"
-            ></el-table-column>
-            <el-table-column
-              prop="ProductName"
-              label="产品编码"
-              :min-width="flexColumnWidthHis('产品编码', 'ProductName')"
-            ></el-table-column>
-            <el-table-column
-              prop="ProductDesc"
-              label="产品描述"
-              :min-width="flexColumnWidthHis('产品描述', 'ProductDesc')"
-            ></el-table-column>
-            <el-table-column
-              prop="OrderStatusDesc"
-              label="生产计划号状态"
-              :min-width="flexColumnWidthHis('生产计划号状态', 'OrderStatusDesc')"
-            ></el-table-column>
-            <el-table-column
-              prop="Qty"
-              label="计划数量"
-              :min-width="flexColumnWidthHis('计划数量', 'Qty')"
-            ></el-table-column>
-            <el-table-column
-              prop="PlannedStartDate"
-              label="计划开始时间"
-              :min-width="flexColumnWidthHis('计划开始时间', 'PlannedStartDate')"
-            ></el-table-column>
-            <el-table-column
-              prop="ApplyTime"
-              label="申请时间"
-              :min-width="flexColumnWidthHis('申请时间', 'ApplyTime')"
-            ></el-table-column>
-            <el-table-column
-              prop="Applicant"
-              label="申请人"
-              :min-width="flexColumnWidthHis('申请人', 'Applicant')"
-            ></el-table-column>
-          </el-table>
-    <div class="mt-2 mb-2">
-      <el-pagination :size="'default'" background @size-change="handleSizeChangeHis"
-        @current-change="handleCurrentChangeHis" :pager-count="5" :current-page="pageObjHis.currentPage"
-        :page-size="pageObjHis.pageSize" :page-sizes="[30, 50, 100, 200,300]" layout="total,sizes, prev, pager, next"
-        :total="historyTable.length">
-      </el-pagination>
-    </div>
+          <el-table-column
+            prop="ApplyNo"
+            label="退料单号"
+            :min-width="flexColumnWidthHis('退料单号', 'ApplyNo')"
+          ></el-table-column>
+          <el-table-column
+            prop="BD_ProductModel"
+            label="产品机型"
+            :min-width="flexColumnWidthHis('产品机型', 'BD_ProductModel')"
+          ></el-table-column>
+          <el-table-column
+            prop="ProductName"
+            label="产品编码"
+            :min-width="flexColumnWidthHis('产品编码', 'ProductName')"
+          ></el-table-column>
+          <el-table-column
+            prop="ProductDesc"
+            label="产品描述"
+            :min-width="flexColumnWidthHis('产品描述', 'ProductDesc')"
+          ></el-table-column>
+          <el-table-column
+            prop="OrderStatusDesc"
+            label="生产计划号状态"
+            :min-width="flexColumnWidthHis('生产计划号状态', 'OrderStatusDesc')"
+          ></el-table-column>
+          <el-table-column
+            prop="Qty"
+            label="计划数量"
+            :min-width="flexColumnWidthHis('计划数量', 'Qty')"
+          ></el-table-column>
+          <el-table-column
+            prop="PlannedStartDate"
+            label="计划开始时间"
+            :min-width="flexColumnWidthHis('计划开始时间', 'PlannedStartDate')"
+          ></el-table-column>
+          <el-table-column
+            prop="ApplyTime"
+            label="申请时间"
+            :min-width="flexColumnWidthHis('申请时间', 'ApplyTime')"
+          ></el-table-column>
+          <el-table-column
+            prop="Applicant"
+            label="申请人"
+            :min-width="flexColumnWidthHis('申请人', 'Applicant')"
+          ></el-table-column>
+        </el-table>
+        <div class="mt-2 mb-2">
+          <el-pagination
+            :size="'default'"
+            background
+            @size-change="handleSizeChangeHis"
+            @current-change="handleCurrentChangeHis"
+            :pager-count="5"
+            :current-page="pageObjHis.currentPage"
+            :page-size="pageObjHis.pageSize"
+            :page-sizes="[30, 50, 100, 200, 300]"
+            layout="total,sizes, prev, pager, next"
+            :total="historyTable.length"
+          >
+          </el-pagination>
+        </div>
       </div>
       <div class="w-full">
         <table-tem
@@ -201,8 +209,8 @@
                 @keyup.enter.native="orderChange(form.MfgOrderName)"
               >
               </el-input>
-              </el-form-item>
-              <el-form-item label="产品机型">
+            </el-form-item>
+            <el-form-item label="产品机型">
               <el-input
                 v-model="form.BD_ProductModel"
                 class="input-with-select"
@@ -240,17 +248,18 @@
             </el-form-item>
             <el-form-item label="退料类型">
               <el-select
-                  v-model="returnType"
-                  placeholder="Select"
-                  style="width: 150px"
-                >
-                  <el-option
-                    v-for="item in iReturnTypeList"
-                    :key="item.Value"
-                    :label="item.Text"
-                    :value="item.Value"
-                  />
-                </el-select>
+                v-model="returnType"
+                placeholder="Select"
+                style="width: 150px"
+                @change="typeChange"
+              >
+                <el-option
+                  v-for="item in iReturnTypeList"
+                  :key="item.Value"
+                  :label="item.Text"
+                  :value="item.Value"
+                />
+              </el-select>
             </el-form-item>
             <br />
             <el-form-item label="产品描述">
@@ -267,9 +276,8 @@
         </div>
         <div class="table_container">
           <el-table
-            :data="
-              feedTableData
-            "
+            ref="table"
+            :data="feedTableData"
             size="small"
             stripe
             border
@@ -283,6 +291,7 @@
             <el-table-column
               type="selection"
               width="55"
+              :selectable="selectable"
               :min-width="flexColumnWidth('选择', 'CompID')"
             />
             <el-table-column
@@ -339,23 +348,29 @@
                 </template>
               </el-table-column> -->
             <el-table-column
+              v-if="returnType === '1'"
               prop="Qty"
               align="center"
               label="请求退料数量"
               :min-width="flexColumnWidth('请求数量', 'Qty')"
             >
             </el-table-column>
-            <!-- <el-table-column prop="RequestQty" align="center" label="请求数量"
-              :min-width="flexColumnWidth('请求数量请求数量', 'Qty')">
+            <el-table-column
+              prop="RequestQty"
+              align="center"
+              label="请求退料数量"
+              v-if="returnType === '2'"
+              :min-width="flexColumnWidth('请求数量', 'Qty')"
+            >
               <template #default="scope">
                 <el-input
-                style="width: 150px;"
-                  v-model="scope.row."
+                  style="width: 150px"
+                  v-model="scope.row.RequestQty"
                   @input="handleInput(scope.row)"
                 >
                 </el-input>
               </template>
-            </el-table-column> -->
+            </el-table-column>
             <!-- <el-table-column prop="QualityIsGood" align="center" label="是否良品"
               :min-width="flexColumnWidth('是否良品是否良品', 'QualityIsGood')">
               <template #default="scope">
@@ -406,7 +421,7 @@ import {
   OrderGoodMaterials,
   QueryMaterialReturnApplyDetail,
   findOrder,
-  GetComboBoxList
+  GetComboBoxList,
 } from "@/api/operate";
 import { cloneDeep } from "lodash-es";
 import {
@@ -440,6 +455,7 @@ const choiceId = ref("");
 const returnType = ref("1");
 const returnTypeList = ref<any[]>([]);
 const iReturnTypeList = ref<any[]>([]);
+const table = ref()
 const detailedPageObj = ref({
   pageSize: 10000000,
   currentPage: 1,
@@ -472,6 +488,7 @@ interface formTS {
   MfgLineDesc: string;
   WorkCenterName: string;
   wcDescription: string;
+  ERPOrder: string;
 }
 
 interface historyFormTS {
@@ -497,13 +514,14 @@ const form = ref<formTS>({
   MfgLineDesc: "",
   WorkCenterName: "",
   wcDescription: "",
+  ERPOrder: "",
 });
 
 const historyForm = ref<historyFormTS>({
   MfgOrderName: "",
   requestStartDate: "",
   requestEndDate: "",
-  QualityIsGood: ""
+  QualityIsGood: "",
 });
 
 // watch(
@@ -555,6 +573,7 @@ const findOrderData = () => {
     MfgLineDesc: "",
     WorkCenterName: "",
     wcDescription: "",
+    ERPOrder: "",
   };
   feedTableData.value = [];
   findOrder({}).then((res: any) => {
@@ -567,13 +586,13 @@ const findOrderData = () => {
 };
 //选中生产计划号
 const orderChange = (data: any) => {
-  if (!orderList.value.some(obj => obj.MfgOrderName === data)) {
-      ElNotification({
-        title: "提示信息",
-        message: '未找到此生产计划号',
-        type: "warning",
-      });
-      return;
+  if (!orderList.value.some((obj) => obj.MfgOrderName === data)) {
+    ElNotification({
+      title: "提示信息",
+      message: "未找到此生产计划号",
+      type: "warning",
+    });
+    return;
   }
   orderList.value.forEach((item: any) => {
     if (item.MfgOrderName === data) {
@@ -592,6 +611,7 @@ const orderChange = (data: any) => {
       form.value.MfgLineDesc = item.MfgLineDesc;
       form.value.WorkCenterName = item.WorkCenterName;
       form.value.wcDescription = item.wcDescription;
+      form.value.ERPOrder = item.ERPOrder;
       getFeedTableData(data);
     }
   });
@@ -600,22 +620,22 @@ const orderChange = (data: any) => {
 
 //根据名称获取配置值
 const getTypeList = () => {
-  GetComboBoxList('ReturnType').then((res:any) => {
+  GetComboBoxList("ReturnType").then((res: any) => {
     iReturnTypeList.value = res.content;
     returnTypeList.value = res.content;
-  })
-}
+  });
+};
 
 //根据名称值获取名称
-const returnTypeText = (data:any) => {
-  let text = ''
-  returnTypeList.value.forEach((item:any) => {
+const returnTypeText = (data: any) => {
+  let text = "";
+  returnTypeList.value.forEach((item: any) => {
     if (item.Value === data) {
-      text = item.Text
+      text = item.Text;
     }
-  })
+  });
   return text;
-}
+};
 
 //获取历史物料退料申请记录
 const getHistory = () => {
@@ -640,7 +660,7 @@ const getFeedTableData = (order: any) => {
       }
       // let data = cloneDeep(feedOrganData(res.content));
       // console.log(data);
-      feedTableData.value = res.content
+      feedTableData.value = res.content;
 
       // feedTableData.value = res.content.map((item:any) => {
       //   return {
@@ -761,14 +781,27 @@ const handleSelectionChange = (data: any) => {
   choiceList.value = data
     .filter((item: any) => item.Qty && item.Qty != 0)
     .map((item: any) => {
-      return {
-        mfgOrder: item.OrderID,
-        Qty: item.Qty,
-        ContainerName: item.CompID,
-        materialName: item.CompName,
-        EmployeeName: loginName,
-        QualityIsGood: returnType.value
-      };
+      if (returnType.value === "1") {
+        return {
+          mfgOrder: item.OrderID,
+          Qty: item.Qty,
+          ContainerName: item.CompID,
+          materialName: item.CompName,
+          EmployeeName: loginName,
+          QualityIsGood: returnType.value,
+          ERPOrder: form.value.ERPOrder,
+        };
+      } else {
+        return {
+          mfgOrder: item.OrderID,
+          Qty: item.RequestQty,
+          ContainerName: item.CompID,
+          materialName: item.CompName,
+          EmployeeName: loginName,
+          QualityIsGood: returnType.value,
+          ERPOrder: form.value.ERPOrder,
+        };
+      }
     });
   console.log(choiceList.value);
 };
@@ -791,17 +824,18 @@ const applyFor = () => {
   //   }
   // });
   console.log(choiceList.value);
-  OrderGoodMaterials(choiceList.value).then((res: any) => {
-    if (res && res.success) {
-      ElNotification({
-        title: "提示信息",
-        message: res.msg,
-        type: "success",
-      });
-      // findOrderData();
-      getFeedTableData(selectOrder.value);
-    }
-  });
+  // OrderGoodMaterials(choiceList.value).then((res: any) => {
+  //   if (res && res.success) {
+  //     ElNotification({
+  //       title: "提示信息",
+  //       message: res.msg,
+  //       type: "success",
+  //     });
+  //     // findOrderData();
+  //     getFeedTableData(selectOrder.value);
+  //     dialogVisible.value = true;
+  //   }
+  // });
 };
 
 const dateChange = () => {
@@ -815,7 +849,9 @@ const dateChange = () => {
 };
 
 const selectable = (row: any) => {
-  if (row.isLoadQueue === 0 || !row.RequestQty) {
+  if (returnType.value === "1") {
+    return true;
+  } else if (row.Qty === 0 || !row.RequestQty) {
     return false;
   } else {
     return true;
@@ -850,6 +886,11 @@ const handleInput = (data: any) => {
     }
   }
 };
+
+//改变
+const typeChange = () => {
+  table.value.clearSelection();
+}
 
 const handleSizeChange = (val: any) => {
   currentPage.value = 1;
