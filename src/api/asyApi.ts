@@ -170,4 +170,19 @@ export function ManualComparisonInfoMovestd(data:any) {
         data
     })
 }
-
+//在线烧录验证
+export function JudgeContainerProProcess(data:any) {
+    return request({
+        url: "/api/DIPFCTBurn/JudgeContainerProProcess",
+        method: "post",
+        data
+    })
+}
+//在线烧录绑定
+export function JudgeAfterStartUpQrCode(data:any) {
+    return request({
+        url: "/api/DIPFCTBurn/JudgeAfterStartUpQrCode",
+        method: "post",
+        data
+    })
+}

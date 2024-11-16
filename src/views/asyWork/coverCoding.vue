@@ -512,10 +512,11 @@ const printData = () => {
       //     message: "开始打印",
       //     type: "success",
       //   });
+      clearInterval(timer.value);
     } else {
       ElNotification({
         title: "提示信息",
-        message: "打印失败",
+        message: res.msg,
         type: "error",
       });
     }

@@ -143,7 +143,9 @@
           <el-input v-model="addMaterForm.TemplateName" style="width: 240px" />
         </el-form-item> -->
         <el-form-item label="物料编码" prop="PartNumber">
-          <el-input v-model="addMaterForm.PartNumber" style="width: 240px" />
+          <el-select-v2 v-model="addMaterForm.PartNumber" :options="materData"  filterable :props="props"
+          style="width: 240px"/>
+          <!-- <el-input v-model="addMaterForm.PartNumber" style="width: 240px" /> -->
         </el-form-item>
       </el-form>
       <template #footer>
@@ -162,6 +164,7 @@ import {
   InsertBarCodeTemplate,
   UpdateBarCodeTemplate,
   DeleteBarCodeTemplate,
+  QueryMESProductNameNews,
   GetBarCodeTemplatePartNumberContent,
   InsertBarCodeRuleTempPartNumContent,
   DeleteBarCodeRuleTempPartNumContent,
@@ -228,6 +231,11 @@ const addMaterForm = ref({
   UserNo: userStore.getUserInfo,
 });
 const TemplateName = ref("");
+const materData = ref([]);
+const props = ref({
+    label: "ProductName",
+    value: "ProductName",
+});
 
 
 onBeforeMount(() => {
@@ -236,6 +244,7 @@ onBeforeMount(() => {
 onMounted(() => {
   window.addEventListener("resize", getScreenHeight);
   getData();
+  getMesData()
 });
 onBeforeUnmount(() => {
   window.addEventListener("resize", getScreenHeight);
@@ -246,6 +255,13 @@ const getData = () => {
     // console.log(res.content);
     tableData.value = res.content;
   });
+};
+const getMesData = () => {
+    QueryMESProductNameNews({
+        ProductName: "",
+    }).then((res: any) => {
+        materData.value = res.content;
+    });
 };
 const getTemplatePart = () => {
   GetBarCodeTemplatePartNumberContent({
