@@ -78,11 +78,11 @@
                                     </el-select>
                                     <!-- <el-input v-model="operateForm.Side" style="width: 150px" /> -->
                                 </el-form-item>
-                                <el-form-item label="产线" class="mb-2" prop="LineNumber">
-                                    <el-input v-model="operateForm.LineNumber" style="width: 200px" disabled />
-                                </el-form-item>
                                 <el-form-item label="计划数量" class="mb-2" prop="OrderPlanedQty">
-                                    <el-input v-model="operateForm.OrderPlanedQty" style="width: 180px" disabled />
+                                    <el-input v-model="operateForm.OrderPlanedQty" style="width: 200px" disabled />
+                                </el-form-item>
+                                <el-form-item label="备料状态" class="mb-2" prop="LineNumber">
+                                    <el-input v-model="operateForm.StatusDec" style="width: 180px" disabled />
                                 </el-form-item>
                                 <el-form-item label="产品编码" class="mb-2" prop="ProductNumber">
                                     <el-input v-model="operateForm.ProductNumber" style="width: 200px" disabled />
@@ -90,8 +90,8 @@
                                 <el-form-item label="产品描述" class="mb-2" prop="ProductDesc">
                                     <el-input v-model="operateForm.ProductDesc" style="width: 450px" disabled />
                                 </el-form-item>
-                                <el-form-item label="状态" class="mb-2" prop="StatusDec">
-                                    <el-input v-model="operateForm.StatusDec" style="width: 180px" disabled />
+                                <el-form-item label="货架号" class="mb-2" prop="StatusDec">
+                                    <el-input v-model="firstForm.shelf_ids" style="width: 180px" disabled />
                                 </el-form-item>
                                 <el-form-item label="状态" class="mb-2" v-if="false" prop="Status">
                                     <el-input v-model="operateForm.Status" style="width: 0" disabled />
@@ -105,6 +105,8 @@
                                     @click="completeSubmit">完成备料</el-button>
                                 <el-button type="warning" v-if="operateForm.Status == '1'"
                                     @click="openFirst">首套亮灯</el-button>
+                                <el-button v-if="operateForm.Status == '1'"
+                                    @click="materialView">货架物料查看</el-button>
                                 <!-- <el-button type="warning">首套亮灯</el-button> -->
                             </div>
                         </div>
@@ -234,6 +236,27 @@
                 </span>
             </template>
         </el-dialog>
+
+<el-dialog
+  align-center
+  :append-to-body="true"
+  :close-on-click-modal="false"
+  v-model="viewVisible"
+  @close=""
+  title="货架物料明细"
+  width="70%"
+>
+  <table-tem
+    ref="lightTable"
+    :showIndex="true"
+    :tableData="viewTableData"
+    :tableHeight="300"
+    :columnData="viewColumnData"
+    :pageObj="pageObj"
+    @handleSizeChange="viewSizeChange"
+    @handleCurrentChange="viewCurrentChange"
+  ></table-tem>
+</el-dialog>
     </div>
 </template>
 
@@ -247,6 +270,7 @@ import {
     SubmitSMTPreparation,
     SendFirstSet,
     CancelFirstSet,
+    QueryRackLightMaterials
 } from "@/api/smtApi";
 import {
     ref,
@@ -295,6 +319,12 @@ const pageObj = ref({
     pageSize: 100,
     currentPage: 1,
 });
+const viewPageObj = ref({
+  pageSize: 100,
+  currentPage: 1,
+});
+const viewTableData = ref([]);
+
 const columnData = reactive([
     {
         text: true,
@@ -369,6 +399,59 @@ const columnData = reactive([
         align: "1",
     },
 ]);
+
+const viewColumnData = reactive([
+  {
+    text: true,
+    prop: "Reel_id",
+    label: "物料批次条码",
+    width: "",
+    min: true,
+    align: "center",
+  },{
+    text: true,
+    prop: "Amount",
+    label: "数量",
+    width: "",
+    min: true,
+    align: "center",
+  },{
+    text: true,
+    prop: "Unit",
+    label: "单位",
+    width: "",
+    min: true,
+    align: "center",
+  },{
+    text: true,
+    prop: "MaterialName",
+    label: "物料编码",
+    width: "",
+    min: true,
+    align: "center",
+  },{
+    text: true,
+    prop: "MaterialDesc",
+    label: "物料描述",
+    width: "",
+    min: true,
+    align: "left",
+  },{
+    text: true,
+    prop: "Shelf_id",
+    label: "货架号",
+    width: "",
+    min: true,
+    align: "center",
+  },{
+    text: true,
+    prop: "Position_info",
+    label: "储位编号",
+    width: "",
+    min: true,
+    align: "center",
+  },
+]);
 const orderVisiable = ref(false);
 const orderData = ref([]);
 const toBePrepared = ref([]);
@@ -400,6 +483,7 @@ const startForm = ref({
     userAccount: userStore.getUserInfo,
 });
 const startVisible = ref(false);
+const viewVisible = ref(false);
 const startFormRef = ref();
 const shelfList = ref<any[]>([]);
 const msgTitle = ref("");
@@ -728,6 +812,16 @@ const openFirst = () => {
     });
     firstVisible.value = true;
 };
+
+const materialView = () => {
+  QueryRackLightMaterials({OrderNumber:operateForm.value.OrderNumber,shelf_ids:firstForm.value.shelf_ids}).then((res:any) => {
+    if (res && res.success) {
+      viewVisible.value = true;
+      viewTableData.value = res.content;
+    }
+  })
+};
+
 const firstCancel = () => {
     firstVisible.value = false;
     firstForm.value.Station = "";
@@ -775,6 +869,14 @@ const handleSizeChange = (val: any) => {
 };
 const handleCurrentChange = (val: any) => {
     pageObj.value.currentPage = val;
+};
+
+const viewSizeChange = (val: any) => {
+    viewPageObj.value.currentPage = 1;
+    viewPageObj.value.pageSize = val;
+};
+const viewCurrentChange = (val: any) => {
+    viewPageObj.value.currentPage = val;
 };
 
 const getScreenHeight = () => {

@@ -201,7 +201,7 @@
               :tableData="tableData"
               :tableHeight="tableHeight"
               :columnData="viewColumnData"
-              :pageObj="pageObj"
+              :pageObj="viewPageObj"
               @handleSizeChange="handleSizeChange"
               @handleCurrentChange="handleCurrentChange"
               @handleSelectionChange="handleSelectionChange"
