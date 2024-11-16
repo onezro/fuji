@@ -200,7 +200,7 @@
               :showIndex="true"
               :tableData="tableData"
               :tableHeight="tableHeight"
-              :columnData="viewColumnData"
+              :columnData="columnData"
               :pageObj="viewPageObj"
               @handleSizeChange="handleSizeChange"
               @handleCurrentChange="handleCurrentChange"
