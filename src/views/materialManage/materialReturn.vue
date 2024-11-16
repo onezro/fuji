@@ -833,7 +833,7 @@ const applyFor = () => {
       });
       // findOrderData();
       getFeedTableData(selectOrder.value);
-      dialogVisible.value = true;
+      dialogVisible.value = false;
     }
   });
 };
