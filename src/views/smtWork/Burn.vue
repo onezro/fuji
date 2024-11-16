@@ -122,7 +122,7 @@ const getChoice = (e: any) => {
       Itemname: item.MaterialDesc,
       DeliveryNum: "",
       Burdate: item.VendorLotNumber,
-      Batchnum: "",
+      Batchnum: item.MfgOrderName,
       Number: item.Qty,
     };
   });
