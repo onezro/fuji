@@ -142,7 +142,7 @@ const lineOption = ref([
 const orderColumns = ref([
   { label: "生产计划号", width: "", prop: "MfgOrderName", fixed: true },
   { label: "产品编码", width: "", prop: "ProductName", fixed: true },
-  { label: "状态", width: "", prop: "OrderStatusDesc" },
+  // { label: "状态", width: "", prop: "OrderStatusDesc" },
   { label: "产品描述", width: "", prop: "ProductDesc" },
   { label: "产品机型", width: "", prop: "BD_ProductModel" },
   { label: "软件版本", width: "", prop: "BD_SoftVersion" },
