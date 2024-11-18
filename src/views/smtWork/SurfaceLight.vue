@@ -144,7 +144,7 @@
                 <el-form-item label="产品描述" class="mb-2">
                   <el-input
                     v-model="operateForm.ProductDesc"
-                    style="width: calc((100vw - 650px) / 2)"
+                    style="width: calc((100vw - 620px) / 2)"
                     disabled
                   />
                 </el-form-item>
@@ -359,7 +359,7 @@ const columnData = reactive([
     label: "物料描述",
     width: "",
     min: true,
-    align: "center",
+    align: "left",
   },
 ]);
 
