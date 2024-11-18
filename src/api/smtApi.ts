@@ -248,7 +248,7 @@ export function findShelf() {
 }
 //提交备料
 export function SubmitSMTPreparation(data: any) {
-  return request({
+  return requestNoMessage({
     url: "/api/smtreadymaterial/SubmitSMTPreparation",
     method: "post",
     data,
@@ -256,7 +256,7 @@ export function SubmitSMTPreparation(data: any) {
 }
 //首套亮灯
 export function SendFirstSet(data: any) {
-  return request({
+  return requestNoMessage({
     url: "/api/smtreadymaterial/SendFirstSet",
     method: "post",
     data,
@@ -265,7 +265,7 @@ export function SendFirstSet(data: any) {
 
 //取消首套亮灯
 export function CancelFirstSet(data: any) {
-  return request({
+  return requestNoMessage({
     url: "/api/smtreadymaterial/CancelFirstSet",
     method: "post",
     data,

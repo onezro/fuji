@@ -97,6 +97,8 @@ interface StopsForm {
   workstationName: string;
   userAccount: string;
   txnDate: string;
+  ResourceDefName:string;
+  UpdateUser:string
 }
 
 interface ToolList {
@@ -117,8 +119,10 @@ const stopsForm = ref<StopsForm>({
   ContainerName: "",
   QrCodeNews: "",
   workstationName: opui.station || "",
+  ResourceDefName:opui.station || "",
   userAccount: userStore.getUserInfo,
   txnDate: "",
+  UpdateUser:userStore.getUserInfo,
 });
 
 const form = ref<InstanceType<typeof Formspan>>({
@@ -309,7 +313,7 @@ const getChange = () => {
   if (checkStringType(barCodeData) == "BDY") {
     JudgeContainerProProcess({
       ContainerName: barCodeData,
-      SpecName: opui.station,
+      ResourceDefName: opui.station,
     }).then((res: any) => {
       msgTitle.value = res.msg;
       msgType.value = res.success;
@@ -318,7 +322,7 @@ const getChange = () => {
         form.value = { ...res.content[0] };
         hisForm.value.MfgOrderName = res.content[0].MfgOrderName;
         getHisData();
-        msgTitle.value =`已验证条码${ stopsForm.value.ContainerName}请扫描烧录二维码`;
+        msgTitle.value =`已验证条码${ stopsForm.value.ContainerName}，请扫描烧录二维码`;
       msgType.value = true;
       } else {
         stopsForm.value.ContainerName = "";
@@ -327,7 +331,8 @@ const getChange = () => {
     });
   } else {
     if (stopsForm.value.ContainerName != "") {
-      stopsForm.value.QrCodeNews = barCodeData;
+      stopsForm.value.QrCodeNews =barCodeData;JSON.stringify(barCodeData)
+      // console.log(  stopsForm.value);
       JudgeAfterStartUpQrCode(stopsForm.value).then((res: any) => {
         msgTitle.value = res.msg;
         msgType.value = res.success;
