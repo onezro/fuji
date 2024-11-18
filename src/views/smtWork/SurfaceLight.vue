@@ -87,7 +87,20 @@
           >
             <span class="ml-5">消息提示</span>
           </div>
-          <div class="p-2"></div>
+          <div class="p-2">
+            <div
+              class="text-xl font-bold text-[#00B400]"
+              v-show="msgType === true || msgTitle === ''"
+            >
+              {{ msgTitle === "" ? "" : msgTitle }}
+            </div>
+            <div
+              class="text-xl font-bold text-[red]"
+              v-show="msgType === false && msgTitle !== ''"
+            >
+              {{ msgTitle }}
+            </div>
+          </div>
         </div>
       </div>
       <div class="w-[calc(100%-300px)]">
@@ -172,9 +185,7 @@
                   :disabled="selectList.length === 0"
                   >取消亮灯</el-button
                 >
-                <el-button @click="materialView"
-                  >货架物料查看</el-button
-                >
+                <el-button @click="materialView">货架物料查看</el-button>
                 <div class="text-[#606266] ml-[2rem] mr-2">扫描接料条码</div>
                 <el-input
                   class="code-input"
@@ -293,6 +304,8 @@ const viewTableHeight = ref(0);
 const selectList = ref<any[]>([]);
 const lightTable = ref();
 const code = ref("");
+const msgTitle = ref("");
+const msgType = ref(true);
 const pageObj = ref({
   pageSize: 100,
   currentPage: 1,
@@ -371,42 +384,48 @@ const viewColumnData = reactive([
     width: "",
     min: true,
     align: "center",
-  },{
+  },
+  {
     text: true,
     prop: "Amount",
     label: "数量",
     width: "",
     min: true,
     align: "center",
-  },{
+  },
+  {
     text: true,
     prop: "Unit",
     label: "单位",
     width: "",
     min: true,
     align: "center",
-  },{
+  },
+  {
     text: true,
     prop: "MaterialName",
     label: "物料编码",
     width: "",
     min: true,
     align: "center",
-  },{
+  },
+  {
     text: true,
     prop: "MaterialDesc",
     label: "物料描述",
     width: "",
     min: true,
     align: "left",
-  },{
+  },
+  {
     text: true,
     prop: "Shelf_id",
     label: "货架号",
     width: "",
     min: true,
     align: "center",
-  },{
+  },
+  {
     text: true,
     prop: "Position_info",
     label: "储位编号",
@@ -422,6 +441,8 @@ const getDevice = () => {
       deviceList.value = res.content;
       selectBox.value = res.content[0].BD_IsAutoSplicing;
     }
+    msgTitle.value = res.msg;
+    msgType.value = res.success;
   });
 };
 
@@ -432,6 +453,8 @@ const getMaterialList = (item: any) => {
       tableData.value = res.content;
       selectList.value = [];
     }
+    msgTitle.value = res.msg;
+    msgType.value = res.success;
   });
 };
 
@@ -440,6 +463,8 @@ const getOrderQuery = () => {
     if (res && res.success && res.content.length > 0) {
       operateForm.value = res.content[0];
     }
+    msgTitle.value = res.msg;
+    msgType.value = res.success;
   });
 };
 
@@ -458,11 +483,13 @@ const AutoSplicing = () => {
         MfgLineName: opui.line,
         BD_IsAutoSplicing: selectBox.value,
       }).then((res: any) => {
-        ElNotification({
-          title: "提示",
-          message: res.msg,
-          type: "success",
-        });
+        // ElNotification({
+        //   title: "提示",
+        //   message: res.msg,
+        //   type: "success",
+        // });
+        msgTitle.value = res.msg;
+        msgType.value = res.success;
       });
     })
     .catch(() => {
@@ -487,12 +514,17 @@ const handleSelectionChange = (e: any) => {
 };
 
 const materialView = () => {
-  QueryRackLightMaterials({OrderNumber:operateForm.value.MfgOrderName,shelf_ids:operateForm.value.shelf_ids}).then((res:any) => {
+  QueryRackLightMaterials({
+    OrderNumber: operateForm.value.MfgOrderName,
+    shelf_ids: operateForm.value.shelf_ids,
+  }).then((res: any) => {
     if (res && res.success) {
       viewVisible.value = true;
       viewTableData.value = res.content;
     }
-  })
+    msgTitle.value = res.msg;
+    msgType.value = res.success;
+  });
 };
 
 const lightUp = (e: any) => {
@@ -503,6 +535,9 @@ const lightUp = (e: any) => {
     shelf_ids: operateForm.value.shelf_ids,
     IssueList: selectList.value,
     OperatorName: loginName,
+  }).then((res: any) => {
+    msgTitle.value = res.msg;
+    msgType.value = res.success;
   });
 };
 
@@ -514,6 +549,9 @@ const lightOut = (e: any) => {
     shelf_ids: operateForm.value.shelf_ids,
     IssueList: selectList.value,
     OperatorName: loginName,
+  }).then((res: any) => {
+    msgTitle.value = res.msg;
+    msgType.value = res.success;
   });
 };
 
