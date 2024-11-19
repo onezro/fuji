@@ -275,7 +275,7 @@ export function CancelFirstSet(data: any) {
 //贴片机亮灯
 //根据工序查询不良记录
 export function QueryDeviceInfo(data: any) {
-  return request({
+  return requestNoMessage({
     url: "/api/smtOnlineRack/QueryDeviceInfo",
     method: "post",
     params: {
@@ -286,7 +286,7 @@ export function QueryDeviceInfo(data: any) {
 
 //查询机台物料清单
 export function QueryMachineMaterialList(data: any) {
-  return request({
+  return requestNoMessage({
     url: "/api/smtOnlineRack/QueryMachineMaterialList",
     method: "post",
     params: {
@@ -297,7 +297,7 @@ export function QueryMachineMaterialList(data: any) {
 
 //查询机台物料清单
 export function MaterialOrderQuery(data: any) {
-  return request({
+  return requestNoMessage({
     url: "/api/smtOnlineRack/OrderQuery",
     method: "post",
     data
@@ -306,7 +306,7 @@ export function MaterialOrderQuery(data: any) {
 
 //接料亮灯
 export function SendOneLine(data: any) {
-  return request({
+  return requestNoMessage({
     url: "/api/smtOnlineRack/SendOneLine",
     method: "post",
     data
@@ -315,7 +315,7 @@ export function SendOneLine(data: any) {
 
 //取消接料亮灯
 export function CancelOneLine(data: any) {
-  return request({
+  return requestNoMessage({
     url: "/api/smtOnlineRack/CancelOneLine",
     method: "post",
     data
@@ -324,7 +324,7 @@ export function CancelOneLine(data: any) {
 
 //修改产线是否自动接料
 export function UpdateMfgLineAutoSplicing(data: any) {
-  return request({
+  return requestNoMessage({
     url: "/api/smtOnlineRack/UpdateMfgLineAutoSplicing",
     method: "post",
     data
@@ -342,7 +342,7 @@ export function AutoOnlineRack(data: any) {
 
 //MES架料物料清单
 export function QueryRackLightMaterials(data: any) {
-  return request({
+  return requestNoMessage({
     url: "/api/smtOnlineRack/QueryRackLightMaterials",
     method: "post",
     data

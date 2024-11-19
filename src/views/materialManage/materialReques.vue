@@ -10,7 +10,7 @@
           label-width="auto"
         >
           <el-form-item label="生产计划号" class="mb-2">
-            <el-input v-model="historyForm.orderNmae" placeholder=""></el-input>
+            <el-input v-model="historyForm.MfgOrderName" placeholder=""></el-input>
           </el-form-item>
           <el-form-item label="申请类型" class="mb-2">
               <el-select
@@ -206,7 +206,7 @@
               width="55"
               :selectable="selectable"
             />
-            <!-- <el-table-column type="index" align="center" fixed label="序号" width="60" /> -->
+            <el-table-column type="index" label="序号" width="50" align="center" />
             <el-table-column
               prop="MaterialName"
               fixed
@@ -403,7 +403,7 @@ interface formTS {
 
 interface historyFormTS {
   RequestType: string;
-  orderNmae: string;
+  MfgOrderName: string;
   requestStartDate: string;
   requestEndDate: string;
 }
@@ -429,7 +429,7 @@ const form = ref<formTS>({
 
 const historyForm = ref<historyFormTS>({
   RequestType: "",
-  orderNmae: "",
+  MfgOrderName: "",
   requestStartDate: "",
   requestEndDate: "",
 });
@@ -793,7 +793,7 @@ const columnData = reactive([
     label: "计划数量",
     width: "",
     min: true,
-    align: "center",
+    align: "left",
   },
   {
     text: true,
@@ -819,7 +819,7 @@ const columnData = reactive([
     width: "",
     min: true,
     align: "center",
-  },
+  }
 ]);
 
 const detailedData = reactive([

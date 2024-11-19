@@ -84,45 +84,51 @@
           @selection-change="handleSelectionChange"
           @rowClick="rowClick"
         >
+        <el-table-column type="index" label="序号" width="50" align="center" />
           <el-table-column
-            prop="MfgOrderName"
-            label="生产计划号"
-            :min-width="flexColumnWidthHis('生产计划号', 'MfgOrderName')"
+            prop="ApplyNo"
+            label="退料单号"
+            :min-width="flexColumnWidthHis('退料单号', 'ApplyNo')"
+            align="center"
           ></el-table-column>
           <el-table-column
             prop="QualityIsGood"
             label="申请类型"
-            :min-width="flexColumnWidthHis('申请类型', 'QualityIsGood')"
+            :min-width="flexColumnWidthHis('申请类型型', 'QualityIsGood')"
+            align="center"
           >
             <template #default="scope">
               <div>{{ returnTypeText(scope.row.QualityIsGood) }}</div>
             </template>
           </el-table-column>
           <el-table-column
-            prop="ApplyNo"
-            label="退料单号"
-            :min-width="flexColumnWidthHis('退料单号', 'ApplyNo')"
+            prop="MfgOrderName"
+            label="生产计划号"
+            :min-width="flexColumnWidthHis('生产计划号', 'MfgOrderName')"
+            align="center"
           ></el-table-column>
           <el-table-column
             prop="BD_ProductModel"
             label="产品机型"
             :min-width="flexColumnWidthHis('产品机型', 'BD_ProductModel')"
+            align="center"
           ></el-table-column>
           <el-table-column
             prop="ProductName"
             label="产品编码"
             :min-width="flexColumnWidthHis('产品编码', 'ProductName')"
+            align="center"
           ></el-table-column>
           <el-table-column
             prop="ProductDesc"
             label="产品描述"
             :min-width="flexColumnWidthHis('产品描述', 'ProductDesc')"
           ></el-table-column>
-          <el-table-column
+          <!-- <el-table-column
             prop="OrderStatusDesc"
             label="生产计划号状态"
             :min-width="flexColumnWidthHis('生产计划号状态', 'OrderStatusDesc')"
-          ></el-table-column>
+          ></el-table-column> -->
           <el-table-column
             prop="Qty"
             label="计划数量"
@@ -132,16 +138,19 @@
             prop="PlannedStartDate"
             label="计划开始时间"
             :min-width="flexColumnWidthHis('计划开始时间', 'PlannedStartDate')"
+            align="center"
           ></el-table-column>
           <el-table-column
             prop="ApplyTime"
             label="申请时间"
             :min-width="flexColumnWidthHis('申请时间', 'ApplyTime')"
+            align="center"
           ></el-table-column>
           <el-table-column
             prop="Applicant"
             label="申请人"
             :min-width="flexColumnWidthHis('申请人', 'Applicant')"
+            align="center"
           ></el-table-column>
         </el-table>
         <div class="mt-2 mb-2">
@@ -294,9 +303,9 @@
               :selectable="selectable"
               :min-width="flexColumnWidth('选择', 'CompID')"
             />
+            <el-table-column type="index" label="序号" width="50" align="center" />
             <el-table-column
               prop="CompID"
-              fixed
               label="物料条码"
               :min-width="flexColumnWidth('物料条码', 'CompID')"
             >
@@ -304,7 +313,6 @@
             <el-table-column
               prop="CompName"
               label="物料编码"
-              :show-overflow-tooltip="true"
               :min-width="flexColumnWidth('物料编码', 'CompName')"
             >
             </el-table-column>
@@ -717,7 +725,7 @@ const getMaxLength = (arr: any) => {
 const getTextWidth = (str: string) => {
   let width = 0;
   const html = document.createElement("span");
-  html.style.cssText = `padding: 0; margin: 0; border: 0; line-height: 1; font-size: ${16}px; font-family: Arial, sans-serif;`;
+  html.style.cssText = `padding: 0; margin: 0; border: 0; line-height: 1; font-size: ${13}px; font-family: Arial, sans-serif;`;
   html.innerText = str; // 去除字符串前后的空白字符
   document.body?.appendChild(html);
 
@@ -1050,14 +1058,6 @@ const detailedData = reactive([
     text: true,
     prop: "Qty",
     label: "退料数量",
-    width: "",
-    min: true,
-    align: "center",
-  },
-  {
-    text: true,
-    prop: "QualityIsGood",
-    label: "是否不良",
     width: "",
     min: true,
     align: "center",
