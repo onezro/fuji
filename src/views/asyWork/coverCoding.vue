@@ -468,17 +468,17 @@ watch(
       timer.value = setInterval(() => {
         printData();
       }, setTime.value*1000);
-      ElNotification({
-        title: "提示信息",
-        message: "开始自动打印",
-        type: "success",
-      });
+      // ElNotification({
+      //   title: "提示信息",
+      //   message: "开始自动打印",
+      //   type: "success",
+      // });
     } else {
-      ElNotification({
-        title: "提示信息",
-        message: "关闭自动打印",
-        type: "warning",
-      });
+      // ElNotification({
+      //   title: "提示信息",
+      //   message: "关闭自动打印",
+      //   type: "warning",
+      // });
       clearInterval(timer.value);
 
     }
@@ -489,36 +489,34 @@ watch(
 );
 const autoPrint = () => {
   isAuto.value = !isAuto.value;
-  //   clearInterval(timer.value);
-  //   timer.value = setInterval(() => {
-  //     console.log(131);
-  //   }, 5000);
+
 };
 const print = () => {
   isAuto.value = false;
-  // ElNotification({
-  //   title: "提示信息",
-  //   message: "开始手动打印",
-  //   type: "success",
-  // });
     printData();
 };
 
 const printData = () => {
   CoverInstallPrint(form.value.MfgOrderName).then((res: any) => {
     if (res.success) {
+      msgTitle.value = "打印成功";
+      msgType.value = res.success
       //   ElNotification({
       //     title: "提示信息",
       //     message: "开始打印",
       //     type: "success",
       //   });
-      clearInterval(timer.value);
+      // clearInterval(timer.value);
     } else {
-      ElNotification({
-        title: "提示信息",
-        message: res.msg,
-        type: "error",
-      });
+      clearInterval(timer.value);
+      isAuto.value=false
+      msgTitle.value = res.msg;
+      msgType.value = res.success
+      // ElNotification({
+      //   title: "提示信息",
+      //   message: res.msg,
+      //   type: "error",
+      // });
     }
   });
 };

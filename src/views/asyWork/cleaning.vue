@@ -5,7 +5,7 @@
       <div></div>
     </div>
     <div class="w-full flex-1 flex">
-      <div class="setwidth w-[400px]">
+      <div class="setwidth w-[350px]">
         <div class="w-full h-full box">
           <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
             <span class="ml-5">基本信息</span>
@@ -13,7 +13,7 @@
           <div class="p-[10px]">
             <el-form class="inbound" ref="formRef" :model="form" label-width="auto">
               <el-form-item label="生产计划号" class="mb-[5px] flex">
-                <selectTa ref="selectTable" :table="orderTable" :selectWidth="220" :columns="orderColumns"
+                <selectTa ref="selectTable" :table="orderTable" :selectWidth="200" :columns="orderColumns"
                   :max-height="400" :tableWidth="700" :defaultSelectVal="defaultSelectVal" :keywords="{
                     label: 'MfgOrderName',
                     value: 'MfgOrderName',
@@ -33,7 +33,7 @@
           </div>
         </div>
       </div>
-      <div class="w-[calc(100%-400px)]">
+      <div class="w-[calc(100%-350px)]">
         <!-- <div class="w-full"> -->
         <div class="w-full h-full flex flex-col">
           <div>
@@ -67,14 +67,15 @@
                 </div>
               </div>
               <div>
-                <el-table :data="detailsData" stripe border fit size="small" :height="130" :style="{ width: '100%' }"  >
-                <el-table-column  label="序号" width="50" type="index" align="center"/>
-                  <el-table-column prop="MaterialNamete" label="物料编码" width="150" />
-                  <el-table-column prop="MaterialDesc" label="物料描述" width="250" />
-                
-                  <el-table-column  label="剩余数量"  width="100">
-                    <template  #default="scope">
-                      <span>{{ scope.row.LoadQueueQty- scope.row.issueQty}}</span>
+                <el-table :data="detailsData" stripe border fit size="small" :height="130" :style="{ width: '100%' }" 
+                  :tooltip-effect="'dark'">
+                  <el-table-column label="序号" width="50" type="index" align="center" />
+                  <el-table-column prop="MaterialName" label="物料编码" width="120" />
+                  <el-table-column prop="MaterialDesc" label="物料描述" width="250" :show-overflow-tooltip="true" />
+                  <el-table-column prop="LoadQueueQty" label="上料总数" width="80" align="center"/>
+                  <el-table-column label="剩余数量" width="80" align="center">
+                    <template #default="scope">
+                      <span>{{ scope.row.LoadQueueQty - scope.row.issueQty }}</span>
                     </template>
                   </el-table-column>
               </el-table>
@@ -125,6 +126,14 @@ import {
   QueryCleanCodeRecord,
   ReloadCleanCode,
 } from "@/api/asyApi";
+import {
+  // OrderQuery,
+  // PluginStationMoveOut,
+  // FindAllDevice,
+  // UpdateDevice,
+  // QueryMoveHistory,
+  QueryOrderMaterialRequired,
+} from "@/api/smtApi";
 
 import {
   ref,
@@ -360,6 +369,11 @@ const rowData = ref<RowData>({
   CreatedBy: "",
   CreatedOn: ""
 });
+const getFeedForm = ref({
+  MfgOrder: "",
+  workstationName: opui.station,
+  SpecName: "ASY-P001",
+});
 onBeforeMount(() => {
   getScreenHeight();
 });
@@ -391,6 +405,19 @@ const getHisData = () => {
     tableData1.value = res.content;
   });
 };
+const getMaterialRequired=()=>{
+  QueryOrderMaterialRequired(getFeedForm.value).then((res: any) => {
+    if (
+      res.content.length == 0 ||
+      res.content == null ||
+      res.content == undefined
+    ) {
+      detailsData.value = [];
+      return;
+    }
+    detailsData.value = res.content;
+  });
+}
 
 const changeHis = (val: any) => {
   if (checkedHis.value.length == 0) {
@@ -442,8 +469,9 @@ const getChange = () => {
       // form.value = { ...res.content[0] };
 
       // hisForm.value.MfgOrderName = res.content[0].MfgOrderName;
-      // getFocus();
+      getFocus();
       getHisData();
+      getMaterialRequired()
     });
   }
 
@@ -479,7 +507,9 @@ const radioChange = (args: any) => {
     stopsForm.value.OrderName = args[0].MfgOrderName;
     stopsForm.value.ProductName = args[0].ProductName;
     hisForm.value.MfgOrderName = args[0].MfgOrderName;
+    getFeedForm.value.MfgOrder = args[0].MfgOrderName;
     getHisData();
+    getMaterialRequired()
   }
 };
 const getOrderData = () => {
@@ -556,7 +586,7 @@ const getScreenHeight = () => {
 }
 
 .setwidth {
-  flex: 0 0 400px;
+  flex: 0 0 350px;
 }
 
 .box {

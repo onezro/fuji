@@ -13,7 +13,7 @@
           <div class="p-[10px]">
             <el-form class="inbound" ref="formRef" :model="form" label-width="auto">
               <el-form-item label="生产计划号" class="mb-[5px] flex">
-                <selectTa ref="selectTable" :table="orderTable" :selectWidth="220" :columns="orderColumns"
+                <selectTa ref="selectTable" :table="orderTable" :selectWidth="200" :columns="orderColumns"
                   :max-height="400" :tableWidth="700" :defaultSelectVal="defaultSelectVal" :keywords="{
                     label: 'MfgOrderName',
                     value: 'MfgOrderName',
@@ -60,7 +60,8 @@
               <div>
                 <el-table :data="barData" size="small" border :row-class-name="tableRowClassName" :height="'100%'">
                   <el-table-column type="index" align="center" fixed label="序号" :width="'60'"></el-table-column>
-                  <el-table-column prop="MaterialName" label="产品编码" width="120" />
+                  <el-table-column prop="MaterialName" label="物料编码" width="120" />
+                  <el-table-column prop="LoadQueueQty" label="上料总数" width="80" align="center"/>
                   <el-table-column prop="QtyRequired" label="剩余数量" width="120">
                     <template  #default="scope">
                       <span>{{ scope.row.LoadQueueQty- scope.row.issueqty}}</span>
@@ -192,13 +193,7 @@ const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
   //     type: "input",
   //     width: "",
   // },
-  {
-    label: "生产计划号",
-    value: "MfgOrderName",
-    disabled: true,
-    type: "input",
-    width: "",
-  },
+
   {
     label: "产品机型",
     value: "BD_ProductModel",

@@ -404,7 +404,7 @@ const handleDelete = (row: any) => {
       // console.log(row.id)
       arrID.value.unshift(row.id);
       // row.sonNum!=null? dataDispose(row):false
-      console.log(arrID.value);
+      // console.log(arrID.value);
       arrID.value.forEach((item) => {
         deleteMeun(item).then(({ data }) => {
           // console.log(data);

@@ -87,34 +87,35 @@
             </div>
             <div class="h-[150px] pt-3 pr-5 pl-5 flex">
               <div>
-              <el-form class="inbound" ref="formRef" :inline="true" :model="form" label-width="auto"
-                @submit.native.prevent>
-                <el-form-item label="扫描条码">
-                  <el-input v-model.trim="barCode" ref="inputRef" :autofocus="inputFocus" style="width: 500px"
-                    placeholder="请扫描PCB条码或治具编码" @keyup.enter.native="getChange" />
-                </el-form-item>
-              </el-form>
-              <div class="text-xl font-bold text-[#00B400]" v-show="msgType === true || msgTitle === ''">
-                {{ msgTitle === "" ? "请扫描PCB条码或治具编码" : msgTitle }}
+                <el-form class="inbound" ref="formRef" :inline="true" :model="form" label-width="auto"
+                  @submit.native.prevent>
+                  <el-form-item label="扫描条码">
+                    <el-input v-model.trim="barCode" ref="inputRef" :autofocus="inputFocus" style="width: 500px"
+                      placeholder="请扫描PCB条码或治具编码" @keyup.enter.native="getChange" />
+                  </el-form-item>
+                </el-form>
+                <div class="text-xl font-bold text-[#00B400]" v-show="msgType === true || msgTitle === ''">
+                  {{ msgTitle === "" ? "请扫描PCB条码或治具编码" : msgTitle }}
+                </div>
+                <div class="text-xl font-bold text-[red]" v-show="msgType === false && msgTitle !== ''">
+                  {{ msgTitle }}
+                </div>
               </div>
-              <div class="text-xl font-bold text-[red]" v-show="msgType === false && msgTitle !== ''">
-                {{ msgTitle }}
-              </div>
-            </div>
-            <div>
-              <el-table :data="detailsData" stripe border fit size="small" :height="140" :style="{ width: '100%' }"  >
-                <el-table-column  label="序号" width="50" type="index" align="center"/>
-                  <el-table-column prop="MaterialNamete" label="物料编码" width="150" />
-                  <el-table-column prop="MaterialDesc" label="物料描述" width="250" />
-                
-                  <el-table-column  label="剩余数量"  width="100">
-                    <template  #default="scope">
-                      <span>{{ scope.row.LoadQueueQty- scope.row.issueQty}}</span>
+              <div>
+                <el-table :data="detailsData" stripe border fit size="small" :height="140" :style="{ width: '100%' }"
+                  :tooltip-effect="'dark'">
+                  <el-table-column label="序号" width="50" type="index" align="center" />
+                  <el-table-column prop="MaterialName" label="物料编码" width="120" />
+                  <el-table-column prop="MaterialDesc" label="物料描述" width="250" :show-overflow-tooltip="true" />
+                  <el-table-column prop="LoadQueueQty" label="上料总数" width="80" align="center"/>
+                  <el-table-column label="剩余数量" width="80" align="center">
+                    <template #default="scope">
+                      <span>{{ scope.row.LoadQueueQty - scope.row.issueQty }}</span>
                     </template>
                   </el-table-column>
-              </el-table>
-              <!-- <tableTemp size="small" :showIndex="true" :tableData="detailsData" :tableHeight="140" :columnData="detailsColumn"><</tableTemp> -->
-            </div>
+                </el-table>
+                <!-- <tableTemp size="small" :showIndex="true" :tableData="detailsData" :tableHeight="140" :columnData="detailsColumn"><</tableTemp> -->
+              </div>
             </div>
             <div class="p-1 pl-1">
               <el-form class="inbound" size="default" ref="formRef" :model="form" :inline="true" label-width="auto">
@@ -128,8 +129,8 @@
                             value: 'MfgOrderName',
                           }" @radioChange="(...args: any) => radioChange(args)">
                         </selectTa>
-                        <el-tooltip content="刷新" placement="top">
-                          <el-icon class="ml-2" color="#777777" :class="isLoding" size="24" @click="getOrderData">
+                        <el-tooltip content="刷新" placement="top"> 
+                          <el-icon class="ml-2" color="#006487" :class="isLoding" size="24" @click="getOrderData">
                             <RefreshRight />
                           </el-icon>
                         </el-tooltip>
@@ -258,7 +259,7 @@ interface StopsForm {
   // OrderNumber: string;
   workstationName: string;
   userAccount: string;
-  orderName:string;
+  orderName: string;
 }
 
 interface ToolList {
@@ -279,7 +280,7 @@ const stopsForm = ref<StopsForm>({
   tools: "",
   ContainerName: "",
   // OrderNumber: "",
-  orderName:"",
+  orderName: "",
   workstationName: opui.station || "",
   userAccount: userStore.getUserInfo,
 });
@@ -633,7 +634,7 @@ const openOver = () => {
   overAddVisible.value = true;
   getOverData();
 };
-const getMaterialRequired=()=>{
+const getMaterialRequired = () => {
   QueryOrderMaterialRequired(getFeedForm.value).then((res: any) => {
     if (
       res.content.length == 0 ||
@@ -648,7 +649,7 @@ const getMaterialRequired=()=>{
 }
 const opendetail = () => {
   detailVisible.value = true;
-  
+
 };
 //获取过序
 const getOverData = () => {
@@ -887,7 +888,7 @@ const radioChange = (args: any) => {
   } else {
     // orderTable.value.data.forEach((v: any) => {
     //   if (v.MfgOrderName == args[1]) {
-    stopsForm.value.orderName=args[0].MfgOrderName
+    stopsForm.value.orderName = args[0].MfgOrderName
     form.MfgOrderName = args[0].MfgOrderName;
     form.ProductName = args[0].ProductName;
     form.ProductDesc = args[0].ProductDesc;

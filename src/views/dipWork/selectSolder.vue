@@ -334,9 +334,9 @@ const geTodayData = () => {
           getHisData()
         }
       );
+      barCode.value = "";
     }
-    barCode.value = "";
-  // };
+   
   
   //分页
   const handleSizeChange = (val: any) => {
