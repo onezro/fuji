@@ -69,7 +69,7 @@
                    <el-button :type="isAuto ? 'danger' : 'primary'" :disabled="form.MfgOrderName == ''"
                     @click="autoPrint">{{ isAuto ? "关闭自动打印" : "自动打印" }}</el-button>
                   <el-button type="warning" :disabled="form.MfgOrderName == ''" @click="print">手动打印</el-button>
-                  <el-button type="success" :disabled="form.MfgOrderName == ''" @click="print">补打条码</el-button>
+                  <!-- <el-button type="success" :disabled="form.MfgOrderName == ''" @click="print">补打条码</el-button> -->
                 </div>
             </div>
           </div>

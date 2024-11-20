@@ -94,7 +94,7 @@
                 <el-table-column type="index" align="center" fixed label="序号" width="60" />
                 <el-table-column prop="MaterialName" fixed label="物料编码" flexible width="150">
                 </el-table-column>
-                <el-table-column prop="MaterialDesc" label="物料描述" :show-overflow-tooltip="true" width="200" flexible>
+                <el-table-column prop="MaterialDesc" label="物料描述" :show-overflow-tooltip="true" width="250" flexible>
                 </el-table-column>
 
                 <el-table-column prop="isMater" label="主料" width="150" flexible>
@@ -107,17 +107,20 @@
                 </el-table-column>
                 <el-table-column prop="SpecDesc" label="工序名称" align="center" flexible>
                 </el-table-column>
-
+                <el-table-column prop="UOMName" align="center" label="单位" flexible>
+                </el-table-column>
+<!-- 
                 <el-table-column prop="isLoadQueue" align="center" label="允许上料" flexible>
                   <template #default="scope">
                     <span v-if="scope.row.isLoadQueue === 1">是</span>
                     <span v-if="scope.row.isLoadQueue === 0">否</span>
                   </template>
-                </el-table-column>
+                </el-table-column> -->
                 <el-table-column prop="QtyRequired" align="center" label="单件用量" flexible>
                 </el-table-column>
                 <el-table-column prop="TotalQtyRequired" align="center" label="需求量" flexible>
                 </el-table-column>
+                
               </el-table>
             </div>
           </el-tab-pane>
@@ -374,9 +377,9 @@ const rowClick = (val: any) => {
     MfgOrder: val.MfgOrderName,
   }).then((res: any) => {
     if (res.success) {
-      let data = cloneDeep(feedOrganData(res.content));
+      // let data = cloneDeep(feedOrganData(res.content));
 
-      feedTableData.value = data;
+      feedTableData.value = res.content
     }
   });
 };
@@ -577,7 +580,7 @@ const feedOrganData = (organizations: any) => {
     }
   });
   return Array.from(organizationMap.values()).filter(
-    (org) => org.originalMaterialName == org.MaterialName
+    (org) => org.originalMaterialName !== org.MaterialName
   );
 };
 
@@ -595,8 +598,9 @@ const tabChange = (name: any) => {
     }).then((res: any) => {
       // console.log(OrganData(res.content));
       if (res.success) {
-        let data = cloneDeep(feedOrganData(res.content));
-        feedTableData.value = data;
+        // let data = cloneDeep(feedOrganData(res.content));
+      
+        feedTableData.value = res.content
       }
     });
   } else if (name === "工艺流程") {
