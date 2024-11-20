@@ -61,7 +61,7 @@
                 <el-table :data="barData" size="small" border :row-class-name="tableRowClassName" :height="'100%'">
                   <el-table-column type="index" align="center" fixed label="序号" :width="'50'"></el-table-column>
                   <el-table-column prop="MaterialName" label="物料编码" width="120" />
-                  <el-table-column prop="LoadQueueQty" label="上料总数" width="80" align="center"/>
+                  <el-table-column prop="LoadQueueQty" label="上料总数" width="80" align="center" />
                   <el-table-column prop="QtyRequired" label="剩余数量" width="120">
                     <template #default="scope">
                       <span>{{ scope.row.LoadQueueQty - scope.row.issueqty }}</span>
@@ -69,8 +69,8 @@
                   </el-table-column>
                   <el-table-column prop="MaterialBarCode" label="批次条码" width="150">
                     <template #default="scope">
-                      <el-input v-model="scope.row.MaterialBarCode" size="small" :ref="createInputRef(scope.$index)"
-                        @keyup.enter.native="getChange1(scope.$index, scope.row)">
+                      <el-input v-if="scope.row.IssueControl == 1" v-model="scope.row.MaterialBarCode" size="small"
+                        :ref="createInputRef(scope.$index)" @keyup.enter.native="getChange1(scope.$index, scope.row)">
                       </el-input>
                     </template>
                   </el-table-column>
@@ -228,21 +228,7 @@ const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
     disabled: true,
     type: "textarea",
     width: 300,
-  },
-  // {
-  //   label: "过站总数",
-  //   value: "AllNum",
-  //   disabled: true,
-  //   type: "input",
-  //   width: "",
-  // },
-  // {
-  //   label: "实时过站",
-  //   value: "TodayNum",
-  //   disabled: true,
-  //   type: "input",
-  //   width: "",
-  // }
+  }
 ]);
 const columnData1 = reactive([
   {
@@ -404,21 +390,24 @@ const getChange = () => {
   } else {
     msgTitle.value = "";
     msgType.value = true;
-    isKeyForm.value.BarCode = barCodeData;
-    // if (stopsForm.value.keyMaterialList.length === 3) {
-    stopsForm.value.BarCode = barCodeData;
-    ScreeSMTCompBindMoveStd(stopsForm.value).then((res: any) => {
-      msgTitle.value = res.msg;
-      msgType.value = res.success;
-      // if (res.success) {
-      stopsForm.value.keyMaterialList = [];
-      // }
-      stopsForm.value.BarCode = "";
-      barCode.value = "";
-      getHisData()
-      getKeyMaterial();
-    });
-    // }
+    // isKeyForm.value.BarCode = barCodeData;
+    if (stopsForm.value.keyMaterialList.length !== 0 || barData.value.length == 0) {
+      stopsForm.value.BarCode = barCodeData;
+      ScreeSMTCompBindMoveStd(stopsForm.value).then((res: any) => {
+        msgTitle.value = res.msg;
+        msgType.value = res.success;
+        stopsForm.value.keyMaterialList = [];
+        stopsForm.value.BarCode = "";
+        barCode.value = "";
+        getHisData()
+        getKeyMaterial();
+      });
+    } else {
+      msgTitle.value = `请扫描关键料或关键为空`
+      msgType.value = false
+    }
+
+
     // JudgeKeyMaterial(isKeyForm.value).then((res: any) => {
     //   msgTitle.value = res.msg;
     //   msgType.value = res.success;
@@ -538,7 +527,7 @@ const getKeyMaterial = () => {
     //   }
     // })
     // barData.value = data;
-    barData.value =res.content
+    barData.value = res.content
     nextTick(() => {
       if (inputRefs.value.length > 0) {
         inputRefs.value[0].focus();

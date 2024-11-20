@@ -69,7 +69,7 @@
                   </el-table-column>
                   <el-table-column prop="MaterialBarCode" label="物料编码" width="150">
                     <template #default="scope">
-                      <el-input v-model="scope.row.MaterialBarCode" size="small" :ref="createInputRef(scope.$index)"
+                      <el-input v-if="scope.row.IssueControl==1" v-model="scope.row.MaterialBarCode" size="small" :ref="createInputRef(scope.$index)"
                         @keyup.enter.native="getChange1(scope.$index,scope.row)">
                       </el-input>
                     </template>
@@ -404,20 +404,22 @@ const getChange = () => {
   } else {
     msgTitle.value = "";
     msgType.value = true;
-    isKeyForm.value.BarCode = barCodeData;
-    // if (stopsForm.value.keyMaterialList.length === 3) {
+     // isKeyForm.value.BarCode = barCodeData;
+     if (stopsForm.value.keyMaterialList.length !== 0 || barData.value.length == 0) {
       stopsForm.value.BarCode = barCodeData;
       CoverSMTCompBindMoveStd(stopsForm.value).then((res: any) => {
         msgTitle.value = res.msg;
         msgType.value = res.success;
-        // if (res.success) {
-          stopsForm.value.keyMaterialList = [];
-        // }
+        stopsForm.value.keyMaterialList = [];
         stopsForm.value.BarCode = "";
         barCode.value = "";
         getHisData()
         getKeyMaterial();
       });
+    } else {
+      msgTitle.value = `请扫描关键料或关键为空`
+      msgType.value = false
+    }
     // }
     // JudgeKeyMaterial(isKeyForm.value).then((res: any) => {
     //   msgTitle.value = res.msg;
