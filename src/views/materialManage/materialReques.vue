@@ -528,7 +528,7 @@ const getFeedTableData = (order: any) => {
         feedTableData.value = [];
         return;
       }
-      // let data = cloneDeep(feedOrganData(res.content));
+      let data = cloneDeep(feedOrganData(res.content));
       // console.log(data);
 
       feedTableData.value = cloneDeep(res.content);
