@@ -97,17 +97,18 @@
                 <el-table-column prop="MaterialDesc" label="物料描述" :show-overflow-tooltip="true" width="250" flexible>
                 </el-table-column>
 
-                <!-- <el-table-column prop="isMater" label="主料" width="150" flexible>
+                <el-table-column prop="isMater" label="主料" width="150" flexible>
                   <template #default="scope">
                     <span v-if="scope.row.isMater === 1">是</span>
                     <span v-if="scope.row.isMater === 0">否{{ `(${scope.row.originalMaterialName})` }}</span>
                   </template>
-                </el-table-column> -->
+                </el-table-column>
                 <el-table-column prop="SpecName" label="工序编码" align="center" flexible>
                 </el-table-column>
                 <el-table-column prop="SpecDesc" label="工序名称" align="center" flexible>
                 </el-table-column>
-
+                <el-table-column prop="UOMName" align="center" label="单位" flexible>
+                </el-table-column>
                 <!-- <el-table-column prop="isLoadQueue" align="center" label="允许上料" flexible>
                   <template #default="scope">
                     <span v-if="scope.row.isLoadQueue === 1">是</span>
@@ -118,8 +119,7 @@
                 </el-table-column>
                 <el-table-column prop="TotalQtyRequired" align="center" label="需求量" flexible>
                 </el-table-column>
-                <el-table-column prop="UOMName" align="center" label="单位" flexible>
-                </el-table-column>
+              
               </el-table>
             </div>
           </el-tab-pane>
