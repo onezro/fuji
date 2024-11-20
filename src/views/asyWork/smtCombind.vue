@@ -61,8 +61,17 @@
                 <el-table :data="barData" size="small" border :row-class-name="tableRowClassName" :height="'100%'">
                   <el-table-column type="index" align="center" fixed label="序号" :width="'60'"></el-table-column>
                   <el-table-column prop="MaterialName" label="物料编码" width="120" />
-                  <el-table-column prop="LoadQueueQty" label="上料总数" width="80" align="center"/>
-                  <el-table-column prop="QtyRequired" label="剩余数量" width="120">
+                  <el-table-column prop="QtyRequired" label="是否关键料" width="80"  align="center">
+                    <template #default="scope">
+                      <el-tag   effect="plain" :type=" scope.row.IssueControl == 1?'warning':'primary'">{{ scope.row.IssueControl == 1?'是':'否' }}</el-tag>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="LoadQueueQty" label="上料总数" width="80" align="center">
+                    <template #default="scope">
+                      {{scope.row.LoadQueueQty==null?0:scope.row.LoadQueueQty  }}
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="QtyRequired" label="剩余数量" width="80" align="center">
                     <template  #default="scope">
                       <span>{{ scope.row.LoadQueueQty- scope.row.issueqty}}</span>
                     </template>
