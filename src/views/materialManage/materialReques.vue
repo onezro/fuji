@@ -197,8 +197,6 @@
             fit
             :tooltip-effect="'dark'"
             :height="400"
-            row-key="MaterialName"
-            :tree-props="{ children: 'children' }"
             @selection-change="handleSelectionChange"
           >
             <el-table-column
@@ -478,7 +476,6 @@ const findOrderData = () => {
 };
 //选中生产计划号
 const orderChange = (data: any) => {
-  console.log(data);
   
   if (!orderList.value.some(obj => obj.MfgOrderName === data)) {
       ElNotification({
@@ -531,10 +528,10 @@ const getFeedTableData = (order: any) => {
         feedTableData.value = [];
         return;
       }
-      let data = cloneDeep(feedOrganData(res.content));
+      // let data = cloneDeep(feedOrganData(res.content));
       // console.log(data);
 
-      feedTableData.value = data;
+      feedTableData.value = cloneDeep(res.content);
 
       // OrganData(res.content)
     }
@@ -555,7 +552,7 @@ const feedOrganData = (organizations: any) => {
     }
   });
   return Array.from(organizationMap.values()).filter(
-    (org) => org.originalMaterialName == org.MaterialName
+    (org) => org.originalMaterialName !== org.MaterialName
   );
 };
 

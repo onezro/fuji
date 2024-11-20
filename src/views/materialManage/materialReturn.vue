@@ -84,7 +84,12 @@
           @selection-change="handleSelectionChange"
           @rowClick="rowClick"
         >
-        <el-table-column type="index" label="序号" width="50" align="center" />
+          <el-table-column
+            type="index"
+            label="序号"
+            width="50"
+            align="center"
+          />
           <el-table-column
             prop="ApplyNo"
             label="退料单号"
@@ -303,7 +308,12 @@
               :selectable="selectable"
               :min-width="flexColumnWidth('选择', 'CompID')"
             />
-            <el-table-column type="index" label="序号" width="50" align="center" />
+            <el-table-column
+              type="index"
+              label="序号"
+              width="50"
+              align="center"
+            />
             <el-table-column
               prop="CompID"
               label="物料条码"
@@ -450,6 +460,7 @@ const hisHeight = ref(0);
 const userStore = useUserStoreWithOut();
 const loginName = userStore.getUserInfo;
 const selectOrder = ref("");
+const selectType = ref("");
 const headerRef = ref();
 const orderList = ref<any[]>([]);
 const feedTableData = ref<any>([]);
@@ -463,7 +474,7 @@ const choiceId = ref("");
 const returnType = ref("1");
 const returnTypeList = ref<any[]>([]);
 const iReturnTypeList = ref<any[]>([]);
-const table = ref()
+const table = ref();
 const detailedPageObj = ref({
   pageSize: 10000000,
   currentPage: 1,
@@ -620,7 +631,8 @@ const orderChange = (data: any) => {
       form.value.WorkCenterName = item.WorkCenterName;
       form.value.wcDescription = item.wcDescription;
       form.value.ERPOrder = item.ERPOrder;
-      getFeedTableData(data);
+      selectType.value = item.OrderTypeName;
+      getFeedTableData(data, item.OrderTypeName);
     }
   });
   selectOrder.value = data;
@@ -656,9 +668,10 @@ const getHistory = () => {
   });
 };
 //根据生产计划号获取物料信息
-const getFeedTableData = (order: any) => {
+const getFeedTableData = (order: any, type: any) => {
   QueryMaterialReturnApplyDetail({
     MfgOrderName: order,
+    OrderType: type,
   }).then((res: any) => {
     // console.log(OrganData(res.content));
     if (res.success) {
@@ -798,6 +811,9 @@ const handleSelectionChange = (data: any) => {
           EmployeeName: loginName,
           QualityIsGood: returnType.value,
           ERPOrder: form.value.ERPOrder,
+          OrderType: selectType.value,
+          AvailableQty: item.Qty,
+          InitQty: item.Amount,
         };
       } else {
         return {
@@ -840,7 +856,7 @@ const applyFor = () => {
         type: "success",
       });
       // findOrderData();
-      getFeedTableData(selectOrder.value);
+      getFeedTableData(selectOrder.value, selectType.value);
       dialogVisible.value = false;
     }
   });
@@ -898,7 +914,7 @@ const handleInput = (data: any) => {
 //改变
 const typeChange = () => {
   table.value.clearSelection();
-}
+};
 
 const handleSizeChange = (val: any) => {
   currentPage.value = 1;

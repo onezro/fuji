@@ -185,7 +185,7 @@
                   :disabled="selectList.length === 0"
                   >取消亮灯</el-button
                 >
-                <el-button @click="materialView">货架物料查看</el-button>
+                <el-button @click="materialView" :disabled="operateForm.shelf_ids === '' || operateForm.shelf_ids === null || operateForm.shelf_ids === undefined">货架物料查看</el-button>
                 <div class="text-[#606266] ml-[2rem] mr-2">扫描接料条码</div>
                 <el-input
                   class="code-input"
