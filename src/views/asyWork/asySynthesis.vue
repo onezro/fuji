@@ -5,7 +5,7 @@
       <div></div>
     </div>
     <div class="w-full flex-1 flex">
-      <div class="setwidth w-[400px]">
+      <div class="setwidth w-[370px]">
         <div class="w-full h-full box">
           <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
             <span class="ml-5">基本信息</span>
@@ -13,14 +13,14 @@
           <div class="p-[10px]">
             <el-form class="inbound" ref="formRef" :model="form" label-width="auto">
               <el-form-item label="生产计划号" class="mb-[5px] flex">
-                <selectTa ref="selectTable" :table="orderTable" :selectWidth="220" :columns="orderColumns"
+                <selectTa ref="selectTable" :table="orderTable" :selectWidth="200" :columns="orderColumns"
                   :max-height="400" :tableWidth="700" :defaultSelectVal="defaultSelectVal" :keywords="{
                     label: 'MfgOrderName',
                     value: 'MfgOrderName',
                   }" @radioChange="(...args: any) => radioChange(args)">
                 </selectTa>
                 <el-tooltip content="刷新" placement="top">
-                  <el-icon class="ml-2" color="#777777" :class="isLoding" size="24" @click="getOrderData">
+                  <el-icon class="ml-2" color="#006487" :class="isLoding" size="24" @click="getOrderData">
                     <RefreshRight />
                   </el-icon>
                 </el-tooltip>
@@ -33,7 +33,7 @@
           </div>
         </div>
       </div>
-      <div class="w-[calc(100%-400px)]">
+      <div class="w-[calc(100%-370px)]">
         <!-- <div class="w-full"> -->
         <div class="w-full h-full flex flex-col">
           <div>
@@ -64,14 +64,27 @@
               <div>
                 <el-table :data="barData" size="small" border :row-class-name="tableRowClassName" :height="'100%'">
                   <el-table-column type="index" align="center" fixed label="序号" :width="'60'"></el-table-column>
-                  <el-table-column prop="MaterialName" label="产品编码" width="120" />
-                  <el-table-column prop="QtyRequired" label="需求量" width="120" />
+                  <el-table-column prop="MaterialName" label="物料编码" width="120" />
+                  <el-table-column prop="QtyRequired" label="是否关键料" width="80" align="center">
+                    <template #default="scope">
+                      <el-tag effect="plain" :type="scope.row.IssueControl == 1 ? 'warning' : 'primary'">{{
+                        scope.row.IssueControl == 1?'是':'否' }}</el-tag>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="LoadQueueQty" label="上料总数" width="80" align="center">
+                    <template #default="scope">
+                      {{ scope.row.LoadQueueQty == null ? 0 : scope.row.LoadQueueQty }}
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="QtyRequired" label="剩余数量" width="80" align="center">
+                    <template #default="scope">
+                      <span>{{ scope.row.LoadQueueQty - scope.row.issueqty }}</span>
+                    </template>
+                  </el-table-column>
                   <el-table-column prop="MaterialBarCode" label="物料编码" width="150">
                     <template #default="scope">
-                      <el-input v-model="scope.row.MaterialBarCode" size="small" :ref="createInputRef(scope.$index)"
-                        @keyup.enter.native="
-                          getChange1(scope.$index, scope.row)
-                          ">
+                      <el-input v-if="scope.row.IssueControl == 1" v-model="scope.row.MaterialBarCode" size="small"
+                        :ref="createInputRef(scope.$index)" @keyup.enter.native="getChange1(scope.$index, scope.row)">
                       </el-input>
                     </template>
                   </el-table-column>
@@ -86,8 +99,8 @@
               <span class="ml-5">历史过站记录</span>
               <div class="mr-5">
                 <el-checkbox-group v-model="checkedHis" class="laser-table-filter">
-                  <el-checkbox v-for="c in checkedHisList" :label="`${c.label}(${changeDataLength(c.value)})`" :value="c.value"
-                    @change="changeHis(c.value)">
+                  <el-checkbox v-for="c in checkedHisList" :label="`${c.label}(${changeDataLength(c.value)})`"
+                    :value="c.value" @change="changeHis(c.value)">
                   </el-checkbox>
                 </el-checkbox-group>
               </div>
@@ -149,6 +162,7 @@ interface KeyMaterial {
   MaterialName: string;
   MfgOrderName: string;
   QtyRequired: number;
+  IssueControl: number
 }
 
 interface ToolList {
@@ -184,7 +198,7 @@ const form = ref<InstanceType<typeof Formspan>>({
   PlannedCompletionDate: "",
   AllNum: "",
   TodayNum: "",
-  ERPOrder:"",
+  ERPOrder: "",
 });
 const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
   // {
@@ -373,12 +387,12 @@ const changeData = computed(() => {
     return tableData1.value;
   }
 });
-const changeDataLength =(val: any) => {
+const changeDataLength = (val: any) => {
   if (val == "today") {
-    let dataLength=geTodayData()
+    let dataLength = geTodayData()
     return dataLength.length
   } else {
-     return tableData1.value.length
+    return tableData1.value.length
   }
 }
 const geTodayData = () => {
@@ -403,20 +417,26 @@ const getChange = () => {
   } else {
     msgTitle.value = "";
     msgType.value = true;
-    isKeyForm.value.BarCode = barCodeData;
-    // if (stopsForm.value.keyMaterialList.length === 3) {
-    stopsForm.value.BarCode = barCodeData;
-    AssemblySynthesisMoveStd(stopsForm.value).then((res: any) => {
-      msgTitle.value = res.msg;
-      msgType.value = res.success;
-      if (res.success) {
-        stopsForm.value.keyMaterialList = [];
-      }
-      stopsForm.value.BarCode = "";
+    // isKeyForm.value.BarCode = barCodeData;
+    
+    if (stopsForm.value.keyMaterialList.length !== 0 || barData.value.length !== 0) {
+      stopsForm.value.BarCode = barCodeData;
+      AssemblySynthesisMoveStd(stopsForm.value).then((res: any) => {
+        msgTitle.value = res.msg;
+        msgType.value = res.success;
+        if (res.success) {
+          stopsForm.value.keyMaterialList = [];
+        }
+        stopsForm.value.BarCode = "";
+        barCode.value = "";
+        getKeyMaterial();
+        getHisData();
+      });
+    } else {
       barCode.value = "";
-      getKeyMaterial();
-      getHisData();
-    });
+      msgTitle.value = `请扫描关键料或关键为空`
+      msgType.value = false
+    }
     // }
     // JudgeAssemblyKeyMaterial(isKeyForm.value).then((res: any) => {
     //   msgTitle.value = res.msg;
@@ -447,29 +467,37 @@ const createInputRef = (val: any) => {
   };
 };
 const getChange1 = (val: any, data: any) => {
-  let data1 = {
-    BarCode: data.MaterialBarCode,
-    OrderName: data.MfgOrderName,
-    ProductName: data.MaterialName,
-  };
-  JudgeAssemblyKeyMaterial(data1).then((res: any) => {
-    msgTitle.value = res.msg;
-    msgType.value = res.success;
-    if (res.success) {
-      if (val + 1 < inputRefs.value.length) {
-        inputRefs.value[val + 1].focus();
-      } else {
-        inputRef.value.focus();
-      }
-      stopsForm.value.keyMaterialList.push({
-        ...data,
-        VirtualCode:res.content==null?"":res.content
-      });
+  if (data.LoadQueueQty - data.issueqty == 0) {
+    msgTitle.value = `关键料剩余为0无法进行绑定`
+    msgType.value = false;
+    inputRefs.value[val].clear();
+    return
+  } else {
+    let data1 = {
+      BarCode: data.MaterialBarCode,
+      OrderName: data.MfgOrderName,
+      ProductName: data.MaterialName,
+      workstationName: opui.station,
+    };
+    JudgeAssemblyKeyMaterial(data1).then((res: any) => {
+      msgTitle.value = res.msg;
+      msgType.value = res.success;
+      if (res.success) {
+        if (val + 1 < inputRefs.value.length) {
+          inputRefs.value[val + 1].focus();
+        } else {
+          inputRef.value.focus();
+        }
+        stopsForm.value.keyMaterialList.push({
+          ...data,
+          VirtualCode: res.content == null ? "" : res.content
+        });
 
-    } else {
-      inputRefs.value[val].clear();
-    }
-  });
+      } else {
+        inputRefs.value[val].clear();
+      }
+    });
+  }
 };
 
 const radioChange = (args: any) => {
@@ -512,22 +540,24 @@ const radioChange = (args: any) => {
 };
 const getKeyMaterial = () => {
   QueryAssemblyKeyMaterial(keyForm.value).then((res: any) => {
-    let data: KeyMaterial[] = [];
-    res.content.forEach((c: any) => {
-      if (c.QtyRequired == 1) {
-        data.push(c);
-      } else {
-        for (let i = 0; i < c.QtyRequired; i++) {
-          data.push({
-            MfgOrderName: c.MfgOrderName,
-            QtyRequired: 1,
-            MaterialName: c.MaterialName,
-            MaterialBarCode: "",
-          });
-        }
-      }
-    });
-    barData.value = data;
+    // let data: KeyMaterial[]=[]
+    // res.content.forEach((c:any)=>{
+    //   if(c.QtyRequired==1){
+    //     data.push(c)
+    //   }else{
+    //     for (let i = 0; i < c.QtyRequired; i++) {  
+    //       data.push({
+    //         MfgOrderName: c.MfgOrderName,
+    //         QtyRequired: 1,
+    //         MaterialName: c.MaterialName,
+    //         MaterialBarCode: ""
+    //       });  
+    // }  
+    //   }
+    // })
+    // barData.value = data;
+    barData.value = res.content
+    barData.value.sort((a, b) => a.IssueControl - b.IssueControl);
     nextTick(() => {
       if (inputRefs.value.length > 0) {
         inputRefs.value[0].focus();
@@ -588,7 +618,7 @@ const getScreenHeight = () => {
 }
 
 .setwidth {
-  flex: 0 0 400px;
+  flex: 0 0 370px;
 }
 
 .box {

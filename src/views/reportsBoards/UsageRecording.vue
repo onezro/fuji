@@ -56,10 +56,9 @@
         >
           <el-table-column type="index" width="50" />
           <el-table-column
-            prop="PlanNo"
-            align="center"
+            prop="mfgOrderName"
             label="计划号"
-            :min-width="flexColumnWidth('计划号', 'PlanNo')"
+            :min-width="flexColumnWidth('计划号', 'mfgOrderName')"
           >
           </el-table-column>
           <el-table-column
@@ -71,7 +70,7 @@
           </el-table-column>
           <el-table-column
             prop="Description"
-            align="center"
+        
             label="物料名称"
             :min-width="flexColumnWidth('物料名称', 'Description')"
           >
@@ -295,8 +294,8 @@ const getTableData = () => {
 };
 
 const rowClick = (val: any) => {
-  if (choiceID1.value !== val.DataGuid) {
-    GetBurnProgDataSiteInfo(val.DataGuid).then((res: any) => {
+  if (choiceID1.value !== val.HeadDataGuid) {
+    GetBurnProgDataSiteInfo(val.HeadDataGuid).then((res: any) => {
       tableData1.value = [];
       tableData2.value = [];
       if (!res || res.content === null) {
