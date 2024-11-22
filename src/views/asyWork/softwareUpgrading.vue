@@ -93,8 +93,7 @@
               <el-button
                 type="warning"
                 :disabled="
-                  SoftwareStatus ||
-                  changeList.length !== tableData1.length
+                  SoftwareStatus || changeList.length !== tableData1.length
                 "
                 @click="ManualSubmit"
                 >人工确认提交</el-button
@@ -151,12 +150,13 @@
             <div class="h-[160px] flex justify-around items-center">
               <div
                 class="w-[120px] h-[120px] rounded-full"
-                :class="msgType ? 'bg-[#00B400]' : 'bg-[red]'"
+                :style="{ backgroundColor: typeColor }"
               ></div>
             </div>
             <div
               :style="{ height: `${boxHeight}px` }"
               class="m-2 border border-solid border-[#cbcbcb]"
+              :class="msgType ? 'text-[#00B400]' : 'text-[red]'"
             >
               {{ msgTitle }}
             </div>
@@ -178,11 +178,11 @@ import { useUserStoreWithOut } from "@/stores/modules/user";
 import { checkStringType } from "@/utils/barcodeFormat";
 import type { Formspan, FormHeader, OrderData } from "@/typing";
 import { ElMessage, ElNotification, ElMessageBox } from "element-plus";
-import { QueryMoveHistory } from "@/api/dipApi";
 import {
   QueryOrderSoftwareInfo,
   AutoComparisonInfoMovestd,
   ManualComparisonInfoMovestd,
+  QueryMoveHistory,
 } from "@/api/asyApi";
 import {
   ref,
@@ -223,6 +223,7 @@ const boxHeight = ref(0);
 const changeList = ref([]);
 const btnType = ref(false);
 const SoftwareStatus = ref(true);
+const typeColor = ref("grey");
 const stopsForm = ref<StopsForm>({
   containerName: "",
   workstationName: opui.station || "",
@@ -238,6 +239,7 @@ const form = ref<InstanceType<typeof Formspan>>({
   ProductDesc: "",
   Qty: "",
   TotalNum: "",
+  TodayNum: "",
 });
 const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
   {
@@ -278,6 +280,13 @@ const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
   {
     label: "过站数量",
     value: "TotalNum",
+    disabled: true,
+    type: "input",
+    width: "",
+  },
+  {
+    label: "当日过序",
+    value: "TodayNum",
     disabled: true,
     type: "input",
     width: "",
@@ -381,19 +390,15 @@ const reset = () => {
   // msgTitle.value = "";
   barCode.value = "";
   SoftwareStatus.value = true;
+  msgTitle.value = "";
+  msgType.value = true;
+  typeColor.value = "grey";
 };
 
 //选中
 const handleSelectionChange = (data: any) => {
   let content = cloneDeep(data);
   changeList.value = content;
-};
-
-//获取过站历史记录
-const getHisData = () => {
-  QueryMoveHistory(hisForm.value).then((res: any) => {
-    tableData1.value = res.content;
-  });
 };
 
 //扫描条码
@@ -405,6 +410,7 @@ const scan = () => {
     }).then((res: any) => {
       msgType.value = res.success;
       msgTitle.value = res.msg;
+      typeColor.value = "grey";
       if (res && res.success) {
         currentCode.value = barCode.value;
         SoftwareStatus.value = res.content.SoftwareStatus;
@@ -414,6 +420,7 @@ const scan = () => {
         form.value.ProductDesc = res.content.ProductDesc;
         form.value.Qty = res.content.Qty;
         form.value.TotalNum = res.content.TotalNum;
+        form.value.TodayNum = res.content.TodayNum;
         tableData1.value = res.content.SoftwareList;
       }
       barCode.value = "";
@@ -428,7 +435,35 @@ const scan = () => {
     }).then((res: any) => {
       msgType.value = res.success;
       msgTitle.value = res.msg;
-      reset();
+      if (res.success) {
+        typeColor.value = "#00B400";
+        QueryMoveHistory({
+          containerName: form.value.PlanNo,
+          workstationName: opui.station,
+        }).then((res: any) => {
+          if (res && res.success) {
+            currentCode.value = "";
+            SoftwareStatus.value = true;
+            const today = new Date();
+            const todayString = today.toISOString().split("T")[0];
+            function getDateFromDateTimeString(dateTimeString: any) {
+              return dateTimeString.split(" ")[0];
+            }
+            const todayDataArray = res.content.value.filter((item: any) => {
+              return getDateFromDateTimeString(item.CreatedOn) === todayString;
+            });
+            form.value.TodayNum = todayDataArray.length;
+            form.value.TotalNum = res.content.length;
+            tableData1.value = [];
+          } else {
+            msgType.value = res.success;
+            msgTitle.value = res.msg;
+          }
+          barCode.value = "";
+        });
+      } else {
+        typeColor.value = "red";
+      }
     });
   }
 };
@@ -441,7 +476,35 @@ const ManualSubmit = () => {
   }).then((res: any) => {
     msgType.value = res.success;
     msgTitle.value = res.msg;
-    reset();
+    if (res.success) {
+      typeColor.value = "#00B400";
+      QueryOrderSoftwareInfo({
+        containerName: form.value.PlanNo,
+        workstationName: opui.station,
+      }).then((res: any) => {
+        if (res && res.success) {
+          currentCode.value = "";
+          SoftwareStatus.value = true;
+          const today = new Date();
+          const todayString = today.toISOString().split("T")[0];
+          function getDateFromDateTimeString(dateTimeString: any) {
+            return dateTimeString.split(" ")[0];
+          }
+          const todayDataArray = res.content.value.filter((item: any) => {
+            return getDateFromDateTimeString(item.CreatedOn) === todayString;
+          });
+          form.value.TodayNum = todayDataArray.length;
+          form.value.TotalNum = res.content.length;
+          tableData1.value = [];
+        } else {
+          msgType.value = res.success;
+          msgTitle.value = res.msg;
+        }
+        barCode.value = "";
+      });
+    } else {
+      typeColor.value = "red";
+    }
   });
 };
 
