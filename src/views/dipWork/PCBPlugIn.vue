@@ -107,10 +107,12 @@
                   <el-table-column label="序号" width="50" type="index" align="center" />
                   <el-table-column prop="MaterialName" label="物料编码" width="120" />
                   <el-table-column prop="MaterialDesc" label="物料描述" width="250" :show-overflow-tooltip="true" />
-                  <el-table-column prop="LoadQueueQty" label="上料总数" width="80" align="center"/>
+                  <el-table-column prop="LoadQueueQty" label="上料总数" width="80" align="center" />
                   <el-table-column label="剩余数量" width="80" align="center">
                     <template #default="scope">
-                      <span>{{ scope.row.LoadQueueQty - scope.row.issueQty }}</span>
+                      <span>{{
+                        scope.row.LoadQueueQty - scope.row.issueQty
+                      }}</span>
                     </template>
                   </el-table-column>
                 </el-table>
@@ -129,7 +131,7 @@
                             value: 'MfgOrderName',
                           }" @radioChange="(...args: any) => radioChange(args)">
                         </selectTa>
-                        <el-tooltip content="刷新" placement="top"> 
+                        <el-tooltip content="刷新" placement="top">
                           <el-icon class="ml-2" color="#006487" :class="isLoding" size="24" @click="getOrderData">
                             <RefreshRight />
                           </el-icon>
@@ -139,13 +141,17 @@
                   </el-col>
                   <el-col :span="6">
                     <el-form-item class="mb-[5px]" label="产品机型">
-                      <span class="text-base font-bold">{{ form.BD_ProductModel }}</span>
+                      <span class="text-base font-bold">{{
+                        form.BD_ProductModel
+                      }}</span>
                       <!-- <el-input v-model="form.BD_ProductModel" style="width: 160px" disabled /> -->
                     </el-form-item>
                   </el-col>
                   <el-col :span="10">
                     <el-form-item class="mb-[5px]" label="工单号">
-                      <span class="text-base font-bold">{{ form.ERPOrder }}</span>
+                      <span class="text-base font-bold">{{
+                        form.ERPOrder
+                      }}</span>
                       <!-- <el-input v-model="form.ERPOrder" style="width: 160px" disabled /> -->
                     </el-form-item>
                   </el-col>
@@ -159,13 +165,17 @@
                   </el-col>
                   <el-col :span="6">
                     <el-form-item class="mb-[5px]" label="产品编码">
-                      <span class="text-base font-bold">{{ form.ProductName }}</span>
+                      <span class="text-base font-bold">{{
+                        form.ProductName
+                      }}</span>
                       <!-- <el-input v-model="form.ProductName" style="width: 160px" disabled /> -->
                     </el-form-item>
                   </el-col>
                   <el-col :span="10">
                     <el-form-item class="mb-[5px]" label="产品描述">
-                      <span class="text-base font-bold">{{ form.ProductDesc }}</span>
+                      <span class="text-base font-bold">{{
+                        form.ProductDesc
+                      }}</span>
                       <!-- <el-input v-model="form.ProductDesc" style="width: 340px" disabled /> -->
                     </el-form-item>
                   </el-col>
@@ -175,7 +185,6 @@
                         </el-form-item> -->
               </el-form>
             </div>
-
           </div>
           <div class="flex flex-col flex-1 tabs-css">
             <div class="h-[35px] flex items-center justify-between text-lg text-[#fff] bg-[#006487]">
@@ -287,7 +296,7 @@ const stopsForm = ref<StopsForm>({
 const tabsValue = ref("history");
 const editVisible = ref(false);
 const badVisible = ref(false);
-const form = reactive<InstanceType<typeof Formspan>>({
+const form = ref<InstanceType<typeof Formspan>>({
   MfgOrderName: "",
   ProductName: "",
   ProductDesc: "",
@@ -755,22 +764,21 @@ onBeforeUnmount(() => {
 
 const getOrderData = () => {
   isLoding.value = "is-loading";
+  defaultSelectVal.value = []
   OrderQuery({
     lineName: opui.line,
     OrderTypeName: "DIP",
     WorkStationName: opui.station,
   }).then((res: any) => {
     let data = res.content;
-
     let timer = setTimeout(() => {
       isLoding.value = "";
       clearTimeout(timer);
     }, 2000);
     if (data !== null && data.length !== 0) {
-      orderTable.value.data[0] = data[0];
-      if (data.length == 1) {
-        let a = data[0].MfgOrderName;
-        defaultSelectVal.value[0] = a;
+      orderTable.value.data = data
+      if (data.length >= 1) {
+        defaultSelectVal.value[0] = data[0].MfgOrderName;
       }
     }
   });
@@ -871,39 +879,38 @@ const formText = (data: string) => {
 };
 const radioChange = (args: any) => {
   if (args[1] == null) {
-    form.MfgOrderName = "";
-    form.ProductName = "";
-    form.ProductDesc = "";
-    form.PlannedStartDate = "";
-    form.BD_ProductModel = "";
-    form.BD_SoftVersion = "";
-    form.ERPOrder = "";
-    form.PlannedCompletionDate = "";
-    form.Qty = "";
+    form.value.MfgOrderName = "";
+    form.value.ProductName = "";
+    form.value.ProductDesc = "";
+    form.value.PlannedStartDate = "";
+    form.value.BD_ProductModel = "";
+    form.value.BD_SoftVersion = "";
+    form.value.ERPOrder = "";
+    form.value.PlannedCompletionDate = "";
+    form.value.Qty = "";
     hisForm.value.MfgOrderName = "";
     getFeedForm.value.MfgOrder = "";
     getToolForm.value.OrderNumber = "";
     tableData1.value = [];
     toolList.value = [];
+    detailsData.value = []
   } else {
     // orderTable.value.data.forEach((v: any) => {
     //   if (v.MfgOrderName == args[1]) {
-    stopsForm.value.orderName = args[0].MfgOrderName
-    form.MfgOrderName = args[0].MfgOrderName;
-    form.ProductName = args[0].ProductName;
-    form.ProductDesc = args[0].ProductDesc;
-    form.BD_ProductModel = args[0].BD_ProductModel;
-    form.BD_SoftVersion = args[0].BD_SoftVersion;
-    form.PlannedStartDate = args[0].PlannedStartDate;
-    form.PlannedCompletionDate = args[0].PlannedCompletionDate;
-    form.ERPOrder = args[0].ERPOrder;
-    form.Qty = args[0].Qty;
-    form.AllNum = args[0].AllNum;
-    form.TodayNum = args[0].TodayNum;
-    getFeedForm.value.MfgOrder = args[0].MfgOrderName;
-    if (getToolForm.value.OrderNumber == args[0].MfgOrderName) {
-      return;
-    } else {
+    if (args[1] !== form.value.MfgOrderName && form.value.MfgOrderName == "") {
+      stopsForm.value.orderName = args[0].MfgOrderName
+      form.value.MfgOrderName = args[0].MfgOrderName;
+      form.value.ProductName = args[0].ProductName;
+      form.value.ProductDesc = args[0].ProductDesc;
+      form.value.BD_ProductModel = args[0].BD_ProductModel;
+      form.value.BD_SoftVersion = args[0].BD_SoftVersion;
+      form.value.PlannedStartDate = args[0].PlannedStartDate;
+      form.value.PlannedCompletionDate = args[0].PlannedCompletionDate;
+      form.value.ERPOrder = args[0].ERPOrder;
+      form.value.Qty = args[0].Qty;
+      form.value.AllNum = args[0].AllNum;
+      form.value.TodayNum = args[0].TodayNum;
+      getFeedForm.value.MfgOrder = args[0].MfgOrderName;
       hisForm.value.MfgOrderName = args[0].MfgOrderName;
       getToolForm.value.OrderNumber = args[0].MfgOrderName;
       getHisData();
@@ -911,6 +918,28 @@ const radioChange = (args: any) => {
       getMaterialRequired()
     }
   }
+  // stopsForm.value.orderName = args[0].MfgOrderName
+  // form.MfgOrderName = args[0].MfgOrderName;
+  // form.ProductName = args[0].ProductName;
+  // form.ProductDesc = args[0].ProductDesc;
+  // form.BD_ProductModel = args[0].BD_ProductModel;
+  // form.BD_SoftVersion = args[0].BD_SoftVersion;
+  // form.PlannedStartDate = args[0].PlannedStartDate;
+  // form.PlannedCompletionDate = args[0].PlannedCompletionDate;
+  // form.ERPOrder = args[0].ERPOrder;
+  // form.Qty = args[0].Qty;
+  // form.AllNum = args[0].AllNum;
+  // form.TodayNum = args[0].TodayNum;
+  // getFeedForm.value.MfgOrder = args[0].MfgOrderName;
+  // if (getToolForm.value.OrderNumber == args[0].MfgOrderName) {
+  //   return;
+  // } else {
+  //   hisForm.value.MfgOrderName = args[0].MfgOrderName;
+  //   getToolForm.value.OrderNumber = args[0].MfgOrderName;
+  //   getHisData();
+  //   getToolData();
+  //   getMaterialRequired()
+  // }
 };
 
 //打开物料上料
@@ -963,7 +992,7 @@ const tabClick = (pane: any) => {
 };
 //过站
 const getChange = (val: any) => {
-  if (form.MfgOrderName.trim() == "") {
+  if (form.value.MfgOrderName.trim() == "") {
     ElNotification({
       title: "请选择生产计划号",
       type: "error",

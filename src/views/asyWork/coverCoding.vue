@@ -22,7 +22,7 @@
                   }" @radioChange="(...args: any) => radioChange(args)">
                 </selectTa>
                 <el-tooltip content="刷新" placement="top">
-                  <el-icon class="ml-2" color="#777777" :class="isLoding" size="24" @click="getOrderData">
+                  <el-icon class="ml-2" color="#006487" :class="isLoding" size="24" @click="getOrderData">
                     <RefreshRight />
                   </el-icon>
                 </el-tooltip>
@@ -43,22 +43,17 @@
               <span class="ml-5"> 扫描条码</span>
             </div>
             <div class="h-[120px] pt-3 pr-5 pl-5">
-              <el-form class="inbound" ref="formRef" :inline="true" :model="form" 
-                @submit.native.prevent>
+              <el-form class="inbound" ref="formRef" :inline="true" :model="form" @submit.native.prevent>
                 <el-form-item label="扫描条码" class="mb-2">
                   <el-input v-model.trim="barCode" ref="inputRef" :autofocus="inputFocus" style="width: 500px"
                     placeholder="请扫描条码" @keyup.enter.native="getChange" />
                 </el-form-item>
                 <el-form-item class="mb-2" label="自动打印间隔">
-                 <span class="text-lg  font-bold pl-1 pr-1 bg-slate-300">{{ setTime }}S</span>
-              
+                  <span class="text-lg font-bold pl-1 pr-1 bg-slate-300">{{ setTime }}S</span>
                 </el-form-item>
-                <el-form-item class="mb-2">
-                 
-                </el-form-item>
-            
+                <el-form-item class="mb-2"> </el-form-item>
               </el-form>
-            
+
               <div class="text-xl font-bold text-[#00B400]" v-show="msgType === true || msgTitle === ''">
                 {{ msgTitle === "" ? "请扫描条码" : msgTitle }}
               </div>
@@ -66,11 +61,11 @@
                 {{ msgTitle }}
               </div>
               <div>
-                   <el-button :type="isAuto ? 'danger' : 'primary'" :disabled="form.MfgOrderName == ''"
-                    @click="autoPrint">{{ isAuto ? "关闭自动打印" : "自动打印" }}</el-button>
-                  <el-button type="warning" :disabled="form.MfgOrderName == ''" @click="print">手动打印</el-button>
-                  <!-- <el-button type="success" :disabled="form.MfgOrderName == ''" @click="print">补打条码</el-button> -->
-                </div>
+                <el-button :type="isAuto ? 'danger' : 'primary'" :disabled="form.MfgOrderName == ''"
+                  @click="autoPrint">{{ isAuto ? "关闭自动打印" : "自动打印" }}</el-button>
+                <el-button type="warning" :disabled="form.MfgOrderName == ''" @click="print">手动打印</el-button>
+                <!-- <el-button type="success" :disabled="form.MfgOrderName == ''" @click="print">补打条码</el-button> -->
+              </div>
             </div>
           </div>
 
@@ -79,32 +74,32 @@
               <span class="ml-5">历史过站记录</span>
               <div class="mr-5">
                 <el-checkbox-group v-model="checkedHis" class="laser-table-filter">
-                   <el-checkbox v-for="c in checkedHisList" :label="`${c.label}(${changeDataLength(c.value)})`" :value="c.value"
-                    @change="changeHis(c.value)">
+                  <el-checkbox v-for="c in checkedHisList" :label="`${c.label}(${changeDataLength(c.value)})`"
+                    :value="c.value" @change="changeHis(c.value)">
                   </el-checkbox>
                 </el-checkbox-group>
               </div>
             </div>
-            <table-tem :showIndex="true" :tableData="changeData"  :tableHeight="tableHeight" :columnData="columnData1"
+            <table-tem :showIndex="true" :tableData="changeData" :tableHeight="tableHeight" :columnData="columnData1"
               :pageObj="pageObj" @handleSizeChange="handleSizeChange"
               @handleCurrentChange="handleCurrentChange"></table-tem>
           </div>
         </div>
       </div>
     </div>
-    <el-dialog v-model="showSetTime" draggable title="自动打印时间设定" width="300px"  :append-to-body="true"
-    :close-on-click-modal="false" :close-on-press-escape="false" @close="setCancel">
-      <el-form ref="formRef" :model="timeForm" label-width="auto"> 
-          <el-form-item label="间隔时间"  prop="time">
-            <el-input-number v-model="timeForm.setTime" :min="1"  />
-          </el-form-item>
+    <el-dialog v-model="showSetTime" draggable title="自动打印时间设定" width="300px" :append-to-body="true"
+      :close-on-click-modal="false" :close-on-press-escape="false" @close="setCancel">
+      <el-form ref="formRef" :model="timeForm" label-width="auto">
+        <el-form-item label="间隔时间" prop="time">
+          <el-input-number v-model="timeForm.setTime" :min="1" />
+        </el-form-item>
       </el-form>
-        <template #footer>
-            <span class="dialog-footer">
-                <el-button @click="setCancel">关闭</el-button>
-                <el-button type="primary" @click="setPrint"> 确定 </el-button>
-            </span>
-        </template>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="setCancel">关闭</el-button>
+          <el-button type="primary" @click="setPrint"> 确定 </el-button>
+        </span>
+      </template>
     </el-dialog>
   </div>
 </template>
@@ -168,11 +163,11 @@ const form = ref<InstanceType<typeof Formspan>>({
   ProductName: "",
   ProductDesc: "",
   Qty: "",
-  ERPOrder:"",
+  ERPOrder: "",
   PlannedStartDate: "",
   PlannedCompletionDate: "",
-     AllNum:"",
-  TodayNum:""
+  AllNum: "",
+  TodayNum: "",
 });
 const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
   // {
@@ -218,7 +213,7 @@ const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
     type: "textarea",
     width: 300,
   },
-   // {
+  // {
   //   label: "过站总数",
   //   value: "AllNum",
   //   disabled: true,
@@ -336,19 +331,19 @@ const changeHis = (val: any) => {
 };
 const changeData = computed(() => {
   if (checkedHis.value[0] == "today") {
-    return geTodayData()
+    return geTodayData();
   } else {
     return tableData1.value;
   }
 });
-const changeDataLength =(val: any) => {
+const changeDataLength = (val: any) => {
   if (val == "today") {
-    let dataLength=geTodayData()
-    return dataLength.length
+    let dataLength = geTodayData();
+    return dataLength.length;
   } else {
-     return tableData1.value.length
+    return tableData1.value.length;
   }
-}
+};
 const geTodayData = () => {
   const today = new Date();
   const todayString = today.toISOString().split("T")[0];
@@ -358,7 +353,7 @@ const geTodayData = () => {
   const todayDataArray = tableData1.value.filter((item: any) => {
     return getDateFromDateTimeString(item.TxnDate) === todayString;
   });
-  return todayDataArray
+  return todayDataArray;
 };
 
 //过站
@@ -375,7 +370,7 @@ const getChange = () => {
     // stopsForm.value.result = "OK";
     //   hisForm.value.MfgOrderName = res.content[0].MfgOrderName;
     getFocus();
-      getHisData();
+    getHisData();
   });
   barCode.value = "";
 };
@@ -391,73 +386,71 @@ const radioChange = (args: any) => {
     form.value.PlannedCompletionDate = "";
     form.value.Qty = "";
     form.value.ERPOrder = "";
+    tableData1.value = []
   } else {
+    if (args[1] !== form.value.MfgOrderName && form.value.MfgOrderName == "") {
+      form.value.MfgOrderName = args[0].MfgOrderName;
+      form.value.ProductName = args[0].ProductName;
+      form.value.ProductDesc = args[0].ProductDesc;
+      form.value.BD_ProductModel = args[0].BD_ProductModel;
+      form.value.BD_SoftVersion = args[0].BD_SoftVersion;
+      form.value.PlannedStartDate = args[0].PlannedStartDate;
+      form.value.PlannedCompletionDate = args[0].PlannedCompletionDate;
+      form.value.Qty = args[0].Qty;
+      form.value.AllNum = args[0].AllNum;
+      form.value.TodayNum = args[0].TodayNum;
+      form.value.ERPOrder = args[0].ERPOrder;
+      hisForm.value.MfgOrderName = args[0].MfgOrderName;
+      getHisData();
+    } else {
+    }
     // orderTable.value.data.forEach((v: any) => {
     //   if (v.MfgOrderName == args[1]) {
-    form.value.MfgOrderName = args[0].MfgOrderName;
-    form.value.ProductName = args[0].ProductName;
-    form.value.ProductDesc = args[0].ProductDesc;
-    form.value.BD_ProductModel = args[0].BD_ProductModel;
-    form.value.BD_SoftVersion = args[0].BD_SoftVersion;
-    form.value.PlannedStartDate = args[0].PlannedStartDate;
-    form.value.PlannedCompletionDate = args[0].PlannedCompletionDate;
-    form.value.Qty = args[0].Qty;
-    form.value.AllNum = args[0].AllNum;
-    form.value.TodayNum = args[0].TodayNum;
-    form.value.ERPOrder = args[0].ERPOrder;
-    hisForm.value.MfgOrderName = args[0].MfgOrderName;
-    // console.log(args[0].MfgOrderName);
-    // getFeedForm.value.MfgOrder = args[0].MfgOrderName;
-
-    // if (getToolForm.value.OrderNumber == args[0].MfgOrderName) {
-    //   return;
-    // } else {
-    //   getToolForm.value.OrderNumber = args[0].MfgOrderName;
-      getHisData();
-    //   getToolData();
-    // }
   }
 };
 const getOrderData = () => {
   isAuto.value = false;
   isLoding.value = "is-loading";
-  OrderQuery({ lineName: opui.line, OrderTypeName: "Assembly",WorkStationName:opui.station }).then((res: any) => {
+  defaultSelectVal.value = []
+  OrderQuery({
+    lineName: opui.line,
+    OrderTypeName: "Assembly",
+    WorkStationName: opui.station,
+  }).then((res: any) => {
     let data = res.content;
     let timer = setTimeout(() => {
       isLoding.value = "";
       clearTimeout(timer);
     }, 2000);
-    if (data.length !== 0) {
-      orderTable.value.data[0] = data[0];
-    }
-    if (data.length == 1) {
-      // console.log(2111);
-      let a = data[0].MfgOrderName;
-      defaultSelectVal.value[0] = a;
+    if (data !== null && data.length !== 0) {
+      orderTable.value.data = data;
+      if (data.length >= 1) {
+        defaultSelectVal.value[0] = data[0].MfgOrderName;
+      }
     }
   });
 };
 
 const timer = ref();
 const isAuto = ref(false);
-const setTime = ref<any>(localStorage.getItem("SETTIME")||5)
-const timeForm=ref({
-  setTime:0
-})
-const showSetTime=ref(false)
-const openPrint=()=>{
-  showSetTime.value=true
-  timeForm.value.setTime=setTime.value
-}
-const setPrint=()=>{
-  let data=timeForm.value.setTime
-  setTime.value=data
-  showSetTime.value=false
-  localStorage.setItem('SETTIME',JSON.stringify(data))
-}
-const setCancel=()=>{
-  showSetTime.value=false
-}
+const setTime = ref<any>(localStorage.getItem("SETTIME") || 5);
+const timeForm = ref({
+  setTime: 0,
+});
+const showSetTime = ref(false);
+const openPrint = () => {
+  showSetTime.value = true;
+  timeForm.value.setTime = setTime.value;
+};
+const setPrint = () => {
+  let data = timeForm.value.setTime;
+  setTime.value = data;
+  showSetTime.value = false;
+  localStorage.setItem("SETTIME", JSON.stringify(data));
+};
+const setCancel = () => {
+  showSetTime.value = false;
+};
 watch(
   () => isAuto.value,
   (newVal) => {
@@ -467,7 +460,7 @@ watch(
       clearInterval(timer.value);
       timer.value = setInterval(() => {
         printData();
-      }, setTime.value*1000);
+      }, setTime.value * 1000);
       // ElNotification({
       //   title: "提示信息",
       //   message: "开始自动打印",
@@ -480,7 +473,6 @@ watch(
       //   type: "warning",
       // });
       clearInterval(timer.value);
-
     }
   },
   {
@@ -489,16 +481,15 @@ watch(
 );
 const autoPrint = () => {
   isAuto.value = !isAuto.value;
-
 };
 const print = () => {
   isAuto.value = false;
-    printData();
+  printData();
 };
 
 const printData = () => {
   CoverInstallPrint(form.value.MfgOrderName).then((res: any) => {
-    msgType.value = res.success
+    msgType.value = res.success;
     if (res.success) {
       msgTitle.value = "打印成功";
       //   ElNotification({
@@ -508,11 +499,11 @@ const printData = () => {
       //   });
       // clearInterval(timer.value);
     } else {
-      isAuto.value=false
+      isAuto.value = false;
       clearInterval(timer.value);
-     
+
       msgTitle.value = res.msg;
-     
+
       // ElNotification({
       //   title: "提示信息",
       //   message: res.msg,

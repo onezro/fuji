@@ -20,7 +20,7 @@
                   }" @radioChange="(...args: any) => radioChange(args)">
                 </selectTa>
                 <el-tooltip content="刷新" placement="top">
-                  <el-icon class="ml-2" color="#777777" :class="isLoding" size="24" @click="getOrderData">
+                  <el-icon class="ml-2" color="#006487" :class="isLoding" size="24" @click="getOrderData">
                     <RefreshRight />
                   </el-icon>
                 </el-tooltip>
@@ -62,24 +62,26 @@
                   </div>
                 </div>
                 <div class="pt-2">
-                  <el-button type="primary" :disabled="form.MfgOrderName == '' || tableData1.length == 0
+                  <el-button type="primary" :disabled="form.MfgOrderName == '' || rowData.OrderNumber == ''
                     " @click="reWash">重新清洗</el-button>
                 </div>
               </div>
               <div>
-                <el-table :data="detailsData" stripe border fit size="small" :height="130" :style="{ width: '100%' }" 
+                <el-table :data="detailsData" stripe border fit size="small" :height="130" :style="{ width: '100%' }"
                   :tooltip-effect="'dark'">
                   <el-table-column label="序号" width="50" type="index" align="center" />
                   <el-table-column prop="MaterialName" label="物料编码" width="120" />
                   <el-table-column prop="MaterialDesc" label="物料描述" width="250" :show-overflow-tooltip="true" />
-                  <el-table-column prop="LoadQueueQty" label="上料总数" width="80" align="center"/>
+                  <el-table-column prop="LoadQueueQty" label="上料总数" width="80" align="center" />
                   <el-table-column label="剩余数量" width="80" align="center">
                     <template #default="scope">
-                      <span>{{ scope.row.LoadQueueQty - scope.row.issueQty }}</span>
+                      <span>{{
+                        scope.row.LoadQueueQty - scope.row.issueQty
+                      }}</span>
                     </template>
                   </el-table-column>
-              </el-table>
-              
+                </el-table>
+
                 <!-- <tableTemp size="small" :showIndex="true" :tableData="detailsData" :tableHeight="130"
                   :columnData="detailsColumn">
                 </tableTemp> -->
@@ -126,14 +128,8 @@ import {
   QueryCleanCodeRecord,
   ReloadCleanCode,
 } from "@/api/asyApi";
-import {
-  // OrderQuery,
-  // PluginStationMoveOut,
-  // FindAllDevice,
-  // UpdateDevice,
-  // QueryMoveHistory,
-  QueryOrderMaterialRequired,
-} from "@/api/smtApi";
+import { QueryOrderMaterialRequired } from "@/api/smtApi";
+import { QuerySpecBystation } from "@/api/dipApi";
 
 import {
   ref,
@@ -253,17 +249,17 @@ const columnData1 = reactive([
   {
     text: true,
     prop: "VirtualContainer",
-    label: "物料条码",
+    label: "虚拟条码",
     width: "",
     align: "1",
   },
-  // {
-  //   text: true,
-  //   prop: "BD_Tools",
-  //   label: "物料编码",
-  //   width: "",
-  //   align: "1",
-  // },
+  {
+    text: true,
+    prop: "Container",
+    label: "物料编码",
+    width: "",
+    align: "1",
+  },
   {
     text: true,
     prop: "CreatedBy",
@@ -367,15 +363,16 @@ const rowData = ref<RowData>({
   Container: "",
   VirtualContainer: "",
   CreatedBy: "",
-  CreatedOn: ""
+  CreatedOn: "",
 });
 const getFeedForm = ref({
   MfgOrder: "",
   workstationName: opui.station,
-  SpecName: "ASY-P001",
+  SpecName: "",
 });
 onBeforeMount(() => {
   getScreenHeight();
+  getSpecName();
 });
 onMounted(() => {
   window.addEventListener("resize", getScreenHeight);
@@ -398,6 +395,11 @@ const formText = (data: string) => {
   let key = data as keyof typeof form;
   return form.value[key];
 };
+const getSpecName = () => {
+  QuerySpecBystation(opui.station).then((res: any) => {
+    getFeedForm.value.SpecName = res.content[0].SpecName;
+  });
+};
 
 //获取过站历史记录
 const getHisData = () => {
@@ -405,7 +407,7 @@ const getHisData = () => {
     tableData1.value = res.content;
   });
 };
-const getMaterialRequired=()=>{
+const getMaterialRequired = () => {
   QueryOrderMaterialRequired(getFeedForm.value).then((res: any) => {
     if (
       res.content.length == 0 ||
@@ -417,7 +419,7 @@ const getMaterialRequired=()=>{
     }
     detailsData.value = res.content;
   });
-}
+};
 
 const changeHis = (val: any) => {
   if (checkedHis.value.length == 0) {
@@ -471,7 +473,7 @@ const getChange = () => {
       // hisForm.value.MfgOrderName = res.content[0].MfgOrderName;
       getFocus();
       getHisData();
-      getMaterialRequired()
+      getMaterialRequired();
     });
   }
 
@@ -486,34 +488,39 @@ const radioChange = (args: any) => {
     form.value.PlannedStartDate = "";
     form.value.BD_ProductModel = "";
     form.value.BD_SoftVersion = "";
-
     form.value.PlannedCompletionDate = "";
     form.value.Qty = "";
     form.value.ERPOrder = "";
+    detailsData.value = []
+    tableData1.value = []
   } else {
-    // orderTable.value.data.forEach((v: any) => {
-    //   if (v.MfgOrderName == args[1]) {
-    form.value.MfgOrderName = args[0].MfgOrderName;
-    form.value.ProductName = args[0].ProductName;
-    form.value.ProductDesc = args[0].ProductDesc;
-    form.value.BD_ProductModel = args[0].BD_ProductModel;
-    form.value.BD_SoftVersion = args[0].BD_SoftVersion;
-    form.value.PlannedStartDate = args[0].PlannedStartDate;
-    form.value.PlannedCompletionDate = args[0].PlannedCompletionDate;
-    form.value.Qty = args[0].Qty;
-    form.value.AllNum = args[0].AllNum;
-    form.value.TodayNum = args[0].TodayNum;
-    form.value.ERPOrder = args[0].ERPOrder;
-    stopsForm.value.OrderName = args[0].MfgOrderName;
-    stopsForm.value.ProductName = args[0].ProductName;
-    hisForm.value.MfgOrderName = args[0].MfgOrderName;
-    getFeedForm.value.MfgOrder = args[0].MfgOrderName;
-    getHisData();
-    getMaterialRequired()
+    
+    if (args[1] !== form.value.MfgOrderName && form.value.MfgOrderName == "") {
+      form.value.MfgOrderName = args[0].MfgOrderName;
+      form.value.ProductName = args[0].ProductName;
+      form.value.ProductDesc = args[0].ProductDesc;
+      form.value.BD_ProductModel = args[0].BD_ProductModel;
+      form.value.BD_SoftVersion = args[0].BD_SoftVersion;
+      form.value.PlannedStartDate = args[0].PlannedStartDate;
+      form.value.PlannedCompletionDate = args[0].PlannedCompletionDate;
+      form.value.Qty = args[0].Qty;
+      form.value.AllNum = args[0].AllNum;
+      form.value.TodayNum = args[0].TodayNum;
+      form.value.ERPOrder = args[0].ERPOrder;
+      stopsForm.value.OrderName = args[0].MfgOrderName;
+      stopsForm.value.ProductName = args[0].ProductName;
+      hisForm.value.MfgOrderName = args[0].MfgOrderName;
+      getFeedForm.value.MfgOrder = args[0].MfgOrderName;
+      getHisData();
+      getMaterialRequired();
+    } else {
+
+    }
   }
 };
 const getOrderData = () => {
   isLoding.value = "is-loading";
+  defaultSelectVal.value=[]
   OrderQuery({ lineName: opui.line, OrderTypeName: "Assembly" }).then(
     (res: any) => {
       let data = res.content;
@@ -522,12 +529,11 @@ const getOrderData = () => {
         clearTimeout(timer);
       }, 2000);
       if (data !== null && data.length !== 0) {
-        orderTable.value.data[0] = data[0];
-        if (data.length == 1) {
-          let a = data[0].MfgOrderName;
-          defaultSelectVal.value[0] = a;
-        }
+      orderTable.value.data = data;
+      if (data.length >= 1) {
+        defaultSelectVal.value[0] = data[0].MfgOrderName;
       }
+    }
     }
   );
 };

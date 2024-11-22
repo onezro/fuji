@@ -225,13 +225,13 @@ const hisColumn = reactive([
         width: "",
         align: "1",
     },
-    {
-        text: true,
-        prop: "BD_Tools",
-        label: "治具编码",
-        width: "",
-        align: "1",
-    },
+    // {
+    //     text: true,
+    //     prop: "BD_Tools",
+    //     label: "治具编码",
+    //     width: "",
+    //     align: "1",
+    // },
     {
         text: true,
         prop: "BD_EmployeeName",

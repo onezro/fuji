@@ -511,8 +511,11 @@ const radioChange = (args: any) => {
     form.value.PlannedCompletionDate = "";
     form.value.Qty = "";
     form.value.ERPOrder = "";
+    barData.value = []
+    tableData1.value = []
   } else {
-    form.value.MfgOrderName = args[0].MfgOrderName;
+    if (args[1] !== form.value.MfgOrderName && form.value.MfgOrderName == "") {
+      form.value.MfgOrderName = args[0].MfgOrderName;
     form.value.ProductName = args[0].ProductName;
     form.value.ProductDesc = args[0].ProductDesc;
     form.value.BD_ProductModel = args[0].BD_ProductModel;
@@ -528,14 +531,13 @@ const radioChange = (args: any) => {
     isKeyForm.value.OrderName = args[0].MfgOrderName;
     keyForm.value.OrderName = args[0].MfgOrderName;
     keyForm.value.ProductName = args[0].ProductName;
-    // nextTick(() => {
-    //   if (inputRefs.value.length > 0) {
-    //     inputRefs.value[0].focus();
-    //   }
-    // });
-    // getFocus();
+
     getKeyMaterial();
     getHisData();
+    } else {
+      
+    }
+   
   }
 };
 const getKeyMaterial = () => {
@@ -576,6 +578,7 @@ const tableRowClassName = (val: any) => {
 };
 const getOrderData = () => {
   isLoding.value = "is-loading";
+  defaultSelectVal.value=[]
   OrderQuery({
     lineName: opui.line,
     OrderTypeName: "Assembly",
@@ -587,10 +590,9 @@ const getOrderData = () => {
       clearTimeout(timer);
     }, 2000);
     if (data !== null && data.length !== 0) {
-      orderTable.value.data[0] = data[0];
-      if (data.length == 1) {
-        let a = data[0].MfgOrderName;
-        defaultSelectVal.value[0] = a;
+      orderTable.value.data = data;
+      if (data.length >= 1) {
+        defaultSelectVal.value[0] = data[0].MfgOrderName;
       }
     }
   });

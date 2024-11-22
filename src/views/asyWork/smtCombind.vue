@@ -61,25 +61,26 @@
                 <el-table :data="barData" size="small" border :row-class-name="tableRowClassName" :height="'100%'">
                   <el-table-column type="index" align="center" fixed label="序号" :width="'60'"></el-table-column>
                   <el-table-column prop="MaterialName" label="物料编码" width="120" />
-                  <el-table-column prop="QtyRequired" label="是否关键料" width="80"  align="center">
+                  <el-table-column prop="QtyRequired" label="是否关键料" width="80" align="center">
                     <template #default="scope">
-                      <el-tag   effect="plain" :type=" scope.row.IssueControl == 1?'warning':'primary'">{{ scope.row.IssueControl == 1?'是':'否' }}</el-tag>
+                      <el-tag effect="plain" :type="scope.row.IssueControl == 1 ? 'warning' : 'primary'">{{
+                        scope.row.IssueControl == 1?'是':'否' }}</el-tag>
                     </template>
                   </el-table-column>
                   <el-table-column prop="LoadQueueQty" label="上料总数" width="80" align="center">
                     <template #default="scope">
-                      {{scope.row.LoadQueueQty==null?0:scope.row.LoadQueueQty  }}
+                      {{ scope.row.LoadQueueQty == null ? 0 : scope.row.LoadQueueQty }}
                     </template>
                   </el-table-column>
                   <el-table-column prop="QtyRequired" label="剩余数量" width="80" align="center">
-                    <template  #default="scope">
-                      <span>{{ scope.row.LoadQueueQty- scope.row.issueqty}}</span>
+                    <template #default="scope">
+                      <span>{{ scope.row.LoadQueueQty - scope.row.issueqty }}</span>
                     </template>
                   </el-table-column>
                   <el-table-column prop="MaterialBarCode" label="物料编码" width="150">
                     <template #default="scope">
-                      <el-input v-if="scope.row.IssueControl==1" v-model="scope.row.MaterialBarCode" size="small" :ref="createInputRef(scope.$index)"
-                        @keyup.enter.native="getChange1(scope.$index,scope.row)">
+                      <el-input v-if="scope.row.IssueControl == 1" v-model="scope.row.MaterialBarCode" size="small"
+                        :ref="createInputRef(scope.$index)" @keyup.enter.native="getChange1(scope.$index, scope.row)">
                       </el-input>
                     </template>
                   </el-table-column>
@@ -94,8 +95,8 @@
               <span class="ml-5">历史过站记录</span>
               <div class="mr-5">
                 <el-checkbox-group v-model="checkedHis" class="laser-table-filter">
-                   <el-checkbox v-for="c in checkedHisList" :label="`${c.label}(${changeDataLength(c.value)})`" :value="c.value"
-                    @change="changeHis(c.value)">
+                  <el-checkbox v-for="c in checkedHisList" :label="`${c.label}(${changeDataLength(c.value)})`"
+                    :value="c.value" @change="changeHis(c.value)">
                   </el-checkbox>
                 </el-checkbox-group>
               </div>
@@ -155,9 +156,9 @@ interface StopsForm {
 interface KeyMaterial {
   MaterialBarCode: string;
   MaterialName: string;
-  MfgOrderName:string;
-  QtyRequired:number;
-  IssueControl:number
+  MfgOrderName: string;
+  QtyRequired: number;
+  IssueControl: number
 }
 
 interface ToolList {
@@ -193,7 +194,7 @@ const form = ref<InstanceType<typeof Formspan>>({
   PlannedCompletionDate: "",
   AllNum: "",
   TodayNum: "",
-  ERPOrder:"",
+  ERPOrder: "",
 });
 const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
   // {
@@ -255,7 +256,7 @@ const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
   // }
 ]);
 const columnData1 = reactive([
-{
+  {
     text: true,
     prop: "ContainerName",
     label: "成品SN条码",
@@ -304,7 +305,7 @@ const orderColumns = ref([
 const defaultSelectVal = ref<string[]>([]);
 const isLoding = ref("");
 const barData = ref<KeyMaterial[]>([
- 
+
 ]);
 const keyForm = ref({
   BarCode: "",
@@ -326,7 +327,7 @@ const isKeyForm = ref({
 });
 const materialRef = ref();
 const inputRefs = ref<any[]>([]);
-  const checkedHis = ref(["today"]);
+const checkedHis = ref(["today"]);
 const checkedHisList = ref([
   {
     value: "today",
@@ -384,12 +385,12 @@ const changeData = computed(() => {
     return tableData1.value;
   }
 });
-const changeDataLength =(val: any) => {
+const changeDataLength = (val: any) => {
   if (val == "today") {
-    let dataLength=geTodayData()
+    let dataLength = geTodayData()
     return dataLength.length
   } else {
-     return tableData1.value.length
+    return tableData1.value.length
   }
 }
 const geTodayData = () => {
@@ -414,8 +415,8 @@ const getChange = () => {
   } else {
     msgTitle.value = "";
     msgType.value = true;
-     // isKeyForm.value.BarCode = barCodeData;
-     if (stopsForm.value.keyMaterialList.length !== 0 || barData.value.length !== 0) {
+    // isKeyForm.value.BarCode = barCodeData;
+    if (stopsForm.value.keyMaterialList.length !== 0 || barData.value.length !== 0) {
       stopsForm.value.BarCode = barCodeData;
       CoverSMTCompBindMoveStd(stopsForm.value).then((res: any) => {
         msgTitle.value = res.msg;
@@ -451,7 +452,7 @@ const getChange = () => {
 
   // barCode.value = "";
   // getFocus();
- 
+
 };
 
 const createInputRef = (val: any) => {
@@ -459,42 +460,42 @@ const createInputRef = (val: any) => {
     if (el) {
       inputRefs.value[val] = el;
       // console.log(val);
-      
+
     }
   };
 };
-const getChange1 = (val: any,data:any) => {
-  if(data.LoadQueueQty-data.issueqty==0){
+const getChange1 = (val: any, data: any) => {
+  if (data.LoadQueueQty - data.issueqty == 0) {
     msgTitle.value = `关键料剩余为0无法进行绑定`
     msgType.value = false;
     inputRefs.value[val].clear();
     return
-  }else{
+  } else {
     let data1 = {
-    BarCode: data.MaterialBarCode,
-    OrderName: data.MfgOrderName,
-    ProductName: data.MaterialName,
-    workstationName: opui.station,
-  };
-  JudgeKeyMaterial(data1).then((res: any) => {
-    msgTitle.value = res.msg;
-    msgType.value = res.success;
-    if (res.success) {
-      if (val + 1 < inputRefs.value.length) {
-        inputRefs.value[val + 1].focus();
+      BarCode: data.MaterialBarCode,
+      OrderName: data.MfgOrderName,
+      ProductName: data.MaterialName,
+      workstationName: opui.station,
+    };
+    JudgeKeyMaterial(data1).then((res: any) => {
+      msgTitle.value = res.msg;
+      msgType.value = res.success;
+      if (res.success) {
+        if (val + 1 < inputRefs.value.length) {
+          inputRefs.value[val + 1].focus();
+        } else {
+          inputRef.value.focus();
+        }
+        stopsForm.value.keyMaterialList.push({
+          ...data,
+          VirtualCode: res.content == null ? "" : res.content
+        });
       } else {
-        inputRef.value.focus();
+        inputRefs.value[val].clear();
       }
-      stopsForm.value.keyMaterialList.push({
-        ...data,
-        VirtualCode:res.content==null?"":res.content
-      });
-    } else {
-      inputRefs.value[val].clear();
-    }
-  });
+    });
   }
-  
+
 };
 
 const radioChange = (args: any) => {
@@ -508,35 +509,36 @@ const radioChange = (args: any) => {
     form.value.PlannedCompletionDate = "";
     form.value.Qty = "";
     form.value.ERPOrder = "";
+    barData.value = []
+    tableData1.value = []
   } else {
-    form.value.MfgOrderName = args[0].MfgOrderName;
-    form.value.ProductName = args[0].ProductName;
-    form.value.ProductDesc = args[0].ProductDesc;
-    form.value.BD_ProductModel = args[0].BD_ProductModel;
-    form.value.BD_SoftVersion = args[0].BD_SoftVersion;
-    form.value.PlannedStartDate = args[0].PlannedStartDate;
-    form.value.PlannedCompletionDate = args[0].PlannedCompletionDate;
-    form.value.Qty = args[0].Qty;
-    form.value.AllNum = args[0].AllNum;
-    form.value.TodayNum = args[0].TodayNum;
-    form.value.ERPOrder = args[0].ERPOrder;
-    stopsForm.value.OrderName = args[0].MfgOrderName;
-    hisForm.value.MfgOrderName = args[0].MfgOrderName;
-    isKeyForm.value.OrderName = args[0].MfgOrderName;
-    keyForm.value.OrderName = args[0].MfgOrderName;
-    keyForm.value.ProductName = args[0].ProductName;
-    // nextTick(() => {
-    //   if (inputRefs.value.length > 0) {
-    //     inputRefs.value[0].focus();
-    //   }
-    // });
-    // getFocus();
-    getKeyMaterial();
-    getHisData();
+    if (args[1] !== form.value.MfgOrderName && form.value.MfgOrderName == "") {
+      form.value.MfgOrderName = args[0].MfgOrderName;
+      form.value.ProductName = args[0].ProductName;
+      form.value.ProductDesc = args[0].ProductDesc;
+      form.value.BD_ProductModel = args[0].BD_ProductModel;
+      form.value.BD_SoftVersion = args[0].BD_SoftVersion;
+      form.value.PlannedStartDate = args[0].PlannedStartDate;
+      form.value.PlannedCompletionDate = args[0].PlannedCompletionDate;
+      form.value.Qty = args[0].Qty;
+      form.value.AllNum = args[0].AllNum;
+      form.value.TodayNum = args[0].TodayNum;
+      form.value.ERPOrder = args[0].ERPOrder;
+      stopsForm.value.OrderName = args[0].MfgOrderName;
+      hisForm.value.MfgOrderName = args[0].MfgOrderName;
+      isKeyForm.value.OrderName = args[0].MfgOrderName;
+      keyForm.value.OrderName = args[0].MfgOrderName;
+      keyForm.value.ProductName = args[0].ProductName;
+      getKeyMaterial();
+      getHisData();
+    } else {
+
+    }
+
   }
 };
 const getKeyMaterial = () => {
-  barData.value=[]
+  barData.value = []
   QueryKeyMaterial(keyForm.value).then((res: any) => {
     // let data: KeyMaterial[]=[]
     // res.content.forEach((c:any)=>{
@@ -554,7 +556,7 @@ const getKeyMaterial = () => {
     //   }
     // })
     // barData.value = data;
-    barData.value =res.content
+    barData.value = res.content
     barData.value.sort((a, b) => a.IssueControl - b.IssueControl);
     nextTick(() => {
       if (inputRefs.value.length > 0) {
@@ -575,21 +577,20 @@ const tableRowClassName = (val: any) => {
 };
 const getOrderData = () => {
   isLoding.value = "is-loading";
-  OrderQuery({ lineName: opui.line, OrderTypeName: "Assembly",WorkStationName:opui.station  }).then(
+  defaultSelectVal.value=[]
+  OrderQuery({ lineName: opui.line, OrderTypeName: "Assembly", WorkStationName: opui.station }).then(
     (res: any) => {
       let data = res.content;
       let timer = setTimeout(() => {
         isLoding.value = "";
         clearTimeout(timer);
       }, 2000);
-      if (data.length !== 0) {
-        orderTable.value.data[0] = data[0];
+      if (data !== null && data.length !== 0) {
+      orderTable.value.data = data;
+      if (data.length >= 1) {
+        defaultSelectVal.value[0] = data[0].MfgOrderName;
       }
-      if (data.length == 1) {
-        // console.log(2111);
-        let a = data[0].MfgOrderName;
-        defaultSelectVal.value[0] = a;
-      }
+    }
     }
   );
 };
