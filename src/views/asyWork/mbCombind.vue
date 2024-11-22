@@ -317,14 +317,6 @@ const form = ref<InstanceType<typeof Formspan>>({
   ERPOrder: "",
 });
 const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
-  // {
-  //     label: "生产计划号",
-  //     value: "MfgOrderName",
-  //     disabled: true,
-  //     type: "input",
-  //     width: "",
-  // },
-
   {
     label: "产品机型",
     value: "BD_ProductModel",
