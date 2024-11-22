@@ -95,23 +95,6 @@
                 </el-form-item>
               </el-col>
             </el-row>
-            <!-- <el-row>
-              <el-col :span="8">
-                <el-form-item class="mb-[5px]" label="计划开始时间">
-                  <el-input v-model="badheadForm.PlannedStartDate" style="width: 160px" disabled />
-                </el-form-item>
-              </el-col>
-              <el-col :span="6">
-                <el-form-item class="mb-[5px]" label="计划完成时间">
-                  <el-input v-model="badheadForm.PlannedCompletionDate" style="width: 160px" disabled />
-                </el-form-item>
-              </el-col>
-              <el-col :span="10">
-                <el-form-item class="mb-[5px]" label="计划数量">
-                  <el-input v-model="badheadForm.Qty" style="width: 160px" disabled />
-                </el-form-item>
-              </el-col>
-            </el-row> -->
           </el-form>
         </div>
         <div>
