@@ -498,9 +498,9 @@ const print = () => {
 
 const printData = () => {
   CoverInstallPrint(form.value.MfgOrderName).then((res: any) => {
+    msgType.value = res.success
     if (res.success) {
       msgTitle.value = "打印成功";
-      msgType.value = res.success
       //   ElNotification({
       //     title: "提示信息",
       //     message: "开始打印",
@@ -508,10 +508,11 @@ const printData = () => {
       //   });
       // clearInterval(timer.value);
     } else {
-      clearInterval(timer.value);
       isAuto.value=false
+      clearInterval(timer.value);
+     
       msgTitle.value = res.msg;
-      msgType.value = res.success
+     
       // ElNotification({
       //   title: "提示信息",
       //   message: res.msg,

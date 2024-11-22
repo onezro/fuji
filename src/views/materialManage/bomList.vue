@@ -655,8 +655,8 @@ const detailedData = reactive([
   },
   {
     text: true,
-    prop: "asyApiSequence",
-    label: "序号",
+    prop: "AssemblySequence",
+    label: "装配序号",
     width: "",
     min: true,
     align: "center",

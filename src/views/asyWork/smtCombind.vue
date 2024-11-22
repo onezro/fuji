@@ -5,7 +5,7 @@
       <div></div>
     </div>
     <div class="w-full flex-1 flex">
-      <div class="setwidth w-[400px]">
+      <div class="setwidth w-[370px]">
         <div class="w-full h-full box">
           <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
             <span class="ml-5">基本信息</span>
@@ -20,7 +20,7 @@
                   }" @radioChange="(...args: any) => radioChange(args)">
                 </selectTa>
                 <el-tooltip content="刷新" placement="top">
-                  <el-icon class="ml-2" color="#777777" :class="isLoding" size="24" @click="getOrderData">
+                  <el-icon class="ml-2" color="#006487" :class="isLoding" size="24" @click="getOrderData">
                     <RefreshRight />
                   </el-icon>
                 </el-tooltip>
@@ -33,7 +33,7 @@
           </div>
         </div>
       </div>
-      <div class="w-[calc(100%-400px)]">
+      <div class="w-[calc(100%-370px)]">
         <!-- <div class="w-full"> -->
         <div class="w-full h-full flex flex-col">
           <div>
@@ -156,7 +156,8 @@ interface KeyMaterial {
   MaterialBarCode: string;
   MaterialName: string;
   MfgOrderName:string;
-  QtyRequired:number
+  QtyRequired:number;
+  IssueControl:number
 }
 
 interface ToolList {
@@ -414,7 +415,7 @@ const getChange = () => {
     msgTitle.value = "";
     msgType.value = true;
      // isKeyForm.value.BarCode = barCodeData;
-     if (stopsForm.value.keyMaterialList.length !== 0 || barData.value.length == 0) {
+     if (stopsForm.value.keyMaterialList.length !== 0 || barData.value.length !== 0) {
       stopsForm.value.BarCode = barCodeData;
       CoverSMTCompBindMoveStd(stopsForm.value).then((res: any) => {
         msgTitle.value = res.msg;
@@ -426,6 +427,7 @@ const getChange = () => {
         getKeyMaterial();
       });
     } else {
+      barCode.value = "";
       msgTitle.value = `请扫描关键料或关键为空`
       msgType.value = false
     }
@@ -456,17 +458,19 @@ const createInputRef = (val: any) => {
   return (el: any) => {
     if (el) {
       inputRefs.value[val] = el;
+      // console.log(val);
+      
     }
   };
 };
 const getChange1 = (val: any,data:any) => {
-  // if (val + 1 < inputRefs.value.length) {
-  //   inputRefs.value[val + 1].focus();
-  // } else {
-  //   inputRef.value.focus()
-  // }
-  // stopsForm.value.keyMaterialList.push(data)
-  let data1 = {
+  if(data.LoadQueueQty-data.issueqty==0){
+    msgTitle.value = `关键料剩余为0无法进行绑定`
+    msgType.value = false;
+    inputRefs.value[val].clear();
+    return
+  }else{
+    let data1 = {
     BarCode: data.MaterialBarCode,
     OrderName: data.MfgOrderName,
     ProductName: data.MaterialName,
@@ -489,6 +493,8 @@ const getChange1 = (val: any,data:any) => {
       inputRefs.value[val].clear();
     }
   });
+  }
+  
 };
 
 const radioChange = (args: any) => {
@@ -549,6 +555,7 @@ const getKeyMaterial = () => {
     // })
     // barData.value = data;
     barData.value =res.content
+    barData.value.sort((a, b) => a.IssueControl - b.IssueControl);
     nextTick(() => {
       if (inputRefs.value.length > 0) {
         inputRefs.value[0].focus();
@@ -627,7 +634,7 @@ const getScreenHeight = () => {
 }
 
 .setwidth {
-  flex: 0 0 400px;
+  flex: 0 0 370px;
 }
 
 .box {

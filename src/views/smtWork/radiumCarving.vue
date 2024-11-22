@@ -231,10 +231,10 @@ const formHeader = reactive<FormHeader[]>([
     lable: "产线",
     value: "MfgLineDesc",
   },
-  {
-    lable: "状态",
-    value: "OrderStatusDesc",
-  },
+  // {
+  //   lable: "状态",
+  //   value: "OrderStatusDesc",
+  // },
   // {
   //   lable: "开始时间",
   //   value: "PlannedStartDate",
@@ -550,7 +550,7 @@ const sureClick = () => {
   form.PlannedCompletionDate = choiceRow.value.PlannedCompletionDate;
   form.Qty = choiceRow.value.Qty;
   form.Side = choiceRow.value.Side;
-  form.ERPOrder = choiceRow.value.Side;
+  form.ERPOrder = choiceRow.value.ERPOrder;
   dialogVisible.value = false;
 };
 
