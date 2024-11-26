@@ -13,10 +13,10 @@
           <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
             <span class="ml-5">工装治具</span>
           </div>
-          <div class="p-3 overflow-auto" :style="{ height: leftBoxH + 'px' }">
+          <div class="p-3 overflow-y-auto" :style="{ height: leftBoxH + 'px' }" ref="listContainer">
             <el-checkbox-group v-model="checked">
-              <el-card shadow="always" class="mb-2" :body-style="{ padding: '8px' }" v-for="t in toolList"
-                :key="t.ToolName">
+              <el-card shadow="always" class="mb-2" :class="{ 'active': t.ToolName === checked[0] }"
+                :body-style="{ padding: '8px' }" v-for="t in toolList" :key="t.ToolName">
                 <el-form ref="formRef" :model="t" label-width="auto">
                   <!-- <el-form-item class="mb-[5px]"> -->
                   <div class="flex justify-between items-center">
@@ -111,8 +111,8 @@
                   <el-table-column label="剩余数量" width="80" align="center">
                     <template #default="scope">
                       <span>{{
-                        scope.row.LoadQueueQty - scope.row.issueQty
-                      }}</span>
+                        scope.row.Qty
+                        }}</span>
                     </template>
                   </el-table-column>
                 </el-table>
@@ -628,6 +628,7 @@ const checkedHisList = ref([
     label: "工序汇总",
   },
 ]);
+const listContainer = ref()
 // const changeCheck = (val: any) => {
 
 //   if (checked.value.length == 0) {
@@ -757,6 +758,7 @@ onBeforeMount(() => {
 onMounted(() => {
   window.addEventListener("resize", getScreenHeight);
   getOrderData();
+
 });
 onBeforeUnmount(() => {
   window.addEventListener("resize", getScreenHeight);
@@ -1009,6 +1011,8 @@ const getChange = (val: any) => {
       // moveUp(toolList.value[toolData])
       stopsForm.value.tools = toolList.value[toolData].ToolName;
       checked.value[0] = toolList.value[toolData].ToolName;
+      // listContainer.value.scrollTop =-100
+      console.log(listContainer.value.scrollTop);
       if (stopsForm.value.ContainerName == "") {
         msgTitle.value = "请扫描PCB条码";
         msgType.value = true;
@@ -1085,6 +1089,7 @@ const detailsCurrentChange = (val: any) => {
 const getScreenHeight = () => {
   nextTick(() => {
     leftBoxH.value = window.innerHeight - 155;
+    console.log(leftBoxH.value);
     tableHeight.value = window.innerHeight - 468; //428
   });
 };

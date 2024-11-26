@@ -479,7 +479,6 @@ const getChange = () => {
     }
   } else {
     stopsForm.value.containerName = barCodeData;
-    // console.log(stopsForm.value.result);
     if (stopsForm.value.result == "OK") {
       InspectionStationMoveOut(stopsForm.value).then((res: any) => {
         msgTitle.value = res.msg;
@@ -489,14 +488,11 @@ const getChange = () => {
         hisForm.value.MfgOrderName = res.content[0].MfgOrderName
         getHisData()
         getFocus()
-        // if (res.success) {
         stopsForm.value.result = "OK";
       });
     } else {
       badForm.value.containerName = barCodeData;
-      // badVisible.value = true;
       QueryDefectCodeInspection(stopsForm.value.containerName).then((res: any) => {
-        //   console.log(res);
         if (!res.success) {
           msgTitle.value = res.msg;
           msgType.value = res.success;

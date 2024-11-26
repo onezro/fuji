@@ -56,44 +56,44 @@
                   :value="item.MfgOrderName"
                 />
               </el-select> -->
-              <el-select-v2 v-model="form.MfgOrderName" :options="orderList" filterable
-              :props="orderProps" style="width: 180px"  @change="orderChange"/>
-              <!-- <el-input v-model="form.MfgOrderName" class="input-with-select"
-                @keyup.enter.native="orderChange(form.MfgOrderName)">
-              </el-input> -->
+              <!-- <el-select-v2 v-model="form.MfgOrderName" :options="orderList" filterable
+              :props="orderProps" style="width: 180px"  @change="orderChange"/> -->
+              <el-input v-model="form.MfgOrderName" class="input-with-select"
+                @keyup.enter.native="orderChange(form.MfgOrderName)" style="width: 152px">
+              </el-input>
             </el-form-item>
             <el-form-item label="产品机型">
-              <el-input v-model="form.BD_ProductModel" style="width: 180px" class="input-with-select" disabled>
+              <el-input v-model="form.BD_ProductModel" style="width: 152px" class="input-with-select" disabled>
               </el-input>
             </el-form-item>
             <el-form-item label="产品编码">
-              <el-input v-model="form.ProductName" style="width: 180px" class="input-with-select" disabled>
+              <el-input v-model="form.ProductName" style="width: 152px" class="input-with-select" disabled>
               </el-input>
             </el-form-item>
             <el-form-item label="计划数量">
-              <el-input v-model="form.Qty" style="width: 180px" class="input-with-select" disabled>
+              <el-input v-model="form.Qty" style="width: 152px" class="input-with-select" disabled>
               </el-input>
             </el-form-item>
             <el-form-item label="产线">
-              <el-input v-model="form.MfgLineDesc" style="width: 180px" class="input-with-select" disabled>
+              <el-input v-model="form.MfgLineDesc" style="width: 152px" class="input-with-select" disabled>
               </el-input>
             </el-form-item>
             <el-form-item label="计划开始时间">
-              <el-input v-model="form.PlannedCompletionDate" style="width: 180px" class="input-with-select" disabled>
+              <el-input v-model="form.PlannedCompletionDate" style="width: 152px" class="input-with-select" disabled>
               </el-input>
             </el-form-item>
             <el-form-item label="工单">
-              <el-input v-model="form.ERPOrder" style="width: 180px" class="input-with-select" disabled>
+              <el-input v-model="form.ERPOrder" style="width: 152px" class="input-with-select" disabled>
               </el-input>
             </el-form-item>
             <el-form-item label="申请类型">
-              <el-select v-model="applyType" style="width: 180px">
+              <el-select v-model="applyType" style="width: 152px">
                 <el-option v-for="item in applyTypeList" :key="item.Value" :label="item.Text" :value="item.Value" />
               </el-select>
             </el-form-item>
             <br />
             <el-form-item label="产品描述">
-              <el-input style="width: 480px" type="textarea" v-model="form.ProductDesc" class="input-with-select"
+              <el-input style="width: 420px" type="textarea" v-model="form.ProductDesc" class="input-with-select"
                 disabled>
               </el-input>
             </el-form-item>

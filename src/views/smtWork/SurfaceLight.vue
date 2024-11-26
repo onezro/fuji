@@ -7,44 +7,29 @@
     <div class="w-full flex-1 flex">
       <div class="setwidth w-[300px]">
         <div class="w-full h-full border-r border-solid border-[#cbcbcb]">
-          <div
-            class="h-[30px] flex items-center text-base text-[#fff] bg-[#006487]"
-          >
+          <div class="h-[30px] flex items-center text-base text-[#fff] bg-[#006487]">
             <span class="ml-5">产线与机台</span>
           </div>
           <div class="p-2">
             <el-form ref="formRef" :model="form" label-width="auto">
               <div class="h-20 flex items-center">
                 <div class="flex items-center">
-                  <img
-                    class="w-16 h-16"
-                    src="@/assets/svgs/MES-smt.svg"
-                    alt=""
-                  />
+                  <img class="w-16 h-16" src="@/assets/svgs/MES-smt.svg" alt="" />
                   <div class="h-16 flex flex-col justify-between ml-4">
                     <div class="text-2xl cursor-default">
                       {{ opui.lineDec }}
                     </div>
                     <div class="flex h-4 items-center">
                       <el-checkbox v-model="selectBox" @change="AutoSplicing">
-                        自动亮灯</el-checkbox
-                      >
+                        自动亮灯</el-checkbox>
                     </div>
                   </div>
                 </div>
               </div>
               <div class="flex flex-col gap-2">
-                <div
-                  class="flex items-center gap-4 p-1 border border-solid border-[#c6c271]"
-                  v-for="item in deviceList"
-                  @click="getMaterialList(item.NickName)"
-                >
-                  <img
-                    alt=""
-                    style="width: 40px; height: 40px"
-                    src="@/assets/svgs/Mounter-blue.svg"
-                    class="ml-10"
-                  />
+                <div class="flex items-center gap-4 p-1 border border-solid border-[#c6c271]" v-for="item in deviceList"
+                  @click="getMaterialList(item.NickName)">
+                  <img alt="" style="width: 40px; height: 40px" src="@/assets/svgs/Mounter-blue.svg" class="ml-10" />
                   <span class="underline cursor-pointer">{{
                     item.Description1 + `（${item.NickName}）`
                   }}</span>
@@ -82,22 +67,14 @@
                             <el-button type="primary"> 接料亮灯(人工/自动)</el-button>
                         </div> -->
           </div>
-          <div
-            class="h-[30px] flex items-center text-base text-[#fff] bg-[#006487]"
-          >
+          <div class="h-[30px] flex items-center text-base text-[#fff] bg-[#006487]">
             <span class="ml-5">消息提示</span>
           </div>
           <div class="p-2">
-            <div
-              class="text-xl font-bold text-[#00B400]"
-              v-show="msgType === true || msgTitle === ''"
-            >
+            <div class="text-xl font-bold text-[#00B400]" v-show="msgType === true || msgTitle === ''">
               {{ msgTitle === "" ? "" : msgTitle }}
             </div>
-            <div
-              class="text-xl font-bold text-[red]"
-              v-show="msgType === false && msgTitle !== ''"
-            >
+            <div class="text-xl font-bold text-[red]" v-show="msgType === false && msgTitle !== ''">
               {{ msgTitle }}
             </div>
           </div>
@@ -107,141 +84,69 @@
         <!-- <div class="w-full"> -->
         <div class="w-full h-full flex flex-col">
           <div>
-            <div
-              class="h-[30px] flex items-center text-base text-[#fff] bg-[#006487]"
-            >
+            <div class="h-[30px] flex items-center text-base text-[#fff] bg-[#006487]">
               <span class="ml-5"> 生产计划号信息</span>
             </div>
             <div class="h-[130px] pt-3 pr-5 pl-5">
-              <el-form
-                ref="operateFormRef"
-                :model="operateForm"
-                :inline="true"
-                label-width="auto"
-              >
+              <el-form ref="operateFormRef" :model="operateForm" :inline="true" label-width="auto">
                 <el-form-item label="生产计划号" class="mb-2">
-                  <el-input
-                    v-model="operateForm.MfgOrderName"
-                    style="width: calc((100vw - 850px) / 4)"
-                    disabled
-                  />
+                  <el-input v-model="operateForm.MfgOrderName" style="width: calc((100vw - 850px) / 4)" disabled />
                 </el-form-item>
                 <el-form-item label="面别" class="mb-2">
-                  <el-input
-                    v-model="operateForm.Side"
-                    style="width: calc((100vw - 850px) / 4)"
-                    disabled
-                  />
+                  <el-input v-model="operateForm.Side" style="width: calc((100vw - 850px) / 4)" disabled />
                 </el-form-item>
                 <el-form-item label="计划数量" class="mb-2">
-                  <el-input
-                    v-model="operateForm.Qty"
-                    style="width: calc((100vw - 850px) / 4)"
-                    disabled
-                  />
+                  <el-input v-model="operateForm.Qty" style="width: calc((100vw - 850px) / 4)" disabled />
                 </el-form-item>
                 <el-form-item label="计划状态" class="mb-2">
-                  <el-input
-                    v-model="operateForm.OrderStatusDesc"
-                    style="width: calc((100vw - 850px) / 4)"
-                    disabled
-                  />
+                  <el-input v-model="operateForm.OrderStatusDesc" style="width: calc((100vw - 850px) / 4)" disabled />
                 </el-form-item>
                 <el-form-item label="产品编码" class="mb-2">
-                  <el-input
-                    v-model="operateForm.ProductName"
-                    style="width: calc((100vw - 850px) / 4)"
-                    disabled
-                  />
+                  <el-input v-model="operateForm.ProductName" style="width: calc((100vw - 850px) / 4)" disabled />
                 </el-form-item>
                 <el-form-item label="产品描述" class="mb-2">
-                  <el-input
-                    v-model="operateForm.ProductDesc"
-                    style="width: calc((100vw - 620px) / 2)"
-                    disabled
-                  />
+                  <el-input v-model="operateForm.ProductDesc" style="width: calc((100vw - 620px) / 2)" disabled />
                 </el-form-item>
                 <el-form-item label="料架" class="mb-2">
-                  <el-input
-                    v-model="operateForm.shelf_ids"
-                    style="width: calc((100vw - 850px) / 4)"
-                    disabled
-                  />
+                  <el-input v-model="operateForm.shelf_ids" style="width: calc((100vw - 850px) / 4)" disabled />
                 </el-form-item>
               </el-form>
               <div class="flex items-center">
-                <el-button type="primary" @click="getOrderQuery"
-                  >刷新</el-button
-                >
-                <el-button
-                  type="warning"
-                  @click="lightUp"
-                  :disabled="selectList.length === 0"
-                  >亮灯</el-button
-                >
-                <el-button
-                  type="info"
-                  @click="lightOut"
-                  :disabled="selectList.length === 0"
-                  >取消亮灯</el-button
-                >
-                <el-button @click="materialView" :disabled="operateForm.shelf_ids === '' || operateForm.shelf_ids === null || operateForm.shelf_ids === undefined">货架物料查看</el-button>
+                <el-button type="primary" @click="getOrderQuery">刷新</el-button>
+                <el-button type="warning" @click="lightUp" :disabled="selectList.length === 0">亮灯</el-button>
+                <el-button type="info" @click="lightOut" :disabled="selectList.length === 0">取消亮灯</el-button>
+                <el-button @click="materialView"
+                  :disabled="operateForm.shelf_ids === '' || operateForm.shelf_ids === null || operateForm.shelf_ids === undefined">货架物料查看</el-button>
                 <div class="text-[#606266] ml-[2rem] mr-2">扫描接料条码</div>
-                <el-input
-                  class="code-input"
-                  sise="small"
-                  v-model.trim="code"
-                  style="width: 450px"
-                  @keydown.enter="keydown"
-                />
+                <el-input class="code-input" sise="small" v-model.trim="code" style="width: 450px"
+                  @keydown.enter="keydown" />
                 <!-- <el-button type="warning">首套亮灯</el-button> -->
               </div>
             </div>
           </div>
 
           <div class="flex flex-col flex-1 tabs-css">
-            <div
-              class="h-[30px] flex items-center text-base text-[#fff] bg-[#006487]"
-            >
+            <div class="h-[30px] flex items-center text-base text-[#fff] bg-[#006487]">
               <span class="ml-5">机台物料清单</span>
             </div>
-            <table-tem
-              ref="lightTable"
-              :showSelect="true"
-              :showIndex="true"
-              :tableData="tableData"
-              :tableHeight="tableHeight"
-              :columnData="columnData"
-              :pageObj="viewPageObj"
-              @handleSizeChange="handleSizeChange"
-              @handleCurrentChange="handleCurrentChange"
-              @handleSelectionChange="handleSelectionChange"
-            ></table-tem>
+            <table-tem ref="lightTable" :showSelect="true" :showIndex="true" :tableData="tableData"
+              :tableHeight="tableHeight" :columnData="columnData" :pageObj="viewPageObj"
+              @handleSizeChange="handleSizeChange" @handleCurrentChange="handleCurrentChange"
+              @handleSelectionChange="handleSelectionChange"></table-tem>
           </div>
         </div>
       </div>
     </div>
 
-    <el-dialog
-      align-center
-      :append-to-body="true"
-      :close-on-click-modal="false"
-      v-model="viewVisible"
-      @close=""
-      title="货架物料明细"
-      width="70%"
-    >
-      <table-tem
-        ref="lightTable"
-        :showIndex="true"
-        :tableData="viewTableData"
-        :tableHeight="300"
-        :columnData="viewColumnData"
-        :pageObj="pageObj"
-        @handleSizeChange="viewSizeChange"
-        @handleCurrentChange="viewCurrentChange"
-      ></table-tem>
-
+    <el-dialog align-center :append-to-body="true" draggable :close-on-click-modal="false" v-model="viewVisible" @close=""
+      :title="'计划号：'+operateForm.MfgOrderName" width="70%">
+      <el-tabs v-model="activeName" type="border-card" class="demo-tabs" >
+        <el-tab-pane label="货架物料明细" name="shelveMaterial" >
+      <table-tem ref="lightTable" size="small" :showIndex="true" :tableData="viewTableData" :tableHeight="420"
+        :columnData="viewColumnData" :pageObj="pageObj" @handleSizeChange="viewSizeChange"
+        @handleCurrentChange="viewCurrentChange"></table-tem>
+      </el-tab-pane>
+    </el-tabs>
       <!-- <template #footer>
         <span class="dialog-footer">
           <el-button @click=""> 取消 </el-button>
@@ -434,6 +339,7 @@ const viewColumnData = reactive([
     align: "center",
   },
 ]);
+const activeName=ref('shelveMaterial')
 
 const getDevice = () => {
   QueryDeviceInfo(opui.line).then((res: any) => {
@@ -632,5 +538,39 @@ const getScreenHeight = () => {
 
 .code-input .el-input__wrapper {
   background-color: rgb(252.5, 245.7, 235.5);
+}
+
+.el-tabs--border-card {
+  border-top: 1px solid #006487;
+}
+
+.demo-tabs .el-tabs__header {
+  --el-tabs-header-height: 30px;
+  background-color: #006487 !important;
+}
+
+.demo-tabs .el-tabs__content {
+  padding: 5px;
+}
+
+
+
+.demo-tabs.el-tabs--border-card>.el-tabs__header .el-tabs__item {
+  color: #fff;
+  font-size: 0.8rem;
+  // padding: 0 !important;
+}
+
+.demo-tabs .el-tabs__item.is-active {
+  font-size: 0.8rem;
+  // color: #fff;
+  color: #006487 !important;
+  // font-weight: bold;
+}
+
+.el-tabs--border-card>.el-tabs__header .el-tabs__item:not(.is-disabled):hover {
+  font-size: 0.8rem;
+  color: #006487 !important;
+  background-color: rgba($color: #fff, $alpha: 0.8);
 }
 </style>

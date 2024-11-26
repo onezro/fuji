@@ -136,10 +136,6 @@
 <script lang="ts" setup>
 import tableTemp from "@/components/tableTemp/index.vue";
 import tableTem from "@/components/tableTem/index.vue";
-// import badInfoTem from "@/components/badInfoTem/index.vue";
-// import formTem from "@/components/formTem/index.vue";
-// import feedTemp from "@/components/feedTemp/index.vue";
-// import selectTa from "@/components/selectTable/index.vue";
 import { useAppStore } from "@/stores/modules/app";
 import { useUserStoreWithOut } from "@/stores/modules/user";
 import { checkStringType } from "@/utils/barcodeFormat";
