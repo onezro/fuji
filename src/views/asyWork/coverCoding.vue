@@ -10,7 +10,7 @@
       </div>
     </div>
     <div class="w-full flex-1 flex">
-      <div class="setwidth w-[400px]">
+      <div class="setwidth w-[370px]">
         <div class="w-full h-full box">
           <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
             <span class="ml-5">基本信息</span>
@@ -38,39 +38,79 @@
           </div>
         </div>
       </div>
-      <div class="w-[calc(100%-400px)]">
+      <div class="w-[calc(100%-370px)]">
         <!-- <div class="w-full"> -->
         <div class="w-full h-full flex flex-col">
           <div>
             <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
               <span class="ml-5"> 扫描条码</span>
             </div>
-            <div class="h-[150px] pt-3 pr-5 pl-5">
-              <el-form class="inbound" ref="formRef" :inline="true" :model="form" @submit.native.prevent>
-                <el-form-item label="扫描条码" class="mb-2">
-                  <el-input v-model.trim="barCode" ref="inputRef" :autofocus="inputFocus" style="width: 500px"
-                    placeholder="请扫描条码" @keyup.enter.native="getChange" />
-                </el-form-item>
+            <div class="h-[200px] pt-3 pr-5 pl-5 flex justify-between">
+              <div>
+                <el-form class="inbound" ref="formRef" :inline="true" :model="form" @submit.native.prevent>
+                  <el-form-item label="扫描条码" class="mb-2">
+                    <el-input v-model.trim="barCode" ref="inputRef" :autofocus="inputFocus" style="width: 500px"
+                      placeholder="请扫描条码" @keyup.enter.native="getChange" />
+                  </el-form-item>
 
-                <el-form-item :class="[stopsForm.result == 'OK' ? 'switchok' : 'switchng']" class="mb-2">
-                  <el-switch v-model="stopsForm.result" size="large" style="
+                  <el-form-item :class="[stopsForm.result == 'OK' ? 'switchok' : 'switchng']" class="mb-2">
+                    <el-switch v-model="stopsForm.result" size="large" style="
                       zoom: 1.2;
                       --el-switch-on-color: #ff4949;
                       --el-switch-off-color: #13ce66;
                     " :active-value="'NG'" :inactive-value="'OK'" active-text="NG" inactive-text="OK" />
-                </el-form-item>
-              </el-form>
-              <div class="mb-2">
-                <el-button :type="isAuto ? 'danger' : 'primary'" :disabled="form.MfgOrderName == ''"
-                  @click="autoPrint">{{ isAuto ? "关闭自动打印" : "自动打印" }}</el-button>
-                <el-button type="warning" :disabled="form.MfgOrderName == ''" @click="print">手动打印</el-button>
-                <!-- <el-button type="success" :disabled="form.MfgOrderName == ''" @click="print">补打条码</el-button> -->
+                  </el-form-item>
+                </el-form>
+                <div class="mb-2">
+                  <el-button :type="isAuto ? 'danger' : 'primary'" :disabled="form.MfgOrderName == ''"
+                    @click="autoPrint">{{ isAuto ? "关闭自动打印" : "自动打印" }}</el-button>
+                  <el-button type="warning" :disabled="form.MfgOrderName == ''" @click="print">手动打印</el-button>
+                  <!-- <el-button type="success" :disabled="form.MfgOrderName == ''" @click="print">补打条码</el-button> -->
+                </div>
+                <div class="text-xl font-bold text-[#00B400]" v-show="msgType === true || msgTitle === ''">
+                  {{ msgTitle === "" ? "请扫描条码" : msgTitle }}
+                </div>
+                <div class="text-xl font-bold text-[red]" v-show="msgType === false && msgTitle !== ''">
+                  {{ msgTitle }}
+                </div>
               </div>
-              <div class="text-xl font-bold text-[#00B400]" v-show="msgType === true || msgTitle === ''">
-                {{ msgTitle === "" ? "请扫描条码" : msgTitle }}
-              </div>
-              <div class="text-xl font-bold text-[red]" v-show="msgType === false && msgTitle !== ''">
-                {{ msgTitle }}
+              <div>
+                <el-table :data="barData" size="small" border :row-class-name="tableRowClassName" :height="180">
+                  <el-table-column type="index" align="center" fixed label="序号" :width="'50'"></el-table-column>
+                  <el-table-column prop="MaterialName" label="物料编码" width="120" />
+                  <el-table-column prop="QtyRequired" label="是否关键料" width="80" align="center">
+                    <template #default="scope">
+                      <el-tag effect="plain" :type="scope.row.IssueControl == 1 ? 'warning' : 'primary'
+                        ">{{ scope.row.IssueControl == 1 ? "是" : "否" }}</el-tag>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="LoadQueueQty" label="上料总数" width="80" align="center">
+                    <template #default="scope">
+                      {{
+                        scope.row.LoadQueueQty == null
+                          ? 0
+                          : scope.row.LoadQueueQty
+                      }}
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="QtyRequired" label="剩余数量" width="80" align="center">
+                    <template #default="scope">
+                      <span>{{
+                        scope.row.Qty
+                      }}</span>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="MaterialBarCode" label="批次条码" width="150">
+                    <template #default="scope">
+                      <el-input v-if="scope.row.IssueControl == 1" v-model="scope.row.MaterialBarCode" size="small"
+                        :ref="createInputRef(scope.$index)" @keyup.enter.native="
+                          getChange1(scope.$index, scope.row)
+                          ">
+                      </el-input>
+                    </template>
+                  </el-table-column>
+                  <!-- <el-table-column prop="address" label="Address" /> -->
+                </el-table>
               </div>
             </div>
           </div>
@@ -485,7 +525,7 @@ const getChange = () => {
     } else {
       badForm.value.containerName = barCodeData;
       getBadForm.value.containerName = barCodeData
-        QueryDefectCode(getBadForm.value).then((res: any) => {
+      QueryDefectCode(getBadForm.value).then((res: any) => {
         if (!res.success) {
           msgTitle.value = res.msg;
           msgType.value = res.success;
@@ -676,7 +716,7 @@ const handleCurrentChange = (val: any) => {
 
 const getScreenHeight = () => {
   nextTick(() => {
-    tableHeight.value = window.innerHeight - 390;
+    tableHeight.value = window.innerHeight - 440;
   });
 };
 </script>
@@ -687,7 +727,7 @@ const getScreenHeight = () => {
 }
 
 .setwidth {
-  flex: 0 0 400px;
+  flex: 0 0 370px;
 }
 
 .box {

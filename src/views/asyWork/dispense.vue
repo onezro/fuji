@@ -141,7 +141,7 @@ import { useUserStoreWithOut } from "@/stores/modules/user";
 import { checkStringType } from "@/utils/barcodeFormat";
 import type { Formspan, FormHeader, OrderData } from "@/typing";
 import { ElMessage, ElNotification, ElMessageBox } from "element-plus";
-import {OrderQuery, DispenseStationMoveOut, QueryMoveHistory, QueryDefectCode, DefectProductRecord } from "@/api/asyApi";
+import {OrderQuery, DispenseStationMoveOut, QueryDisMoveHistory, QueryDefectCode, DefectProductRecord } from "@/api/asyApi";
 import {
   ref,
   reactive,
@@ -253,14 +253,14 @@ const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
 const columnData1 = reactive([
 {
     text: true,
-    prop: "VirtualContainer",
+    prop: "ContainerName",
     label: "虚拟条码",
     width: "",
     align: "1",
   },
   {
     text: true,
-    prop: "ContainerName",
+    prop: "ScreenCode",
     label: "MES屏条码",
     width: "",
     align: "1",
@@ -404,7 +404,7 @@ const getOrderData = () => {
 };
 //获取过站历史记录
 const getHisData = () => {
-  QueryMoveHistory(hisForm.value).then((res: any) => {
+  QueryDisMoveHistory(hisForm.value).then((res: any) => {
     tableData1.value = res.content;
   });
 };

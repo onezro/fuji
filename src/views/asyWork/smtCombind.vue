@@ -88,8 +88,7 @@
                   <el-table-column prop="QtyRequired" label="剩余数量" width="80" align="center">
                     <template #default="scope">
                       <span>{{
-                       scope.row.IssueControl==2? scope.row.Qty:
-                       scope.row.LoadQueueQty - scope.row.issueqty
+                      scope.row.Qty
                       }}</span>
                     </template>
                   </el-table-column>
@@ -632,7 +631,7 @@ const getChange1 = (val: any, data: any) => {
     }
     inputRefs.value[val].clear();
   } else {
-    if (data.LoadQueueQty - data.issueqty == 0) {
+    if (data.Qty == 0||data.Qty==null) {
       msgTitle.value = `关键料剩余为0无法进行绑定`;
       msgType.value = false;
       inputRefs.value[val].clear();

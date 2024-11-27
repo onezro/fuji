@@ -630,7 +630,7 @@ const getChange1 = (val: any, data: any) => {
     }
     inputRefs.value[val].clear();
   } else {
-    if (data.LoadQueueQty - data.issueqty == 0) {
+    if (data.Qty == 0||data.Qty==null) {
       msgTitle.value = `关键料剩余为0无法进行绑定`;
       msgType.value = false;
       inputRefs.value[val].clear();

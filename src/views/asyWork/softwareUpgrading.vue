@@ -1,65 +1,33 @@
 <template>
   <div class="flex flex-col w-full h-full">
-    <div
-      class="h-[40px] min-h-[40px] pl-2 pr-2 flex justify-between items-center"
-    >
+    <div class="h-[40px] min-h-[40px] pl-2 pr-2 flex justify-between items-center">
       <span class="text-[1.2rem]"> {{ opui.stationDec }} </span>
       <div></div>
     </div>
     <div class="w-full flex-1 flex">
       <div class="setwidth w-[350px]">
         <div class="w-full h-full box">
-          <div
-            class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]"
-          >
+          <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
             <span class="ml-5">基本信息</span>
           </div>
           <div class="p-[10px]">
-            <el-form
-              class="inbound"
-              ref="formRef"
-              :model="form"
-              label-width="auto"
-            >
+            <el-form class="inbound" ref="formRef" :model="form" label-width="auto">
               <el-form-item label="生产计划号" class="mb-[5px] flex">
-                <selectTa
-                  ref="selectTable"
-                  :table="orderTable"
-                  :selectWidth="200"
-                  :columns="orderColumns"
-                  :max-height="400"
-                  :tableWidth="700"
-                  :defaultSelectVal="defaultSelectVal"
-                  :keywords="{
+                <selectTa ref="selectTable" :table="orderTable" :selectWidth="200" :columns="orderColumns"
+                  :max-height="400" :tableWidth="700" :defaultSelectVal="defaultSelectVal" :keywords="{
                     label: 'MfgOrderName',
                     value: 'MfgOrderName',
-                  }"
-                  @radioChange="(...args: any) => radioChange(args)"
-                >
+                  }" @radioChange="(...args: any) => radioChange(args)">
                 </selectTa>
                 <el-tooltip content="刷新" placement="top">
-                  <el-icon
-                    class="ml-2"
-                    color="#006487"
-                    :class="isLoding"
-                    size="24"
-                    @click="getOrderData"
-                  >
+                  <el-icon class="ml-2" color="#006487" :class="isLoding" size="24" @click="getOrderData">
                     <RefreshRight />
                   </el-icon>
                 </el-tooltip>
               </el-form-item>
-              <el-form-item
-                v-for="f in formHeader"
-                :key="f.value"
-                :label="f.label"
-              >
-                <span
-                  class="font-bold text-lg leading-[30px]"
-                  :class="f.value == 'passNum' ? 'text-[#00B400]' : ''"
-                >
-                  {{ formText(f.value) }}</span
-                >
+              <el-form-item v-for="f in formHeader" :key="f.value" :label="f.label">
+                <span class="font-bold text-lg leading-[30px]" :class="f.value == 'passNum' ? 'text-[#00B400]' : ''">
+                  {{ formText(f.value) }}</span>
               </el-form-item>
             </el-form>
           </div>
@@ -69,30 +37,15 @@
         <!-- <div class="w-full"> -->
         <div class="w-full h-full flex flex-col">
           <div>
-            <div
-              class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]"
-            >
+            <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
               <span class="ml-5"> 扫描条码</span>
             </div>
             <div class="h-[60px] pt-3 pr-5 pl-5">
-              <el-form
-                class="inbound"
-                ref="formRef"
-                :inline="true"
-                :model="form"
-                label-width="auto"
-                @submit.native.prevent
-              >
+              <el-form class="inbound" ref="formRef" :inline="true" :model="form" label-width="auto"
+                @submit.native.prevent>
                 <el-form-item label="扫描条码" class="mb-2">
-                  <el-input
-                    v-model.trim="barCode"
-                    ref="inputRef"
-                    :autofocus="inputFocus"
-                    style="width: 500px"
-                    placeholder="请扫描MES条码"
-                    :disabled="isActive"
-                    @keyup.enter.native="scan"
-                  />
+                  <el-input v-model.trim="barCode" ref="inputRef" :autofocus="inputFocus" style="width: 500px"
+                    placeholder="请扫描MES条码" :disabled="isActive" @keyup.enter.native="scan" />
                 </el-form-item>
                 <el-form-item label="" class="mb-2">
                   <el-button type="primary" @click="reset">重置</el-button>
@@ -114,78 +67,48 @@
           </div>
 
           <div class="flex flex-col flex-1 tabs-css">
-            <div
-              class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487] justify-between"
-            >
+            <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487] justify-between">
               <span class="ml-5">软件信息</span>
-              <el-button
-                type="warning"
-                :disabled="
-                  SoftwareStatus || changeList.length !== tableData1.length
-                "
-                @click="ManualSubmit"
-                >人工确认提交</el-button
-              >
+              <el-button type="warning" :disabled="SoftwareStatus || changeList.length !== tableData1.length
+                " @click="ManualSubmit">人工确认提交</el-button>
             </div>
-            <table-tem
-              class="my-table"
-              :show-select="true"
-              :tableData="tableData1"
-              :tableHeight="tableHeight"
-              :columnData="columnData1"
-              :pageObj="pageObj"
-              @handleSizeChange="handleSizeChange"
-              @handleCurrentChange="handleCurrentChange"
-              @handleSelectionChange="handleSelectionChange"
-            ></table-tem>
+            <el-table class="my-table"  stripe border fit :data="tableData1" :style="{ width: '100%' }" :height="tableHeight"
+              @selection-change="handleSelectionChange">
+              <el-table-column type="selection" fixed width="55" align="center" />
+              <el-table-column prop="SoftwareName" label="Name" width="200" />
+              <el-table-column prop="SoftwareVersion" label="Address" />
+            </el-table>
+            <!-- <table-tem class="my-table" :show-select="true" :tableData="tableData1" :tableHeight="tableHeight"
+              :columnData="columnData1" :pageObj="pageObj" @handleSizeChange="handleSizeChange"
+              @handleCurrentChange="handleCurrentChange" @handleSelectionChange="handleSelectionChange"></table-tem> -->
           </div>
         </div>
       </div>
       <div class="setwidth w-[350px] border-l border-solid border-[#cbcbcb]">
         <div class="w-full h-full box">
-          <div
-            class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]"
-          >
+          <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
             <span class="ml-5">当前MES码</span>
           </div>
           <div class="h-[60px] pt-3 pr-5 pl-5">
-            <el-form
-              class="inbound"
-              ref="formRef"
-              :inline="true"
-              :model="form"
-              label-width="auto"
-              @submit.native.prevent
-            >
+            <el-form class="inbound" ref="formRef" :inline="true" :model="form" label-width="auto"
+              @submit.native.prevent>
               <el-form-item label="" class="mb-2">
-                <el-input
-                  class="custom-input custom-input-class"
-                  v-model.trim="currentCode"
-                  ref="inputRef"
-                  style="width: 300px"
-                  disabled
-                />
+                <el-input class="custom-input custom-input-class" v-model.trim="currentCode" ref="inputRef"
+                  style="width: 300px" disabled />
               </el-form-item>
             </el-form>
           </div>
 
           <div class="flex flex-col flex-1 tabs-css">
-            <div
-              class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]"
-            >
+            <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
               <span class="ml-5">检测结果与提示消息</span>
             </div>
             <div class="h-[160px] flex justify-around items-center">
-              <div
-                class="w-[120px] h-[120px] rounded-full"
-                :style="{ backgroundColor: typeColor }"
-              ></div>
+              <div class="w-[120px] h-[120px] rounded-full" :style="{ backgroundColor: typeColor }"></div>
             </div>
-            <div
-              :style="{ height: `${boxHeight}px` }"
+            <div :style="{ height: `${boxHeight}px` }"
               class="m-2 border border-solid border-[#cbcbcb] text-2xl font-bold"
-              :class="msgType ? 'text-[#00B400]' : 'text-[red]'"
-            >
+              :class="msgType ? 'text-[#00B400]' : 'text-[red]'">
               {{ msgTitle }}
             </div>
           </div>
@@ -481,6 +404,8 @@ const reset = () => {
 //选中
 const handleSelectionChange = (data: any) => {
   let content = cloneDeep(data);
+  console.log(data);
+  
   changeList.value = content;
 };
 
@@ -489,7 +414,7 @@ const scan = () => {
   const barCodeData = barCode.value;
   if (currentCode.value === "") {
     VerifyContainer({
-      containerName:barCodeData ,
+      containerName: barCodeData,
       orderName: form.value.MfgOrderName,
       workstationName: opui.station,
     }).then((res: any) => {
@@ -497,13 +422,14 @@ const scan = () => {
       msgTitle.value = res.msg;
       if (res.success) {
         currentCode.value = barCodeData;
+        if (!SoftwareStatus.value) {
+          isActive.value = true;
+        } else {
+          isActive.value = false;
+        }
       }
     });
-    if (!SoftwareStatus.value) {
-      isActive.value = true;
-    } else {
-      isActive.value = false;
-    }
+
   } else {
     if (SoftwareStatus.value) {
       AutoComparisonInfoMovestd({
@@ -702,7 +628,7 @@ const getScreenHeight = () => {
   font-size: 1.1rem;
 }
 
-.tabs-css .el-tabs--border-card > .el-tabs__header .el-tabs__item {
+.tabs-css .el-tabs--border-card>.el-tabs__header .el-tabs__item {
   color: #fff;
   // padding: 0 !important;
 }
@@ -725,10 +651,7 @@ const getScreenHeight = () => {
   color: #ff4949;
 }
 
-.tabs-css
-  .el-tabs--border-card
-  > .el-tabs__header
-  .el-tabs__item:not(.is-disabled):hover {
+.tabs-css .el-tabs--border-card>.el-tabs__header .el-tabs__item:not(.is-disabled):hover {
   // color: #fff;
   // background-color: #fff;
   background-color: rgba($color: #fff, $alpha: 0.8);

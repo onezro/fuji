@@ -130,7 +130,7 @@
               <span class="ml-5">机台物料清单</span>
             </div>
             <table-tem ref="lightTable" :showSelect="true" :showIndex="true" :tableData="tableData"
-              :tableHeight="tableHeight" :columnData="columnData" :pageObj="viewPageObj"
+              :tableHeight="tableHeight" :columnData="columnData" :pageObj="pageObj"
               @handleSizeChange="handleSizeChange" @handleCurrentChange="handleCurrentChange"
               @handleSelectionChange="handleSelectionChange"></table-tem>
           </div>
@@ -143,7 +143,7 @@
       <el-tabs v-model="activeName" type="border-card" class="demo-tabs" >
         <el-tab-pane label="货架物料明细" name="shelveMaterial" >
       <table-tem ref="lightTable" size="small" :showIndex="true" :tableData="viewTableData" :tableHeight="420"
-        :columnData="viewColumnData" :pageObj="pageObj" @handleSizeChange="viewSizeChange"
+        :columnData="viewColumnData" :pageObj="viewPageObj" @handleSizeChange="viewSizeChange"
         @handleCurrentChange="viewCurrentChange"></table-tem>
       </el-tab-pane>
     </el-tabs>
@@ -318,9 +318,9 @@ const viewColumnData = reactive([
     text: true,
     prop: "MaterialDesc",
     label: "物料描述",
-    width: "",
-    min: true,
-    align: "left",
+    width: "250",
+    // min: true,
+    align: "1",
   },
   {
     text: true,

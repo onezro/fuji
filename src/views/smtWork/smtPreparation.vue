@@ -239,8 +239,8 @@
             <el-tabs v-model="activeName" type="border-card" class="demo-tabs" >
                 <el-tab-pane label="货架物料明细" name="shelveMaterial" >
             <table-tem ref="lightTable" :size="'small'" :showIndex="true" :tableData="viewTableData" :tableHeight="420"
-                :columnData="viewColumnData" :pageObj="pageObj" @handleSizeChange="viewSizeChange"
-                @handleCurrentChange="viewCurrentChange"></table-tem>
+                :columnData="viewColumnData" :pageObj="pageObj" @handleSizeChange="handleSizeChange"
+                @handleCurrentChange="handleCurrentChange"></table-tem>
             </el-tab-pane>
         </el-tabs>
         </el-dialog>
@@ -424,8 +424,8 @@ const viewColumnData = reactive([
         text: true,
         prop: "MaterialDesc",
         label: "物料描述",
-        width: "",
-        min: true,
+        width: "250",
+     
         align: "left",
     },
     {

@@ -184,7 +184,7 @@ import { ElMessage, ElNotification, ElMessageBox } from "element-plus";
 
 import {
   OrderQuery,
-  QueryMoveHistory,
+  QueryDisMoveHistory,
   QueryKeyMaterial,
   JudgeKeyMaterial,
   ScreeSMTCompBindMoveStd,
@@ -296,13 +296,21 @@ const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
   },
 ]);
 const columnData1 = reactive([
-  {
+{
     text: true,
     prop: "ContainerName",
-    label: "成品SN条码",
+    label: "虚拟条码",
     width: "",
     align: "1",
   },
+  {
+    text: true,
+    prop: "ScreenCode",
+    label: "MES屏条码",
+    width: "",
+    align: "1",
+  },
+
   {
     text: true,
     prop: "BD_EmployeeName",
@@ -449,7 +457,7 @@ const formText = (data: string) => {
 
 //获取过站历史记录
 const getHisData = () => {
-  QueryMoveHistory(hisForm.value).then((res: any) => {
+  QueryDisMoveHistory(hisForm.value).then((res: any) => {
     tableData1.value = res.content;
   });
 };
@@ -630,7 +638,7 @@ const getChange1 = (val: any, data: any) => {
     }
     inputRefs.value[val].clear();
   } else {
-    if (data.Qty == 0) {
+    if (data.Qty == 0||data.Qty==null) {
       msgTitle.value = `关键料剩余为0无法进行绑定`;
       msgType.value = false;
       inputRefs.value[val].clear();

@@ -240,3 +240,12 @@ export function MoveStdNew(data:any) {
         data
     })
 }
+export function QueryDisMoveHistory(data:any) {
+    return request({
+        url: "/api/Dispense/QueryMoveHistory",
+        method: "post",
+        data
+    })
+}
+
+
