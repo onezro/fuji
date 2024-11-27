@@ -56,7 +56,7 @@
                   :value="item.MfgOrderName"
                 />
               </el-select> -->
-              <el-select-v2 v-model="form.MfgOrderName" :options="orderList" filterable
+              <el-select-v2 v-model="form.MfgOrderName" :options="orderList" filterable placeholder=""
               :props="orderProps" style="width: 180px"  @change="orderChange"/>
               <!-- <el-input v-model="form.MfgOrderName" class="input-with-select"
                 @keyup.enter.native="orderChange(form.MfgOrderName)">
