@@ -542,12 +542,17 @@ const repairCancel = () => {
 };
 const repairSubmit = () => {
   SaveRepairRecord(repairForm.value).then((res: any) => {
-    if (res.success) {
-      ElNotification({
+    ElNotification({
         title: "提示信息",
         message: res.msg,
-        type: "success",
+        type: res.success?"success":"error",
       });
+    if (res.success) {
+      // ElNotification({
+      //   title: "提示信息",
+      //   message: res.msg,
+      //   type: "success",
+      // });
       repairCancel();
       getFocus();
       barCode.value = "";

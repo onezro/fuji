@@ -511,9 +511,10 @@ const isLoding = ref("");
           msgTitle.value = res.msg;
           msgType.value = res.success;
           stopsForm.value.containerName = "";
-          form.value = { ...res.content[0] };
-          hisForm.value.MfgOrderName = res.content[0].MfgOrderName
-          getHisData()
+          if(res.success){
+            getHisData()
+          }
+         
           getFocus()
           // if (res.success) {
           stopsForm.value.result = "OK";

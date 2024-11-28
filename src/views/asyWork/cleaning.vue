@@ -309,7 +309,7 @@ const columnData1 = reactive([
   {
     text: true,
     prop: "Container",
-    label: "物料编码",
+    label: "物料批次号",
     width: "",
     align: "1",
   },
@@ -682,11 +682,13 @@ const radioChange = (args: any) => {
       stopsForm.value.ProductName = args[0].ProductName;
       hisForm.value.MfgOrderName = args[0].MfgOrderName;
       getFeedForm.value.MfgOrder = args[0].MfgOrderName;
-      getHisData();
-      getMaterialRequired();
+      // getHisData();
+      // getMaterialRequired();
     } else {
 
     }
+    getHisData();
+    getMaterialRequired();
   }
 };
 const getOrderData = () => {

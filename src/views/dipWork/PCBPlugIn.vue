@@ -915,10 +915,13 @@ const radioChange = (args: any) => {
       getFeedForm.value.MfgOrder = args[0].MfgOrderName;
       hisForm.value.MfgOrderName = args[0].MfgOrderName;
       getToolForm.value.OrderNumber = args[0].MfgOrderName;
-      getHisData();
+      // getHisData();
+      // getToolData();
+      // getMaterialRequired()
+    }
+    getHisData();
       getToolData();
       getMaterialRequired()
-    }
   }
   // stopsForm.value.orderName = args[0].MfgOrderName
   // form.MfgOrderName = args[0].MfgOrderName;
@@ -999,7 +1002,6 @@ const getChange = (val: any) => {
       title: "请选择生产计划号",
       type: "error",
     });
-    // stopsForm.value.ContainerName = "";
     return;
   }
   let barCodeVal = barCode.value;
@@ -1033,17 +1035,19 @@ const getChange = (val: any) => {
     }
     barCode.value = "";
     if (stopsForm.value.ContainerName !== "" && stopsForm.value.tools !== "") {
+
       PluginStationMoveOut(stopsForm.value).then((res: any) => {
         msgTitle.value = res.msg;
         msgType.value = res.success;
         stopsForm.value.ContainerName = "";
         barCode.value = "";
+        getMaterialRequired()
         if (res.success) {
           stopsForm.value.tools = "";
           checked.value = [];
           getToolData();
           getHisData();
-          getMaterialRequired()
+          
         }
         // console.log(stopsForm.value);
       });

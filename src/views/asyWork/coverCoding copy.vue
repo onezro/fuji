@@ -2,7 +2,12 @@
   <div class="flex flex-col w-full h-full">
     <div class="h-[40px] min-h-[40px] pl-2 pr-2 flex justify-between items-center">
       <span class="text-[1.2rem]"> {{ opui.stationDec }} </span>
-      <div></div>
+      <div class="flex items-center">
+        <div>
+          自动打印间隔：<span class="text-lg font-bold pl-1 pr-1 bg-slate-300">{{ setTime }}S</span>
+        </div>
+        <el-button type="info" class="ml-2" @click="openPrint">设定间隔</el-button>
+      </div>
     </div>
     <div class="w-full flex-1 flex">
       <div class="setwidth w-[370px]">
@@ -13,7 +18,7 @@
           <div class="p-[10px]">
             <el-form class="inbound" ref="formRef" :model="form" label-width="auto">
               <el-form-item label="生产计划号" class="mb-[5px] flex">
-                <selectTa ref="selectTable" :table="orderTable" :selectWidth="200" :columns="orderColumns"
+                <selectTa ref="selectTable" :table="orderTable" :selectWidth="220" :columns="orderColumns"
                   :max-height="400" :tableWidth="700" :defaultSelectVal="defaultSelectVal" :keywords="{
                     label: 'MfgOrderName',
                     value: 'MfgOrderName',
@@ -40,69 +45,32 @@
             <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
               <span class="ml-5"> 扫描条码</span>
             </div>
-            <div class="h-[200px] pt-3 pr-5 pl-5 flex justify-between">
-              <div>
-                <el-form class="inbound" ref="formRef" :inline="true" :model="form" label-width="auto"
-                  @submit.native.prevent>
-                  <el-form-item label="扫描条码">
-                    <el-input v-model.trim="barCode" ref="inputRef" :autofocus="inputFocus" style="width: 500px"
-                      placeholder="请扫描条码" @keyup.enter.native="getChange" />
-                  </el-form-item>
-                  <el-form-item :class="[
-                    stopsForm.result == 'OK' ? 'switchok' : 'switchng',
-                  ]" class="mb-2">
-                    <el-switch v-model="stopsForm.result" size="large" style="
-                        zoom: 1.2;
-                        --el-switch-on-color: #ff4949;
-                        --el-switch-off-color: #13ce66;
-                      " :active-value="'NG'" :inactive-value="'OK'" active-text="NG" inactive-text="OK" />
-                  </el-form-item>
-                  <div></div>
-                </el-form>
-                <div class="text-xl font-bold text-[#00B400]" v-show="msgType === true || msgTitle === ''">
-                  {{ msgTitle === "" ? "请扫描屏材料批次条码" : msgTitle }}
-                </div>
-                <div class="text-xl font-bold text-[red]" v-show="msgType === false && msgTitle !== ''">
-                  {{ msgTitle }}
-                </div>
+            <div class="h-[200px] pt-3 pr-5 pl-5">
+              <el-form class="inbound" ref="formRef" :inline="true" :model="form" @submit.native.prevent>
+                <el-form-item label="扫描条码" class="mb-2">
+                  <el-input v-model.trim="barCode" ref="inputRef" :autofocus="inputFocus" style="width: 500px"
+                    placeholder="请扫描条码" @keyup.enter.native="getChange" />
+                </el-form-item>
+
+                <el-form-item :class="[stopsForm.result == 'OK' ? 'switchok' : 'switchng']" class="mb-2">
+                  <el-switch v-model="stopsForm.result" size="large" style="
+                      zoom: 1.2;
+                      --el-switch-on-color: #ff4949;
+                      --el-switch-off-color: #13ce66;
+                    " :active-value="'NG'" :inactive-value="'OK'" active-text="NG" inactive-text="OK" />
+                </el-form-item>
+              </el-form>
+              <div class="mb-2">
+                <el-button :type="isAuto ? 'danger' : 'primary'" :disabled="form.MfgOrderName == ''"
+                  @click="autoPrint">{{ isAuto ? "关闭自动打印" : "自动打印" }}</el-button>
+                <el-button type="warning" :disabled="form.MfgOrderName == ''" @click="print">手动打印</el-button>
+                <!-- <el-button type="success" :disabled="form.MfgOrderName == ''" @click="print">补打条码</el-button> -->
               </div>
-              <div>
-                <el-table :data="barData" size="small" border :row-class-name="tableRowClassName" :height="180">
-                  <el-table-column type="index" align="center" fixed label="序号" :width="'50'"></el-table-column>
-                  <el-table-column prop="MaterialName" label="物料编码" width="120" />
-                  <el-table-column prop="QtyRequired" label="是否关键料" width="80" align="center">
-                    <template #default="scope">
-                      <el-tag effect="plain" :type="scope.row.IssueControl == 1 ? 'warning' : 'primary'
-                        ">{{ scope.row.IssueControl == 1 ? "是" : "否" }}</el-tag>
-                    </template>
-                  </el-table-column>
-                  <el-table-column prop="LoadQueueQty" label="上料总数" width="80" align="center">
-                    <template #default="scope">
-                      {{
-                        scope.row.LoadQueueQty == null
-                          ? 0
-                          : scope.row.LoadQueueQty
-                      }}
-                    </template>
-                  </el-table-column>
-                  <el-table-column prop="QtyRequired" label="剩余数量" width="80" align="center">
-                    <template #default="scope">
-                      <span>{{
-                       scope.row.Qty
-                      }}</span>
-                    </template>
-                  </el-table-column>
-                  <el-table-column prop="MaterialBarCode" label="批次条码" width="150">
-                    <template #default="scope">
-                      <el-input v-if="scope.row.IssueControl == 1" v-model="scope.row.MaterialBarCode" size="small"
-                        :ref="createInputRef(scope.$index)" @keyup.enter.native="
-                          getChange1(scope.$index, scope.row)
-                          ">
-                      </el-input>
-                    </template>
-                  </el-table-column>
-                  <!-- <el-table-column prop="address" label="Address" /> -->
-                </el-table>
+              <div class="text-xl font-bold text-[#00B400]" v-show="msgType === true || msgTitle === ''">
+                {{ msgTitle === "" ? "请扫描条码" : msgTitle }}
+              </div>
+              <div class="text-xl font-bold text-[red]" v-show="msgType === false && msgTitle !== ''">
+                {{ msgTitle }}
               </div>
             </div>
           </div>
@@ -125,6 +93,20 @@
         </div>
       </div>
     </div>
+    <el-dialog v-model="showSetTime" draggable title="自动打印时间设定" width="300px" :append-to-body="true"
+      :close-on-click-modal="false" :close-on-press-escape="false" @close="setCancel">
+      <el-form ref="formRef" :model="timeForm" label-width="auto">
+        <el-form-item label="间隔时间" prop="time">
+          <el-input-number v-model="timeForm.setTime" :min="1" />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="setCancel">关闭</el-button>
+          <el-button type="primary" @click="setPrint"> 确定 </el-button>
+        </span>
+      </template>
+    </el-dialog>
     <el-dialog v-model="badVisible" title="不良登记" width="60%" :append-to-body="true" :close-on-click-modal="false"
       :close-on-press-escape="false" align-center @close="badCancel">
       <div>
@@ -174,22 +156,21 @@
 
 <script lang="ts" setup>
 import tableTem from "@/components/tableTem/index.vue";
-import tableTemp from "@/components/tableTemp/index.vue";
+import badInfoTem from "@/components/badInfoTem/index.vue";
+import formTem from "@/components/formTem/index.vue";
+import feedTemp from "@/components/feedTemp/index.vue";
 import selectTa from "@/components/selectTable/index.vue";
 import { useAppStore } from "@/stores/modules/app";
 import { useUserStoreWithOut } from "@/stores/modules/user";
 import { checkStringType } from "@/utils/barcodeFormat";
 import type { Formspan, FormHeader, OrderData } from "@/typing";
 import { ElMessage, ElNotification, ElMessageBox } from "element-plus";
-
+import { QueryMoveHistory, OrderQuery } from "@/api/dipApi";
 import {
-  OrderQuery,
-  QueryDisMoveHistory,
-  QueryKeyMaterial,
-  JudgeKeyMaterial,
-  ScreeSMTCompBindMoveStd,
-  QueryDefectCode,
+  CoverInstallPrint,
+  CoverInstallStationMoveOut,
   DefectProductRecord,
+  QueryDefectCode,
 } from "@/api/asyApi";
 
 import {
@@ -200,26 +181,15 @@ import {
   computed,
   onBeforeMount,
   onBeforeUnmount,
+  watch,
 } from "vue";
 import { cloneDeep } from "lodash-es";
 interface StopsForm {
-
+  containerName: string;
   workstationName: string;
   result: string;
   userAccount: string;
   txnDate: string;
-
-  OrderName: string;
-  tools: string;
-  BarCode: string;
-  keyMaterialList: Array<KeyMaterial>;
-}
-interface KeyMaterial {
-  MaterialBarCode: string;
-  MaterialName: string;
-  MfgOrderName: string;
-  QtyRequired: number;
-  IssueControl: number;
 }
 
 interface ToolList {
@@ -234,15 +204,12 @@ const appStore = useAppStore();
 const userStore = useUserStoreWithOut();
 const opui = appStore.getOPUIReal();
 const inputRef = ref();
-const inputFocus = ref(false);
+const inputFocus = ref(true);
 const barCode = ref("");
 const stopsForm = ref<StopsForm>({
+  containerName: "",
   workstationName: opui.station || "",
   userAccount: userStore.getUserInfo,
-  BarCode: "",
-  OrderName: "",
-  keyMaterialList: [],
-  tools: "",
   txnDate: "",
   result: "OK",
 });
@@ -252,13 +219,21 @@ const form = ref<InstanceType<typeof Formspan>>({
   ProductName: "",
   ProductDesc: "",
   Qty: "",
+  ERPOrder: "",
   PlannedStartDate: "",
   PlannedCompletionDate: "",
   AllNum: "",
   TodayNum: "",
-  ERPOrder: "",
 });
 const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
+  // {
+  //     label: "生产计划号",
+  //     value: "MfgOrderName",
+  //     disabled: true,
+  //     type: "input",
+  //     width: "",
+  // },
+
   {
     label: "产品机型",
     value: "BD_ProductModel",
@@ -294,23 +269,29 @@ const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
     type: "textarea",
     width: 300,
   },
+  // {
+  //   label: "过站总数",
+  //   value: "AllNum",
+  //   disabled: true,
+  //   type: "input",
+  //   width: "",
+  // },
+  // {
+  //   label: "实时过站",
+  //   value: "TodayNum",
+  //   disabled: true,
+  //   type: "input",
+  //   width: "",
+  // },
 ]);
 const columnData1 = reactive([
-{
-    text: true,
-    prop: "ContainerName",
-    label: "虚拟条码",
-    width: "",
-    align: "1",
-  },
   {
     text: true,
-    prop: "ScreenCode",
-    label: "MES屏条码",
+    prop: "ContainerName",
+    label: "成品SN条码",
     width: "",
     align: "1",
   },
-
   {
     text: true,
     prop: "BD_EmployeeName",
@@ -352,27 +333,6 @@ const orderColumns = ref([
 ]);
 const defaultSelectVal = ref<string[]>([]);
 const isLoding = ref("");
-const barData = ref<KeyMaterial[]>([]);
-const keyForm = ref({
-  BarCode: "",
-  OrderName: "",
-  ProductName: "",
-  workstationName: opui.station,
-  tools: "",
-  userAccount: "",
-  txnDate: "",
-});
-const isKeyForm = ref({
-  BarCode: "",
-  OrderName: "",
-  ProductName: "",
-  workstationName: opui.station,
-  tools: "",
-  userAccount: userStore.getUserInfo,
-  txnDate: "",
-});
-// const materialRef = ref();
-const inputRefs = ref<any[]>([]);
 const checkedHis = ref(["today"]);
 const checkedHisList = ref([
   {
@@ -431,14 +391,16 @@ const changeList = ref([]);
 const BadtableData = ref([]);
 
 onBeforeMount(() => {
+  clearInterval(timer.value);
   getScreenHeight();
 });
 onMounted(() => {
   window.addEventListener("resize", getScreenHeight);
   getOrderData();
-  // getFocus();
+  getFocus();
 });
 onBeforeUnmount(() => {
+  clearInterval(timer.value);
   window.addEventListener("resize", getScreenHeight);
 });
 
@@ -457,7 +419,7 @@ const formText = (data: string) => {
 
 //获取过站历史记录
 const getHisData = () => {
-  QueryDisMoveHistory(hisForm.value).then((res: any) => {
+  QueryMoveHistory(hisForm.value).then((res: any) => {
     tableData1.value = res.content;
   });
 };
@@ -499,87 +461,58 @@ const geTodayData = () => {
 //过站
 const getChange = () => {
   let barCodeData = barCode.value;
-  if (stopsForm.value.OrderName == "") {
-    msgTitle.value = "请先选择生产计划号";
-    msgType.value = false;
-  } else {
-    if (checkStringType(barCodeData) == "result") {
-      if (barCodeData == "ng" || barCodeData == "NG") {
-        stopsForm.value.result = "NG";
-      } else {
-        stopsForm.value.result = "OK";
-        inputRefs.value[0].focus();
-      }
+  if (checkStringType(barCodeData) == "result") {
+    if (barCodeData == "ng" || barCodeData == "NG") {
+      stopsForm.value.result = "NG";
     } else {
-      if (stopsForm.value.result == "OK") {
-        msgTitle.value = "";
-        msgType.value = true;
-        let dataIndex = barData.value.findIndex(
-          (b: any) => b.IssueControl == 1 && b.MaterialBarCode !== ""
-        );
-        if (stopsForm.value.keyMaterialList.length !== 0 || dataIndex !== -1) {
-          stopsForm.value.BarCode = barCodeData;
-          ScreeSMTCompBindMoveStd(stopsForm.value).then((res: any) => {
-            msgTitle.value = res.msg;
-            msgType.value = res.success;
-            stopsForm.value.BarCode = "";
-            barCode.value = "";
-            stopsForm.value.keyMaterialList = [];
-            getHisData();
-            getKeyMaterial();
-          });
-        } else {
-          barCode.value = "";
-          msgTitle.value = `请扫描关键料或关键为空`;
-          msgType.value = false;
-          let dataIndex1 = barData.value.findIndex(
-            (b: any) => b.IssueControl == 1 && b.MaterialBarCode == ""
-          );
-          inputRefs.value[dataIndex1].focus();
-        }
-      } else {
-        badForm.value.containerName = barCodeData;
-        getBadForm.value.containerName = barCodeData
-        QueryDefectCode(getBadForm.value).then((res: any) => {
-          if (!res.success) {
-            msgTitle.value = res.msg;
-            msgType.value = res.success;
-            return;
-          }
-          badheadForm.value.MfgOrderName = res.content.MfgOrderName;
-          badheadForm.value.ProductName = res.content.ProductName;
-          badheadForm.value.ProductDesc = res.content.ProductDesc;
-          badheadForm.value.Qty = res.content.Qty;
-          BadtableData.value = res.content.defectCode;
-          badVisible.value = true;
-        });
-      }
+      stopsForm.value.result = "OK";
     }
-    // msgTitle.value = "";
-    // msgType.value = true;
-    // if (
-    //   stopsForm.value.keyMaterialList.length !== 0 ||
-    //   barData.value.length !== 0
-    // ) {
-    //   stopsForm.value.BarCode = barCodeData;
-    //   ScreeSMTCompBindMoveStd(stopsForm.value).then((res: any) => {
-    //     msgTitle.value = res.msg;
-    //     msgType.value = res.success;
-    //     stopsForm.value.BarCode = "";
-    //     barCode.value = "";
-    //     if (res.success) {
-    //       stopsForm.value.keyMaterialList = [];
-    //       getHisData();
-    //       getKeyMaterial();
-    //     }
-    //   });
-    // } else {
-    //   barCode.value = "";
-    //   msgTitle.value = `请扫描关键料或关键为空`;
-    //   msgType.value = false;
-    // }
-    barCode.value = "";
+  } else {
+    stopsForm.value.containerName = barCodeData;
+    if (stopsForm.value.result == "OK") {
+      msgTitle.value = "";
+      msgType.value = true;
+      CoverInstallStationMoveOut(stopsForm.value).then((res: any) => {
+        msgTitle.value = res.msg;
+        msgType.value = res.success;
+        stopsForm.value.containerName = "";
+        if (res.success) {
+          getHisData();
+        }
+        getFocus();
+      });
+      barCode.value = "";
+    } else {
+      badForm.value.containerName = barCodeData;
+      getBadForm.value.containerName = barCodeData
+        QueryDefectCode(getBadForm.value).then((res: any) => {
+        if (!res.success) {
+          msgTitle.value = res.msg;
+          msgType.value = res.success;
+          return;
+        }
+        badheadForm.value.MfgOrderName = res.content.MfgOrderName;
+        badheadForm.value.ProductName = res.content.ProductName;
+        badheadForm.value.ProductDesc = res.content.ProductDesc;
+        badheadForm.value.Qty = res.content.Qty;
+        BadtableData.value = res.content.defectCode;
+        badVisible.value = true;
+      });
+    }
   }
+  // stopsForm.value.containerName = barCodeData;
+  // msgTitle.value = "";
+  // msgType.value = true;
+  // CoverInstallStationMoveOut(stopsForm.value).then((res: any) => {
+  //   msgTitle.value = res.msg;
+  //   msgType.value = res.success;
+  //   stopsForm.value.containerName = "";
+  //   if (res.success) {
+  //     getHisData();
+  //   }
+  //   getFocus();
+  // });
+  barCode.value = "";
 };
 const badSelectionChange = (data: any) => {
   let content = cloneDeep(data);
@@ -608,8 +541,7 @@ const badSubmit = () => {
       changeList.value = [];
       badForm.value.DefectDetails = [];
       stopsForm.value.result = "OK";
-      inputRefs.value[0].focus();
-      // getFocus();
+      getFocus();
     }
     ElNotification({
       title: "提示信息",
@@ -619,58 +551,8 @@ const badSubmit = () => {
   });
 };
 
-const createInputRef = (val: any) => {
-  return (el: any) => {
-    if (el) {
-      inputRefs.value[val] = el;
-    }
-  };
-};
-const getChange1 = (val: any, data: any) => {
-  if (checkStringType(data.MaterialBarCode) == "result") {
-    if (data.MaterialBarCode == "ng" || data.MaterialBarCode == "NG") {
-      stopsForm.value.result = "NG";
-      inputRef.value.focus();
-    } else {
-      stopsForm.value.result = "OK";
-    }
-    inputRefs.value[val].clear();
-  } else {
-    let isEmty= barData.value.findIndex((b:any)=>b.Qty==0)
-    if (data.Qty == 0||data.Qty==null||isEmty!=-1) {
-      msgTitle.value = `关键料剩余为0无法进行绑定`;
-      msgType.value = false;
-      inputRefs.value[val].clear();
-      return;
-    } else {
-      let data1 = {
-        BarCode: data.MaterialBarCode,
-        OrderName: data.MfgOrderName,
-        ProductName: data.MaterialName,
-        workstationName: opui.station,
-      };
-      JudgeKeyMaterial(data1).then((res: any) => {
-        msgTitle.value = res.msg;
-        msgType.value = res.success;
-        if (res.success) {
-          if (val + 1 < inputRefs.value.length) {
-            inputRefs.value[val + 1].focus();
-          } else {
-            inputRef.value.focus();
-          }
-          stopsForm.value.keyMaterialList.push({
-            ...data,
-            VirtualCode: res.content == null ? "" : res.content,
-          });
-        } else {
-          inputRefs.value[val].clear();
-        }
-      });
-    }
-  }
-};
-
 const radioChange = (args: any) => {
+  isAuto.value = false;
   if (args[1] == null) {
     form.value.MfgOrderName = "";
     form.value.ProductName = "";
@@ -681,7 +563,6 @@ const radioChange = (args: any) => {
     form.value.PlannedCompletionDate = "";
     form.value.Qty = "";
     form.value.ERPOrder = "";
-    barData.value = [];
     tableData1.value = [];
   } else {
     if (args[1] !== form.value.MfgOrderName && form.value.MfgOrderName == "") {
@@ -696,87 +577,16 @@ const radioChange = (args: any) => {
       form.value.AllNum = args[0].AllNum;
       form.value.TodayNum = args[0].TodayNum;
       form.value.ERPOrder = args[0].ERPOrder;
-      stopsForm.value.OrderName = args[0].MfgOrderName;
       hisForm.value.MfgOrderName = args[0].MfgOrderName;
-      isKeyForm.value.OrderName = args[0].MfgOrderName;
-      keyForm.value.OrderName = args[0].MfgOrderName;
-      keyForm.value.ProductName = args[0].ProductName;
-      // getHisData();
-      // getKeyMaterial();
+      getHisData();
     } else {
     }
-    getHisData();
-    getKeyMaterial();
-    // form.value.MfgOrderName = args[0].MfgOrderName;
-    // form.value.ProductName = args[0].ProductName;
-    // form.value.ProductDesc = args[0].ProductDesc;
-    // form.value.BD_ProductModel = args[0].BD_ProductModel;
-    // form.value.BD_SoftVersion = args[0].BD_SoftVersion;
-    // form.value.PlannedStartDate = args[0].PlannedStartDate;
-    // form.value.PlannedCompletionDate = args[0].PlannedCompletionDate;
-    // form.value.Qty = args[0].Qty;
-    // form.value.AllNum = args[0].AllNum;
-    // form.value.TodayNum = args[0].TodayNum;
-    // form.value.ERPOrder = args[0].ERPOrder;
-    // stopsForm.value.OrderName = args[0].MfgOrderName;
-    // hisForm.value.MfgOrderName = args[0].MfgOrderName;
-    // isKeyForm.value.OrderName = args[0].MfgOrderName;
-    // keyForm.value.OrderName = args[0].MfgOrderName;
-    // keyForm.value.ProductName = args[0].ProductName;
-
-    // getKeyMaterial();
-    // getHisData();
+    // orderTable.value.data.forEach((v: any) => {
+    //   if (v.MfgOrderName == args[1]) {
   }
-};
-const getKeyMaterial = () => {
-  barData.value = [];
-  QueryKeyMaterial(keyForm.value).then((res: any) => {
-    // let data: KeyMaterial[] = []
-    // res.content.forEach((c: any) => {
-    //   if (c.QtyRequired == 1) {
-    //     data.push(c)
-    //   } else {
-    //     for (let i = 0; i < c.QtyRequired; i++) {
-    //       data.push({
-    //         MfgOrderName: c.MfgOrderName,
-    //         QtyRequired: 1,
-    //         MaterialName: c.MaterialName,
-    //         MaterialBarCode: ""
-    //       });
-    //     }
-    //   }
-    // })
-    // barData.value = data;
-    barData.value = res.content;
-    barData.value.sort((a, b) => a.IssueControl - b.IssueControl);
-    barData.value = barData.value.map((b: any) => {
-      if (b.IssueControl == 1) {
-        return {
-          ...b,
-          MaterialBarCode: "",
-        };
-      } else {
-        return b;
-      }
-    });
-    nextTick(() => {
-      if (inputRefs.value.length > 0) {
-        inputRefs.value[0].focus();
-      }
-    });
-  });
-};
-const tableRowClassName = (val: any) => {
-  // console.log(val.row);
-  const isExitCode = stopsForm.value.keyMaterialList.findIndex(
-    (k: any) => val.row.MaterialBarCode == k.MaterialBarCode
-  );
-  if (isExitCode !== -1) {
-    return "active-table";
-  }
-  return "";
 };
 const getOrderData = () => {
+  isAuto.value = false;
   isLoding.value = "is-loading";
   defaultSelectVal.value = [];
   OrderQuery({
@@ -798,6 +608,63 @@ const getOrderData = () => {
   });
 };
 
+const timer = ref();
+const isAuto = ref(false);
+const setTime = ref<any>(localStorage.getItem("SETTIME") || 5);
+const timeForm = ref({
+  setTime: 0,
+});
+const showSetTime = ref(false);
+const openPrint = () => {
+  showSetTime.value = true;
+  timeForm.value.setTime = setTime.value;
+};
+const setPrint = () => {
+  let data = timeForm.value.setTime;
+  setTime.value = data;
+  showSetTime.value = false;
+  localStorage.setItem("SETTIME", JSON.stringify(data));
+};
+const setCancel = () => {
+  showSetTime.value = false;
+};
+watch(
+  () => isAuto.value,
+  (newVal) => {
+    if (newVal) {
+      clearInterval(timer.value);
+      timer.value = setInterval(() => {
+        printData();
+      }, setTime.value * 1000);
+    } else {
+      clearInterval(timer.value);
+    }
+  },
+  {
+    deep: true,
+  }
+);
+const autoPrint = () => {
+  isAuto.value = !isAuto.value;
+};
+const print = () => {
+  isAuto.value = false;
+  printData();
+};
+
+const printData = () => {
+  CoverInstallPrint(form.value.MfgOrderName).then((res: any) => {
+    msgType.value = res.success;
+    if (res.success) {
+      msgTitle.value = "打印成功";
+    } else {
+      isAuto.value = false;
+      clearInterval(timer.value);
+      msgTitle.value = res.msg;
+    }
+  });
+};
+
 //分页
 const handleSizeChange = (val: any) => {
   pageObj.value.currentPage = 1;
@@ -809,7 +676,7 @@ const handleCurrentChange = (val: any) => {
 
 const getScreenHeight = () => {
   nextTick(() => {
-    tableHeight.value = window.innerHeight - 440;
+    tableHeight.value = window.innerHeight - 390;
   });
 };
 </script>
@@ -881,16 +748,6 @@ const getScreenHeight = () => {
 // }
 .checked .el-checkbox {
   height: 14px;
-}
-</style>
-
-<style>
-.el-table .warning-row {
-  --el-table-tr-bg-color: var(--el-color-warning-light-9);
-}
-
-.el-table .active-table {
-  --el-table-tr-bg-color: var(--el-color-success-light-9);
 }
 </style>
 <style lang="scss" scoped>

@@ -630,7 +630,8 @@ const getChange1 = (val: any, data: any) => {
     }
     inputRefs.value[val].clear();
   } else {
-    if (data.Qty == 0||data.Qty==null) {
+    let isEmty= barData.value.findIndex((b:any)=>b.Qty==0)
+    if (data.Qty == 0||data.Qty==null||isEmty!=-1) {
       msgTitle.value = `关键料剩余为0无法进行绑定`;
       msgType.value = false;
       inputRefs.value[val].clear();
@@ -679,6 +680,7 @@ const radioChange = (args: any) => {
     barData.value = [];
     tableData1.value = [];
   } else {
+
     if (args[1] !== form.value.MfgOrderName && form.value.MfgOrderName == "") {
       form.value.MfgOrderName = args[0].MfgOrderName;
       form.value.ProductName = args[0].ProductName;
@@ -696,10 +698,12 @@ const radioChange = (args: any) => {
       isKeyForm.value.OrderName = args[0].MfgOrderName;
       keyForm.value.OrderName = args[0].MfgOrderName;
       keyForm.value.ProductName = args[0].ProductName;
-      getHisData();
-      getKeyMaterial();
+      // getHisData();
+      // getKeyMaterial();
     } else {
     }
+    getHisData();
+      getKeyMaterial();
     // form.value.MfgOrderName = args[0].MfgOrderName;
     // form.value.ProductName = args[0].ProductName;
     // form.value.ProductDesc = args[0].ProductDesc;

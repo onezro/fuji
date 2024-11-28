@@ -605,6 +605,7 @@ const columnData = reactive([
     label: "产品编码",
     width: "",
     min: true,
+    fixed:true,
     align: "center",
   },
   {
@@ -612,7 +613,7 @@ const columnData = reactive([
     prop: "ProductDsc",
     label: "产品描述",
     width: "250",
-    min: true,
+    // min: true,
     align: "1",
   },
   {
@@ -629,14 +630,14 @@ const columnData = reactive([
     label: "工序描述",
     width: "",
     min: true,
-    align: "center",
+    align: "1",
   },
   {
     text: true,
     prop: "Side",
     label: "面别",
-    width: "",
-    min: true,
+    width: "50",
+    // min: true,
     align: "center",
   },
   {
@@ -653,14 +654,14 @@ const columnData = reactive([
     label: "工治具型号编码",
     width: "",
     min: true,
-    align: "center",
+    align: "1",
   },
   {
     text: true,
     prop: "Amount",
     label: "消耗量",
-    width: "",
-    min: true,
+    width: "80",
+    // min: true,
     align: "center",
   },
   {
@@ -674,7 +675,7 @@ const columnData = reactive([
     prop: "Status",
     label: "状态",
     width: "100",
-    min: true,
+    // min: true,
     align: "center",
   },
   {

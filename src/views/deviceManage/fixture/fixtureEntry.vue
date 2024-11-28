@@ -9,10 +9,67 @@
               <el-button type="primary" icon="Search" size="small"></el-button> </template></el-input>
         </div>
       </div>
-      <table-tem :show-index="true" size="small" :tableData="tableData1" :tableHeight="tableHeight"
+      <el-table :data="tableData.slice(
+        (pageObj.currentPage - 1) * pageObj.pageSize,
+        pageObj.currentPage * pageObj.pageSize
+      )
+        " stripe border fit :height="tableHeight" size="small" :tooltip-effect="'dark'">
+        <el-table-column type="index" align="center" fixed label="序号" width="50">
+          <template #default="scope">
+            <span>{{
+              scope.$index + pageObj.pageSize * (pageObj.currentPage - 1) + 1
+            }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="CompID" label="工治具编码" width="250" :min-width="flexColumnWidth('工治具编码', 'CompID')" />
+        <el-table-column prop="MaterialName" label="工治具类别" width="150"
+          :min-width="flexColumnWidth('工治具类别', 'MaterialName')" />
+        <el-table-column prop="CompName" label="工治具型号" width="250" :min-width="flexColumnWidth('工治具型号', 'CompName')" />
+        <el-table-column prop="TotalUses" label="默认使用次数" align="center" />
+        <el-table-column prop="Uses" label="已使用次数" align="center" width="80" />
+        <el-table-column prop="Status" label="状态" align="center" width="80">
+          <template #default="scope">
+            <el-tag type="primary" effect="light" v-if="scope.row.Status==1">
+              已上线
+            </el-tag>
+            <el-tag type="warning" effect="light" v-if="scope.row.Status==11">
+              已出库
+            </el-tag>
+            <el-tag type="success" effect="light" v-if="scope.row.Status==0">
+              可使用
+            </el-tag>
+            <el-tag type="info" effect="light" v-if="scope.row.Status!==0&&scope.row.Status!==1&&scope.row.Status!==11">
+              已使用
+            </el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column prop="Location" label="库位" align="center" width="60" />
+        <el-table-column prop="ExpirationDate" label="到期日期" />
+        <el-table-column label="操作" align="center" width="180">
+          <template #default="scope">
+            <el-tooltip content="编辑" placement="top">
+              <el-button type="primary" icon="EditPen" size="small" @click.prevent="editSubmit(scope.row)"></el-button>
+            </el-tooltip>
+            <el-tooltip content="删除" placement="top">
+              <el-button type="danger" icon="Delete" size="small" @click.prevent="editSubmit(scope.row)"></el-button>
+            </el-tooltip>
+            <el-tooltip content="报废" placement="top">
+              <el-button type="warning" icon="Failed" size="small" @click.prevent="editSubmit(scope.row)"></el-button>
+            </el-tooltip>
+          </template>
+        </el-table-column>
+      </el-table>
+      <div class="mt-2 mb-2">
+        <el-pagination :size="'default'" background @size-change="handleSizeChange"
+          @current-change="handleCurrentChange" :pager-count="5" :current-page="pageObj.currentPage"
+          :page-size="pageObj.pageSize" :page-sizes="[30, 50, 100, 200, 300]" layout="total,sizes, prev, pager, next"
+          :total="tableData.length">
+        </el-pagination>
+      </div>
+      <!-- <table-tem :show-index="true" size="small" :tableData="tableData1" :tableHeight="tableHeight"
         :columnData="columnData" :pageObj="pageObj" @handleSizeChange="handleSizeChange"
         @handleCurrentChange="handleCurrentChange">
-      </table-tem>
+      </table-tem> -->
     </el-card>
     <el-dialog align-center :append-to-body="true" :close-on-click-modal="false" v-model="editVisible" @close=""
       title="编辑" width="50%">
@@ -464,10 +521,10 @@ const columnData = reactive([
     tag: true,
     tagType: "number",
     tagItem: [
-      { text: "必须清洗", type: "primary", number: 4 },
-      { text: "必须清洗", type: "primary", number: 3 },
-      { text: "初始状态", type: "info", number: 0 },
-      { text: "正在清洗", type: "warning", number: 2 },
+      { text: "已上线", type: "primary", number: 1 },
+      { text: "已出库", type: "warning", number: 11 },
+      { text: "可使用", type: "success", number: 0 },
+      // { text: "其他", type: "", number: 2 },
     ],
     prop: "CleanStatus",
     label: "状态",
@@ -491,7 +548,6 @@ const columnData = reactive([
     min: true,
     align: "center",
   },
-
 
   {
     isOperation: true,
@@ -555,6 +611,41 @@ const getCompnameList = () => {
     const dataText = data.content;
     compnameList.value = dataText;
   });
+};
+const getMaxLength = (arr: any) => {
+  return arr.reduce((acc: any, item: any) => {
+    if (item) {
+      // console.log(acc,item);
+      const calcLen = getTextWidth(item);
+
+      if (acc < calcLen) {
+        acc = calcLen;
+      }
+    }
+    return acc;
+  }, 0);
+};
+const getTextWidth = (str: string) => {
+  let width = 0;
+  const html = document.createElement("span");
+  html.style.cssText = `padding: 0; margin: 0; border: 0; line-height: 1; font-size: ${13}px; font-family: Arial, sans-serif;`;
+  html.innerText = str; // 去除字符串前后的空白字符
+  document.body?.appendChild(html);
+
+  const spanElement = html; // 无需再次查询，直接使用创建的元素
+  if (spanElement) {
+    width = spanElement.offsetWidth;
+    spanElement.remove();
+  }
+  // console.log(width);
+  return width;
+};
+
+const flexColumnWidth = (label: any, prop: any) => {
+  const arr = tableData?.value.map((x: { [x: string]: any }) => x[prop]);
+  arr.push(label); // 把每列的表头也加进去算
+  // console.log(arr);
+  return getMaxLength(arr) + 25 + "px";
 };
 
 const handleSizeChange = (val: any) => {

@@ -20,6 +20,9 @@ importers:
       '@fullcalendar/interaction':
         specifier: ^6.1.15
         version: 6.1.15(@fullcalendar/core@6.1.15)
+      '@fullcalendar/list':
+        specifier: ^6.1.15
+        version: 6.1.15(@fullcalendar/core@6.1.15)
       '@fullcalendar/timegrid':
         specifier: ^6.1.15
         version: 6.1.15(@fullcalendar/core@6.1.15)
@@ -38,6 +41,9 @@ importers:
       axios:
         specifier: ^1.7.7
         version: 1.7.7
+      dayjs:
+        specifier: ^1.11.13
+        version: 1.11.13
       element-plus:
         specifier: ^2.8.5
         version: 2.8.5(vue@3.5.12(typescript@5.4.5))
@@ -409,6 +415,11 @@ packages:
 
   '@fullcalendar/interaction@6.1.15':
     resolution: {integrity: sha512-DOTSkofizM7QItjgu7W68TvKKvN9PSEEvDJceyMbQDvlXHa7pm/WAVtAc6xSDZ9xmB1QramYoWGLHkCYbTW1rQ==}
+    peerDependencies:
+      '@fullcalendar/core': ~6.1.15
+
+  '@fullcalendar/list@6.1.15':
+    resolution: {integrity: sha512-U1bce04tYDwkFnuVImJSy2XalYIIQr6YusOWRPM/5ivHcJh67Gm8CIMSWpi3KdRSNKFkqBxLPkfZGBMaOcJYug==}
     peerDependencies:
       '@fullcalendar/core': ~6.1.15
 
@@ -1827,6 +1838,10 @@ snapshots:
       '@fullcalendar/core': 6.1.15
 
   '@fullcalendar/interaction@6.1.15(@fullcalendar/core@6.1.15)':
+    dependencies:
+      '@fullcalendar/core': 6.1.15
+
+  '@fullcalendar/list@6.1.15(@fullcalendar/core@6.1.15)':
     dependencies:
       '@fullcalendar/core': 6.1.15
 

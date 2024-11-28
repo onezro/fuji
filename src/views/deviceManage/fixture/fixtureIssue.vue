@@ -47,18 +47,18 @@
           <el-table-column prop="MaterialName" align="center" label="工治具类别"
             :min-width="flexColumnWidth('工治具类别', 'MaterialName')">
           </el-table-column>
-          <el-table-column prop="ToolsMold" align="center" label="工治具型号"
+          <el-table-column prop="ToolsMold"  label="工治具型号"
             :min-width="flexColumnWidth('工治具型号', 'ToolsMold')">
           </el-table-column>
          
 
           
-          <el-table-column prop="Amount" align="center" label="需求数" :min-width="flexColumnWidth('需求数', 'Amount')">
+          <el-table-column prop="Amount" align="center" label="需求数" :min-width="60">
           </el-table-column>
           <el-table-column prop="IssuedQuantity" align="center" label="出库数"
-            :min-width="flexColumnWidth('出库数', 'IssuedQuantity')">
+            :min-width="60">
           </el-table-column>
-          <el-table-column prop="Status" align="center" label="状态" :min-width="flexColumnWidth('状态', 'Status')">
+          <el-table-column prop="Status" align="center" label="状态" :min-width="80">
             <template #default="scope">
               <el-tag type="primary" size="small" v-if="scope.row.Status=='已申请'">{{ scope.row.Status }}</el-tag>
               <el-tag type="warning" size="small" v-if="scope.row.Status=='已接受'">{{ scope.row.Status }}</el-tag>

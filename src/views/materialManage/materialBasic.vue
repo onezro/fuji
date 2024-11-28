@@ -162,7 +162,7 @@ import {
   UpdateMSDMaterialAttribute,
   GetComboBoxList
 } from "@/api/operate";
-import tableTem from "@/components/tableTem/indexCopy.vue";
+import tableTem from "@/components/tableTem/index.vue";
 import formTem from "@/components/formTem/index.vue";
 import { cloneDeep } from "lodash-es";
 import { ElNotification } from "element-plus";
@@ -189,7 +189,7 @@ const form = ref({
 const tableData = ref([]);
 const tableHeight = ref(0);
 const pageObj = ref({
-  pageSize: 50,
+  pageSize: 100,
   currentPage: 1,
 });
 const columnData = reactive([

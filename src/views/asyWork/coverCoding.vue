@@ -53,12 +53,14 @@
                       placeholder="请扫描条码" @keyup.enter.native="getChange" />
                   </el-form-item>
 
-                  <el-form-item :class="[stopsForm.result == 'OK' ? 'switchok' : 'switchng']" class="mb-2">
+                  <el-form-item :class="[
+                    stopsForm.result == 'OK' ? 'switchok' : 'switchng',
+                  ]" class="mb-2">
                     <el-switch v-model="stopsForm.result" size="large" style="
-                      zoom: 1.2;
-                      --el-switch-on-color: #ff4949;
-                      --el-switch-off-color: #13ce66;
-                    " :active-value="'NG'" :inactive-value="'OK'" active-text="NG" inactive-text="OK" />
+                        zoom: 1.2;
+                        --el-switch-on-color: #ff4949;
+                        --el-switch-off-color: #13ce66;
+                      " :active-value="'NG'" :inactive-value="'OK'" active-text="NG" inactive-text="OK" />
                   </el-form-item>
                 </el-form>
                 <div class="mb-2">
@@ -95,9 +97,7 @@
                   </el-table-column>
                   <el-table-column prop="QtyRequired" label="剩余数量" width="80" align="center">
                     <template #default="scope">
-                      <span>{{
-                        scope.row.Qty
-                      }}</span>
+                      <span>{{ scope.row.Qty }}</span>
                     </template>
                   </el-table-column>
                   <el-table-column prop="MaterialBarCode" label="批次条码" width="150">
@@ -209,6 +209,8 @@ import { QueryMoveHistory, OrderQuery } from "@/api/dipApi";
 import {
   CoverInstallPrint,
   CoverInstallStationMoveOut,
+  QueryCoverKeyMaterial,
+  JudgeCoverKeyMaterial,
   DefectProductRecord,
   QueryDefectCode,
 } from "@/api/asyApi";
@@ -225,13 +227,22 @@ import {
 } from "vue";
 import { cloneDeep } from "lodash-es";
 interface StopsForm {
-  containerName: string;
   workstationName: string;
   result: string;
   userAccount: string;
   txnDate: string;
+  OrderName: string;
+  tools: string;
+  BarCode: string;
+  keyMaterialList: Array<KeyMaterial>;
 }
-
+interface KeyMaterial {
+  MaterialBarCode: string;
+  MaterialName: string;
+  MfgOrderName: string;
+  QtyRequired: number;
+  IssueControl: number;
+}
 interface ToolList {
   WorkStationName: string;
   OrderNumber: string;
@@ -247,9 +258,12 @@ const inputRef = ref();
 const inputFocus = ref(true);
 const barCode = ref("");
 const stopsForm = ref<StopsForm>({
-  containerName: "",
   workstationName: opui.station || "",
   userAccount: userStore.getUserInfo,
+  BarCode: "",
+  OrderName: "",
+  keyMaterialList: [],
+  tools: "",
   txnDate: "",
   result: "OK",
 });
@@ -266,14 +280,6 @@ const form = ref<InstanceType<typeof Formspan>>({
   TodayNum: "",
 });
 const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
-  // {
-  //     label: "生产计划号",
-  //     value: "MfgOrderName",
-  //     disabled: true,
-  //     type: "input",
-  //     width: "",
-  // },
-
   {
     label: "产品机型",
     value: "BD_ProductModel",
@@ -309,20 +315,6 @@ const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
     type: "textarea",
     width: 300,
   },
-  // {
-  //   label: "过站总数",
-  //   value: "AllNum",
-  //   disabled: true,
-  //   type: "input",
-  //   width: "",
-  // },
-  // {
-  //   label: "实时过站",
-  //   value: "TodayNum",
-  //   disabled: true,
-  //   type: "input",
-  //   width: "",
-  // },
 ]);
 const columnData1 = reactive([
   {
@@ -429,6 +421,26 @@ const badColumn = reactive([
 const badVisible = ref(false);
 const changeList = ref([]);
 const BadtableData = ref([]);
+const inputRefs = ref<any[]>([]);
+const barData = ref<KeyMaterial[]>([]);
+const keyForm = ref({
+  BarCode: "",
+  OrderName: "",
+  ProductName: "",
+  workstationName: opui.station,
+  tools: "",
+  userAccount: "",
+  txnDate: "",
+});
+const isKeyForm = ref({
+  BarCode: "",
+  OrderName: "",
+  ProductName: "",
+  workstationName: opui.station,
+  tools: "",
+  userAccount: userStore.getUserInfo,
+  txnDate: "",
+});
 
 onBeforeMount(() => {
   clearInterval(timer.value);
@@ -457,6 +469,32 @@ const formText = (data: string) => {
   return form.value[key];
 };
 
+//获取物料
+const getKeyMaterial = () => {
+  barData.value = [];
+  QueryCoverKeyMaterial(keyForm.value).then((res: any) => {
+    barData.value = res.content;
+    barData.value.sort((a, b) => a.IssueControl - b.IssueControl);
+    barData.value = barData.value.map((b: any) => {
+      if (b.IssueControl == 1) {
+        return {
+          ...b,
+          MaterialBarCode: "",
+        };
+      } else {
+        return b;
+      }
+    });
+    nextTick(() => {
+      if (inputRefs.value.length >= 0) {
+        inputRefs.value[0].focus();
+      }else{
+        // getFocus()
+        inputRef.value.focus();
+      }
+    });
+  });
+};
 //获取过站历史记录
 const getHisData = () => {
   QueryMoveHistory(hisForm.value).then((res: any) => {
@@ -498,60 +536,132 @@ const geTodayData = () => {
   return todayDataArray;
 };
 
-//过站
-const getChange = () => {
-  let barCodeData = barCode.value;
-  if (checkStringType(barCodeData) == "result") {
-    if (barCodeData == "ng" || barCodeData == "NG") {
+const createInputRef = (val: any) => {
+  return (el: any) => {
+    if (el) {
+      inputRefs.value[val] = el;
+    }
+  };
+};
+const getChange1 = (val: any, data: any) => {
+  if (checkStringType(data.MaterialBarCode) == "result") {
+    if (data.MaterialBarCode == "ng" || data.MaterialBarCode == "NG") {
       stopsForm.value.result = "NG";
+      inputRef.value.focus();
     } else {
       stopsForm.value.result = "OK";
     }
+    inputRefs.value[val].clear();
   } else {
-    stopsForm.value.containerName = barCodeData;
-    if (stopsForm.value.result == "OK") {
-      msgTitle.value = "";
-      msgType.value = true;
-      CoverInstallStationMoveOut(stopsForm.value).then((res: any) => {
+    if (data.Qty == 0 || data.Qty == null) {
+      msgTitle.value = `关键料剩余为0无法进行绑定`;
+      msgType.value = false;
+      inputRefs.value[val].clear();
+      return;
+    } else {
+      let data1 = {
+        BarCode: data.MaterialBarCode,
+        OrderName: data.MfgOrderName,
+        ProductName: data.MaterialName,
+        workstationName: opui.station,
+      };
+      JudgeCoverKeyMaterial(data1).then((res: any) => {
         msgTitle.value = res.msg;
         msgType.value = res.success;
-        stopsForm.value.containerName = "";
         if (res.success) {
-          getHisData();
+          if (val + 1 < inputRefs.value.length) {
+            inputRefs.value[val + 1].focus();
+          } else {
+            inputRef.value.focus();
+          }
+          stopsForm.value.keyMaterialList.push({
+            ...data,
+            VirtualCode: res.content == null ? "" : res.content,
+          });
+        } else {
+          inputRefs.value[val].clear();
         }
-        getFocus();
-      });
-      barCode.value = "";
-    } else {
-      badForm.value.containerName = barCodeData;
-      getBadForm.value.containerName = barCodeData
-      QueryDefectCode(getBadForm.value).then((res: any) => {
-        if (!res.success) {
-          msgTitle.value = res.msg;
-          msgType.value = res.success;
-          return;
-        }
-        badheadForm.value.MfgOrderName = res.content.MfgOrderName;
-        badheadForm.value.ProductName = res.content.ProductName;
-        badheadForm.value.ProductDesc = res.content.ProductDesc;
-        badheadForm.value.Qty = res.content.Qty;
-        BadtableData.value = res.content.defectCode;
-        badVisible.value = true;
       });
     }
   }
-  // stopsForm.value.containerName = barCodeData;
-  // msgTitle.value = "";
-  // msgType.value = true;
-  // CoverInstallStationMoveOut(stopsForm.value).then((res: any) => {
-  //   msgTitle.value = res.msg;
-  //   msgType.value = res.success;
-  //   stopsForm.value.containerName = "";
-  //   if (res.success) {
-  //     getHisData();
-  //   }
-  //   getFocus();
-  // });
+};
+const tableRowClassName = (val: any) => {
+  // console.log(val.row);
+  const isExitCode = stopsForm.value.keyMaterialList.findIndex(
+    (k: any) => val.row.MaterialBarCode == k.MaterialBarCode
+  );
+  if (isExitCode !== -1) {
+    return "active-table";
+  }
+  return "";
+};
+
+//过站
+const getChange = () => {
+  let barCodeData = barCode.value;
+  if (stopsForm.value.OrderName == "") {
+    msgTitle.value = "请先选择生产计划号";
+    msgType.value = false;
+  } else {
+    if (checkStringType(barCodeData) == "result") {
+      if (barCodeData == "ng" || barCodeData == "NG") {
+        stopsForm.value.result = "NG";
+      } else {
+        stopsForm.value.result = "OK";
+        inputRefs.value[0].focus();
+      }
+    } else {
+      if (stopsForm.value.result == "OK") {
+        msgTitle.value = "";
+        msgType.value = true;
+        let dataIndex = barData.value.findIndex(
+          (b: any) => b.IssueControl == 1
+        );
+        // if (stopsForm.value.keyMaterialList.length !== 0 || dataIndex !== -1) {
+    //  if(dataIndex==-1){
+      stopsForm.value.BarCode = barCodeData;
+          CoverInstallStationMoveOut(stopsForm.value).then((res: any) => {
+            msgTitle.value = res.msg;
+            msgType.value = res.success;
+            stopsForm.value.BarCode = "";
+            barCode.value = "";
+            stopsForm.value.keyMaterialList = [];
+            getHisData();
+            getKeyMaterial();
+            // getFocus()
+          });
+    //  }else{
+
+    //  }
+          
+        // } else {
+        //   barCode.value = "";
+        //   msgTitle.value = `请扫描关键料或关键为空`;
+        //   msgType.value = false;
+        //   let dataIndex1 = barData.value.findIndex(
+        //     (b: any) => b.IssueControl == 1 && b.MaterialBarCode == ""
+        //   );
+        //   inputRefs.value[dataIndex1].focus();
+        // }
+      } else {
+        badForm.value.containerName = barCodeData;
+        getBadForm.value.containerName = barCodeData;
+        QueryDefectCode(getBadForm.value).then((res: any) => {
+          if (!res.success) {
+            msgTitle.value = res.msg;
+            msgType.value = res.success;
+            return;
+          }
+          badheadForm.value.MfgOrderName = res.content.MfgOrderName;
+          badheadForm.value.ProductName = res.content.ProductName;
+          badheadForm.value.ProductDesc = res.content.ProductDesc;
+          badheadForm.value.Qty = res.content.Qty;
+          BadtableData.value = res.content.defectCode;
+          badVisible.value = true;
+        });
+      }
+    }
+  }
   barCode.value = "";
 };
 const badSelectionChange = (data: any) => {
@@ -603,6 +713,7 @@ const radioChange = (args: any) => {
     form.value.PlannedCompletionDate = "";
     form.value.Qty = "";
     form.value.ERPOrder = "";
+    barData.value = [];
     tableData1.value = [];
   } else {
     if (args[1] !== form.value.MfgOrderName && form.value.MfgOrderName == "") {
@@ -617,10 +728,16 @@ const radioChange = (args: any) => {
       form.value.AllNum = args[0].AllNum;
       form.value.TodayNum = args[0].TodayNum;
       form.value.ERPOrder = args[0].ERPOrder;
+      stopsForm.value.OrderName = args[0].MfgOrderName;
       hisForm.value.MfgOrderName = args[0].MfgOrderName;
-      getHisData();
+      isKeyForm.value.OrderName = args[0].MfgOrderName;
+      keyForm.value.OrderName = args[0].MfgOrderName;
+      keyForm.value.ProductName = args[0].ProductName;
+    
     } else {
     }
+    getHisData();
+    getKeyMaterial();
     // orderTable.value.data.forEach((v: any) => {
     //   if (v.MfgOrderName == args[1]) {
   }

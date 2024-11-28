@@ -630,12 +630,13 @@ const cellClick = (row: any) => {
     }
     if (row.Status == 1) {
         StatusDec = "备料中";
-        firstForm.value.shelf_ids = row.shelf_ids;
+      
         // firstForm.value.shelf_ids_list.push (row.shelf_ids)
     }
     if (row.Status == 2) {
         StatusDec = "备料完成";
     }
+    firstForm.value.shelf_ids = row.shelf_ids;
     chooseOrder.value = { ...row, StatusDec };
     //   operateForm.value=
 };
@@ -647,11 +648,12 @@ const celldblclick = (row: any) => {
     }
     if (row.Status == 1) {
         StatusDec = "备料中";
-        firstForm.value.shelf_ids = row.shelf_ids;
+      
     }
     if (row.Status == 2) {
         StatusDec = "备料完成";
     }
+    firstForm.value.shelf_ids = row.shelf_ids;
     operateForm.value = { ...row, StatusDec };
     startForm.value.LineNumber = row.LineNumber;
     startForm.value.OrderNumber = row.OrderNumber;

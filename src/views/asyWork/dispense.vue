@@ -82,50 +82,7 @@
         </div>
       </div>
     </div>
-    <!-- <el-dialog v-model="badVisible" title="不良登记" width="60%" :append-to-body="true" :close-on-click-modal="false"
-      :close-on-press-escape="false" align-center @close="badCancel">
-      <div>
-        <div>
-          <div class="h-[30px] pl-3 flex items-center text-base text-[#fff] bg-[#006487]">
-            基本信息
-          </div>
-          <el-form ref="badFormRef" :model="badheadForm" label-width="auto">
-            <el-form-item label="PCB条码" class="mb-[5px] flex">
-              <el-input v-model="badForm.containerName" style="width: 160px" disabled />
-            </el-form-item>
-            <el-row>
-              <el-col :span="8">
-                <el-form-item label="生产计划号" class="mb-[5px] flex">
-                  <el-input v-model="badheadForm.MfgOrderName" style="width: 160px" disabled />
-                </el-form-item>
-              </el-col>
-              <el-col :span="6">
-                <el-form-item class="mb-[5px]" label="产品编码">
-                  <el-input v-model="badheadForm.ProductName" style="width: 160px" disabled /> </el-form-item></el-col>
-              <el-col :span="10">
-                <el-form-item class="mb-[5px]" label="产品描述">
-                  <el-input v-model="badheadForm.ProductDesc" style="width: 320px" disabled />
-                </el-form-item>
-              </el-col>
-            </el-row>
-          </el-form>
-        </div>
-        <div>
-          <div class="h-[30px] pl-3 flex items-center text-base text-[#fff] bg-[#006487]">
-            不良原因
-          </div>
-          <table-temp :showIndex="true" :show-select="true" :tableData="BadtableData" :tableHeight="300"
-            :columnData="badColumn"  @handleSelectionChange="badSelectionChange"></table-temp>
-        </div>
-      </div>
-
-      <template #footer>
-        <span class="dialog-footer">
-          <el-button @click="badCancel">取消</el-button>
-          <el-button type="primary" @click="badSubmit"> 确定 </el-button>
-        </span>
-      </template>
-    </el-dialog> -->
+   
   </div>
 </template>
 
@@ -555,11 +512,12 @@ const radioChange = (args: any) => {
       // stopsForm.value.ProductName = args[0].ProductName;
       hisForm.value.MfgOrderName = args[0].MfgOrderName;
       // getFeedForm.value.MfgOrder = args[0].MfgOrderName;
-      getHisData();
+      // getHisData();
       // getMaterialRequired();
     } else {
 
     }
+    getHisData();
   }
 };
 

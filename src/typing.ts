@@ -98,3 +98,12 @@ interface BurnForm{
     data:Array<string>,
     
 }
+
+interface FeedForm{
+    MfgOrderName:string;
+  type:string;
+  ProductName:string;
+  ProductDesc: string;
+  Qty: string;
+  eqInfo: string;
+}
