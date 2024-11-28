@@ -206,3 +206,14 @@ export function QuerySMTDefectRecordDetail(data: any) {
       },
     });
   }
+
+
+  export function QuerySpecBystation(data:any) {
+    return request({
+        url: `/api/workstation/QuerySpecBystation`,
+        method: "post",
+      params:{
+        workStation:data
+      }
+    })
+  }

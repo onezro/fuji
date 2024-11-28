@@ -1,37 +1,33 @@
 <template>
   <div class="flex flex-col w-full h-full">
-    <div
-      class="h-[40px] min-h-[40px] pl-2 pr-2 flex justify-between items-center"
-    >
+    <div class="h-[40px] min-h-[40px] pl-2 pr-2 flex justify-between items-center">
       <span class="text-[1.2rem]"> {{ opui.stationDec }} </span>
       <div></div>
     </div>
     <div class="w-full flex-1 flex">
       <div class="setwidth w-[350px]">
         <div class="w-full h-full box">
-          <div
-            class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]"
-          >
+          <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
             <span class="ml-5">基本信息</span>
           </div>
           <div class="p-[10px]">
-            <el-form
-              class="inbound"
-              ref="formRef"
-              :model="form"
-              label-width="auto"
-            >
-              <el-form-item
-                v-for="f in formHeader"
-                :key="f.value"
-                :label="f.label"
-              >
-                <span
-                  class="font-bold text-lg leading-[30px]"
-                  :class="f.value == 'passNum' ? 'text-[#00B400]' : ''"
-                >
-                  {{ formText(f.value) }}</span
-                >
+            <el-form class="inbound" ref="formRef" :model="form" label-width="auto">
+              <el-form-item label="生产计划号" class="mb-[5px] flex">
+                <selectTa ref="selectTable" :table="orderTable" :selectWidth="200" :columns="orderColumns"
+                  :max-height="400" :tableWidth="700" :defaultSelectVal="defaultSelectVal" :keywords="{
+                    label: 'MfgOrderName',
+                    value: 'MfgOrderName',
+                  }" @radioChange="(...args: any) => radioChange(args)">
+                </selectTa>
+                <el-tooltip content="刷新" placement="top">
+                  <el-icon class="ml-2" color="#006487" :class="isLoding" size="24" @click="getOrderData">
+                    <RefreshRight />
+                  </el-icon>
+                </el-tooltip>
+              </el-form-item>
+              <el-form-item v-for="f in formHeader" :key="f.value" :label="f.label">
+                <span class="font-bold text-lg leading-[30px]" :class="f.value == 'passNum' ? 'text-[#00B400]' : ''">
+                  {{ formText(f.value) }}</span>
               </el-form-item>
             </el-form>
           </div>
@@ -41,30 +37,15 @@
         <!-- <div class="w-full"> -->
         <div class="w-full h-full flex flex-col">
           <div>
-            <div
-              class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]"
-            >
+            <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
               <span class="ml-5"> 扫描条码</span>
             </div>
             <div class="h-[60px] pt-3 pr-5 pl-5">
-              <el-form
-                class="inbound"
-                ref="formRef"
-                :inline="true"
-                :model="form"
-                label-width="auto"
-                @submit.native.prevent
-              >
+              <el-form class="inbound" ref="formRef" :inline="true" :model="form" label-width="auto"
+                @submit.native.prevent>
                 <el-form-item label="扫描条码" class="mb-2">
-                  <el-input
-                    v-model.trim="barCode"
-                    ref="inputRef"
-                    :autofocus="inputFocus"
-                    style="width: 500px"
-                    placeholder="请扫描MES条码"
-                    :disabled="!SoftwareStatus"
-                    @keyup.enter.native="scan"
-                  />
+                  <el-input v-model.trim="barCode" ref="inputRef" :autofocus="inputFocus" style="width: 500px"
+                    placeholder="请扫描MES条码" :disabled="isActive" @keyup.enter.native="scan" />
                 </el-form-item>
                 <el-form-item label="" class="mb-2">
                   <el-button type="primary" @click="reset">重置</el-button>
@@ -86,78 +67,48 @@
           </div>
 
           <div class="flex flex-col flex-1 tabs-css">
-            <div
-              class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487] justify-between"
-            >
+            <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487] justify-between">
               <span class="ml-5">软件信息</span>
-              <el-button
-                type="warning"
-                :disabled="
-                  SoftwareStatus || changeList.length !== tableData1.length
-                "
-                @click="ManualSubmit"
-                >人工确认提交</el-button
-              >
+              <el-button type="warning" :disabled="SoftwareStatus || changeList.length !== tableData1.length
+                " @click="ManualSubmit">人工确认提交</el-button>
             </div>
-            <table-tem
-              class="my-table"
-              :show-select="true"
-              :tableData="tableData1"
-              :tableHeight="tableHeight"
-              :columnData="columnData1"
-              :pageObj="pageObj"
-              @handleSizeChange="handleSizeChange"
-              @handleCurrentChange="handleCurrentChange"
-              @handleSelectionChange="handleSelectionChange"
-            ></table-tem>
+            <el-table class="my-table"  stripe border fit :data="tableData1" :style="{ width: '100%' }" :height="tableHeight"
+              @selection-change="handleSelectionChange">
+              <el-table-column type="selection" fixed width="55" align="center" />
+              <el-table-column prop="SoftwareName" label="Name" width="200" />
+              <el-table-column prop="SoftwareVersion" label="Address" />
+            </el-table>
+            <!-- <table-tem class="my-table" :show-select="true" :tableData="tableData1" :tableHeight="tableHeight"
+              :columnData="columnData1" :pageObj="pageObj" @handleSizeChange="handleSizeChange"
+              @handleCurrentChange="handleCurrentChange" @handleSelectionChange="handleSelectionChange"></table-tem> -->
           </div>
         </div>
       </div>
       <div class="setwidth w-[350px] border-l border-solid border-[#cbcbcb]">
         <div class="w-full h-full box">
-          <div
-            class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]"
-          >
+          <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
             <span class="ml-5">当前MES码</span>
           </div>
           <div class="h-[60px] pt-3 pr-5 pl-5">
-            <el-form
-              class="inbound"
-              ref="formRef"
-              :inline="true"
-              :model="form"
-              label-width="auto"
-              @submit.native.prevent
-            >
+            <el-form class="inbound" ref="formRef" :inline="true" :model="form" label-width="auto"
+              @submit.native.prevent>
               <el-form-item label="" class="mb-2">
-                <el-input
-                  class="custom-input custom-input-class"
-                  v-model.trim="currentCode"
-                  ref="inputRef"
-                  style="width: 300px"
-                  disabled
-                />
+                <el-input class="custom-input custom-input-class" v-model.trim="currentCode" ref="inputRef"
+                  style="width: 300px" disabled />
               </el-form-item>
             </el-form>
           </div>
 
           <div class="flex flex-col flex-1 tabs-css">
-            <div
-              class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]"
-            >
+            <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
               <span class="ml-5">检测结果与提示消息</span>
             </div>
             <div class="h-[160px] flex justify-around items-center">
-              <div
-                class="w-[120px] h-[120px] rounded-full"
-                :style="{ backgroundColor: typeColor }"
-              ></div>
+              <div class="w-[120px] h-[120px] rounded-full" :style="{ backgroundColor: typeColor }"></div>
             </div>
-            <div
-              :style="{ height: `${boxHeight}px` }"
-              class="m-2 border border-solid border-[#cbcbcb]"
-              :class="msgType ? 'text-[#00B400]' : 'text-[red]'"
-            >
+            <div :style="{ height: `${boxHeight}px` }"
+              class="m-2 border border-solid border-[#cbcbcb] text-2xl font-bold"
+              :class="msgType ? 'text-[#00B400]' : 'text-[red]'">
               {{ msgTitle }}
             </div>
           </div>
@@ -179,6 +130,8 @@ import { checkStringType } from "@/utils/barcodeFormat";
 import type { Formspan, FormHeader, OrderData } from "@/typing";
 import { ElMessage, ElNotification, ElMessageBox } from "element-plus";
 import {
+  OrderQuery,
+  VerifyContainer,
   QueryOrderSoftwareInfo,
   AutoComparisonInfoMovestd,
   ManualComparisonInfoMovestd,
@@ -200,6 +153,7 @@ interface StopsForm {
   result: string;
   userAccount: string;
   txnDate: string;
+  orderName: string;
 }
 
 interface ToolList {
@@ -228,30 +182,46 @@ const stopsForm = ref<StopsForm>({
   containerName: "",
   workstationName: opui.station || "",
   userAccount: userStore.getUserInfo,
+  orderName: "",
   txnDate: "",
   result: "OK",
 });
 
 const form = ref<InstanceType<typeof Formspan>>({
-  PlanNo: "",
-  ProductModel: "",
+  MfgOrderName: "",
   ProductName: "",
   ProductDesc: "",
   Qty: "",
+  ERPOrder: "",
+  BD_ProductModel: "",
   TotalNum: "",
   TodayNum: "",
 });
 const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
+  // {
+  //   label: "生产计划号",
+  //   value: "PlanNo",
+  //   disabled: true,
+  //   type: "input",
+  //   width: "",
+  // },
   {
-    label: "生产计划号",
-    value: "PlanNo",
+    label: "产品机型",
+    value: "BD_ProductModel",
     disabled: true,
     type: "input",
     width: "",
   },
   {
-    label: "产品机型",
-    value: "ProductModel",
+    label: "工单号",
+    value: "ERPOrder",
+    disabled: true,
+    type: "input",
+    width: "",
+  },
+  {
+    label: "计划数量",
+    value: "Qty",
     disabled: true,
     type: "input",
     width: "",
@@ -271,14 +241,7 @@ const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
     width: 300,
   },
   {
-    label: "计划数量",
-    value: "Qty",
-    disabled: true,
-    type: "input",
-    width: "",
-  },
-  {
-    label: "过站数量",
+    label: "工序汇总",
     value: "TotalNum",
     disabled: true,
     type: "input",
@@ -348,13 +311,29 @@ const hisForm = ref({
   MfgOrderName: "",
   workstationName: opui.station,
 });
+const hisTableData = ref([]);
+
+const orderTable = ref<InstanceType<typeof OrderData>>({
+  data: [],
+});
+const orderColumns = ref([
+  { label: "生产计划号", width: "", prop: "MfgOrderName" },
+  { label: "产品编码", width: "", prop: "ProductName" },
+  { label: "产线", width: "", prop: "MfgLineDesc" },
+  { label: "状态", width: "", prop: "OrderStatusDesc" },
+  { label: "计划开始", width: "", prop: "PlannedStartDate" },
+  { label: "计划完成", width: "", prop: "PlannedCompletionDate" },
+]);
+const defaultSelectVal = ref<string[]>([]);
+const isLoding = ref("");
+const isActive = ref(false);
 
 onBeforeMount(() => {
   getScreenHeight();
 });
 onMounted(() => {
   window.addEventListener("resize", getScreenHeight);
-  // getOrderData();
+  getOrderData();
   getFocus();
 });
 onBeforeUnmount(() => {
@@ -373,99 +352,108 @@ const formText = (data: string) => {
   let key = data as keyof typeof form;
   return form.value[key];
 };
+//获取过站历史记录
+const getHisData = () => {
+  QueryMoveHistory(hisForm.value).then((res: any) => {
+    hisTableData.value = res.content;
+    form.value.TotalNum = changeDataLength("all");
+    form.value.TodayNum = changeDataLength("today");
+  });
+};
+const changeDataLength = (val: any) => {
+  if (val == "today") {
+    let dataLength = geTodayData();
+    return dataLength.length;
+  } else {
+    return hisTableData.value.length;
+  }
+};
+const geTodayData = () => {
+  const today = new Date();
+  const todayString = today.toISOString().split("T")[0];
+  function getDateFromDateTimeString(dateTimeString: any) {
+    return dateTimeString.split(" ")[0];
+  }
+  const todayDataArray = hisTableData.value.filter((item: any) => {
+    return getDateFromDateTimeString(item.TxnDate) === todayString;
+  });
+  return todayDataArray;
+};
+//获取工单软件信息
+const getOrderMess = () => {
+  QueryOrderSoftwareInfo(form.value.BD_ProductModel).then((res: any) => {
+    tableData1.value = res.content.SoftwareList;
+    SoftwareStatus.value = res.content.SoftwareStatus;
+    if (!res.success) {
+      msgType.value = res.success;
+      msgTitle.value = res.msg;
+    }
+  });
+};
 
 //重置页面
 const reset = () => {
-  form.value = {
-    MfgOrderName: "",
-    ProductName: "",
-    ProductDesc: "",
-    Qty: "",
-    PlannedStartDate: "",
-    PlannedCompletionDate: "",
-  };
-  tableData1.value = [];
   currentCode.value = "";
-  // msgType.value = true;
-  // msgTitle.value = "";
   barCode.value = "";
-  SoftwareStatus.value = true;
   msgTitle.value = "";
   msgType.value = true;
   typeColor.value = "grey";
+  isActive.value = false;
 };
 
 //选中
 const handleSelectionChange = (data: any) => {
   let content = cloneDeep(data);
+  console.log(data);
+  
   changeList.value = content;
 };
 
 //扫描条码
 const scan = () => {
+  const barCodeData = barCode.value;
   if (currentCode.value === "") {
-    QueryOrderSoftwareInfo({
-      containerName: barCode.value,
+    VerifyContainer({
+      containerName: barCodeData,
+      orderName: form.value.MfgOrderName,
       workstationName: opui.station,
-    }).then((res: any) => {
-      msgType.value = res.success;
-      msgTitle.value = res.msg;
-      typeColor.value = "grey";
-      if (res && res.success) {
-        currentCode.value = barCode.value;
-        SoftwareStatus.value = res.content.SoftwareStatus;
-        form.value.PlanNo = res.content.PlanNo;
-        form.value.ProductModel = res.content.ProductModel;
-        form.value.ProductName = res.content.ProductName;
-        form.value.ProductDesc = res.content.ProductDesc;
-        form.value.Qty = res.content.Qty;
-        form.value.TotalNum = res.content.TotalNum;
-        form.value.TodayNum = res.content.TodayNum;
-        tableData1.value = res.content.SoftwareList;
-      }
-      barCode.value = "";
-    });
-  } else {
-    AutoComparisonInfoMovestd({
-      ContainerName: currentCode.value,
-      SoftwareCode: barCode.value,
-      SoftwareInfo: tableData1.value,
-      workstationName: opui.station,
-      userAccount: userStore.getUserInfo,
     }).then((res: any) => {
       msgType.value = res.success;
       msgTitle.value = res.msg;
       if (res.success) {
-        typeColor.value = "#00B400";
-        QueryMoveHistory({
-          containerName: form.value.PlanNo,
-          workstationName: opui.station,
-        }).then((res: any) => {
-          if (res && res.success) {
-            currentCode.value = "";
-            SoftwareStatus.value = true;
-            const today = new Date();
-            const todayString = today.toISOString().split("T")[0];
-            function getDateFromDateTimeString(dateTimeString: any) {
-              return dateTimeString.split(" ")[0];
-            }
-            const todayDataArray = res.content.value.filter((item: any) => {
-              return getDateFromDateTimeString(item.CreatedOn) === todayString;
-            });
-            form.value.TodayNum = todayDataArray.length;
-            form.value.TotalNum = res.content.length;
-            tableData1.value = [];
-          } else {
-            msgType.value = res.success;
-            msgTitle.value = res.msg;
-          }
-          barCode.value = "";
-        });
-      } else {
-        typeColor.value = "red";
+        currentCode.value = barCodeData;
+        if (!SoftwareStatus.value) {
+          isActive.value = true;
+        } else {
+          isActive.value = false;
+        }
       }
     });
+
+  } else {
+    if (SoftwareStatus.value) {
+      AutoComparisonInfoMovestd({
+        ContainerName: currentCode.value,
+        SoftwareCode: barCode.value,
+        SoftwareInfo: tableData1.value,
+        workstationName: opui.station,
+        userAccount: userStore.getUserInfo,
+      }).then((res: any) => {
+        msgType.value = res.success;
+        msgTitle.value = res.msg;
+        if (res.success) {
+          typeColor.value = "#00B400";
+          getHisData();
+          isActive.value = false;
+          currentCode.value = "";
+        } else {
+          typeColor.value = "red";
+        }
+      });
+    }
   }
+  barCode.value = "";
+  getFocus();
 };
 
 const ManualSubmit = () => {
@@ -476,32 +464,37 @@ const ManualSubmit = () => {
   }).then((res: any) => {
     msgType.value = res.success;
     msgTitle.value = res.msg;
+
     if (res.success) {
       typeColor.value = "#00B400";
-      QueryOrderSoftwareInfo({
-        containerName: form.value.PlanNo,
-        workstationName: opui.station,
-      }).then((res: any) => {
-        if (res && res.success) {
-          currentCode.value = "";
-          SoftwareStatus.value = true;
-          const today = new Date();
-          const todayString = today.toISOString().split("T")[0];
-          function getDateFromDateTimeString(dateTimeString: any) {
-            return dateTimeString.split(" ")[0];
-          }
-          const todayDataArray = res.content.value.filter((item: any) => {
-            return getDateFromDateTimeString(item.CreatedOn) === todayString;
-          });
-          form.value.TodayNum = todayDataArray.length;
-          form.value.TotalNum = res.content.length;
-          tableData1.value = [];
-        } else {
-          msgType.value = res.success;
-          msgTitle.value = res.msg;
-        }
-        barCode.value = "";
-      });
+      getHisData();
+      isActive.value = false;
+      currentCode.value = "";
+      // getOrderMess()
+      // QueryOrderSoftwareInfo({
+      //   containerName: form.value.PlanNo,
+      //   workstationName: opui.station,
+      // }).then((res: any) => {
+      //   if (res && res.success) {
+      //     currentCode.value = "";
+      //     SoftwareStatus.value = true;
+      //     const today = new Date();
+      //     const todayString = today.toISOString().split("T")[0];
+      //     function getDateFromDateTimeString(dateTimeString: any) {
+      //       return dateTimeString.split(" ")[0];
+      //     }
+      //     const todayDataArray = res.content.value.filter((item: any) => {
+      //       return getDateFromDateTimeString(item.CreatedOn) === todayString;
+      //     });
+      //     form.value.TodayNum = todayDataArray.length;
+      //     form.value.TotalNum = res.content.length;
+      //     tableData1.value = [];
+      //   } else {
+      //     msgType.value = res.success;
+      //     msgTitle.value = res.msg;
+      //   }
+      //   barCode.value = "";
+      // });
     } else {
       typeColor.value = "red";
     }
@@ -514,7 +507,62 @@ const getChange = () => {
 
   stopsForm.value.containerName = barCodeData;
 };
+const getOrderData = () => {
+  isLoding.value = "is-loading";
+  defaultSelectVal.value = [];
+  OrderQuery({ lineName: opui.line, OrderTypeName: "Assembly" }).then(
+    (res: any) => {
+      let data = res.content;
+      let timer = setTimeout(() => {
+        isLoding.value = "";
+        clearTimeout(timer);
+      }, 2000);
+      if (data !== null && data.length !== 0) {
+        orderTable.value.data = data;
+        if (data.length >= 1) {
+          defaultSelectVal.value[0] = data[0].MfgOrderName;
+        }
+      }
+    }
+  );
+};
 
+const radioChange = (args: any) => {
+  if (args[1] == null) {
+    form.value.MfgOrderName = "";
+    form.value.ProductName = "";
+    form.value.ProductDesc = "";
+    form.value.PlannedStartDate = "";
+    form.value.BD_ProductModel = "";
+    form.value.BD_SoftVersion = "";
+    form.value.PlannedCompletionDate = "";
+    form.value.Qty = "";
+    form.value.ERPOrder = "";
+    // detailsData.value = []
+    tableData1.value = [];
+  } else {
+    if (args[1] !== form.value.MfgOrderName && form.value.MfgOrderName == "") {
+      form.value.MfgOrderName = args[0].MfgOrderName;
+      form.value.ProductName = args[0].ProductName;
+      form.value.ProductDesc = args[0].ProductDesc;
+      form.value.BD_ProductModel = args[0].BD_ProductModel;
+      form.value.BD_SoftVersion = args[0].BD_SoftVersion;
+      form.value.PlannedStartDate = args[0].PlannedStartDate;
+      form.value.PlannedCompletionDate = args[0].PlannedCompletionDate;
+      form.value.Qty = args[0].Qty;
+      form.value.AllNum = args[0].AllNum;
+      form.value.TodayNum = args[0].TodayNum;
+      form.value.ERPOrder = args[0].ERPOrder;
+      stopsForm.value.orderName = args[0].MfgOrderName;
+      hisForm.value.MfgOrderName = args[0].MfgOrderName;
+      getHisData();
+      getOrderMess();
+      // getMaterialRequired();
+    } else {
+    }
+  }
+};
+//
 onBeforeMount(() => {
   getScreenHeight();
 });
@@ -580,7 +628,7 @@ const getScreenHeight = () => {
   font-size: 1.1rem;
 }
 
-.tabs-css .el-tabs--border-card > .el-tabs__header .el-tabs__item {
+.tabs-css .el-tabs--border-card>.el-tabs__header .el-tabs__item {
   color: #fff;
   // padding: 0 !important;
 }
@@ -603,10 +651,7 @@ const getScreenHeight = () => {
   color: #ff4949;
 }
 
-.tabs-css
-  .el-tabs--border-card
-  > .el-tabs__header
-  .el-tabs__item:not(.is-disabled):hover {
+.tabs-css .el-tabs--border-card>.el-tabs__header .el-tabs__item:not(.is-disabled):hover {
   // color: #fff;
   // background-color: #fff;
   background-color: rgba($color: #fff, $alpha: 0.8);
@@ -631,6 +676,7 @@ const getScreenHeight = () => {
   background-color: rgba($color: #000000, $alpha: 0);
   color: black;
 }
+
 .custom-input-class.el-input.is-disabled .el-input__inner {
   color: black;
   -webkit-text-fill-color: black;

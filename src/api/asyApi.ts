@@ -143,13 +143,21 @@ export function QueryMoveHistory(data:any) {
         data
     })
 }
-
+export function VerifyContainer(data:any) {
+    return request({
+        url: "/api/SoftwareUpgrade/VerifyContainer",
+        method: "post",
+     data
+    })
+}
 //查询工单软件信息
 export function QueryOrderSoftwareInfo(data:any) {
     return request({
         url: "/api/SoftwareUpgrade/QueryOrderSoftwareInfo",
         method: "post",
-        data
+       params:{
+        productModel:data
+       }
     })
 }
 
@@ -186,3 +194,58 @@ export function JudgeAfterStartUpQrCode(data:any) {
         data
     })
 }
+
+//不良登记查询
+export function QueryDefectCode(data:any) {
+    return request({
+        url: "/api/DefectProductRecord/QueryDefectCode",
+        method: "post",
+       data
+    })
+}
+//不良登记
+export function DefectProductRecord(data:any) {
+    return request({
+        url: "/api/DefectProductRecord/DefectProductRecord",
+        method: "post",
+        data
+    })
+}
+
+//EOL人工检测
+export function EolManualTestStationMoveOut(data:any) {
+    return request({
+        url: "/api/EolManualTest/EolManualTestStationMoveOut",
+        method: "post",
+        data
+    })
+}
+
+//
+export function eolQueryDefectCode(data:any) {
+    return request({
+        url: "/api/EolManualTest/QueryDefectCode",
+        method: "post",
+        params:{
+            containerName:data
+        }
+    })
+}
+
+//过站
+export function MoveStdNew(data:any) {
+    return request({
+        url: "/api/workstation/MoveStdNew",
+        method: "post",
+        data
+    })
+}
+export function QueryDisMoveHistory(data:any) {
+    return request({
+        url: "/api/Dispense/QueryMoveHistory",
+        method: "post",
+        data
+    })
+}
+
+

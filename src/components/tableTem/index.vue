@@ -9,6 +9,9 @@
       <el-table-column type="selection" fixed width="55" align="center" v-if="showSelect" />
       <el-table-column type="index" align="center" fixed label="序号" :width="size == 'small' ? '50' : '60'"
         v-if="showIndex">
+        <template #default="scope">
+          <span>{{ scope.$index+pageObj.pageSize* (pageObj.currentPage-1) +1}}</span>
+        </template>
       </el-table-column>
       <el-table-column v-for="(c, i) in columnData" :key="i" :prop="c.prop" :label="c.label"
         :show-overflow-tooltip="true" :width="c.width" :min-width="c.min ? flexColumnWidth(c.label, c.prop) : ''"

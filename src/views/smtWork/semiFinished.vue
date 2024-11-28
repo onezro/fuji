@@ -1,47 +1,30 @@
 <template>
   <div class="flex flex-col w-full h-full">
-    <div
-      class="h-[40px] min-h-[40px] pl-2 pr-2 flex justify-between items-center"
-    >
+    <div class="h-[40px]  pl-2 pr-2 flex justify-between items-center">
       <span class="text-[1.2rem]"> {{ opui.stationDec }} </span>
     </div>
     <div class="w-full flex-1 flex">
       <div class="setwidth w-[350px]">
         <div class="w-full h-full box">
-          <div
-            class="h-[35px] flex items-center justify-between text-lg text-[#fff] bg-[#006487]"
-          >
+          <div class="h-[35px] flex items-center justify-between text-lg text-[#fff] bg-[#006487]">
             <span class="ml-5">周转箱列表</span>
             <el-tooltip content="刷新" placement="top">
-              <el-icon
-                class="mr-3"
-                color="#fff"
-                :class="isLoding"
-                size="24"
-                @click="getCarrierList"
-                ><RefreshRight
-              /></el-icon>
+              <el-icon class="mr-3" color="#fff" :class="isLoding" size="24" @click="getCarrierList">
+                <RefreshRight />
+              </el-icon>
             </el-tooltip>
           </div>
           <div class="p-3" :style="{ height: boxHeight + 'px' }">
-            <el-card
-              shadow="always"
-              class="mb-2"
-              :body-style="{ padding: '8px' }"
-              v-for="t in turnData"
-              :key="t.CARRIERNAME"
-            >
+            <el-card shadow="always" class="mb-2" :body-style="{ padding: '8px' }" v-for="t in turnData"
+              :key="t.CARRIERNAME">
               <el-form ref="formRef" :model="t" label-width="auto">
                 <el-row :gutter="20">
                   <el-col :span="12">
                     <el-form-item label="周转箱类型">
-                      <span
-                        :class="[
-                          t.LOADTYPE == 'OK' ? 'text-[#00B400]' : 'text-[red]',
-                          'font-bold text-base',
-                        ]"
-                        >{{ t.LOADTYPE }}</span
-                      >
+                      <span :class="[
+                        t.LOADTYPE == 'OK' ? 'text-[#00B400]' : 'text-[red]',
+                        'font-bold text-base',
+                      ]">{{ t.LOADTYPE }}</span>
                     </el-form-item>
                   </el-col>
                   <el-col :span="12">
@@ -53,24 +36,18 @@
                 <el-row :gutter="20">
                   <el-col :span="12">
                     <el-form-item label="周转箱条码">
-                      <span
-                        class="text-base text-[#006487] font-bold underline cursor-pointer"
-                        @click="getList(t.CARRIERNAME)"
-                        >{{ t.CARRIERNAME }}</span
-                      >
+                      <span class="text-base text-[#006487] font-bold underline cursor-pointer"
+                        @click="getList(t.CARRIERNAME)">{{ t.CARRIERNAME }}</span>
                     </el-form-item>
                   </el-col>
                   <el-col :span="12">
                     <el-form-item label="装箱数量">
                       <span class="text-base">{{ t.QTY }}</span>
-                    </el-form-item></el-col
-                  >
+                    </el-form-item></el-col>
                 </el-row>
               </el-form>
               <div class="flex justify-end">
-                <el-button type="primary" :disabled="t.QTY==0" @click="disFullBox(t)"
-                  >不满箱装箱</el-button
-                >
+                <el-button type="primary" :disabled="t.QTY == 0" @click="disFullBox(t)">不满箱装箱</el-button>
               </div>
             </el-card>
           </div>
@@ -79,61 +56,33 @@
       <div class="w-[calc(100%-350px)]">
         <div class="w-full h-full flex flex-col">
           <div>
-            <div
-              class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]"
-            >
+            <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
               <span class="ml-5"> 扫描条码</span>
             </div>
             <div class="h-[120px] p-5">
-              <el-form
-                class="inbound"
-                ref="formRef"
-                :inline="true"
-                :model="form"
-                label-width="auto"
-                @submit.native.prevent
-              >
+              <el-form class="inbound" ref="formRef" :inline="true" :model="form" label-width="auto"
+                @submit.native.prevent>
                 <el-form-item label="扫描条码">
-                  <el-input
-                    v-model.trim="form.PcbNumber"
-                    ref="inputRef"
-                    :autofocus="inputFocus"
-                    style="width: 500px"
-                    placeholder="请扫描条码"
-                    @keyup.enter.native="getChange"
-                  />
+                  <el-input v-model.trim="form.PcbNumber" ref="inputRef" :autofocus="inputFocus" style="width: 500px"
+                    placeholder="请扫描条码" @keyup.enter.native="getChange" />
                 </el-form-item>
               </el-form>
-              <div
-                class="text-xl font-bold text-[#00B400]"
-                v-show="msgType === true || msgTitle === ''"
-              >
+              <div class="text-xl font-bold text-[#00B400]" v-show="msgType === true || msgTitle === ''">
                 {{ msgTitle === "" ? "请扫描PCB条码" : msgTitle }}
               </div>
-              <div
-                class="text-xl font-bold text-[red]"
-                v-show="msgType === false && msgTitle !== ''"
-              >
+              <div class="text-xl font-bold text-[red]" v-show="msgType === false && msgTitle !== ''">
                 {{ msgTitle }}
               </div>
             </div>
           </div>
           <div class="flex flex-col flex-1">
-            <div
-              class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]"
-            >
+            <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
               <span class="ml-5">周转箱装载清单</span>
             </div>
             <div class="flex-1">
-              <table-tem
-                :showIndex="true"
-                :tableData="tableData"
-                :tableHeight="tableHeight"
-                :columnData="columnData"
-                :pageObj="pageObj"
-                @handleSizeChange="handleSizeChange"
-                @handleCurrentChange="handleCurrentChange"
-              ></table-tem>
+              <table-tem :showIndex="true" :tableData="tableData" :tableHeight="tableHeight" :columnData="columnData"
+                :pageObj="pageObj" @handleSizeChange="handleSizeChange"
+                @handleCurrentChange="handleCurrentChange"></table-tem>
             </div>
           </div>
         </div>
@@ -188,7 +137,7 @@ const columnData = reactive([
     label: "周转箱条码",
     width: "",
     min: true,
-    fixed:true,
+    fixed: true,
     align: "center",
   },
   {
@@ -287,8 +236,8 @@ const getCarrierList = () => {
       isLoding.value = "";
       clearTimeout(timer);
     }, 2000);
-    if (res.content == null||res.content.length==0) {
-      turnData.value=[]
+    if (res.content == null || res.content.length == 0) {
+      turnData.value = []
       return;
     }
     turnData.value = res.content;
@@ -296,7 +245,7 @@ const getCarrierList = () => {
       getList(turnData.value[0].CARRIERNAME)
       return
     }
-  
+
   });
 };
 
@@ -323,7 +272,7 @@ const disFullBox = (val: any) => {
         getCarrierList();
       });
     })
-    .catch(() => {});
+    .catch(() => { });
 };
 const getList = (val: any) => {
   QueryPackListByCarrier({ carrierName: val }).then((res: any) => {

@@ -95,23 +95,6 @@
                 </el-form-item>
               </el-col>
             </el-row>
-            <!-- <el-row>
-              <el-col :span="8">
-                <el-form-item class="mb-[5px]" label="计划开始时间">
-                  <el-input v-model="badheadForm.PlannedStartDate" style="width: 160px" disabled />
-                </el-form-item>
-              </el-col>
-              <el-col :span="6">
-                <el-form-item class="mb-[5px]" label="计划完成时间">
-                  <el-input v-model="badheadForm.PlannedCompletionDate" style="width: 160px" disabled />
-                </el-form-item>
-              </el-col>
-              <el-col :span="10">
-                <el-form-item class="mb-[5px]" label="计划数量">
-                  <el-input v-model="badheadForm.Qty" style="width: 160px" disabled />
-                </el-form-item>
-              </el-col>
-            </el-row> -->
           </el-form>
         </div>
         <div>
@@ -496,7 +479,6 @@ const getChange = () => {
     }
   } else {
     stopsForm.value.containerName = barCodeData;
-    // console.log(stopsForm.value.result);
     if (stopsForm.value.result == "OK") {
       InspectionStationMoveOut(stopsForm.value).then((res: any) => {
         msgTitle.value = res.msg;
@@ -506,14 +488,11 @@ const getChange = () => {
         hisForm.value.MfgOrderName = res.content[0].MfgOrderName
         getHisData()
         getFocus()
-        // if (res.success) {
         stopsForm.value.result = "OK";
       });
     } else {
       badForm.value.containerName = barCodeData;
-      // badVisible.value = true;
       QueryDefectCodeInspection(stopsForm.value.containerName).then((res: any) => {
-        //   console.log(res);
         if (!res.success) {
           msgTitle.value = res.msg;
           msgType.value = res.success;

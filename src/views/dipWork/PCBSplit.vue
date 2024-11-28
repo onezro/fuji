@@ -102,7 +102,8 @@
 </template>
 
 <script lang="ts" setup>
-import tableTem from "@/components/tableTemp/index.vue";
+import tableTem from "@/components/tableTem/index.vue";
+
 import badInfoTem from "@/components/badInfoTem/index.vue";
 import selectTa from "@/components/selectTable/index.vue";
 import { useAppStore } from "@/stores/modules/app";
@@ -225,13 +226,13 @@ const hisColumn = reactive([
         width: "",
         align: "1",
     },
-    {
-        text: true,
-        prop: "BD_Tools",
-        label: "治具编码",
-        width: "",
-        align: "1",
-    },
+    // {
+    //     text: true,
+    //     prop: "BD_Tools",
+    //     label: "治具编码",
+    //     width: "",
+    //     align: "1",
+    // },
     {
         text: true,
         prop: "BD_EmployeeName",

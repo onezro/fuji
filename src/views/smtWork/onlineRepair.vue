@@ -42,7 +42,7 @@
         </div>
       </div>
     </div>
-    <el-dialog v-model="badVisible" width="80%" :fullscreen="false" :append-to-body="true" :close-on-click-modal="false"
+    <el-dialog v-model="badVisible" width="80%" :fullscreen="false" :append-to-body="true" class="saveAsDialog" :close-on-click-modal="false"
       :close-on-press-escape="false" align-center>
       <template #header="{ close, titleId, titleClass }">
         <div class="flex justify-between">
@@ -95,8 +95,20 @@
           <div class="h-[30px] pl-3 flex items-center text-base text-[#fff] bg-[#006487]">
             不良列表
           </div>
-          <tableTemp :showIndex="true" :tableData="badData" :tableHeight="200" :columnData="badColumn" size="small">
-          </tableTemp>
+          <el-table :data="badData" :style="{ width: '100%' }" size="small" :height="200"  stripe border fit>
+              <el-table-column  label="序号" type="index" width="50" align="center" />
+              <el-table-column prop="DefectCode" label="不良点位"  />
+              <el-table-column prop="DefectDesc" label="不良原因" />
+              <el-table-column  label="序号"  width="50" align="center">
+                <template template #default="scope">
+                    {{ badData.length+scope.$index+1 }}
+                </template>
+              </el-table-column >
+              <el-table-column prop="DefectCode1" label="不良点位" />
+              <el-table-column prop="DefectDesc1" label="不良原因" />
+          </el-table>
+          <!-- <tableTemp :showIndex="true" :tableData="badData" :tableHeight="200" :columnData="badColumn" size="small">
+          </tableTemp> -->
         </div>
         <div>
           <div class="h-[30px] pl-3 flex items-center text-base text-[#fff] bg-[#006487]">
@@ -118,7 +130,7 @@
                 </el-select>
               </el-form-item>
               <el-form-item label="返修原因" prop="Remark">
-                <el-input v-model="repairForm.RepairRemark" :rows="3" style="width: 350px" type="textarea"
+                <el-input v-model="repairForm.RepairRemark" :rows="3" style="width: 200px" type="textarea"
                   placeholder="请输入" />
               </el-form-item>
             </div>
@@ -132,7 +144,7 @@
         </span>
       </template>
     </el-dialog>
-    <el-dialog v-model="hopOffVisible" width="80%" :fullscreen="false" :append-to-body="true"
+    <el-dialog v-model="hopOffVisible" width="80%" :fullscreen="false" :append-to-body="true" class="saveAsDialog"
       :close-on-click-modal="false" :close-on-press-escape="false" align-center title="返修跳站" @close="hopOffCancel">
       <div class="flex flex-col border-solid border-1 border-[#bdbdbd]">
         <div>
@@ -603,5 +615,10 @@ const getScreenHeight = () => {
 
 .list .el-table__empty-text {
   display: none;
+}
+</style>
+<style lang="scss">
+.saveAsDialog {
+  min-width: 954px;
 }
 </style>
