@@ -1,13 +1,13 @@
 <template>
   <div class="flex flex-col w-full h-full">
-    <div class="h-[40px] pl-2 pr-2 flex justify-between items-center">
+    <!-- <div class="h-[40px] pl-2 pr-2 flex justify-between items-center">
       <span class="text-[1.2rem]"> {{ opui.stationDec }} </span>
       <div></div>
-    </div>
+    </div> -->
     <div class="w-full flex-1 flex">
       <div class="setwidth w-[300px]">
         <div class="w-full h-full border-r border-solid border-[#cbcbcb]">
-          <div class="h-[30px] flex items-center text-base text-[#fff] bg-[#006487]">
+          <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
             <span class="ml-5">产线与机台</span>
           </div>
           <div class="p-2">
@@ -67,7 +67,7 @@
                             <el-button type="primary"> 接料亮灯(人工/自动)</el-button>
                         </div> -->
           </div>
-          <div class="h-[30px] flex items-center text-base text-[#fff] bg-[#006487]">
+          <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
             <span class="ml-5">消息提示</span>
           </div>
           <div class="p-2">
@@ -84,7 +84,7 @@
         <!-- <div class="w-full"> -->
         <div class="w-full h-full flex flex-col">
           <div>
-            <div class="h-[30px] flex items-center text-base text-[#fff] bg-[#006487]">
+            <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
               <span class="ml-5"> 生产计划号信息</span>
             </div>
             <div class="h-[130px] pt-3 pr-5 pl-5">
@@ -126,7 +126,7 @@
           </div>
 
           <div class="flex flex-col flex-1 tabs-css">
-            <div class="h-[30px] flex items-center text-base text-[#fff] bg-[#006487]">
+            <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
               <span class="ml-5">机台物料清单</span>
             </div>
             <table-tem ref="lightTable" :showSelect="true" :showIndex="true" :tableData="tableData"
@@ -526,7 +526,7 @@ const viewCurrentChange = (val: any) => {
 
 const getScreenHeight = () => {
   nextTick(() => {
-    tableHeight.value = window.innerHeight - 355;
+    tableHeight.value = window.innerHeight - 330;
   });
 };
 </script>

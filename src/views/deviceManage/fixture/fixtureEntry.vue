@@ -32,13 +32,16 @@
             <el-tag type="primary" effect="light" v-if="scope.row.Status==1">
               已上线
             </el-tag>
-            <el-tag type="warning" effect="light" v-if="scope.row.Status==11">
-              已出库
+            <el-tag type="warning"  effect="light" v-if="scope.row.Status==11">
+              在库
             </el-tag>
             <el-tag type="success" effect="light" v-if="scope.row.Status==0">
               可使用
             </el-tag>
-            <el-tag type="info" effect="light" v-if="scope.row.Status!==0&&scope.row.Status!==1&&scope.row.Status!==11">
+            <el-tag type="info" effect="light" v-if="scope.row.Status==4">
+              报废
+            </el-tag>
+            <el-tag color="#ffffff" effect="light" v-if="scope.row.Status!==0&&scope.row.Status!==1&&scope.row.Status!==11">
               已使用
             </el-tag>
           </template>

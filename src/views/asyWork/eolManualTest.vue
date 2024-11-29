@@ -1,9 +1,9 @@
 <template>
     <div class="flex flex-col w-full h-full">
-      <div class="h-[40px] min-h-[40px] pl-2 pr-2 flex justify-between items-center">
+      <!-- <div class="h-[40px] min-h-[40px] pl-2 pr-2 flex justify-between items-center">
         <span class="text-[1.2rem]"> {{ opui.stationDec }} </span>
         <div></div>
-      </div>
+      </div> -->
       <div class="w-full flex-1 flex">
         <div class="setwidth w-[350px]">
           <div class="w-full h-full box">
@@ -549,36 +549,27 @@ const isLoding = ref("");
     form.value.MfgOrderName = "";
     form.value.ProductName = "";
     form.value.ProductDesc = "";
-    form.value.PlannedStartDate = "";
     form.value.BD_ProductModel = "";
     form.value.BD_SoftVersion = "";
-    form.value.PlannedCompletionDate = "";
     form.value.Qty = "";
     form.value.ERPOrder = "";
     tableData.value = []
   } else {
 
-    if (args[1] !== form.value.MfgOrderName && form.value.MfgOrderName == "") {
+    if (args[1] !== form.value.MfgOrderName ||form.value.MfgOrderName == "") {
       form.value.MfgOrderName = args[0].MfgOrderName;
       form.value.ProductName = args[0].ProductName;
       form.value.ProductDesc = args[0].ProductDesc;
       form.value.BD_ProductModel = args[0].BD_ProductModel;
       form.value.BD_SoftVersion = args[0].BD_SoftVersion;
-      form.value.PlannedStartDate = args[0].PlannedStartDate;
-      form.value.PlannedCompletionDate = args[0].PlannedCompletionDate;
       form.value.Qty = args[0].Qty;
-      form.value.AllNum = args[0].AllNum;
-      form.value.TodayNum = args[0].TodayNum;
       form.value.ERPOrder = args[0].ERPOrder;
       stopsForm.value.orderName = args[0].MfgOrderName;
-      // stopsForm.value.ProductName = args[0].ProductName;
       hisForm.value.MfgOrderName = args[0].MfgOrderName;
-      // getFeedForm.value.MfgOrder = args[0].MfgOrderName;
-      getHisData();
-      // getMaterialRequired();
     } else {
 
     }
+    getHisData();
   }
 };
   
@@ -594,7 +585,7 @@ const isLoding = ref("");
   const getScreenHeight = () => {
     nextTick(() => {
       leftBoxH.value = window.innerHeight - 155;
-      tableHeight.value = window.innerHeight - 360;
+      tableHeight.value = window.innerHeight - 320;
     });
   };
   </script>

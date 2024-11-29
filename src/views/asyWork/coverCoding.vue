@@ -1,7 +1,8 @@
 <template>
   <div class="flex flex-col w-full h-full">
     <div class="h-[40px] min-h-[40px] pl-2 pr-2 flex justify-between items-center">
-      <span class="text-[1.2rem]"> {{ opui.stationDec }} </span>
+      <!-- <span class="text-[1.2rem]"> {{ opui.stationDec }} </span> -->
+       <div></div>
       <div class="flex items-center">
         <div>
           自动打印间隔：<span class="text-lg font-bold pl-1 pr-1 bg-slate-300">{{ setTime }}S</span>
@@ -89,15 +90,14 @@
                   <el-table-column prop="LoadQueueQty" label="上料总数" width="80" align="center">
                     <template #default="scope">
                       {{
-                        scope.row.LoadQueueQty == null
-                          ? 0
-                          : scope.row.LoadQueueQty
+                      scope.row.IssueControl==1? scope.row.AllQty:scope.row.LoadQueueQty
                       }}
                     </template>
                   </el-table-column>
                   <el-table-column prop="QtyRequired" label="剩余数量" width="80" align="center">
                     <template #default="scope">
-                      <span>{{ scope.row.Qty }}</span>
+                      <span>{{  scope.row.IssueControl==1?
+                         scope.row.remainQty:scope.row.Qty }}</span>
                     </template>
                   </el-table-column>
                   <el-table-column prop="MaterialBarCode" label="批次条码" width="150">
@@ -553,8 +553,8 @@ const getChange1 = (val: any, data: any) => {
     }
     inputRefs.value[val].clear();
   } else {
-    if (data.Qty == 0 || data.Qty == null) {
-      msgTitle.value = `关键料剩余为0无法进行绑定`;
+    if (data.remainQty == 0 || data.remainQty == null) {
+      msgTitle.value = `关键料剩余为0,请到WMS进行叫料`;
       msgType.value = false;
       inputRefs.value[val].clear();
       return;
@@ -716,7 +716,7 @@ const radioChange = (args: any) => {
     barData.value = [];
     tableData1.value = [];
   } else {
-    if (args[1] !== form.value.MfgOrderName && form.value.MfgOrderName == "") {
+    if (args[1] !== form.value.MfgOrderName ||form.value.MfgOrderName == "") {
       form.value.MfgOrderName = args[0].MfgOrderName;
       form.value.ProductName = args[0].ProductName;
       form.value.ProductDesc = args[0].ProductDesc;
