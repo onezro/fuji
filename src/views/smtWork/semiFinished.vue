@@ -1,8 +1,8 @@
 <template>
   <div class="flex flex-col w-full h-full">
-    <div class="h-[40px]  pl-2 pr-2 flex justify-between items-center">
+    <!-- <div class="h-[40px]  pl-2 pr-2 flex justify-between items-center">
       <span class="text-[1.2rem]"> {{ opui.stationDec }} </span>
-    </div>
+    </div> -->
     <div class="w-full flex-1 flex">
       <div class="setwidth w-[350px]">
         <div class="w-full h-full box">
@@ -311,7 +311,7 @@ const handleCurrentChange = (val: any) => {
 const getScreenHeight = () => {
   nextTick(() => {
     boxHeight.value = window.innerHeight - 155;
-    tableHeight.value = window.innerHeight - 360;
+    tableHeight.value = window.innerHeight - 320;
   });
 };
 </script>

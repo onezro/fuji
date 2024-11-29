@@ -1,8 +1,8 @@
 <template>
   <div class="flex flex-col w-full h-full">
-    <div class="h-[40px] min-h-[40px] pl-2 pr-2 flex justify-between items-center">
+    <!-- <div class="h-[40px] min-h-[40px] pl-2 pr-2 flex justify-between items-center">
       <span class="text-[1.2rem]"> {{ opui.stationDec }} </span>
-    </div>
+    </div> -->
     <div class="w-full flex-1 flex">
       <!-- <div class="w-[calc(100%-350px)]"> -->
 
@@ -542,12 +542,17 @@ const repairCancel = () => {
 };
 const repairSubmit = () => {
   SaveRepairRecord(repairForm.value).then((res: any) => {
-    if (res.success) {
-      ElNotification({
+    ElNotification({
         title: "提示信息",
         message: res.msg,
-        type: "success",
+        type: res.success?"success":"error",
       });
+    if (res.success) {
+      // ElNotification({
+      //   title: "提示信息",
+      //   message: res.msg,
+      //   type: "success",
+      // });
       repairCancel();
       getFocus();
       barCode.value = "";
@@ -595,7 +600,7 @@ const handleCurrentChange = (val: any) => {
 };
 const getScreenHeight = () => {
   nextTick(() => {
-    tableHeight.value = window.innerHeight - 360;
+    tableHeight.value = window.innerHeight - 320;
   });
 };
 </script>

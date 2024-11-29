@@ -1,9 +1,9 @@
 <template>
   <div class="flex flex-col w-full h-full">
-    <div class="h-[40px] min-h-[40px] pl-2 pr-2 flex justify-between items-center">
+    <!-- <div class="h-[40px] min-h-[40px] pl-2 pr-2 flex justify-between items-center">
       <span class="text-[1.2rem]"> {{ opui.stationDec }} </span>
       <div></div>
-    </div>
+    </div> -->
     <div class="w-full flex-1 flex">
       <div class="setwidth w-[350px]">
         <div class="w-full h-full box">
@@ -309,7 +309,7 @@ const columnData1 = reactive([
   {
     text: true,
     prop: "Container",
-    label: "物料编码",
+    label: "物料批次条码",
     width: "",
     align: "1",
   },
@@ -666,7 +666,7 @@ const radioChange = (args: any) => {
     tableData1.value = []
   } else {
 
-    if (args[1] !== form.value.MfgOrderName && form.value.MfgOrderName == "") {
+    if (args[1] !== form.value.MfgOrderName ||form.value.MfgOrderName == "") {
       form.value.MfgOrderName = args[0].MfgOrderName;
       form.value.ProductName = args[0].ProductName;
       form.value.ProductDesc = args[0].ProductDesc;
@@ -682,11 +682,13 @@ const radioChange = (args: any) => {
       stopsForm.value.ProductName = args[0].ProductName;
       hisForm.value.MfgOrderName = args[0].MfgOrderName;
       getFeedForm.value.MfgOrder = args[0].MfgOrderName;
-      getHisData();
-      getMaterialRequired();
+      // getHisData();
+      // getMaterialRequired();
     } else {
 
     }
+    getHisData();
+    getMaterialRequired();
   }
 };
 const getOrderData = () => {
@@ -752,7 +754,7 @@ const handleCurrentChange = (val: any) => {
 
 const getScreenHeight = () => {
   nextTick(() => {
-    tableHeight.value = window.innerHeight - 420;
+    tableHeight.value = window.innerHeight - 380;
   });
 };
 </script>

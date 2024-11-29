@@ -1,9 +1,9 @@
 <template>
   <div class="flex flex-col w-full h-full">
-    <div class="h-[40px] min-h-[40px] pl-2 pr-2 flex justify-between items-center">
+    <!-- <div class="h-[40px] min-h-[40px] pl-2 pr-2 flex justify-between items-center">
       <span class="text-[1.2rem]"> {{ opui.stationDec }} </span>
       <div></div>
-    </div>
+    </div> -->
     <div class="w-full flex-1 flex">
       <div class="setwidth w-[370px]">
         <div class="w-full h-full box">
@@ -79,16 +79,15 @@
                   <el-table-column prop="LoadQueueQty" label="上料总数" width="80" align="center">
                     <template #default="scope">
                       {{
-                        scope.row.LoadQueueQty == null
-                          ? 0
-                          : scope.row.LoadQueueQty
+                         scope.row.IssueControl==1? scope.row.AllQty:scope.row.LoadQueueQty
                       }}
                     </template>
                   </el-table-column>
                   <el-table-column prop="QtyRequired" label="剩余数量" width="80" align="center">
                     <template #default="scope">
                       <span>{{
-                      scope.row.Qty
+                       scope.row.IssueControl==1?
+                       scope.row.remainQty:scope.row.Qty
                       }}</span>
                     </template>
                   </el-table-column>
@@ -631,8 +630,9 @@ const getChange1 = (val: any, data: any) => {
     }
     inputRefs.value[val].clear();
   } else {
-    if (data.Qty == 0||data.Qty==null) {
-      msgTitle.value = `关键料剩余为0无法进行绑定`;
+    // let isEmty= barData.value.findIndex((b:any)=>b.Qty==0)
+    if (data.remainQty == 0||data.remainQty==null) {
+      msgTitle.value = `关键料剩余为0,请到WMS进行叫料`;
       msgType.value = false;
       inputRefs.value[val].clear();
       return;
@@ -680,7 +680,9 @@ const radioChange = (args: any) => {
     barData.value = [];
     tableData1.value = [];
   } else {
-    if (args[1] !== form.value.MfgOrderName && form.value.MfgOrderName == "") {
+    
+    
+    if (args[1] !== form.value.MfgOrderName ||form.value.MfgOrderName == "") {
       form.value.MfgOrderName = args[0].MfgOrderName;
       form.value.ProductName = args[0].ProductName;
       form.value.ProductDesc = args[0].ProductDesc;
@@ -697,29 +699,15 @@ const radioChange = (args: any) => {
       isKeyForm.value.OrderName = args[0].MfgOrderName;
       keyForm.value.OrderName = args[0].MfgOrderName;
       keyForm.value.ProductName = args[0].ProductName;
-      getHisData();
-      getKeyMaterial();
+    
+      // getHisData();
+      // getKeyMaterial();
     } else {
+      // console.log( keyForm.value.OrderName);
+      
     }
-    // form.value.MfgOrderName = args[0].MfgOrderName;
-    // form.value.ProductName = args[0].ProductName;
-    // form.value.ProductDesc = args[0].ProductDesc;
-    // form.value.BD_ProductModel = args[0].BD_ProductModel;
-    // form.value.BD_SoftVersion = args[0].BD_SoftVersion;
-    // form.value.PlannedStartDate = args[0].PlannedStartDate;
-    // form.value.PlannedCompletionDate = args[0].PlannedCompletionDate;
-    // form.value.Qty = args[0].Qty;
-    // form.value.AllNum = args[0].AllNum;
-    // form.value.TodayNum = args[0].TodayNum;
-    // form.value.ERPOrder = args[0].ERPOrder;
-    // stopsForm.value.OrderName = args[0].MfgOrderName;
-    // hisForm.value.MfgOrderName = args[0].MfgOrderName;
-    // isKeyForm.value.OrderName = args[0].MfgOrderName;
-    // keyForm.value.OrderName = args[0].MfgOrderName;
-    // keyForm.value.ProductName = args[0].ProductName;
-
-    // getKeyMaterial();
-    // getHisData();
+    getHisData();
+    getKeyMaterial()
   }
 };
 const getKeyMaterial = () => {
@@ -806,7 +794,7 @@ const handleCurrentChange = (val: any) => {
 
 const getScreenHeight = () => {
   nextTick(() => {
-    tableHeight.value = window.innerHeight - 440;
+    tableHeight.value = window.innerHeight - 400;
   });
 };
 </script>

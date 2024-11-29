@@ -1,9 +1,9 @@
 <template>
   <div class="flex flex-col w-full h-full">
-    <div class="h-[40px] min-h-[40px] pl-2 pr-2 flex justify-between items-center">
+    <!-- <div class="h-[40px] min-h-[40px] pl-2 pr-2 flex justify-between items-center">
       <span class="text-[1.2rem]"> {{ opui.stationDec }} </span>
       <div></div>
-    </div>
+    </div> -->
     <div class="w-full flex-1 flex">
       <div class="setwidth w-[350px]">
         <div class="w-full h-full box">
@@ -75,7 +75,7 @@
             <el-table class="my-table"  stripe border fit :data="tableData1" :style="{ width: '100%' }" :height="tableHeight"
               @selection-change="handleSelectionChange">
               <el-table-column type="selection" fixed width="55" align="center" />
-              <el-table-column prop="SoftwareName" label="Name" width="200" />
+              <el-table-column prop="ENSoftwareName" label="Name" width="250" />
               <el-table-column prop="SoftwareVersion" label="Address" />
             </el-table>
             <!-- <table-tem class="my-table" :show-select="true" :tableData="tableData1" :tableHeight="tableHeight"
@@ -541,7 +541,7 @@ const radioChange = (args: any) => {
     // detailsData.value = []
     tableData1.value = [];
   } else {
-    if (args[1] !== form.value.MfgOrderName && form.value.MfgOrderName == "") {
+    if (args[1] !== form.value.MfgOrderName ||form.value.MfgOrderName == "") {
       form.value.MfgOrderName = args[0].MfgOrderName;
       form.value.ProductName = args[0].ProductName;
       form.value.ProductDesc = args[0].ProductDesc;
@@ -593,8 +593,8 @@ const materialCurrentChange = (val: any) => {
 
 const getScreenHeight = () => {
   nextTick(() => {
-    tableHeight.value = window.innerHeight - 255;
-    boxHeight.value = window.innerHeight - 430;
+    tableHeight.value = window.innerHeight - 220;
+    boxHeight.value = window.innerHeight - 400;
   });
 };
 </script>

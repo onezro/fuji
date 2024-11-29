@@ -1,13 +1,13 @@
 <template>
     <div class="flex flex-col w-full h-full">
-        <div class="h-[40px] pl-2 pr-2 flex justify-between items-center">
+        <!-- <div class="h-[40px] pl-2 pr-2 flex justify-between items-center">
             <span class="text-[1.2rem]"> {{ opui.stationDec }} </span>
             <div></div>
-        </div>
+        </div> -->
         <div class="w-full flex-1 flex">
             <div class="setwidth w-[300px]">
                 <div class="w-full h-full border-r border-solid border-[#cbcbcb]">
-                    <div class="h-[30px] flex items-center text-base text-[#fff] bg-[#006487]">
+                    <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
                         <span class="ml-5">基本信息</span>
                     </div>
                     <div class="p-2">
@@ -44,7 +44,7 @@
                             <!-- <el-button type="primary"> 接料亮灯(人工/自动)</el-button> -->
                         </div>
                     </div>
-                    <div class="h-[30px] flex items-center text-base text-[#fff] bg-[#006487]">
+                    <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
                         <span class="ml-5">消息提示</span>
                     </div>
                     <div class="p-2">
@@ -61,7 +61,7 @@
                 <!-- <div class="w-full"> -->
                 <div class="w-full h-full flex flex-col">
                     <div>
-                        <div class="h-[30px] flex items-center text-base text-[#fff] bg-[#006487]">
+                        <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
                             <span class="ml-5"> 生产计划备料操作</span>
                         </div>
                         <div class="h-[130px] pt-3 pr-2 pl-2 overflow-auto">
@@ -112,7 +112,7 @@
                     </div>
 
                     <div class="flex flex-col flex-1 tabs-css">
-                        <div class="h-[30px] flex items-center text-base text-[#fff] bg-[#006487]">
+                        <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
                             <span class="ml-5">站位物料明细</span>
                         </div>
                         <!-- <table-tem :showIndex="true" :tableData="tableData" :tableHeight="tableHeight"
@@ -625,12 +625,13 @@ const cellClick = (row: any) => {
     }
     if (row.Status == 1) {
         StatusDec = "备料中";
-        firstForm.value.shelf_ids = row.shelf_ids;
+      
         // firstForm.value.shelf_ids_list.push (row.shelf_ids)
     }
     if (row.Status == 2) {
         StatusDec = "备料完成";
     }
+    firstForm.value.shelf_ids = row.shelf_ids;
     chooseOrder.value = { ...row, StatusDec };
     //   operateForm.value=
 };
@@ -642,11 +643,12 @@ const celldblclick = (row: any) => {
     }
     if (row.Status == 1) {
         StatusDec = "备料中";
-        firstForm.value.shelf_ids = row.shelf_ids;
+      
     }
     if (row.Status == 2) {
         StatusDec = "备料完成";
     }
+    firstForm.value.shelf_ids = row.shelf_ids;
     operateForm.value = { ...row, StatusDec };
     startForm.value.LineNumber = row.LineNumber;
     startForm.value.OrderNumber = row.OrderNumber;
@@ -871,7 +873,7 @@ const viewCurrentChange = (val: any) => {
 
 const getScreenHeight = () => {
     nextTick(() => {
-        tableHeight.value = window.innerHeight - 310; //360
+        tableHeight.value = window.innerHeight - 285; //360
     });
 };
 </script>

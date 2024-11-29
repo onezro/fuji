@@ -1,7 +1,8 @@
 <template>
   <div class="flex flex-col w-full h-full">
     <div class="h-[40px] min-h-[40px] pl-2 pr-2 flex justify-between items-center">
-      <span class="text-[1.2rem]">{{ opui.stationDec }}</span>
+      <div></div>
+      <!-- <span class="text-[1.2rem]">{{ opui.stationDec }}</span> -->
       <div>
         <el-button type="primary" @click="dialogVisible = true, getOrderList()">计划开工</el-button>
         <!-- <el-button type="warning" @click="openFeed">物料上料</el-button> -->

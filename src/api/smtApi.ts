@@ -349,4 +349,11 @@ export function QueryRackLightMaterials(data: any) {
   })
 }
 
-//
+//烧录转批次
+export function MESSaveBurnResult(data: any) {
+  return requestNoMessage({
+    url: "/api/Burn/MESSaveBurnResult",
+    method: "post",
+    params:data
+  })
+}

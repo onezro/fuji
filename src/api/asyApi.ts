@@ -84,6 +84,22 @@ export function ScreeSMTCompBindMoveStd(data:any) {
         data
     });
 }
+//盖板获取关键料
+export function QueryCoverKeyMaterial(data:any) {
+    return request({
+        url: "/api/CoverInstall/QueryAssemblyKeyMaterial",
+        method: "post",
+        data
+    });
+}
+//盖板验证关键料
+export function JudgeCoverKeyMaterial(data:any) {
+    return request({
+        url: "/api/CoverInstall/JudgeAssemblyKeyMaterial",
+        method: "post",
+        data
+    });
+}
 //盖板过站并扣料
 export function CoverSMTCompBindMoveStd(data:any) {
     return request({
@@ -240,6 +256,7 @@ export function MoveStdNew(data:any) {
         data
     })
 }
+//点胶历史记录
 export function QueryDisMoveHistory(data:any) {
     return request({
         url: "/api/Dispense/QueryMoveHistory",
@@ -247,5 +264,55 @@ export function QueryDisMoveHistory(data:any) {
         data
     })
 }
+
+//返修登记
+export function QuerySMTDefectRecordDetail(data: any) {
+    return request({
+      url: "/api/repair/QuerySMTDefectRecordDetail",
+      method: "post",
+      params: {
+        ContainerName: data,
+      },
+    });
+  }
+  //返修工序
+  export function QueryWorkflowList(data: any) {
+    return request({
+      url: "/api/repair/QueryWorkflowList",
+      method: "post",
+      params: {
+        workflowName: data,
+      },
+    });
+  }
+  //提交返修登记
+  export function SaveRepairRecord(data: any) {
+    return request({
+      url: "/api/repair/SaveRepairRecord",
+      method: "post",
+      data,
+    });
+  }
+  //查询返修修操作
+  export function QueryRepairAction(data: any) {
+    return request({
+      url: "/api/repair/QueryRepairAction",
+      method: "post",
+      params: {
+        operationName: data,
+      },
+    });
+  }
+  //根据工序查询不良记录
+  export function QueryRepairRecord(data: any) {
+    return request({
+      url: "/api/repair/QueryRepairRecord",
+      method: "post",
+      params: {
+        workStaion: data,
+      },
+    });
+  }
+
 
 

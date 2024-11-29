@@ -499,7 +499,7 @@ const radioChange = (args: any) => {
     barData.value = []
     tableData1.value = []
   } else {
-    if (args[1] !== form.value.MfgOrderName && form.value.MfgOrderName == "") {
+    if (args[1] !== form.value.MfgOrderName ||form.value.MfgOrderName == "") {
       form.value.MfgOrderName = args[0].MfgOrderName;
       form.value.ProductName = args[0].ProductName;
       form.value.ProductDesc = args[0].ProductDesc;

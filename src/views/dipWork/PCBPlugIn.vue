@@ -1,12 +1,12 @@
 <template>
   <div class="flex flex-col w-full h-full">
-    <div class="h-[40px] pl-2 pr-2 flex justify-between items-center">
+    <!-- <div class="h-[40px] pl-2 pr-2 flex justify-between items-center">
       <span class="text-[1.2rem]"> {{ opui.stationDec }} </span>
       <div>
-        <!-- <el-button type="warning" @click="opendetail">工单物料明细</el-button> -->
-        <!-- <el-button type="primary" @click="openOver">波峰焊设置</el-button> -->
+        <el-button type="warning" @click="opendetail">工单物料明细</el-button>
+        <el-button type="primary" @click="openOver">波峰焊设置</el-button>
       </div>
-    </div>
+    </div> -->
     <div class="w-full flex-1 flex">
       <div class="setwidth w-[350px]">
         <div class="w-full h-full box">
@@ -899,7 +899,7 @@ const radioChange = (args: any) => {
   } else {
     // orderTable.value.data.forEach((v: any) => {
     //   if (v.MfgOrderName == args[1]) {
-    if (args[1] !== form.value.MfgOrderName && form.value.MfgOrderName == "") {
+    if (args[1] !== form.value.MfgOrderName || form.value.MfgOrderName == "") {
       stopsForm.value.orderName = args[0].MfgOrderName
       form.value.MfgOrderName = args[0].MfgOrderName;
       form.value.ProductName = args[0].ProductName;
@@ -915,10 +915,13 @@ const radioChange = (args: any) => {
       getFeedForm.value.MfgOrder = args[0].MfgOrderName;
       hisForm.value.MfgOrderName = args[0].MfgOrderName;
       getToolForm.value.OrderNumber = args[0].MfgOrderName;
-      getHisData();
-      getToolData();
-      getMaterialRequired()
+      // getHisData();
+      // getToolData();
+      // getMaterialRequired()
     }
+    getHisData();
+    getToolData();
+    getMaterialRequired()
   }
   // stopsForm.value.orderName = args[0].MfgOrderName
   // form.MfgOrderName = args[0].MfgOrderName;
@@ -999,7 +1002,6 @@ const getChange = (val: any) => {
       title: "请选择生产计划号",
       type: "error",
     });
-    // stopsForm.value.ContainerName = "";
     return;
   }
   let barCodeVal = barCode.value;
@@ -1033,17 +1035,19 @@ const getChange = (val: any) => {
     }
     barCode.value = "";
     if (stopsForm.value.ContainerName !== "" && stopsForm.value.tools !== "") {
+
       PluginStationMoveOut(stopsForm.value).then((res: any) => {
         msgTitle.value = res.msg;
         msgType.value = res.success;
         stopsForm.value.ContainerName = "";
         barCode.value = "";
+        getMaterialRequired()
         if (res.success) {
           stopsForm.value.tools = "";
           checked.value = [];
           getToolData();
           getHisData();
-          getMaterialRequired()
+          
         }
         // console.log(stopsForm.value);
       });
@@ -1088,9 +1092,9 @@ const detailsCurrentChange = (val: any) => {
 
 const getScreenHeight = () => {
   nextTick(() => {
-    leftBoxH.value = window.innerHeight - 155;
+    leftBoxH.value = window.innerHeight - 120;
     console.log(leftBoxH.value);
-    tableHeight.value = window.innerHeight - 468; //428
+    tableHeight.value = window.innerHeight - 432; //428
   });
 };
 </script>
