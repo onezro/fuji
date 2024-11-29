@@ -388,7 +388,7 @@
               prop="RequestQty"
               align="center"
               label="请求退料数量"
-              v-if="returnType === '2'"
+              v-if="returnType !== '1'"
               :min-width="flexColumnWidth('请求数量', 'Qty')"
             >
               <template #default="scope">
