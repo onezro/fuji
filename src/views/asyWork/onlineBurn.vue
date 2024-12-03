@@ -369,8 +369,8 @@ const getChange = () => {
       msgType.value = res.success;
       if (res.success) {
         stopsForm.value.ContainerName = barCodeData;
-        form.value = { ...res.content[0] };
-        hisForm.value.MfgOrderName = res.content[0].MfgOrderName;
+        // form.value = { ...res.content[0] };
+        // hisForm.value.MfgOrderName = res.content[0].MfgOrderName;
         getHisData();
         msgTitle.value =`已验证条码${ stopsForm.value.ContainerName}，请扫描烧录二维码`;
       msgType.value = true;

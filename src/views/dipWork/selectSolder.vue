@@ -381,9 +381,9 @@ const geTodayData = () => {
           msgTitle.value = res.msg;
           msgType.value = res.success;
           stopsForm.value.tools = "";
-          form.value = { ...res.content[0] }
+          // form.value = { ...res.content[0] }
           stopsForm.value.result = "OK";
-          hisForm.value.MfgOrderName=res.content[0].MfgOrderName
+          // hisForm.value.MfgOrderName=res.content[0].MfgOrderName
           getHisData()
         }
       );

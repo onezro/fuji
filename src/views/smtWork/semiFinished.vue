@@ -224,9 +224,9 @@ onBeforeMount(() => {
 onMounted(() => {
   window.addEventListener("resize", getScreenHeight);
   getCarrierList();
-  // autoTimer.value=setInterval(()=>{
-  //   getCarrierList();
-  // },1000*10)
+  autoTimer.value=setInterval(()=>{
+    getCarrierList();
+  },1000*10)
 });
 onBeforeUnmount(() => {
   clearInterval(autoTimer.value)

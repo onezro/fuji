@@ -525,8 +525,8 @@ const getChange = () => {
         msgTitle.value = res.msg;
         msgType.value = res.success;
         stopsForm.value.containerName = "";
-        form.value = { ...res.content[0] };
-        hisForm.value.MfgOrderName = res.content[0].MfgOrderName;
+        // form.value = { ...res.content[0] };
+        // hisForm.value.MfgOrderName = res.content[0].MfgOrderName;
         getHisData();
         getFocus();
         stopsForm.value.result = "OK";
