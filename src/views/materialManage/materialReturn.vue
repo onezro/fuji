@@ -394,7 +394,7 @@
               <template #default="scope">
                 <el-input
                   style="width: 100%"
-                  :disabled="scope.row.MaterialQueue !== null"
+                  :disabled="scope.row.MaterialQueue ? true:false"
                   v-model="scope.row.RequestQty"
                   @input="handleInput(scope.row)"
                 >
