@@ -4,11 +4,11 @@
       <div>
         <el-form ref="formRef" size="small" :model="getForm" label-width="auto" :inline="true">
           <el-form-item label="组件编码" prop="ProductName" class="mb-2">
-            <el-input v-model="getForm.ProductName" style="width: 160px" clearable @clear="getData" @change="getData" />
+            <el-input v-model="getForm.ProductName" style="width: 160px" clearable @keyup.enter.native="getData" />
           </el-form-item>
           <el-form-item label="组件描述" prop="ProductDescription" class="mb-2">
-            <el-input v-model="getForm.ProductDescription" style="width: 160px" clearable @clear="getData"
-              @change="getData" />
+            <el-input v-model="getForm.ProductDescription" style="width: 160px" clearable
+              @keyup.enter.native="getData" />
           </el-form-item>
           <!-- <el-form-item label="组件类型" prop="ProductDescription" class="mb-2">
             <el-select v-model="getForm.QueryType" style="width: 150px" @change="getData">
@@ -24,9 +24,9 @@
         <div class="setwidth w-[400px]">
           <!-- <el-table-v2 :columns="columns" :data="tableData" :height="tableHeight" border fit fixed highlight-current-row
             @cell-click="cellClick" /> -->
-          <el-table :data="tableData" size="small" :height="tableHeight" :tooltip-effect="'dark'" border fit
+          <el-table :data="tableData" size="small" :height="tableHeight" :tooltip-effect="'dark'" border fit stripe
             highlight-current-row @cell-click="cellClick">
-             <el-table-column type="index" align="center" fixed label="序号" width="50" />
+            <el-table-column type="index" align="center" fixed label="序号" width="50" />
             <el-table-column prop="ProductName" label="组件编码" width="120" />
             <el-table-column prop="ProductDesc" label="组件描述" :show-overflow-tooltip="true" />
             <template #empty>
@@ -34,22 +34,43 @@
                 <el-empty />
               </div>
             </template>
-</el-table>
+          </el-table>
         </div>
         <div class="w-[calc(100%-408px)] ml-2">
           <div class="mb-1 w-full">
-            <el-form ref="formRef" label-position="left" label-width="auto" size="small" :inline="true">
-              <el-form-item label="工艺流程名称" prop="WorkflowName" class="mb-1">
-                <el-input disabled v-model.trim="specWork.WorkflowName" style="width: 160px"></el-input>
-              </el-form-item>
-              <el-form-item label="工艺流程描述" prop="WorkflowDesc" class="mb-1">
-                <el-input disabled v-model.trim="specWork.WorkflowDesc" style="width: 160px"></el-input>
-              </el-form-item>
-              <el-form-item class="mb-1">
-                <el-button type="primary" @click="openSpecWorK"
-                  :disabled="specWorkForm.ProductName == ''">修改工艺路线</el-button>
-              </el-form-item>
-            </el-form>
+            <el-radio-group v-model="radio1" @change="changeRadio">
+              <el-form ref="formRef" label-position="left" label-width="auto" size="small" :inline="true">
+                <el-form-item class="mb-1">
+                  <el-radio-button value="1" size="small" label="主工艺流程"></el-radio-button>
+                </el-form-item>
+
+                <el-form-item label="主工艺流程名称" prop="WorkflowName" class="mb-1">
+                  <el-input disabled v-model.trim="specWork.WorkflowName" style="width: 160px"></el-input>
+                </el-form-item>
+                <el-form-item label="主工艺流程描述" prop="WorkflowDesc" class="mb-1">
+                  <el-input disabled v-model.trim="specWork.WorkflowDesc" style="width: 160px"></el-input>
+                </el-form-item>
+                <el-form-item class="mb-1">
+                  <el-button type="primary" @click="openSpecWorK('1')"
+                    :disabled="specWorkForm.ProductName == ''">修改工艺路线</el-button>
+                </el-form-item>
+              </el-form>
+              <el-form ref="formRef" label-position="left" label-width="auto" size="small" :inline="true">
+                <el-form-item class="mb-1">
+                  <el-radio-button value="2" size="small" label="预加工流程"></el-radio-button>
+                </el-form-item>
+                <el-form-item label="预加工流程名称" prop="WorkflowName" class="mb-1">
+                  <el-input disabled v-model.trim="specPreWork.WorkflowName" style="width: 160px"></el-input>
+                </el-form-item>
+                <el-form-item label="预加工流程描述" prop="WorkflowDesc" class="mb-1">
+                  <el-input disabled v-model.trim="specPreWork.WorkflowDesc" style="width: 160px"></el-input>
+                </el-form-item>
+                <el-form-item class="mb-1">
+                  <el-button type="warning" @click="openSpecWorK('2')"
+                    :disabled="specWorkForm.ProductName == ''">修改预加工工艺路线</el-button>
+                </el-form-item>
+              </el-form>
+            </el-radio-group>
             <el-table :data="specWorkData" size="small" :height="tableHeight1" :tooltip-effect="'dark'" stripe border
               fit>
               <el-table-column type="index" align="center" fixed label="序号" width="50" />
@@ -84,9 +105,15 @@
               </el-table-column>
               <el-table-column prop="SpecDesc" label="工序名称" flexible>
               </el-table-column>
-              <el-table-column prop="QtyRequired" label="单件用量" flexible />
-              <el-table-column prop="UOMName" label="单位" flexible />
-              <el-table-column prop="IssueControlType" label="消耗类型" flexible />
+              <el-table-column prop="QtyRequired" label="单件用量" width="80" align="center" />
+              <el-table-column prop="UOMName" label="单位" width="80" align="center" />
+              <el-table-column prop="IssueControlType" label="消耗类型" width="80" align="center">
+                <template #default="scope">
+                  <el-tag type="primary" v-if="scope.row.IssueControl==2">{{ scope.row. IssueControlType }}</el-tag>
+                  <el-tag type="info" v-if="scope.row.IssueControl==6">{{scope.row. IssueControlType }}</el-tag>
+                  <el-tag type="warning" v-if="scope.row.IssueControl==1">{{ scope.row. IssueControlType }}</el-tag>
+                </template>
+              </el-table-column>
               <template #empty>
                 <div class="flex items-center justify-center h-100%">
                   <el-empty />
@@ -180,6 +207,8 @@ import {
 } from "vue";
 import { ElNotification } from "element-plus";
 
+import { debounce } from 'lodash-es'
+
 interface SpecForm {
   ProductName: string;
   ProductDescription: string;
@@ -201,59 +230,23 @@ const pageObj = ref({
 });
 const getForm = ref({
   ProductName: "",
-  // Revision: "",
   ProductDescription: "",
-  // TypeName: "",
-  // TypeDescription: "",
-  // FamilyName: "",
-  // FamilyDescription: "",
-  // Unit: "",
-  // UnitDescription: "",
-  // Factory: "",
-  // Customer_ProductNumber: "",
-  // BD_ProductCategory: "",
-  // BD_ProductModel: "",
-  // BD_ProjectNo: "",
-  // BD_CheckSum: "",
-  // BD_ChipType: "",
-  // BD_SoftVersion: "",
-  // BD_IsICCID: "",
-  // BD_ICCIDType: "",
-  // BD_IsActivate: "",
-  // BD_IsMSD: "",
-  // BD_MSDLevel: "",
   QueryType: "2",
-  // WorkflowName: "",
 });
 const specWork = ref({
   WorkflowName: "",
   WorkflowDesc: "",
 });
+const specPreWork = ref({
+  WorkflowName: "",
+  WorkflowDesc: "",
+});
+const radio1 = ref("1");
+
 const specWorkVisible = ref(false);
 const specWorkForm = ref({
   ProductName: "",
-  Revision: "",
-  ProductDescription: "",
-  TypeName: "",
-  TypeDescription: "",
-  FamilyName: "",
-  FamilyDescription: "",
-  Unit: "",
-  UnitDescription: "",
-  Factory: "",
-  Customer_ProductNumber: "",
-  BD_ProductCategory: "",
-  BD_ProductModel: "",
-  BD_ProjectNo: "",
-  BD_CheckSum: "",
-  BD_ChipType: "",
-  BD_SoftVersion: "",
-  BD_IsICCID: "",
-  BD_ICCIDType: "",
-  BD_IsActivate: "",
-  BD_IsMSD: "",
-  BD_MSDLevel: "",
-  QueryType: "",
+  WorkflowType: "",
   WorkflowName: "",
 });
 
@@ -307,7 +300,7 @@ onBeforeMount(() => {
 });
 onMounted(() => {
   window.addEventListener("resize", getScreenHeight);
-  getData();
+  // getData();
   getWorkFlow();
 });
 onBeforeUnmount(() => {
@@ -323,8 +316,15 @@ const getData = () => {
       WorkflowDesc: "",
       WorkflowName: "",
     };
+    specPreWork.value = {
+      WorkflowDesc: "",
+      WorkflowName: "",
+    };
   });
 };
+const inputData = debounce(() => {
+  getData()
+}, 1000)
 const getProductList = () => {
   findProductBOMMaterialList(ProductName.value).then((res: any) => {
     productData.value = res.content;
@@ -358,23 +358,58 @@ const getSpecWorkData = () => {
 };
 
 const cellClick = (val: any) => {
-  specWorkForm.value = { ...val };
+  specWorkData.value = []
+  productData.value = []
   ProductName.value = val.ProductName;
   specForm.value.ProductName = val.ProductName;
-  getSpecWorkData();
+  specWorkForm.value.ProductName = val.ProductName;
+  specWork.value.WorkflowName = val.WorkflowName;
+  specWork.value.WorkflowDesc = val.WorkflowDesc;
+  specPreWork.value.WorkflowName = val.PreProcessWorkflowName;
+  specPreWork.value.WorkflowDesc = val.PreProcessWorkflowDesc;
+
+  // getSpecWorkData();
+
+  getSpecData();
   getProductList();
 };
 
-const openSpecWorK = () => {
+const getSpecData = () => {
+  if (ProductName.value !== "") {
+    let data = "";
+    if (radio1.value == "1") {
+      data = specWork.value.WorkflowName;
+    } else {
+      data = specPreWork.value.WorkflowName;
+    }
+    if (data !== null) {
+      findWorkflowSpec(data).then((res: any) => {
+        specWorkData.value = res.content;
+      });
+    }
+  } else {
+  }
+};
+const changeRadio = () => {
+  specWorkData.value = [];
+  getSpecData();
+};
+
+const openSpecWorK = (type: any) => {
+  specWorkDecData.value = [];
+  specWorkForm.value.WorkflowType = type;
   specWorkVisible.value = true;
+  // console.log( specWorkForm.value);
+  let workflowName =
+    type == 1 ? specWork.value.WorkflowName : specPreWork.value.WorkflowName;
   const isHight = workFlow.value.find(
-    (w: any) => w.WorkflowName == specWork.value.WorkflowName
+    (w: any) => w.WorkflowName == workflowName
   );
   nextTick(() => {
     if (isHight !== undefined) {
-      specWorkForm.value.WorkflowName = specWork.value.WorkflowName;
+      specWorkForm.value.WorkflowName = workflowName;
       singleTableRef.value.setCurrentRow(isHight);
-      getWorkFlowSpec(specWork.value.WorkflowName);
+      getWorkFlowSpec(workflowName);
     } else {
       specWorkForm.value.WorkflowName = "";
       singleTableRef.value.setCurrentRow();
@@ -387,13 +422,25 @@ const updateSpecWork = () => {
 
   UpdateProductWorkflow(specWorkForm.value).then((res: any) => {
     specWorkVisible.value = false;
+    ElNotification({
+      title: "提示信息",
+      message: res.msg,
+      type: res.success ? "success" : "error",
+    });
     if (res.success) {
-      ElNotification({
-        title: "提示信息",
-        message: res.msg,
-        type: "success",
+      findProduct({
+        ProductName: ProductName.value,
+        ProductDescription: "",
+      }).then((res: any) => {
+        let data = res.content[0];
+        specWork.value.WorkflowName = data.WorkflowName;
+        specWork.value.WorkflowDesc = data.WorkflowDesc;
+        specPreWork.value.WorkflowName = data.PreProcessWorkflowName;
+        specPreWork.value.WorkflowDesc = data.PreProcessWorkflowDesc;
       });
-      getSpecWorkData();
+      // getSpecWorkData();
+      specWorkForm.value.WorkflowName = "";
+      getSpecData();
     }
   });
 };
@@ -452,8 +499,8 @@ const selectable = (row: any, selectedRows: any) => {
 
 const getScreenHeight = () => {
   nextTick(() => {
-    tableHeight.value = window.innerHeight - 145.5;
-    tableHeight1.value = (window.innerHeight - 207) * 0.5;
+    tableHeight.value = window.innerHeight - 146;
+    tableHeight1.value = (window.innerHeight - 240) * 0.5;
     // tableHeight2.value =( window.innerHeight - 178)*0.5;
   });
 };

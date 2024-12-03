@@ -69,12 +69,13 @@
           </el-form-item> -->
         </el-form>
         <div class="mb-[5px]">
-          <el-button type="warning" size="small" :disabled="onlineData.length === 1 ? false : true"
+          <el-button type="primary" size="small" :disabled="onlineData.length === 1 ? false : true"
             @click="openOrderOnline">计划上线</el-button>
+          <el-button type="warning" size="small" :disabled="isOffline" @click="openOrderOffline">计划下线</el-button>
+          <el-button color="#409eff" size="small" style="color: #fff" icon="Unlock"
+          :disabled="onlineData.length === 1 ? false : true" @click="orderUnlock">解锁</el-button>
           <el-button type="info" size="small" icon="Lock" :disabled="onlineData.length === 1 ? false : true"
             @click="orderLock">锁定</el-button>
-          <el-button color="#409eff" size="small" style="color: #fff" icon="Unlock"
-            :disabled="onlineData.length === 1 ? false : true" @click="orderUnlock">解锁</el-button>
         </div>
       </div>
       <div class="table_container">
@@ -230,6 +231,7 @@ import {
   findShelf,
   OrderOnline,
   QueryOrderLine,
+  OrderOffline
 } from "@/api/operate";
 import {
   ref,
@@ -239,6 +241,7 @@ import {
   onMounted,
   onBeforeMount,
   onBeforeUnmount,
+  computed,
 } from "vue";
 import { shortcuts,setTodayDate,setLastDate } from "@/utils/dataMenu";
 interface wmsType {
@@ -365,6 +368,15 @@ watch(
 
   }
 );
+const isOffline = computed(() => {
+  if (
+    onlineData.value.length !== 1 ||
+    onlineData.value.findIndex((o: any) => o.OrderStatusName == "OnLine") == -1
+  ) {
+    return true;
+  }
+  return false;
+});
 const rowClick = (val: any) => {
   dialogVisible.value = true;
   if (orderChoice.value === val.MfgOrderName) {
@@ -645,6 +657,21 @@ const openOrderOnline = () => {
   });
   findShelf().then((res: any) => {
     shelfList.value = res.content;
+  });
+};
+const openOrderOffline = () => {
+  let data = cloneDeep(onlineData.value)
+
+  OrderOffline({
+    OrderNumber: data[0].MfgOrderName,
+    UpdatedBy: userStore.getUserInfo,
+  }).then((res: any) => {
+    ElNotification({
+      title: "提示信息",
+      message: res.msg,
+      type: res.success ? "success" : "error",
+    });
+    getTableData();
   });
 };
 //关闭生产计划号上线

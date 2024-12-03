@@ -1,17 +1,30 @@
 <template>
   <div class="flex flex-col w-full h-full">
-    <div class="h-[40px] min-h-[40px] pl-2 pr-2 flex justify-between items-center">
+    <!-- <div class="h-[40px] min-h-[40px] pl-2 pr-2 flex justify-between items-center">
       <span class="text-[1.2rem]"> {{ opui.stationDec }} </span>
       <div></div>
-    </div>
+    </div> -->
     <div class="w-full flex-1 flex">
-      <div class="setwidth w-[350px]">
+      <div class="setwidth w-[370px]">
         <div class="w-full h-full box">
           <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
             <span class="ml-5">基本信息</span>
           </div>
           <div class="p-[10px]">
             <el-form class="inbound" ref="formRef" :model="form" label-width="auto">
+              <el-form-item label="生产计划号" class="mb-[5px] flex">
+                <selectTa ref="selectTable" :table="orderTable" :selectWidth="200" :columns="orderColumns"
+                  :max-height="400" :tableWidth="700" :defaultSelectVal="defaultSelectVal" :keywords="{
+                    label: 'MfgOrderName',
+                    value: 'MfgOrderName',
+                  }" @radioChange="(...args: any) => radioChange(args)">
+                </selectTa>
+                <el-tooltip content="刷新" placement="top">
+                  <el-icon class="ml-2" color="#006487" :class="isLoding" size="24" @click="getOrderData">
+                    <RefreshRight />
+                  </el-icon>
+                </el-tooltip>
+              </el-form-item>
               <el-form-item v-for="f in formHeader" :key="f.value" :label="f.label">
                 <span class="font-bold text-lg leading-[30px]" :class="f.value == 'TodayNum' ? 'text-[#00B400]' : ''">
                   {{ formText(f.value) }}</span>
@@ -20,7 +33,7 @@
           </div>
         </div>
       </div>
-      <div class="w-[calc(100%-350px)]">
+      <div class="w-[calc(100%-370px)]">
         <!-- <div class="w-full"> -->
         <div class="w-full h-full flex flex-col">
           <div>
@@ -56,8 +69,8 @@
               <span class="ml-5">历史过站记录</span>
               <div class="mr-5">
                 <el-checkbox-group v-model="checkedHis" class="laser-table-filter">
-                  <el-checkbox v-for="c in checkedHisList" :label="`${c.label}(${changeDataLength(c.value)})`" :value="c.value"
-                    @change="changeHis(c.value)">
+                  <el-checkbox v-for="c in checkedHisList" :label="`${c.label}(${changeDataLength(c.value)})`"
+                    :value="c.value" @change="changeHis(c.value)">
                   </el-checkbox>
                 </el-checkbox-group>
               </div>
@@ -119,10 +132,7 @@
 <script lang="ts" setup>
 import tableTemp from "@/components/tableTemp/index.vue";
 import tableTem from "@/components/tableTem/index.vue";
-// import badInfoTem from "@/components/badInfoTem/index.vue";
-// import formTem from "@/components/formTem/index.vue";
-// import feedTemp from "@/components/feedTemp/index.vue";
-// import selectTa from "@/components/selectTable/index.vue";
+import selectTa from "@/components/selectTable/index.vue";
 import { useAppStore } from "@/stores/modules/app";
 import { useUserStoreWithOut } from "@/stores/modules/user";
 import { checkStringType } from "@/utils/barcodeFormat";
@@ -132,7 +142,8 @@ import {
   InspectionStationMoveOut,
   DefectProductRecord,
   QueryDefectCodeInspection,
-  QueryMoveHistory
+  QueryMoveHistory,
+  OrderQuery,
 } from "@/api/dipApi";
 
 import {
@@ -152,11 +163,12 @@ interface StopsForm {
   result: string;
   userAccount: string;
   txnDate: string;
+  orderName: string;
 }
 interface Defect {
   isDefectLabel: string;
 
-  isDefectType: number | string
+  isDefectType: number | string;
 }
 interface BadForm {
   containerName: string;
@@ -176,6 +188,7 @@ const stopsForm = ref<StopsForm>({
   userAccount: userStore.getUserInfo,
   txnDate: "",
   result: "OK",
+  orderName: "",
 });
 
 const badVisible = ref(false);
@@ -232,22 +245,6 @@ const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
     type: "textarea",
     width: 300,
   },
-
-
-   // {
-  //   label: "过站总数",
-  //   value: "AllNum",
-  //   disabled: true,
-  //   type: "input",
-  //   width: "",
-  // },
-  // {
-  //   label: "实时过站",
-  //   value: "TodayNum",
-  //   disabled: true,
-  //   type: "input",
-  //   width: "",
-  // },
 ]);
 
 const columnData1 = reactive([
@@ -258,13 +255,7 @@ const columnData1 = reactive([
     width: "",
     align: "1",
   },
-  // {
-  //   text: true,
-  //   prop: "BD_Tools",
-  //   label: "工装治具",
-  //   width: "",
-  //   align: "1",
-  // },
+
   {
     text: true,
     prop: "BD_EmployeeName",
@@ -278,7 +269,7 @@ const columnData1 = reactive([
     label: "扫描时间",
     width: "",
     align: "1",
-  }
+  },
 ]);
 const tableData = ref([]);
 const tableHeight = ref(0);
@@ -301,12 +292,7 @@ const badForm = ref<BadForm>({
   userAccount: userStore.getUserInfo,
 });
 //不良信息table
-const BadtableData = ref([
-  //   {
-  //     isDefectReasonName: "s004",
-  //     isDefectReasonDesc: "少件",
-  //   },
-]);
+const BadtableData = ref([]);
 
 const badpageObj = ref({
   pageSize: 100,
@@ -335,8 +321,8 @@ const msgType = ref(true);
 const leftBoxH = ref(0);
 const hisForm = ref({
   MfgOrderName: "",
-  workstationName: opui.station
-})
+  workstationName: opui.station,
+});
 const checkedHis = ref(["today"]);
 const checkedHisList = ref([
   {
@@ -348,18 +334,30 @@ const checkedHisList = ref([
     label: "工序汇总",
   },
 ]);
+const orderTable = ref<InstanceType<typeof OrderData>>({
+  data: [],
+});
+const orderColumns = ref([
+  { label: "生产计划号", width: "", prop: "MfgOrderName" },
+  { label: "产品编码", width: "", prop: "ProductName" },
+  { label: "产线", width: "", prop: "MfgLineDesc" },
+  { label: "状态", width: "", prop: "OrderStatusDesc" },
+  { label: "计划开始", width: "", prop: "PlannedStartDate" },
+  { label: "计划完成", width: "", prop: "PlannedCompletionDate" },
+]);
+const defaultSelectVal = ref<string[]>([]);
+const isLoding = ref("");
 onBeforeMount(() => {
   getScreenHeight();
 });
 onMounted(() => {
   window.addEventListener("resize", getScreenHeight);
-  // getOrderData();
+  getOrderData();
   getFocus();
 });
 onBeforeUnmount(() => {
   window.addEventListener("resize", getScreenHeight);
 });
-
 
 watch(
   () => stopsForm.value.result,
@@ -379,12 +377,29 @@ const getFocus = () => {
     inputFocus.value = true;
   }, 100);
 };
+const getOrderData = () => {
+  isLoding.value = "is-loading";
+  defaultSelectVal.value = [];
+  OrderQuery({ lineName: opui.line, OrderTypeName: "DIP" }).then((res: any) => {
+    let data = res.content;
+    let timer = setTimeout(() => {
+      isLoding.value = "";
+      clearTimeout(timer);
+    }, 2000);
+    if (data !== null && data.length !== 0) {
+      orderTable.value.data = data;
+      if (data.length >= 1) {
+        defaultSelectVal.value[0] = data[0].MfgOrderName;
+      }
+    }
+  });
+};
 //获取过站历史记录
 const getHisData = () => {
   QueryMoveHistory(hisForm.value).then((res: any) => {
-    tableData.value = res.content
-  })
-}
+    tableData.value = res.content;
+  });
+};
 const changeHis = (val: any) => {
   if (checkedHis.value.length == 0) {
     checkedHis.value = [];
@@ -395,19 +410,19 @@ const changeHis = (val: any) => {
 };
 const changeData = computed(() => {
   if (checkedHis.value[0] == "today") {
-    return geTodayData()
+    return geTodayData();
   } else {
     return tableData.value;
   }
 });
-const changeDataLength =(val: any) => {
+const changeDataLength = (val: any) => {
   if (val == "today") {
-    let dataLength=geTodayData()
-    return dataLength.length
+    let dataLength = geTodayData();
+    return dataLength.length;
   } else {
-     return tableData.value.length
+    return tableData.value.length;
   }
-}
+};
 const geTodayData = () => {
   const today = new Date();
   const todayString = today.toISOString().split("T")[0];
@@ -417,7 +432,7 @@ const geTodayData = () => {
   const todayDataArray = tableData.value.filter((item: any) => {
     return getDateFromDateTimeString(item.TxnDate) === todayString;
   });
-  return todayDataArray
+  return todayDataArray;
 };
 
 const formText = (data: string) => {
@@ -443,7 +458,7 @@ const badSubmit = () => {
   changeList.value.forEach((c: any) => {
     badForm.value.DefectDetails.push({
       isDefectLabel: c.isDefectReasonName,
-      isDefectType: 1
+      isDefectType: 1,
     });
   });
   DefectProductRecord(badForm.value).then((res: any) => {
@@ -455,7 +470,7 @@ const badSubmit = () => {
       changeList.value = [];
       badForm.value.DefectDetails = [];
       stopsForm.value.result = "OK";
-      getFocus()
+      getFocus();
     }
     ElNotification({
       title: "提示信息",
@@ -467,15 +482,41 @@ const badSubmit = () => {
   });
 };
 
+const radioChange = (args: any) => {
+  if (args[1] == null) {
+    form.value.MfgOrderName = "";
+    form.value.ProductName = "";
+    form.value.ProductDesc = "";
+    form.value.BD_ProductModel = "";
+    form.value.BD_SoftVersion = "";
+    form.value.Qty = "";
+    form.value.ERPOrder = "";
+    tableData.value = [];
+  } else {
+    if (args[1] !== form.value.MfgOrderName || form.value.MfgOrderName == "") {
+      form.value.MfgOrderName = args[0].MfgOrderName;
+      form.value.ProductName = args[0].ProductName;
+      form.value.ProductDesc = args[0].ProductDesc;
+      form.value.BD_ProductModel = args[0].BD_ProductModel;
+      form.value.BD_SoftVersion = args[0].BD_SoftVersion;
+      form.value.Qty = args[0].Qty;
+      form.value.ERPOrder = args[0].ERPOrder;
+      stopsForm.value.orderName = args[0].MfgOrderName;
+      hisForm.value.MfgOrderName = args[0].MfgOrderName;
+    } else {
+    }
+    getHisData();
+  }
+};
 //过站
 const getChange = () => {
   let barCodeData = barCode.value;
   if (checkStringType(barCodeData) == "result") {
     // stopsForm.value.result = barCodeData;
     if (barCodeData == "ng" || barCodeData == "NG") {
-      stopsForm.value.result = "NG"
+      stopsForm.value.result = "NG";
     } else {
-      stopsForm.value.result = "OK"
+      stopsForm.value.result = "OK";
     }
   } else {
     stopsForm.value.containerName = barCodeData;
@@ -485,29 +526,37 @@ const getChange = () => {
         msgType.value = res.success;
         stopsForm.value.containerName = "";
         form.value = { ...res.content[0] };
-        hisForm.value.MfgOrderName = res.content[0].MfgOrderName
-        getHisData()
-        getFocus()
+        hisForm.value.MfgOrderName = res.content[0].MfgOrderName;
+        getHisData();
+        getFocus();
         stopsForm.value.result = "OK";
       });
     } else {
       badForm.value.containerName = barCodeData;
-      QueryDefectCodeInspection(stopsForm.value.containerName).then((res: any) => {
-        if (!res.success) {
-          msgTitle.value = res.msg;
-          msgType.value = res.success;
-          return;
+      let data1 = {
+        containerName: barCodeData,
+        orderName: form.value.MfgOrderName,
+        workstationName: opui.station,
+        userAccount:  userStore.getUserInfo,
+      };
+      QueryDefectCodeInspection(data1).then(
+        (res: any) => {
+          if (!res.success) {
+            msgTitle.value = res.msg;
+            msgType.value = res.success;
+            return;
+          }
+          badheadForm.value.MfgOrderName = res.content.MfgOrderName;
+          badheadForm.value.ProductName = res.content.ProductName;
+          badheadForm.value.ProductDesc = res.content.ProductDesc;
+          badheadForm.value.Qty = res.content.Qty;
+          badheadForm.value.PlannedstartDate = res.content.PlannedstartDate;
+          badheadForm.value.PlannedCompletionDate =
+            res.content.PlannedCompletionDate;
+          BadtableData.value = res.content.defectCode;
+          badVisible.value = true;
         }
-        badheadForm.value.MfgOrderName = res.content.MfgOrderName;
-        badheadForm.value.ProductName = res.content.ProductName;
-        badheadForm.value.ProductDesc = res.content.ProductDesc;
-        badheadForm.value.Qty = res.content.Qty;
-        badheadForm.value.PlannedstartDate = res.content.PlannedstartDate;
-        badheadForm.value.PlannedCompletionDate =
-          res.content.PlannedCompletionDate;
-        BadtableData.value = res.content.defectCode;
-        badVisible.value = true;
-      });
+      );
     }
   }
   barCode.value = "";
@@ -525,7 +574,7 @@ const handleCurrentChange = (val: any) => {
 const getScreenHeight = () => {
   nextTick(() => {
     leftBoxH.value = window.innerHeight - 155;
-    tableHeight.value = window.innerHeight - 360;
+    tableHeight.value = window.innerHeight - 320;
   });
 };
 </script>
@@ -536,7 +585,7 @@ const getScreenHeight = () => {
 }
 
 .setwidth {
-  flex: 0 0 350px;
+  flex: 0 0 370px;
 }
 
 .box {

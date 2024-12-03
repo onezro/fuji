@@ -216,6 +216,7 @@ const turnData = ref<Turn[]>([]);
 const boxHeight = ref(0);
 const inputFocus = ref(true);
 const isLoding = ref("");
+const autoTimer=ref()
 
 onBeforeMount(() => {
   getScreenHeight();
@@ -223,8 +224,12 @@ onBeforeMount(() => {
 onMounted(() => {
   window.addEventListener("resize", getScreenHeight);
   getCarrierList();
+  // autoTimer.value=setInterval(()=>{
+  //   getCarrierList();
+  // },1000*10)
 });
 onBeforeUnmount(() => {
+  clearInterval(autoTimer.value)
   window.addEventListener("resize", getScreenHeight);
 });
 

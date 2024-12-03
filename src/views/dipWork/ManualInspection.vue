@@ -1,17 +1,30 @@
 <template>
   <div class="flex flex-col w-full h-full">
-    <div class="h-[40px] min-h-[40px] pl-2 pr-2 flex justify-between items-center">
+    <!-- <div class="h-[40px] min-h-[40px] pl-2 pr-2 flex justify-between items-center">
       <span class="text-[1.2rem]"> {{ opui.stationDec }} </span>
       <div></div>
-    </div>
+    </div> -->
     <div class="w-full flex-1 flex">
-      <div class="setwidth w-[350px]">
+      <div class="setwidth w-[370px]">
         <div class="w-full h-full box">
           <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
             <span class="ml-5">基本信息</span>
           </div>
           <div class="p-[10px]">
             <el-form class="inbound" ref="formRef" :model="form" label-width="auto">
+              <el-form-item label="生产计划号" class="mb-[5px] flex">
+                <selectTa ref="selectTable" :table="orderTable" :selectWidth="200" :columns="orderColumns"
+                  :max-height="400" :tableWidth="700" :defaultSelectVal="defaultSelectVal" :keywords="{
+                    label: 'MfgOrderName',
+                    value: 'MfgOrderName',
+                  }" @radioChange="(...args: any) => radioChange(args)">
+                </selectTa>
+                <el-tooltip content="刷新" placement="top">
+                  <el-icon class="ml-2" color="#006487" :class="isLoding" size="24" @click="getOrderData">
+                    <RefreshRight />
+                  </el-icon>
+                </el-tooltip>
+              </el-form-item>
               <el-form-item v-for="f in formHeader" :key="f.value" :label="f.label">
                 <span class="font-bold text-lg leading-[30px]" :class="f.value == 'TodayNum' ? 'text-[#00B400]' : ''">
                   {{ formText(f.value) }}</span>
@@ -20,7 +33,7 @@
           </div>
         </div>
       </div>
-      <div class="w-[calc(100%-350px)]">
+      <div class="w-[calc(100%-370px)]">
         <!-- <div class="w-full"> -->
         <div class="w-full h-full flex flex-col">
           <div>
@@ -136,6 +149,7 @@
 <script lang="ts" setup>
 import tableTemp from "@/components/tableTemp/index.vue";
 import tableTem from "@/components/tableTem/index.vue";
+import selectTa from "@/components/selectTable/index.vue";
 import { useAppStore } from "@/stores/modules/app";
 import { useUserStoreWithOut } from "@/stores/modules/user";
 import { checkStringType } from "@/utils/barcodeFormat";
@@ -145,7 +159,8 @@ import {
   VIStationMoveOut,
   VIDefectProductRecord,
   QueryDefectCode,
-  QueryMoveHistory
+  QueryMoveHistory,
+  OrderQuery
 } from "@/api/dipApi";
 
 import {
@@ -165,6 +180,7 @@ interface StopsForm {
   result: string;
   userAccount: string;
   txnDate: string;
+  orderName:string
 }
 interface Defect {
   isDefectLabel: string;
@@ -189,6 +205,7 @@ const stopsForm = ref<StopsForm>({
   userAccount: userStore.getUserInfo,
   txnDate: "",
   result: "OK",
+  orderName:""
 });
 
 const badVisible = ref(false);
@@ -202,13 +219,7 @@ const form = ref<InstanceType<typeof Formspan>>({
   passNum: ""
 });
 const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
-  {
-    label: "生产计划号",
-    value: "MfgOrderName",
-    disabled: true,
-    type: "input",
-    width: "",
-  },
+ 
   {
     label: "产品机型",
     value: "BD_ProductModel",
@@ -255,13 +266,7 @@ const columnData1 = reactive([
     width: "",
     align: "1",
   },
-  // {
-  //   text: true,
-  //   prop: "BD_Tools",
-  //   label: "工装治具",
-  //   width: "",
-  //   align: "1",
-  // },
+
   {
     text: true,
     prop: "BD_EmployeeName",
@@ -345,12 +350,25 @@ const checkedHisList = ref([
     label: "工序汇总",
   },
 ]);
+const orderTable = ref<InstanceType<typeof OrderData>>({
+  data: [],
+});
+const orderColumns = ref([
+  { label: "生产计划号", width: "", prop: "MfgOrderName" },
+  { label: "产品编码", width: "", prop: "ProductName" },
+  { label: "产线", width: "", prop: "MfgLineDesc" },
+  { label: "状态", width: "", prop: "OrderStatusDesc" },
+  { label: "计划开始", width: "", prop: "PlannedStartDate" },
+  { label: "计划完成", width: "", prop: "PlannedCompletionDate" },
+]);
+const defaultSelectVal = ref<string[]>([]);
+const isLoding = ref("");
 onBeforeMount(() => {
   getScreenHeight();
 });
 onMounted(() => {
   window.addEventListener("resize", getScreenHeight);
-  // getOrderData();
+  getOrderData();
   getFocus();
 });
 onBeforeUnmount(() => {
@@ -375,6 +393,25 @@ const getFocus = () => {
   setTimeout(() => {
     inputFocus.value = true;
   }, 100);
+};
+const getOrderData = () => {
+  isLoding.value = "is-loading";
+  defaultSelectVal.value = []
+  OrderQuery({ lineName: opui.line, OrderTypeName: "DIP" }).then(
+    (res: any) => {
+      let data = res.content;
+      let timer = setTimeout(() => {
+        isLoding.value = "";
+        clearTimeout(timer);
+      }, 2000);
+      if (data !== null && data.length !== 0) {
+        orderTable.value.data = data;
+        if (data.length >= 1) {
+          defaultSelectVal.value[0] = data[0].MfgOrderName;
+        }
+      }
+    }
+  );
 };
 //获取过站历史记录
 const getHisData = () => {
@@ -463,6 +500,34 @@ const badSubmit = () => {
     // console.log(res);
   });
 };
+const radioChange = (args: any) => {
+  if (args[1] == null) {
+    form.value.MfgOrderName = "";
+    form.value.ProductName = "";
+    form.value.ProductDesc = "";
+    form.value.BD_ProductModel = "";
+    form.value.BD_SoftVersion = "";
+    form.value.Qty = "";
+    form.value.ERPOrder = "";
+    tableData.value = []
+  } else {
+
+    if (args[1] !== form.value.MfgOrderName || form.value.MfgOrderName == "") {
+      form.value.MfgOrderName = args[0].MfgOrderName;
+      form.value.ProductName = args[0].ProductName;
+      form.value.ProductDesc = args[0].ProductDesc;
+      form.value.BD_ProductModel = args[0].BD_ProductModel;
+      form.value.BD_SoftVersion = args[0].BD_SoftVersion;
+      form.value.Qty = args[0].Qty;
+      form.value.ERPOrder = args[0].ERPOrder;
+      stopsForm.value.orderName = args[0].MfgOrderName;
+      hisForm.value.MfgOrderName = args[0].MfgOrderName;
+    } else {
+
+    }
+    getHisData();
+  }
+};
 
 //过站
 const getChange = () => {
@@ -493,7 +558,13 @@ const getChange = () => {
     } else {
       badForm.value.containerName = barCodeData;
       // badVisible.value = true;
-      QueryDefectCode(stopsForm.value.containerName).then((res: any) => {
+      let data1 = {
+        containerName: barCodeData,
+        orderName: form.value.MfgOrderName,
+        workstationName: opui.station,
+        userAccount:  userStore.getUserInfo,
+      };
+      QueryDefectCode(data1).then((res: any) => {
         //   console.log(res);
         if (!res.success) {
           msgTitle.value = res.msg;
@@ -527,7 +598,7 @@ const handleCurrentChange = (val: any) => {
 const getScreenHeight = () => {
   nextTick(() => {
     leftBoxH.value = window.innerHeight - 155;
-    tableHeight.value = window.innerHeight - 360;
+    tableHeight.value = window.innerHeight - 320;
   });
 };
 </script>
@@ -538,7 +609,7 @@ const getScreenHeight = () => {
 }
 
 .setwidth {
-  flex: 0 0 350px;
+  flex: 0 0 370px;
 }
 
 .box {

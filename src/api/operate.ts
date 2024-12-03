@@ -325,6 +325,13 @@ export function OrderOnline(data: any) {
         data
     });
 }
+export function OrderOffline(data: any) {
+    return request({
+        url: "/api/order/OrderOffline",
+        method: "post",
+        data
+    });
+}
 //ECN查询
 export function GetECNorder(data: any) {
     return request({

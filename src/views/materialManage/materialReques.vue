@@ -456,7 +456,7 @@ const getTypeList = () => {
 const getTextWidth = (str: string) => {
   let width = 0;
   const html = document.createElement("span");
-  html.style.cssText = `padding: 0; margin: 0; border: 0; line-height: 1; font-size: ${16}px; font-family: Arial, sans-serif;`;
+  html.style.cssText = `padding: 0; margin: 0; border: 0; line-height: 1; font-size: ${13}px; font-family: Arial, sans-serif;`;
   html.innerText = str; // 去除字符串前后的空白字符
   document.body?.appendChild(html);
 

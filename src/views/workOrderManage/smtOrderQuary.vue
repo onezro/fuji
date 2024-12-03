@@ -69,12 +69,14 @@
           </el-form-item> -->
         </el-form>
         <div class="mb-[5px]">
-          <el-button type="warning" size="small" :disabled="onlineData.length === 1 ? false : true"
+          <el-button type="primary" size="small" :disabled="onlineData.length === 1 ? false : true"
             @click="openOrderOnline">计划上线</el-button>
+          <el-button type="warning" size="small" :disabled="isOffline" @click="openOrderOffline">计划下线</el-button>
+          <el-button color="#409eff" size="small" style="color: #fff" icon="Unlock"
+          :disabled="onlineData.length === 1 ? false : true" @click="orderUnlock">解锁</el-button>
           <el-button type="info" size="small" icon="Lock" :disabled="onlineData.length === 1 ? false : true"
             @click="orderLock">锁定</el-button>
-          <el-button color="#409eff" size="small" style="color: #fff" icon="Unlock"
-            :disabled="onlineData.length === 1 ? false : true" @click="orderUnlock">解锁</el-button>
+         
         </div>
       </div>
       <div class="table_container">
@@ -109,7 +111,7 @@
                 </el-table-column>
                 <el-table-column prop="UOMName" align="center" label="单位" flexible>
                 </el-table-column>
-<!-- 
+                <!-- 
                 <el-table-column prop="isLoadQueue" align="center" label="允许上料" flexible>
                   <template #default="scope">
                     <span v-if="scope.row.isLoadQueue === 1">是</span>
@@ -120,7 +122,6 @@
                 </el-table-column>
                 <el-table-column prop="TotalQtyRequired" align="center" label="需求量" flexible>
                 </el-table-column>
-                
               </el-table>
             </div>
           </el-tab-pane>
@@ -231,17 +232,19 @@ import {
   findShelf,
   OrderOnline,
   QueryOrderLine,
+  OrderOffline,
 } from "@/api/operate";
 import {
   ref,
   reactive,
   watch,
+  computed,
   nextTick,
   onMounted,
   onBeforeMount,
   onBeforeUnmount,
 } from "vue";
-import { shortcuts,setTodayDate,setLastDate } from "@/utils/dataMenu";
+import { shortcuts, setTodayDate, setLastDate } from "@/utils/dataMenu";
 interface wmsType {
   phase_code: string;
   pt_code: string;
@@ -355,7 +358,7 @@ watch(
       searchForm.value.PlanStartTime = "";
       searchForm.value.PlanEndTime = "";
       getTableData();
-      return 
+      return;
     }
     if (newVal !== oldVal) {
       searchForm.value.PlanStartTime = newVal[0];
@@ -364,6 +367,26 @@ watch(
     }
   }
 );
+
+const isOffline = computed(() => {
+  if (
+    onlineData.value.length !== 1 ||
+    onlineData.value.findIndex((o: any) => o.OrderStatusName == "OnLine") == -1
+  ) {
+    return true;
+  }
+  return false;
+});
+// const isLock= computed(() => {
+//   if (
+//     onlineData.value.length == 1 &&
+//     onlineData.value.findIndex((o: any) => o.BD_IsLocked == false) !== -1
+//   ) {
+//     return false;
+//   }
+//   return true;
+// });
+
 const rowClick = (val: any) => {
   dialogVisible.value = true;
   if (orderChoice.value === val.MfgOrderName) {
@@ -379,7 +402,7 @@ const rowClick = (val: any) => {
     if (res.success) {
       // let data = cloneDeep(feedOrganData(res.content));
 
-      feedTableData.value = res.content
+      feedTableData.value = res.content;
     }
   });
 };
@@ -391,12 +414,12 @@ const columnData = reactive([
     // width: "",
     // min: true,
     // align: "center",
-    fixed:true,
+    fixed: true,
     isOperation: true,
     label: "生产计划号",
     width: "150",
+    min: true,
     align: "center",
-    
     operation: [
       {
         type: "primary",
@@ -464,7 +487,6 @@ const columnData = reactive([
     min: true,
     align: "1",
   },
- 
 
   {
     text: true,
@@ -599,8 +621,8 @@ const tabChange = (name: any) => {
       // console.log(OrganData(res.content));
       if (res.success) {
         // let data = cloneDeep(feedOrganData(res.content));
-      
-        feedTableData.value = res.content
+
+        feedTableData.value = res.content;
       }
     });
   } else if (name === "工艺流程") {
@@ -646,9 +668,9 @@ const openOrderOnline = () => {
   orderOnlineVisible.value = true;
   let data = cloneDeep(onlineData.value);
   orderOnlineForm.value.OrderNumber = data[0].MfgOrderName;
-// console.log(data[0].Side);
-orderOnlineForm.value.LineNumber=data[0].MfgLineName
-orderOnlineForm.value.Side=data[0].Side
+  // console.log(data[0].Side);
+  orderOnlineForm.value.LineNumber = data[0].MfgLineName;
+  orderOnlineForm.value.Side = data[0].Side;
   QueryOrderLine(data[0].OrderTypeName).then((res: any) => {
     onlineList.value = res.content;
   });
@@ -677,6 +699,21 @@ const orderOnline = () => {
     getTableData();
   });
 };
+const openOrderOffline = () => {
+  let data = cloneDeep(onlineData.value)
+
+  OrderOffline({
+    OrderNumber: data[0].MfgOrderName,
+    UpdatedBy: userStore.getUserInfo,
+  }).then((res: any) => {
+    ElNotification({
+      title: "提示信息",
+      message: res.msg,
+      type: res.success ? "success" : "error",
+    });
+    getTableData();
+  });
+};
 //
 const orderLock = () => {
   let data = cloneDeep(onlineData.value);
@@ -690,7 +727,7 @@ const orderLock = () => {
     ElNotification({
       title: "提示信息",
       message: res.msg,
-      type: "success",
+      type: res.success ? "success" : "error",
     });
     getTableData();
   });
@@ -708,7 +745,7 @@ const orderUnlock = () => {
     ElNotification({
       title: "提示信息",
       message: res.msg,
-      type: "success",
+      type: res.success ? "success" : "error",
     });
     getTableData();
   });
@@ -744,8 +781,6 @@ const getScreenHeight = () => {
 .demo-tabs .el-tabs__content {
   padding: 5px;
 }
-
-
 
 .demo-tabs.el-tabs--border-card>.el-tabs__header .el-tabs__item {
   color: #fff;

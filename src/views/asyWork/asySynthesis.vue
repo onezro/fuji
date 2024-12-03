@@ -92,13 +92,6 @@
                     </template>
                   </el-table-column>
                   <el-table-column prop="MaterialBarCode" label="批次条码" width="150">
-                    <template #default="scope">
-                      <el-input v-if="scope.row.IssueControl == 1" v-model="scope.row.MaterialBarCode" size="small"
-                        :ref="createInputRef(scope.$index)" @keyup.enter.native="
-                          getChange1(scope.$index, scope.row)
-                          ">
-                      </el-input>
-                    </template>
                   </el-table-column>
                   <!-- <el-table-column prop="address" label="Address" /> -->
                 </el-table>
@@ -212,7 +205,7 @@ interface StopsForm {
   OrderName: string;
   tools: string;
   BarCode: string;
-  keyMaterialList: Array<KeyMaterial>;
+  keyMaterialList: Array<KeyMaterial1>;
 }
 interface KeyMaterial {
   MaterialBarCode: string;
@@ -220,21 +213,18 @@ interface KeyMaterial {
   MfgOrderName: string;
   QtyRequired: number;
   IssueControl: number;
+  barCount: number;
+}
+interface KeyMaterial1 {
+  MaterialBarCode: string;
+  MaterialName: string;
 }
 
-interface ToolList {
-  WorkStationName: string;
-  OrderNumber: string;
-  ToolName: string;
-  sort: number;
-  MaterialName: string;
-  CompName: string;
-}
 const appStore = useAppStore();
 const userStore = useUserStoreWithOut();
 const opui = appStore.getOPUIReal();
 const inputRef = ref();
-const inputFocus = ref(false);
+const inputFocus = ref(true);
 const barCode = ref("");
 const stopsForm = ref<StopsForm>({
   workstationName: opui.station || "",
@@ -390,6 +380,7 @@ interface BadForm {
 const getBadForm = ref({
   containerName: "",
   workstationName: opui.station,
+  orderName:""
 });
 const badForm = ref<BadForm>({
   containerName: "",
@@ -488,7 +479,7 @@ const geTodayData = () => {
   return todayDataArray;
 };
 
-//过站
+//扫描
 const getChange = () => {
   let barCodeData = barCode.value;
   if (stopsForm.value.OrderName == "") {
@@ -500,39 +491,44 @@ const getChange = () => {
         stopsForm.value.result = "NG";
       } else {
         stopsForm.value.result = "OK";
-        inputRefs.value[0].focus();
       }
     } else {
       if (stopsForm.value.result == "OK") {
-        msgTitle.value = "";
-        msgType.value = true;
-        let dataIndex = barData.value.findIndex((b: any) => b.IssueControl == 1 && b.MaterialBarCode !== '')
-        if (
-          stopsForm.value.keyMaterialList.length !== 0 ||
-          dataIndex !== -1
-        ) {
-
-          stopsForm.value.BarCode = barCodeData;
-          AssemblySynthesisMoveStd(stopsForm.value).then((res: any) => {
-            msgTitle.value = res.msg;
-            msgType.value = res.success;
-            stopsForm.value.BarCode = "";
-            barCode.value = "";
-            stopsForm.value.keyMaterialList = [];
-
-            getHisData();
-            getKeyMaterial();
-          });
+        const isKeyZero = barData.value.findIndex(
+          (b: any) =>
+            b.IssueControl == 1 && (b.remainQty == 0 || b.remainQty == null)
+        );
+        if (isKeyZero == -1) {
+          // if (checkStringType(barCodeData) == "BDY") {
+          //   if (isKeyEmpty.value == -1) {
+          //     stopsForm.value.BarCode = barCodeData;
+          //     // goStop();
+          //   } else {
+          //     stopsForm.value.BarCode = barCodeData;
+          //     msgTitle.value = `屏条码：${ stopsForm.value.BarCode}已扫描`;
+          //     msgType.value = true;
+          //   }
+          // } else {
+          //   if (isKeyEmpty.value != -1) {
+          // verifyBarCode(barCodeData)
+          //   }else{
+          //     msgTitle.value = `关键料已扫描`;
+          //     msgType.value = false;
+          //   }
+          // }
+          if (isKeyEmpty.value == -1) {
+            stopsForm.value.BarCode = barCodeData;
+            goStop()
+          } else {
+            verifyBarCode(barCodeData)
+          }
         } else {
-          barCode.value = "";
-          msgTitle.value = `请扫描关键料或关键为空`;
+          msgTitle.value = `关键料剩余为0,请到WMS进行叫料`;
           msgType.value = false;
-          let dataIndex1 = barData.value.findIndex((b: any) => b.IssueControl == 1 && b.MaterialBarCode == '')
-          inputRefs.value[dataIndex1].focus();
         }
       } else {
         badForm.value.containerName = barCodeData;
-         getBadForm.value.containerName = barCodeData
+        getBadForm.value.containerName = barCodeData;
         QueryDefectCode(getBadForm.value).then((res: any) => {
           if (!res.success) {
             msgTitle.value = res.msg;
@@ -548,31 +544,76 @@ const getChange = () => {
         });
       }
     }
-    // msgTitle.value = "";
-    // msgType.value = true;
-    // if (
-    //   stopsForm.value.keyMaterialList.length !== 0 ||
-    //   barData.value.length !== 0
-    // ) {
-    //   stopsForm.value.BarCode = barCodeData;
-    //   ScreeSMTCompBindMoveStd(stopsForm.value).then((res: any) => {
-    //     msgTitle.value = res.msg;
-    //     msgType.value = res.success;
-    //     stopsForm.value.BarCode = "";
-    //     barCode.value = "";
-    //     if (res.success) {
-    //       stopsForm.value.keyMaterialList = [];
-    //       getHisData();
-    //       getKeyMaterial();
-    //     }
-    //   });
-    // } else {
-    //   barCode.value = "";
-    //   msgTitle.value = `请扫描关键料或关键为空`;
-    //   msgType.value = false;
-    // }
     barCode.value = "";
   }
+};
+//过站
+const goStop = () => {
+  AssemblySynthesisMoveStd(stopsForm.value).then((res: any) => {
+    msgTitle.value = res.msg;
+    msgType.value = res.success;
+    stopsForm.value.BarCode = "";
+    stopsForm.value.result = "OK";
+    barCode.value = "";
+    if (res.success) {
+      stopsForm.value.keyMaterialList = [];
+      getHisData();
+      getKeyMaterial();
+    }
+    getFocus();
+  });
+};
+//绑定为空
+const isKeyEmpty = computed(() => {
+  return barData.value.findIndex(
+    (b: any) => b.IssueControl == 1 && b.barCount !== b.QtyRequired
+  );
+});
+//验证绑定
+const verifyBarCode = (barCodeData: any) => {
+  let data1 = {
+    BarCode: barCodeData,
+    OrderName: form.value.MfgOrderName,
+    workstationName: opui.station,
+  };
+  JudgeAssemblyKeyMaterial(data1).then((res: any) => {
+    msgTitle.value = res.msg;
+    msgType.value = res.success;
+    if (res.success) {
+      const keyIndex = barData.value.findIndex(
+        (b: any) => b.MaterialName == res.content.ProductName
+      );
+      if (barData.value[keyIndex].MaterialBarCode == "") {
+        barData.value[keyIndex].MaterialBarCode = barCodeData;
+        stopsForm.value.keyMaterialList.push({
+          MaterialBarCode: barCodeData,
+          MaterialName: barData.value[keyIndex].MaterialName,
+        });
+        barData.value[keyIndex].barCount++;
+      } else {
+        const MaterialBarArr =
+          barData.value[keyIndex].MaterialBarCode.split(",");
+        const isEixtBar = MaterialBarArr.findIndex(
+          (m: any) => barCodeData == m
+        );
+        if (isEixtBar == -1) {
+          barData.value[keyIndex].MaterialBarCode =
+            barData.value[keyIndex].MaterialBarCode + "," + barCodeData;
+          stopsForm.value.keyMaterialList.push({
+            MaterialBarCode: barCodeData,
+            MaterialName: barData.value[keyIndex].MaterialName,
+          });
+          barData.value[keyIndex].barCount++;
+        } else {
+          msgTitle.value = `重复扫描`;
+          msgType.value = false;
+        }
+      }
+      // if (isKeyEmpty.value == -1 && stopsForm.value.BarCode != '') {
+      //   goStop()
+      // }
+    }
+  });
 };
 const badSelectionChange = (data: any) => {
   let content = cloneDeep(data);
@@ -612,59 +653,7 @@ const badSubmit = () => {
   });
 };
 
-const createInputRef = (val: any) => {
-  return (el: any) => {
-    if (el) {
-      inputRefs.value[val] = el;
-    }
-  };
-};
-const getChange1 = (val: any, data: any) => {
-  if (checkStringType(data.MaterialBarCode) == "result") {
-    if (data.MaterialBarCode == "ng" || data.MaterialBarCode == "NG") {
-      stopsForm.value.result = "NG";
-      inputRef.value.focus();
-    } else {
-      stopsForm.value.result = "OK";
-    }
-    inputRefs.value[val].clear();
-  } else {
-   
-    if (data.remainQty == 0 || data.remainQty == null) {
-      msgTitle.value = `关键料剩余为0,请到WMS进行叫料`;
-   
-      msgType.value = false;
-      inputRefs.value[val].clear();
-      return;
-    } else {
-      let data1 = {
-        BarCode: data.MaterialBarCode,
-        OrderName: data.MfgOrderName,
-        ProductName: data.MaterialName,
-        workstationName: opui.station,
-      };
-      JudgeAssemblyKeyMaterial(data1).then((res: any) => {
-        msgTitle.value = res.msg;
-        msgType.value = res.success;
-        if (res.success) {
-          if (val + 1 < inputRefs.value.length) {
-            inputRefs.value[val + 1].focus();
-          } else {
-            inputRef.value.focus();
-          }
-          stopsForm.value.keyMaterialList.push({
-            ...data,
-            VirtualCode: res.content == null ? "" : res.content,
-          });
-        } else {
-          inputRefs.value[val].clear();
-        }
-      });
-    }
-  }
 
-
-};
 
 const radioChange = (args: any) => {
   if (args[1] == null) {
@@ -698,68 +687,29 @@ const radioChange = (args: any) => {
       isKeyForm.value.OrderName = args[0].MfgOrderName;
       keyForm.value.OrderName = args[0].MfgOrderName;
       keyForm.value.ProductName = args[0].ProductName;
-      // getHisData();
-      // getKeyMaterial();
-    } else {
-    }
-    getHisData();
+      getBadForm.value.orderName=args[0].MfgOrderName;
+      getHisData();
       getKeyMaterial();
-    // form.value.MfgOrderName = args[0].MfgOrderName;
-    // form.value.ProductName = args[0].ProductName;
-    // form.value.ProductDesc = args[0].ProductDesc;
-    // form.value.BD_ProductModel = args[0].BD_ProductModel;
-    // form.value.BD_SoftVersion = args[0].BD_SoftVersion;
-    // form.value.PlannedStartDate = args[0].PlannedStartDate;
-    // form.value.PlannedCompletionDate = args[0].PlannedCompletionDate;
-    // form.value.Qty = args[0].Qty;
-    // form.value.AllNum = args[0].AllNum;
-    // form.value.TodayNum = args[0].TodayNum;
-    // form.value.ERPOrder = args[0].ERPOrder;
-    // stopsForm.value.OrderName = args[0].MfgOrderName;
-    // hisForm.value.MfgOrderName = args[0].MfgOrderName;
-    // isKeyForm.value.OrderName = args[0].MfgOrderName;
-    // keyForm.value.OrderName = args[0].MfgOrderName;
-    // keyForm.value.ProductName = args[0].ProductName;
+    } else {
+      getHisData();
+    }
 
-    // getKeyMaterial();
-    // getHisData();
   }
 };
 const getKeyMaterial = () => {
   barData.value = [];
   QueryAssemblyKeyMaterial(keyForm.value).then((res: any) => {
-    // let data: KeyMaterial[] = []
-    // res.content.forEach((c: any) => {
-    //   if (c.QtyRequired == 1) {
-    //     data.push(c)
-    //   } else {
-    //     for (let i = 0; i < c.QtyRequired; i++) {
-    //       data.push({
-    //         MfgOrderName: c.MfgOrderName,
-    //         QtyRequired: 1,
-    //         MaterialName: c.MaterialName,
-    //         MaterialBarCode: ""
-    //       });
-    //     }
-    //   }
-    // })
-    // barData.value = data;
     barData.value = res.content;
     barData.value.sort((a, b) => a.IssueControl - b.IssueControl);
     barData.value = barData.value.map((b: any) => {
       if (b.IssueControl == 1) {
-
         return {
           ...b,
-          MaterialBarCode: ''
-        }
+          MaterialBarCode: "",
+          barCount: 0,
+        };
       } else {
-        return b
-      }
-    })
-    nextTick(() => {
-      if (inputRefs.value.length > 0) {
-        inputRefs.value[0].focus();
+        return b;
       }
     });
   });
@@ -767,7 +717,7 @@ const getKeyMaterial = () => {
 const tableRowClassName = (val: any) => {
   // console.log(val.row);
   const isExitCode = stopsForm.value.keyMaterialList.findIndex(
-    (k: any) => val.row.MaterialBarCode == k.MaterialBarCode
+    (k: any) => k.QtyRequired == k.barCount
   );
   if (isExitCode !== -1) {
     return "active-table";

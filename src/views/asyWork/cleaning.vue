@@ -201,7 +201,8 @@ interface StopsForm {
   BarCode: string;
   OrderName: string;
   tools: string;
-  result: string
+  result: string;
+  MaterialName:Array<string>
 }
 
 interface ToolList {
@@ -226,7 +227,8 @@ const stopsForm = ref<StopsForm>({
   OrderName: "",
   tools: "",
   BarCode: "",
-  result: ""
+  result: "",
+  MaterialName:[]
 });
 
 const form = ref<InstanceType<typeof Formspan>>({
@@ -283,20 +285,7 @@ const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
     type: "textarea",
     width: 300,
   },
-  // {
-  //   label: "过站总数",
-  //   value: "AllNum",
-  //   disabled: true,
-  //   type: "input",
-  //   width: "",
-  // },
-  // {
-  //   label: "实时过站",
-  //   value: "TodayNum",
-  //   disabled: true,
-  //   type: "input",
-  //   width: "",
-  // },
+
 ]);
 const columnData1 = reactive([
   {
@@ -504,6 +493,7 @@ const getHisData = () => {
   });
 };
 const getMaterialRequired = () => {
+  stopsForm.value.MaterialName=[]
   QueryOrderMaterialRequired(getFeedForm.value).then((res: any) => {
     if (
       res.content.length == 0 ||
@@ -514,6 +504,9 @@ const getMaterialRequired = () => {
       return;
     }
     detailsData.value = res.content;
+    detailsData.value.forEach((d:any)=>{
+      stopsForm.value.MaterialName.push(d.MaterialName)
+    })
   });
 };
 
@@ -559,55 +552,25 @@ const getChange = () => {
     msgTitle.value = "请先选择生产计划号";
     msgType.value = false;
   } else {
-    // if (checkStringType(barCodeData) == "result") {
-    //   if (barCodeData == "ng" || barCodeData == "NG") {
-    //     stopsForm.value.result = "NG";
-    //   } else {
-    //     stopsForm.value.result = "OK";
-    //   }
-    // } else {
-    //   stopsForm.value.BarCode = barCodeData;
-    //   if (stopsForm.value.result == "OK") {
-    //     stopsForm.value.BarCode = barCodeData;
-    //     CleanCodeSave(stopsForm.value).then((res: any) => {
-    //       msgTitle.value = res.msg;
-    //       msgType.value = res.success;
-    //       stopsForm.value.BarCode = "";
-    //       if (res.success) {
-    //         getHisData();
-    //         getMaterialRequired();
-    //       }
-    //     });
-    //     barCode.value = "";
-    //   } else {
-    //     badForm.value.containerName = barCodeData;
-    //     QueryDefectCode(stopsForm.value.BarCode).then((res: any) => {
-    //       if (!res.success) {
-    //         msgTitle.value = res.msg;
-    //         msgType.value = res.success;
-    //         return;
-    //       }
-    //       badheadForm.value.MfgOrderName = res.content.MfgOrderName;
-    //       badheadForm.value.ProductName = res.content.ProductName;
-    //       badheadForm.value.ProductDesc = res.content.ProductDesc;
-    //       badheadForm.value.Qty = res.content.Qty;
-    //       BadtableData.value = res.content.defectCode;
-    //       badVisible.value = true;
-    //     });
-    //   }
-    // }
-    stopsForm.value.BarCode = barCodeData;
-    CleanCodeSave(stopsForm.value).then((res: any) => {
-      msgTitle.value = res.msg;
-      msgType.value = res.success;
-      stopsForm.value.BarCode = "";
-      // getFocus();
-      if(res.success){
-        getHisData();
-        getMaterialRequired();
-      }
-    
-    });
+let isZero=detailsData.value.findIndex((d:any)=>d.Qty==0)
+    if (detailsData.value.length == 0||isZero!==-1) {
+      msgTitle.value = `批次料为空或余量为0，请进行维护`
+      msgType.value = false
+    } else {
+      stopsForm.value.BarCode = barCodeData;
+      CleanCodeSave(stopsForm.value).then((res: any) => {
+        msgTitle.value = res.msg;
+        msgType.value = res.success;
+        stopsForm.value.BarCode = "";
+        // getFocus();
+        if (res.success) {
+          getHisData();
+          getMaterialRequired();
+        }
+
+      });
+    }
+
   }
   barCode.value = "";
   getFocus();
@@ -666,7 +629,7 @@ const radioChange = (args: any) => {
     tableData1.value = []
   } else {
 
-    if (args[1] !== form.value.MfgOrderName ||form.value.MfgOrderName == "") {
+    if (args[1] !== form.value.MfgOrderName || form.value.MfgOrderName == "") {
       form.value.MfgOrderName = args[0].MfgOrderName;
       form.value.ProductName = args[0].ProductName;
       form.value.ProductDesc = args[0].ProductDesc;

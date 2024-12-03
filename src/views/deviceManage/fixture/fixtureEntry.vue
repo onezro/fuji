@@ -9,7 +9,7 @@
               <el-button type="primary" icon="Search" size="small"></el-button> </template></el-input>
         </div>
       </div>
-      <el-table :data="tableData.slice(
+      <el-table :data="tableData1.slice(
         (pageObj.currentPage - 1) * pageObj.pageSize,
         pageObj.currentPage * pageObj.pageSize
       )
@@ -21,11 +21,11 @@
             }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="CompID" label="工治具编码" width="250" :min-width="flexColumnWidth('工治具编码', 'CompID')" />
-        <el-table-column prop="MaterialName" label="工治具类别" width="150"
+        <el-table-column prop="CompID" label="工治具编码"  fixed :min-width="flexColumnWidth('工治具编码', 'CompID')" />
+        <el-table-column prop="MaterialName" label="工治具类别" 
           :min-width="flexColumnWidth('工治具类别', 'MaterialName')" />
-        <el-table-column prop="CompName" label="工治具型号" width="250" :min-width="flexColumnWidth('工治具型号', 'CompName')" />
-        <el-table-column prop="TotalUses" label="默认使用次数" align="center" />
+        <el-table-column prop="CompName" label="工治具型号"  :min-width="flexColumnWidth('工治具型号', 'CompName')" />
+        <el-table-column prop="TotalUses" label="默认使用次数" align="center"  :min-width="flexColumnWidth('默认使用次数', 'TotalUses')"/>
         <el-table-column prop="Uses" label="已使用次数" align="center" width="80" />
         <el-table-column prop="Status" label="状态" align="center" width="80">
           <template #default="scope">
@@ -48,7 +48,7 @@
         </el-table-column>
         <el-table-column prop="Location" label="库位" align="center" width="60" />
         <el-table-column prop="ExpirationDate" label="到期日期" />
-        <el-table-column label="操作" align="center" width="180">
+        <el-table-column label="操作" align="center" width="180" fixed="right">
           <template #default="scope">
             <el-tooltip content="编辑" placement="top">
               <el-button type="primary" icon="EditPen" size="small" @click.prevent="editSubmit(scope.row)"></el-button>
@@ -307,6 +307,7 @@ watch(
     if (newdata == "") {
       tableData1.value = tableData.value;
     } else {
+      
       tableData1.value = table1(newdata);
     }
   }
