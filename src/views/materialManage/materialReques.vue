@@ -497,7 +497,7 @@ const handleSelectionChange = (data: any) => {
 
       };
     });
-  console.log(choiceList.value);
+  console.log(choiceList.value,data);
 };
 //申请物料
 const applyFor = () => {

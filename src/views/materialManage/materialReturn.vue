@@ -408,7 +408,7 @@
             >
               <template #default="scope">
                 <div>
-                  {{ scope.row.MaterialQueue === null ? "可退料" : "不可退料" }}
+                  {{ scope.row.MaterialQueue ? "不可退料" : "可退料" }}
                 </div>
               </template>
             </el-table-column>
@@ -899,6 +899,8 @@ const dateChange = () => {
 };
 
 const selectable = (row: any) => {
+  console.log(row.MaterialQueue,row.MaterialQueue ? true:false);
+  
   if (row.MaterialQueue) {
     return false;
   } else if (returnType.value === "1") {
@@ -950,9 +952,10 @@ const tableRowClassName = ({
   rowIndex: number;
 }) => {
   // 在这里判断行数据是否符合条件
-  console.log(row.MaterialQueue !== null);
-  if (row.MaterialQueue !== null) {
+  console.log(row.MaterialQueue ? true:false);
+  if (row.MaterialQueue) {
     return "has-material-row";
+  }else {
   }
   return "";
 };
