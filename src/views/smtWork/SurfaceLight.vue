@@ -95,11 +95,11 @@
                 <el-form-item label="面别" class="mb-2">
                   <el-input v-model="operateForm.Side" style="width: calc((100vw - 850px) / 4)" disabled />
                 </el-form-item>
+                <el-form-item label="产品机型" class="mb-2">
+                  <el-input v-model="operateForm.BD_ProductModel" style="width: calc((100vw - 850px) / 4)" disabled />
+                </el-form-item>
                 <el-form-item label="计划数量" class="mb-2">
                   <el-input v-model="operateForm.Qty" style="width: calc((100vw - 850px) / 4)" disabled />
-                </el-form-item>
-                <el-form-item label="计划状态" class="mb-2">
-                  <el-input v-model="operateForm.OrderStatusDesc" style="width: calc((100vw - 850px) / 4)" disabled />
                 </el-form-item>
                 <el-form-item label="产品编码" class="mb-2">
                   <el-input v-model="operateForm.ProductName" style="width: calc((100vw - 850px) / 4)" disabled />
@@ -107,7 +107,7 @@
                 <el-form-item label="产品描述" class="mb-2">
                   <el-input v-model="operateForm.ProductDesc" style="width: calc((100vw - 620px) / 2)" disabled />
                 </el-form-item>
-                <el-form-item label="料架" class="mb-2">
+                <el-form-item label="货架号" class="mb-2">
                   <el-input v-model="operateForm.shelf_ids" style="width: calc((100vw - 850px) / 4)" disabled />
                 </el-form-item>
               </el-form>
@@ -199,6 +199,7 @@ const operateForm = ref({
   OrderStatusDesc: "",
   shelf_ids: "",
   Side: "",
+  BD_ProductModel:''
 });
 const selectBox = ref(false);
 const viewVisible = ref(false);
