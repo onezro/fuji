@@ -236,9 +236,13 @@
 
         <el-dialog align-center :append-to-body="true" :close-on-click-modal="false" v-model="viewVisible" @close=""
             title="货架物料明细" width="70%">
-            <table-tem ref="lightTable" :showIndex="true" :tableData="viewTableData" :tableHeight="300"
-                :columnData="viewColumnData" :pageObj="pageObj" @handleSizeChange="viewSizeChange"
+      <el-tabs v-model="activeName" type="border-card" class="demo-tabs" >
+        <el-tab-pane label="货架物料明细" name="shelveMaterial" >
+            <table-tem ref="lightTable" :showIndex="true" :tableData="viewTableData" :tableHeight="420"
+                :columnData="viewColumnData" :pageObj="viewPageObj" @handleSizeChange="viewSizeChange"
                 @handleCurrentChange="viewCurrentChange"></table-tem>
+      </el-tab-pane>
+    </el-tabs>
         </el-dialog>
     </div>
 </template>
@@ -286,6 +290,7 @@ const operateForm = ref({
     Status: "",
     StatusDec: "",
 });
+const activeName=ref('shelveMaterial')
 const sideList = ref([
     {
         value: "TOP",
