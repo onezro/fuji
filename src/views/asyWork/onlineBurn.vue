@@ -185,6 +185,14 @@ const columnData1 = reactive([
     width: "",
     align: "1",
   },
+  {
+    text: true,
+    prop: "BurnQRCode",
+    label: "车机外部码",
+    width: "",
+    align: "1",
+  },
+  
 
   {
     text: true,

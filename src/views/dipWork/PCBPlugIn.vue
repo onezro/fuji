@@ -82,8 +82,9 @@
       <div class="w-[calc(100%-350px)]">
         <div class="w-full h-full flex flex-col">
           <div>
-            <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
+            <div class="h-[35px] flex justify-between items-center text-lg text-[#fff] bg-[#006487]">
               <span class="ml-5"> 扫描条码</span>
+              <div><el-button type="warning" @click="toolsVisible = true">工治具解绑</el-button></div>
             </div>
             <div class="h-[150px] pt-3 pr-5 pl-5 flex">
               <div>
@@ -218,6 +219,27 @@
         </span>
       </template> -->
     </el-dialog>
+    <el-dialog v-model="toolsVisible" draggable title="工治具解绑" width="500px" :append-to-body="true" :close-on-click-modal="false"
+      :close-on-press-escape="false" align-center @open="toolsOpen" @close="toolsCancel">
+      <el-form ref="formRef" :model="form" label-width="auto" @submit.native.prevent>
+        <el-form-item label="治具条码">
+          <el-input v-model="tools" ref="inputToolRef" @keyup.enter.native="getToolChange" />
+        </el-form-item>
+
+      </el-form>
+      <div class="text-xl font-bold text-[#00B400]" v-show="msgToolType === true || msgToolTitle === ''">
+        {{ msgToolTitle === "" ? "请扫描治具条码" : msgToolTitle }}
+      </div>
+      <div class="text-xl font-bold text-[red]" v-show="msgToolType === false && msgToolTitle !== ''">
+        {{ msgToolTitle }}
+      </div>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="toolsCancel">关闭</el-button>
+
+        </span>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -239,14 +261,10 @@ import {
   FindAllDevice,
   UpdateDevice,
   PIQueryMoveHistory,
+  UnbindTools
   // QueryOrderMaterialRequired,
 } from "@/api/dipApi";
 import {
-  // OrderQuery,
-  // PluginStationMoveOut,
-  // FindAllDevice,
-  // UpdateDevice,
-  // QueryMoveHistory,
   QueryOrderMaterialRequired,
 } from "@/api/smtApi";
 
@@ -752,6 +770,11 @@ const FeedHeader = reactive([
   },
 ]);
 const isLoding = ref("");
+const toolsVisible = ref(false)
+const tools = ref("")
+const inputToolRef = ref()
+const msgToolTitle = ref("");
+const msgToolType = ref(true);
 onBeforeMount(() => {
   getScreenHeight();
 });
@@ -923,78 +946,9 @@ const radioChange = (args: any) => {
     getToolData();
     getMaterialRequired()
   }
-  // stopsForm.value.orderName = args[0].MfgOrderName
-  // form.MfgOrderName = args[0].MfgOrderName;
-  // form.ProductName = args[0].ProductName;
-  // form.ProductDesc = args[0].ProductDesc;
-  // form.BD_ProductModel = args[0].BD_ProductModel;
-  // form.BD_SoftVersion = args[0].BD_SoftVersion;
-  // form.PlannedStartDate = args[0].PlannedStartDate;
-  // form.PlannedCompletionDate = args[0].PlannedCompletionDate;
-  // form.ERPOrder = args[0].ERPOrder;
-  // form.Qty = args[0].Qty;
-  // form.AllNum = args[0].AllNum;
-  // form.TodayNum = args[0].TodayNum;
-  // getFeedForm.value.MfgOrder = args[0].MfgOrderName;
-  // if (getToolForm.value.OrderNumber == args[0].MfgOrderName) {
-  //   return;
-  // } else {
-  //   hisForm.value.MfgOrderName = args[0].MfgOrderName;
-  //   getToolForm.value.OrderNumber = args[0].MfgOrderName;
-  //   getHisData();
-  //   getToolData();
-  //   getMaterialRequired()
-  // }
+  
 };
 
-//打开物料上料
-const openFeed = () => {
-  feedVisible.value = true;
-};
-//关闭物料上料
-const feedCancel = () => {
-  feedVisible.value = false;
-};
-
-//打开不良登记
-const openDialog = () => {
-  editVisible.value = true;
-};
-
-//关闭不良登记
-const editCancel = () => {
-  BadtableData.value = [];
-  // console.log(BadtableData.value);
-  editVisible.value = false;
-};
-//提交不良信息
-const editSubmit = () => {
-  // console.log(BadtableData.value);
-  editVisible.value = false;
-};
-//删除不良信息
-const deleteBad = (data: any) => {
-  BadtableData.value = BadtableData.value.filter((v: any) => {
-    return data[0].badCode != v.badCode;
-  });
-};
-//打开不良登记
-const openAddBad = () => {
-  badVisible.value = true;
-};
-//增加不良信息
-const addBadData = (data: any) => {
-  BadtableData.value.push(data);
-  // console.log(data);
-};
-
-//关闭过序
-const overCancel = () => {
-  overVisible.value = false;
-};
-const tabClick = (pane: any) => {
-  console.log(pane.props.name);
-};
 //过站
 const getChange = (val: any) => {
   if (form.value.MfgOrderName.trim() == "") {
@@ -1058,21 +1012,30 @@ const getChange = (val: any) => {
     msgTitle.value = "请先进行工装治具上线";
     msgType.value = false;
   }
-  // stopsForm.value.ContainerName = barCodeVal;
-  // PluginStationMoveOut(stopsForm.value).then((res: any) => {
-  //   msgTitle.value = res.msg;
-  //   msgType.value = res.success;
-  //   stopsForm.value.ContainerName = "";
-  //   barCode.value = "";
-  //   if (res.success) {
-  //     stopsForm.value.tools = "";
-  //     checked.value = [];
-  //     getToolData();
-  //     getHisData();
-  //   }
-  //   getFocus();
-  // });
+
 };
+const toolsOpen = () => {
+  nextTick(() => {
+    if (inputToolRef.value) {
+      inputToolRef.value.focus()
+    }
+  });
+
+}
+const toolsCancel = () => {
+  tools.value = ""
+  toolsVisible.value = false
+  inputRef.value.focus()
+  getFocus()
+}
+const getToolChange = () => {
+
+  UnbindTools(tools.value).then((res: any) => {
+    msgToolTitle.value = res.msg;
+    msgToolType.value = res.success;
+    tools.value = ""
+  })
+}
 
 //分页
 const handleSizeChange = (val: any) => {

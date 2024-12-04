@@ -3,6 +3,7 @@
     <!-- <div class="h-[40px] min-h-[40px] pl-2 pr-2 flex justify-between items-center">
       <span class="text-[1.2rem]"> {{ opui.stationDec }} </span>
       <div></div>
+    
     </div> -->
     <div class="w-full flex-1 flex">
       <div class="setwidth w-[370px]">
@@ -126,6 +127,7 @@
         </span>
       </template>
     </el-dialog>
+   
   </div>
 </template>
 
@@ -144,6 +146,7 @@ import {
   QueryDefectCodeInspection,
   QueryMoveHistory,
   OrderQuery,
+  UnbindTools
 } from "@/api/dipApi";
 
 import {
@@ -341,6 +344,13 @@ const orderColumns = ref([
 ]);
 const defaultSelectVal = ref<string[]>([]);
 const isLoding = ref("");
+
+const toolsVisible = ref(false)
+const tools = ref("")
+const inputToolRef = ref()
+const msgToolTitle = ref("");
+const msgToolType = ref(true);
+
 onBeforeMount(() => {
   getScreenHeight();
 });
@@ -527,14 +537,14 @@ const getChange = () => {
       });
     } else {
       badForm.value.containerName = barCodeData;
-      let dataForm= {
+      let dataForm = {
         containerName: barCodeData,
         orderName: form.value.MfgOrderName,
         workstationName: opui.station,
-        userAccount:  userStore.getUserInfo,
+        userAccount: userStore.getUserInfo,
       };
       console.log(dataForm);
-      
+
       QueryDefectCodeInspection(dataForm).then(
         (res: any) => {
           if (!res.success) {

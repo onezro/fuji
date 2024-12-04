@@ -100,11 +100,18 @@
           </el-form>
         </div>
         <div class="table_container">
-          <el-table :data="feedTableData
+          <div class="flex justify-end">
+            <el-input v-model.trim="searchText" size="small" style="width: 250px;" >
+              <template #append>
+                <el-button icon="Search" />
+              </template>
+            </el-input>
+          </div>
+          <el-table :data="filterTableData
             " size="small" stripe border fit :tooltip-effect="'dark'" :height="400" ref="tableRef"
             @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="55" :selectable="selectable" />
-            <el-table-column type="index" label="序号" width="50" align="center"  fixed/>
+            <el-table-column type="index" label="序号" width="50" align="center" fixed />
             <el-table-column prop="MaterialName" label="物料编码" :min-width="150" width="150">
             </el-table-column>
             <!-- <el-form-item label="申请类型">
@@ -176,12 +183,7 @@
 </template>
 
 <script lang="ts" setup>
-import { getCheckResults } from "@/api/operate";
-import type { InspectionResult } from "@/typing";
 import {
-  ElMessageBox,
-  ElMessage,
-  ElLoading,
   ElNotification,
 } from "element-plus";
 import tableTem from "@/components/tableTem/index.vue";
@@ -199,6 +201,7 @@ import {
   ref,
   reactive,
   watch,
+  computed,
   nextTick,
   onMounted,
   onBeforeMount,
@@ -295,10 +298,17 @@ const historyForm = ref<historyFormTS>({
   requestStartDate: "",
   requestEndDate: "",
 });
-const tableRef=ref()
-const orderProps=ref({
+const tableRef = ref()
+const orderProps = ref({
   label: "MfgOrderName",
   value: "MfgOrderName",
+})
+const searchText = ref("")
+const filterTableData=computed(()=>{
+  if(searchText.value==""){
+    return feedTableData.value
+  }
+  return feedTableData.value.filter((f:any)=>(f.MaterialName.toLowerCase()).includes(searchText.value.toLowerCase()))
 })
 // watch(
 
@@ -319,7 +329,7 @@ onMounted(() => {
     "0" +
     (today.getMonth() + 1)
   ).slice(-2)}-${("0" + today.getDate()).slice(-2)}`;
-  console.log(formattedDate, formattedTodayDate);
+  // console.log(formattedDate, formattedTodayDate);
   historyForm.value.requestStartDate = formattedDate;
   historyForm.value.requestEndDate = formattedTodayDate;
   date.value = [formattedDate, formattedTodayDate];
@@ -497,7 +507,7 @@ const handleSelectionChange = (data: any) => {
 
       };
     });
-  console.log(choiceList.value,data);
+  console.log(choiceList.value, data);
 };
 //申请物料
 const applyFor = () => {
@@ -588,8 +598,8 @@ const handleInput = (data: any) => {
       });
     }
   }
-  if(data.RequestQty==""){
-      tableRef.value.clearSelection();
+  if (data.RequestQty == "") {
+    tableRef.value.clearSelection();
   }
 };
 

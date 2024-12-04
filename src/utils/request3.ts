@@ -40,7 +40,7 @@ async function createApiInstance() {
     apiInstance = axios.create({
         baseURL:apiUrl,
         // 5秒超时
-        timeout: 5000 * 2,
+        timeout: 1000 * 60,
     });
     apiInstance.interceptors.request.use(
         (config) => {

@@ -32,7 +32,7 @@ const hideLoading = () => {
 const service = axios.create({
     baseURL: '/smtApi',
     // 5秒超时
-    timeout: 5000 * 2,
+    timeout: 1000 * 60,
 });
 // let source = axios.CancelToken.source();
 // console.log(source);

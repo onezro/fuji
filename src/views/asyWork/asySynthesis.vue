@@ -607,7 +607,7 @@ const verifyBarCode = (barCodeData: any) => {
         (b: any) => b.MaterialName == res.content.ProductName
       );
       if(keyIndex==-1){
-        msgTitle.value = `扫描错误`
+        msgTitle.value = `条码${res.content.ProductName}不属于该生产计划关键物料，请重新扫描`
         msgType.value = false
         return
       }

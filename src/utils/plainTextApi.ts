@@ -32,7 +32,7 @@ const hideLoading = () => {
 const service = axios.create({
   baseURL: '/controlApi',
   // 5秒超时
-  timeout: 5000 * 2,
+  timeout: 1000 * 60,
   headers: {
     'Content-Type': 'application/json'
   }

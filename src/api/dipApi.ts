@@ -97,6 +97,17 @@ export function InspectionStationMoveOut(data: any) {
     data,
   });
 }
+//解绑
+export function UnbindTools(data: any) {
+  return request({
+    url: "/api/inspection/UnbindTools",
+    method: "post",
+    params:{
+      tool:data
+    }
+  });
+}
+
 //目检提交不良登记信息
 export function DefectProductRecord(data: any) {
   return request({
