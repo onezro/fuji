@@ -75,7 +75,7 @@
             <el-table class="my-table" border fit :data="tableData1" :style="{ width: '100%' }" :height="tableHeight"
               @selection-change="handleSelectionChange" :row-class-name="tableRowClassName">
               <el-table-column type="selection" fixed width="55" align="center" />
-              <el-table-column prop="ENSoftwareName" label="Name" width="250" />
+              <!-- <el-table-column prop="ENSoftwareName" label="Name" width="250" /> -->
               <el-table-column prop="CNSoftwareName" label="Name" width="250" />
               <el-table-column prop="SoftwareVersion" label="Address" />
             </el-table>
