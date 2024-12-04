@@ -608,6 +608,11 @@ const verifyBarCode = (barCodeData: any) => {
       const keyIndex = barData.value.findIndex(
         (b: any) => b.MaterialName == res.content.ProductName
       );
+      if(keyIndex==-1){
+        msgTitle.value = `扫描错误`
+        msgType.value = false
+        return
+      }
       if (barData.value[keyIndex].MaterialBarCode == "") {
         barData.value[keyIndex].MaterialBarCode = barCodeData;
         stopsForm.value.keyMaterialList.push({
@@ -712,11 +717,13 @@ const radioChange = (args: any) => {
       keyForm.value.OrderName = args[0].MfgOrderName;
       keyForm.value.ProductName = args[0].ProductName;
       getBadForm.value.orderName=args[0].MfgOrderName;
-      getKeyMaterial()
-      getHisData();
+      // getKeyMaterial()
+      // getHisData();
     } else {
-      getHisData();
+      // getHisData();
     }
+    getKeyMaterial();
+    getHisData();
     // getHisData();
 
   }

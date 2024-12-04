@@ -527,7 +527,7 @@ const toolList = ref<ToolList[]>([]);
 const getToolForm = ref({
   ToolName: "",
   OrderNumber: "",
-  OperateType: "",
+  OperateType: "3",
   CompName: "",
   workstationName: opui.station,
   userAccount: userStore.getUserInfo,

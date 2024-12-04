@@ -59,6 +59,14 @@ export function QueryCarrierList(data: any) {
     params: data,
   });
 }
+//获取装箱信息
+export function QueryPackListByCarrier(data: any) {
+  return requestNoMessage({
+    url: "/api/packing/QueryPackingListByCarrierName",
+    method: "post",
+    params: data,
+  });
+}
 //扫描装箱
 export function SubmitPcbToPacking(data: any) {
   return requestNoMessage({
@@ -103,14 +111,7 @@ export function PrintBurnModel(data: any) {
 //     })
 // }
 
-//获取装箱信息
-export function QueryPackListByCarrier(data: any) {
-  return requestNoMessage({
-    url: "/api/packing/QueryPackingListByCarrierName",
-    method: "post",
-    params: data,
-  });
-}
+
 
 //物料上料
 export function LoadMaterialQueue(data: any) {

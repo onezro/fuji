@@ -93,11 +93,12 @@
 
 <script lang="ts" setup>
 import {
-  QueryCarrierList,
+ 
   SubmitPcbToPacking,
   TrunkDeal,
-  QueryPackListByCarrier,
+
 } from "@/api/smtApi";
+import { QueryCarrierList,  QueryPackListByCarrier} from "@/api/smtNolo"
 import tableTem from "@/components/tableTem/index.vue";
 import { useAppStoreWithOut } from "@/stores/modules/app";
 import { useUserStoreWithOut } from "@/stores/modules/user";
@@ -243,12 +244,12 @@ const getCarrierList = () => {
     }, 2000);
     if (res.content == null || res.content.length == 0) {
       turnData.value = []
-      return;
+    }else{
+      turnData.value = res.content;
     }
-    turnData.value = res.content;
-    if (turnData.value.length == 1) {
+    
+    if (turnData.value.length !== 0) {
       getList(turnData.value[0].CARRIERNAME)
-      return
     }
 
   });
