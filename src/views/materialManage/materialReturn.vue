@@ -1154,7 +1154,7 @@ const getScreenHeight = () => {
 .el-pagination {
   justify-content: center;
 }
-::v-deep .has-material-row {
+.el-table .has-material-row {
   --el-table-tr-bg-color:rgb(255 243 243);
 }
 /* ::v-deep .is-disabled .el-checkbox__inner {

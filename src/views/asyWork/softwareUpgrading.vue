@@ -72,10 +72,11 @@
               <el-button type="warning" :disabled="SoftwareStatus || changeList.length !== tableData1.length
                 " @click="ManualSubmit">人工确认提交</el-button>
             </div>
-            <el-table class="my-table"  stripe border fit :data="tableData1" :style="{ width: '100%' }" :height="tableHeight"
-              @selection-change="handleSelectionChange">
+            <el-table class="my-table" border fit :data="tableData1" :style="{ width: '100%' }" :height="tableHeight"
+              @selection-change="handleSelectionChange" :row-class-name="tableRowClassName">
               <el-table-column type="selection" fixed width="55" align="center" />
-              <el-table-column prop="ENSoftwareName" label="Name" width="250" />
+              <!-- <el-table-column prop="ENSoftwareName" label="Name" width="250" /> -->
+              <el-table-column prop="CNSoftwareName" label="Name" width="250" />
               <el-table-column prop="SoftwareVersion" label="Address" />
             </el-table>
             <!-- <table-tem class="my-table" :show-select="true" :tableData="tableData1" :tableHeight="tableHeight"
@@ -328,6 +329,8 @@ const defaultSelectVal = ref<string[]>([]);
 const isLoding = ref("");
 const isActive = ref(false);
 
+const errorRow = ref('')
+
 onBeforeMount(() => {
   getScreenHeight();
 });
@@ -382,8 +385,10 @@ const geTodayData = () => {
 //获取工单软件信息
 const getOrderMess = () => {
   QueryOrderSoftwareInfo(form.value.BD_ProductModel).then((res: any) => {
-    tableData1.value = res.content.SoftwareList;
-    SoftwareStatus.value = res.content.SoftwareStatus;
+    if (res.content) {
+      tableData1.value = res.content.SoftwareList;
+      SoftwareStatus.value = res.content.SoftwareStatus;
+    }
     if (!res.success) {
       msgType.value = res.success;
       msgTitle.value = res.msg;
@@ -447,6 +452,10 @@ const scan = () => {
           isActive.value = false;
           currentCode.value = "";
         } else {
+          if (res.content) {
+            errorRow.value = res.content.ENSoftwareName
+            console.log(errorRow);
+          }
           typeColor.value = "red";
         }
       });
@@ -525,6 +534,21 @@ const getOrderData = () => {
       }
     }
   );
+};
+
+const tableRowClassName = ({
+  row,
+}: {
+  row: any;
+  rowIndex: number;
+}) => {
+  // 在这里判断行数据是否符合条件
+  if (row.ENSoftwareName === errorRow.value) {
+    tableData1.value = tableData1.value;
+    return "has-material-row";
+  }else {
+  }
+  return "";
 };
 
 const radioChange = (args: any) => {
@@ -685,5 +709,9 @@ const getScreenHeight = () => {
 
 .my-table .el-table__header-wrapper {
   display: none;
+}
+
+.my-table .has-material-row {
+  --el-table-tr-bg-color:rgb(255 243 243);
 }
 </style>
