@@ -63,9 +63,24 @@
           <div class="h-[30px] pl-3 flex items-center text-base text-[#fff] bg-[#006487]">
             不良列表
           </div>
-          <tableTemp size="small" :showIndex="true" :tableData="detailData" :tableHeight="200"
+          <el-table :data="detailData" :style="{ width: '100%' }" size="small" :height="200"  stripe border fit>
+            <el-table-column  label="序号" type="index" width="50" align="center" />
+              <el-table-column prop="DefectCode" label="不良代码"  />
+              <el-table-column prop="DefectDesc" label="不良原因" />
+              <el-table-column prop="ref_name" label="不良点位" />
+              
+              <el-table-column  label="序号"  width="50" align="center">
+                <template template #default="scope">
+                    {{ detailData.length+scope.$index+1 }}
+                </template>
+              </el-table-column >
+              <el-table-column prop="DefectCode1" label="不良代码" />
+              <el-table-column prop="DefectDesc1" label="不良原因" />
+              <el-table-column prop="ref_name1" label="不良点位" />
+          </el-table>
+          <!-- <tableTemp size="small" :showIndex="true" :tableData="detailData" :tableHeight="200"
             :columnData="detailColumn">
-          </tableTemp>
+          </tableTemp> -->
         </div>
         <div>
           <div class="h-[30px] pl-3 flex items-center text-base text-[#fff] bg-[#006487]">

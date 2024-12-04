@@ -97,16 +97,19 @@
             不良列表
           </div>
           <el-table :data="badData" :style="{ width: '100%' }" size="small" :height="200" stripe border fit>
-              <el-table-column  label="序号" type="index" width="50" align="center" />
-              <el-table-column prop="DefectCode" label="不良点位"  />
+            <el-table-column  label="序号" type="index" width="50" align="center" />
+              <el-table-column prop="DefectCode" label="不良代码"  />
               <el-table-column prop="DefectDesc" label="不良原因" />
+              <el-table-column prop="ref_name" label="不良点位" />
+              
               <el-table-column  label="序号"  width="50" align="center">
                 <template template #default="scope">
                     {{ badData.length+scope.$index+1 }}
                 </template>
               </el-table-column >
-              <el-table-column prop="DefectCode1" label="不良点位" />
+              <el-table-column prop="DefectCode1" label="不良代码" />
               <el-table-column prop="DefectDesc1" label="不良原因" />
+              <el-table-column prop="ref_name1" label="不良点位" />
           </el-table>
           <!-- <tableTemp :showIndex="true" :tableData="badData" :tableHeight="200" :columnData="badColumn" size="small">
           </tableTemp> -->

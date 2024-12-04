@@ -13,7 +13,7 @@
           <div class="p-[10px]">
             <el-form class="inbound" ref="formRef" :model="form" label-width="auto">
               <el-form-item label="生产计划号" class="mb-[5px] flex">
-                <selectTa ref="selectTable" :table="orderTable" :selectWidth="200" :columns="orderColumns"
+                <selectTa ref="selectTable" :table="orderTable" :selectWidth="220" :columns="orderColumns"
                   :max-height="400" :tableWidth="700" :defaultSelectVal="defaultSelectVal" :keywords="{
                     label: 'MfgOrderName',
                     value: 'MfgOrderName',
@@ -79,18 +79,16 @@
                   <el-table-column prop="LoadQueueQty" label="上料总数" width="80" align="center">
                     <template #default="scope">
                       {{
-                        scope.row.IssueControl == 1
-                          ? scope.row.AllQty
-                          : scope.row.LoadQueueQty
+                        scope.row.IssueControl == 1 ? 
+                        ( scope.row.AllQty==null?0: scope.row.AllQty):( scope.row.LoadQueueQty==null?0: scope.row.LoadQueueQty)
                       }}
                     </template>
                   </el-table-column>
                   <el-table-column prop="QtyRequired" label="剩余数量" width="80" align="center">
                     <template #default="scope">
                       <span>{{
-                        scope.row.IssueControl == 1
-                          ? scope.row.remainQty
-                          : scope.row.Qty
+                        scope.row.IssueControl == 1 ?
+                          (scope.row.remainQty == null ? 0 : scope.row.remainQty) : (scope.row.Qty == null ? 0 : scope.row.Qty)
                       }}</span>
                     </template>
                   </el-table-column>
@@ -135,7 +133,7 @@
             基本信息
           </div>
           <el-form ref="badFormRef" :model="badheadForm" label-width="auto">
-            <el-form-item label="PCB条码" class="mb-[5px] flex">
+            <el-form-item label="成品条码" class="mb-[5px] flex">
               <el-input v-model="badForm.containerName" style="width: 160px" disabled />
             </el-form-item>
             <el-row>
@@ -396,7 +394,7 @@ interface BadForm {
 const getBadForm = ref({
   containerName: "",
   workstationName: opui.station,
-  orderName:""
+  orderName: ""
 });
 const badForm = ref<BadForm>({
   containerName: "",
@@ -510,11 +508,7 @@ const getChange = () => {
       }
     } else {
       if (stopsForm.value.result == "OK") {
-        const isKeyZero = barData.value.findIndex(
-          (b: any) =>
-            b.IssueControl == 1 && (b.remainQty == 0 || b.remainQty == null)
-        );
-        if (isKeyZero == -1) {
+        if (isKeyZero.value == -1) {
           // if (checkStringType(barCodeData) == "BDY") {
           //   if (isKeyEmpty.value == -1) {
           //     stopsForm.value.BarCode = barCodeData;
@@ -533,13 +527,19 @@ const getChange = () => {
           //   }
           // }
           if (isKeyEmpty.value == -1) {
-            stopsForm.value.BarCode = barCodeData;
-            goStop()
+            if (isNoKeyZero.value == -1) {
+              stopsForm.value.BarCode = barCodeData;
+              goStop()
+            } else {
+              msgTitle.value = `批次物料余量为零，请进行上料`;
+              msgType.value = false;
+            }
+
           } else {
             verifyBarCode(barCodeData)
           }
         } else {
-          msgTitle.value = `关键料剩余为0,请到WMS进行叫料`;
+          msgTitle.value = `关键料剩余为0，操作失败`;
           msgType.value = false;
         }
       } else {
@@ -579,6 +579,19 @@ const goStop = () => {
     getFocus();
   });
 };
+const isKeyZero = computed(() => {
+  return barData.value.findIndex(
+    (b: any) =>
+      b.IssueControl == 1 && (b.remainQty == 0 || b.remainQty == null)
+  );
+})
+//批次料为空
+const isNoKeyZero = computed(() => {
+  return barData.value.findIndex(
+    (b: any) =>
+      b.IssueControl == 2 && (b.Qty == 0 || b.Qty == null)
+  );
+})
 //绑定为空
 const isKeyEmpty = computed(() => {
   return barData.value.findIndex(
@@ -750,7 +763,7 @@ const radioChange = (args: any) => {
       isKeyForm.value.OrderName = args[0].MfgOrderName;
       keyForm.value.OrderName = args[0].MfgOrderName;
       keyForm.value.ProductName = args[0].ProductName;
-      getBadForm.value.orderName=args[0].MfgOrderName;
+      getBadForm.value.orderName = args[0].MfgOrderName;
       getKeyMaterial();
       getHisData();
       // getFocus()

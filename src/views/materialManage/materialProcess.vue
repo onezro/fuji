@@ -24,7 +24,7 @@
         <div class="setwidth w-[400px]">
           <!-- <el-table-v2 :columns="columns" :data="tableData" :height="tableHeight" border fit fixed highlight-current-row
             @cell-click="cellClick" /> -->
-          <el-table :data="tableData" size="small" :height="tableHeight" :tooltip-effect="'dark'" border fit stripe
+          <el-table :data="tableData" ref="tableRef"  size="small" :height="tableHeight" :tooltip-effect="'dark'" border fit stripe
             highlight-current-row @cell-click="cellClick">
             <el-table-column type="index" align="center" fixed label="序号" width="50" />
             <el-table-column prop="ProductName" label="组件编码" width="120" />
@@ -109,9 +109,9 @@
               <el-table-column prop="UOMName" label="单位" width="80" align="center" />
               <el-table-column prop="IssueControlType" label="消耗类型" width="80" align="center">
                 <template #default="scope">
-                  <el-tag type="primary" v-if="scope.row.IssueControl==2">{{ scope.row. IssueControlType }}</el-tag>
-                  <el-tag type="info" v-if="scope.row.IssueControl==6">{{scope.row. IssueControlType }}</el-tag>
-                  <el-tag type="warning" v-if="scope.row.IssueControl==1">{{ scope.row. IssueControlType }}</el-tag>
+                  <el-tag type="primary" v-if="scope.row.IssueControl == 2">{{ scope.row.IssueControlType }}</el-tag>
+                  <el-tag type="info" v-if="scope.row.IssueControl == 6">{{ scope.row.IssueControlType }}</el-tag>
+                  <el-tag type="warning" v-if="scope.row.IssueControl == 1">{{ scope.row.IssueControlType }}</el-tag>
                 </template>
               </el-table-column>
               <template #empty>
@@ -294,6 +294,7 @@ const columns = ref([
     // width: 150,
   },
 ]);
+const tableRef=ref()
 
 onBeforeMount(() => {
   getScreenHeight();
@@ -309,7 +310,6 @@ onBeforeUnmount(() => {
 
 const getData = () => {
   findProduct(getForm.value).then((res: any) => {
-    tableData.value = res.content;
     specWorkData.value = [];
     productData.value = [];
     specWork.value = {
@@ -320,6 +320,14 @@ const getData = () => {
       WorkflowDesc: "",
       WorkflowName: "",
     };
+    tableData.value = res.content;
+    if (tableData.value.length == 1) {
+      cellClick(res.content[0])
+     
+      
+      tableRef.value.setCurrentRow(res.content[0])
+     
+    }
   });
 };
 const inputData = debounce(() => {

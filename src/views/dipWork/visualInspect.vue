@@ -203,13 +203,7 @@ const form = ref<InstanceType<typeof Formspan>>({
   TodayNum: "",
 });
 const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
-  {
-    label: "生产计划号",
-    value: "MfgOrderName",
-    disabled: true,
-    type: "input",
-    width: "",
-  },
+
   {
     label: "产品机型",
     value: "BD_ProductModel",
@@ -533,13 +527,15 @@ const getChange = () => {
       });
     } else {
       badForm.value.containerName = barCodeData;
-      let data1 = {
+      let dataForm= {
         containerName: barCodeData,
         orderName: form.value.MfgOrderName,
         workstationName: opui.station,
         userAccount:  userStore.getUserInfo,
       };
-      QueryDefectCodeInspection(data1).then(
+      console.log(dataForm);
+      
+      QueryDefectCodeInspection(dataForm).then(
         (res: any) => {
           if (!res.success) {
             msgTitle.value = res.msg;

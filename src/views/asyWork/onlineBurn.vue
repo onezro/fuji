@@ -106,7 +106,6 @@ interface StopsForm {
   workstationName: string;
   userAccount: string;
   txnDate: string;
-  ResourceDefName:string;
   OrderName:string
 }
 
@@ -129,7 +128,6 @@ const stopsForm = ref<StopsForm>({
   QrCodeNews: "",
   OrderName:"",
   workstationName: opui.station || "",
-  ResourceDefName:opui.station || "",
   userAccount: userStore.getUserInfo,
   txnDate: "",
 });
@@ -362,7 +360,7 @@ const getChange = () => {
     JudgeContainerProProcess({
       OrderName:form.value.MfgOrderName,
       ContainerName: barCodeData,
-      ResourceDefName: opui.station,
+      workstationName: opui.station,
       userAccount:userStore.getUserInfo
     }).then((res: any) => {
       msgTitle.value = res.msg;
@@ -381,8 +379,7 @@ const getChange = () => {
     });
   } else {
     if (stopsForm.value.ContainerName != "") {
-      stopsForm.value.QrCodeNews =barCodeData;JSON.stringify(barCodeData)
-      // console.log(  stopsForm.value);
+      stopsForm.value.QrCodeNews =barCodeData
       JudgeAfterStartUpQrCode(stopsForm.value).then((res: any) => {
         msgTitle.value = res.msg;
         msgType.value = res.success;

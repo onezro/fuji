@@ -56,7 +56,7 @@
                 </el-form-item>
               </el-form>
               <div class="text-xl font-bold text-[#00B400]" v-show="msgType === true || msgTitle === ''">
-                {{ msgTitle === "" ? "请扫描PCB条码" : msgTitle }}
+                {{ msgTitle === "" ? "请扫描成品条码" : msgTitle }}
               </div>
               <div class="text-xl font-bold text-[red]" v-show="msgType === false && msgTitle !== ''">
                 {{ msgTitle }}
@@ -244,7 +244,7 @@ const columnData1 = reactive([
   {
     text: true,
     prop: "ContainerName",
-    label: "PCB条码",
+    label: "成品条码",
     width: "",
     align: "1",
   },
