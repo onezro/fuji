@@ -222,13 +222,13 @@
     <el-dialog v-model="toolsVisible" draggable title="工治具解绑" width="500px" :append-to-body="true" :close-on-click-modal="false"
       :close-on-press-escape="false" align-center @open="toolsOpen" @close="toolsCancel">
       <el-form ref="formRef" :model="form" label-width="auto" @submit.native.prevent>
-        <el-form-item label="治具条码">
+        <el-form-item label="治具编码">
           <el-input v-model="tools" ref="inputToolRef" @keyup.enter.native="getToolChange" />
         </el-form-item>
 
       </el-form>
       <div class="text-xl font-bold text-[#00B400]" v-show="msgToolType === true || msgToolTitle === ''">
-        {{ msgToolTitle === "" ? "请扫描治具条码" : msgToolTitle }}
+        {{ msgToolTitle === "" ? "请扫描治具编码" : msgToolTitle }}
       </div>
       <div class="text-xl font-bold text-[red]" v-show="msgToolType === false && msgToolTitle !== ''">
         {{ msgToolTitle }}

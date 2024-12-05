@@ -76,8 +76,8 @@
               @selection-change="handleSelectionChange" :row-class-name="tableRowClassName">
               <el-table-column type="selection" fixed width="55" align="center" />
               <!-- <el-table-column prop="ENSoftwareName" label="Name" width="250" /> -->
-              <el-table-column prop="CNSoftwareName" label="Name" width="250" />
-              <el-table-column prop="SoftwareVersion" label="Address" />
+              <el-table-column prop="CNSoftwareName" label="名称" width="250" />
+              <el-table-column prop="SoftwareVersion" label="版本" />
             </el-table>
             <!-- <table-tem class="my-table" :show-select="true" :tableData="tableData1" :tableHeight="tableHeight"
               :columnData="columnData1" :pageObj="pageObj" @handleSizeChange="handleSizeChange"
@@ -384,7 +384,9 @@ const geTodayData = () => {
 };
 //获取工单软件信息
 const getOrderMess = () => {
-  QueryOrderSoftwareInfo(form.value.BD_ProductModel).then((res: any) => {
+  // console.log(form.value.BD_ProductModel);
+  let ProductModel=form.value.BD_ProductModel==null?"":form.value.BD_ProductModel
+  QueryOrderSoftwareInfo(ProductModel).then((res: any) => {
     if (res.content) {
       tableData1.value = res.content.SoftwareList;
       SoftwareStatus.value = res.content.SoftwareStatus;
@@ -409,7 +411,7 @@ const reset = () => {
 //选中
 const handleSelectionChange = (data: any) => {
   let content = cloneDeep(data);
-  console.log(data);
+  // console.log(data);
   
   changeList.value = content;
 };
@@ -579,11 +581,12 @@ const radioChange = (args: any) => {
       form.value.ERPOrder = args[0].ERPOrder;
       stopsForm.value.orderName = args[0].MfgOrderName;
       hisForm.value.MfgOrderName = args[0].MfgOrderName;
-      getHisData();
-      getOrderMess();
+    
       // getMaterialRequired();
     } else {
     }
+    getHisData();
+    getOrderMess();
   }
 };
 //
@@ -707,8 +710,8 @@ const getScreenHeight = () => {
   font-size: large;
 }
 
-.my-table .el-table__header-wrapper {
-  display: none;
+.my-table .el-table__cell {
+  padding: 4px 0;
 }
 
 .my-table .has-material-row {
