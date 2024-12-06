@@ -94,7 +94,7 @@
       :close-on-click-modal="false" :close-on-press-escape="false" align-center @close="addCancel">
       <el-form ref="addTempRef" :model="addTempForm" label-width="auto">
         <el-form-item label="模板名称" prop="TemplateName" class="flex items-center">
-          <el-input v-model="addTempForm.TemplateName" style="width: 240px" />
+          <el-input v-model="addTempForm.TemplateName"  style="width: 240px" />
           <el-checkbox v-model="addTempForm.TemplateEnable" label="是否启用" class="ml-3" />
         </el-form-item>
         <el-form-item label="模板文件" prop="Template_File">
@@ -117,7 +117,7 @@
       :close-on-click-modal="false" :close-on-press-escape="false" align-center @close="editCancel">
       <el-form ref="editTempRef" :model="editTempForm" label-width="auto">
         <el-form-item label="模板名称" prop="TemplateName" class="flex items-center">
-          <el-input v-model="editTempForm.TemplateName" style="width: 240px" />
+          <el-input v-model="editTempForm.TemplateName" disabled style="width: 240px" />
           <el-checkbox v-model="editTempForm.TemplateEnable" label="是否启用" class="ml-3" />
         </el-form-item>
         <el-form-item label="模板文件" prop="Template_File">
@@ -186,13 +186,17 @@ const getForm = ref({
   TemplateEnable: "",
 });
 const typeList = ref([
+{
+    label: "",
+    value: "",
+  },
   {
     label: "是",
-    value: "0",
+    value: "是",
   },
   {
     label: "否",
-    value: "1",
+    value: "否",
   },
 ]);
 const tableData = ref([]);
@@ -299,6 +303,7 @@ const cellClick = (row: any) => {
   getTemplatePart();
 };
 const handleEdit = (row: any) => {
+  
   editTempForm.value.TemplateName = row.Template_Name;
   editTempForm.value.TemplateEnable = row.Template_Enable;
   editTempForm.value.TemplateEnableExternal = row.Template_EnableExternal;
@@ -312,16 +317,17 @@ const editCancel = () => {
 };
 
 const editConfirm = () => {
-  UpdateBarCodeTemplate(addTempForm.value).then((res: any) => {
+  UpdateBarCodeTemplate(editTempForm.value).then((res: any) => {
     if (res.success) {
       ElNotification({
         title: "提示信息",
         message: res.msg,
         type: "success",
       });
-      addTempRef.value.resetFields();
+    
       getData();
-      addVisible.value = false;
+      editTempRef.value.resetFields();
+      editVisible.value = false;
     }
   });
 };
