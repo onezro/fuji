@@ -26,6 +26,22 @@ export function ReloadCleanCode(data:any) {
         data
     });
 }
+export function QueryCleanKeyMaterial(data:any) {
+    return request({
+        url: "/api/clean/QueryKeyMaterial",
+        method: "post",
+        data
+    });
+}
+
+
+export function JudgeMaterial(data:any) {
+    return request({
+        url: "/api/clean/JudgeMaterial",
+        method: "post",
+        data
+    });
+}
 
 //点胶
 export function DispenseStationMoveOut(data:any) {
