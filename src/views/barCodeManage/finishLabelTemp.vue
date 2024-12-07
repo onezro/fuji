@@ -43,7 +43,7 @@
                 <el-form-item label="备注" prop="TemplateRemark">
                     <el-input v-model="addForm.TemplateRemark" type="textarea" style="width: 180px" />
                 </el-form-item>
-                <el-tabs v-model="activeName" type="border-card" class="demo-tabs" @tab-change="tabChange">
+                <el-tabs v-model="activeName" type="border-card" class="demo-tabs" @tab-change="tabChange1">
                     <el-tab-pane label="外箱模板" name="TemplateBox">
                         <el-form-item label="模板" prop="TemplateBox" label-width="68px">
                             <!-- <el-input v-model="addForm.TemplateBox" style="width: 150px" /> -->
@@ -72,7 +72,7 @@
                                 </el-form-item>
                                 <el-form-item label="条码前缀3" prop="TempRluePrefixSuffix03">
                                     <el-input v-model="form.TempRluePrefixSuffix03" style="width: 150px" />
-                                    <el-checkbox v-model="form.TempRlueEnable1" label="是否启用外部码" class="ml-3" />
+                                    <el-checkbox v-model="form.TempRlueEnable1" label="是否启用外箱码" class="ml-3" />
                                 </el-form-item>
                                 <el-form-item label="条码前缀4" prop="TempRluePrefixSuffix04">
                                     <el-input v-model="form.TempRluePrefixSuffix04" style="width: 150px" />
@@ -407,7 +407,7 @@
                 <el-form-item label="备注" prop="TemplateRemark">
                     <el-input v-model="editForm.TemplateRemark" type="textarea" style="width: 180px" />
                 </el-form-item>
-                <el-tabs v-model="activeName" type="border-card" class="demo-tabs" @tab-change="tabChange">
+                <el-tabs v-model="activeName" type="border-card" class="demo-tabs" @tab-change="tabChange2">
                     <el-tab-pane label="外箱模板" name="TemplateBox">
                         <el-form-item label="模板" prop="TemplateBox" label-width="68px">
                             <!-- <el-input v-model="addForm.TemplateBox" style="width: 150px" /> -->
@@ -436,7 +436,7 @@
                                 </el-form-item>
                                 <el-form-item label="条码前缀3" prop="TempRluePrefixSuffix03">
                                     <el-input v-model="form.TempRluePrefixSuffix03" style="width: 150px" />
-                                    <el-checkbox v-model="form.TempRlueEnable1" label="是否启用外部码" class="ml-3" />
+                                    <el-checkbox v-model="form.TempRlueEnable1" label="是否启用外箱码" class="ml-3" />
                                 </el-form-item>
                                 <el-form-item label="条码前缀4" prop="TempRluePrefixSuffix04">
                                     <el-input v-model="form.TempRluePrefixSuffix04" style="width: 150px" />
@@ -828,6 +828,8 @@ const pageObj = ref({
 const ProductName = ref("");
 const handleEdit = (row: any) => {
     ProductName.value = row.Template_PartNum;
+    console.log( row.Template_PartNum);
+    
     QueryBarCodeRule_TemContentRule({
         ProductName: row.Template_PartNum,
     }).then((res: any) => {
@@ -1068,9 +1070,9 @@ const form = ref({
     TempRluePrefixSuffix04: "",
     TempRluePrefixSuffix05: "",
     TempRluePrefixSuffix06: "",
-    TempRlueEnable1: false,
-    TempRlueEnable2: false,
-    TempRlueEnable3: false,
+    TempRlueEnable1: true,
+    TempRlueEnable2: true,
+    TempRlueEnable3: true,
 });
 const addFormRef = ref();
 const editFormRef = ref();
@@ -1236,18 +1238,25 @@ const addTempCancel = () => {
     addForm.value.tempcontent04 = [];
     addForm.value.tempcontent05 = [];
     addForm.value.tempcontent06 = [];
+    getData()
+     activeName.value="TemplateBox"
     addTempVisible.value = false;
 };
 //添加保存
 const addTempConfirm = () => {
     // console.log(addForm.value);
     InsertBarCodeRule_TemContentRules(addForm.value).then((res: any) => {
+        ElNotification({
+            title: "提示信息",
+            message: res.msg,
+            type: res.success ? "success" : "error",
+        });
         if (res.success) {
-            ElNotification({
-                title: "提示信息",
-                message: res.msg,
-                type: "success",
-            });
+            // ElNotification({
+            //     title: "提示信息",
+            //     message: res.msg,
+            //     type: "success",
+            // });
             addForm.value.tempcontent01 = [];
             addForm.value.tempcontent02 = [];
             addForm.value.tempcontent03 = [];
@@ -1269,6 +1278,7 @@ const editTempCancel = () => {
     editForm.value.tempcontent05 = [];
     editForm.value.tempcontent06 = [];
     activeName.value="TemplateBox"
+    getData()
     editTempVisible.value = false;
 };
 //添加保存
@@ -1326,8 +1336,11 @@ const getBasMaterialData = (val: any) => {
         tempList.value = res.content;
     });
 };
-const tabChange = () => { 
-    editFormRef.value.resetFields();
+const tabChange1 = () => { 
+    formRef.value.resetFields();
+};
+const tabChange2 = () => { 
+    // editFormRef.value.resetFields();
     formRef.value.resetFields();
 };
 const handleSizeChange = (val: any) => {

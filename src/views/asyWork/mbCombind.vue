@@ -416,10 +416,11 @@ const badColumn = reactive([
     align: "1",
   },
   {
-    text: true,
+       text: true,
     prop: "isDefectReasonDesc",
     label: "不良原因",
-    width: "100",
+    width: "",
+    min:true,
     align: "1",
   },
 ]);
@@ -531,7 +532,7 @@ const getChange = () => {
               stopsForm.value.BarCode = barCodeData;
               goStop()
             } else {
-              msgTitle.value = `批次物料余量为零，请进行上料`;
+              msgTitle.value = `${barData.value[isNoKeyZero.value]}批次物料剩余为0，请进行上料`;
               msgType.value = false;
             }
 
@@ -539,7 +540,7 @@ const getChange = () => {
             verifyBarCode(barCodeData)
           }
         } else {
-          msgTitle.value = `关键料剩余为0，操作失败`;
+          msgTitle.value = `${barData.value[isKeyEmpty.value]}关键料剩余为0，操作失败`;
           msgType.value = false;
         }
       } else {
@@ -613,7 +614,7 @@ const verifyBarCode = (barCodeData: any) => {
         (b: any) => b.MaterialName == res.content.ProductName
       );
       if(keyIndex==-1){
-         msgTitle.value = `条码${res.content.ProductName}不属于该生产计划关键物料，请重新扫描`
+        msgTitle.value = `条码${barCodeData}不属于该生产计划关键物料，请重新扫描`
         msgType.value = false
         return
       }

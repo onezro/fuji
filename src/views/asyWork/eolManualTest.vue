@@ -307,10 +307,11 @@ const badColumn = reactive([
     align: "1",
   },
   {
-    text: true,
+       text: true,
     prop: "isDefectReasonDesc",
     label: "不良原因",
-    width: "100",
+    width: "",
+    min:true,
     align: "1",
   },
 ]);

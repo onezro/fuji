@@ -71,7 +71,7 @@
               
               <el-table-column  label="序号"  width="50" align="center">
                 <template template #default="scope">
-                    {{ detailData.length+scope.$index+1 }}
+                      {{scope.row.DefectCode1==null|| scope.row.DefectCode1=="" ?"":detailData.length+scope.$index+1}}
                 </template>
               </el-table-column >
               <el-table-column prop="DefectCode1" label="不良代码" />
