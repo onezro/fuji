@@ -2,7 +2,7 @@
   <div class="p-2">
     <el-card shadow="always" :body-style="{ padding: '8px 8px 0px 8px' }">
       <el-form ref="getFormRef" :model="getForm" :inline="true">
-        <el-form-item label="时间" prop="timePeriod" class="mb-2">
+        <el-form-item label="登记时间" prop="timePeriod" class="mb-2">
           <el-date-picker :shortcuts="shortcuts" v-model="getForm.timePeriod" value-format="YYYY-MM-DD" type="daterange"
             range-separator="-" style="width: 240px" size="small" :clearable="true" />
         </el-form-item>
@@ -23,7 +23,7 @@
         :columnData="columnData" :pageObj="pageObj" @handleSizeChange="handleSizeChange"
         @handleCurrentChange="handleCurrentChange"></table-tem>
     </el-card>
-    <el-dialog v-model="detailVisible" draggable width="70%" :title="'PCB编码：' + title" :append-to-body="true"
+    <el-dialog v-model="detailVisible" draggable width="70%" :title="'PCB条码：' + title" :append-to-body="true"
       :close-on-click-modal="false" :close-on-press-escape="false" align-center>
       <div class="flex flex-col border-solid border-1 border-[#bdbdbd]">
         <div>
@@ -178,7 +178,7 @@ const columnData = ref([
   {
     text: true,
     prop: "ContainerName",
-    label: "PCB编码",
+    label: "PCB条码",
     width: "",
     min: true,
     align: "1",

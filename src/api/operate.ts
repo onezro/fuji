@@ -425,6 +425,22 @@ export function QueryMaterialReturnApplyDetail(data: any) {
         data
     });
 }
+//查询生产计划转单物料清单
+export function QueryChangeOrderMaterialRequired(data: any) {
+    return request({
+        url: "/api/order/QueryChangeOrderMaterialRequired",
+        method: "post",
+        data
+    });
+}
+//生产计划物料转单申请
+export function ApplyChangeOrderMaterialRequired(data: any) {
+    return request({
+        url: "/api/order/ApplyChangeOrderMaterialRequired",
+        method: "post",
+        data
+    });
+}
 //量具
 export function GetGaugeToolList(data: any) {
     return request({

@@ -7,27 +7,57 @@
     <div class="w-full flex-1 flex">
       <div class="setwidth w-[370px]">
         <div class="w-full h-full box">
-          <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
+          <div
+            class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]"
+          >
             <span class="ml-5">基本信息</span>
           </div>
           <div class="p-[10px]">
-            <el-form class="inbound" ref="formRef" :model="form" label-width="auto">
+            <el-form
+              class="inbound"
+              ref="formRef"
+              :model="form"
+              label-width="auto"
+            >
               <el-form-item label="生产计划号" class="mb-[5px] flex">
-                <selectTa ref="selectTable" :table="orderTable" :selectWidth="220" :columns="orderColumns"
-                  :max-height="400" :tableWidth="700" :defaultSelectVal="defaultSelectVal" :keywords="{
+                <selectTa
+                  ref="selectTable"
+                  :table="orderTable"
+                  :selectWidth="220"
+                  :columns="orderColumns"
+                  :max-height="400"
+                  :tableWidth="700"
+                  :defaultSelectVal="defaultSelectVal"
+                  :keywords="{
                     label: 'MfgOrderName',
                     value: 'MfgOrderName',
-                  }" @radioChange="(...args: any) => radioChange(args)">
+                  }"
+                  @radioChange="(...args: any) => radioChange(args)"
+                >
                 </selectTa>
                 <el-tooltip content="刷新" placement="top">
-                  <el-icon class="ml-2" color="#006487" :class="isLoding" size="24" @click="getOrderData">
+                  <el-icon
+                    class="ml-2"
+                    color="#006487"
+                    :class="isLoding"
+                    size="24"
+                    @click="getOrderData"
+                  >
                     <RefreshRight />
                   </el-icon>
                 </el-tooltip>
               </el-form-item>
-              <el-form-item v-for="f in formHeader" :key="f.value" :label="f.label">
-                <span class="font-bold text-lg leading-[30px]" :class="f.value == 'TodayNum' ? 'text-[#00B400]' : ''">
-                  {{ formText(f.value) }}</span>
+              <el-form-item
+                v-for="f in formHeader"
+                :key="f.value"
+                :label="f.label"
+              >
+                <span
+                  class="font-bold text-lg leading-[30px]"
+                  :class="f.value == 'TodayNum' ? 'text-[#00B400]' : ''"
+                >
+                  {{ formText(f.value) }}</span
+                >
               </el-form-item>
             </el-form>
           </div>
@@ -37,44 +67,109 @@
         <!-- <div class="w-full"> -->
         <div class="w-full h-full flex flex-col">
           <div>
-            <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
+            <div
+              class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]"
+            >
               <span class="ml-5"> 扫描条码</span>
             </div>
             <div class="h-[120px] pt-3 pr-5 pl-5">
-              <el-form class="inbound" ref="formRef" :inline="true" :model="form" label-width="auto"
-                @submit.native.prevent>
+              <el-form
+                class="inbound"
+                ref="formRef"
+                :inline="true"
+                :model="form"
+                label-width="auto"
+                @submit.native.prevent
+              >
                 <el-form-item label="扫描条码" class="mb-2">
-                  <el-input v-model.trim="barCode" ref="inputRef" :autofocus="inputFocus" style="width: 500px"
-                    placeholder="请扫描条码" @keyup.enter.native="getChange" />
+                  <el-input
+                    v-model.trim="barCode"
+                    ref="inputRef"
+                    :autofocus="inputFocus"
+                    style="width: 500px"
+                    placeholder="请扫描条码"
+                    :disabled="isActive"
+                    @keyup.enter.native="getChange"
+                  />
+                </el-form-item>
+                <el-form-item label="" class="mb-2">
+                  <el-input
+                    class="custom-input custom-input-class"
+                    v-model.trim="stopsForm.ContainerName"
+                    ref="inputRef"
+                    style="width: 300px"
+                    disabled
+                  />
                 </el-form-item>
               </el-form>
-              <div class="text-xl font-bold text-[#00B400]" v-show="msgType === true || msgTitle === ''">
+              <div
+                class="text-xl font-bold text-[#00B400]"
+                v-show="msgType === true || msgTitle === ''"
+              >
                 {{ msgTitle === "" ? "请扫描成品条码" : msgTitle }}
               </div>
-              <div class="text-xl font-bold text-[red]" v-show="msgType === false && msgTitle !== ''">
+              <div
+                class="text-xl font-bold text-[red]"
+                v-show="msgType === false && msgTitle !== ''"
+              >
                 {{ msgTitle }}
               </div>
             </div>
           </div>
 
           <div class="flex flex-col flex-1 tabs-css">
-            <div class="h-[35px] flex items-center justify-between text-lg text-[#fff] bg-[#006487]">
+            <div
+              class="h-[35px] flex items-center justify-between text-lg text-[#fff] bg-[#006487]"
+            >
               <span class="ml-5">历史过站记录</span>
               <div class="mr-5">
-                <el-checkbox-group v-model="checkedHis" class="laser-table-filter">
-                  <el-checkbox v-for="c in checkedHisList" :label="`${c.label}(${changeDataLength(c.value)})`"
-                    :value="c.value" @change="changeHis(c.value)">
+                <el-checkbox-group
+                  v-model="checkedHis"
+                  class="laser-table-filter"
+                >
+                  <el-checkbox
+                    v-for="c in checkedHisList"
+                    :label="`${c.label}(${changeDataLength(c.value)})`"
+                    :value="c.value"
+                    @change="changeHis(c.value)"
+                  >
                   </el-checkbox>
                 </el-checkbox-group>
               </div>
             </div>
-            <table-tem :showIndex="true" :tableData="changeData" :tableHeight="tableHeight" :columnData="columnData1"
-              :pageObj="pageObj" @handleSizeChange="handleSizeChange"
-              @handleCurrentChange="handleCurrentChange"></table-tem>
+            <table-tem
+              :showIndex="true"
+              :tableData="changeData"
+              :tableHeight="tableHeight"
+              :columnData="columnData1"
+              :pageObj="pageObj"
+              @handleSizeChange="handleSizeChange"
+              @handleCurrentChange="handleCurrentChange"
+            ></table-tem>
           </div>
         </div>
       </div>
     </div>
+    <el-dialog align-center :append-to-body="true" draggable :close-on-click-modal="false" v-model="viewVisible" @close=""
+      title="?" width="70%">
+      <el-tabs v-model="activeName" type="border-card" class="demo-tabs" >
+        <el-tab-pane label="6236426" name="shelveMaterial" >
+          <el-table class="my-table" border fit :data="popTableData" :style="{ width: '100%' }" :height="400"
+              @selection-change="handleSelectionChange" :row-class-name="tableRowClassName">
+              <el-table-column type="selection" fixed width="55" align="center" />
+              <!-- <el-table-column prop="ENSoftwareName" label="Name" width="250" /> -->
+              <el-table-column prop="CNSoftwareName" label="名称" width="250" />
+              <el-table-column prop="SoftwareVersion" label="版本" />
+            </el-table>
+      </el-tab-pane>
+    </el-tabs>
+      <!-- <template #footer>
+        <span class="dialog-footer">
+          <el-button @click=""> 取消 </el-button>
+          <el-button type="primary" @click=""> 确定 </el-button>
+        </span>
+      </template> -->
+    </el-dialog>
   </div>
 </template>
 
@@ -85,11 +180,13 @@ import { useAppStore } from "@/stores/modules/app";
 import { useUserStoreWithOut } from "@/stores/modules/user";
 import { checkStringType } from "@/utils/barcodeFormat";
 import type { Formspan, FormHeader, OrderData } from "@/typing";
+import { cloneDeep } from "lodash-es";
 import {
   JudgeContainerProProcess,
   JudgeAfterStartUpQrCode,
   QueryMoveHistory,
-  OrderQuery
+  OrderQuery,
+  ueryOrderTUIDQRInfo,
 } from "@/api/asyApi";
 import {
   ref,
@@ -106,7 +203,7 @@ interface StopsForm {
   workstationName: string;
   userAccount: string;
   txnDate: string;
-  OrderName:string
+  OrderName: string;
 }
 
 interface ToolList {
@@ -123,10 +220,16 @@ const opui = appStore.getOPUIReal();
 const inputRef = ref();
 const inputFocus = ref(true);
 const barCode = ref("");
+const currentCode = ref("");
+const SoftwareStatus = ref(true);
+const isActive = ref(false);
+const viewVisible = ref(false);
+const activeName=ref('shelveMaterial');
+const changeList = ref([]);
 const stopsForm = ref<StopsForm>({
   ContainerName: "",
   QrCodeNews: "",
-  OrderName:"",
+  OrderName: "",
   workstationName: opui.station || "",
   userAccount: userStore.getUserInfo,
   txnDate: "",
@@ -192,7 +295,6 @@ const columnData1 = reactive([
     width: "",
     align: "1",
   },
-  
 
   {
     text: true,
@@ -209,6 +311,7 @@ const columnData1 = reactive([
     align: "1",
   },
 ]);
+const popTableData = ref([])
 const tableData1 = ref([]);
 const tableHeight = ref(0);
 const pageObj = ref({
@@ -272,7 +375,7 @@ const formText = (data: string) => {
 };
 const getOrderData = () => {
   isLoding.value = "is-loading";
-  defaultSelectVal.value = []
+  defaultSelectVal.value = [];
   OrderQuery({ lineName: opui.line, OrderTypeName: "Assembly" }).then(
     (res: any) => {
       let data = res.content;
@@ -339,9 +442,8 @@ const radioChange = (args: any) => {
     form.value.BD_SoftVersion = "";
     form.value.Qty = "";
     form.value.ERPOrder = "";
-    tableData1.value = []
+    tableData1.value = [];
   } else {
-
     if (args[1] !== form.value.MfgOrderName || form.value.MfgOrderName == "") {
       form.value.MfgOrderName = args[0].MfgOrderName;
       form.value.ProductName = args[0].ProductName;
@@ -352,24 +454,36 @@ const radioChange = (args: any) => {
       form.value.ERPOrder = args[0].ERPOrder;
       stopsForm.value.OrderName = args[0].MfgOrderName;
       hisForm.value.MfgOrderName = args[0].MfgOrderName;
+      ueryOrderTUIDQRInfo(args[0].BD_ProductModel).then((data: any) => {
+        if (data.content) {
+          SoftwareStatus.value = data.content.IsTUIDQRCode;
+        }
+      });
     } else {
-
     }
     getHisData();
   }
 };
 
+//选中
+const handleSelectionChange = (data: any) => {
+  let content = cloneDeep(data);
+  // console.log(data);
+  
+  changeList.value = content;
+};
+
 //过站
 const getChange = () => {
   let barCodeData = barCode.value;
-  msgTitle.value = ""
-  msgType.value = true
+  msgTitle.value = "";
+  msgType.value = true;
   if (checkStringType(barCodeData) == "BDY") {
     JudgeContainerProProcess({
-      OrderName:form.value.MfgOrderName,
+      OrderName: form.value.MfgOrderName,
       ContainerName: barCodeData,
       workstationName: opui.station,
-      userAccount:userStore.getUserInfo
+      userAccount: userStore.getUserInfo,
     }).then((res: any) => {
       msgTitle.value = res.msg;
       msgType.value = res.success;
@@ -378,8 +492,14 @@ const getChange = () => {
         // form.value = { ...res.content[0] };
         // hisForm.value.MfgOrderName = res.content[0].MfgOrderName;
         getHisData();
-        msgTitle.value =`已验证条码${ stopsForm.value.ContainerName}，请扫描烧录二维码`;
-      msgType.value = true;
+        msgTitle.value = `已验证条码${stopsForm.value.ContainerName}，请扫描烧录二维码`;
+        msgType.value = true;
+        if (!SoftwareStatus.value) {
+          isActive.value = true;
+          viewVisible.value = true;
+        } else {
+          isActive.value = false;
+        }
       } else {
         stopsForm.value.ContainerName = "";
       }
@@ -387,7 +507,7 @@ const getChange = () => {
     });
   } else {
     if (stopsForm.value.ContainerName != "") {
-      stopsForm.value.QrCodeNews =barCodeData
+      stopsForm.value.QrCodeNews = barCodeData;
       JudgeAfterStartUpQrCode(stopsForm.value).then((res: any) => {
         msgTitle.value = res.msg;
         msgType.value = res.success;
@@ -419,6 +539,22 @@ const getChange = () => {
   //   }
   // );
   // barCode.value = "";
+};
+
+//判断是否可选中
+const tableRowClassName = ({
+  row,
+}: {
+  row: any;
+  rowIndex: number;
+}) => {
+  // 在这里判断行数据是否符合条件
+  // if (row.ENSoftwareName === errorRow.value) {
+  //   tableData1.value = tableData1.value;
+  //   return "has-material-row";
+  // }else {
+  // }
+  return "";
 };
 
 //分页
@@ -466,7 +602,7 @@ const getScreenHeight = () => {
   font-size: 1.1rem;
 }
 
-.tabs-css .el-tabs--border-card>.el-tabs__header .el-tabs__item {
+.tabs-css .el-tabs--border-card > .el-tabs__header .el-tabs__item {
   color: #fff;
   // padding: 0 !important;
 }
@@ -489,7 +625,10 @@ const getScreenHeight = () => {
   color: #ff4949;
 }
 
-.tabs-css .el-tabs--border-card>.el-tabs__header .el-tabs__item:not(.is-disabled):hover {
+.tabs-css
+  .el-tabs--border-card
+  > .el-tabs__header
+  .el-tabs__item:not(.is-disabled):hover {
   // color: #fff;
   // background-color: #fff;
   background-color: rgba($color: #fff, $alpha: 0.8);
@@ -518,5 +657,54 @@ const getScreenHeight = () => {
   /* 你的样式 */
   color: white !important;
   font-size: 1.1rem;
+}
+
+.custom-input .el-input__inner {
+  font-weight: bold;
+}
+
+.custom-input-class.el-input.is-disabled .el-input__wrapper {
+  background-color: rgba($color: #000000, $alpha: 0);
+  color: black;
+}
+
+.custom-input-class.el-input.is-disabled .el-input__inner {
+  color: black;
+  -webkit-text-fill-color: black;
+  font-size: large;
+}
+
+.el-tabs--border-card {
+  border-top: 1px solid #006487;
+}
+
+.demo-tabs .el-tabs__header {
+  --el-tabs-header-height: 30px;
+  background-color: #006487 !important;
+}
+
+.demo-tabs .el-tabs__content {
+  padding: 5px;
+}
+
+
+
+.demo-tabs.el-tabs--border-card>.el-tabs__header .el-tabs__item {
+  color: #fff;
+  font-size: 0.8rem;
+  // padding: 0 !important;
+}
+
+.demo-tabs .el-tabs__item.is-active {
+  font-size: 0.8rem;
+  // color: #fff;
+  color: #006487 !important;
+  // font-weight: bold;
+}
+
+.el-tabs--border-card>.el-tabs__header .el-tabs__item:not(.is-disabled):hover {
+  font-size: 0.8rem;
+  color: #006487 !important;
+  background-color: rgba($color: #fff, $alpha: 0.8);
 }
 </style>

@@ -56,17 +56,17 @@
       </div>
       <div class="table_container">
         <!-- <table-tem
-          :show-index="true"
-          size="small"
-          :tableData="historyTable"
-          :tableHeight="hisHeight"
-          :columnData="columnData"
-          :pageObj="pageObjHis"
-          @handleSizeChange="handleSizeChangeHis"
-          @handleCurrentChange="handleCurrentChangeHis"
-          @rowClick="rowClick"
-        >
-        </table-tem> -->
+            :show-index="true"
+            size="small"
+            :tableData="historyTable"
+            :tableHeight="hisHeight"
+            :columnData="columnData"
+            :pageObj="pageObjHis"
+            @handleSizeChange="handleSizeChangeHis"
+            @handleCurrentChange="handleCurrentChangeHis"
+            @rowClick="rowClick"
+          >
+          </table-tem> -->
         <el-table
           :data="
             historyTable.slice(
@@ -136,10 +136,10 @@
             :min-width="flexColumnWidthHis('产品描述', 'ProductDesc')"
           ></el-table-column>
           <!-- <el-table-column
-            prop="OrderStatusDesc"
-            label="生产计划号状态"
-            :min-width="flexColumnWidthHis('生产计划号状态', 'OrderStatusDesc')"
-          ></el-table-column> -->
+              prop="OrderStatusDesc"
+              label="生产计划号状态"
+              :min-width="flexColumnWidthHis('生产计划号状态', 'OrderStatusDesc')"
+            ></el-table-column> -->
           <el-table-column
             prop="Qty"
             label="计划数量"
@@ -196,41 +196,25 @@
     <el-dialog
       v-model="dialogVisible"
       width="80%"
-      title="退料申请"
+      title="退料转单"
       align-center
     >
       <div class="w-full">
         <div ref="headerRef">
           <el-form
             ref="formRef"
-            class="form"
+            class="form flex items-start"
             :inline="true"
             size="small"
             label-width="85px"
           >
-            <el-form-item label="生产计划号">
-              <!-- <el-select
-                v-model="form.MfgOrderName"
-                placeholder=""
-                filterable
-                style="width: 152.4px"
-                @change="orderChange"
-              >
-                <el-option
-                  v-for="item in orderList"
-                  :key="item.MfgOrderName"
-                  :label="item.MfgOrderName"
-                  :value="item.MfgOrderName"
-                />
-              </el-select>  -->
+            <el-form-item label="当前单号">
               <el-input
                 v-model="form.MfgOrderName"
                 class="input-with-select"
                 @keyup.enter.native="orderChange(form.MfgOrderName)"
               >
               </el-input>
-              <!-- <el-select-v2 v-model="form.MfgOrderName" :options="orderList" filterable
-                :props="orderProps" style="width: 180px"  @change="orderChange"/> -->
             </el-form-item>
             <el-form-item label="产品机型">
               <el-input
@@ -250,54 +234,59 @@
               >
               </el-input>
             </el-form-item>
-            <el-form-item label="计划数量">
-              <el-input
-                v-model="form.Qty"
-                style="width: 152px"
-                class="input-with-select"
-                disabled
-              >
-              </el-input>
-            </el-form-item>
-            <el-form-item label="产线">
-              <el-input
-                v-model="form.MfgLineDesc"
-                style="width: 152px"
-                class="input-with-select"
-                disabled
-              >
-              </el-input>
-            </el-form-item>
-            <el-form-item label="计划开始时间">
-              <el-input
-                v-model="form.PlannedCompletionDate"
-                style="width: 152px"
-                class="input-with-select"
-                disabled
-              >
-              </el-input>
-            </el-form-item>
-            <el-form-item label="退料类型">
-              <el-select
-                v-model="returnType"
-                placeholder="Select"
-                style="width: 152px"
-                @change="typeChange"
-              >
-                <el-option
-                  v-for="item in iReturnTypeList"
-                  :key="item.Value"
-                  :label="item.Text"
-                  :value="item.Value"
-                />
-              </el-select>
-            </el-form-item>
-            <br />
+            <!-- <br /> -->
             <el-form-item label="产品描述">
               <el-input
-                style="width: 420px"
+                style="width: 240px"
                 type="textarea"
+                :rows="2"
                 v-model="form.ProductDesc"
+                class="input-with-select"
+                disabled
+              >
+              </el-input>
+            </el-form-item>
+          </el-form>
+          <el-form
+            ref="formRef"
+            class="form flex items-start"
+            :inline="true"
+            size="small"
+            label-width="85px"
+          >
+            <el-form-item label="转单单号">
+              <el-input
+                v-model="transferForm.MfgOrderName"
+                class="input-with-select"
+                @keyup.enter.native="transferChange(transferForm.MfgOrderName)"
+              >
+              </el-input>
+            </el-form-item>
+            <el-form-item label="产品机型">
+              <el-input
+                v-model="transferForm.BD_ProductModel"
+                style="width: 152px"
+                class="input-with-select"
+                disabled
+              >
+              </el-input>
+            </el-form-item>
+            <el-form-item label="产品编码">
+              <el-input
+                v-model="transferForm.ProductName"
+                style="width: 152px"
+                class="input-with-select"
+                disabled
+              >
+              </el-input>
+            </el-form-item>
+            <!-- <br /> -->
+            <el-form-item label="产品描述">
+              <el-input
+                style="width: 240px"
+                type="textarea"
+                :rows="2"
+                v-model="transferForm.ProductDesc"
                 class="input-with-select"
                 disabled
               >
@@ -306,15 +295,17 @@
           </el-form>
         </div>
         <div class="table_container">
-          <div class="flex justify-end">
+          <div class="flex justify-between items-end">
+            <el-button type="primary" class="mr-8" @click="getFeedTableData"
+              >查询转单列表</el-button
+            >
             <!-- <el-input
               v-model.trim="searchText"
               size="small"
               style="width: 250px"
-              @keyup.enter.native="filterFeedTableData"
             >
               <template #append>
-                <el-button @click="filterFeedTableData" icon="Search" />
+                <el-button icon="Search" />
               </template>
             </el-input> -->
           <el-form
@@ -360,31 +351,31 @@
               align="center"
             />
             <el-table-column
-              prop="CompID"
+              prop="ContainerName"
               label="物料条码"
               :min-width="flexColumnWidth('物料条码', 'CompID')"
             >
             </el-table-column>
             <el-table-column
-              prop="CompName"
+              prop="MaterialName"
               label="物料编码"
               :min-width="flexColumnWidth('物料编码', 'CompName')"
             >
             </el-table-column>
 
             <!-- <el-table-column
-                prop="isMater"
-                label="主料"
-                width="150"
-                :min-width="150"
-              >
-                <template #default="scope">
-                  <span v-if="scope.row.isMater === 1">是</span>
-                  <span v-if="scope.row.isMater === 0"
-                    >否{{ `(${scope.row.originalMaterialName})` }}</span
-                  >
-                </template>
-              </el-table-column> -->
+                  prop="isMater"
+                  label="主料"
+                  width="150"
+                  :min-width="150"
+                >
+                  <template #default="scope">
+                    <span v-if="scope.row.isMater === 1">是</span>
+                    <span v-if="scope.row.isMater === 0"
+                      >否{{ `(${scope.row.originalMaterialName})` }}</span
+                    >
+                  </template>
+                </el-table-column> -->
             <el-table-column
               prop="Amount"
               label="初始数量"
@@ -400,25 +391,25 @@
             >
             </el-table-column>
             <!-- <el-table-column
-                prop="isLoadQueue"
-                align="center"
-                label="允许上料"
-                :min-width="flexColumnWidth('允许上料：（是否）', 'isLoadoueue')"
-              >
-                <template #default="scope">
-                  <span v-if="scope.row.isLoadQueue === 1">是</span>
-                  <span v-if="scope.row.isLoadQueue === 0">否</span>
-                </template>
-              </el-table-column> -->
-            <el-table-column
+                  prop="isLoadQueue"
+                  align="center"
+                  label="允许上料"
+                  :min-width="flexColumnWidth('允许上料：（是否）', 'isLoadoueue')"
+                >
+                  <template #default="scope">
+                    <span v-if="scope.row.isLoadQueue === 1">是</span>
+                    <span v-if="scope.row.isLoadQueue === 0">否</span>
+                  </template>
+                </el-table-column> -->
+            <!-- <el-table-column
               v-if="returnType === '1'"
               prop="Qty"
               align="center"
               label="请求退料数量"
               :min-width="flexColumnWidth('请求数量', 'Qty')"
             >
-            </el-table-column>
-            <el-table-column
+            </el-table-column> -->
+            <!-- <el-table-column
               prop="RequestQty"
               align="center"
               label="请求退料数量"
@@ -434,7 +425,7 @@
                 >
                 </el-input>
               </template>
-            </el-table-column>
+            </el-table-column> -->
             <el-table-column
               align="center"
               label="状态"
@@ -442,28 +433,28 @@
             >
               <template #default="scope">
                 <div>
-                  {{ scope.row.MaterialQueue ? "不可退料" : "可退料" }}
+                  {{ scope.row.MaterialQueue ? "不可转产" : "可转产" }}
                 </div>
               </template>
             </el-table-column>
             <!-- <el-table-column prop="QualityIsGood" align="center" label="是否良品"
-              :min-width="flexColumnWidth('是否良品是否良品', 'QualityIsGood')">
-              <template #default="scope">
-                <el-select
-                  v-model="scope.row.QualityIsGood"
-                  placeholder="Select"
-                  size="large"
-                  style="width: 150px"
-                >
-                  <el-option
-                    v-for="item in [{label:'良品',value:1},{label:'不良品',value:2},{label:'未知',value:0},]"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value"
-                  />
-                </el-select>
-              </template>
-            </el-table-column> -->
+                :min-width="flexColumnWidth('是否良品是否良品', 'QualityIsGood')">
+                <template #default="scope">
+                  <el-select
+                    v-model="scope.row.QualityIsGood"
+                    placeholder="Select"
+                    size="large"
+                    style="width: 150px"
+                  >
+                    <el-option
+                      v-for="item in [{label:'良品',value:1},{label:'不良品',value:2},{label:'未知',value:0},]"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value"
+                    />
+                  </el-select>
+                </template>
+              </el-table-column> -->
           </el-table>
         </div>
       </div>
@@ -497,6 +488,8 @@ import {
   QueryMaterialReturnApplyDetail,
   findOrder,
   GetComboBoxList,
+  QueryChangeOrderMaterialRequired,
+  ApplyChangeOrderMaterialRequired,
 } from "@/api/operate";
 import { cloneDeep } from "lodash-es";
 import {
@@ -519,6 +512,8 @@ const userStore = useUserStoreWithOut();
 const loginName = userStore.getUserInfo;
 const selectOrder = ref("");
 const selectType = ref("");
+const transSelectOrder = ref("");
+const transSelectType = ref("");
 const headerRef = ref();
 const orderList = ref<any[]>([]);
 const feedTableData = ref<any>([]);
@@ -595,19 +590,26 @@ const form = ref<formTS>({
   ERPOrder: "",
 });
 
+const transferForm = ref({
+  MfgOrderName: "",
+  BD_ProductModel: "",
+  ProductName: "",
+  ProductDesc: "",
+});
+
 const historyForm = ref<historyFormTS>({
   MfgOrderName: "",
   requestStartDate: "",
   requestEndDate: "",
   QualityIsGood: "",
-  OperationType: "R"
+  OperationType: "C",
 });
 const orderProps = ref({
   label: "MfgOrderName",
   value: "MfgOrderName",
 });
 const searchText = ref("");
-const filterTableData = ref([])
+const filterTableData = ref([]);
 // const filterTableData = computed(() => {
 //   if (searchText.value == "") {
 //     return feedTableData.value;
@@ -619,16 +621,6 @@ const filterTableData = ref([])
 // watch(
 
 // );
-//搜索编码
-const filterFeedTableData = () => {
-  if (searchText.value == "") {
-    filterTableData.value = feedTableData.value
-    return
-  }
-  filterTableData.value = feedTableData.value.filter((f: any) =>
-    f.CompName.toLowerCase().includes(searchText.value.toLowerCase())
-  );
-}
 onBeforeMount(() => {});
 
 onMounted(() => {
@@ -649,7 +641,7 @@ onMounted(() => {
   historyForm.value.requestEndDate = formattedTodayDate;
   date.value = [formattedDate, formattedTodayDate];
   getHistory();
-  getTypeList();
+  //   getTypeList();
   getScreenHeight();
   findOrderData();
   window.addEventListener("resize", getScreenHeight);
@@ -715,10 +707,33 @@ const orderChange = (data: any) => {
       form.value.wcDescription = item.wcDescription;
       form.value.ERPOrder = item.ERPOrder;
       selectType.value = item.OrderTypeName;
-      getFeedTableData(data, item.OrderTypeName);
+      // getFeedTableData(data, item.OrderTypeName);
     }
   });
   selectOrder.value = data;
+};
+
+//选中转单单号
+const transferChange = (data: any) => {
+  if (!orderList.value.some((obj) => obj.MfgOrderName === data)) {
+    ElNotification({
+      title: "提示信息",
+      message: "未找到此生产计划号",
+      type: "warning",
+    });
+    return;
+  }
+  orderList.value.forEach((item: any) => {
+    if (item.MfgOrderName === data) {
+      transferForm.value.MfgOrderName = item.MfgOrderName;
+      transferForm.value.ProductName = item.ProductName;
+      transferForm.value.BD_ProductModel = item.BD_ProductModel;
+      transferForm.value.ProductDesc = item.ProductDesc;
+      transSelectType.value = item.OrderTypeName;
+      // getFeedTableData(data, item.OrderTypeName);
+    }
+  });
+  transSelectOrder.value = data;
 };
 
 //根据名称获取配置值
@@ -740,6 +755,17 @@ const returnTypeText = (data: any) => {
   return text;
 };
 
+//搜索编码
+const filterFeedTableData = () => {
+  if (searchText.value == "") {
+    filterTableData.value = feedTableData.value
+    return
+  }
+  filterTableData.value = feedTableData.value.filter((f: any) =>
+     f.MaterialName.toLowerCase().includes(searchText.value.toLowerCase())
+  );
+}
+
 //获取历史物料退料申请记录
 const getHistory = () => {
   QueryMaterialReturn(historyForm.value).then((res: any) => {
@@ -751,10 +777,12 @@ const getHistory = () => {
   });
 };
 //根据生产计划号获取物料信息
-const getFeedTableData = (order: any, type: any) => {
-  QueryMaterialReturnApplyDetail({
-    MfgOrderName: order,
-    OrderType: type,
+const getFeedTableData = () => {
+  QueryChangeOrderMaterialRequired({
+    FromMfgOrder: selectOrder.value,
+    FromOrderType: selectType.value,
+    ToMfgOrder: transSelectOrder.value,
+    ToOrderType: transSelectType.value,
   }).then((res: any) => {
     // console.log(OrganData(res.content));
     if (res.success) {
@@ -766,7 +794,6 @@ const getFeedTableData = (order: any, type: any) => {
       // console.log(data);
       feedTableData.value = res.content;
       filterTableData.value = res.content;
-
       // feedTableData.value = res.content.map((item:any) => {
       //   return {
       //     ...item,
@@ -888,26 +915,21 @@ const handleSelectionChange = (data: any) => {
     .map((item: any) => {
       if (returnType.value === "1") {
         return {
-          mfgOrder: item.OrderID,
+          mfgOrder: selectOrder.value,
+          changemfgOrder: transSelectOrder.value,
+          ContainerName: item.ContainerName,
+          MaterialName: item.MaterialName,
+          Amount: item.Amount,
           Qty: item.Qty,
-          ContainerName: item.CompID,
-          materialName: item.CompName,
-          EmployeeName: loginName,
-          QualityIsGood: returnType.value,
-          ERPOrder: form.value.ERPOrder,
-          OrderType: selectType.value,
-          AvailableQty: item.Qty,
-          InitQty: item.Amount,
+          MaterialQueue: item.MaterialQueue,
         };
       } else {
         return {
-          mfgOrder: item.OrderID,
-          Qty: item.RequestQty,
-          ContainerName: item.CompID,
-          materialName: item.CompName,
-          EmployeeName: loginName,
-          QualityIsGood: returnType.value,
-          ERPOrder: form.value.ERPOrder,
+          ContainerName: item.ContainerName,
+          MaterialName: item.MaterialName,
+          Amount: item.Amount,
+          Qty: item.Qty,
+          MaterialQueue: item.MaterialQueue,
         };
       }
     });
@@ -932,18 +954,19 @@ const applyFor = () => {
   //   }
   // });
   console.log(choiceList.value);
-  OrderGoodMaterials(choiceList.value).then((res: any) => {
-    if (res && res.success) {
-      ElNotification({
-        title: "提示信息",
-        message: res.msg,
-        type: "success",
-      });
-      // findOrderData();
-      getFeedTableData(selectOrder.value, selectType.value);
-      dialogVisible.value = false;
-    }
-  });
+    ApplyChangeOrderMaterialRequired(choiceList.value).then((res: any) => {
+      if (res && res.success) {
+        ElNotification({
+          title: "提示信息",
+          message: res.msg,
+          type: "success",
+        });
+        // findOrderData();
+        // getFeedTableData();
+        getHistory();
+        dialogVisible.value = false;
+      }
+    });
 };
 
 const dateChange = () => {
@@ -1010,7 +1033,7 @@ const tableRowClassName = ({
   rowIndex: number;
 }) => {
   // 在这里判断行数据是否符合条件
-  console.log(row.MaterialQueue ? true : false);
+//   console.log(row.MaterialQueue ? true : false);
   if (row.MaterialQueue) {
     return "has-material-row";
   } else {
@@ -1218,6 +1241,6 @@ const getScreenHeight = () => {
 }
 
 /* ::v-deep .is-disabled .el-checkbox__inner {
-  background-color:rgb(216, 216, 216);
-} */
+    background-color:rgb(216, 216, 216);
+  } */
 </style>
