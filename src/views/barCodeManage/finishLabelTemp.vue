@@ -43,7 +43,7 @@
                 <el-form-item label="备注" prop="TemplateRemark">
                     <el-input v-model="addForm.TemplateRemark" type="textarea" style="width: 180px" />
                 </el-form-item>
-                <el-tabs v-model="activeName" type="border-card" class="demo-tabs" @tab-change="tabChange1">
+                <el-tabs v-model="activeName" type="border-card" class="demo-tabs" @tab-change="tabChange">
                     <el-tab-pane label="外箱模板" name="TemplateBox">
                         <el-form-item label="模板" prop="TemplateBox" label-width="68px">
                             <!-- <el-input v-model="addForm.TemplateBox" style="width: 150px" /> -->
@@ -98,14 +98,14 @@
                             :height="250" size="small" @selection-change="handleSelectionChange">
                             <el-table-column type="selection" align="center" width="50"></el-table-column>
                             <el-table-column type="index" align="center" fixed label="序号" width="55" />
-                            <el-table-column prop="TempRlueName" label="规则名称" width="180" />
-                            <el-table-column prop="TempRlueFormat" label="条码格式" width="180" />
-                            <el-table-column prop="TempRluePrefixSuffix01" label="条码前缀1" />
-                            <el-table-column prop="TempRluePrefixSuffix02" label="条码前缀2" />
-                            <el-table-column prop="TempRluePrefixSuffix03" label="条码前缀3" />
-                            <el-table-column prop="TempRluePrefixSuffix04" label="条码前缀4" />
-                            <el-table-column prop="TempRluePrefixSuffix05" label="条码前缀5" />
-                            <el-table-column prop="TempRluePrefixSuffix06" label="条码前缀6" />
+                            <el-table-column prop="TempRlueName" label="规则名称" width="100"  fixed/>
+                            <el-table-column prop="TempRlueFormat" label="条码格式" width="180" fixed/>
+                            <el-table-column prop="TempRluePrefixSuffix01" label="条码前缀1" width="120"/>
+                            <el-table-column prop="TempRluePrefixSuffix02" label="条码前缀2" width="120"/>
+                            <el-table-column prop="TempRluePrefixSuffix03" label="条码前缀3" width="120"/>
+                            <el-table-column prop="TempRluePrefixSuffix04" label="条码前缀4" width="120"/>
+                            <el-table-column prop="TempRluePrefixSuffix05" label="条码后缀1" />
+                            <el-table-column prop="TempRluePrefixSuffix06" label="条码后缀2" />
                             <el-table-column prop="TempRlueEnable1" label="外箱码" />
                             <el-table-column prop="TempRlueEnable2" label="是否启用" />
                         </el-table>
@@ -165,12 +165,12 @@
                             :height="250" size="small" @selection-change="handleSelectionChange">
                             <el-table-column type="selection" align="center" width="50"></el-table-column>
                             <el-table-column type="index" align="center" fixed label="序号" width="55" />
-                            <el-table-column prop="TempRlueName" label="规则名称" width="180" />
-                            <el-table-column prop="TempRlueFormat" label="条码格式" width="180" />
-                            <el-table-column prop="TempRluePrefixSuffix01" label="条码前缀1" />
-                            <el-table-column prop="TempRluePrefixSuffix02" label="条码前缀2" />
-                            <el-table-column prop="TempRluePrefixSuffix03" label="条码前缀3" />
-                            <el-table-column prop="TempRluePrefixSuffix04" label="条码前缀4" />
+                            <el-table-column prop="TempRlueName" label="规则名称" width="100"  fixed/>
+                            <el-table-column prop="TempRlueFormat" label="条码格式" width="180" fixed/>
+                            <el-table-column prop="TempRluePrefixSuffix01" label="条码前缀1" width="120"/>
+                            <el-table-column prop="TempRluePrefixSuffix02" label="条码前缀2" width="120"/>
+                            <el-table-column prop="TempRluePrefixSuffix03" label="条码前缀3" width="120"/>
+                            <el-table-column prop="TempRluePrefixSuffix04" label="条码前缀4" width="120"/>
                             <el-table-column prop="TempRluePrefixSuffix05" label="条码后缀1" />
                             <el-table-column prop="TempRluePrefixSuffix06" label="条码后缀2" />
                             <el-table-column prop="TempRlueEnable1" label="客户成品码" />
@@ -233,12 +233,12 @@
                             :height="250" size="small" @selection-change="handleSelectionChange">
                             <el-table-column type="selection" align="center" width="50"></el-table-column>
                             <el-table-column type="index" align="center" fixed label="序号" width="55" />
-                            <el-table-column prop="TempRlueName" label="规则名称" width="180" />
-                            <el-table-column prop="TempRlueFormat" label="条码格式" width="180" />
-                            <el-table-column prop="TempRluePrefixSuffix01" label="条码前缀1" />
-                            <el-table-column prop="TempRluePrefixSuffix02" label="条码前缀2" />
-                            <el-table-column prop="TempRluePrefixSuffix03" label="条码前缀3" />
-                            <el-table-column prop="TempRluePrefixSuffix04" label="条码前缀4" />
+                            <el-table-column prop="TempRlueName" label="规则名称" width="100"  fixed/>
+                            <el-table-column prop="TempRlueFormat" label="条码格式" width="180" fixed/>
+                            <el-table-column prop="TempRluePrefixSuffix01" label="条码前缀1" width="120"/>
+                            <el-table-column prop="TempRluePrefixSuffix02" label="条码前缀2" width="120"/>
+                            <el-table-column prop="TempRluePrefixSuffix03" label="条码前缀3" width="120"/>
+                            <el-table-column prop="TempRluePrefixSuffix04" label="条码前缀4" width="120"/>
                             <el-table-column prop="TempRluePrefixSuffix05" label="条码后缀1" />
                             <el-table-column prop="TempRluePrefixSuffix06" label="条码后缀2" />
                             <el-table-column prop="TempRlueEnable1" label="客户成品码" />
@@ -301,12 +301,12 @@
                             :height="250" size="small" @selection-change="handleSelectionChange">
                             <el-table-column type="selection" align="center" width="50"></el-table-column>
                             <el-table-column type="index" align="center" fixed label="序号" width="55" />
-                            <el-table-column prop="TempRlueName" label="规则名称" width="180" />
-                            <el-table-column prop="TempRlueFormat" label="条码格式" width="180" />
-                            <el-table-column prop="TempRluePrefixSuffix01" label="条码前缀1" />
-                            <el-table-column prop="TempRluePrefixSuffix02" label="条码前缀2" />
-                            <el-table-column prop="TempRluePrefixSuffix03" label="条码前缀3" />
-                            <el-table-column prop="TempRluePrefixSuffix04" label="条码前缀4" />
+                            <el-table-column prop="TempRlueName" label="规则名称" width="100"  fixed/>
+                            <el-table-column prop="TempRlueFormat" label="条码格式" width="180" fixed/>
+                            <el-table-column prop="TempRluePrefixSuffix01" label="条码前缀1" width="120"/>
+                            <el-table-column prop="TempRluePrefixSuffix02" label="条码前缀2" width="120"/>
+                            <el-table-column prop="TempRluePrefixSuffix03" label="条码前缀3" width="120"/>
+                            <el-table-column prop="TempRluePrefixSuffix04" label="条码前缀4" width="120"/>
                             <el-table-column prop="TempRluePrefixSuffix05" label="条码后缀1" />
                             <el-table-column prop="TempRluePrefixSuffix06" label="条码后缀2" />
                             <el-table-column prop="TempRlueEnable1" label="客户成品码" />
@@ -369,12 +369,12 @@
                             :height="250" size="small" @selection-change="handleSelectionChange">
                             <el-table-column type="selection" align="center" width="50"></el-table-column>
                             <el-table-column type="index" align="center" fixed label="序号" width="55" />
-                            <el-table-column prop="TempRlueName" label="规则名称" width="180" />
-                            <el-table-column prop="TempRlueFormat" label="条码格式" width="180" />
-                            <el-table-column prop="TempRluePrefixSuffix01" label="条码前缀1" />
-                            <el-table-column prop="TempRluePrefixSuffix02" label="条码前缀2" />
-                            <el-table-column prop="TempRluePrefixSuffix03" label="条码前缀3" />
-                            <el-table-column prop="TempRluePrefixSuffix04" label="条码前缀4" />
+                            <el-table-column prop="TempRlueName" label="规则名称" width="100"  fixed/>
+                            <el-table-column prop="TempRlueFormat" label="条码格式" width="180" fixed/>
+                            <el-table-column prop="TempRluePrefixSuffix01" label="条码前缀1" width="120"/>
+                            <el-table-column prop="TempRluePrefixSuffix02" label="条码前缀2" width="120"/>
+                            <el-table-column prop="TempRluePrefixSuffix03" label="条码前缀3" width="120"/>
+                            <el-table-column prop="TempRluePrefixSuffix04" label="条码前缀4" width="120"/>
                             <el-table-column prop="TempRluePrefixSuffix05" label="条码后缀1" />
                             <el-table-column prop="TempRluePrefixSuffix06" label="条码后缀2" />
                             <el-table-column prop="TempRlueEnable1" label="客户成品码" />
@@ -407,7 +407,7 @@
                 <el-form-item label="备注" prop="TemplateRemark">
                     <el-input v-model="editForm.TemplateRemark" type="textarea" style="width: 180px" />
                 </el-form-item>
-                <el-tabs v-model="activeName" type="border-card" class="demo-tabs" @tab-change="tabChange2">
+                <el-tabs v-model="activeName" type="border-card" class="demo-tabs" @tab-change="tabChange">
                     <el-tab-pane label="外箱模板" name="TemplateBox">
                         <el-form-item label="模板" prop="TemplateBox" label-width="68px">
                             <!-- <el-input v-model="addForm.TemplateBox" style="width: 150px" /> -->
@@ -459,17 +459,18 @@
                             </div>
                         </div>
                         <el-table :data="editForm.tempcontent01" :style="{ width: '100%' }" stripe border fit
-                            :height="250" size="small" @selection-change="handleSelectionChange">
+                            :height="250" size="small" @selection-change="handleSelectionChange"
+                            @row-dblclick="rowDblclick" >
                             <el-table-column type="selection" align="center" width="50"></el-table-column>
                             <el-table-column type="index" align="center" fixed label="序号" width="55" />
-                            <el-table-column prop="TempRlueName" label="规则名称" width="180" />
-                            <el-table-column prop="TempRlueFormat" label="条码格式" width="180" />
-                            <el-table-column prop="TempRluePrefixSuffix01" label="条码前缀1" />
-                            <el-table-column prop="TempRluePrefixSuffix02" label="条码前缀2" />
-                            <el-table-column prop="TempRluePrefixSuffix03" label="条码前缀3" />
-                            <el-table-column prop="TempRluePrefixSuffix04" label="条码前缀4" />
-                            <el-table-column prop="TempRluePrefixSuffix05" label="条码后缀5" />
-                            <el-table-column prop="TempRluePrefixSuffix06" label="条码后缀6" />
+                            <el-table-column prop="TempRlueName" label="规则名称" width="100"  fixed/>
+                            <el-table-column prop="TempRlueFormat" label="条码格式" width="180" fixed/>
+                            <el-table-column prop="TempRluePrefixSuffix01" label="条码前缀1" width="120"/>
+                            <el-table-column prop="TempRluePrefixSuffix02" label="条码前缀2" width="120"/>
+                            <el-table-column prop="TempRluePrefixSuffix03" label="条码前缀3" width="120"/>
+                            <el-table-column prop="TempRluePrefixSuffix04" label="条码前缀4" width="120"/>
+                            <el-table-column prop="TempRluePrefixSuffix05" label="条码后缀1" />
+                            <el-table-column prop="TempRluePrefixSuffix06" label="条码后缀2" />
                             <el-table-column prop="TempRlueEnable1" label="外箱码" />
                             <el-table-column prop="TempRlueEnable2" label="是否启用" />
                         </el-table>
@@ -526,15 +527,15 @@
                             </div>
                         </div>
                         <el-table :data="editForm.tempcontent02" :style="{ width: '100%' }" stripe border fit
-                            :height="250" size="small" @selection-change="handleSelectionChange">
+                            :height="250" size="small" @selection-change="handleSelectionChange"  @row-dblclick="rowDblclick" >
                             <el-table-column type="selection" align="center" width="50"></el-table-column>
                             <el-table-column type="index" align="center" fixed label="序号" width="55" />
-                            <el-table-column prop="TempRlueName" label="规则名称" width="180" />
-                            <el-table-column prop="TempRlueFormat" label="条码格式" width="180" />
-                            <el-table-column prop="TempRluePrefixSuffix01" label="条码前缀1" />
-                            <el-table-column prop="TempRluePrefixSuffix02" label="条码前缀2" />
-                            <el-table-column prop="TempRluePrefixSuffix03" label="条码前缀3" />
-                            <el-table-column prop="TempRluePrefixSuffix04" label="条码前缀4" />
+                            <el-table-column prop="TempRlueName" label="规则名称" width="100"  fixed/>
+                            <el-table-column prop="TempRlueFormat" label="条码格式" width="180" fixed/>
+                            <el-table-column prop="TempRluePrefixSuffix01" label="条码前缀1" width="120"/>
+                            <el-table-column prop="TempRluePrefixSuffix02" label="条码前缀2" width="120"/>
+                            <el-table-column prop="TempRluePrefixSuffix03" label="条码前缀3" width="120"/>
+                            <el-table-column prop="TempRluePrefixSuffix04" label="条码前缀4" width="120"/>
                             <el-table-column prop="TempRluePrefixSuffix05" label="条码后缀1" />
                             <el-table-column prop="TempRluePrefixSuffix06" label="条码后缀2" />
                             <el-table-column prop="TempRlueEnable1" label="客户成品码" />
@@ -594,15 +595,15 @@
                             </div>
                         </div>
                         <el-table :data="editForm.tempcontent03" :style="{ width: '100%' }" stripe border fit
-                            :height="250" size="small" @selection-change="handleSelectionChange">
+                            :height="250" size="small" @selection-change="handleSelectionChange"  @row-dblclick="rowDblclick" >
                             <el-table-column type="selection" align="center" width="50"></el-table-column>
                             <el-table-column type="index" align="center" fixed label="序号" width="55" />
-                            <el-table-column prop="TempRlueName" label="规则名称" width="180" />
-                            <el-table-column prop="TempRlueFormat" label="条码格式" width="180" />
-                            <el-table-column prop="TempRluePrefixSuffix01" label="条码前缀1" />
-                            <el-table-column prop="TempRluePrefixSuffix02" label="条码前缀2" />
-                            <el-table-column prop="TempRluePrefixSuffix03" label="条码前缀3" />
-                            <el-table-column prop="TempRluePrefixSuffix04" label="条码前缀4" />
+                            <el-table-column prop="TempRlueName" label="规则名称" width="100"  fixed/>
+                            <el-table-column prop="TempRlueFormat" label="条码格式" width="180" fixed/>
+                            <el-table-column prop="TempRluePrefixSuffix01" label="条码前缀1" width="120"/>
+                            <el-table-column prop="TempRluePrefixSuffix02" label="条码前缀2" width="120"/>
+                            <el-table-column prop="TempRluePrefixSuffix03" label="条码前缀3" width="120"/>
+                            <el-table-column prop="TempRluePrefixSuffix04" label="条码前缀4" width="120"/>
                             <el-table-column prop="TempRluePrefixSuffix05" label="条码后缀1" />
                             <el-table-column prop="TempRluePrefixSuffix06" label="条码后缀2" />
                             <el-table-column prop="TempRlueEnable1" label="客户成品码" />
@@ -662,15 +663,15 @@
                             </div>
                         </div>
                         <el-table :data="editForm.tempcontent04" :style="{ width: '100%' }" stripe border fit
-                            :height="250" size="small" @selection-change="handleSelectionChange">
+                            :height="250" size="small" @selection-change="handleSelectionChange"  @row-dblclick="rowDblclick" >
                             <el-table-column type="selection" align="center" width="50"></el-table-column>
                             <el-table-column type="index" align="center" fixed label="序号" width="55" />
-                            <el-table-column prop="TempRlueName" label="规则名称" width="180" />
-                            <el-table-column prop="TempRlueFormat" label="条码格式" width="180" />
-                            <el-table-column prop="TempRluePrefixSuffix01" label="条码前缀1" />
-                            <el-table-column prop="TempRluePrefixSuffix02" label="条码前缀2" />
-                            <el-table-column prop="TempRluePrefixSuffix03" label="条码前缀3" />
-                            <el-table-column prop="TempRluePrefixSuffix04" label="条码前缀4" />
+                            <el-table-column prop="TempRlueName" label="规则名称" width="100"  fixed/>
+                            <el-table-column prop="TempRlueFormat" label="条码格式" width="180" fixed/>
+                            <el-table-column prop="TempRluePrefixSuffix01" label="条码前缀1" width="120"/>
+                            <el-table-column prop="TempRluePrefixSuffix02" label="条码前缀2" width="120"/>
+                            <el-table-column prop="TempRluePrefixSuffix03" label="条码前缀3" width="120"/>
+                            <el-table-column prop="TempRluePrefixSuffix04" label="条码前缀4" width="120"/>
                             <el-table-column prop="TempRluePrefixSuffix05" label="条码后缀1" />
                             <el-table-column prop="TempRluePrefixSuffix06" label="条码后缀2" />
                             <el-table-column prop="TempRlueEnable1" label="客户成品码" />
@@ -730,15 +731,15 @@
                             </div>
                         </div>
                         <el-table :data="editForm.tempcontent05" :style="{ width: '100%' }" stripe border fit
-                            :height="250" size="small" @selection-change="handleSelectionChange">
+                            :height="250" size="small" @selection-change="handleSelectionChange"  @row-dblclick="rowDblclick" >
                             <el-table-column type="selection" align="center" width="50"></el-table-column>
                             <el-table-column type="index" align="center" fixed label="序号" width="55" />
-                            <el-table-column prop="TempRlueName" label="规则名称" width="180" />
-                            <el-table-column prop="TempRlueFormat" label="条码格式" width="180" />
-                            <el-table-column prop="TempRluePrefixSuffix01" label="条码前缀1" />
-                            <el-table-column prop="TempRluePrefixSuffix02" label="条码前缀2" />
-                            <el-table-column prop="TempRluePrefixSuffix03" label="条码前缀3" />
-                            <el-table-column prop="TempRluePrefixSuffix04" label="条码前缀4" />
+                            <el-table-column prop="TempRlueName" label="规则名称" width="100"  fixed/>
+                            <el-table-column prop="TempRlueFormat" label="条码格式" width="180" fixed/>
+                            <el-table-column prop="TempRluePrefixSuffix01" label="条码前缀1" width="120"/>
+                            <el-table-column prop="TempRluePrefixSuffix02" label="条码前缀2" width="120"/>
+                            <el-table-column prop="TempRluePrefixSuffix03" label="条码前缀3" width="120"/>
+                            <el-table-column prop="TempRluePrefixSuffix04" label="条码前缀4" width="120"/>
                             <el-table-column prop="TempRluePrefixSuffix05" label="条码后缀1" />
                             <el-table-column prop="TempRluePrefixSuffix06" label="条码后缀2" />
                             <el-table-column prop="TempRlueEnable1" label="客户成品码" />
@@ -751,7 +752,7 @@
             <template #footer>
                 <span class="dialog-footer">
                     <el-button @click="editTempCancel">关闭</el-button>
-                    <el-button type="primary" @click="editTempConfirm"> 保存 </el-button>
+                    <el-button type="primary" @click="editTempConfirm"> 保存 </el-button> 
                 </span>
             </template>
         </el-dialog>
@@ -828,8 +829,6 @@ const pageObj = ref({
 const ProductName = ref("");
 const handleEdit = (row: any) => {
     ProductName.value = row.Template_PartNum;
-    console.log( row.Template_PartNum);
-    
     QueryBarCodeRule_TemContentRule({
         ProductName: row.Template_PartNum,
     }).then((res: any) => {
@@ -1238,8 +1237,8 @@ const addTempCancel = () => {
     addForm.value.tempcontent04 = [];
     addForm.value.tempcontent05 = [];
     addForm.value.tempcontent06 = [];
-    getData()
-     activeName.value="TemplateBox"
+
+    activeName.value = "TemplateBox";
     addTempVisible.value = false;
 };
 //添加保存
@@ -1263,6 +1262,7 @@ const addTempConfirm = () => {
             addForm.value.tempcontent04 = [];
             addForm.value.tempcontent05 = [];
             addForm.value.tempcontent06 = [];
+            getData();
         }
     });
 };
@@ -1277,8 +1277,8 @@ const editTempCancel = () => {
     editForm.value.tempcontent04 = [];
     editForm.value.tempcontent05 = [];
     editForm.value.tempcontent06 = [];
-    activeName.value="TemplateBox"
-    getData()
+    activeName.value = "TemplateBox";
+
     editTempVisible.value = false;
 };
 //添加保存
@@ -1298,7 +1298,8 @@ const editTempConfirm = () => {
             editForm.value.tempcontent05 = [];
             editForm.value.tempcontent06 = [];
             // editTempVisible.value = false;
-            getBarCodeRule_TemContentRule()
+            getBarCodeRule_TemContentRule();
+            getData();
         }
     });
 };
@@ -1336,12 +1337,12 @@ const getBasMaterialData = (val: any) => {
         tempList.value = res.content;
     });
 };
-const tabChange1 = () => { 
+const tabChange = () => {
     formRef.value.resetFields();
 };
-const tabChange2 = () => { 
-    // editFormRef.value.resetFields();
-    formRef.value.resetFields();
+
+const rowDblclick = (row: any) => {
+    // form.value = { ...row };
 };
 const handleSizeChange = (val: any) => {
     pageObj.value.currentPage = 1;
