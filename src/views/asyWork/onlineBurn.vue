@@ -73,35 +73,52 @@
               <span class="ml-5"> 扫描条码</span>
             </div>
             <div class="h-[120px] pt-3 pr-5 pl-5">
-              <el-form
-                class="inbound"
-                ref="formRef"
-                :inline="true"
-                :model="form"
-                label-width="auto"
-                @submit.native.prevent
-              >
-                <el-form-item label="扫描条码" class="mb-2">
-                  <el-input
-                    v-model.trim="barCode"
-                    ref="inputRef"
-                    :autofocus="inputFocus"
-                    style="width: 500px"
-                    placeholder="请扫描条码"
-                    :disabled="isActive"
-                    @keyup.enter.native="getChange"
-                  />
-                </el-form-item>
-                <el-form-item label="" class="mb-2">
-                  <el-input
-                    class="custom-input custom-input-class"
-                    v-model.trim="stopsForm.ContainerName"
-                    ref="inputRef"
-                    style="width: 300px"
-                    disabled
-                  />
-                </el-form-item>
-              </el-form>
+              <div class="flex justify-between">
+                <div>
+                  <el-form
+                    class="inbound"
+                    ref="formRef"
+                    :inline="true"
+                    :model="form"
+                    label-width="auto"
+                    @submit.native.prevent
+                  >
+                    <el-form-item label="扫描条码" class="mb-2">
+                      <el-input
+                        v-model.trim="barCode"
+                        ref="inputRef"
+                        :autofocus="inputFocus"
+                        style="width: 500px"
+                        placeholder="请扫描条码"
+                        :disabled="isActive"
+                        @keyup.enter.native="getChange"
+                      />
+                    </el-form-item>
+                    <el-form-item label="" class="mb-2">
+                      <el-button type="primary" @click="reset">重置</el-button>
+                    </el-form-item>
+                    <el-form-item label="" class="mb-2">
+                      <el-input
+                        class="custom-input custom-input-class"
+                        v-model.trim="stopsForm.ContainerName"
+                        style="width: 300px"
+                        disabled
+                      />
+                    </el-form-item>
+                  </el-form>
+                </div>
+                <div>
+                  <el-form
+                    class="inbound"
+                    ref="formRef"
+                    :inline="true"
+                    :model="form"
+                    label-width="auto"
+                    @submit.native.prevent
+                  >
+                  </el-form>
+                </div>
+              </div>
               <div
                 class="text-xl font-bold text-[#00B400]"
                 v-show="msgType === true || msgTitle === ''"
@@ -150,25 +167,68 @@
         </div>
       </div>
     </div>
-    <el-dialog align-center :append-to-body="true" draggable :close-on-click-modal="false" v-model="viewVisible" @close=""
-      title="?" width="70%">
-      <el-tabs v-model="activeName" type="border-card" class="demo-tabs" >
-        <el-tab-pane label="6236426" name="shelveMaterial" >
-          <el-table class="my-table" border fit :data="popTableData" :style="{ width: '100%' }" :height="400"
-              @selection-change="handleSelectionChange" :row-class-name="tableRowClassName">
-              <el-table-column type="selection" fixed width="55" align="center" />
-              <!-- <el-table-column prop="ENSoftwareName" label="Name" width="250" /> -->
-              <el-table-column prop="CNSoftwareName" label="名称" width="250" />
-              <el-table-column prop="SoftwareVersion" label="版本" />
-            </el-table>
-      </el-tab-pane>
-    </el-tabs>
-      <!-- <template #footer>
+    <el-dialog
+      align-center
+      :append-to-body="true"
+      draggable
+      :close-on-click-modal="false"
+      v-model="viewVisible"
+      @close=""
+      title="选择烧录外部码（上位机）"
+      width="90%"
+    >
+      <el-tabs v-model="activeName" type="border-card" class="demo-tabs">
+        <el-tab-pane label="车机外部码列表" name="shelveMaterial">
+          <el-table
+            ref="taskTableRef"
+            class="my-table"
+            border
+            fit
+            :data="popTableData"
+            :style="{ width: '100%' }"
+            :height="450"
+            @select="selectClick"
+            :row-class-name="tableRowClassName"
+            size="large"
+          >
+            <el-table-column type="selection" fixed width="55" align="center" />
+            <!-- <el-table-column prop="ENSoftwareName" label="Name" width="250" /> -->
+            <el-table-column type="index" width="75" label="序号" />
+            <el-table-column
+              prop="ProgramedDate"
+              width="250"
+              label="烧录时间"
+            >
+                  <template #default="scope">
+                    <div style="font-size: 18px">{{ scope.row.ProgramedDate }}</div>
+                  </template>
+                </el-table-column>
+            <el-table-column
+              prop="tuid"
+              label="tuid"
+              width="350"
+            >
+                  <template #default="scope">
+                    <div style="font-size: 18px">{{ scope.row.tuid }}</div>
+                  </template>
+                </el-table-column>
+            <el-table-column
+              prop="TUIDQRCode"
+              label="车机外部码"
+            >
+                  <template #default="scope">
+                    <div style="font-size: 18px">{{ scope.row.TUIDQRCode }}</div>
+                  </template>
+                </el-table-column>
+          </el-table>
+        </el-tab-pane>
+      </el-tabs>
+      <template #footer>
         <span class="dialog-footer">
-          <el-button @click=""> 取消 </el-button>
-          <el-button type="primary" @click=""> 确定 </el-button>
+          <el-button @click="viewVisible = false"> 取消 </el-button>
+          <el-button type="primary" @click="submit"> 确定 </el-button>
         </span>
-      </template> -->
+      </template>
     </el-dialog>
   </div>
 </template>
@@ -187,7 +247,10 @@ import {
   QueryMoveHistory,
   OrderQuery,
   ueryOrderTUIDQRInfo,
+  GetPLCExternalCodeList,
+  SubmitPLCExternalCode,
 } from "@/api/asyApi";
+import { ElNotification } from "element-plus";
 import {
   ref,
   reactive,
@@ -216,6 +279,7 @@ interface ToolList {
 }
 const appStore = useAppStore();
 const userStore = useUserStoreWithOut();
+const loginName = userStore.getUserInfo;
 const opui = appStore.getOPUIReal();
 const inputRef = ref();
 const inputFocus = ref(true);
@@ -224,8 +288,9 @@ const currentCode = ref("");
 const SoftwareStatus = ref(true);
 const isActive = ref(false);
 const viewVisible = ref(false);
-const activeName=ref('shelveMaterial');
+const activeName = ref("shelveMaterial");
 const changeList = ref([]);
+const taskTableRef = ref();
 const stopsForm = ref<StopsForm>({
   ContainerName: "",
   QrCodeNews: "",
@@ -311,7 +376,7 @@ const columnData1 = reactive([
     align: "1",
   },
 ]);
-const popTableData = ref([])
+const popTableData = ref([]);
 const tableData1 = ref([]);
 const tableHeight = ref(0);
 const pageObj = ref({
@@ -393,6 +458,31 @@ const getOrderData = () => {
   );
 };
 
+//提交
+const submit = () => {
+  if (changeList.value.length === 0) {
+    ElNotification({
+      title: `请选择`,
+      // message: "取消操作",
+      type: "warning",
+    });
+  }
+
+  SubmitPLCExternalCode(stopsForm.value).then((res: any) => {
+    msgTitle.value = res.msg;
+    msgType.value = res.success;
+    if (res.success) {
+      stopsForm.value.ContainerName = "";
+      stopsForm.value.QrCodeNews = "";
+      viewVisible.value = false;
+      isActive.value = false;
+      getHisData();
+    }
+    barCode.value = "";
+    getFocus();
+  });
+};
+
 //获取过站历史记录
 const getHisData = () => {
   QueryMoveHistory(hisForm.value).then((res: any) => {
@@ -469,8 +559,20 @@ const radioChange = (args: any) => {
 const handleSelectionChange = (data: any) => {
   let content = cloneDeep(data);
   // console.log(data);
-  
+
   changeList.value = content;
+};
+
+//重置页面
+const reset = () => {
+  currentCode.value = "";
+  barCode.value = "";
+  msgTitle.value = "";
+  msgType.value = true;
+  stopsForm.value.QrCodeNews = "";
+  stopsForm.value.ContainerName = "";
+  isActive.value = false;
+  popTableData.value = [];
 };
 
 //过站
@@ -492,11 +594,19 @@ const getChange = () => {
         // form.value = { ...res.content[0] };
         // hisForm.value.MfgOrderName = res.content[0].MfgOrderName;
         getHisData();
-        msgTitle.value = `已验证条码${stopsForm.value.ContainerName}，请扫描烧录二维码`;
+        msgTitle.value = `已验证条码${stopsForm.value.ContainerName}，请扫描车机外部码`;
         msgType.value = true;
         if (!SoftwareStatus.value) {
           isActive.value = true;
-          viewVisible.value = true;
+          GetPLCExternalCodeList({
+            OrderName: form.value.MfgOrderName,
+            userAccount: loginName,
+          }).then((res: any) => {
+            if (res.content) {
+              popTableData.value = res.content;
+              viewVisible.value = true;
+            }
+          });
         } else {
           isActive.value = false;
         }
@@ -541,13 +651,60 @@ const getChange = () => {
   // barCode.value = "";
 };
 
+const selectClick = (selection: any, row: any) => {
+  if (selection.length > 1) {
+    let del_row = selection.shift();
+    taskTableRef.value.toggleRowSelection(del_row, false); // 用于多选表格，切换某一行的选中状态，如果使用了第二个参数，则是设置这一行选中与否（selected 为 true 则选中）；第二个参数为true时又变成了多选
+    // console.log(selection[0]);
+    changeList.value = selection[0];
+    stopsForm.value.QrCodeNews = selection[0].TUIDQRCode;
+  } else {
+    // console.log(selection[0]);
+    changeList.value = selection[0];
+    stopsForm.value.QrCodeNews = selection[0].TUIDQRCode;
+  }
+};
+
+const getTextWidth = (str: string) => {
+  let fontSizeNum = 16;
+  let width = 0;
+  const html = document.createElement("span");
+  html.style.cssText = `padding: 0; margin: 0; border: 0; line-height: 1; font-size: ${fontSizeNum}px; font-family: Arial, sans-serif;`;
+  html.innerText = str; // 去除字符串前后的空白字符
+  document.body?.appendChild(html);
+
+  const spanElement = html; // 无需再次查询，直接使用创建的元素
+  if (spanElement) {
+    width = spanElement.offsetWidth;
+    spanElement.remove();
+  }
+  // console.log(width);
+  return width;
+};
+
+const flexColumnWidth = (label: any, prop: any) => {
+  const arr = popTableData?.value.map((x: { [x: string]: any }) => x[prop]);
+  arr.push(label); // 把每列的表头也加进去算
+  // console.log(arr);
+  return getMaxLength(arr) + 25 + "px";
+};
+
+const getMaxLength = (arr: any) => {
+  return arr.reduce((acc: any, item: any) => {
+    if (item) {
+      // console.log(acc,item);
+      const calcLen = getTextWidth(item);
+
+      if (acc < calcLen) {
+        acc = calcLen;
+      }
+    }
+    return acc;
+  }, 0);
+};
+
 //判断是否可选中
-const tableRowClassName = ({
-  row,
-}: {
-  row: any;
-  rowIndex: number;
-}) => {
+const tableRowClassName = ({ row }: { row: any; rowIndex: number }) => {
   // 在这里判断行数据是否符合条件
   // if (row.ENSoftwareName === errorRow.value) {
   //   tableData1.value = tableData1.value;
@@ -687,9 +844,7 @@ const getScreenHeight = () => {
   padding: 5px;
 }
 
-
-
-.demo-tabs.el-tabs--border-card>.el-tabs__header .el-tabs__item {
+.demo-tabs.el-tabs--border-card > .el-tabs__header .el-tabs__item {
   color: #fff;
   font-size: 0.8rem;
   // padding: 0 !important;
@@ -702,9 +857,30 @@ const getScreenHeight = () => {
   // font-weight: bold;
 }
 
-.el-tabs--border-card>.el-tabs__header .el-tabs__item:not(.is-disabled):hover {
+.el-tabs--border-card
+  > .el-tabs__header
+  .el-tabs__item:not(.is-disabled):hover {
   font-size: 0.8rem;
   color: #006487 !important;
   background-color: rgba($color: #fff, $alpha: 0.8);
+}
+
+::v-deep .el-table__header-wrapper {
+  .el-checkbox__inner {
+    display: none;
+  }
+}
+
+//添加全选样式
+::v-deep .el-table .addAllSelectClass .cell::before {
+  content: "选择";
+  // text-align: center;
+  //   margin-left: 5px;
+  //   /** 文本1 */
+  // font-size: 16px;
+  // font-weight: 400;
+  // letter-spacing: 0px;
+  // line-height: 23.17px;
+  // color: rgba(128, 128, 128, 1);
 }
 </style>

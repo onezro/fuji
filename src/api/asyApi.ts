@@ -341,5 +341,25 @@ export function QuerySMTDefectRecordDetail(data: any) {
     });
   }
 
+  //获取上位机上传的tuid清单
+  export function GetPLCExternalCodeList(data: any) {
+    return request({
+      url: "/api/ASYBurn/GetPLCExternalCodeList",
+      method: "post",
+      data
+    });
+  }
+
+  //上位机选择tuid信息
+  export function SubmitPLCExternalCode(data: any) {
+    return request({
+      url: "/api/ASYBurn/SubmitPLCExternalCode",
+      method: "post",
+      data
+    });
+  }
+
+
+
 
 
