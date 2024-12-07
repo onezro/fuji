@@ -13,9 +13,13 @@ import breadcrumb from '@/components/bread/bread.vue'
         <!-- <div class="pr-[15px]">
             <img src="../../assets/logo.png" width="160" alt="">
         </div> -->
-        <div class="pr-[5px] w-[180px]">
+        <div class=" w-[180px]">
             <img src="../../assets/logo.png"  alt="北斗智联">
         </div>
+        <!-- <div class="pr-[5px]">
+            <img src="../../assets/logo-white.svg" width="140px" alt="">
+          
+        </div> -->
         <div class="pr-[10px]">
             <img src="../../assets/logo201.png" width="90px" alt="雨阳">
         </div>
