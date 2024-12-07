@@ -330,5 +330,16 @@ export function QuerySMTDefectRecordDetail(data: any) {
     });
   }
 
+  //查询TUID烧录二维码信息
+  export function ueryOrderTUIDQRInfo(data: any) {
+    return request({
+      url: "/api/ASYBurn/QueryOrderTUIDQRInfo",
+      method: "post",
+      params: {
+        productModel: data,
+      },
+    });
+  }
+
 
 

@@ -101,11 +101,27 @@
         </div>
         <div class="table_container">
           <div class="flex justify-end">
-            <el-input v-model.trim="searchText" size="small" style="width: 250px;" >
+            <!-- <el-input v-model.trim="searchText" size="small" style="width: 250px;" >
               <template #append>
                 <el-button icon="Search" />
               </template>
-            </el-input>
+            </el-input> -->
+          <el-form
+          @submit.native.prevent
+            ref="formRef"
+            class="form flex items-start"
+            :inline="true"
+            size="small"
+            label-width="85px"
+          >
+            <el-form-item label="查询编码" class="mb-0" style="margin-right: 0;">
+            <el-input
+              v-model.trim="searchText"
+              size="small"
+              style="width: 250px"
+              @keyup.enter.native="filterFeedTableData"></el-input>
+            </el-form-item>
+          </el-form>
           </div>
           <el-table :data="filterTableData
             " size="small" stripe border fit :tooltip-effect="'dark'" :height="400" ref="tableRef"
@@ -304,12 +320,13 @@ const orderProps = ref({
   value: "MfgOrderName",
 })
 const searchText = ref("")
-const filterTableData=computed(()=>{
-  if(searchText.value==""){
-    return feedTableData.value
-  }
-  return feedTableData.value.filter((f:any)=>(f.MaterialName.toLowerCase()).includes(searchText.value.toLowerCase()))
-})
+const filterTableData = ref([]);
+// const filterTableData=computed(()=>{
+//   if(searchText.value==""){
+//     return feedTableData.value
+//   }
+//   return feedTableData.value.filter((f:any)=>(f.MaterialName.toLowerCase()).includes(searchText.value.toLowerCase()))
+// })
 // watch(
 
 // );
@@ -410,7 +427,7 @@ const getFeedTableData = (order: any) => {
       // console.log(data);
 
       feedTableData.value = cloneDeep(res.content);
-
+      filterTableData.value = cloneDeep(res.content);
       // OrganData(res.content)
     }
   });
@@ -550,6 +567,17 @@ const applyFor = () => {
     }
   });
 };
+
+//搜索编码
+const filterFeedTableData = () => {
+  if (searchText.value == "") {
+    filterTableData.value = feedTableData.value
+    return
+  }
+  filterTableData.value = feedTableData.value.filter((f: any) =>
+    f.MaterialName.toLowerCase().includes(searchText.value.toLowerCase())
+  );
+}
 
 const dateChange = () => {
   if (date.value !== null && date.value.length !== 0) {

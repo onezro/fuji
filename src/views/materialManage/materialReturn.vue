@@ -307,15 +307,32 @@
         </div>
         <div class="table_container">
           <div class="flex justify-end">
+            <!-- <el-input
+              v-model.trim="searchText"
+              size="small"
+              style="width: 250px"
+              @keyup.enter.native="filterFeedTableData"
+            >
+              <template #append>
+                <el-button @click="filterFeedTableData" icon="Search" />
+              </template>
+            </el-input> -->
+          <el-form
+          @submit.native.prevent
+            ref="formRef"
+            class="form flex items-start"
+            :inline="true"
+            size="small"
+            label-width="85px"
+          >
+            <el-form-item label="查询编码" class="mb-0" style="margin-right: 0;">
             <el-input
               v-model.trim="searchText"
               size="small"
               style="width: 250px"
-            >
-              <template #append>
-                <el-button icon="Search" />
-              </template>
-            </el-input>
+              @keyup.enter.native="filterFeedTableData"></el-input>
+            </el-form-item>
+          </el-form>
           </div>
           <el-table
             ref="table"
@@ -590,17 +607,28 @@ const orderProps = ref({
   value: "MfgOrderName",
 });
 const searchText = ref("");
-const filterTableData = computed(() => {
-  if (searchText.value == "") {
-    return feedTableData.value;
-  }
-  return feedTableData.value.filter((f: any) =>
-    f.CompName.toLowerCase().includes(searchText.value.toLowerCase())
-  );
-});
+const filterTableData = ref([])
+// const filterTableData = computed(() => {
+//   if (searchText.value == "") {
+//     return feedTableData.value;
+//   }
+//   return feedTableData.value.filter((f: any) =>
+//     f.CompName.toLowerCase().includes(searchText.value.toLowerCase())
+//   );
+// });
 // watch(
 
 // );
+//搜索编码
+const filterFeedTableData = () => {
+  if (searchText.value == "") {
+    filterTableData.value = feedTableData.value
+    return
+  }
+  filterTableData.value = feedTableData.value.filter((f: any) =>
+    f.CompName.toLowerCase().includes(searchText.value.toLowerCase())
+  );
+}
 onBeforeMount(() => {});
 
 onMounted(() => {
@@ -737,6 +765,7 @@ const getFeedTableData = (order: any, type: any) => {
       // let data = cloneDeep(feedOrganData(res.content));
       // console.log(data);
       feedTableData.value = res.content;
+      filterTableData.value = res.content;
 
       // feedTableData.value = res.content.map((item:any) => {
       //   return {
