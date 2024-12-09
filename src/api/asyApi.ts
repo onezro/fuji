@@ -342,9 +342,9 @@ export function QuerySMTDefectRecordDetail(data: any) {
   }
 
   //获取上位机上传的tuid清单
-  export function GetPLCExternalCodeList(data: any) {
+  export function GetPLCExternalCode(data: any) {
     return request({
-      url: "/api/ASYBurn/GetPLCExternalCodeList",
+      url: "/api/ASYBurn/GetPLCExternalCode",
       method: "post",
       data
     });
