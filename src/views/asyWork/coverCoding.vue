@@ -70,7 +70,7 @@
                   <el-button type="warning" :disabled="form.MfgOrderName == ''" @click="print">手动打印</el-button>
                   <!-- <el-button type="success" :disabled="form.MfgOrderName == ''" @click="print">补打条码</el-button> -->
                 </div>
-                <div class="text-xl font-bold text-[#00B400]" v-show="msgType === true || msgTitle === ''">
+                <div class="text-xl font-bold"  :style="{ 'color': isGo ? '#00B400' : '#e6a23c' }"  v-show="msgType === true || msgTitle === ''">
                   {{ msgTitle === "" ? "请扫描条码" : msgTitle }}
                 </div>
                 <div class="text-xl font-bold text-[red]" v-show="msgType === false && msgTitle !== ''">
@@ -439,6 +439,7 @@ const isKeyForm = ref({
   userAccount: userStore.getUserInfo,
   txnDate: "",
 });
+const isGo = ref(true)
 
 onBeforeMount(() => {
   clearInterval(timer.value);
@@ -576,14 +577,14 @@ const getChange = () => {
               stopsForm.value.BarCode = barCodeData;
               goStop()
             } else {
-              msgTitle.value = `${barData.value[isNoKeyZero.value]}批次物料剩余为0，请进行上料`;
+              msgTitle.value = `${barData.value[isNoKeyZero.value].MaterialName}批次物料剩余为0，请进行上料`;
               msgType.value = false;
             }
           } else {
             verifyBarCode(barCodeData)
           }
         } else {
-          msgTitle.value = `${barData.value[isKeyEmpty.value]}关键料剩余为0，操作失败`;
+          msgTitle.value = `${barData.value[isKeyEmpty.value].MaterialName}关键料剩余为0，操作失败`;
           msgType.value = false;
         }
       } else {
@@ -612,6 +613,7 @@ const goStop = () => {
   CoverInstallStationMoveOut(stopsForm.value).then((res: any) => {
     msgTitle.value = res.msg;
     msgType.value = res.success;
+    isGo.value=true
     stopsForm.value.BarCode = "";
     stopsForm.value.result = "OK";
     barCode.value = "";
@@ -653,6 +655,7 @@ const verifyBarCode = (barCodeData: any) => {
   JudgeCoverKeyMaterial(data1).then((res: any) => {
     msgTitle.value = res.msg;
     msgType.value = res.success;
+    isGo.value=false
     if (res.success) {
       const keyIndex = barData.value.findIndex(
         (b: any) => b.MaterialName == res.content.ProductName

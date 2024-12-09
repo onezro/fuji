@@ -59,7 +59,8 @@
                   </el-form-item> -->
                   <div></div>
                 </el-form>
-                <div class="text-xl font-bold text-[#00B400]" v-show="msgType === true || msgTitle === ''">
+                <div class="text-xl font-bold" :style="{ 'color': isGo ? '#00B400' : '#e6a23c' }"
+                  v-show="msgType === true || msgTitle === ''">
                   {{ msgTitle === "" ? "请扫描屏材料批次条码" : msgTitle }}
                 </div>
                 <div class="text-xl font-bold text-[red]" v-show="msgType === false && msgTitle !== ''">
@@ -407,17 +408,18 @@ const badColumn = reactive([
     align: "1",
   },
   {
-       text: true,
+    text: true,
     prop: "isDefectReasonDesc",
     label: "不良原因",
     width: "",
-    min:true,
+    min: true,
     align: "1",
   },
 ]);
 const badVisible = ref(false);
 const changeList = ref([]);
 const BadtableData = ref([]);
+const isGo = ref(true)
 
 onBeforeMount(() => {
   getScreenHeight();
@@ -507,7 +509,12 @@ const getChange = () => {
         msgTitle.value = `关键料和批次物料剩余为0，操作失败`;
         return
       }
-      msgTitle.value = `${isKeyZero.value != -1 ? '关键料' : '批次物料'}剩余为0，操作失败`;
+      if(isKeyZero.value != -1 ){
+        msgTitle.value= `关键料${barData.value[isKeyZero.value].MaterialName}剩余为0，操作失败`
+      }
+      if(isNoKeyZero.value!=-1){
+        msgTitle.value=`批次物料${barData.value[isNoKeyZero.value].MaterialName}剩余为0，请进行上料`
+      }
     }
     // if (isKeyZero.value == -1) {
     //   if (isKeyEmpty.value == -1) {
@@ -534,6 +541,7 @@ const goStop = () => {
   CoverSMTCompBindMoveStd(stopsForm.value).then((res: any) => {
     msgTitle.value = res.msg;
     msgType.value = res.success;
+    isGo.value = true
     stopsForm.value.BarCode = "";
     stopsForm.value.result = "OK";
     barCode.value = "";
@@ -575,6 +583,7 @@ const verifyBarCode = (barCodeData: any) => {
   JudgeMaterial(data1).then((res: any) => {
     msgTitle.value = res.msg;
     msgType.value = res.success;
+    isGo.value = false
     if (res.success) {
       const keyIndex = barData.value.findIndex(
         (b: any) => b.MaterialName == res.content.ProductName
@@ -703,7 +712,7 @@ const radioChange = (args: any) => {
       form.value.BD_SoftVersion = args[0].BD_SoftVersion;
 
       form.value.Qty = args[0].Qty;
- 
+
       form.value.ERPOrder = args[0].ERPOrder;
       stopsForm.value.OrderName = args[0].MfgOrderName;
       hisForm.value.MfgOrderName = args[0].MfgOrderName;

@@ -72,7 +72,7 @@
                                 </el-form-item>
                                 <el-form-item label="条码前缀3" prop="TempRluePrefixSuffix03">
                                     <el-input v-model="form.TempRluePrefixSuffix03" style="width: 150px" />
-                                    <el-checkbox v-model="form.TempRlueEnable1" label="是否启用外箱码" class="ml-3" />
+                                    <el-checkbox v-model="form.TempRlueEnable1" label="外箱码" class="ml-3" />
                                 </el-form-item>
                                 <el-form-item label="条码前缀4" prop="TempRluePrefixSuffix04">
                                     <el-input v-model="form.TempRluePrefixSuffix04" style="width: 150px" />
@@ -436,7 +436,7 @@
                                 </el-form-item>
                                 <el-form-item label="条码前缀3" prop="TempRluePrefixSuffix03">
                                     <el-input v-model="form.TempRluePrefixSuffix03" style="width: 150px" />
-                                    <el-checkbox v-model="form.TempRlueEnable1" label="是否启用外箱码" class="ml-3" />
+                                    <el-checkbox v-model="form.TempRlueEnable1" label="外箱码" class="ml-3" />
                                 </el-form-item>
                                 <el-form-item label="条码前缀4" prop="TempRluePrefixSuffix04">
                                     <el-input v-model="form.TempRluePrefixSuffix04" style="width: 150px" />
