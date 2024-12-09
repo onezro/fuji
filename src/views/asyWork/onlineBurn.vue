@@ -348,7 +348,7 @@ const columnData1 = reactive([
     text: true,
     prop: "ContainerName",
     label: "成品条码",
-    width: "",
+    width: "180",
     align: "1",
   },
   {
@@ -363,14 +363,14 @@ const columnData1 = reactive([
     text: true,
     prop: "BD_EmployeeName",
     label: "扫描人",
-    width: "",
+    width: "150",
     align: "1",
   },
   {
     text: true,
     prop: "TxnDate",
     label: "扫描时间",
-    width: "",
+    width: "180",
     align: "1",
   },
 ]);
