@@ -5,53 +5,28 @@
         <el-button type="primary" @click="openAdd" size="small">添加</el-button>
       </div>
 
-      <el-table
-        :data="
-          tableData.slice(
-            (pageObj.currentPage - 1) * pageObj.pageSize,
-            pageObj.currentPage * pageObj.pageSize
-          )
-        "
-        border
-        :height="tableHeight"
-        style="width: 100%"
-        size="small"
-        highlight-current-row
-        @cell-click="cellClick"
-      >
-        <el-table-column
-          type="index"
-          align="center"
-          fixed
-          label="序号"
-          :width="'50'"
-        ></el-table-column>
+      <el-table :data="tableData.slice(
+        (pageObj.currentPage - 1) * pageObj.pageSize,
+        pageObj.currentPage * pageObj.pageSize
+      )
+        " border :height="tableHeight" style="width: 100%" size="small" highlight-current-row @cell-click="cellClick">
+        <el-table-column type="index" align="center" fixed label="序号" :width="'50'"></el-table-column>
         <el-table-column prop="Name" label="名称" width="150" fixed />
         <el-table-column prop="Description" label="描述" width="150" />
         <el-table-column prop="Type" label="类型">
           <template #default="scope">
-            <el-tag
-              :type="scope.row.Type == '0' ? 'primary' : 'warning'"
-              size="small"
-              effect="dark"
-              >{{ scope.row.Type == 0 ? "量具" : "检具" }}</el-tag
-            >
+            <el-tag :type="scope.row.Type == '0' ? 'primary' : 'warning'" size="small" effect="dark">{{ scope.row.Type
+              == 0 ? "量具" : "检具" }}</el-tag>
           </template>
         </el-table-column>
         <el-table-column prop="Model" label="型号" width="150" />
         <el-table-column prop="Specification" label="规格" width="150" />
         <el-table-column prop="PrecisionLevel" label="精度等级" width="150" />
-        <el-table-column
-          prop="NextCalibrationDate"
-          label="下次校准日期"
-          width="150"
-        >
+        <el-table-column prop="NextCalibrationDate" label="下次校准日期" width="150">
           <template #default="scope">
-            <span
-              :class="[
-                computedDate(scope.row.NextCalibrationDate) ? '' : 'text-[red]',
-              ]"
-            >
+            <span :class="[
+              computedDate(scope.row.NextCalibrationDate) ? '' : 'text-[red]',
+            ]">
               {{ scope.row.NextCalibrationDate }}
             </span>
           </template>
@@ -59,96 +34,48 @@
         <el-table-column prop="Department" label="使用部门" width="150" />
         <el-table-column prop="Status" label="状态" width="100">
           <template #default="scope">
-            <el-tag effect="light" v-if="scope.row.Status == 0" type="primary"
-              >正常使用</el-tag
-            >
-            <el-tag effect="light" v-if="scope.row.Status == 1" type="warning"
-              >闲置</el-tag
-            >
-            <el-tag effect="light" v-if="scope.row.Status == 2" type="danger"
-              >报废</el-tag
-            >
-            <el-tag effect="light" v-if="scope.row.Status == 3" type="info"
-              >其他</el-tag
-            >
+            <el-tag effect="light" v-if="scope.row.Status == 0" type="primary">正常使用</el-tag>
+            <el-tag effect="light" v-if="scope.row.Status == 1" type="warning">闲置</el-tag>
+            <el-tag effect="light" v-if="scope.row.Status == 2" type="danger">报废</el-tag>
+            <el-tag effect="light" v-if="scope.row.Status == 3" type="info">其他</el-tag>
             <!-- <el-tag :style="{ marginRight: '6px' }" type="danger">Tag 5</el-tag> -->
           </template>
         </el-table-column>
         <el-table-column prop="UpdateBy" label="更新人" width="150" />
         <el-table-column prop="UpdateOn" label="更新时间" width="150" />
-        <el-table-column
-          prop="LastCalibrationTime"
-          label="已校准日期"
-          width="150"
-        />
+        <el-table-column prop="LastCalibrationTime" label="已校准日期" width="150" />
 
         <el-table-column label="操作" width="120" fixed="right" align="center">
           <template #default="scope">
             <el-tooltip content="编辑" placement="top">
-              <el-button
-                type="primary"
-                icon="EditPen"
-                size="small"
-                @click.prevent="handleEdit(scope.row)"
-              ></el-button>
+              <el-button type="primary" icon="EditPen" size="small" @click.prevent="handleEdit(scope.row)"></el-button>
             </el-tooltip>
             <el-tooltip content="校验" placement="top">
-              <el-button
-                type="warning"
-                icon="Document"
-                size="small"
-                :disabled="
-                  scope.row.NextCalibrationDate == null ||
-                  scope.row.NextCalibrationDate == '' ||
-                  scope.row.NextCalibrationDate == undefined
-                "
-                @click.prevent="handleAdd(scope.row)"
-              ></el-button>
+              <el-button type="warning" icon="Document" size="small" :disabled="scope.row.NextCalibrationDate == null ||
+                scope.row.NextCalibrationDate == '' ||
+                scope.row.NextCalibrationDate == undefined
+                " @click.prevent="handleAdd(scope.row)"></el-button>
             </el-tooltip>
           </template>
         </el-table-column>
       </el-table>
       <div class="block mt-2 mb-2">
-        <el-pagination
-          align="center"
-          background
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-          :current-page="pageObj.currentPage"
-          :page-size="pageObj.pageSize"
-          :page-sizes="[15, 30, 50, 100, 150]"
-          layout="total,sizes, prev, pager, next"
-          :total="tableData.length"
-        >
+        <el-pagination align="center" background @size-change="handleSizeChange" @current-change="handleCurrentChange"
+          :current-page="pageObj.currentPage" :page-size="pageObj.pageSize" :page-sizes="[15, 30, 50, 100, 150]"
+          layout="total,sizes, prev, pager, next" :total="tableData.length">
         </el-pagination>
       </div>
 
-      <table-temp
-        :show-index="true"
-        size="small"
-        :tableData="tableData1"
-        :tableHeight="tableHeight1"
-        :columnData="columnData1"
-      ></table-temp>
+      <table-temp :show-index="true" size="small" :tableData="tableData1" :tableHeight="tableHeight1"
+        :columnData="columnData1"></table-temp>
     </el-card>
-    <el-dialog
-      align-center
-      :append-to-body="true"
-      :close-on-click-modal="false"
-      v-model="addVisible"
-      title="添加"
-      width="800px"
-      @close="addCacle"
-    >
+    <el-dialog align-center :append-to-body="true" :close-on-click-modal="false" v-model="addVisible" title="添加"
+      width="800px" @close="addCacle">
       <el-form ref="formRef" :model="form" label-width="auto">
         <el-row>
           <el-col :span="12">
             <el-form-item label="类型" prop="Type">
-              <el-select
-                v-model="form.Type"
-                placeholder=""
-                style="width: 240px"
-              >
+              <el-select v-model="form.Type" placeholder="" style="width: 240px">
                 <el-option label="量具" value="0" />
                 <el-option label="检具" value="1" />
               </el-select>
@@ -156,42 +83,26 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="名称" prop="Name">
-              <el-input
-                v-model="form.Name"
-                style="width: 240px"
-                placeholder=""
-              />
+              <el-input v-model="form.Name" style="width: 240px" placeholder="" />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="12">
             <el-form-item label="描述" prop="Description">
-              <el-input
-                v-model="form.Description"
-                style="width: 240px"
-                placeholder=""
-              />
+              <el-input v-model="form.Description" style="width: 240px" placeholder="" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="型号" prop="Model">
-              <el-input
-                v-model="form.Model"
-                style="width: 240px"
-                placeholder=""
-              />
+              <el-input v-model="form.Model" style="width: 240px" placeholder="" />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="12">
             <el-form-item label="规格" prop="Specification">
-              <el-input
-                v-model="form.Specification"
-                style="width: 240px"
-                placeholder=""
-              />
+              <el-input v-model="form.Specification" style="width: 240px" placeholder="" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -207,33 +118,20 @@
         <el-row>
           <el-col :span="12">
             <el-form-item label="使用部门" prop="Department">
-              <el-input
-                v-model="form.Department"
-                style="width: 240px"
-                placeholder=""
-              />
+              <el-input v-model="form.Department" style="width: 240px" placeholder="" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="下次校准日期" prop="NextCalibrationDate">
-              <el-date-picker
-                v-model="form.NextCalibrationDate"
-                value-format="YYYY-MM-DD"
-                style="width: 240px"
-                type="date"
-                placeholder=""
-              />
+              <el-date-picker v-model="form.NextCalibrationDate" value-format="YYYY-MM-DD" style="width: 240px"
+                type="date" placeholder="" />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="12">
             <el-form-item label="状态" prop="Status">
-              <el-select
-                v-model="form.Status"
-                placeholder=""
-                style="width: 240px"
-              >
+              <el-select v-model="form.Status" placeholder="" style="width: 240px">
                 <el-option label="正常使用" value="0" />
                 <el-option label="闲置" value="1" />
                 <el-option label="报废" value="2" />
@@ -243,13 +141,7 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="备注" prop="Remark">
-              <el-input
-                v-model="form.Remark"
-                style="width: 240px"
-                placeholder=""
-                type="textarea"
-                :rows="4"
-              />
+              <el-input v-model="form.Remark" style="width: 240px" placeholder="" type="textarea" :rows="4" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -262,24 +154,13 @@
         </span>
       </template>
     </el-dialog>
-    <el-dialog
-      align-center
-      :append-to-body="true"
-      :close-on-click-modal="false"
-      v-model="editVisible"
-      title="修改"
-      width="800px"
-      @close="editCacle"
-    >
+    <el-dialog align-center :append-to-body="true" :close-on-click-modal="false" v-model="editVisible" title="修改"
+      width="800px" @close="editCacle">
       <el-form ref="editFormRef" :model="editForm" label-width="auto">
         <el-row>
           <el-col :span="12">
             <el-form-item label="类型" prop="Type">
-              <el-select
-                v-model="editForm.Type"
-                placeholder=""
-                style="width: 240px"
-              >
+              <el-select v-model="editForm.Type" placeholder="" style="width: 240px">
                 <el-option label="量具" value="0" />
                 <el-option label="检具" value="1" />
               </el-select>
@@ -287,42 +168,26 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="名称" prop="Name">
-              <el-input
-                v-model="editForm.Name"
-                style="width: 240px"
-                placeholder=""
-              />
+              <el-input v-model="editForm.Name" style="width: 240px" placeholder="" />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="12">
             <el-form-item label="描述" prop="Description">
-              <el-input
-                v-model="editForm.Description"
-                style="width: 240px"
-                placeholder=""
-              />
+              <el-input v-model="editForm.Description" style="width: 240px" placeholder="" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="型号" prop="Model">
-              <el-input
-                v-model="editForm.Model"
-                style="width: 240px"
-                placeholder=""
-              />
+              <el-input v-model="editForm.Model" style="width: 240px" placeholder="" />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="12">
             <el-form-item label="规格" prop="Specification">
-              <el-input
-                v-model="editForm.Specification"
-                style="width: 240px"
-                placeholder=""
-              />
+              <el-input v-model="editForm.Specification" style="width: 240px" placeholder="" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -336,35 +201,21 @@
         <el-row>
           <el-col :span="12">
             <el-form-item label="使用部门" prop="Department">
-              <el-input
-                v-model="editForm.PrecisionLevel"
-                style="width: 240px"
-                placeholder=""
-              />
+              <el-input v-model="editForm.PrecisionLevel" style="width: 240px" placeholder="" />
               <!-- <el-input v-model="editForm.Department" style="width: 240px" placeholder="" /> -->
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="下次校准日期" prop="NextCalibrationDate">
-              <el-date-picker
-                :disabled="!editForm.IsSet"
-                v-model="editForm.NextCalibrationDate"
-                value-format="YYYY-MM-DD"
-                style="width: 240px"
-                type="date"
-                placeholder=""
-              />
+              <el-date-picker :disabled="!editForm.IsSet" v-model="editForm.NextCalibrationDate"
+                value-format="YYYY-MM-DD" style="width: 240px" type="date" placeholder="" />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="12">
             <el-form-item label="状态" prop="Status">
-              <el-select
-                v-model="editForm.Status"
-                placeholder=""
-                style="width: 240px"
-              >
+              <el-select v-model="editForm.Status" placeholder="" style="width: 240px">
                 <el-option label="正常使用" value="0" />
                 <el-option label="闲置" value="1" />
                 <el-option label="报废" value="2" />
@@ -374,13 +225,7 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="备注" prop="Remark">
-              <el-input
-                v-model="editForm.Remark"
-                style="width: 240px"
-                placeholder=""
-                type="textarea"
-                :rows="4"
-              />
+              <el-input v-model="editForm.Remark" style="width: 240px" placeholder="" type="textarea" :rows="4" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -393,65 +238,32 @@
         </span>
       </template>
     </el-dialog>
-    <el-dialog
-      align-center
-      :append-to-body="true"
-      :close-on-click-modal="false"
-      v-model="setVisible"
-      title="校验"
-      width="400px"
-      @close="setCacle"
-    >
+    <el-dialog align-center :append-to-body="true" :close-on-click-modal="false" v-model="setVisible" title="校验"
+      width="450px" @close="setCacle">
       <el-form ref="setFormRef" :model="setForm" label-width="auto">
         <el-form-item label="校验结果" prop="Result">
-          <el-select
-            v-model="setForm.Result"
-            placeholder=""
-            style="width: 240px"
-          >
+          <el-select v-model="setForm.Result" placeholder="" style="width: 300px">
             <el-option label="OK" value="OK" />
             <el-option label="NG" value="NG" />
           </el-select>
           <!-- <el-input v-model="setForm.Result" style="width: 240px" placeholder="" /> -->
         </el-form-item>
         <el-form-item label="校验测试结果数据" prop="ResultData">
-          <el-input
-            v-model="setForm.ResultData"
-            style="width: 240px"
-            placeholder=""
-          />
+          <el-input v-model="setForm.ResultData" style="width: 300px"  type="textarea" placeholder="" :rows="4"/>
         </el-form-item>
         <el-form-item label="下次校准日期" prop="NextCalibrationDate">
-          <el-date-picker
-            v-model="setForm.NextCalibrationDate"
-            value-format="YYYY-MM-DD"
-            :disabled-date="disabledDate"
-            style="width: 240px"
-            type="date"
-            placeholder=""
-          />
+          <el-date-picker v-model="setForm.NextCalibrationDate" value-format="YYYY-MM-DD" :disabled-date="disabledDate"
+            style="width: 300px" type="date" placeholder="" />
         </el-form-item>
-        <!-- <el-form-item label="描述" prop="Desc">
-          <el-input v-model="setForm.Desc" style="width: 240px" placeholder="" />
+     
+        <!-- <el-form-item label="是否强制" prop="IsForce">
+          <el-switch v-model="setForm.IsForce" inline-prompt active-text="是" inactive-text="否" :active-value="true"
+            :inactive-value="false" />
+      
         </el-form-item> -->
-        <el-form-item label="是否强制" prop="IsForce">
-          <el-switch v-model="setForm.IsForce" inline-prompt active-text="是" inactive-text="否"
-          :active-value="true" :inactive-value="false" />
-          <!-- <el-input
-            v-model="setForm.Desc"
-            style="width: 240px"
-            placeholder=""
-          /> -->
-        </el-form-item>
 
         <el-form-item label="备注" prop="Remark">
-          <el-input
-            v-model="setForm.Remark"
-            style="width: 240px"
-            placeholder=""
-            type="textarea"
-            :rows="4"
-          />
+          <el-input v-model="setForm.Remark" style="width: 300px" placeholder="" type="textarea" :rows="4" />
         </el-form-item>
       </el-form>
 
@@ -691,7 +503,7 @@ const columnData1 = reactive([
     text: true,
     prop: "CreatedOn",
     label: "校准日期",
-    width: "",
+    width: "150",
     // min: true,
     align: "1",
   },
@@ -699,7 +511,7 @@ const columnData1 = reactive([
     text: true,
     prop: "CreatedBy",
     label: "操作人",
-    width: "",
+    width: "120",
     // min: true,
     align: "1",
   },
@@ -736,7 +548,7 @@ const columnData1 = reactive([
     text: true,
     prop: "NextCalibrationDate",
     label: "下次校准日期",
-    width: "",
+    width: "100",
     // min: true,
     align: "1",
   },
@@ -862,8 +674,6 @@ const editSumbit = () => {
   });
 };
 const handleAdd = (row: any) => {
-  // console.log(row);
-
   GetCalibrationRecordList(getRecordForm.value).then((res: any) => {
     tableData1.value = res.content;
     if (computedDate(row.NextCalibrationDate)) {
@@ -875,6 +685,7 @@ const handleAdd = (row: any) => {
         .then(() => {
           setForm.value.GaugeToolID = row.ID;
           getRecordForm.value.GaugeToolID = row.ID;
+          setForm.value.IsForce=true
           setVisible.value = true;
         })
         .catch(() => {
@@ -887,6 +698,7 @@ const handleAdd = (row: any) => {
     } else {
       setForm.value.GaugeToolID = row.ID;
       getRecordForm.value.GaugeToolID = row.ID;
+      setForm.value.IsForce=false
       setVisible.value = true;
     }
   });
