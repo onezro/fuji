@@ -283,7 +283,7 @@
                 >
                   <span class="ml-5">不良品拆解</span>
                 </div>
-                <table-tem
+                <!-- <table-tem
                   :showIndex="true"
                   :tableData="qtytableData"
                   :tableHeight="'300'"
@@ -291,7 +291,72 @@
                   :pageObj="qtypageObj"
                   @handleSizeChange="handleSizeChange1"
                   @handleCurrentChange="handleCurrentChange1"
-                ></table-tem>
+                ></table-tem> -->
+                <el-table
+                  ref="taskTableRef"
+                  class="test"
+                  stripe
+                  border
+                  :data="
+                    qtytableData.slice(
+                      (qtypageObj.currentPage - 1) * qtypageObj.pageSize,
+                      qtypageObj.currentPage * qtypageObj.pageSize
+                    )
+                  "
+                  style="width: 100%"
+                  :tableHeight="'300'"
+                  @handleSizeChange="handleSizeChange1"
+                  @handleCurrentChange="handleCurrentChange1"
+                >
+                  <el-table-column
+                    prop="ContainerName"
+                    align="center"
+                    label="MES屏条码"
+                    :min-width="flexColumnWidth('MES屏条码', 'ContainerName')"
+                  >
+                  </el-table-column>
+                  <el-table-column
+                    prop="MfgOrderName"
+                    align="center"
+                    label="生产计划号"
+                    :min-width="flexColumnWidth('生产计划号', 'MfgOrderName')"
+                  >
+                  </el-table-column>
+                  <el-table-column
+                    prop="BindContainerName"
+                    align="center"
+                    label="供应商条码"
+                    :min-width="flexColumnWidth('供应商条码', 'BindContainerName')"
+                  >
+                  </el-table-column>
+                  <el-table-column
+                    prop="State"
+                    align="center"
+                    label="状态"
+                    :min-width="flexColumnWidth('状态', 'State')"
+                  >
+                    <template #default="scope">
+                      <div>{{ scope.row.State === 1 ? "报废" : "" }}</div>
+                    </template>
+                  </el-table-column>
+                  <el-table-column
+                    prop="State"
+                    align="center"
+                    label="状态"
+                    width="80"
+                  >
+                    <template #default="scope">
+                      <el-tooltip
+                        class="box-item"
+                        effect="dark"
+                        content="报废"
+                        placement="top-start"
+                      >
+                        <el-button type="danger" icon="Delete" size="small" :disabled="scope.row.State === 1"></el-button>
+                      </el-tooltip>
+                    </template>
+                  </el-table-column>
+                </el-table>
               </div>
               <template #footer>
                 <span class="dialog-footer">
@@ -624,6 +689,20 @@ const qtycolumnData = reactive([
     prop: "BindContainerName",
     label: "供应商条码",
     width: "",
+    min: true,
+    align: "1",
+  },
+  {
+    text: false,
+    tag: true,
+    tagType: "number",
+    tagItem: [
+      { text: "", type: "primary", number: 0 },
+      { text: "报废", type: "primary", number: 1 },
+    ],
+    prop: "Status",
+    label: "状态",
+    width: "80",
     min: true,
     align: "1",
   },

@@ -90,11 +90,10 @@
                         :autofocus="inputFocus"
                         style="width: 500px"
                         placeholder="请扫描条码"
-                        :disabled="isActive"
                         @keyup.enter.native="getChange"
                       />
                     </el-form-item>
-                    <el-form-item label="" class="mb-2">
+                    <!-- <el-form-item label="" class="mb-2">
                       <el-button type="primary" @click="reset">重置</el-button>
                     </el-form-item>
                     <el-form-item label="" class="mb-2">
@@ -104,7 +103,7 @@
                         style="width: 300px"
                         disabled
                       />
-                    </el-form-item>
+                    </el-form-item> -->
                   </el-form>
                 </div>
                 <div>
@@ -167,7 +166,7 @@
         </div>
       </div>
     </div>
-    <el-dialog
+    <!-- <el-dialog
       align-center
       :append-to-body="true"
       draggable
@@ -192,7 +191,6 @@
             size="large"
           >
             <el-table-column type="selection" fixed width="55" align="center" />
-            <!-- <el-table-column prop="ENSoftwareName" label="Name" width="250" /> -->
             <el-table-column type="index" width="75" label="序号" />
             <el-table-column
               prop="ProgramedDate"
@@ -229,7 +227,7 @@
           <el-button type="primary" @click="submit"> 确定 </el-button>
         </span>
       </template>
-    </el-dialog>
+    </el-dialog> -->
   </div>
 </template>
 
@@ -544,11 +542,11 @@ const radioChange = (args: any) => {
       form.value.ERPOrder = args[0].ERPOrder;
       stopsForm.value.OrderName = args[0].MfgOrderName;
       hisForm.value.MfgOrderName = args[0].MfgOrderName;
-      ueryOrderTUIDQRInfo(args[0].BD_ProductModel).then((data: any) => {
-        if (data.content) {
-          SoftwareStatus.value = data.content.IsTUIDQRCode;
-        }
-      });
+      // ueryOrderTUIDQRInfo(args[0].BD_ProductModel).then((data: any) => {
+      //   if (data.content) {
+      //     SoftwareStatus.value = data.content.IsTUIDQRCode;
+      //   }
+      // });
     } else {
     }
     getHisData();
@@ -564,16 +562,16 @@ const handleSelectionChange = (data: any) => {
 };
 
 //重置页面
-const reset = () => {
-  currentCode.value = "";
-  barCode.value = "";
-  msgTitle.value = "";
-  msgType.value = true;
-  stopsForm.value.QrCodeNews = "";
-  stopsForm.value.ContainerName = "";
-  isActive.value = false;
-  popTableData.value = [];
-};
+// const reset = () => {
+//   currentCode.value = "";
+//   barCode.value = "";
+//   msgTitle.value = "";
+//   msgType.value = true;
+//   stopsForm.value.QrCodeNews = "";
+//   stopsForm.value.ContainerName = "";
+//   isActive.value = false;
+//   popTableData.value = [];
+// };
 
 //过站
 const getChange = () => {
@@ -586,30 +584,37 @@ const getChange = () => {
       ContainerName: barCodeData,
       workstationName: opui.station,
       userAccount: userStore.getUserInfo,
+      MfgLineName: opui.line
     }).then((res: any) => {
       msgTitle.value = res.msg;
       msgType.value = res.success;
       if (res.success) {
+        if(!res.content.IsTUIDQRCode) {
+          msgTitle.value = res.msg;
+          msgType.value = true;
+          barCode.value = '';
+          getHisData();
+          return;
+        }
         stopsForm.value.ContainerName = barCodeData;
         // form.value = { ...res.content[0] };
         // hisForm.value.MfgOrderName = res.content[0].MfgOrderName;
-        getHisData();
-        msgTitle.value = `已验证条码${stopsForm.value.ContainerName}，请扫描车机外部码`;
+        msgTitle.value = res.msg;
         msgType.value = true;
-        if (!SoftwareStatus.value) {
-          isActive.value = true;
-          GetPLCExternalCodeList({
-            OrderName: form.value.MfgOrderName,
-            userAccount: loginName,
-          }).then((res: any) => {
-            if (res.content) {
-              popTableData.value = res.content;
-              viewVisible.value = true;
-            }
-          });
-        } else {
-          isActive.value = false;
-        }
+        // if (!SoftwareStatus.value) {
+        //   isActive.value = true;
+        //   GetPLCExternalCodeList({
+        //     OrderName: form.value.MfgOrderName,
+        //     userAccount: loginName,
+        //   }).then((res: any) => {
+        //     if (res.content) {
+        //       popTableData.value = res.content;
+        //       viewVisible.value = true;
+        //     }
+        //   });
+        // } else {
+        //   isActive.value = false;
+        // }
       } else {
         stopsForm.value.ContainerName = "";
       }
