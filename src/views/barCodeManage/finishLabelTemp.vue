@@ -1069,9 +1069,9 @@ const form = ref({
     TempRluePrefixSuffix04: "",
     TempRluePrefixSuffix05: "",
     TempRluePrefixSuffix06: "",
-    TempRlueEnable1: true,
+    TempRlueEnable1: false,
     TempRlueEnable2: true,
-    TempRlueEnable3: true,
+    TempRlueEnable3: false,
 });
 const addFormRef = ref();
 const editFormRef = ref();
@@ -1338,6 +1338,13 @@ const getBasMaterialData = (val: any) => {
     });
 };
 const tabChange = () => {
+    if(activeName.value=="TemplateBox"){
+        form.value.TempRlueEnable2=true
+        form.value.TempRlueEnable3=false
+    }else{
+        form.value.TempRlueEnable2=false
+        form.value.TempRlueEnable3=true
+    }
     formRef.value.resetFields();
 };
 
