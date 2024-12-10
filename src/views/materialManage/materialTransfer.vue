@@ -688,6 +688,31 @@ const orderChange = (data: any) => {
     });
     return;
   }
+  if(form.value.MfgOrderName === transferForm.value.MfgOrderName) {
+    form.value.MfgOrderName = ''
+      form.value.PlannedStartDate = '';
+      form.value.PlannedCompletionDate = '';
+      form.value.Qty = 0;
+      form.value.ProductName = '';
+      form.value.BD_ProjectNo = '';
+      form.value.BD_ProductModel = '';
+      form.value.ProductDesc = '';
+      form.value.UOMName = '';
+      form.value.OrderStatusName = '';
+      form.value.OrderStatusDesc = '';
+      form.value.MfgLineName = '';
+      form.value.MfgLineDesc = '';
+      form.value.WorkCenterName = '';
+      form.value.wcDescription = '';
+      form.value.ERPOrder = '';
+      selectType.value = '';
+    ElNotification({
+      title: "提示信息",
+      message: "不能选择同一个单号",
+      type: "warning",
+    });
+    return;
+  }
   orderList.value.forEach((item: any) => {
     if (item.MfgOrderName === data) {
       form.value.MfgOrderName = item.MfgOrderName;
@@ -719,6 +744,19 @@ const transferChange = (data: any) => {
     ElNotification({
       title: "提示信息",
       message: "未找到此生产计划号",
+      type: "warning",
+    });
+    return;
+  }
+  if(form.value.MfgOrderName === transferForm.value.MfgOrderName) {
+    transferForm.value.MfgOrderName = ''
+      transferForm.value.ProductName = '';
+      transferForm.value.BD_ProductModel = '';
+      transferForm.value.ProductDesc = '';
+      transSelectType.value = '';
+    ElNotification({
+      title: "提示信息",
+      message: "不能选择同一个单号",
       type: "warning",
     });
     return;
@@ -778,6 +816,14 @@ const getHistory = () => {
 };
 //根据生产计划号获取物料信息
 const getFeedTableData = () => {
+  if(transSelectType.value === '' || selectType.value === '') {
+    ElNotification({
+      title: "提示信息",
+      message: "请先选择单号",
+      type: "warning",
+    });
+    return;
+  }
   QueryChangeOrderMaterialRequired({
     FromMfgOrder: selectOrder.value,
     FromOrderType: selectType.value,
