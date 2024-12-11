@@ -285,7 +285,7 @@ const columnData = reactive([
 const viewColumnData = reactive([
   {
     text: true,
-    prop: "Reel_id",
+    prop: "ReelId",
     label: "物料批次条码",
     width: "",
     min: true,
@@ -309,7 +309,7 @@ const viewColumnData = reactive([
   },
   {
     text: true,
-    prop: "MaterialName",
+    prop: "part_number",
     label: "物料编码",
     width: "",
     min: true,
@@ -317,7 +317,7 @@ const viewColumnData = reactive([
   },
   {
     text: true,
-    prop: "MaterialDesc",
+    prop: "part_number",
     label: "物料描述",
     width: "250",
     // min: true,
@@ -325,7 +325,7 @@ const viewColumnData = reactive([
   },
   {
     text: true,
-    prop: "Shelf_id",
+    prop: "shelf_id",
     label: "货架号",
     width: "",
     min: true,
@@ -333,7 +333,7 @@ const viewColumnData = reactive([
   },
   {
     text: true,
-    prop: "Position_info",
+    prop: "BinCode",
     label: "储位编号",
     width: "",
     min: true,
