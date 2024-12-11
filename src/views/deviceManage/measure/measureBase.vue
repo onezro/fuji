@@ -38,7 +38,6 @@
             <el-tag effect="light" v-if="scope.row.Status == 1" type="warning">闲置</el-tag>
             <el-tag effect="light" v-if="scope.row.Status == 2" type="danger">报废</el-tag>
             <el-tag effect="light" v-if="scope.row.Status == 3" type="info">其他</el-tag>
-            <!-- <el-tag :style="{ marginRight: '6px' }" type="danger">Tag 5</el-tag> -->
           </template>
         </el-table-column>
         <el-table-column prop="UpdateBy" label="更新人" width="150" />
@@ -65,9 +64,28 @@
           layout="total,sizes, prev, pager, next" :total="tableData.length">
         </el-pagination>
       </div>
-
-      <table-temp :show-index="true" size="small" :tableData="tableData1" :tableHeight="tableHeight1"
-        :columnData="columnData1"></table-temp>
+      <el-table :data="tableData1" border :height="tableHeight1" style="width: 100%" size="small" >
+        <el-table-column prop="CreatedOn" label="校准日期" width="150" />
+        <el-table-column prop="CreatedBy" label="操作人" width="120" />
+        <el-table-column prop="IsForce" label="强制更新" width="80" >
+          <template #default="scope">
+          <el-tag effect="light" v-if="scope.row.IsForce == false" type="primary">否</el-tag>
+          <el-tag effect="light" v-if="scope.row.IsForce == true" type="warning">是</el-tag>
+        </template>
+        </el-table-column>
+        <el-table-column prop="Result" label="校验结果" width="80" >
+          <template #default="scope">
+          <el-tag effect="plain" v-if="scope.row.Result == 'OK'" type="success">OK</el-tag>
+          <el-tag effect="plain" v-if="scope.row.Result == 'NG'" type="error">NG</el-tag>
+        </template>
+        </el-table-column>
+        <el-table-column prop="ResultData" label="校准测试结果数据" />
+        <el-table-column prop="NextCalibrationDate" label="下次校准日期" width="100"/>
+        <el-table-column prop="Remark" label="备注" />
+        <el-table-column prop="Annex" label="附件" width="附件" />
+      </el-table>
+      <!-- <table-temp :show-index="true" size="small" :tableData="tableData1" :tableHeight="tableHeight1"
+        :columnData="columnData1"></table-temp> -->
     </el-card>
     <el-dialog align-center :append-to-body="true" :close-on-click-modal="false" v-model="addVisible" title="添加"
       width="800px" @close="addCacle">
@@ -255,13 +273,6 @@
           <el-date-picker v-model="setForm.NextCalibrationDate" value-format="YYYY-MM-DD" :disabled-date="disabledDate"
             style="width: 300px" type="date" placeholder="" />
         </el-form-item>
-     
-        <!-- <el-form-item label="是否强制" prop="IsForce">
-          <el-switch v-model="setForm.IsForce" inline-prompt active-text="是" inactive-text="否" :active-value="true"
-            :inactive-value="false" />
-      
-        </el-form-item> -->
-
         <el-form-item label="备注" prop="Remark">
           <el-input v-model="setForm.Remark" style="width: 300px" placeholder="" type="textarea" :rows="4" />
         </el-form-item>
@@ -308,21 +319,7 @@ const pageObj = ref({
 });
 const addVisible = ref(false);
 const getForm = ref({
-  // ID: "",
-  // Type: "",
-  // Name: "",
-  // Description: "",
-  // Model: "",
-  // Specification: "",
-  // PrecisionLevel: 0,
-  // NextCalibrationDate: "",
-  // Department: "",
-  // Status: 0,
-  // CreatedOn: "",
-  // CreatedBy: "",
-  // UpdateOn: "",
-  // UpdateBy: "",
-  // Remark: "",
+
 });
 const form = ref({
   ID: "",
@@ -524,7 +521,7 @@ const columnData1 = reactive([
     // align: "1",
     text: false,
     prop: "Result",
-    label: "校准结果",
+    label: "Result",
     min: true,
     align: "center",
     width: "80px",
@@ -586,6 +583,7 @@ const setForm = ref({
   Annex: "",
   IsForce: true,
   NextCalibrationDate: "",
+  PlanCalibrationDate:""
 });
 const date1 = ref("");
 const validateEndDate = (rule: any, value: any, callback: any) => {
@@ -674,6 +672,7 @@ const editSumbit = () => {
   });
 };
 const handleAdd = (row: any) => {
+  setForm.value.PlanCalibrationDate=row.NextCalibrationDate
   GetCalibrationRecordList(getRecordForm.value).then((res: any) => {
     tableData1.value = res.content;
     if (computedDate(row.NextCalibrationDate)) {

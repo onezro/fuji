@@ -59,7 +59,7 @@
                   </el-form-item>
                   <div></div>
                 </el-form>
-                <div class="text-xl font-bold text-[#00B400]" v-show="msgType === true || msgTitle === ''">
+                <div class="text-xl font-bold "  :style="{ 'color': isGo ? '#00B400' : '#e6a23c' }" v-show="msgType === true || msgTitle === ''">
                   {{ msgTitle === "" ? "请扫描屏材料批次条码" : msgTitle }}
                 </div>
                 <div class="text-xl font-bold text-[red]" v-show="msgType === false && msgTitle !== ''">
@@ -414,6 +414,7 @@ const badColumn = reactive([
 const badVisible = ref(false);
 const changeList = ref([]);
 const BadtableData = ref([]);
+const isGo = ref(true)
 
 onBeforeMount(() => {
   getScreenHeight();
@@ -496,14 +497,6 @@ const getChange = () => {
       }
     } else {
       if (stopsForm.value.result == "OK") {
-        // const isKeyZero = barData.value.findIndex(
-        //   (b: any) =>
-        //     b.IssueControl == 1 && (b.remainQty == 0 || b.remainQty == null)
-        // );
-        // const isNoKeyZero = barData.value.findIndex(
-        //   (b: any) =>
-        //     b.IssueControl == 2&& (b.Qty == 0 || b.Qty == null)
-        // );
         if (isKeyZero.value == -1) {
           // if (checkStringType(barCodeData) == "BDY") {
           //   if (isKeyEmpty.value == -1) {
@@ -527,14 +520,14 @@ const getChange = () => {
               stopsForm.value.BarCode = barCodeData;
               goStop()
             } else {
-              msgTitle.value = `${barData.value[isNoKeyZero.value]}批次物料剩余为0，请进行上料`;
+              msgTitle.value = `${barData.value[isNoKeyZero.value].MaterialName}批次物料剩余为0，请进行上料`;
               msgType.value = false;
             }
           } else {
             verifyBarCode(barCodeData)
           }
         } else {
-          msgTitle.value = `${barData.value[isKeyEmpty.value]}关键料剩余为0，操作失败`;
+          msgTitle.value = `${barData.value[isKeyEmpty.value].MaterialName}关键料剩余为0，操作失败`;
           msgType.value = false;
         }
       } else {
@@ -563,6 +556,7 @@ const goStop = () => {
   AssemblySynthesisMoveStd(stopsForm.value).then((res: any) => {
     msgTitle.value = res.msg;
     msgType.value = res.success;
+    isGo.value=true
     stopsForm.value.BarCode = "";
     stopsForm.value.result = "OK";
     barCode.value = "";
@@ -603,6 +597,7 @@ const verifyBarCode = (barCodeData: any) => {
   JudgeAssemblyKeyMaterial(data1).then((res: any) => {
     msgTitle.value = res.msg;
     msgType.value = res.success;
+    isGo.value=false
     if (res.success) {
       const keyIndex = barData.value.findIndex(
         (b: any) => b.MaterialName == res.content.ProductName
