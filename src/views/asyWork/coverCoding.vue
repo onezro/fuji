@@ -10,7 +10,7 @@
       </div>
     </div> -->
     <div class="w-full flex-1 flex">
-      <div class="setwidth w-[370px]">
+      <div class="setwidth w-[320px]">
         <div class="w-full h-full box">
           <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
             <span class="ml-5">基本信息</span>
@@ -18,7 +18,7 @@
           <div class="p-[10px]">
             <el-form class="inbound" ref="formRef" :model="form" label-width="auto">
               <el-form-item label="生产计划号" class="mb-[5px] flex">
-                <selectTa ref="selectTable" :table="orderTable" :selectWidth="220" :columns="orderColumns"
+                <selectTa ref="selectTable" :table="orderTable" :selectWidth="170" :columns="orderColumns"
                   :max-height="400" :tableWidth="700" :defaultSelectVal="defaultSelectVal" :keywords="{
                     label: 'MfgOrderName',
                     value: 'MfgOrderName',
@@ -38,7 +38,7 @@
           </div>
         </div>
       </div>
-      <div class="w-[calc(100%-370px)]">
+      <div class="w-[calc(100%-320px)]">
         <!-- <div class="w-full"> -->
         <div class="w-full h-full flex flex-col">
           <div>
@@ -857,7 +857,9 @@ const print = () => {
 };
 
 const printData = () => {
-  CoverInstallPrint(form.value.MfgOrderName).then((res: any) => {
+  CoverInstallPrint({orderNumber:form.value.MfgOrderName,
+    workStation:opui.station
+  }).then((res: any) => {
     msgType.value = res.success;
     if (res.success) {
       msgTitle.value = "打印成功";
@@ -891,7 +893,7 @@ const getScreenHeight = () => {
 }
 
 .setwidth {
-  flex: 0 0 370px;
+  flex: 0 0 320px;
 }
 
 .box {

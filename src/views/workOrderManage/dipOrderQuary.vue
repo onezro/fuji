@@ -655,9 +655,9 @@ const openOrderOnline = () => {
   QueryOrderLine(data[0].OrderTypeName).then((res: any) => {
     onlineList.value = res.content;
   });
-  findShelf().then((res: any) => {
-    shelfList.value = res.content;
-  });
+  // findShelf().then((res: any) => {
+  //   shelfList.value = res.content;
+  // });
 };
 const openOrderOffline = () => {
   let data = cloneDeep(onlineData.value)

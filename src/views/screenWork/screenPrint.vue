@@ -18,7 +18,7 @@
                 ref="selectTable"
                 :table="orderTable"
                 :columns="orderColumns"
-                :selectWidth="220"
+                :selectWidth="170"
                 :max-height="400"
                 :tableWidth="700"
                 :keywords="{ label: 'MfgOrderName', value: 'MfgOrderName' }"

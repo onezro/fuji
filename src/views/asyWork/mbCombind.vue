@@ -5,7 +5,7 @@
       <div></div>
     </div> -->
     <div class="w-full flex-1 flex">
-      <div class="setwidth w-[370px]">
+      <div class="setwidth w-[320px]">
         <div class="w-full h-full box">
           <div
             class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]"
@@ -23,7 +23,7 @@
                 <selectTa
                   ref="selectTable"
                   :table="orderTable"
-                  :selectWidth="220"
+                  :selectWidth="170"
                   :columns="orderColumns"
                   :max-height="400"
                   :tableWidth="700"
@@ -63,7 +63,7 @@
           </div>
         </div>
       </div>
-      <div class="w-[calc(100%-370px)]">
+      <div class="w-[calc(100%-320px)]">
         <!-- <div class="w-full"> -->
         <div class="w-full h-full flex flex-col">
           <div>
@@ -971,7 +971,7 @@ const getScreenHeight = () => {
 }
 
 .setwidth {
-  flex: 0 0 370px;
+  flex: 0 0 320px;
 }
 
 .box {
