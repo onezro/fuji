@@ -308,22 +308,27 @@
                 <el-button icon="Search" />
               </template>
             </el-input> -->
-          <el-form
-          @submit.native.prevent
-            ref="formRef"
-            class="form flex items-start"
-            :inline="true"
-            size="small"
-            label-width="85px"
-          >
-            <el-form-item label="查询编码" class="mb-0" style="margin-right: 0;">
-            <el-input
-              v-model.trim="searchText"
+            <el-form
+              @submit.native.prevent
+              ref="formRef"
+              class="form flex items-start"
+              :inline="true"
               size="small"
-              style="width: 250px"
-              @keyup.enter.native="filterFeedTableData"></el-input>
-            </el-form-item>
-          </el-form>
+              label-width="85px"
+            >
+              <el-form-item
+                label="查询编码"
+                class="mb-0"
+                style="margin-right: 0"
+              >
+                <el-input
+                  v-model.trim="searchText"
+                  size="small"
+                  style="width: 250px"
+                  @keyup.enter.native="filterFeedTableData"
+                ></el-input>
+              </el-form-item>
+            </el-form>
           </div>
           <el-table
             ref="table"
@@ -688,24 +693,24 @@ const orderChange = (data: any) => {
     });
     return;
   }
-  if(form.value.MfgOrderName === transferForm.value.MfgOrderName) {
-    form.value.MfgOrderName = ''
-      form.value.PlannedStartDate = '';
-      form.value.PlannedCompletionDate = '';
-      form.value.Qty = 0;
-      form.value.ProductName = '';
-      form.value.BD_ProjectNo = '';
-      form.value.BD_ProductModel = '';
-      form.value.ProductDesc = '';
-      form.value.UOMName = '';
-      form.value.OrderStatusName = '';
-      form.value.OrderStatusDesc = '';
-      form.value.MfgLineName = '';
-      form.value.MfgLineDesc = '';
-      form.value.WorkCenterName = '';
-      form.value.wcDescription = '';
-      form.value.ERPOrder = '';
-      selectType.value = '';
+  if (form.value.MfgOrderName === transferForm.value.MfgOrderName) {
+    form.value.MfgOrderName = "";
+    form.value.PlannedStartDate = "";
+    form.value.PlannedCompletionDate = "";
+    form.value.Qty = 0;
+    form.value.ProductName = "";
+    form.value.BD_ProjectNo = "";
+    form.value.BD_ProductModel = "";
+    form.value.ProductDesc = "";
+    form.value.UOMName = "";
+    form.value.OrderStatusName = "";
+    form.value.OrderStatusDesc = "";
+    form.value.MfgLineName = "";
+    form.value.MfgLineDesc = "";
+    form.value.WorkCenterName = "";
+    form.value.wcDescription = "";
+    form.value.ERPOrder = "";
+    selectType.value = "";
     ElNotification({
       title: "提示信息",
       message: "不能选择同一个单号",
@@ -748,12 +753,12 @@ const transferChange = (data: any) => {
     });
     return;
   }
-  if(form.value.MfgOrderName === transferForm.value.MfgOrderName) {
-    transferForm.value.MfgOrderName = ''
-      transferForm.value.ProductName = '';
-      transferForm.value.BD_ProductModel = '';
-      transferForm.value.ProductDesc = '';
-      transSelectType.value = '';
+  if (form.value.MfgOrderName === transferForm.value.MfgOrderName) {
+    transferForm.value.MfgOrderName = "";
+    transferForm.value.ProductName = "";
+    transferForm.value.BD_ProductModel = "";
+    transferForm.value.ProductDesc = "";
+    transSelectType.value = "";
     ElNotification({
       title: "提示信息",
       message: "不能选择同一个单号",
@@ -796,13 +801,13 @@ const returnTypeText = (data: any) => {
 //搜索编码
 const filterFeedTableData = () => {
   if (searchText.value == "") {
-    filterTableData.value = feedTableData.value
-    return
+    filterTableData.value = feedTableData.value;
+    return;
   }
   filterTableData.value = feedTableData.value.filter((f: any) =>
-     f.MaterialName.toLowerCase().includes(searchText.value.toLowerCase())
+    f.MaterialName.toLowerCase().includes(searchText.value.toLowerCase())
   );
-}
+};
 
 //获取历史物料退料申请记录
 const getHistory = () => {
@@ -816,7 +821,7 @@ const getHistory = () => {
 };
 //根据生产计划号获取物料信息
 const getFeedTableData = () => {
-  if(transSelectType.value === '' || selectType.value === '') {
+  if (transSelectType.value === "" || selectType.value === "") {
     ElNotification({
       title: "提示信息",
       message: "请先选择单号",
@@ -1000,19 +1005,21 @@ const applyFor = () => {
   //   }
   // });
   console.log(choiceList.value);
-    ApplyChangeOrderMaterialRequired(choiceList.value).then((res: any) => {
-      if (res && res.success) {
-        ElNotification({
-          title: "提示信息",
-          message: res.msg,
-          type: "success",
-        });
-        // findOrderData();
-        // getFeedTableData();
-        getHistory();
-        dialogVisible.value = false;
-      }
-    });
+  ApplyChangeOrderMaterialRequired(choiceList.value).then((res: any) => {
+    if (res && res.success) {
+      ElNotification({
+        title: "提示信息",
+        message: res.msg,
+        type: "success",
+      });
+      // findOrderData();
+      // getFeedTableData();
+      getHistory();
+      feedTableData.value = [];
+      filterTableData.value = [];
+      dialogVisible.value = false;
+    }
+  });
 };
 
 const dateChange = () => {
@@ -1079,7 +1086,7 @@ const tableRowClassName = ({
   rowIndex: number;
 }) => {
   // 在这里判断行数据是否符合条件
-//   console.log(row.MaterialQueue ? true : false);
+  //   console.log(row.MaterialQueue ? true : false);
   if (row.MaterialQueue) {
     return "has-material-row";
   } else {

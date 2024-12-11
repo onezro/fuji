@@ -562,7 +562,9 @@ const applyFor = () => {
         type: "success",
       });
       // findOrderData();
-      getFeedTableData(form.value.MfgOrderName);
+      // getFeedTableData(form.value.MfgOrderName);
+      feedTableData.value = [];
+      filterTableData.value = [];
       dialogVisible.value = true;
     }
   });
