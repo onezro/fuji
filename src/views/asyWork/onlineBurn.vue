@@ -633,7 +633,7 @@ const getMaxLength = (arr: any) => {
 //判断是否可选中
 const tableRowClassName = ({ row }: { row: any; rowIndex: number }) => {
   // 在这里判断行数据是否符合条件
-  // if (row.ENSoftwareName === errorRow.value) {
+  // if (row.SoftwareName === errorRow.value) {
   //   tableData1.value = tableData1.value;
   //   return "has-material-row";
   // }else {
