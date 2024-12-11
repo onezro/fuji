@@ -317,7 +317,7 @@ const viewColumnData = reactive([
   },
   {
     text: true,
-    prop: "part_number",
+    prop: "MaterialDesc",
     label: "物料描述",
     width: "250",
     // min: true,
