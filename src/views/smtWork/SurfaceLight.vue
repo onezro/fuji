@@ -217,7 +217,7 @@ const pageObj = ref({
   currentPage: 1,
 });
 const viewPageObj = ref({
-  pageSize: 100,
+  pageSize: 300,
   currentPage: 1,
 });
 
