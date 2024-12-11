@@ -235,7 +235,7 @@
         </el-dialog>
 
         <el-dialog align-center :append-to-body="true" :close-on-click-modal="false" v-model="viewVisible" @close=""
-        :title="'计划号：'+operateForm.OrderNumber" width="80%">
+        :title="'生产计划号：'+operateForm.OrderNumber" width="80%">
       <el-tabs v-model="activeName" type="border-card" class="demo-tabs"  >
         <el-tab-pane label="货架物料明细" name="shelveMaterial" >
             <table-tem ref="lightTable" size="small" :showIndex="true" :tableData="viewTableData" :tableHeight="420"
@@ -425,7 +425,7 @@ const viewColumnData = reactive([
         text: true,
         prop: "MaterialDesc",
         label: "物料描述",
-        width: "250",
+        width: "350",
         // min: true,
         align: "left",
     },
