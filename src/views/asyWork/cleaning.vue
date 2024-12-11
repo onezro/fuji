@@ -59,7 +59,7 @@
                   </el-form-item> -->
                   <div></div>
                 </el-form>
-                <div class="text-xl font-bold" :style="{ 'color': isGo ? '#00B400' : '#e6a23c' }"
+                <div class="text-xl font-bold" :style="{ color: isGo ? '#00B400' : '#e6a23c' }"
                   v-show="msgType === true || msgTitle === ''">
                   {{ msgTitle === "" ? "请扫描屏材料批次条码" : msgTitle }}
                 </div>
@@ -80,18 +80,26 @@
                   <el-table-column prop="LoadQueueQty" label="上料总数" width="80" align="center">
                     <template #default="scope">
                       {{
-                        scope.row.IssueControl == 1 ?
-                          (scope.row.AllQty == null ? 0 : scope.row.AllQty) : (scope.row.LoadQueueQty == null ? 0 :
-                            scope.row.LoadQueueQty)
+                        scope.row.IssueControl == 1
+                          ? scope.row.AllQty == null
+                            ? 0
+                            : scope.row.AllQty
+                          : scope.row.LoadQueueQty == null
+                            ? 0
+                            : scope.row.LoadQueueQty
                       }}
                     </template>
                   </el-table-column>
                   <el-table-column prop="QtyRequired" label="剩余数量" width="80" align="center">
                     <template #default="scope">
                       <span>{{
-                        scope.row.IssueControl == 1 ?
-                          (scope.row.remainQty == null ? 0 : scope.row.remainQty) : (scope.row.Qty == null ? 0 :
-                            scope.row.Qty)
+                        scope.row.IssueControl == 1
+                          ? scope.row.remainQty == null
+                            ? 0
+                            : scope.row.remainQty
+                          : scope.row.Qty == null
+                            ? 0
+                            : scope.row.Qty
                       }}</span>
                     </template>
                   </el-table-column>
@@ -178,7 +186,6 @@ import { checkStringType } from "@/utils/barcodeFormat";
 import type { Formspan, FormHeader, OrderData } from "@/typing";
 import { ElNotification } from "element-plus";
 
-
 import {
   OrderQuery,
   QueryMoveHistory,
@@ -187,7 +194,7 @@ import {
   CoverSMTCompBindMoveStd,
   QueryDefectCode,
   DefectProductRecord,
-  QueryCleanCodeRecord
+  QueryCleanCodeRecord,
 } from "@/api/asyApi";
 
 import {
@@ -224,7 +231,6 @@ interface KeyMaterial1 {
   MaterialBarCode: string;
   MaterialName: string;
 }
-
 
 const appStore = useAppStore();
 const userStore = useUserStoreWithOut();
@@ -386,7 +392,7 @@ interface BadForm {
 const getBadForm = ref({
   containerName: "",
   workstationName: opui.station,
-  orderName: ""
+  orderName: "",
 });
 const badForm = ref<BadForm>({
   containerName: "",
@@ -419,7 +425,7 @@ const badColumn = reactive([
 const badVisible = ref(false);
 const changeList = ref([]);
 const BadtableData = ref([]);
-const isGo = ref(true)
+const isGo = ref(true);
 
 onBeforeMount(() => {
   getScreenHeight();
@@ -431,7 +437,6 @@ onMounted(() => {
 });
 onBeforeUnmount(() => {
   window.addEventListener("resize", getScreenHeight);
-
 });
 
 //获取光标
@@ -495,25 +500,25 @@ const getChange = () => {
     msgTitle.value = "请先选择生产计划号";
     msgType.value = false;
   } else {
-
     if (isKeyZero.value == -1 && isNoKeyZero.value == -1) {
       if (isKeyEmpty.value == -1) {
-        goStop()
+        goStop();
       } else {
-        verifyBarCode(barCodeData)
+        verifyBarCode(barCodeData);
       }
-
     } else {
       msgType.value = false;
       if (isKeyZero.value == -1 && isNoKeyZero.value == -1) {
         msgTitle.value = `关键料和批次物料剩余为0，操作失败`;
-        return
+        return;
       }
-      if(isKeyZero.value != -1 ){
-        msgTitle.value= `关键料${barData.value[isKeyZero.value].MaterialName}剩余为0，操作失败`
+      if (isKeyZero.value != -1) {
+        msgTitle.value = `关键料${barData.value[isKeyZero.value].MaterialName
+          }剩余为0，操作失败`;
       }
-      if(isNoKeyZero.value!=-1){
-        msgTitle.value=`批次物料${barData.value[isNoKeyZero.value].MaterialName}剩余为0，请进行上料`
+      if (isNoKeyZero.value != -1) {
+        msgTitle.value = `批次物料${barData.value[isNoKeyZero.value].MaterialName
+          }剩余为0，请进行上料`;
       }
     }
     // if (isKeyZero.value == -1) {
@@ -541,7 +546,7 @@ const goStop = () => {
   CoverSMTCompBindMoveStd(stopsForm.value).then((res: any) => {
     msgTitle.value = res.msg;
     msgType.value = res.success;
-    isGo.value = true
+    isGo.value = true;
     stopsForm.value.BarCode = "";
     stopsForm.value.result = "OK";
     barCode.value = "";
@@ -556,22 +561,18 @@ const goStop = () => {
 //关键料为零
 const isKeyZero = computed(() => {
   return barData.value.findIndex(
-    (b: any) =>
-      b.IssueControl == 1 && (b.remainQty == 0 || b.remainQty == null)
+    (b: any) => b.IssueControl == 1 && (b.remainQty == 0 || b.remainQty == null)
   );
-})
+});
 //批次料为零
 const isNoKeyZero = computed(() => {
   return barData.value.findIndex(
-    (b: any) =>
-      b.IssueControl == 2 && (b.Qty == 0 || b.Qty == null)
+    (b: any) => b.IssueControl == 2 && (b.Qty == 0 || b.Qty == null)
   );
-})
+});
 //绑定为空
 const isKeyEmpty = computed(() => {
-  return barData.value.findIndex(
-    (b: any) => b.barCount !== b.QtyRequired
-  );
+  return barData.value.findIndex((b: any) => b.barCount !== b.QtyRequired);
 });
 //验证绑定
 const verifyBarCode = (barCodeData: any) => {
@@ -583,27 +584,29 @@ const verifyBarCode = (barCodeData: any) => {
   JudgeMaterial(data1).then((res: any) => {
     msgTitle.value = res.msg;
     msgType.value = res.success;
-    isGo.value = false
+    isGo.value = false;
     if (res.success) {
       const keyIndex = barData.value.findIndex(
         (b: any) => b.MaterialName == res.content.ProductName
       );
       if (keyIndex == -1) {
-        msgTitle.value = `条码${barCodeData}不属于该生产计划物料，请重新扫描`
-        msgType.value = false
-        return
+        msgTitle.value = `条码${barCodeData}不属于该生产计划物料，请重新扫描`;
+        msgType.value = false;
+        return;
       }
       if (barData.value[keyIndex].barCount == 0) {
         if (barData.value[keyIndex].IssueControl == 2) {
           stopsForm.value.BarCode = barCodeData;
         } else {
           if (checkStringType(barCodeData) == "SCR") {
-            if (barData.value.findIndex((b: any) => b.IssueControl == 2) == -1) {
+            if (
+              barData.value.findIndex((b: any) => b.IssueControl == 2) == -1
+            ) {
               stopsForm.value.BarCode = barCodeData;
             } else {
-              msgTitle.value = `扫描关键料条码${barCodeData}错误，请重新扫描`
-              msgType.value = false
-              return
+              msgTitle.value = `扫描关键料条码${barCodeData}错误，请重新扫描`;
+              msgType.value = false;
+              return;
             }
           } else {
             stopsForm.value.keyMaterialList.push({
@@ -614,11 +617,30 @@ const verifyBarCode = (barCodeData: any) => {
         }
         barData.value[keyIndex].MaterialBarCode = barCodeData;
         barData.value[keyIndex].barCount++;
+        if (
+          barData.value[keyIndex].barCount !==
+          barData.value[keyIndex].QtyRequired
+        ) {
+          msgType.value = true;
+          msgTitle.value = `请继续扫描${barData.value[keyIndex].IssueControl == 1 ? "关键料" : "批次料"
+            }${barData.value[keyIndex].MaterialName}`;
+        } else {
+          if (isKeyEmpty.value !== -1) {
+            msgType.value = true;
+          msgTitle.value = `请继续扫描${barData.value[isKeyEmpty.value].IssueControl == 1 ? "关键料" : "批次料"
+            }${barData.value[isKeyEmpty.value].MaterialName}`;
+          }else{
+
+          }
+        }
       } else {
-        if (barData.value[keyIndex].barCount == barData.value[keyIndex].QtyRequired) {
-          msgTitle.value = `已扫描验证，请勿重复扫描`
-          msgType.value = false
-          return
+        if (
+          barData.value[keyIndex].barCount ==
+          barData.value[keyIndex].QtyRequired
+        ) {
+          msgTitle.value = `已扫描验证，请勿重复扫描`;
+          msgType.value = false;
+          return;
         } else {
           const MaterialBarArr =
             barData.value[keyIndex].MaterialBarCode.split(",");
@@ -688,17 +710,13 @@ const badSubmit = () => {
   });
 };
 
-
-
 const radioChange = (args: any) => {
   if (args[1] == null) {
     form.value.MfgOrderName = "";
     form.value.ProductName = "";
     form.value.ProductDesc = "";
-
     form.value.BD_ProductModel = "";
     form.value.BD_SoftVersion = "";
-
     form.value.Qty = "";
     form.value.ERPOrder = "";
     barData.value = [];
@@ -710,9 +728,7 @@ const radioChange = (args: any) => {
       form.value.ProductDesc = args[0].ProductDesc;
       form.value.BD_ProductModel = args[0].BD_ProductModel;
       form.value.BD_SoftVersion = args[0].BD_SoftVersion;
-
       form.value.Qty = args[0].Qty;
-
       form.value.ERPOrder = args[0].ERPOrder;
       stopsForm.value.OrderName = args[0].MfgOrderName;
       hisForm.value.MfgOrderName = args[0].MfgOrderName;
@@ -727,8 +743,8 @@ const radioChange = (args: any) => {
     }
     getKeyMaterial();
     getHisData();
+    inputRef.value.focus()
     // getHisData();
-
   }
 };
 const getKeyMaterial = () => {
@@ -743,6 +759,15 @@ const getKeyMaterial = () => {
         barCount: 0,
       };
     });
+    if (barData.value.length !== 0) {
+      if (barData.value[0].IssueControl == 1) {
+        msgType.value = true;
+        msgTitle.value = `请先扫描关键物料${barData.value[0].MaterialName}`;
+      } else {
+        msgType.value = true;
+        msgTitle.value = `请先扫描批次物料${barData.value[0].MaterialName}`;
+      }
+    }
   });
 };
 const tableRowClassName = (val: any) => {

@@ -633,6 +633,23 @@ const verifyBarCode = (barCodeData: any) => {
           msgType.value = false;
         }
       }
+      if (
+          barData.value[keyIndex].barCount !==
+          barData.value[keyIndex].QtyRequired
+        ) {
+          msgType.value = true;
+          msgTitle.value = `请继续扫描${barData.value[keyIndex].IssueControl == 1 ? "关键料" : "批次料"
+            }${barData.value[keyIndex].MaterialName}`;
+        }else{
+          if (isKeyEmpty.value !== -1) {
+            msgType.value = true;
+          msgTitle.value = `请继续扫描${barData.value[isKeyEmpty.value].IssueControl == 1 ? "关键料" : "批次料"
+            }${barData.value[isKeyEmpty.value].MaterialName}`;
+          }else{
+            msgType.value = true;
+            msgTitle.value=`请扫描MES条码`
+          }
+        }
       // if (isKeyEmpty.value == -1 && stopsForm.value.BarCode != '') {
       //   goStop()
       // }
@@ -719,6 +736,7 @@ const radioChange = (args: any) => {
     }
     getKeyMaterial();
     getHisData();
+    inputRef.value.focus()
 
   }
 };
@@ -738,6 +756,12 @@ const getKeyMaterial = () => {
         return b;
       }
     });
+    if (barData.value.length !== 0) {
+      if (barData.value[0].IssueControl == 1) {
+        msgType.value = true;
+        msgTitle.value = `请先扫描关键物料${barData.value[0].MaterialName}`;
+      }
+    }
   });
 };
 const tableRowClassName = (val: any) => {
