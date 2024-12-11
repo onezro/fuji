@@ -940,7 +940,9 @@ const applyFor = () => {
         type: "success",
       });
       // findOrderData();
-      getFeedTableData(selectOrder.value, selectType.value);
+      // getFeedTableData(selectOrder.value, selectType.value);
+      feedTableData.value = [];
+      filterTableData.value = [];
       dialogVisible.value = false;
     }
   });
