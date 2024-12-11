@@ -5,7 +5,7 @@
       <div></div>
     </div> -->
     <div class="w-full flex-1 flex">
-      <div class="setwidth w-[370px]">
+      <div class="setwidth w-[320px]">
         <div class="w-full h-full box">
           <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
             <span class="ml-5">基本信息</span>
@@ -13,7 +13,7 @@
           <div class="p-[10px]">
             <el-form class="inbound" ref="formRef" :model="form" label-width="auto">
               <el-form-item label="生产计划号" class="mb-[5px] flex">
-                <selectTa ref="selectTable" :table="orderTable" :selectWidth="220" :columns="orderColumns"
+                <selectTa ref="selectTable" :table="orderTable" :selectWidth="170" :columns="orderColumns"
                   :max-height="400" :tableWidth="700" :defaultSelectVal="defaultSelectVal" :keywords="{
                     label: 'MfgOrderName',
                     value: 'MfgOrderName',
@@ -33,7 +33,7 @@
           </div>
         </div>
       </div>
-      <div class="w-[calc(100%-370px)]">
+      <div class="w-[calc(100%-320px)]">
         <!-- <div class="w-full"> -->
         <div class="w-full h-full flex flex-col">
           <div>
@@ -636,6 +636,23 @@ const verifyBarCode = (barCodeData: any) => {
           msgType.value = false;
         }
       }
+      if (
+          barData.value[keyIndex].barCount !==
+          barData.value[keyIndex].QtyRequired
+        ) {
+          msgType.value = true;
+          msgTitle.value = `请继续扫描${barData.value[keyIndex].IssueControl == 1 ? "关键料" : "批次料"
+            }${barData.value[keyIndex].MaterialName}`;
+        }else{
+          if (isKeyEmpty.value !== -1) {
+            msgType.value = true;
+          msgTitle.value = `请继续扫描${barData.value[isKeyEmpty.value].IssueControl == 1 ? "关键料" : "批次料"
+            }${barData.value[isKeyEmpty.value].MaterialName}`;
+          }else{
+            msgType.value = true;
+            msgTitle.value=`请扫描MES条码`
+          }
+        }
       // if (isKeyEmpty.value == -1 && stopsForm.value.BarCode != '') {
       //   goStop()
       // }
@@ -721,6 +738,7 @@ const radioChange = (args: any) => {
     }
     getKeyMaterial();
     getHisData();
+    inputRef.value.focus()
     // getHisData();
 
   }
@@ -741,6 +759,12 @@ const getKeyMaterial = () => {
         return b;
       }
     });
+    if (barData.value.length !== 0) {
+      if (barData.value[0].IssueControl == 1) {
+        msgType.value = true;
+        msgTitle.value = `请先扫描关键物料${barData.value[0].MaterialName}`;
+      }
+    }
   });
 };
 const tableRowClassName = (val: any) => {
@@ -796,7 +820,7 @@ const getScreenHeight = () => {
 }
 
 .setwidth {
-  flex: 0 0 370px;
+  flex: 0 0 320px;
 }
 
 .box {

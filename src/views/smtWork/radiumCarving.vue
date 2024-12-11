@@ -1,19 +1,20 @@
 <template>
   <div class="flex flex-col w-full h-full">
-    <div class="h-[40px] min-h-[40px] pl-2 pr-2 flex justify-between items-center">
+    <!-- <div class="h-[40px] min-h-[40px] pl-2 pr-2 flex justify-between items-center">
       <div></div>
-      <!-- <span class="text-[1.2rem]">{{ opui.stationDec }}</span> -->
+      <span class="text-[1.2rem]">{{ opui.stationDec }}</span>
       <div>
         <el-button type="primary" @click="dialogVisible = true, getOrderList()">计划开工</el-button>
-        <!-- <el-button type="warning" @click="openFeed">物料上料</el-button> -->
-        <!-- <el-button type="primary">条码转生产计划号</el-button> -->
+        <el-button type="warning" @click="openFeed">物料上料</el-button>
+        <el-button type="primary">条码转生产计划号</el-button>
       </div>
-    </div>
+    </div> -->
     <div class="w-full flex-1 flex">
-      <div class="setwidth w-[400px]">
+      <div class="setwidth w-[320px]">
         <div class="w-full h-full box">
           <div class="h-[35px] flex items-center text-xl text-[#fff] bg-[#006487]">
             <span class="ml-5">基本信息</span>
+           
           </div>
           <div class="p-[10px] overflow-auto custom-scrollbar-hidden" :style="{ height: formHeight + 'px' }">
             <el-form class="inbound" ref="formRef" :model="form" label-width="auto">
@@ -25,11 +26,14 @@
           </div>
         </div>
       </div>
-      <div class="w-[calc(100%-400px)]">
+      <div class="w-[calc(100%-320px)]">
         <div class="w-full h-full ">
           <div>
-            <div class="h-[35px] flex items-center text-xl text-[#fff] bg-[#006487]">
+            <div class="h-[35px] flex items-center justify-between text-xl text-[#fff] bg-[#006487]">
               <span class="ml-5"> 扫描条码</span>
+              <div class="pr-2">
+              <el-button type="warning" @click="dialogVisible = true, getOrderList()">计划开工</el-button>
+            </div>
             </div>
             <div class="h-[120px] p-5">
               <el-form class="inbound" ref="formRef" :model="form" label-width="auto" @submit.native.prevent>
@@ -92,18 +96,19 @@
           :label="item.lable"
         />
       </el-table> -->
-      <el-table ref="taskTableRef" class="test"  :header-cell-class-name="cellClass" stripe border :data="workOrderList1"
+      <el-table ref="taskTableRef" class="test" :header-cell-class-name="cellClass" stripe border :data="workOrderList1"
         style="width: 100%" :height="'50vh'" @select="selectClick" :tooltip-effect="'dark'">
         <el-table-column type="selection" width="55" />
-        <el-table-column prop="MfgOrderName" label="生产计划号" width="150" :min-width="100" ></el-table-column>
-        <el-table-column prop="ProductName" label="产品编码" width="150" :min-width="150" ></el-table-column>
-        <el-table-column prop="ProductDesc" label="产品描述" :show-overflow-tooltip="true"  :min-width="flexColumnWidth('产品描述', 'ProductDesc')" ></el-table-column>
-        <el-table-column prop="MfgLineDesc" label="产线" width="150"  :min-width="150"  ></el-table-column>
-        <el-table-column prop="OrderStatusDesc" label="状态" width="100"  :min-width="100"  ></el-table-column>
-        <el-table-column prop="PlannedStartDate" label="开始时间" width="180"  :min-width="180"  ></el-table-column>
-        <el-table-column prop="PlannedCompletionDate" label="结束时间" width="180"  :min-width="180"  ></el-table-column>
-        <el-table-column prop="Side" label="面号" width="80"  :min-width="80"  ></el-table-column>
-        <el-table-column prop="Qty" label="数量" width="100"  :min-width="100"  ></el-table-column>
+        <el-table-column prop="MfgOrderName" label="生产计划号" width="150" :min-width="100"></el-table-column>
+        <el-table-column prop="ProductName" label="产品编码" width="150" :min-width="150"></el-table-column>
+        <el-table-column prop="ProductDesc" label="产品描述" :show-overflow-tooltip="true"
+          :min-width="flexColumnWidth('产品描述', 'ProductDesc')"></el-table-column>
+        <el-table-column prop="MfgLineDesc" label="产线" width="150" :min-width="150"></el-table-column>
+        <el-table-column prop="OrderStatusDesc" label="状态" width="100" :min-width="100"></el-table-column>
+        <el-table-column prop="PlannedStartDate" label="开始时间" width="180" :min-width="180"></el-table-column>
+        <el-table-column prop="PlannedCompletionDate" label="结束时间" width="180" :min-width="180"></el-table-column>
+        <el-table-column prop="Side" label="面号" width="80" :min-width="80"></el-table-column>
+        <el-table-column prop="Qty" label="数量" width="100" :min-width="100"></el-table-column>
         <!-- <el-table-column v-for="item in formHeader" :prop="item.value" :label="item.lable"
           :min-width="flexColumnWidth(item.lable, item.value)" /> -->
       </el-table>
@@ -158,7 +163,7 @@ interface Form {
   PlannedCompletionDate: string;
   Qty: number | string;
   Side: string;
-  ERPOrder:string
+  ERPOrder: string
 }
 interface FormHeader {
   lable: string;
@@ -211,7 +216,7 @@ const form = reactive<Form>({
   ProductDesc: "",
   OrderStatusDesc: "",
   MfgLineDesc: "",
-  ERPOrder:""
+  ERPOrder: ""
 });
 const formHeader = reactive<FormHeader[]>([
   {
@@ -225,32 +230,7 @@ const formHeader = reactive<FormHeader[]>([
   {
     lable: "工单号",
     value: "ERPOrder",
- 
-  },
-  
-  {
-    lable: "产线",
-    value: "MfgLineDesc",
-  },
-  // {
-  //   lable: "状态",
-  //   value: "OrderStatusDesc",
-  // },
-  // {
-  //   lable: "开始时间",
-  //   value: "PlannedStartDate",
-  // },
-  // {
-  //   lable: "结束时间",
-  //   value: "PlannedCompletionDate",
-  // },
-  {
-    lable: "面号",
-    value: "Side",
-  },
-  {
-    lable: "计划数量",
-    value: "Qty",
+
   },
   {
     lable: "产品编码",
@@ -260,6 +240,19 @@ const formHeader = reactive<FormHeader[]>([
     lable: "产品描述",
     value: "ProductDesc",
   },
+  {
+    lable: "产线",
+    value: "MfgLineDesc",
+  },
+
+  {
+    lable: "面号",
+    value: "Side",
+  },
+  {
+    lable: "计划数量",
+    value: "Qty",
+  }
 ]);
 const tableData = ref<any[]>([]);
 const tableHeight = ref(0);
@@ -450,12 +443,12 @@ const handleCurrentChange1 = (val: any) => {
 };
 const getScreenHeight = () => {
   nextTick(() => {
-    tableHeight.value = window.innerHeight - 365;
-    formHeight.value = window.innerHeight - 165;
+    tableHeight.value = window.innerHeight - 320;
+    formHeight.value = window.innerHeight - 125;
   });
 };
 const getOrderList = () => {
-  OrderQuery({ lineName: opui.line, OrderTypeName:'SMT'}).then((res: any) => {
+  OrderQuery({ lineName: opui.line, OrderTypeName: 'SMT' }).then((res: any) => {
     workOrderList.value = res.content
     workOrderList1.value = res.content
   })
@@ -589,7 +582,7 @@ const getMaxLength = (arr: any) => {
 };
 
 const getTextWidth = (str: string) => {
-  let fontSizeNum =16;
+  let fontSizeNum = 16;
   let width = 0;
   const html = document.createElement("span");
   html.style.cssText = `padding: 0; margin: 0; border: 0; line-height: 1; font-size: ${fontSizeNum}px; font-family: Arial, sans-serif;`;
@@ -609,7 +602,7 @@ const flexColumnWidth = (label: any, prop: any) => {
   const arr = tableData?.value.map((x: { [x: string]: any }) => x[prop]);
   arr.push(label); // 把每列的表头也加进去算
 
-console.log(getMaxLength(arr) + 25 + "px");
+  console.log(getMaxLength(arr) + 25 + "px");
 
   return getMaxLength(arr) + 25 + "px";
 };
@@ -621,7 +614,7 @@ console.log(getMaxLength(arr) + 25 + "px");
 }
 
 .setwidth {
-  flex: 0 0 400px;
+  flex: 0 0 320px;
 }
 
 .box {

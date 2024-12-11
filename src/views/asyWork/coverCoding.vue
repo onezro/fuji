@@ -1,7 +1,6 @@
 <template>
   <div class="flex flex-col w-full h-full">
-    <div class="h-[40px] min-h-[40px] pl-2 pr-2 flex justify-between items-center">
-      <!-- <span class="text-[1.2rem]"> {{ opui.stationDec }} </span> -->
+    <!-- <div class="h-[40px] min-h-[40px] pl-2 pr-2 flex justify-between items-center">
       <div></div>
       <div class="flex items-center">
         <div>
@@ -9,9 +8,9 @@
         </div>
         <el-button type="info" class="ml-2" @click="openPrint">设定间隔</el-button>
       </div>
-    </div>
+    </div> -->
     <div class="w-full flex-1 flex">
-      <div class="setwidth w-[370px]">
+      <div class="setwidth w-[320px]">
         <div class="w-full h-full box">
           <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
             <span class="ml-5">基本信息</span>
@@ -19,7 +18,7 @@
           <div class="p-[10px]">
             <el-form class="inbound" ref="formRef" :model="form" label-width="auto">
               <el-form-item label="生产计划号" class="mb-[5px] flex">
-                <selectTa ref="selectTable" :table="orderTable" :selectWidth="220" :columns="orderColumns"
+                <selectTa ref="selectTable" :table="orderTable" :selectWidth="170" :columns="orderColumns"
                   :max-height="400" :tableWidth="700" :defaultSelectVal="defaultSelectVal" :keywords="{
                     label: 'MfgOrderName',
                     value: 'MfgOrderName',
@@ -39,12 +38,18 @@
           </div>
         </div>
       </div>
-      <div class="w-[calc(100%-370px)]">
+      <div class="w-[calc(100%-320px)]">
         <!-- <div class="w-full"> -->
         <div class="w-full h-full flex flex-col">
           <div>
-            <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
+            <div class="h-[35px] flex justify-between items-center text-lg text-[#fff] bg-[#006487]">
               <span class="ml-5"> 扫描条码</span>
+              <div class="flex items-center mr-3">
+                <div>
+                  自动打印间隔：<span class="text-lg font-bold pl-1 pr-1 bg-slate-300 text-[red]">{{ setTime }}S</span>
+                </div>
+                <el-button type="info" class="ml-2" @click="openPrint">设定间隔</el-button>
+              </div>
             </div>
             <div class="h-[200px] pt-3 pr-5 pl-5 flex justify-between">
               <div>
@@ -70,8 +75,9 @@
                   <el-button type="warning" :disabled="form.MfgOrderName == ''" @click="print">手动打印</el-button>
                   <!-- <el-button type="success" :disabled="form.MfgOrderName == ''" @click="print">补打条码</el-button> -->
                 </div>
-                <div class="text-xl font-bold"  :style="{ 'color': isGo ? '#00B400' : '#e6a23c' }"  v-show="msgType === true || msgTitle === ''">
-                  {{ msgTitle === "" ? "请扫描条码" : msgTitle }}
+                <div class="text-xl font-bold" :style="{ 'color': isGo ? '#00B400' : '#e6a23c' }"
+                  v-show="msgType === true || msgTitle === ''">
+                  {{ msgTitle === "" ? "请扫描MES条码" : msgTitle }}
                 </div>
                 <div class="text-xl font-bold text-[red]" v-show="msgType === false && msgTitle !== ''">
                   {{ msgTitle }}
@@ -90,15 +96,17 @@
                   <el-table-column prop="LoadQueueQty" label="上料总数" width="80" align="center">
                     <template #default="scope">
                       {{
-                        scope.row.IssueControl == 1 ? 
-                        ( scope.row.AllQty==null?0: scope.row.AllQty):( scope.row.LoadQueueQty==null?0: scope.row.LoadQueueQty)
+                        scope.row.IssueControl == 1 ?
+                          (scope.row.AllQty == null ? 0 : scope.row.AllQty) : (scope.row.LoadQueueQty == null ? 0 :
+                            scope.row.LoadQueueQty)
                       }}
                     </template>
                   </el-table-column>
                   <el-table-column prop="QtyRequired" label="剩余数量" width="80" align="center">
                     <template #default="scope">
                       <span>{{ scope.row.IssueControl == 1 ?
-                         ( scope.row.remainQty==null?0: scope.row.remainQty):( scope.row.Qty==null?0: scope.row.Qty) }}</span>
+                        (scope.row.remainQty == null ? 0 : scope.row.remainQty) : (scope.row.Qty == null ? 0 : scope.row.Qty)
+                        }}</span>
                     </template>
                   </el-table-column>
                   <el-table-column prop="MaterialBarCode" label="批次条码" width="150">
@@ -191,9 +199,6 @@
 
 <script lang="ts" setup>
 import tableTem from "@/components/tableTem/index.vue";
-import badInfoTem from "@/components/badInfoTem/index.vue";
-import formTem from "@/components/formTem/index.vue";
-import feedTemp from "@/components/feedTemp/index.vue";
 import selectTa from "@/components/selectTable/index.vue";
 import { useAppStore } from "@/stores/modules/app";
 import { useUserStoreWithOut } from "@/stores/modules/user";
@@ -408,11 +413,11 @@ const badColumn = reactive([
     align: "1",
   },
   {
-       text: true,
+    text: true,
     prop: "isDefectReasonDesc",
     label: "不良原因",
     width: "",
-    min:true,
+    min: true,
     align: "1",
   },
 ]);
@@ -485,6 +490,12 @@ const getKeyMaterial = () => {
         return b;
       }
     });
+    if (barData.value.length !== 0) {
+      if (barData.value[0].IssueControl == 1) {
+        msgType.value = true;
+        msgTitle.value = `请先扫描关键物料${barData.value[0].MaterialName}`;
+      }
+    }
   });
 };
 //获取过站历史记录
@@ -555,23 +566,6 @@ const getChange = () => {
     } else {
       if (stopsForm.value.result == "OK") {
         if (isKeyZero.value == -1) {
-          // if (checkStringType(barCodeData) == "BDY") {
-          //   if (isKeyEmpty.value == -1) {
-          //     stopsForm.value.BarCode = barCodeData;
-          //     // goStop();
-          //   } else {
-          //     stopsForm.value.BarCode = barCodeData;
-          //     msgTitle.value = `屏条码：${ stopsForm.value.BarCode}已扫描`;
-          //     msgType.value = true;
-          //   }
-          // } else {
-          //   if (isKeyEmpty.value != -1) {
-          // verifyBarCode(barCodeData)
-          //   }else{
-          //     msgTitle.value = `关键料已扫描`;
-          //     msgType.value = false;
-          //   }
-          // }
           if (isKeyEmpty.value == -1) {
             if (isNoKeyZero.value == -1) {
               stopsForm.value.BarCode = barCodeData;
@@ -613,7 +607,7 @@ const goStop = () => {
   CoverInstallStationMoveOut(stopsForm.value).then((res: any) => {
     msgTitle.value = res.msg;
     msgType.value = res.success;
-    isGo.value=true
+    isGo.value = true
     stopsForm.value.BarCode = "";
     stopsForm.value.result = "OK";
     barCode.value = "";
@@ -655,12 +649,12 @@ const verifyBarCode = (barCodeData: any) => {
   JudgeCoverKeyMaterial(data1).then((res: any) => {
     msgTitle.value = res.msg;
     msgType.value = res.success;
-    isGo.value=false
+    isGo.value = false
     if (res.success) {
       const keyIndex = barData.value.findIndex(
         (b: any) => b.MaterialName == res.content.ProductName
       );
-      if(keyIndex==-1){
+      if (keyIndex == -1) {
         msgTitle.value = `条码${barCodeData}不属于该生产计划关键物料，请重新扫描`
         msgType.value = false
         return
@@ -689,6 +683,23 @@ const verifyBarCode = (barCodeData: any) => {
         } else {
           msgTitle.value = `重复扫描`;
           msgType.value = false;
+        }
+      }
+      if (
+        barData.value[keyIndex].barCount !==
+        barData.value[keyIndex].QtyRequired
+      ) {
+        msgType.value = true;
+        msgTitle.value = `请继续扫描${barData.value[keyIndex].IssueControl == 1 ? "关键料" : "批次料"
+          }${barData.value[keyIndex].MaterialName}`;
+      } else {
+        if (isKeyEmpty.value !== -1) {
+          msgType.value = true;
+          msgTitle.value = `请继续扫描${barData.value[isKeyEmpty.value].IssueControl == 1 ? "关键料" : "批次料"
+            }${barData.value[isKeyEmpty.value].MaterialName}`;
+        } else {
+          msgType.value = true;
+          msgTitle.value = `请扫描MES条码`
         }
       }
       // if (isKeyEmpty.value == -1 && stopsForm.value.BarCode != '') {
@@ -767,13 +778,13 @@ const radioChange = (args: any) => {
       keyForm.value.OrderName = args[0].MfgOrderName;
       keyForm.value.ProductName = args[0].ProductName;
       getBadForm.value.orderName = args[0].MfgOrderName;
-    
+
     } else {
       // getHisData();
     }
     getKeyMaterial();
     getHisData();
-
+    inputRef.value.focus()
     // orderTable.value.data.forEach((v: any) => {
     //   if (v.MfgOrderName == args[1]) {
   }
@@ -846,7 +857,9 @@ const print = () => {
 };
 
 const printData = () => {
-  CoverInstallPrint(form.value.MfgOrderName).then((res: any) => {
+  CoverInstallPrint({orderNumber:form.value.MfgOrderName,
+    workStation:opui.station
+  }).then((res: any) => {
     msgType.value = res.success;
     if (res.success) {
       msgTitle.value = "打印成功";
@@ -869,7 +882,7 @@ const handleCurrentChange = (val: any) => {
 
 const getScreenHeight = () => {
   nextTick(() => {
-    tableHeight.value = window.innerHeight - 440;
+    tableHeight.value = window.innerHeight - 400;
   });
 };
 </script>
@@ -880,7 +893,7 @@ const getScreenHeight = () => {
 }
 
 .setwidth {
-  flex: 0 0 370px;
+  flex: 0 0 320px;
 }
 
 .box {

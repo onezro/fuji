@@ -1,6 +1,6 @@
 <template>
   <div class="flex">
-    <div class="w-[400px] border-solid border-r-2 border-[#cbcbcb]">
+    <div class="w-[320px] border-solid border-r-2 border-[#cbcbcb]">
       <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
         <span class="ml-5">基本信息</span>
       </div>
@@ -8,13 +8,13 @@
         <el-form class="inbound" size="default" ref="formRef" :model="OrderForm" label-width="auto">
           <el-form-item label="生产计划号">
             <div class="flex items-center">
-              <selectTa ref="selectTable" :table="orderTable" :columns="orderColumns" :selectWidth="220"
+              <selectTa ref="selectTable" :table="orderTable" :columns="orderColumns" :selectWidth="170"
                 :max-height="400" :tableWidth="700" :defaultSelectVal="defaultSelectVal"
                 :keywords="{ label: 'MfgOrderName', value: 'MfgOrderName' }"
                 @radioChange="(...args: any) => radioChange(args)">
               </selectTa>
               <el-tooltip content="刷新" placement="top">
-                <el-icon class="ml-3" color="#777777" :class="isLoding" size="24" @click="getOrderData">
+                <el-icon class="ml-3" color="#006487" :class="isLoding" size="24" @click="getOrderData">
                   <RefreshRight />
                 </el-icon>
               </el-tooltip>
@@ -27,7 +27,7 @@
         </el-form>
       </div>
     </div>
-    <div class="w-[calc(100%-400px)] pt-[5px]">
+    <div class="w-[calc(100%-320px)] pt-[5px]">
       <div>
         <div class="ml-2">
           <el-form ref="formRef" :inline="true" size="default" :model="form" label-width="auto">
@@ -225,6 +225,20 @@ const OrderForm = reactive<InstanceType<typeof Formspan>>({
 
 const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
   {
+    label: "产品机型",
+    value: "BD_ProductModel",
+    disabled: true,
+    type: "input",
+    width: "",
+  },
+  {
+    label: "工单号",
+    value: "ERPOrder",
+    disabled: true,
+    type: "input",
+    width: "",
+  },
+  {
     label: "产品编码",
     value: "ProductName",
     disabled: true,
@@ -238,32 +252,12 @@ const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
     type: "textarea",
     width: "",
   },
-  {
-    label: "产品机型",
-    value: "BD_ProductModel",
-    disabled: true,
-    type: "input",
-    width: "",
-  },
+
   {
     label: "软件版本",
     value: "BD_SoftVersion",
     disabled: true,
     type: "textarea",
-    width: "",
-  },
-  {
-    label: "计划开始",
-    value: "PlannedStartDate",
-    disabled: true,
-    type: "input",
-    width: "",
-  },
-  {
-    label: "计划完成",
-    value: "PlannedCompletionDate",
-    disabled: true,
-    type: "input",
     width: "",
   },
   {
@@ -364,7 +358,16 @@ const columnData = reactive([
 ]);
 
 const burnPrint = () => {
-  PrintBurnModel(BurnTableData.value).then((data: any) => {
+  // console.log(BurnTableData.value);
+  let data1=BurnTableData.value.map((b:any)=>{
+    return {
+      ...b,
+      workStation:opui.station
+    }
+  })
+
+  
+  PrintBurnModel(data1).then((data: any) => {
     ElMessage({
       showClose: true,
       message: data.msg,
@@ -543,6 +546,7 @@ const radioChange = (args: any) => {
     OrderForm.BD_ProductModel = "";
     OrderForm.BD_SoftVersion = "";
     OrderForm.PlannedCompletionDate = "";
+    OrderForm.ERPOrder = "";
     OrderForm.Qty = "";
   } else {
     orderTable.value.data.forEach((v: any) => {
@@ -556,6 +560,7 @@ const radioChange = (args: any) => {
         OrderForm.PlannedCompletionDate = v.PlannedCompletionDate;
         OrderForm.Qty = v.Qty;
         form.value.OrderNum = v.MfgOrderName;
+        OrderForm.ERPOrder = v.ERPOrder;
       }
     });
     onSubmit();
