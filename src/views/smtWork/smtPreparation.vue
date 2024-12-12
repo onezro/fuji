@@ -235,10 +235,10 @@
         </el-dialog>
 
         <el-dialog align-center :append-to-body="true" :close-on-click-modal="false" v-model="viewVisible" @close=""
-            title="货架物料明细" width="70%">
-      <el-tabs v-model="activeName" type="border-card" class="demo-tabs" >
+        :title="'生产计划号：'+operateForm.OrderNumber" width="80%">
+      <el-tabs v-model="activeName" type="border-card" class="demo-tabs"  >
         <el-tab-pane label="货架物料明细" name="shelveMaterial" >
-            <table-tem ref="lightTable" :showIndex="true" :tableData="viewTableData" :tableHeight="420"
+            <table-tem ref="lightTable" size="small" :showIndex="true" :tableData="viewTableData" :tableHeight="420"
                 :columnData="viewColumnData" :pageObj="viewPageObj" @handleSizeChange="viewSizeChange"
                 @handleCurrentChange="viewCurrentChange"></table-tem>
       </el-tab-pane>
@@ -391,7 +391,7 @@ const columnData = reactive([
 const viewColumnData = reactive([
     {
         text: true,
-        prop: "Reel_id",
+        prop: "ReelId",
         label: "物料批次条码",
         width: "",
         min: true,
@@ -415,7 +415,7 @@ const viewColumnData = reactive([
     },
     {
         text: true,
-        prop: "MaterialName",
+        prop: "part_number",
         label: "物料编码",
         width: "",
         min: true,
@@ -425,13 +425,13 @@ const viewColumnData = reactive([
         text: true,
         prop: "MaterialDesc",
         label: "物料描述",
-        width: "",
-        min: true,
+        width: "350",
+        // min: true,
         align: "left",
     },
     {
         text: true,
-        prop: "Shelf_id",
+        prop: "shelf_id",
         label: "货架号",
         width: "",
         min: true,
@@ -439,7 +439,7 @@ const viewColumnData = reactive([
     },
     {
         text: true,
-        prop: "Position_info",
+        prop: "BinCode",
         label: "储位编号",
         width: "",
         min: true,
@@ -894,5 +894,38 @@ const getScreenHeight = () => {
 .myselect .el-select__selection {
     font-size: 18px;
     font-weight: bold;
+}
+.el-tabs--border-card {
+  border-top: 1px solid #006487;
+}
+
+.demo-tabs .el-tabs__header {
+  --el-tabs-header-height: 30px;
+  background-color: #006487 !important;
+}
+
+.demo-tabs .el-tabs__content {
+  padding: 5px;
+}
+
+
+
+.demo-tabs.el-tabs--border-card>.el-tabs__header .el-tabs__item {
+  color: #fff;
+  font-size: 0.8rem;
+  // padding: 0 !important;
+}
+
+.demo-tabs .el-tabs__item.is-active {
+  font-size: 0.8rem;
+  // color: #fff;
+  color: #006487 !important;
+  // font-weight: bold;
+}
+
+.el-tabs--border-card>.el-tabs__header .el-tabs__item:not(.is-disabled):hover {
+  font-size: 0.8rem;
+  color: #006487 !important;
+  background-color: rgba($color: #fff, $alpha: 0.8);
 }
 </style>

@@ -75,8 +75,8 @@
             <el-table class="my-table" border fit :data="tableData1" :style="{ width: '100%' }" :height="tableHeight"
               @selection-change="handleSelectionChange" :row-class-name="tableRowClassName">
               <el-table-column type="selection" fixed width="55" align="center" />
-              <!-- <el-table-column prop="ENSoftwareName" label="Name" width="250" /> -->
-              <el-table-column prop="CNSoftwareName" label="名称" width="250" />
+              <!-- <el-table-column prop="SoftwareName" label="Name" width="250" /> -->
+              <el-table-column prop="SoftwareName" label="名称" width="250" />
               <el-table-column prop="SoftwareVersion" label="版本" />
             </el-table>
             <!-- <table-tem class="my-table" :show-select="true" :tableData="tableData1" :tableHeight="tableHeight"
@@ -455,7 +455,7 @@ const scan = () => {
           currentCode.value = "";
         } else {
           if (res.content) {
-            errorRow.value = res.content.ENSoftwareName
+            errorRow.value = res.content.SoftwareName
             console.log(errorRow);
           }
           typeColor.value = "red";
@@ -545,7 +545,7 @@ const tableRowClassName = ({
   rowIndex: number;
 }) => {
   // 在这里判断行数据是否符合条件
-  if (row.ENSoftwareName === errorRow.value) {
+  if (row.SoftwareName === errorRow.value) {
     tableData1.value = tableData1.value;
     return "has-material-row";
   }else {
