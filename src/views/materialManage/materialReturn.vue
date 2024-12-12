@@ -80,7 +80,6 @@
           fit
           :tooltip-effect="'dark'"
           :height="hisHeight"
-          row-key="MaterialName"
           @selection-change="handleSelectionChange"
           @rowClick="rowClick"
         >
