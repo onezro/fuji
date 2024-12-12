@@ -198,6 +198,7 @@
       width="80%"
       title="退料转单"
       align-center
+      @close="close"
     >
       <div class="w-full">
         <div ref="headerRef">
@@ -210,7 +211,7 @@
           >
             <el-form-item label="当前单号">
               <el-input
-                v-model="form.MfgOrderName"
+                v-model.trim="form.MfgOrderName"
                 class="input-with-select"
                 @keyup.enter.native="orderChange(form.MfgOrderName)"
               >
@@ -248,7 +249,7 @@
             </el-form-item>
           </el-form>
           <el-form
-            ref="formRef"
+            ref="tranformRef"
             class="form flex items-start"
             :inline="true"
             size="small"
@@ -256,7 +257,7 @@
           >
             <el-form-item label="转单单号">
               <el-input
-                v-model="transferForm.MfgOrderName"
+                v-model.trim="transferForm.MfgOrderName"
                 class="input-with-select"
                 @keyup.enter.native="transferChange(transferForm.MfgOrderName)"
               >
@@ -338,8 +339,6 @@
             fit
             :tooltip-effect="'dark'"
             :height="400"
-            row-key="MaterialName"
-            :tree-props="{ children: 'children' }"
             @selection-change="handleSelectionChange"
             :row-class-name="tableRowClassName"
           >
@@ -532,6 +531,7 @@ const choiceId = ref("");
 const returnType = ref("1");
 const returnTypeList = ref<any[]>([]);
 const iReturnTypeList = ref<any[]>([]);
+const tranformRef = ref();
 const table = ref();
 const detailedPageObj = ref({
   pageSize: 10000000,
@@ -804,9 +804,9 @@ const filterFeedTableData = () => {
     filterTableData.value = feedTableData.value;
     return;
   }
-  filterTableData.value = feedTableData.value.filter((f: any) =>
-    f.MaterialName.toLowerCase().includes(searchText.value.toLowerCase())
-  );
+  filterTableData.value = feedTableData.value.filter((f: any) => 
+  f.MaterialName.toLowerCase().includes(searchText.value.toLowerCase())
+);
 };
 
 //获取历史物料退料申请记录
@@ -1020,6 +1020,17 @@ const applyFor = () => {
       dialogVisible.value = false;
     }
   });
+};
+
+const close = () => {
+  feedTableData.value = [];
+  filterTableData.value = [];
+  transferForm.value.MfgOrderName = "";
+  transferForm.value.ProductName = "";
+  transferForm.value.BD_ProductModel = "";
+  transferForm.value.ProductDesc = "";
+  transSelectType.value = "";
+  searchText.value = "";
 };
 
 const dateChange = () => {
