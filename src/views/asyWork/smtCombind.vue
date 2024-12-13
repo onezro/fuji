@@ -111,9 +111,43 @@
                 </el-checkbox-group>
               </div>
             </div>
-            <table-tem :showIndex="true" :tableData="changeData" :tableHeight="tableHeight" :columnData="columnData1"
+            <el-table :data="changeData.slice(
+              (pageObj.currentPage - 1) * pageObj.pageSize,
+              pageObj.currentPage * pageObj.pageSize
+            )
+              " stripe border fit :height="tableHeight">
+              <el-table-column type="index" align="center" fixed label="序号" :width="'60'">
+                <template #default="scope">
+                  <span>{{
+                    scope.$index +
+                    pageObj.pageSize * (pageObj.currentPage - 1) +
+                    1
+                  }}</span>
+                </template>
+              </el-table-column>
+              <el-table-column prop="ContainerName" label="成品条码" width="180" />
+              <el-table-column label="PCB组件条码">
+                <template #default="scope">
+                  <div v-if="scope.row.BindContainerName!==null">SN1：{{ scope.row.BindContainerName }}</div>
+                  <div v-if="scope.row.BindContainerName2!==null">SN2：{{ scope.row.BindContainerName2 }}</div>
+                  <div v-if="scope.row.BindContainerName3!=null">SN3：{{ scope.row.BindContainerName3 }}</div>
+                  <div v-if="scope.row.BindContainerName4!=null">SN4：{{ scope.row.BindContainerName4 }}</div>
+                  <div v-if="scope.row.BindContainerName5!=null">SN5：{{ scope.row.BindContainerName5 }}</div>
+                </template>
+              </el-table-column>
+              <el-table-column prop="BD_EmployeeName" label="扫描人" width="180" />
+              <el-table-column prop="TxnDate" label="扫描时间" width="180" />
+            </el-table>
+            <div class="mt-2 mb-2">
+              <el-pagination :size="'default'" background @size-change="handleSizeChange"
+                @current-change="handleCurrentChange" :pager-count="5" :current-page="pageObj.currentPage"
+                :page-size="pageObj.pageSize" :page-sizes="[30, 50, 100, 200, 300]"
+                layout="total,sizes, prev, pager, next" :total="tableData1.length">
+              </el-pagination>
+            </div>
+            <!-- <table-tem :showIndex="true" :tableData="changeData" :tableHeight="tableHeight" :columnData="columnData1"
               :pageObj="pageObj" @handleSizeChange="handleSizeChange"
-              @handleCurrentChange="handleCurrentChange"></table-tem>
+              @handleCurrentChange="handleCurrentChange"></table-tem> -->
           </div>
         </div>
       </div>
@@ -738,7 +772,7 @@ const radioChange = (args: any) => {
     }
     getKeyMaterial();
     getHisData();
-    inputRef.value.focus()
+  
     // getHisData();
 
   }
@@ -905,5 +939,8 @@ const getScreenHeight = () => {
   /* 你的样式 */
   color: white !important;
   font-size: 1.1rem;
+}
+.el-pagination {
+  justify-content: center;
 }
 </style>

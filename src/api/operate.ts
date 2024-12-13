@@ -750,3 +750,12 @@ export function QueryBarCodeRuleExpressionType() {
        
     })
 }
+
+//对应的规则
+export function GetTempLabeReportParameter(data: any) {
+    return request({
+        url: "/api/BarCodeTemplate/GetTempLabeReportParameter",
+        method: "post",
+        data
+    })
+}

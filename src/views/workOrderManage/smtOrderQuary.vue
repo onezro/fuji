@@ -73,10 +73,10 @@
             @click="openOrderOnline">计划上线</el-button>
           <el-button type="warning" size="small" :disabled="isOffline" @click="openOrderOffline">计划下线</el-button>
           <el-button color="#409eff" size="small" style="color: #fff" icon="Unlock"
-          :disabled="onlineData.length === 1 ? false : true" @click="orderUnlock">解锁</el-button>
+            :disabled="onlineData.length === 1 ? false : true" @click="orderUnlock">解锁</el-button>
           <el-button type="info" size="small" icon="Lock" :disabled="onlineData.length === 1 ? false : true"
             @click="orderLock">锁定</el-button>
-         
+
         </div>
       </div>
       <div class="table_container">
@@ -86,7 +86,7 @@
       </div>
     </el-card>
 
-    <el-dialog v-model="dialogVisible" width="80%" :title="'生产计划号：' + orderName" align-center>
+    <el-dialog v-model="dialogVisible" width="85%" :title="'生产计划号：' + orderName" align-center>
       <div class="w-full">
         <el-tabs v-model="activeName" type="border-card" class="demo-tabs" @tab-change="tabChange">
           <el-tab-pane label="物料需求" name="物料清单明细" :stretch="true">
@@ -109,7 +109,7 @@
                 </el-table-column>
                 <el-table-column prop="SpecDesc" label="工序名称" align="center" flexible>
                 </el-table-column>
-                <el-table-column prop="UOMName" align="center" label="单位" flexible>
+                <el-table-column prop="UOMName" align="center" label="单位">
                 </el-table-column>
                 <!-- 
                 <el-table-column prop="isLoadQueue" align="center" label="允许上料" flexible>
@@ -118,9 +118,11 @@
                     <span v-if="scope.row.isLoadQueue === 0">否</span>
                   </template>
                 </el-table-column> -->
-                <el-table-column prop="QtyRequired" align="center" label="单件用量" flexible>
+                <el-table-column prop="QtyRequired" align="center" label="单件用量">
                 </el-table-column>
                 <el-table-column prop="TotalQtyRequired" align="center" label="需求量" flexible>
+                </el-table-column>
+                <el-table-column prop="IssueControlType" align="center" label="消耗类型">
                 </el-table-column>
               </el-table>
             </div>
@@ -144,24 +146,29 @@
             </el-table>
           </el-tab-pane>
           <el-tab-pane label="工治具明细" name="工治具明细">
-            <el-table :data="toolTableData" size="small" stripe border fit :tooltip-effect="'dark'" :height="400">
+            <el-table :data="toolTableData" size="small" stripe border fit  :height="400"
+              row-key="ID" :tree-props="{ children: 'children' }">
               <el-table-column type="index" align="center" fixed label="序号" width="60" />
-
-              <!-- <el-table-column prop="MfgLineName" label="产线" :min-width="180" align="center">
-              </el-table-column> -->
-              <el-table-column prop="MfgLineName" label="产线编码" :min-width="180" align="center">
+              <el-table-column prop="LineName" label="产线编码" :min-width="180" align="center" fixed>
               </el-table-column>
-              <el-table-column prop="WorkStationName" label="工位编码" :min-width="180" align="center">
+              <el-table-column prop="TaskNo" label="计划任务单" :min-width="120" align="center" fixed>
               </el-table-column>
-              <!-- <el-table-column prop="OrderNumber" label="生产计划号" :min-width="180" align="center">
-                </el-table-column> -->
-              <el-table-column prop="ToolName" label="工治具编码" :min-width="180" align="center">
+              <el-table-column prop="ProcedureDsc" label="工序" width="100" align="center" fixed>
               </el-table-column>
-              <el-table-column prop="compName" label="工治具型号" :min-width="180" align="center">
+              <el-table-column prop="Status" label="任务状态" width="80" align="center" fixed>
+                <template #default="scope">
+                  <el-tag  effect="light" :type="scope.row.Status==2? 'success':'info'">{{ scope.row.Status==2?'完成':'未完成' }}</el-tag>
+                </template>
               </el-table-column>
-              <el-table-column prop="OperatorID" label="操作人" :min-width="180" align="center">
+              <el-table-column prop="ProductName" label="产品编码" :min-width="120" align="center">
               </el-table-column>
-              <el-table-column prop="Timestamp" label="操作时间" :min-width="180" align="center">
+              <el-table-column prop="CompName" label="工治具型号" :min-width="180">
+              </el-table-column>
+              <el-table-column prop="CompID" label="工治具编码" :min-width="180">
+              </el-table-column>
+              <el-table-column prop="CreatedBy" label="操作人" :min-width="120" align="center">
+              </el-table-column>
+              <el-table-column prop="CreatedOn" label="操作时间" :min-width="180" align="center">
               </el-table-column>
             </el-table>
           </el-tab-pane>
@@ -588,21 +595,21 @@ const getTableData = () => {
   });
 };
 
-const feedOrganData = (organizations: any) => {
+const toolOrganData = (organizations: any) => {
   const organizationMap = new Map();
   organizations.forEach((org: any) => {
-    organizationMap.set(org.MaterialName, { ...org, children: [] });
+    organizationMap.set(org.ID, { ...org, children: [] });
   });
   organizations.forEach((org: any) => {
-    if (org.originalMaterialName !== org.MaterialName) {
-      const parentOrg = organizationMap.get(org.originalMaterialName);
+    if (org.FID !== org.ID) {
+      const parentOrg = organizationMap.get(org.FID);
       if (parentOrg) {
-        parentOrg.children.push(organizationMap.get(org.MaterialName));
+        parentOrg.children.push(organizationMap.get(org.ID));
       }
     }
   });
   return Array.from(organizationMap.values()).filter(
-    (org) => org.originalMaterialName !== org.MaterialName
+    (org) => org.FID == null
   );
 };
 
@@ -641,7 +648,10 @@ const tabChange = (name: any) => {
       if (!res || res.content.lenght === 0) {
         return;
       }
-      toolTableData.value = res.content;
+      toolTableData.value = toolOrganData(res.content)
+      // console.log(toolTableData.value);
+
+
     });
   }
 };

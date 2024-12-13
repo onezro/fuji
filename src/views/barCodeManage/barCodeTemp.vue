@@ -95,11 +95,11 @@
       <el-form ref="addTempRef" :model="addTempForm" label-width="auto">
         <el-form-item label="模板名称" prop="TemplateName" class="flex items-center">
           <el-input v-model="addTempForm.TemplateName"  style="width: 240px" />
-          <el-checkbox v-model="addTempForm.TemplateEnable" label="是否启用" class="ml-3" />
+          <el-checkbox v-model="addTempForm.TemplateEnable" label="启用" class="ml-3" />
         </el-form-item>
-        <el-form-item label="模板文件" prop="Template_File">
-          <el-input v-model="addTempForm.Template_File" style="width: 240px" />
-          <el-checkbox v-model="addTempForm.TemplateEnableExternal" label="是否启用外部码" class="ml-3" />
+        <el-form-item label="模板文件" prop="TemplateName">
+          <el-input v-model="addTempForm.TemplateName" style="width: 240px" disabled/>
+          <el-checkbox v-model="addTempForm.TemplateEnableExternal" label="外部码" class="ml-3" />
         </el-form-item>
         <el-form-item label="备注" prop="TemplateRemark">
           <el-input v-model="addTempForm.TemplateRemark" type="textarea" style="width: 240px"
@@ -118,11 +118,11 @@
       <el-form ref="editTempRef" :model="editTempForm" label-width="auto">
         <el-form-item label="模板名称" prop="TemplateName" class="flex items-center">
           <el-input v-model="editTempForm.TemplateName" disabled style="width: 240px" />
-          <el-checkbox v-model="editTempForm.TemplateEnable" label="是否启用" class="ml-3" />
+          <el-checkbox v-model="editTempForm.TemplateEnable" label="启用" class="ml-3" />
         </el-form-item>
         <el-form-item label="模板文件" prop="Template_File">
           <el-input v-model="editTempForm.Template_File" style="width: 240px" />
-          <el-checkbox v-model="editTempForm.TemplateEnableExternal" label="是否启用外部码" class="ml-3" />
+          <el-checkbox v-model="editTempForm.TemplateEnableExternal" label="外部码" class="ml-3" />
         </el-form-item>
         <el-form-item label="备注" prop="TemplateRemark">
           <el-input v-model="editTempForm.TemplateRemark" type="textarea" style="width: 240px"
@@ -211,7 +211,7 @@ const addTempRef = ref();
 const addVisible = ref(false);
 const addTempForm = ref({
   TemplateName: "",
-  TemplateEnableExternal: true,
+  TemplateEnableExternal: false,
   TemplateEnable: true,
   TemplateRemark: "",
   Template_File: "",
@@ -221,7 +221,7 @@ const editTempRef = ref();
 const editVisible = ref(false);
 const editTempForm = ref({
   TemplateName: "",
-  TemplateEnableExternal: true,
+  TemplateEnableExternal: false,
   TemplateEnable: true,
   TemplateRemark: "",
   Template_File: "",
@@ -283,7 +283,13 @@ const addCancel = () => {
 };
 
 const addConfirm = () => {
+  addTempForm.value.Template_File=addTempForm.value.TemplateName
   InsertBarCodeTemplate(addTempForm.value).then((res: any) => {
+    // ElNotification({
+    //         title: "提示信息",
+    //         message: res.msg,
+    //         type: res.success ? "success" : "error",
+    //     });
     if (res.success) {
       ElNotification({
         title: "提示信息",
@@ -348,6 +354,7 @@ const handleDelete = (row: any) => {
             message: "删除成功",
             type: "success",
           });
+          getData()
         }
       });
     })
