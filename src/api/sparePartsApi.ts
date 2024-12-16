@@ -388,10 +388,13 @@ export function updateEndRepair(data: any){
 }
 
 //确认维修
-export function RepairConfirm(data: any){
+export function RepairConfirm(type:any,data: any){
     return request({
         url: "/api/resourceRepair/RepairConfirm",
         method: "post",
-        data
+        data,
+        params:{
+            type
+        }
     });
 }

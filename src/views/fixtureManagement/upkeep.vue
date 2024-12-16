@@ -10,19 +10,28 @@
               clearable
             ></el-input> -->
           <el-form ref="formRef" class="form" :inline="true" label-width="">
-            <el-form-item label="故障代码" class="mb-2">
+            <el-form-item label="工单号" class="mb-2">
               <el-input
                 size="small"
-                v-model="searchForm.ErrorCode"
+                v-model="searchForm.ErrorOrder"
                 style="width: 180px"
                 placeholder=""
                 clearable
               ></el-input>
             </el-form-item>
-            <el-form-item label="故障名称" class="mb-2">
+            <el-form-item label="设备名称" class="mb-2">
               <el-input
                 size="small"
-                v-model="searchForm.ErrorName"
+                v-model="searchForm.EquipmentName"
+                style="width: 180px"
+                placeholder=""
+                clearable
+              ></el-input>
+            </el-form-item>
+            <el-form-item label="故障代码" class="mb-2">
+              <el-input
+                size="small"
+                v-model="searchForm.EquipmentGuid"
                 style="width: 180px"
                 placeholder=""
                 clearable
@@ -47,7 +56,7 @@
           type="primary"
           @click="clearForm(), (addVisible = true)"
           size="small"
-          >新增故障代码</el-button
+          >新增维修记录</el-button
         >
       </div>
       <!-- <table-tem
@@ -145,7 +154,7 @@
                   type="warning"
                   icon="VideoPause"
                   size="small"
-                  @click="startSubmit(scope.row)"
+                  @click="endSubmit(scope.row)"
                 ></el-button>
               </el-tooltip>
               <el-tooltip content="确认维修" placement="top">
@@ -153,7 +162,10 @@
                   type="primary"
                   icon="Check"
                   size="small"
-                  @click="editSubmit(scope.row)"
+                  @click="
+                    (repairVisible = true),
+                      (choiceId = scope.row.EquipmentErrorRecordGuid)
+                  "
                 ></el-button>
               </el-tooltip>
             </div>
@@ -178,10 +190,10 @@
       align-center
       :append-to-body="true"
       :close-on-click-modal="false"
-      v-model="editVisible"
+      v-model="repairVisible"
       @close=""
-      title="编辑"
-      width="50%"
+      title="确认维修"
+      width="30%"
     >
       <el-form
         ref="editFormRef"
@@ -190,56 +202,26 @@
         label-width="auto"
         :inline="true"
       >
-        <el-form-item label="故障代码类型">
-          <el-select
-            v-model="EditForm.ErrorTypeCode"
-            placeholder=""
-            style="width: 250px"
-          >
+        <el-form-item label="类型">
+          <el-select v-model="repairType" placeholder="" style="width: 250px">
             <el-option
-              v-for="item in faultCodeType"
-              :key="item.Value"
-              :label="item.Text"
-              :value="item.Value"
+              v-for="item in [
+                { label: '通过', item: '1' },
+                { label: '不通过', item: '0' },
+              ]"
+              :key="item.label"
+              :label="item.label"
+              :value="item.item"
             />
           </el-select>
-        </el-form-item>
-        <el-form-item label="故障名称类型">
-          <el-select
-            v-model="EditForm.ErrorTypeName"
-            placeholder=""
-            style="width: 250px"
-          >
-            <el-option
-              v-for="item in faultNameType"
-              :key="item.Value"
-              :label="item.Text"
-              :value="item.Value"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="故障代码">
-          <el-input v-model="EditForm.ErrorCode" style="width: 250px" />
-        </el-form-item>
-        <el-form-item label="故障名称">
-          <el-input v-model="EditForm.ErrorName" style="width: 250px" />
-        </el-form-item>
-        <el-form-item label="故障记录">
-          <el-input v-model="EditForm.ErrorNote" style="width: 250px" />
-        </el-form-item>
-        <el-form-item label="修复方法">
-          <el-input v-model="EditForm.RepairMethod" style="width: 250px" />
-        </el-form-item>
-        <el-form-item label="故障描述">
-          <el-input v-model="EditForm.ErrorDesc" style="width: 250px" />
         </el-form-item>
       </el-form>
 
       <template #footer>
         <span class="dialog-footer">
           <!-- <el-button type="info" @click="addSon"> 增加子项</el-button> -->
-          <el-button @click="editVisible = false"> 取消 </el-button>
-          <el-button type="primary" @click=""> 确定 </el-button>
+          <el-button @click="repairVisible = false"> 取消 </el-button>
+          <el-button type="primary" @click="sureSubmit"> 确定 </el-button>
         </span>
       </template>
     </el-dialog>
@@ -289,7 +271,11 @@
           <el-input v-model="form.ErrorNote" style="width: 250px" />
         </el-form-item>
         <el-form-item label="故障描述">
-          <el-input type="textarea" v-model="form.ErrorDesc" style="width: 250px" />
+          <el-input
+            type="textarea"
+            v-model="form.ErrorDesc"
+            style="width: 250px"
+          />
         </el-form-item>
       </el-form>
 
@@ -332,14 +318,14 @@ import { shortcuts, setTodayDate, setLastDate } from "@/utils/dataMenu";
 const userStore = useUserStoreWithOut();
 
 interface formTS {
-  "ErrorOrder": string;
-  "EquipmentGuid": string;
-  "EquipmentName": string;
-  "ErrorCodeGuid": string;
-  "ErrorDesc": string;
-  "ErrorNote": string;
-  "RowDeleted": boolean;
-  "CreatedBy": string;
+  ErrorOrder: string;
+  EquipmentGuid: string;
+  EquipmentName: string;
+  ErrorCodeGuid: string;
+  ErrorDesc: string;
+  ErrorNote: string;
+  RowDeleted: boolean;
+  CreatedBy: string;
 }
 
 interface EditFormTS {
@@ -368,8 +354,9 @@ interface inFormTS {
 }
 
 interface SearchFormTS {
-  ErrorCode: string;
-  ErrorName: string;
+  ErrorOrder: "",
+  EquipmentGuid: "",
+  EquipmentName: "",
 }
 
 interface detailFormTS {
@@ -389,7 +376,7 @@ const currentPage = ref(1);
 const tableHeight = ref(0);
 const addVisible = ref(false);
 const InVisible = ref(false);
-const editVisible = ref(false);
+const repairVisible = ref(false);
 const dateValue = ref<any[]>([]);
 const detailVisible = ref(false);
 const detailTable = ref<any[]>([]);
@@ -399,6 +386,8 @@ const inFormType = ref("");
 const tableData1 = ref<any[]>([]);
 const faultCodeType = ref();
 const faultNameType = ref();
+const repairType = ref("1");
+const choiceId = ref("");
 const pageObj = ref({
   pageSize: 30,
   currentPage: 1,
@@ -466,8 +455,9 @@ const inForm = ref<inFormTS>({
 });
 
 const searchForm = ref<SearchFormTS>({
-  ErrorCode: "",
-  ErrorName: "",
+  ErrorOrder: "",
+  EquipmentGuid: "",
+  EquipmentName: "",
 });
 
 const detailForm = ref<detailFormTS>({
@@ -482,19 +472,6 @@ const detailForm = ref<detailFormTS>({
   Remark: "",
 });
 
-const editSubmit = (data: any) => {
-  console.log(data.ReturnOn);
-  EditForm.value.CreatedBy = loginName;
-  EditForm.value.ErrorCode = data.ErrorCode;
-  EditForm.value.ErrorDesc = data.ErrorDesc;
-  EditForm.value.ErrorName = data.ErrorName;
-  EditForm.value.ErrorNote = data.ErrorNote;
-  EditForm.value.ErrorTypeCode = data.ErrorTypeCode;
-  EditForm.value.ErrorTypeName = data.ErrorTypeName;
-  EditForm.value.RepairMethod = data.RepairMethod;
-  editVisible.value = true;
-};
-
 interface toolType {
   Text: string;
   Value: string;
@@ -504,15 +481,15 @@ const MaterialNameList = ref<toolType[]>([]);
 
 const clearForm = () => {
   form.value = {
-  ErrorOrder: "",
-  EquipmentGuid: "",
-  EquipmentName: "",
-  ErrorCodeGuid: "",
-  ErrorDesc: "",
-  ErrorNote: "",
-  RowDeleted: true,
-  CreatedBy: "",
-};
+    ErrorOrder: "",
+    EquipmentGuid: "",
+    EquipmentName: "",
+    ErrorCodeGuid: "",
+    ErrorDesc: "",
+    ErrorNote: "",
+    RowDeleted: true,
+    CreatedBy: "",
+  };
 };
 
 const inFormClose = () => {
@@ -535,15 +512,15 @@ const clearEditForm = () => {
 
 const typeChange = () => {
   form.value = {
-  ErrorOrder: "",
-  EquipmentGuid: "",
-  EquipmentName: "",
-  ErrorCodeGuid: "",
-  ErrorDesc: "",
-  ErrorNote: "",
-  RowDeleted: true,
-  CreatedBy: "",
-};
+    ErrorOrder: "",
+    EquipmentGuid: "",
+    EquipmentName: "",
+    ErrorCodeGuid: "",
+    ErrorDesc: "",
+    ErrorNote: "",
+    RowDeleted: true,
+    CreatedBy: "",
+  };
 };
 
 const getData = () => {
@@ -618,6 +595,51 @@ const startSubmit = (data: any) => {
         message: "取消操作",
       });
     });
+};
+
+const endSubmit = (data: any) => {
+  //   deleteVisible.value = true;
+  // deleteChoice.value = data.EquipmentErrorRecordGuid;
+  ElMessageBox.confirm("确定结束维修", "确认操作", {
+    confirmButtonText: "确定",
+    cancelButtonText: "取消",
+    type: "warning",
+  })
+    .then(() => {
+      updateEndRepair({
+        EquipmentErrorRecordGuid: data.EquipmentErrorRecordGuid,
+      }).then((res: any) => {
+        if (!res) {
+          return;
+        }
+        ElNotification({
+          type: "success",
+          message: res.msg,
+        });
+        getData();
+      });
+    })
+    .catch(() => {
+      ElNotification({
+        type: "info",
+        message: "取消操作",
+      });
+    });
+};
+
+const sureSubmit = () => {
+  RepairConfirm(repairType.value, {
+    EquipmentErrorRecordGuid: choiceId.value,
+  }).then((res: any) => {
+    if (!res) {
+      return;
+    }
+    ElNotification({
+      type: "success",
+      message: res.msg,
+    });
+    getData();
+  });
 };
 
 const addData = () => {
@@ -787,6 +809,8 @@ const getScreenHeight = () => {
 
 //el-table自动计算宽度
 const flexColumnWidth = (label: any, prop: any) => {
+  console.log(tableData?.value);
+  
   const arr = tableData?.value.map((x: { [x: string]: any }) => x[prop]);
   arr.push(label); // 把每列的表头也加进去算
   return getMaxLength(arr) + 25 + "px";
