@@ -37,8 +37,14 @@
         <!-- <div class="w-full"> -->
         <div class="w-full h-full flex flex-col">
           <div>
-            <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
+            <div class="h-[35px] flex items-center justify-between text-lg text-[#fff] bg-[#006487]">
               <span class="ml-5"> 扫描条码</span>
+              <div class="flex items-center mr-3">
+                <div>
+                  时间间隔：<span class="text-lg font-bold pl-1 pr-1 bg-slate-300 text-[red]">{{ setTime }}h</span>
+                </div>
+                <el-button type="info" class="ml-2" @click="openSetTime">设定</el-button>
+              </div>
             </div>
             <div class="h-[200px] pt-3 pr-5 pl-5 flex justify-between">
               <div>
@@ -59,8 +65,18 @@
                   </el-form-item>
                   <div></div>
                 </el-form>
-                <div class="text-xl font-bold "  :style="{ 'color': isGo ? '#00B400' : '#e6a23c' }" v-show="msgType === true || msgTitle === ''">
+                <!-- <div class="text-xl font-bold " :style="{ 'color': isGo ? '#00B400' : '#e6a23c' }"
+                  v-show="msgType === true || msgTitle === ''">
                   {{ msgTitle === "" ? "请扫描屏材料批次条码" : msgTitle }}
+                </div>
+                <div class="text-xl font-bold text-[red]" v-show="msgType === false && msgTitle !== ''">
+                  {{ msgTitle }}
+                </div> -->
+                <div class="text-xl font-bold text-[#f48000]">
+                  {{ barMsg }}
+                </div>
+                <div class="text-xl font-bold text-[#00B400]" v-show="msgType === true || msgTitle === ''">
+                  {{ msgTitle }}
                 </div>
                 <div class="text-xl font-bold text-[red]" v-show="msgType === false && msgTitle !== ''">
                   {{ msgTitle }}
@@ -79,17 +95,18 @@
                   <el-table-column prop="LoadQueueQty" label="上料总数" width="80" align="center">
                     <template #default="scope">
                       {{
-                       scope.row.IssueControl==1?
-                       ( scope.row.AllQty==null?0: scope.row.AllQty):( scope.row.LoadQueueQty==null?0: scope.row.LoadQueueQty)
+                        scope.row.IssueControl == 1 ?
+                          (scope.row.AllQty == null ? 0 : scope.row.AllQty) : (scope.row.LoadQueueQty == null ? 0 :
+                            scope.row.LoadQueueQty)
                       }}
                     </template>
                   </el-table-column>
                   <el-table-column prop="QtyRequired" label="剩余数量" width="80" align="center">
                     <template #default="scope">
                       <span>{{
-                      scope.row.IssueControl==1?
-                      ( scope.row.remainQty==null?0: scope.row.remainQty):( scope.row.Qty==null?0: scope.row.Qty)
-                      }}</span>
+                        scope.row.IssueControl == 1 ?
+                          (scope.row.remainQty == null ? 0 : scope.row.remainQty) : (scope.row.Qty == null ? 0 : scope.row.Qty)
+                        }}</span>
                     </template>
                   </el-table-column>
                   <el-table-column prop="MaterialBarCode" label="批次条码" width="150">
@@ -111,9 +128,43 @@
                 </el-checkbox-group>
               </div>
             </div>
-            <table-tem :showIndex="true" :tableData="changeData" :tableHeight="tableHeight" :columnData="columnData1"
+            <el-table :data="changeData.slice(
+              (pageObj.currentPage - 1) * pageObj.pageSize,
+              pageObj.currentPage * pageObj.pageSize
+            )
+              " stripe border fit :height="tableHeight">
+              <el-table-column type="index" align="center" fixed label="序号" :width="'60'">
+                <template #default="scope">
+                  <span>{{
+                    scope.$index +
+                    pageObj.pageSize * (pageObj.currentPage - 1) +
+                    1
+                  }}</span>
+                </template>
+              </el-table-column>
+              <el-table-column prop="ContainerName" label="成品条码" width="180" />
+              <el-table-column label="PCB组件条码">
+                <template #default="scope">
+                  <div v-if="scope.row.BindContainerName !== null">SN1：{{ scope.row.BindContainerName }}</div>
+                  <div v-if="scope.row.BindContainerName2 !== null">SN2：{{ scope.row.BindContainerName2 }}</div>
+                  <div v-if="scope.row.BindContainerName3 != null">SN3：{{ scope.row.BindContainerName3 }}</div>
+                  <div v-if="scope.row.BindContainerName4 != null">SN4：{{ scope.row.BindContainerName4 }}</div>
+                  <div v-if="scope.row.BindContainerName5 != null">SN5：{{ scope.row.BindContainerName5 }}</div>
+                </template>
+              </el-table-column>
+              <el-table-column prop="BD_EmployeeName" label="扫描人" width="180" />
+              <el-table-column prop="TxnDate" label="扫描时间" width="180" />
+            </el-table>
+            <div class="mt-2 mb-2">
+              <el-pagination :size="'default'" background @size-change="handleSizeChange"
+                @current-change="handleCurrentChange" :pager-count="5" :current-page="pageObj.currentPage"
+                :page-size="pageObj.pageSize" :page-sizes="[30, 50, 100, 200, 300]"
+                layout="total,sizes, prev, pager, next" :total="tableData1.length">
+              </el-pagination>
+            </div>
+            <!-- <table-tem :showIndex="true" :tableData="changeData" :tableHeight="tableHeight" :columnData="columnData1"
               :pageObj="pageObj" @handleSizeChange="handleSizeChange"
-              @handleCurrentChange="handleCurrentChange"></table-tem>
+              @handleCurrentChange="handleCurrentChange"></table-tem> -->
           </div>
         </div>
       </div>
@@ -159,6 +210,20 @@
         <span class="dialog-footer">
           <el-button @click="badCancel">取消</el-button>
           <el-button type="primary" @click="badSubmit"> 确定 </el-button>
+        </span>
+      </template>
+    </el-dialog>
+    <el-dialog v-model="showSetTime" draggable title="时间设定" width="300px" :append-to-body="true"
+      :close-on-click-modal="false" :close-on-press-escape="false" @close="setCancel">
+      <el-form ref="formRef" :model="timeForm" label-width="auto">
+        <el-form-item label="间隔时间" prop="time">
+          <el-input-number v-model="timeForm.setTime" :min="1"   :precision="0"/>
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="setCancel">关闭</el-button>
+          <el-button type="primary" @click="setASYtime"> 确定 </el-button>
         </span>
       </template>
     </el-dialog>
@@ -381,7 +446,7 @@ interface BadForm {
 const getBadForm = ref({
   containerName: "",
   workstationName: opui.station,
-  orderName:""
+  orderName: ""
 });
 const badForm = ref<BadForm>({
   containerName: "",
@@ -403,11 +468,11 @@ const badColumn = reactive([
     align: "1",
   },
   {
-       text: true,
+    text: true,
     prop: "isDefectReasonDesc",
     label: "不良原因",
     width: "",
-    min:true,
+    min: true,
     align: "1",
   },
 ]);
@@ -415,6 +480,12 @@ const badVisible = ref(false);
 const changeList = ref([]);
 const BadtableData = ref([]);
 const isGo = ref(true)
+const barMsg = ref("")
+const setTime=ref<any>(localStorage.getItem("ASYSETTIME") ||1)
+  const timeForm = ref({
+  setTime: 0,
+});
+const showSetTime = ref(false);
 
 onBeforeMount(() => {
   getScreenHeight();
@@ -556,7 +627,7 @@ const goStop = () => {
   AssemblySynthesisMoveStd(stopsForm.value).then((res: any) => {
     msgTitle.value = res.msg;
     msgType.value = res.success;
-    isGo.value=true
+    isGo.value = true
     stopsForm.value.BarCode = "";
     stopsForm.value.result = "OK";
     barCode.value = "";
@@ -593,26 +664,36 @@ const verifyBarCode = (barCodeData: any) => {
     BarCode: barCodeData,
     OrderName: form.value.MfgOrderName,
     workstationName: opui.station,
+    TimeSpan:parseInt(setTime.value)
   };
   JudgeAssemblyKeyMaterial(data1).then((res: any) => {
     msgTitle.value = res.msg;
     msgType.value = res.success;
-    isGo.value=false
+    isGo.value = false
     if (res.success) {
       const keyIndex = barData.value.findIndex(
         (b: any) => b.MaterialName == res.content.ProductName
       );
-      if(keyIndex==-1){
+      if (keyIndex == -1) {
         msgTitle.value = `条码${barCodeData}不属于该生产计划关键物料，请重新扫描`
         msgType.value = false
         return
       }
       if (barData.value[keyIndex].MaterialBarCode == "") {
-        barData.value[keyIndex].MaterialBarCode = barCodeData;
-        stopsForm.value.keyMaterialList.push({
-          MaterialBarCode: barCodeData,
-          MaterialName: barData.value[keyIndex].MaterialName,
-        });
+        if (res.BarCode != barCodeData) {
+          barData.value[keyIndex].MaterialBarCode = res.content.BarCode;
+          stopsForm.value.keyMaterialList.push({
+            MaterialBarCode: res.content.BarCode,
+            MaterialName: barData.value[keyIndex].MaterialName,
+          });
+        } else {
+          barData.value[keyIndex].MaterialBarCode = barCodeData;
+          stopsForm.value.keyMaterialList.push({
+            MaterialBarCode: barCodeData,
+            MaterialName: barData.value[keyIndex].MaterialName,
+          });
+        }
+
         barData.value[keyIndex].barCount++;
       } else {
         const MaterialBarArr =
@@ -621,12 +702,22 @@ const verifyBarCode = (barCodeData: any) => {
           (m: any) => barCodeData == m
         );
         if (isEixtBar == -1) {
+          if (res.BarCode != barCodeData) {
+            barData.value[keyIndex].MaterialBarCode =
+            barData.value[keyIndex].MaterialBarCode + "," + res.content.BarCode;
+          stopsForm.value.keyMaterialList.push({
+            MaterialBarCode: res.content.BarCode,
+            MaterialName: barData.value[keyIndex].MaterialName,
+          });
+        } else {
           barData.value[keyIndex].MaterialBarCode =
             barData.value[keyIndex].MaterialBarCode + "," + barCodeData;
           stopsForm.value.keyMaterialList.push({
             MaterialBarCode: barCodeData,
             MaterialName: barData.value[keyIndex].MaterialName,
           });
+        }
+          
           barData.value[keyIndex].barCount++;
         } else {
           msgTitle.value = `重复扫描`;
@@ -634,22 +725,27 @@ const verifyBarCode = (barCodeData: any) => {
         }
       }
       if (
-          barData.value[keyIndex].barCount !==
-          barData.value[keyIndex].QtyRequired
-        ) {
+        barData.value[keyIndex].barCount !==
+        barData.value[keyIndex].QtyRequired
+      ) {
+        msgType.value = true;
+        barMsg.value = `请继续扫描${barData.value[keyIndex].IssueControl == 1 ? "关键料" : "批次料"
+        }${barData.value[keyIndex].MaterialName}`;
+        // msgTitle.value = `请继续扫描${barData.value[keyIndex].IssueControl == 1 ? "关键料" : "批次料"
+        //   }${barData.value[keyIndex].MaterialName}`;
+      } else {
+        if (isKeyEmpty.value !== -1) {
           msgType.value = true;
-          msgTitle.value = `请继续扫描${barData.value[keyIndex].IssueControl == 1 ? "关键料" : "批次料"
-            }${barData.value[keyIndex].MaterialName}`;
-        }else{
-          if (isKeyEmpty.value !== -1) {
-            msgType.value = true;
-          msgTitle.value = `请继续扫描${barData.value[isKeyEmpty.value].IssueControl == 1 ? "关键料" : "批次料"
+          barMsg.value =`请继续扫描${barData.value[isKeyEmpty.value].IssueControl == 1 ? "关键料" : "批次料"
             }${barData.value[isKeyEmpty.value].MaterialName}`;
-          }else{
-            msgType.value = true;
-            msgTitle.value=`请扫描MES条码`
-          }
+          // msgTitle.value = `请继续扫描${barData.value[isKeyEmpty.value].IssueControl == 1 ? "关键料" : "批次料"
+          //   }${barData.value[isKeyEmpty.value].MaterialName}`;
+        } else {
+          msgType.value = true;
+          barMsg.value=`请扫描成品条码`
+          // msgTitle.value = `请扫描MES条码`
         }
+      }
       // if (isKeyEmpty.value == -1 && stopsForm.value.BarCode != '') {
       //   goStop()
       // }
@@ -711,7 +807,7 @@ const radioChange = (args: any) => {
     tableData1.value = [];
   } else {
 
-    if (args[1] !== form.value.MfgOrderName ||form.value.MfgOrderName == "") {
+    if (args[1] !== form.value.MfgOrderName || form.value.MfgOrderName == "") {
       form.value.MfgOrderName = args[0].MfgOrderName;
       form.value.ProductName = args[0].ProductName;
       form.value.ProductDesc = args[0].ProductDesc;
@@ -728,7 +824,7 @@ const radioChange = (args: any) => {
       isKeyForm.value.OrderName = args[0].MfgOrderName;
       keyForm.value.OrderName = args[0].MfgOrderName;
       keyForm.value.ProductName = args[0].ProductName;
-      getBadForm.value.orderName=args[0].MfgOrderName;
+      getBadForm.value.orderName = args[0].MfgOrderName;
       // getHisData();
       // getKeyMaterial();
     } else {
@@ -736,7 +832,7 @@ const radioChange = (args: any) => {
     }
     getKeyMaterial();
     getHisData();
-    inputRef.value.focus()
+
 
   }
 };
@@ -759,16 +855,22 @@ const getKeyMaterial = () => {
     if (barData.value.length !== 0) {
       if (barData.value[0].IssueControl == 1) {
         msgType.value = true;
-        msgTitle.value = `请先扫描关键物料${barData.value[0].MaterialName}`;
+        msgTitle.value=''
+        // msgTitle.value = `请先扫描关键物料${barData.value[0].MaterialName}`;
+        barMsg.value=`请先扫描关键物料${barData.value[0].MaterialName}`;
       }
     }
   });
 };
 const tableRowClassName = (val: any) => {
   // console.log(val.row);
-  const isExitCode = stopsForm.value.keyMaterialList.findIndex(
+  
+  
+  const isExitCode = barData.value.findIndex(
     (k: any) => k.QtyRequired == k.barCount
   );
+ 
+  
   if (isExitCode !== -1) {
     return "active-table";
   }
@@ -794,6 +896,20 @@ const getOrderData = () => {
       }
     }
   });
+};
+
+const openSetTime=()=>{
+  showSetTime.value = true;
+  timeForm.value.setTime = setTime.value;
+}
+const setASYtime = () => {
+  let data = timeForm.value.setTime;
+  setTime.value = data;
+  showSetTime.value = false;
+  localStorage.setItem("ASYSETTIME", JSON.stringify(data));
+};
+const setCancel = () => {
+  showSetTime.value = false;
 };
 
 //分页
@@ -888,7 +1004,7 @@ const getScreenHeight = () => {
 }
 
 .el-table .active-table {
-  --el-table-tr-bg-color: var(--el-color-success-light-9);
+  --el-table-tr-bg-color: var(--el-color-success-light-5);
 }
 </style>
 <style lang="scss" scoped>
@@ -903,5 +1019,9 @@ const getScreenHeight = () => {
   /* 你的样式 */
   color: white !important;
   font-size: 1.1rem;
+}
+
+.el-pagination {
+  justify-content: center;
 }
 </style>

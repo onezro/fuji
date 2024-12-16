@@ -355,7 +355,7 @@ const columnData = reactive([
     min: true,
     align: "1",
   },
-]);
+]); 
 
 const burnPrint = () => {
   // console.log(BurnTableData.value);
@@ -366,6 +366,7 @@ const burnPrint = () => {
     }
   })
 
+  // console.log(data1);
   
   PrintBurnModel(data1).then((data: any) => {
     ElMessage({

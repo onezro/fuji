@@ -59,8 +59,17 @@
                   </el-form-item>
                   <div></div>
                 </el-form>
-                <div class="text-xl font-bold "  :style="{ 'color': isGo ? '#00B400' : '#e6a23c' }" v-show="msgType === true || msgTitle === ''">
+                <!-- <div class="text-xl font-bold "  :style="{ 'color': isGo ? '#00B400' : '#e6a23c' }" v-show="msgType === true || msgTitle === ''">
                   {{ msgTitle === "" ? "请扫描屏材料批次条码" : msgTitle }}
+                </div>
+                <div class="text-xl font-bold text-[red]" v-show="msgType === false && msgTitle !== ''">
+                  {{ msgTitle }}
+                </div> -->
+                <div class="text-xl font-bold text-[#f48000]">
+                  {{ barMsg }}
+                </div>
+                <div class="text-xl font-bold text-[#00B400]" v-show="msgType === true || msgTitle === ''">
+                  {{ msgTitle }}
                 </div>
                 <div class="text-xl font-bold text-[red]" v-show="msgType === false && msgTitle !== ''">
                   {{ msgTitle }}
@@ -111,9 +120,43 @@
                 </el-checkbox-group>
               </div>
             </div>
-            <table-tem :showIndex="true" :tableData="changeData" :tableHeight="tableHeight" :columnData="columnData1"
+            <el-table :data="changeData.slice(
+              (pageObj.currentPage - 1) * pageObj.pageSize,
+              pageObj.currentPage * pageObj.pageSize
+            )
+              " stripe border fit :height="tableHeight">
+              <el-table-column type="index" align="center" fixed label="序号" :width="'60'">
+                <template #default="scope">
+                  <span>{{
+                    scope.$index +
+                    pageObj.pageSize * (pageObj.currentPage - 1) +
+                    1
+                  }}</span>
+                </template>
+              </el-table-column>
+              <el-table-column prop="ContainerName" label="成品条码" width="180" />
+              <el-table-column label="PCB组件条码">
+                <template #default="scope">
+                  <div v-if="scope.row.BindContainerName!==null">SN1：{{ scope.row.BindContainerName }}</div>
+                  <div v-if="scope.row.BindContainerName2!==null">SN2：{{ scope.row.BindContainerName2 }}</div>
+                  <div v-if="scope.row.BindContainerName3!=null">SN3：{{ scope.row.BindContainerName3 }}</div>
+                  <div v-if="scope.row.BindContainerName4!=null">SN4：{{ scope.row.BindContainerName4 }}</div>
+                  <div v-if="scope.row.BindContainerName5!=null">SN5：{{ scope.row.BindContainerName5 }}</div>
+                </template>
+              </el-table-column>
+              <el-table-column prop="BD_EmployeeName" label="扫描人" width="180" />
+              <el-table-column prop="TxnDate" label="扫描时间" width="180" />
+            </el-table>
+            <div class="mt-2 mb-2">
+              <el-pagination :size="'default'" background @size-change="handleSizeChange"
+                @current-change="handleCurrentChange" :pager-count="5" :current-page="pageObj.currentPage"
+                :page-size="pageObj.pageSize" :page-sizes="[30, 50, 100, 200, 300]"
+                layout="total,sizes, prev, pager, next" :total="tableData1.length">
+              </el-pagination>
+            </div>
+            <!-- <table-tem :showIndex="true" :tableData="changeData" :tableHeight="tableHeight" :columnData="columnData1"
               :pageObj="pageObj" @handleSizeChange="handleSizeChange"
-              @handleCurrentChange="handleCurrentChange"></table-tem>
+              @handleCurrentChange="handleCurrentChange"></table-tem> -->
           </div>
         </div>
       </div>
@@ -416,6 +459,7 @@ const badVisible = ref(false);
 const changeList = ref([]);
 const BadtableData = ref([]);
 const isGo = ref(true)
+const barMsg = ref("")
 
 onBeforeMount(() => {
   getScreenHeight();
@@ -641,16 +685,21 @@ const verifyBarCode = (barCodeData: any) => {
           barData.value[keyIndex].QtyRequired
         ) {
           msgType.value = true;
-          msgTitle.value = `请继续扫描${barData.value[keyIndex].IssueControl == 1 ? "关键料" : "批次料"
+          // msgTitle.value = `请继续扫描${barData.value[keyIndex].IssueControl == 1 ? "关键料" : "批次料"
+          //   }${barData.value[keyIndex].MaterialName}`;
+            barMsg.value = `请继续扫描${barData.value[keyIndex].IssueControl == 1 ? "关键料" : "批次料"
             }${barData.value[keyIndex].MaterialName}`;
         }else{
           if (isKeyEmpty.value !== -1) {
             msgType.value = true;
-          msgTitle.value = `请继续扫描${barData.value[isKeyEmpty.value].IssueControl == 1 ? "关键料" : "批次料"
-            }${barData.value[isKeyEmpty.value].MaterialName}`;
+          // msgTitle.value = `请继续扫描${barData.value[isKeyEmpty.value].IssueControl == 1 ? "关键料" : "批次料"
+          //   }${barData.value[isKeyEmpty.value].MaterialName}`;
+          barMsg.value = `请继续扫描${barData.value[isKeyEmpty.value].IssueControl == 1 ? "关键料" : "批次料"
+          }${barData.value[isKeyEmpty.value].MaterialName}`;
           }else{
             msgType.value = true;
-            msgTitle.value=`请扫描MES条码`
+            // msgTitle.value=`请扫描MES条码`
+              barMsg.value = `请扫描MES条码`
           }
         }
       // if (isKeyEmpty.value == -1 && stopsForm.value.BarCode != '') {
@@ -738,7 +787,7 @@ const radioChange = (args: any) => {
     }
     getKeyMaterial();
     getHisData();
-    inputRef.value.focus()
+  
     // getHisData();
 
   }
@@ -762,14 +811,16 @@ const getKeyMaterial = () => {
     if (barData.value.length !== 0) {
       if (barData.value[0].IssueControl == 1) {
         msgType.value = true;
-        msgTitle.value = `请先扫描关键物料${barData.value[0].MaterialName}`;
+            msgTitle.value=''
+        // msgTitle.value = `请先扫描关键物料${barData.value[0].MaterialName}`;
+        barMsg.value = `请先扫描关键物料${barData.value[0].MaterialName}`;
       }
     }
   });
 };
 const tableRowClassName = (val: any) => {
   // console.log(val.row);
-  const isExitCode = stopsForm.value.keyMaterialList.findIndex(
+  const isExitCode = barData.value.findIndex(
     (k: any) => k.QtyRequired == k.barCount
   );
   if (isExitCode !== -1) {
@@ -890,7 +941,7 @@ const getScreenHeight = () => {
 }
 
 .el-table .active-table {
-  --el-table-tr-bg-color: var(--el-color-success-light-9);
+  --el-table-tr-bg-color: var(--el-color-success-light-5);
 }
 </style>
 <style lang="scss" scoped>
@@ -905,5 +956,8 @@ const getScreenHeight = () => {
   /* 你的样式 */
   color: white !important;
   font-size: 1.1rem;
+}
+.el-pagination {
+  justify-content: center;
 }
 </style>

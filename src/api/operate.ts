@@ -742,3 +742,20 @@ export function DeleteBarCodeRuleTemplatePara(data: any) {
         data
     })
 }
+//获取取值规则
+export function QueryBarCodeRuleExpressionType() {
+    return request({
+        url: "/api/BarCodeTemplate/QueryBarCodeRuleExpressionType",
+        method: "post",
+       
+    })
+}
+
+//对应的规则
+export function GetTempLabeReportParameter(data: any) {
+    return request({
+        url: "/api/BarCodeTemplate/GetTempLabeReportParameter",
+        method: "post",
+        data
+    })
+}

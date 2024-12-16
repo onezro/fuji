@@ -122,6 +122,40 @@
                 </el-checkbox-group>
               </div>
             </div>
+            <!-- <el-table :data="changeData.slice(
+              (pageObj.currentPage - 1) * pageObj.pageSize,
+              pageObj.currentPage * pageObj.pageSize
+            )
+              " stripe border fit :height="tableHeight">
+              <el-table-column type="index" align="center" fixed label="序号" :width="'60'">
+                <template #default="scope">
+                  <span>{{
+                    scope.$index +
+                    pageObj.pageSize * (pageObj.currentPage - 1) +
+                    1
+                  }}</span>
+                </template>
+              </el-table-column>
+              <el-table-column prop="ContainerName" label="虚拟条码" width="180" />
+              <el-table-column label="PCB组件条码">
+                <template #default="scope">
+                  <div v-if="scope.row.BindContainerName!==null">SN1：{{ scope.row.BindContainerName }}</div>
+                  <div v-if="scope.row.BindContainerName2!==null">SN2：{{ scope.row.BindContainerName2 }}</div>
+                  <div v-if="scope.row.BindContainerName3!=null">SN3：{{ scope.row.BindContainerName3 }}</div>
+                  <div v-if="scope.row.BindContainerName4!=null">SN4：{{ scope.row.BindContainerName4 }}</div>
+                  <div v-if="scope.row.BindContainerName5!=null">SN5：{{ scope.row.BindContainerName5 }}</div>
+                </template>
+              </el-table-column>
+              <el-table-column prop="BD_EmployeeName" label="扫描人" width="180" />
+              <el-table-column prop="TxnDate" label="扫描时间" width="180" />
+            </el-table>
+            <div class="mt-2 mb-2">
+              <el-pagination :size="'default'" background @size-change="handleSizeChange"
+                @current-change="handleCurrentChange" :pager-count="5" :current-page="pageObj.currentPage"
+                :page-size="pageObj.pageSize" :page-sizes="[30, 50, 100, 200, 300]"
+                layout="total,sizes, prev, pager, next" :total="tableData.length">
+              </el-pagination>
+            </div> -->
             <table-tem :showIndex="true" :tableData="changeData" :tableHeight="tableHeight" :columnData="columnData1"
               :pageObj="pageObj" @handleSizeChange="handleSizeChange"
               @handleCurrentChange="handleCurrentChange"></table-tem>
@@ -177,7 +211,7 @@
 </template>
 
 <script lang="ts" setup>
-import tableTem from "@/components/tableTem/index.vue";
+import tableTem from "@/components/tableTem/noIndex.vue";
 import tableTemp from "@/components/tableTemp/index.vue";
 import selectTa from "@/components/selectTable/index.vue";
 import { useAppStore } from "@/stores/modules/app";
@@ -301,10 +335,17 @@ const columnData1 = reactive([
   {
     text: true,
     prop: "ContainerName",
-    label: "成品SN条码",
+    label: "虚拟条码",
     width: "",
     align: "1",
   },
+  // {
+  //   text: true,
+  //   prop: "BindContainerName",
+  //   label: "PCB组件条码",
+  //   width: "",
+  //   align: "1",
+  // },
   {
     text: true,
     prop: "BD_EmployeeName",
@@ -320,7 +361,7 @@ const columnData1 = reactive([
     align: "1",
   },
 ]);
-const tableData1 = ref([]);
+const tableData = ref([]);
 const tableHeight = ref(0);
 const pageObj = ref({
   pageSize: 100,
@@ -455,7 +496,7 @@ const formText = (data: string) => {
 //获取过站历史记录
 const getHisData = () => {
   QueryMoveHistory(hisForm.value).then((res: any) => {
-    tableData1.value = res.content;
+    tableData.value = res.content;
   });
 };
 const changeHis = (val: any) => {
@@ -470,7 +511,7 @@ const changeData = computed(() => {
   if (checkedHis.value[0] == "today") {
     return geTodayData();
   } else {
-    return tableData1.value;
+    return tableData.value;
   }
 });
 const changeDataLength = (val: any) => {
@@ -478,7 +519,7 @@ const changeDataLength = (val: any) => {
     let dataLength = geTodayData();
     return dataLength.length;
   } else {
-    return tableData1.value.length;
+    return tableData.value.length;
   }
 };
 const geTodayData = () => {
@@ -487,7 +528,7 @@ const geTodayData = () => {
   function getDateFromDateTimeString(dateTimeString: any) {
     return dateTimeString.split(" ")[0];
   }
-  const todayDataArray = tableData1.value.filter((item: any) => {
+  const todayDataArray = tableData.value.filter((item: any) => {
     return getDateFromDateTimeString(item.TxnDate) === todayString;
   });
   return todayDataArray;
@@ -521,22 +562,6 @@ const getChange = () => {
           }剩余为0，请进行上料`;
       }
     }
-    // if (isKeyZero.value == -1) {
-    //   if (isKeyEmpty.value == -1) {
-    //     if (isNoKeyZero.value == -1) {
-    //       stopsForm.value.BarCode = barCodeData;
-    //       goStop()
-    //     } else {
-    //       msgTitle.value = `批次物料余量为零，请进行上料`;
-    //       msgType.value = false;
-    //     }
-    //   } else {
-    //     verifyBarCode(barCodeData)
-    //   }
-    // } else {
-    //   msgTitle.value = `关键料剩余为0，操作失败`;
-    //   msgType.value = false;
-    // }
 
     barCode.value = "";
   }
@@ -595,14 +620,22 @@ const verifyBarCode = (barCodeData: any) => {
         return;
       }
       if (barData.value[keyIndex].barCount == 0) {
+        barData.value[keyIndex].MaterialBarCode = barCodeData;
+        barData.value[keyIndex].barCount++;
         if (barData.value[keyIndex].IssueControl == 2) {
           stopsForm.value.BarCode = barCodeData;
+          if (isKeyEmpty.value == -1) {
+            goStop();
+          }
         } else {
           if (checkStringType(barCodeData) == "SCR") {
             if (
               barData.value.findIndex((b: any) => b.IssueControl == 2) == -1
             ) {
               stopsForm.value.BarCode = barCodeData;
+              if (isKeyEmpty.value == -1) {
+                goStop();
+              }
             } else {
               msgTitle.value = `扫描关键料条码${barCodeData}错误，请重新扫描`;
               msgType.value = false;
@@ -615,8 +648,7 @@ const verifyBarCode = (barCodeData: any) => {
             });
           }
         }
-        barData.value[keyIndex].MaterialBarCode = barCodeData;
-        barData.value[keyIndex].barCount++;
+
         if (
           barData.value[keyIndex].barCount !==
           barData.value[keyIndex].QtyRequired
@@ -627,10 +659,11 @@ const verifyBarCode = (barCodeData: any) => {
         } else {
           if (isKeyEmpty.value !== -1) {
             msgType.value = true;
-          msgTitle.value = `请继续扫描${barData.value[isKeyEmpty.value].IssueControl == 1 ? "关键料" : "批次料"
-            }${barData.value[isKeyEmpty.value].MaterialName}`;
-          }else{
-
+            msgTitle.value = `请继续扫描${barData.value[isKeyEmpty.value].IssueControl == 1
+                ? "关键料"
+                : "批次料"
+              }${barData.value[isKeyEmpty.value].MaterialName}`;
+          } else {
           }
         }
       } else {
@@ -720,7 +753,7 @@ const radioChange = (args: any) => {
     form.value.Qty = "";
     form.value.ERPOrder = "";
     barData.value = [];
-    tableData1.value = [];
+    tableData.value = [];
   } else {
     if (args[1] !== form.value.MfgOrderName || form.value.MfgOrderName == "") {
       form.value.MfgOrderName = args[0].MfgOrderName;
@@ -743,7 +776,7 @@ const radioChange = (args: any) => {
     }
     getKeyMaterial();
     getHisData();
-    inputRef.value.focus()
+
     // getHisData();
   }
 };
@@ -772,9 +805,11 @@ const getKeyMaterial = () => {
 };
 const tableRowClassName = (val: any) => {
   // console.log(val.row);
-  const isExitCode = stopsForm.value.keyMaterialList.findIndex(
+  const isExitCode = barData.value.findIndex(
     (k: any) => k.QtyRequired == k.barCount
   );
+  // console.log(isExitCode);
+
   if (isExitCode !== -1) {
     return "active-table";
   }
@@ -893,7 +928,7 @@ const getScreenHeight = () => {
 }
 
 .el-table .active-table {
-  --el-table-tr-bg-color: var(--el-color-success-light-9);
+  --el-table-tr-bg-color: var(--el-color-success-light-5);
 }
 </style>
 <style lang="scss" scoped>
@@ -908,5 +943,9 @@ const getScreenHeight = () => {
   /* 你的样式 */
   color: white !important;
   font-size: 1.1rem;
+}
+
+.el-pagination {
+  justify-content: center;
 }
 </style>

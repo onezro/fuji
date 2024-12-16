@@ -24,6 +24,12 @@
                 <el-form-item label="规则描述" prop="Temppara_Name">
                     <el-input v-model="addForm.Temppara_Name" style="width: 240px" />
                 </el-form-item>
+                <el-form-item label="取值规则" prop="Temppara_Expression">
+                    <el-select v-model="addForm.Temppara_Expression" placeholder="" style="width: 240px" >
+                        <el-option v-for="e in expressionList" :key="e.Expression_Name"
+                            :label="e.Expression_Description" :value="e.Expression_Name" />
+                    </el-select>
+                </el-form-item>
             </el-form>
             <template #footer>
                 <span class="dialog-footer">
@@ -40,6 +46,7 @@ import {
     QueryBarCodeRuleTemplatePara,
     InsertBarCodeRuleTemplatePara,
     DeleteBarCodeRuleTemplatePara,
+    QueryBarCodeRuleExpressionType,
 } from "@/api/operate";
 import {
     ref,
@@ -80,7 +87,7 @@ const handleDelete = (row: any) => {
                         message: "删除成功",
                         type: "success",
                     });
-                    getData()
+                    getData();
                 }
             });
         })
@@ -93,7 +100,8 @@ const handleDelete = (row: any) => {
         });
 };
 const columnData = ref([
-{
+   
+    {
         text: true,
         prop: "Temppara_No",
         label: "规则编码",
@@ -101,6 +109,7 @@ const columnData = ref([
         // min: true,
         align: "1",
     },
+
     {
         text: true,
         prop: "Temppara_Name",
@@ -109,7 +118,22 @@ const columnData = ref([
         // min: true,
         align: "1",
     },
-   
+    {
+        text: true,
+        prop: "Temppara_Expression",
+        label: "取值规则",
+        width: "",
+        // min: true,
+        align: "1",
+    },
+    {
+        text: true,
+        prop: "Expression_Description",
+        label: "取值规则描述",
+        width: "",
+        // min: true,
+        align: "1",
+    },
     {
         isOperation: true,
         label: "删除",
@@ -131,8 +155,16 @@ const addFormRef = ref();
 const addForm = ref({
     Temppara_No: "",
     Temppara_Name: "",
+    Temppara_Expression: "",
     UserNo: userStore.getUserInfo,
 });
+interface Expression {
+    ID: number;
+    Expression_No: number;
+    Expression_Name: string;
+    Expression_Description: string;
+}
+const expressionList = ref<Expression[]>([]);
 
 onBeforeMount(() => {
     getScreenHeight();
@@ -140,6 +172,7 @@ onBeforeMount(() => {
 onMounted(() => {
     window.addEventListener("resize", getScreenHeight);
     getData();
+    getExpressionList()
 });
 onBeforeUnmount(() => {
     window.addEventListener("resize", getScreenHeight);
@@ -150,6 +183,12 @@ const getData = () => {
         tableData.value = res.content;
     });
 };
+const getExpressionList = () => {
+    QueryBarCodeRuleExpressionType().then((res: any) => {
+        expressionList.value = res.content;
+    });
+};
+
 const openAdd = () => {
     addVisible.value = true;
 };
@@ -165,7 +204,7 @@ const addConfirm = () => {
                 message: res.msg,
                 type: "success",
             });
-            getData()
+            getData();
             addFormRef.value.resetFields();
             addVisible.value = false;
         }

@@ -585,6 +585,8 @@ const radioChange = (args: any) => {
       // getMaterialRequired();
     } else {
     }
+    msgType.value=true
+    msgTitle.value=''
     getHisData();
     getOrderMess();
   }
