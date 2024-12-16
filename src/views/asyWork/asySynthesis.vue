@@ -37,8 +37,14 @@
         <!-- <div class="w-full"> -->
         <div class="w-full h-full flex flex-col">
           <div>
-            <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
+            <div class="h-[35px] flex items-center justify-between text-lg text-[#fff] bg-[#006487]">
               <span class="ml-5"> 扫描条码</span>
+              <div class="flex items-center mr-3">
+                <div>
+                  时间间隔：<span class="text-lg font-bold pl-1 pr-1 bg-slate-300 text-[red]">{{ setTime }}h</span>
+                </div>
+                <el-button type="info" class="ml-2" @click="openSetTime">设定间隔</el-button>
+              </div>
             </div>
             <div class="h-[200px] pt-3 pr-5 pl-5 flex justify-between">
               <div>
@@ -59,9 +65,18 @@
                   </el-form-item>
                   <div></div>
                 </el-form>
-                <div class="text-xl font-bold " :style="{ 'color': isGo ? '#00B400' : '#e6a23c' }"
+                <!-- <div class="text-xl font-bold " :style="{ 'color': isGo ? '#00B400' : '#e6a23c' }"
                   v-show="msgType === true || msgTitle === ''">
                   {{ msgTitle === "" ? "请扫描屏材料批次条码" : msgTitle }}
+                </div>
+                <div class="text-xl font-bold text-[red]" v-show="msgType === false && msgTitle !== ''">
+                  {{ msgTitle }}
+                </div> -->
+                <div class="text-xl font-bold text-[#f48000]">
+                  {{ barMsg }}
+                </div>
+                <div class="text-xl font-bold text-[#00B400]" v-show="msgType === true || msgTitle === ''">
+                  {{ msgTitle }}
                 </div>
                 <div class="text-xl font-bold text-[red]" v-show="msgType === false && msgTitle !== ''">
                   {{ msgTitle }}
@@ -195,6 +210,20 @@
         <span class="dialog-footer">
           <el-button @click="badCancel">取消</el-button>
           <el-button type="primary" @click="badSubmit"> 确定 </el-button>
+        </span>
+      </template>
+    </el-dialog>
+    <el-dialog v-model="showSetTime" draggable title="时间设定" width="300px" :append-to-body="true"
+      :close-on-click-modal="false" :close-on-press-escape="false" @close="setCancel">
+      <el-form ref="formRef" :model="timeForm" label-width="auto">
+        <el-form-item label="间隔时间" prop="time">
+          <el-input-number v-model="timeForm.setTime" :min="1"   :precision="0"/>
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="setCancel">关闭</el-button>
+          <el-button type="primary" @click="setASYtime"> 确定 </el-button>
         </span>
       </template>
     </el-dialog>
@@ -451,6 +480,12 @@ const badVisible = ref(false);
 const changeList = ref([]);
 const BadtableData = ref([]);
 const isGo = ref(true)
+const barMsg = ref("")
+const setTime=ref<any>(localStorage.getItem("ASYSETTIME") ||1)
+  const timeForm = ref({
+  setTime: 0,
+});
+const showSetTime = ref(false);
 
 onBeforeMount(() => {
   getScreenHeight();
@@ -629,6 +664,7 @@ const verifyBarCode = (barCodeData: any) => {
     BarCode: barCodeData,
     OrderName: form.value.MfgOrderName,
     workstationName: opui.station,
+    TimeSpan:parseInt(setTime.value)
   };
   JudgeAssemblyKeyMaterial(data1).then((res: any) => {
     msgTitle.value = res.msg;
@@ -693,16 +729,21 @@ const verifyBarCode = (barCodeData: any) => {
         barData.value[keyIndex].QtyRequired
       ) {
         msgType.value = true;
-        msgTitle.value = `请继续扫描${barData.value[keyIndex].IssueControl == 1 ? "关键料" : "批次料"
-          }${barData.value[keyIndex].MaterialName}`;
+        barMsg.value = `请继续扫描${barData.value[keyIndex].IssueControl == 1 ? "关键料" : "批次料"
+        }${barData.value[keyIndex].MaterialName}`;
+        // msgTitle.value = `请继续扫描${barData.value[keyIndex].IssueControl == 1 ? "关键料" : "批次料"
+        //   }${barData.value[keyIndex].MaterialName}`;
       } else {
         if (isKeyEmpty.value !== -1) {
           msgType.value = true;
-          msgTitle.value = `请继续扫描${barData.value[isKeyEmpty.value].IssueControl == 1 ? "关键料" : "批次料"
+          barMsg.value =`请继续扫描${barData.value[isKeyEmpty.value].IssueControl == 1 ? "关键料" : "批次料"
             }${barData.value[isKeyEmpty.value].MaterialName}`;
+          // msgTitle.value = `请继续扫描${barData.value[isKeyEmpty.value].IssueControl == 1 ? "关键料" : "批次料"
+          //   }${barData.value[isKeyEmpty.value].MaterialName}`;
         } else {
           msgType.value = true;
-          msgTitle.value = `请扫描MES条码`
+          barMsg.value=`请扫描成品条码`
+          // msgTitle.value = `请扫描MES条码`
         }
       }
       // if (isKeyEmpty.value == -1 && stopsForm.value.BarCode != '') {
@@ -814,7 +855,9 @@ const getKeyMaterial = () => {
     if (barData.value.length !== 0) {
       if (barData.value[0].IssueControl == 1) {
         msgType.value = true;
-        msgTitle.value = `请先扫描关键物料${barData.value[0].MaterialName}`;
+        msgTitle.value=''
+        // msgTitle.value = `请先扫描关键物料${barData.value[0].MaterialName}`;
+        barMsg.value=`请先扫描关键物料${barData.value[0].MaterialName}`;
       }
     }
   });
@@ -849,6 +892,20 @@ const getOrderData = () => {
       }
     }
   });
+};
+
+const openSetTime=()=>{
+  showSetTime.value = true;
+  timeForm.value.setTime = setTime.value;
+}
+const setASYtime = () => {
+  let data = timeForm.value.setTime;
+  setTime.value = data;
+  showSetTime.value = false;
+  localStorage.setItem("ASYSETTIME", JSON.stringify(data));
+};
+const setCancel = () => {
+  showSetTime.value = false;
 };
 
 //分页
@@ -943,7 +1000,7 @@ const getScreenHeight = () => {
 }
 
 .el-table .active-table {
-  --el-table-tr-bg-color: var(--el-color-success-light-9);
+  --el-table-tr-bg-color: var(--el-color-success-light-5);
 }
 </style>
 <style lang="scss" scoped>

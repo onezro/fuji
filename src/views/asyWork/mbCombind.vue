@@ -59,9 +59,11 @@
                   </el-form-item>
                   <div></div>
                 </el-form>
-                <div class="text-xl font-bold" :style="{ color: isGo ? '#00B400' : '#e6a23c' }"
-                  v-show="msgType === true || msgTitle === ''">
-                  {{ msgTitle === "" ? "请扫描屏材料批次条码" : msgTitle }}
+                <div class="text-xl font-bold text-[#f48000]">
+                  {{ barMsg }}
+                </div>
+                <div class="text-xl font-bold text-[#00B400]" v-show="msgType === true || msgTitle === ''">
+                  {{ msgTitle }}
                 </div>
                 <div class="text-xl font-bold text-[red]" v-show="msgType === false && msgTitle !== ''">
                   {{ msgTitle }}
@@ -145,14 +147,14 @@
               </el-table-column>
               <el-table-column prop="ContainerName" label="虚拟条码" width="180" />
               <el-table-column prop="ScreenCode" label="MES屏条码" width="180" />
-              
+
               <el-table-column label="PCB组件条码">
                 <template #default="scope">
-                  <div v-if="scope.row.BindContainerName!==null">SN1：{{ scope.row.BindContainerName }}</div>
-                  <div v-if="scope.row.BindContainerName2!==null">SN2：{{ scope.row.BindContainerName2 }}</div>
-                  <div v-if="scope.row.BindContainerName3!=null">SN3：{{ scope.row.BindContainerName3 }}</div>
-                  <div v-if="scope.row.BindContainerName4!=null">SN4：{{ scope.row.BindContainerName4 }}</div>
-                  <div v-if="scope.row.BindContainerName5!=null">SN5：{{ scope.row.BindContainerName5 }}</div>
+                  <div v-if="scope.row.BindContainerName !== null">SN1：{{ scope.row.BindContainerName }}</div>
+                  <div v-if="scope.row.BindContainerName2 !== null">SN2：{{ scope.row.BindContainerName2 }}</div>
+                  <div v-if="scope.row.BindContainerName3 != null">SN3：{{ scope.row.BindContainerName3 }}</div>
+                  <div v-if="scope.row.BindContainerName4 != null">SN4：{{ scope.row.BindContainerName4 }}</div>
+                  <div v-if="scope.row.BindContainerName5 != null">SN5：{{ scope.row.BindContainerName5 }}</div>
                 </template>
               </el-table-column>
               <el-table-column prop="BD_EmployeeName" label="扫描人" width="180" />
@@ -476,6 +478,7 @@ const badVisible = ref(false);
 const changeList = ref([]);
 const BadtableData = ref([]);
 const isGo = ref(true);
+const barMsg = ref("")
 
 onBeforeMount(() => {
   getScreenHeight();
@@ -682,16 +685,21 @@ const verifyBarCode = (barCodeData: any) => {
         barData.value[keyIndex].QtyRequired
       ) {
         msgType.value = true;
-        msgTitle.value = `请继续扫描${barData.value[keyIndex].IssueControl == 1 ? "关键料" : "批次料"
+        barMsg.value = `请继续扫描${barData.value[keyIndex].IssueControl == 1 ? "关键料" : "批次料"
           }${barData.value[keyIndex].MaterialName}`;
+        // msgTitle.value = `请继续扫描${barData.value[keyIndex].IssueControl == 1 ? "关键料" : "批次料"
+        //   }${barData.value[keyIndex].MaterialName}`;
       } else {
         if (isKeyEmpty.value !== -1) {
           msgType.value = true;
-          msgTitle.value = `请继续扫描${barData.value[isKeyEmpty.value].IssueControl == 1 ? "关键料" : "批次料"
+          barMsg.value = `请继续扫描${barData.value[isKeyEmpty.value].IssueControl == 1 ? "关键料" : "批次料"
             }${barData.value[isKeyEmpty.value].MaterialName}`;
+          // msgTitle.value = `请继续扫描${barData.value[isKeyEmpty.value].IssueControl == 1 ? "关键料" : "批次料"
+          //   }${barData.value[isKeyEmpty.value].MaterialName}`;
         } else {
           msgType.value = true;
-          msgTitle.value = `请扫描MES条码`
+          barMsg.value = `请扫描MES条码`
+          // msgTitle.value = `请扫描MES条码`
         }
       }
       // if (isKeyEmpty.value == -1 && stopsForm.value.BarCode != '') {
@@ -794,8 +802,11 @@ const getKeyMaterial = () => {
     });
     if (barData.value.length !== 0) {
       if (barData.value[0].IssueControl == 1) {
+        // isGo.value=fa
         msgType.value = true;
-        msgTitle.value = `请先扫描关键物料${barData.value[0].MaterialName}`;
+            msgTitle.value=''
+        // msgTitle.value = `请先扫描关键物料${barData.value[0].MaterialName}`;
+        barMsg.value = `请先扫描关键物料${barData.value[0].MaterialName}`;
       }
     }
   });
@@ -925,7 +936,7 @@ const getScreenHeight = () => {
 }
 
 .el-table .active-table {
-  --el-table-tr-bg-color: var(--el-color-success-light-9);
+  --el-table-tr-bg-color: var(--el-color-success-light-5);
 }
 </style>
 <style lang="scss" scoped>
@@ -941,6 +952,7 @@ const getScreenHeight = () => {
   color: white !important;
   font-size: 1.1rem;
 }
+
 .el-pagination {
   justify-content: center;
 }

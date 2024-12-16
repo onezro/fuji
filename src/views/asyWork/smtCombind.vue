@@ -59,8 +59,17 @@
                   </el-form-item>
                   <div></div>
                 </el-form>
-                <div class="text-xl font-bold "  :style="{ 'color': isGo ? '#00B400' : '#e6a23c' }" v-show="msgType === true || msgTitle === ''">
+                <!-- <div class="text-xl font-bold "  :style="{ 'color': isGo ? '#00B400' : '#e6a23c' }" v-show="msgType === true || msgTitle === ''">
                   {{ msgTitle === "" ? "请扫描屏材料批次条码" : msgTitle }}
+                </div>
+                <div class="text-xl font-bold text-[red]" v-show="msgType === false && msgTitle !== ''">
+                  {{ msgTitle }}
+                </div> -->
+                <div class="text-xl font-bold text-[#f48000]">
+                  {{ barMsg }}
+                </div>
+                <div class="text-xl font-bold text-[#00B400]" v-show="msgType === true || msgTitle === ''">
+                  {{ msgTitle }}
                 </div>
                 <div class="text-xl font-bold text-[red]" v-show="msgType === false && msgTitle !== ''">
                   {{ msgTitle }}
@@ -450,6 +459,7 @@ const badVisible = ref(false);
 const changeList = ref([]);
 const BadtableData = ref([]);
 const isGo = ref(true)
+const barMsg = ref("")
 
 onBeforeMount(() => {
   getScreenHeight();
@@ -675,16 +685,21 @@ const verifyBarCode = (barCodeData: any) => {
           barData.value[keyIndex].QtyRequired
         ) {
           msgType.value = true;
-          msgTitle.value = `请继续扫描${barData.value[keyIndex].IssueControl == 1 ? "关键料" : "批次料"
+          // msgTitle.value = `请继续扫描${barData.value[keyIndex].IssueControl == 1 ? "关键料" : "批次料"
+          //   }${barData.value[keyIndex].MaterialName}`;
+            barMsg.value = `请继续扫描${barData.value[keyIndex].IssueControl == 1 ? "关键料" : "批次料"
             }${barData.value[keyIndex].MaterialName}`;
         }else{
           if (isKeyEmpty.value !== -1) {
             msgType.value = true;
-          msgTitle.value = `请继续扫描${barData.value[isKeyEmpty.value].IssueControl == 1 ? "关键料" : "批次料"
-            }${barData.value[isKeyEmpty.value].MaterialName}`;
+          // msgTitle.value = `请继续扫描${barData.value[isKeyEmpty.value].IssueControl == 1 ? "关键料" : "批次料"
+          //   }${barData.value[isKeyEmpty.value].MaterialName}`;
+          barMsg.value = `请继续扫描${barData.value[isKeyEmpty.value].IssueControl == 1 ? "关键料" : "批次料"
+          }${barData.value[isKeyEmpty.value].MaterialName}`;
           }else{
             msgType.value = true;
-            msgTitle.value=`请扫描MES条码`
+            // msgTitle.value=`请扫描MES条码`
+              barMsg.value = `请扫描MES条码`
           }
         }
       // if (isKeyEmpty.value == -1 && stopsForm.value.BarCode != '') {
@@ -796,7 +811,9 @@ const getKeyMaterial = () => {
     if (barData.value.length !== 0) {
       if (barData.value[0].IssueControl == 1) {
         msgType.value = true;
-        msgTitle.value = `请先扫描关键物料${barData.value[0].MaterialName}`;
+            msgTitle.value=''
+        // msgTitle.value = `请先扫描关键物料${barData.value[0].MaterialName}`;
+        barMsg.value = `请先扫描关键物料${barData.value[0].MaterialName}`;
       }
     }
   });
@@ -924,7 +941,7 @@ const getScreenHeight = () => {
 }
 
 .el-table .active-table {
-  --el-table-tr-bg-color: var(--el-color-success-light-9);
+  --el-table-tr-bg-color: var(--el-color-success-light-5);
 }
 </style>
 <style lang="scss" scoped>

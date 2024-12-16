@@ -907,6 +907,7 @@ const printData = () => {
   });
 };
 
+
 //分页
 const handleSizeChange = (val: any) => {
   pageObj.value.currentPage = 1;
@@ -1007,5 +1008,14 @@ const getScreenHeight = () => {
 }
 .el-pagination {
   justify-content: center;
+}
+</style>
+<style>
+.el-table .warning-row {
+  --el-table-tr-bg-color: var(--el-color-warning-light-9);
+}
+
+.el-table .active-table {
+  --el-table-tr-bg-color: var(--el-color-success-light-5);
 }
 </style>
