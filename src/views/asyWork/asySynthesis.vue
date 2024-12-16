@@ -43,7 +43,7 @@
                 <div>
                   时间间隔：<span class="text-lg font-bold pl-1 pr-1 bg-slate-300 text-[red]">{{ setTime }}h</span>
                 </div>
-                <el-button type="info" class="ml-2" @click="openSetTime">设定间隔</el-button>
+                <el-button type="info" class="ml-2" @click="openSetTime">设定</el-button>
               </div>
             </div>
             <div class="h-[200px] pt-3 pr-5 pl-5 flex justify-between">
@@ -864,9 +864,13 @@ const getKeyMaterial = () => {
 };
 const tableRowClassName = (val: any) => {
   // console.log(val.row);
-  const isExitCode = stopsForm.value.keyMaterialList.findIndex(
+  
+  
+  const isExitCode = barData.value.findIndex(
     (k: any) => k.QtyRequired == k.barCount
   );
+ 
+  
   if (isExitCode !== -1) {
     return "active-table";
   }

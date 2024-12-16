@@ -562,22 +562,6 @@ const getChange = () => {
           }剩余为0，请进行上料`;
       }
     }
-    // if (isKeyZero.value == -1) {
-    //   if (isKeyEmpty.value == -1) {
-    //     if (isNoKeyZero.value == -1) {
-    //       stopsForm.value.BarCode = barCodeData;
-    //       goStop()
-    //     } else {
-    //       msgTitle.value = `批次物料余量为零，请进行上料`;
-    //       msgType.value = false;
-    //     }
-    //   } else {
-    //     verifyBarCode(barCodeData)
-    //   }
-    // } else {
-    //   msgTitle.value = `关键料剩余为0，操作失败`;
-    //   msgType.value = false;
-    // }
 
     barCode.value = "";
   }
@@ -636,14 +620,22 @@ const verifyBarCode = (barCodeData: any) => {
         return;
       }
       if (barData.value[keyIndex].barCount == 0) {
+        barData.value[keyIndex].MaterialBarCode = barCodeData;
+        barData.value[keyIndex].barCount++;
         if (barData.value[keyIndex].IssueControl == 2) {
           stopsForm.value.BarCode = barCodeData;
+          if (isKeyEmpty.value == -1) {
+            goStop();
+          }
         } else {
           if (checkStringType(barCodeData) == "SCR") {
             if (
               barData.value.findIndex((b: any) => b.IssueControl == 2) == -1
             ) {
               stopsForm.value.BarCode = barCodeData;
+              if (isKeyEmpty.value == -1) {
+                goStop();
+              }
             } else {
               msgTitle.value = `扫描关键料条码${barCodeData}错误，请重新扫描`;
               msgType.value = false;
@@ -656,8 +648,7 @@ const verifyBarCode = (barCodeData: any) => {
             });
           }
         }
-        barData.value[keyIndex].MaterialBarCode = barCodeData;
-        barData.value[keyIndex].barCount++;
+
         if (
           barData.value[keyIndex].barCount !==
           barData.value[keyIndex].QtyRequired
@@ -814,9 +805,11 @@ const getKeyMaterial = () => {
 };
 const tableRowClassName = (val: any) => {
   // console.log(val.row);
-  const isExitCode = stopsForm.value.keyMaterialList.findIndex(
+  const isExitCode = barData.value.findIndex(
     (k: any) => k.QtyRequired == k.barCount
   );
+  // console.log(isExitCode);
+
   if (isExitCode !== -1) {
     return "active-table";
   }
