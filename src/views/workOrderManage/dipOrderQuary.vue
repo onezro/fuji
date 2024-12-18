@@ -147,27 +147,39 @@
             <el-table :data="toolTableData" size="small" stripe border fit :height="400" row-key="ID"
               :tree-props="{ children: 'children' }">
               <el-table-column type="index" align="center" fixed label="序号" width="60" />
-              <el-table-column prop="LineName" label="产线编码" :min-width="180" align="center" fixed>
-              </el-table-column>
-              <el-table-column prop="TaskNo" label="计划任务单" :min-width="120" align="center" fixed>
+              <el-table-column prop="TaskNo" label="计划任务单" :min-width="180"  fixed>
+                <template #default="scope">
+                  {{scope.row.FID!==null? "":scope.row.TaskNo }}
+                </template>
               </el-table-column>
               <el-table-column prop="ProcedureDsc" label="工序" width="100" align="center" fixed>
               </el-table-column>
-              <el-table-column prop="Status" label="任务状态" width="80" align="center" fixed>
+              <el-table-column label="任务状态" width="80" align="center" fixed>
                 <template #default="scope">
-                  <el-tag effect="light" :type="scope.row.Status == 2 ? 'success' : 'info'">{{ scope.row.Status == 2 ? '完成' : '未完成'
-                    }}</el-tag>
+                <div v-if="scope.row.FID==null"> <el-tag  effect="light" :type="scope.row.Status == 2 ? 'success' : 'info'">{{ scope.row.Status == 2 ? '完成' : '未完成'
+                    }}</el-tag></div>
+                 
                 </template>
               </el-table-column>
-              <el-table-column prop="ProductName" label="产品编码" :min-width="120" align="center">
+             
+              <el-table-column prop="ToolsMold" label="工治具型号" :min-width="180">
               </el-table-column>
-              <el-table-column prop="CompName" label="工治具型号" :min-width="180">
+              <el-table-column prop="Amount" label="需求数量" :min-width="80" align="center">
+                <template #default="scope">
+                  {{scope.row.FID!==null? "":scope.row.Amount }}
+                </template>
+              </el-table-column>
+              <el-table-column prop="OutNum" label="出库数量" :min-width="80" align="center">
+                <template #default="scope">
+                  {{scope.row.FID!==null? "":scope.row.OutNum }}
+                </template>
               </el-table-column>
               <el-table-column prop="CompID" label="工治具编码" :min-width="180">
+               
               </el-table-column>
               <el-table-column prop="CreatedBy" label="操作人" :min-width="120" align="center">
               </el-table-column>
-              <el-table-column prop="CreatedOn" label="操作时间" :min-width="180" align="center">
+              <el-table-column prop="CreatedOn" label="操作时间" :min-width="150" align="center">
               </el-table-column>
               <!-- <el-table-column  label="操作" :width="80" align="center" fixed="right">
                 <template #default="scope">

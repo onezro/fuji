@@ -11,7 +11,7 @@ export function getLaserWorkOrder(data: any) {
 }
 
 export function OrderSNQuery(data: any) {
-  return request({
+  return requestNoMessage({
     url: "api/LaserCarving/OrderSNQuery",
     method: "post",
     data,

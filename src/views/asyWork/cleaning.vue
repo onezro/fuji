@@ -831,11 +831,11 @@ const getKeyMaterial = () => {
     if (barData.value.length !== 0) {
       if (barData.value[0].IssueControl == 1) {
         msgType.value = true;
-        // msgTitle.value = ``;
+        msgTitle.value = ``;
         barMsg.value = `请先扫描关键物料${barData.value[0].MaterialName}`
       } else {
         msgType.value = true;
-        // msgTitle.value = ``;
+        msgTitle.value = ``;
         barMsg.value = `请先扫描批次物料${barData.value[0].MaterialName}`
       }
     }
