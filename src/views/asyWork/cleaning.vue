@@ -57,11 +57,26 @@
                         --el-switch-off-color: #13ce66;
                       " :active-value="'NG'" :inactive-value="'OK'" active-text="NG" inactive-text="OK" />
                   </el-form-item> -->
-                  <div></div>
+                  <el-form-item class="mb-2">
+                    <el-button type="primary" :disabled="form.MfgOrderName == '' || rowData.OrderNumber == ''
+                      " @click="reWash">重新清洗</el-button>
+                  </el-form-item>
+                  <div>
+
+                  </div>
                 </el-form>
-                <div class="text-xl font-bold" :style="{ color: isGo ? '#00B400' : '#e6a23c' }"
+                <!-- <div class="text-xl font-bold" :style="{ color: isGo ? '#00B400' : '#e6a23c' }"
                   v-show="msgType === true || msgTitle === ''">
                   {{ msgTitle === "" ? "请扫描屏材料批次条码" : msgTitle }}
+                </div>
+                <div class="text-xl font-bold text-[red]" v-show="msgType === false && msgTitle !== ''">
+                  {{ msgTitle }}
+                </div> -->
+                <div class="text-xl font-bold text-[#f48000]">
+                  {{ barMsg }}
+                </div>
+                <div class="text-xl font-bold text-[#00B400]" v-show="msgType === true || msgTitle === ''">
+                  {{ msgTitle }}
                 </div>
                 <div class="text-xl font-bold text-[red]" v-show="msgType === false && msgTitle !== ''">
                   {{ msgTitle }}
@@ -122,11 +137,11 @@
                 </el-checkbox-group>
               </div>
             </div>
-            <!-- <el-table :data="changeData.slice(
+            <el-table :data="changeData.slice(
               (pageObj.currentPage - 1) * pageObj.pageSize,
               pageObj.currentPage * pageObj.pageSize
             )
-              " stripe border fit :height="tableHeight">
+              " stripe border fit :height="tableHeight" @cell-click="cellClick" highlight-current-row>
               <el-table-column type="index" align="center" fixed label="序号" :width="'60'">
                 <template #default="scope">
                   <span>{{
@@ -136,18 +151,9 @@
                   }}</span>
                 </template>
               </el-table-column>
-              <el-table-column prop="ContainerName" label="虚拟条码" width="180" />
-              <el-table-column label="PCB组件条码">
-                <template #default="scope">
-                  <div v-if="scope.row.BindContainerName!==null">SN1：{{ scope.row.BindContainerName }}</div>
-                  <div v-if="scope.row.BindContainerName2!==null">SN2：{{ scope.row.BindContainerName2 }}</div>
-                  <div v-if="scope.row.BindContainerName3!=null">SN3：{{ scope.row.BindContainerName3 }}</div>
-                  <div v-if="scope.row.BindContainerName4!=null">SN4：{{ scope.row.BindContainerName4 }}</div>
-                  <div v-if="scope.row.BindContainerName5!=null">SN5：{{ scope.row.BindContainerName5 }}</div>
-                </template>
-              </el-table-column>
-              <el-table-column prop="BD_EmployeeName" label="扫描人" width="180" />
-              <el-table-column prop="TxnDate" label="扫描时间" width="180" />
+              <el-table-column prop="VirtualContainer" label="虚拟条码" />
+              <el-table-column prop="UpdatedBy" label="扫描人" />
+              <el-table-column prop="UpdatedOn" label="扫描时间" />
             </el-table>
             <div class="mt-2 mb-2">
               <el-pagination :size="'default'" background @size-change="handleSizeChange"
@@ -155,10 +161,10 @@
                 :page-size="pageObj.pageSize" :page-sizes="[30, 50, 100, 200, 300]"
                 layout="total,sizes, prev, pager, next" :total="tableData.length">
               </el-pagination>
-            </div> -->
-            <table-tem :showIndex="true" :tableData="changeData" :tableHeight="tableHeight" :columnData="columnData1"
+            </div>
+            <!-- <table-tem :showIndex="true" :tableData="changeData" :tableHeight="tableHeight" :columnData="columnData1"
               :pageObj="pageObj" @handleSizeChange="handleSizeChange"
-              @handleCurrentChange="handleCurrentChange"></table-tem>
+              @handleCurrentChange="handleCurrentChange" ></table-tem> -->
           </div>
         </div>
       </div>
@@ -225,10 +231,10 @@ import {
   QueryMoveHistory,
   QueryCleanKeyMaterial,
   JudgeMaterial,
-  CoverSMTCompBindMoveStd,
-  QueryDefectCode,
   DefectProductRecord,
   QueryCleanCodeRecord,
+  CleanCodeSave,
+  ReloadCleanCode
 } from "@/api/asyApi";
 
 import {
@@ -467,6 +473,25 @@ const badVisible = ref(false);
 const changeList = ref([]);
 const BadtableData = ref([]);
 const isGo = ref(true);
+const barMsg = ref("")
+interface RowData {
+  WorkStationName: string;
+  OrderNumber: string;
+  ProductName: string;
+  Container: string;
+  VirtualContainer: string;
+  CreatedBy: string;
+  CreatedOn: string;
+}
+const rowData = ref<RowData>({
+  WorkStationName: "",
+  OrderNumber: "",
+  ProductName: "",
+  Container: "",
+  VirtualContainer: "",
+  CreatedBy: "",
+  CreatedOn: "",
+});
 
 onBeforeMount(() => {
   getScreenHeight();
@@ -495,7 +520,7 @@ const formText = (data: string) => {
 
 //获取过站历史记录
 const getHisData = () => {
-  QueryMoveHistory(hisForm.value).then((res: any) => {
+  QueryCleanCodeRecord(hisForm.value).then((res: any) => {
     tableData.value = res.content;
   });
 };
@@ -529,7 +554,7 @@ const geTodayData = () => {
     return dateTimeString.split(" ")[0];
   }
   const todayDataArray = tableData.value.filter((item: any) => {
-    return getDateFromDateTimeString(item.TxnDate) === todayString;
+    return getDateFromDateTimeString(item.UpdatedOn) === todayString;
   });
   return todayDataArray;
 };
@@ -568,7 +593,7 @@ const getChange = () => {
 };
 //过站
 const goStop = () => {
-  CoverSMTCompBindMoveStd(stopsForm.value).then((res: any) => {
+  CleanCodeSave(stopsForm.value).then((res: any) => {
     msgTitle.value = res.msg;
     msgType.value = res.success;
     isGo.value = true;
@@ -578,8 +603,9 @@ const goStop = () => {
     if (res.success) {
       stopsForm.value.keyMaterialList = [];
       getHisData();
-      getKeyMaterial();
+      // getKeyMaterial();
     }
+    getKeyMaterial();
     getFocus();
   });
 };
@@ -626,6 +652,8 @@ const verifyBarCode = (barCodeData: any) => {
           stopsForm.value.BarCode = barCodeData;
           if (isKeyEmpty.value == -1) {
             goStop();
+            // console.log(stopsForm.value);
+
           }
         } else {
           if (checkStringType(barCodeData) == "SCR") {
@@ -654,16 +682,24 @@ const verifyBarCode = (barCodeData: any) => {
           barData.value[keyIndex].QtyRequired
         ) {
           msgType.value = true;
-          msgTitle.value = `请继续扫描${barData.value[keyIndex].IssueControl == 1 ? "关键料" : "批次料"
+          // msgTitle.value = `请继续扫描${barData.value[keyIndex].IssueControl == 1 ? "关键料" : "批次料"
+          //   }${barData.value[keyIndex].MaterialName}`;
+          barMsg.value = `请继续扫描${barData.value[keyIndex].IssueControl == 1 ? "关键料" : "批次料"
             }${barData.value[keyIndex].MaterialName}`;
         } else {
           if (isKeyEmpty.value !== -1) {
             msgType.value = true;
-            msgTitle.value = `请继续扫描${barData.value[isKeyEmpty.value].IssueControl == 1
-                ? "关键料"
-                : "批次料"
+            // msgTitle.value = `请继续扫描${barData.value[isKeyEmpty.value].IssueControl == 1
+            //     ? "关键料"
+            //     : "批次料"
+            //   }${barData.value[isKeyEmpty.value].MaterialName}`;
+            barMsg.value = `请继续扫描${barData.value[isKeyEmpty.value].IssueControl == 1
+              ? "关键料"
+              : "批次料"
               }${barData.value[isKeyEmpty.value].MaterialName}`;
           } else {
+            msgType.value = true;
+            barMsg.value = `请扫描物料条码`
           }
         }
       } else {
@@ -795,10 +831,12 @@ const getKeyMaterial = () => {
     if (barData.value.length !== 0) {
       if (barData.value[0].IssueControl == 1) {
         msgType.value = true;
-        msgTitle.value = `请先扫描关键物料${barData.value[0].MaterialName}`;
+        // msgTitle.value = ``;
+        barMsg.value = `请先扫描关键物料${barData.value[0].MaterialName}`
       } else {
         msgType.value = true;
-        msgTitle.value = `请先扫描批次物料${barData.value[0].MaterialName}`;
+        // msgTitle.value = ``;
+        barMsg.value = `请先扫描批次物料${barData.value[0].MaterialName}`
       }
     }
   });
@@ -808,8 +846,6 @@ const tableRowClassName = (val: any) => {
   const isExitCode = barData.value.findIndex(
     (k: any) => k.QtyRequired == k.barCount
   );
-  // console.log(isExitCode);
-
   if (isExitCode !== -1) {
     return "active-table";
   }
@@ -836,6 +872,43 @@ const getOrderData = () => {
     }
   });
 };
+
+const reWash = () => {
+  let reWashForm = {
+    BarCode: "",
+    OrderName: form.value.MfgOrderName,
+    ProductName: "",
+    workstationName: opui.station,
+    userAccount: userStore.getUserInfo,
+  };
+  reWashForm.BarCode = rowData.value.VirtualContainer;
+  reWashForm.ProductName = rowData.value.ProductName;
+  // console.log(reWashForm);
+  
+  ReloadCleanCode(reWashForm).then((res: any) => {
+    msgTitle.value = res.msg;
+    msgType.value = res.success;
+    if (res.success) {
+      getHisData();
+      rowData.value = {
+        WorkStationName: "",
+        OrderNumber: "",
+        ProductName: "",
+        Container: "",
+        VirtualContainer: "",
+        CreatedBy: "",
+        CreatedOn: "",
+      }
+    }
+    getFocus();
+  });
+
+}
+const cellClick = (val: any) => {
+  // console.log(val);
+  rowData.value = val
+
+}
 //分页
 const handleSizeChange = (val: any) => {
   pageObj.value.currentPage = 1;

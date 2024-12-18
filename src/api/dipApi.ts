@@ -223,3 +223,10 @@ export function QuerySpecBystation(data: any) {
     },
   });
 }
+export function RepairRecordStart(data: any) {
+  return request({
+    url: "/api/repair/RepairRecordStart",
+    method: "post",
+    data,
+  });
+}

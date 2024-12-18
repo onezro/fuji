@@ -564,8 +564,14 @@ const getChange = () => {
         if (isKeyZero.value == -1) {
           if (isKeyEmpty.value == -1) {
             if (isNoKeyZero.value == -1) {
-              stopsForm.value.BarCode = barCodeData;
-              goStop();
+             
+              if (checkStringType(barCodeData) == "SCR") {
+                stopsForm.value.BarCode = barCodeData;
+                goStop();
+              } else {
+                msgType.value = false;
+                msgTitle.value = `条码${barCodeData}不是屏条码，请扫描MES屏条码`;
+              }
             } else {
               msgTitle.value = `${barData.value[isNoKeyZero.value].MaterialName
                 }批次物料剩余为0，请进行上料`;

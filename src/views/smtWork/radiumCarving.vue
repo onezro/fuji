@@ -14,7 +14,6 @@
         <div class="w-full h-full box">
           <div class="h-[35px] flex items-center text-xl text-[#fff] bg-[#006487]">
             <span class="ml-5">基本信息</span>
-           
           </div>
           <div class="p-[10px] overflow-auto custom-scrollbar-hidden" :style="{ height: formHeight + 'px' }">
             <el-form class="inbound" ref="formRef" :model="form" label-width="auto">
@@ -27,13 +26,13 @@
         </div>
       </div>
       <div class="w-[calc(100%-320px)]">
-        <div class="w-full h-full ">
+        <div class="w-full h-full">
           <div>
             <div class="h-[35px] flex items-center justify-between text-xl text-[#fff] bg-[#006487]">
               <span class="ml-5"> 扫描条码</span>
               <div class="pr-2">
-              <el-button type="warning" @click="dialogVisible = true, getOrderList()">计划开工</el-button>
-            </div>
+                <el-button type="warning" @click="(dialogVisible = true), getOrderList()">计划开工</el-button>
+              </div>
             </div>
             <div class="h-[120px] p-5">
               <el-form class="inbound" ref="formRef" :model="form" label-width="auto" @submit.native.prevent>
@@ -54,7 +53,6 @@
               <span class="ml-5"> PCB条码列表</span>
               <div class="h-full flex items-center">
                 <el-checkbox-group v-model="checkList" class="laser-table-filter">
-
                   <el-checkbox :label="`未释放(${notReleased.length})`" value="未释放" />
                   <el-checkbox :label="`待镭雕(${awaitLaser.length})`" value="待镭雕" />
                   <el-checkbox :label="`已完成(${Completed.length})`" value="已完成" />
@@ -142,13 +140,13 @@
 import { ElMessage } from "element-plus";
 import tableTem from "@/components/tableTem/index.vue";
 import feedTemp from "@/components/feedTemp/index.vue";
-import { cloneDeep } from 'lodash-es';
+import { cloneDeep } from "lodash-es";
 // import {  } from "@/api/smt1";
 import {
   getMaterialInformation,
   OrderSNQuery,
   getLaserWorkOrder,
-  OrderQuery
+  OrderQuery,
 } from "@/api/smtApi";
 import { useAppStore } from "@/stores/modules/app";
 import { watch, computed } from "vue";
@@ -163,7 +161,7 @@ interface Form {
   PlannedCompletionDate: string;
   Qty: number | string;
   Side: string;
-  ERPOrder: string
+  ERPOrder: string;
 }
 interface FormHeader {
   lable: string;
@@ -216,7 +214,7 @@ const form = reactive<Form>({
   ProductDesc: "",
   OrderStatusDesc: "",
   MfgLineDesc: "",
-  ERPOrder: ""
+  ERPOrder: "",
 });
 const formHeader = reactive<FormHeader[]>([
   {
@@ -230,7 +228,6 @@ const formHeader = reactive<FormHeader[]>([
   {
     lable: "工单号",
     value: "ERPOrder",
-
   },
   {
     lable: "产品编码",
@@ -252,7 +249,7 @@ const formHeader = reactive<FormHeader[]>([
   {
     lable: "计划数量",
     value: "Qty",
-  }
+  },
 ]);
 const tableData = ref<any[]>([]);
 const tableHeight = ref(0);
@@ -324,42 +321,41 @@ const pageObj1 = ref({
 
 const feedVisible = ref(false);
 const feedForm = ref({
-  MfgOrderName: '208310182',
+  MfgOrderName: "208310182",
   type: opui.station,
-  ProductName: '240106000131',
-  ProductDesc: '0402封装贴片电容100DF+5%50V MURATAGRM1555C1H101JA01D',
-  Qty: '100',
-  eqInfo: opui.stationDec
-})
+  ProductName: "240106000131",
+  ProductDesc: "0402封装贴片电容100DF+5%50V MURATAGRM1555C1H101JA01D",
+  Qty: "100",
+  eqInfo: opui.stationDec,
+});
 
 const FeedHeader = reactive([
   {
-    label: '机台',
-    prop: 'eqInfo'
+    label: "机台",
+    prop: "eqInfo",
   },
   {
-    label: '生产计划号',
-    prop: 'MfgOrderName'
+    label: "生产计划号",
+    prop: "MfgOrderName",
   },
 
   {
-    label: '产品机型',
-    prop: 'type'
+    label: "产品机型",
+    prop: "type",
   },
   {
-    label: '产品编码',
-    prop: 'ProductName'
+    label: "产品编码",
+    prop: "ProductName",
   },
   {
-    label: '产品描述',
-    prop: 'ProductDesc'
+    label: "产品描述",
+    prop: "ProductDesc",
   },
   {
-    label: '计划数量',
-    prop: 'Qty'
+    label: "计划数量",
+    prop: "Qty",
   },
-
-])
+]);
 
 watch(
   () => workOrderInput.value,
@@ -400,8 +396,6 @@ onBeforeUnmount(() => {
   window.addEventListener("resize", getScreenHeight);
 });
 
-
-
 //打开物料上料
 const openFeed = () => {
   if (form.MfgOrderName === "") {
@@ -412,11 +406,11 @@ const openFeed = () => {
     barCode.value = "";
     return;
   }
-  let data = cloneDeep(form)
+  let data = cloneDeep(form);
 
-  feedForm.value = { ...data }
-  feedForm.value.type = opui.station
-  feedForm.value.eqInfo = opui.stationDec
+  feedForm.value = { ...data };
+  feedForm.value.type = opui.station;
+  feedForm.value.eqInfo = opui.stationDec;
   feedVisible.value = true;
 };
 //关闭物料上料
@@ -448,10 +442,10 @@ const getScreenHeight = () => {
   });
 };
 const getOrderList = () => {
-  OrderQuery({ lineName: opui.line, OrderTypeName: 'SMT' }).then((res: any) => {
-    workOrderList.value = res.content
-    workOrderList1.value = res.content
-  })
+  OrderQuery({ lineName: opui.line, OrderTypeName: "SMT" }).then((res: any) => {
+    workOrderList.value = res.content;
+    workOrderList1.value = res.content;
+  });
   // getLaserWorkOrder({ orderID: "" }).then((data: any) => {
   //   // const dataText = JSON.parse(data.content);
   //   // workOrderList.value = [...dataText,{},{}];
@@ -521,46 +515,67 @@ const sureClick = () => {
   }
   OrderSNQuery({
     orderName: choiceRow.value.MfgOrderName,
+    IsVerify: true,
   }).then((data: any) => {
     Completed.value = [];
     awaitLaser.value = [];
     notReleased.value = [];
     // const dataText = JSON.parse(data.content);
-    tableData.value = data.content
-    Completed.value = tableData.value.filter((item) => item.IsResponse === '已完成');
-    awaitLaser.value = tableData.value.filter((item) => item.IsResponse === '待镭雕');
-    notReleased.value = tableData.value.filter((item) => item.IsResponse === '未释放');
+
+    if (data.success) {
+      tableData.value = data.content;
+      Completed.value = tableData.value.filter(
+        (item) => item.IsResponse === "已完成"
+      );
+      awaitLaser.value = tableData.value.filter(
+        (item) => item.IsResponse === "待镭雕"
+      );
+      notReleased.value = tableData.value.filter(
+        (item) => item.IsResponse === "未释放"
+      );
+      form.MfgOrderName = choiceRow.value.MfgOrderName;
+      form.BD_ProductModel = choiceRow.value.BD_ProductModel;
+      form.ProductName = choiceRow.value.ProductName;
+      form.ProductDesc = choiceRow.value.ProductDesc;
+      form.MfgLineDesc = choiceRow.value.MfgLineDesc;
+      form.OrderStatusDesc = choiceRow.value.OrderStatusDesc;
+      form.Qty = choiceRow.value.Qty;
+      form.Side = choiceRow.value.Side;
+      form.ERPOrder = choiceRow.value.ERPOrder;
+      dialogVisible.value = false;
+    }
   });
   checkList.value = ["待镭雕", "未释放"];
-  msgTitle.value = ''
-  barCode.value = ''
-  form.MfgOrderName = choiceRow.value.MfgOrderName;
-  form.BD_ProductModel = choiceRow.value.BD_ProductModel;
-  form.ProductName = choiceRow.value.ProductName;
-  form.ProductDesc = choiceRow.value.ProductDesc;
-  form.MfgLineDesc = choiceRow.value.MfgLineDesc;
-  form.OrderStatusDesc = choiceRow.value.OrderStatusDesc;
-  form.PlannedStartDate = choiceRow.value.PlannedStartDate;
-  form.PlannedCompletionDate = choiceRow.value.PlannedCompletionDate;
-  form.Qty = choiceRow.value.Qty;
-  form.Side = choiceRow.value.Side;
-  form.ERPOrder = choiceRow.value.ERPOrder;
-  dialogVisible.value = false;
+  msgTitle.value = "";
+  barCode.value = "";
 };
 
 const refreshClick = () => {
+  if (form.MfgOrderName == "") {
+    return;
+  }
   OrderSNQuery({
-    orderName: form.MfgOrderName
+    orderName: form.MfgOrderName,
+    IsVerify: true,
   }).then((data: any) => {
     Completed.value = [];
     awaitLaser.value = [];
     notReleased.value = [];
     // const dataText = JSON.parse(data.content);
-    tableData.value = data.content;
+    if(data.success){
+      tableData.value = data.content;
     checkList.value = ["待镭雕", "未释放"];
-    Completed.value = tableData.value.filter((item) => item.IsResponse === '已完成');
-    awaitLaser.value = tableData.value.filter((item) => item.IsResponse === '待镭雕');
-    notReleased.value = tableData.value.filter((item) => item.IsResponse === '未释放');
+    Completed.value = tableData.value.filter(
+      (item) => item.IsResponse === "已完成"
+    );
+    awaitLaser.value = tableData.value.filter(
+      (item) => item.IsResponse === "待镭雕"
+    );
+    notReleased.value = tableData.value.filter(
+      (item) => item.IsResponse === "未释放"
+    );
+    }
+   
   });
 };
 
