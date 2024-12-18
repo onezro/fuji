@@ -66,7 +66,7 @@
         <div class="table_container">
           <div class="flex justify-between">
             <div></div>
-            <el-button size="small">入库</el-button>
+            <el-button size="small" type="">入库</el-button>
           </div>
           <el-table size="small" :data="tableData.slice(
             (currentPage - 1) * pageSize,
