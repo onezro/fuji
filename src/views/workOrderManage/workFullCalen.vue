@@ -63,7 +63,7 @@ const calendarOptions = reactive({
   plugins: [dayGridPlugin, interactionPlugin, timeGridPlugin, listPlugin],
   initialView: "timeGridWeek",// 默认为那个视图（月：dayGridMonth，周：timeGridWeek，日：timeGridDay）
   weekends: true, // 显示周末  
-  headerToolbar: true,//是否隐藏默认工具栏
+  // headerToolbar: true,//是否隐藏默认工具栏
   // navLinks: true,//日期是否可以被点击
   dayMaxEvents: 4,// 最大事件数
   firstDay: 0, // 设置一周中显示的第一天是哪天，周日是0，周一是1，类推  new Date().getDay()当前天
@@ -73,11 +73,11 @@ const calendarOptions = reactive({
   selectable: true, //是否可以选中日历格
   dayCellClassNames: 'month-day-cell',//单元格类名
   nowIndicator: true,//是否显示时间线
-  // headerToolbar: {
-  //   left: 'prevYear,prev next,nextYear',
-  //   center: 'title',
-  //   right: 'today dayGridMonth,timeGridWeek,timeGridDay'
-  // },
+  headerToolbar: {
+    left: 'prev next',
+    center: 'title',
+    right: 'today'
+  },
   buttonText: { today: "今天", month: "月", week: "周", day: "日" },
   eventOverlap: false, // 允许事件叠堆
   events: dataSelet.value

@@ -73,7 +73,7 @@
             @click="openOrderOnline">计划上线</el-button>
           <el-button type="warning" size="small" :disabled="isOffline" @click="openOrderOffline">计划下线</el-button>
           <el-button color="#409eff" size="small" style="color: #fff" icon="Unlock"
-          :disabled="onlineData.length === 1 ? false : true" @click="orderUnlock">解锁</el-button>
+            :disabled="onlineData.length === 1 ? false : true" @click="orderUnlock">解锁</el-button>
           <el-button type="info" size="small" icon="Lock" :disabled="onlineData.length === 1 ? false : true"
             @click="orderLock">锁定</el-button>
         </div>
@@ -120,7 +120,7 @@
                 </el-table-column>
                 <el-table-column prop="TotalQtyRequired" align="center" label="需求量" flexible>
                 </el-table-column>
-                <el-table-column prop="IssueControlType" align="center" label="消耗类型" >
+                <el-table-column prop="IssueControlType" align="center" label="消耗类型">
                 </el-table-column>
               </el-table>
             </div>
@@ -144,8 +144,8 @@
             </el-table>
           </el-tab-pane>
           <el-tab-pane label="工治具明细" name="工治具明细">
-            <el-table :data="toolTableData" size="small" stripe border fit  :height="400"
-              row-key="ID" :tree-props="{ children: 'children' }">
+            <el-table :data="toolTableData" size="small" stripe border fit :height="400" row-key="ID"
+              :tree-props="{ children: 'children' }">
               <el-table-column type="index" align="center" fixed label="序号" width="60" />
               <el-table-column prop="LineName" label="产线编码" :min-width="180" align="center" fixed>
               </el-table-column>
@@ -155,7 +155,8 @@
               </el-table-column>
               <el-table-column prop="Status" label="任务状态" width="80" align="center" fixed>
                 <template #default="scope">
-                  <el-tag  effect="light" :type="scope.row.Status==2? 'success':'info'">{{ scope.row.Status==2?'完成':'未完成' }}</el-tag>
+                  <el-tag effect="light" :type="scope.row.Status == 2 ? 'success' : 'info'">{{ scope.row.Status == 2 ? '完成' : '未完成'
+                    }}</el-tag>
                 </template>
               </el-table-column>
               <el-table-column prop="ProductName" label="产品编码" :min-width="120" align="center">
@@ -168,6 +169,13 @@
               </el-table-column>
               <el-table-column prop="CreatedOn" label="操作时间" :min-width="180" align="center">
               </el-table-column>
+              <!-- <el-table-column  label="操作" :width="80" align="center" fixed="right">
+                <template #default="scope">
+                  <el-tooltip content="还原" placement="top">
+              <el-button type="primary" icon="Refresh" size="small" @click.prevent="handleRestore(scope.row)" />
+            </el-tooltip>
+                </template>
+              </el-table-column> -->
             </el-table>
           </el-tab-pane>
         </el-tabs>
@@ -185,7 +193,7 @@
           <el-input v-model="orderOnlineForm.OrderNumber" disabled />
         </el-form-item>
         <el-form-item label="产线" prop="LineNumber">
-          <el-select v-model="orderOnlineForm.LineNumber" placeholder="" >
+          <el-select v-model="orderOnlineForm.LineNumber" placeholder="">
             <el-option v-for="item in onlineList" :key="item.MfgLineName" :label="item.Description"
               :value="item.MfgLineName" />
           </el-select>
@@ -222,7 +230,7 @@
 
 <script lang="ts" setup>
 import { OrganData } from "@/utils/dataMenu";
-import { ElNotification } from "element-plus";
+import { ElNotification, ElMessageBox } from "element-plus";
 import { cloneDeep } from "lodash-es";
 import tableTem from "@/components/tableTem/index.vue";
 import { useUserStoreWithOut } from "@/stores/modules/user";
@@ -249,7 +257,8 @@ import {
   onBeforeUnmount,
   computed,
 } from "vue";
-import { shortcuts,setTodayDate,setLastDate } from "@/utils/dataMenu";
+import { shortcuts, setTodayDate, setLastDate } from "@/utils/dataMenu";
+
 interface wmsType {
   phase_code: string;
   pt_code: string;
@@ -363,7 +372,7 @@ watch(
       searchForm.value.PlanStartTime = "";
       searchForm.value.PlanEndTime = "";
       getTableData();
-      return 
+      return
     }
     if (newVal !== oldVal) {
       searchForm.value.PlanStartTime = newVal[0];
@@ -397,7 +406,7 @@ const rowClick = (val: any) => {
   }).then((res: any) => {
     if (res.success) {
       // let data = cloneDeep(feedOrganData(res.content));
-     
+
       feedTableData.value = res.content
     }
   });
@@ -410,7 +419,7 @@ const columnData = reactive([
     // width: "",
     // min: true,
     // align: "center",
-    fixed:true,
+    fixed: true,
     isOperation: true,
     label: "生产计划号",
     width: "150",
@@ -628,8 +637,8 @@ const tabChange = (name: any) => {
       // console.log(OrganData(res.content));
       if (res.success) {
         // let data = cloneDeep(feedOrganData(res.content));
-       
-      feedTableData.value = res.content
+
+        feedTableData.value = res.content
       }
     });
   } else if (name === "工艺流程") {
@@ -675,7 +684,7 @@ const openOrderOnline = () => {
   orderOnlineVisible.value = true;
   let data = cloneDeep(onlineData.value);
   orderOnlineForm.value.OrderNumber = data[0].MfgOrderName;
-  orderOnlineForm.value.LineNumber=data[0].MfgLineName
+  orderOnlineForm.value.LineNumber = data[0].MfgLineName
   QueryOrderLine(data[0].OrderTypeName).then((res: any) => {
     onlineList.value = res.content;
   });
@@ -755,6 +764,23 @@ const orderUnlock = () => {
     getTableData();
   });
 };
+const handleRestore = (val: any) => {
+  ElMessageBox.confirm("确定还原", "确认操作", {
+    confirmButtonText: "确定",
+    cancelButtonText: "取消",
+    type: "warning",
+  })
+    .then(() => {
+
+    })
+    .catch(() => {
+      ElNotification({
+        title: "提示信息",
+        message: "取消操作",
+        type: "info",
+      });
+    });
+}
 
 const getScreenHeight = () => {
   nextTick(() => {

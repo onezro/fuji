@@ -686,7 +686,6 @@ const reWash = () => {
     OrderName: form.value.MfgOrderName,
     ProductName: "",
     workstationName: opui.station,
-    tools: "",
     userAccount: userStore.getUserInfo,
   };
   if (rowData.value.VirtualContainer == "") {

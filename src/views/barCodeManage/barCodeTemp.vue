@@ -5,7 +5,7 @@
         <div>
           <el-button type="primary" size="small" @click="openAddTemp">添加</el-button>
         </div>
-        <el-form ref="formRef" size="small" :model="getForm" label-width="auto" :inline="true" >
+        <el-form ref="formRef" size="small" :model="getForm" label-width="auto" :inline="true">
           <el-form-item label="模板名称" prop="ProductName" class="mb-2">
             <el-input v-model="getForm.TemplateName" style="width: 160px" clearable @clear="getData"
               @change="getData" />
@@ -31,19 +31,22 @@
             <el-table-column prop="Template_Name" label="模板名称" width="180" :show-overflow-tooltip="true" />
             <el-table-column prop="Template_EnableExternal" label="是否启用外部码" width="120" align="center">
               <template #default="scope">
-             
-             <el-tag    effect="plain" :type="scope.row.Template_EnableExternal?'primary':'info'">{{scope.row.Template_EnableExternal?'是':'否' }}</el-tag>
-            
-           </template>
+
+                <el-tag effect="plain" :type="scope.row.Template_EnableExternal ? 'primary' : 'info'">{{
+                  scope.row.Template_EnableExternal ? '是' : '否'
+                  }}</el-tag>
+
+              </template>
             </el-table-column>
             <el-table-column prop="Template_UpdateOn" label="更新时间" width="180" />
             <el-table-column prop="Template_UpdateBy" label="更新人" />
-            <el-table-column prop="Template_Remark" label="备注" :show-overflow-tooltip="true" min-width="180"/>
+            <el-table-column prop="Template_Remark" label="备注" :show-overflow-tooltip="true" min-width="180" />
             <el-table-column prop="Template_Enable" label="是否启用" width="80" align="center">
               <template #default="scope">
-             
-                <el-tag  :type="scope.row.Template_Enable?'primary':'info'">{{scope.row.Template_Enable?'是':'否' }}</el-tag>
-               
+
+                <el-tag :type="scope.row.Template_Enable ? 'primary' : 'info'">{{ scope.row.Template_Enable ? '是' : '否'
+                  }}</el-tag>
+
               </template>
             </el-table-column>
             <el-table-column label="操作" width="120" fixed="right" align="center">
@@ -65,7 +68,7 @@
         </div>
         <div class="w-[400px] ml-2">
           <div class="mb-2">
-            <el-button type="primary" size="small" @click="openAddMater" :disabled="TemplateName==''" >添加</el-button>
+            <el-button type="primary" size="small" @click="openAddMater" :disabled="TemplateName == ''">添加</el-button>
           </div>
           <el-table :data="materialData" size="small" :style="{ width: '100%' }" :height="tableHeight1"
             :tooltip-effect="'dark'" border fit>
@@ -94,11 +97,16 @@
       :close-on-click-modal="false" :close-on-press-escape="false" align-center @close="addCancel">
       <el-form ref="addTempRef" :model="addTempForm" label-width="auto">
         <el-form-item label="模板名称" prop="TemplateName" class="flex items-center">
-          <el-input v-model="addTempForm.TemplateName"  style="width: 240px" />
+          <el-input v-model="addTempForm.TemplateName" style="width: 240px" />
           <el-checkbox v-model="addTempForm.TemplateEnable" label="启用" class="ml-3" />
         </el-form-item>
         <el-form-item label="模板文件" prop="TemplateName">
           <el-input v-model="addTempForm.TemplateName" style="width: 240px" disabled/>
+          <!-- <el-upload ref="upload" class="upload-demo" action="" style="width: 240px" :limit="1"
+            :on-exceed="handleExceed" :http-request="handleFileUpload" :auto-upload="false">
+            <el-button size="small" type="primary">点击上传</el-button>
+            <div slot="tip" class="el-upload__tip">只能上传一个文件</div>
+          </el-upload> -->
           <el-checkbox v-model="addTempForm.TemplateEnableExternal" label="外部码" class="ml-3" />
         </el-form-item>
         <el-form-item label="备注" prop="TemplateRemark">
@@ -143,8 +151,8 @@
           <el-input v-model="addMaterForm.TemplateName" style="width: 240px" />
         </el-form-item> -->
         <el-form-item label="物料编码" prop="PartNumber">
-          <el-select-v2 v-model="addMaterForm.PartNumber" :options="materData"  filterable :props="props"
-          style="width: 240px"/>
+          <el-select-v2 v-model="addMaterForm.PartNumber" :options="materData" filterable :props="props"
+            style="width: 240px" />
           <!-- <el-input v-model="addMaterForm.PartNumber" style="width: 240px" /> -->
         </el-form-item>
       </el-form>
@@ -186,7 +194,7 @@ const getForm = ref({
   TemplateEnable: "",
 });
 const typeList = ref([
-{
+  {
     label: "",
     value: "",
   },
@@ -237,8 +245,8 @@ const addMaterForm = ref({
 const TemplateName = ref("");
 const materData = ref([]);
 const props = ref({
-    label: "ProductName",
-    value: "ProductName",
+  label: "ProductName",
+  value: "ProductName",
 });
 
 
@@ -261,11 +269,11 @@ const getData = () => {
   });
 };
 const getMesData = () => {
-    QueryMESProductNameNews({
-        ProductName: "",
-    }).then((res: any) => {
-        materData.value = res.content;
-    });
+  QueryMESProductNameNews({
+    ProductName: "",
+  }).then((res: any) => {
+    materData.value = res.content;
+  });
 };
 const getTemplatePart = () => {
   GetBarCodeTemplatePartNumberContent({
@@ -283,7 +291,7 @@ const addCancel = () => {
 };
 
 const addConfirm = () => {
-  addTempForm.value.Template_File=addTempForm.value.TemplateName
+  addTempForm.value.Template_File = addTempForm.value.TemplateName
   InsertBarCodeTemplate(addTempForm.value).then((res: any) => {
     // ElNotification({
     //         title: "提示信息",
@@ -305,11 +313,11 @@ const addConfirm = () => {
 
 const cellClick = (row: any) => {
   TemplateName.value = row.Template_Name;
-  addMaterForm.value.TemplateName=row.Template_Name
+  addMaterForm.value.TemplateName = row.Template_Name
   getTemplatePart();
 };
 const handleEdit = (row: any) => {
-  
+
   editTempForm.value.TemplateName = row.Template_Name;
   editTempForm.value.TemplateEnable = row.Template_Enable;
   editTempForm.value.TemplateEnableExternal = row.Template_EnableExternal;
@@ -330,7 +338,7 @@ const editConfirm = () => {
         message: res.msg,
         type: "success",
       });
-    
+
       getData();
       editTempRef.value.resetFields();
       editVisible.value = false;
@@ -391,7 +399,7 @@ const addMaterConfirm = () => {
 
 const deleteMater = (row: any) => {
 
-  
+
   ElMessageBox.confirm("确定删除", "确认操作", {
     confirmButtonText: "确定",
     cancelButtonText: "取消",
@@ -421,7 +429,20 @@ const deleteMater = (row: any) => {
       });
     });
 };
+const handleExceed = () => {
+  console.log(111);
 
+}
+const handleFileUpload = (data: any) => {
+  convertFileToBase64(data.file)
+}
+const convertFileToBase64 = (file: any) => {
+  const reader = new FileReader();
+  reader.readAsDataURL(file);
+  reader.onload = (e: any) => {
+    console.log(e.target.result);
+  };
+}
 const handleSizeChange = (val: any) => {
   pageObj.value.currentPage = 1;
   pageObj.value.pageSize = val;

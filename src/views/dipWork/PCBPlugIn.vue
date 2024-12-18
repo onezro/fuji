@@ -113,7 +113,7 @@
                     <template #default="scope">
                       <span>{{
                         scope.row.Qty
-                        }}</span>
+                      }}</span>
                     </template>
                   </el-table-column>
                 </el-table>
@@ -219,8 +219,8 @@
         </span>
       </template> -->
     </el-dialog>
-    <el-dialog v-model="toolsVisible" draggable title="工治具解绑" width="500px" :append-to-body="true" :close-on-click-modal="false"
-      :close-on-press-escape="false" align-center @open="toolsOpen" @close="toolsCancel">
+    <el-dialog v-model="toolsVisible" draggable title="工治具解绑" width="500px" :append-to-body="true"
+      :close-on-click-modal="false" :close-on-press-escape="false" align-center @open="toolsOpen" @close="toolsCancel">
       <el-form ref="formRef" :model="form" label-width="auto" @submit.native.prevent>
         <el-form-item label="治具编码">
           <el-input v-model="tools" ref="inputToolRef" @keyup.enter.native="getToolChange" />
@@ -946,7 +946,7 @@ const radioChange = (args: any) => {
     getToolData();
     getMaterialRequired()
   }
-  
+
 };
 
 //过站
@@ -1001,7 +1001,7 @@ const getChange = (val: any) => {
           checked.value = [];
           getToolData();
           getHisData();
-          
+
         }
         // console.log(stopsForm.value);
       });
