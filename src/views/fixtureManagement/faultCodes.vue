@@ -88,6 +88,16 @@
         >
         </el-table-column>
         <el-table-column
+          prop="ReturnDate"
+          align="center"
+          label="故障类型名称"
+          width="100"
+        >
+          <template #default="scope">
+            <div>{{ getTypeStr(scope.row.ErrorTypeName) }}</div>
+          </template>
+        </el-table-column>
+        <el-table-column
           prop="RepairMethod"
           align="center"
           label="修复方法"
@@ -185,6 +195,7 @@
         <el-form-item label="故障代码类型">
           <el-select
             v-model="EditForm.ErrorTypeCode"
+            @change="geteditName"
             placeholder=""
             style="width: 250px"
           >
@@ -196,7 +207,7 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="故障名称类型">
+        <!-- <el-form-item label="故障名称类型">
           <el-select
             v-model="EditForm.ErrorTypeName"
             placeholder=""
@@ -209,7 +220,7 @@
               :value="item.Value"
             />
           </el-select>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="故障代码">
           <el-input v-model="EditForm.ErrorCode" style="width: 250px" />
         </el-form-item>
@@ -256,6 +267,7 @@
             v-model="form.ErrorTypeCode"
             placeholder=""
             style="width: 250px"
+            @change="getaddName"
           >
             <el-option
               v-for="item in faultCodeType"
@@ -265,7 +277,7 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="故障名称类型">
+        <!-- <el-form-item label="故障名称类型">
           <el-select
             v-model="form.ErrorTypeName"
             placeholder=""
@@ -278,7 +290,7 @@
               :value="item.Value"
             />
           </el-select>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="故障代码">
           <el-input v-model="form.ErrorCode" style="width: 250px" />
         </el-form-item>
@@ -511,6 +523,14 @@ const clearForm = () => {
   };
 };
 
+const getaddName = (str) => {
+  form.value.ErrorTypeName = str
+}
+
+const geteditName = (str) => {
+  EditForm.value.ErrorTypeName = str;
+}
+
 const inFormClose = () => {
   inFormRef.value.resetFields();
   InVisible.value = false;
@@ -557,9 +577,9 @@ const getData = () => {
 
 //根据名称获取配置值
 const getTypeList = () => {
-  GetComboBoxList("ReturnType").then((res: any) => {
+  GetComboBoxList("ResourceErrorType").then((res: any) => {
     faultCodeType.value = res.content;
-    faultNameType.value = res.content;
+    // faultNameType.value = res.content;
   });
 };
 
@@ -641,6 +661,16 @@ const editData = () => {
     getData();
   });
 };
+
+const getTypeStr = (code:any) => {
+  let str = '';
+  faultCodeType.value.forEach(element => {
+    if (element.Value === code) {
+      str = element.Text;
+    }
+  });
+  return str;
+}
 
 const columnData = reactive([
   {

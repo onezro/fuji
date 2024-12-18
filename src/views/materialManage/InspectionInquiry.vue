@@ -64,14 +64,26 @@
           </el-form>
         </div>
         <div class="table_container">
+          <div class="flex justify-between">
+            <div></div>
+            <el-button size="small">入库</el-button>
+          </div>
           <el-table size="small" :data="tableData.slice(
             (currentPage - 1) * pageSize,
             currentPage * pageSize
           )
-            " border :height="tableHeight" row-key="step1" style="width: 100%">
+            " border :height="tableHeight" row-key="step1" style="width: 100%"
+            @selection-change="handleSelectionChange"
+            >
+            <el-table-column
+              type="selection"
+              width="45"
+               label="选择"
+                align="center"
+            />
             <el-table-column type="index" label="序号" width="50" align="center">
             </el-table-column>
-            <el-table-column prop="InspectOrder" label="送检单号" width="180" align="center":min-width="flexColumnWidth('送检单号', 'TotalUses')">
+            <el-table-column prop="InspectOrder" label="送检单号" width="180" align="center" :min-width="flexColumnWidth('送检单号', 'TotalUses')">
             </el-table-column>
             <el-table-column prop="StepName" label="包装箱号" align="center":min-width="flexColumnWidth('包装箱号', 'TotalUses')"> </el-table-column>
             <el-table-column prop="Remark" label="包装箱数量" align="center":min-width="flexColumnWidth('v', 'TotalUses')"> </el-table-column>
@@ -155,6 +167,10 @@
   onBeforeUnmount(() => {
     window.addEventListener("resize", getScreenHeight);
   })
+
+  
+const handleSelectionChange = (data: any) => {
+};
   
 const getMaxLength = (arr: any) => {
   return arr.reduce((acc: any, item: any) => {

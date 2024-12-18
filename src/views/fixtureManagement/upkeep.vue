@@ -83,24 +83,31 @@
         stripe
       >
         <el-table-column
-          prop="ErrorCode"
+          prop="ErrorOrder"
           align="center"
-          label="故障代码"
-          :min-width="flexColumnWidth('故障代码', 'ErrorCode')"
+          label="故障单号"
+          :min-width="flexColumnWidth('故障单号', 'ErrorOrder')"
         >
         </el-table-column>
         <el-table-column
-          prop="ErrorName"
+          prop="EquipmentName"
           align="center"
-          label="故障名称"
-          :min-width="flexColumnWidth('故障名称', 'ErrorName')"
+          label="设备名称"
+          :min-width="flexColumnWidth('设备名称', 'EquipmentName')"
         >
         </el-table-column>
         <el-table-column
-          prop="RepairMethod"
+          prop="EquipmentGuid"
           align="center"
-          label="修复方法"
-          :min-width="flexColumnWidth('修复方法', 'RepairMethod')"
+          label="设备标识"
+          :min-width="flexColumnWidth('设备标识', 'EquipmentGuid')"
+        >
+        </el-table-column>
+        <el-table-column
+          prop="ErrorCodeGuid"
+          align="center"
+          label="故障代码标识"
+          :min-width="flexColumnWidth('故障代码标识', 'ErrorCodeGuid')"
         >
         </el-table-column>
         <el-table-column
@@ -115,7 +122,14 @@
           prop="ErrorNote"
           align="center"
           label="故障记录"
-          :min-width="flexColumnWidth('归还人', 'ErrorNote')"
+          :min-width="flexColumnWidth('故障记录', 'ErrorNote')"
+        >
+        </el-table-column>
+        <el-table-column
+          prop="RepairStatu"
+          align="center"
+          label="状态"
+          :min-width="flexColumnWidth('状态', 'RepairStatu')"
         >
         </el-table-column>
         <el-table-column
@@ -146,6 +160,7 @@
                   type="success"
                   icon="CaretRight"
                   size="small"
+                  :disabled="scope.row.RepairStatu !== '待维修'"
                   @click="startSubmit(scope.row)"
                 ></el-button>
               </el-tooltip>
@@ -154,7 +169,11 @@
                   type="warning"
                   icon="VideoPause"
                   size="small"
-                  @click="endSubmit(scope.row)"
+                  :disabled="scope.row.RepairStatu !== '维修中'"
+                  @click="
+                    (endVisible = true),
+                      (choiceEndId = scope.row.EquipmentErrorRecordGuid)
+                  "
                 ></el-button>
               </el-tooltip>
               <el-tooltip content="确认维修" placement="top">
@@ -162,6 +181,7 @@
                   type="primary"
                   icon="Check"
                   size="small"
+                  :disabled="scope.row.RepairStatu !== '维修确认'"
                   @click="
                     (repairVisible = true),
                       (choiceId = scope.row.EquipmentErrorRecordGuid)
@@ -287,6 +307,40 @@
         </span>
       </template>
     </el-dialog>
+    <el-dialog
+      align-center
+      :append-to-body="true"
+      :close-on-click-modal="false"
+      v-model="endVisible"
+      @close=""
+      title="结束维修"
+      width="30%"
+    >
+      <el-form
+        ref="editFormRef"
+        label-position="left"
+        label-width="auto"
+        :inline="true"
+      >
+        <el-form-item label="维修原因">
+          <el-input type="textare" v-model="endForm.ErrorReson"></el-input>
+        </el-form-item>
+        <el-form-item label="维修过程">
+          <el-input type="textare" v-model="endForm.RepairProcess"></el-input>
+        </el-form-item>
+        <el-form-item label="预防措施">
+          <el-input type="textare" v-model="endForm.PreventMethod"></el-input>
+        </el-form-item>
+      </el-form>
+
+      <template #footer>
+        <span class="dialog-footer">
+          <!-- <el-button type="info" @click="addSon"> 增加子项</el-button> -->
+          <el-button @click="repairVisible = false"> 取消 </el-button>
+          <el-button type="primary" @click="endSubmit"> 确定 </el-button>
+        </span>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -339,24 +393,18 @@ interface EditFormTS {
   CreatedBy: string;
 }
 
-interface inFormTS {
-  Chkin_sht: string;
-  PartID: string;
-  Qty: number;
-  PartNumber: string;
-  DueDate: string;
-  AssetNumber: string;
-  Vendor: string;
-  Manufacturer: string;
-  Specification: string;
-  StorageLocation: string;
-  CreatedBy: string;
+interface repairFormTS {
+  EquipmentErrorRecordGuid: string;
+  ErrorReson: string;
+  RepairProcess: string;
+  RepairBy: string;
+  PreventMethod: string;
 }
 
 interface SearchFormTS {
-  ErrorOrder: "",
-  EquipmentGuid: "",
-  EquipmentName: "",
+  ErrorOrder: "";
+  EquipmentGuid: "";
+  EquipmentName: "";
 }
 
 interface detailFormTS {
@@ -375,6 +423,7 @@ interface detailFormTS {
 const currentPage = ref(1);
 const tableHeight = ref(0);
 const addVisible = ref(false);
+const endVisible = ref(false);
 const InVisible = ref(false);
 const repairVisible = ref(false);
 const dateValue = ref<any[]>([]);
@@ -388,6 +437,8 @@ const faultCodeType = ref();
 const faultNameType = ref();
 const repairType = ref("1");
 const choiceId = ref("");
+const choiceEndId = ref("");
+const reason = ref("");
 const pageObj = ref({
   pageSize: 30,
   currentPage: 1,
@@ -396,7 +447,6 @@ const pageObj1 = ref({
   pageSize: 30,
   currentPage: 1,
 });
-const typeList = ["采购入库", "归还入库", "维修入库"];
 const loginName = userStore.getUserInfo;
 
 const formControl = ref({
@@ -426,7 +476,7 @@ const form = ref<formTS>({
   ErrorDesc: "",
   ErrorNote: "",
   RowDeleted: true,
-  CreatedBy: "",
+  CreatedBy: loginName,
 });
 
 const EditForm = ref<EditFormTS>({
@@ -440,18 +490,12 @@ const EditForm = ref<EditFormTS>({
   CreatedBy: "",
 });
 
-const inForm = ref<inFormTS>({
-  Chkin_sht: "",
-  PartID: "",
-  Qty: 0,
-  PartNumber: "",
-  DueDate: "",
-  AssetNumber: "",
-  Vendor: "",
-  Manufacturer: "",
-  Specification: "",
-  StorageLocation: "",
-  CreatedBy: loginName,
+const endForm = ref<repairFormTS>({
+  EquipmentErrorRecordGuid: "",
+  ErrorReson: "",
+  RepairBy: loginName,
+  RepairProcess: "",
+  PreventMethod: ""
 });
 
 const searchForm = ref<SearchFormTS>({
@@ -488,7 +532,7 @@ const clearForm = () => {
     ErrorDesc: "",
     ErrorNote: "",
     RowDeleted: true,
-    CreatedBy: "",
+    CreatedBy: loginName,
   };
 };
 
@@ -538,7 +582,7 @@ const getData = () => {
 
 //根据名称获取配置值
 const getTypeList = () => {
-  GetComboBoxList("ReturnType").then((res: any) => {
+  GetComboBoxList("ResourceErrorType").then((res: any) => {
     faultCodeType.value = res.content;
     faultNameType.value = res.content;
   });
@@ -578,6 +622,7 @@ const startSubmit = (data: any) => {
     .then(() => {
       updateStartRepair({
         EquipmentErrorRecordGuid: data.EquipmentErrorRecordGuid,
+        RepairBy: loginName,
       }).then((res: any) => {
         if (!res) {
           return;
@@ -597,43 +642,44 @@ const startSubmit = (data: any) => {
     });
 };
 
-const endSubmit = (data: any) => {
+const endSubmit = () => {
   //   deleteVisible.value = true;
   // deleteChoice.value = data.EquipmentErrorRecordGuid;
-  ElMessageBox.confirm("确定结束维修", "确认操作", {
-    confirmButtonText: "确定",
-    cancelButtonText: "取消",
-    type: "warning",
-  })
-    .then(() => {
-      updateEndRepair({
-        EquipmentErrorRecordGuid: data.EquipmentErrorRecordGuid,
-      }).then((res: any) => {
-        if (!res) {
-          return;
-        }
-        ElNotification({
-          type: "success",
-          message: res.msg,
-        });
-        getData();
-      });
-    })
-    .catch(() => {
-      ElNotification({
-        type: "info",
-        message: "取消操作",
-      });
+  // ElMessageBox.confirm("确定结束维修", "确认操作", {
+  //   confirmButtonText: "确定",
+  //   cancelButtonText: "取消",
+  //   type: "warning",
+  // })
+  //   .then(() => {
+  //   })
+  //   .catch(() => {
+  //     ElNotification({
+  //       type: "info",
+  //       message: "取消操作",
+  //     });
+  //   });
+  updateEndRepair({...endForm.value,EquipmentErrorRecordGuid:choiceEndId.value}).then((res: any) => {
+    if (!res) {
+      return;
+    }
+    endVisible.value = false
+    ElNotification({
+      type: "success",
+      message: res.msg,
     });
+    getData();
+  });
 };
 
 const sureSubmit = () => {
   RepairConfirm(repairType.value, {
     EquipmentErrorRecordGuid: choiceId.value,
+    CreatedBy: loginName,
   }).then((res: any) => {
     if (!res) {
       return;
     }
+    repairVisible.value = false
     ElNotification({
       type: "success",
       message: res.msg,
@@ -809,8 +855,6 @@ const getScreenHeight = () => {
 
 //el-table自动计算宽度
 const flexColumnWidth = (label: any, prop: any) => {
-  console.log(tableData?.value);
-  
   const arr = tableData?.value.map((x: { [x: string]: any }) => x[prop]);
   arr.push(label); // 把每列的表头也加进去算
   return getMaxLength(arr) + 25 + "px";
