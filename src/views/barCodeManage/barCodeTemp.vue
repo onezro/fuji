@@ -34,7 +34,7 @@
 
                 <el-tag effect="plain" :type="scope.row.Template_EnableExternal ? 'primary' : 'info'">{{
                   scope.row.Template_EnableExternal ? '是' : '否'
-                  }}</el-tag>
+                }}</el-tag>
 
               </template>
             </el-table-column>
@@ -102,8 +102,8 @@
         </el-form-item>
         <el-form-item label="模板文件" prop="TemplateName">
           <!-- <el-input v-model="addTempForm.TemplateName" style="width: 240px" disabled/> -->
-          <el-upload ref="upload" class="upload-demo" accept=".frx" action="" style="width: 240px" :limit="1"
-            :on-exceed="handleExceed"    :http-request="handleFileUpload" :auto-upload="true">
+          <el-upload ref="upload" class="upload-demo" accept=".frx" action="" :file-list="fileList" style="width: 240px" :limit="1" 
+          :on-exceed="handleExceed"  :http-request="handleFileUpload"  :on-remove="handleRemove" :auto-upload="true">
             <el-button size="small" type="primary">点击上传</el-button>
             <div slot="tip" class="el-upload__tip">只能上传一个文件</div>
           </el-upload>
@@ -128,10 +128,16 @@
           <el-input v-model="editTempForm.TemplateName" disabled style="width: 240px" />
           <el-checkbox v-model="editTempForm.TemplateEnable" label="启用" class="ml-3" />
         </el-form-item>
-        <!-- <el-form-item label="模板文件" prop="Template_File">
-          <el-input v-model="editTempForm.Template_File" style="width: 240px" />
+        <el-form-item label="模板文件" prop="Template_File">
+          <!-- <el-input v-model="editTempForm.Template_File" style="width: 240px" /> -->
+          <el-upload ref="upload" class="upload-demo" accept=".frx" action="" :file-list="fileList" style="width: 240px" :limit="1"
+          :on-exceed="handleExceed" :http-request="handleFileUpload"  :on-remove="handleRemove" :auto-upload="true">
+          <el-button size="small" type="primary">点击上传</el-button>
+          <div slot="tip" class="el-upload__tip">只能上传一个文件</div>
+        </el-upload>
           <el-checkbox v-model="editTempForm.TemplateEnableExternal" label="外部码" class="ml-3" />
-        </el-form-item> -->
+        </el-form-item>
+       
         <el-form-item label="备注" prop="TemplateRemark">
           <el-input v-model="editTempForm.TemplateRemark" type="textarea" style="width: 240px"
             :autoSize="{ minRows: 4, maxRows: 6 }" />
@@ -185,6 +191,8 @@ import {
   nextTick,
   reactive,
 } from "vue";
+import { genFileId } from 'element-plus'
+import type { UploadInstance, UploadProps, UploadRawFile } from 'element-plus'
 import { ElNotification, ElMessageBox } from "element-plus";
 import { useUserStoreWithOut } from "@/stores/modules/user";
 const userStore = useUserStoreWithOut();
@@ -248,7 +256,8 @@ const props = ref({
   label: "ProductName",
   value: "ProductName",
 });
-
+const fileList=ref([])
+const upload=ref()
 
 onBeforeMount(() => {
   getScreenHeight();
@@ -286,24 +295,20 @@ const openAddTemp = () => {
   addVisible.value = true;
 };
 const addCancel = () => {
+  fileList.value=[]
   addTempRef.value.resetFields();
   addVisible.value = false;
 };
 
 const addConfirm = () => {
-  // addTempForm.value.Template_File = addTempForm.value.TemplateName
   InsertBarCodeTemplate(addTempForm.value).then((res: any) => {
-    // ElNotification({
-    //         title: "提示信息",
-    //         message: res.msg,
-    //         type: res.success ? "success" : "error",
-    //     });
     if (res.success) {
       ElNotification({
         title: "提示信息",
         message: res.msg,
         type: "success",
       });
+      fileList.value=[]
       addTempRef.value.resetFields();
       getData();
       addVisible.value = false;
@@ -326,6 +331,7 @@ const handleEdit = (row: any) => {
   editVisible.value = true;
 };
 const editCancel = () => {
+  fileList.value=[]
   editTempRef.value.resetFields();
   editVisible.value = false;
 };
@@ -340,6 +346,7 @@ const editConfirm = () => {
       });
 
       getData();
+      fileList.value=[]
       editTempRef.value.resetFields();
       editVisible.value = false;
     }
@@ -398,8 +405,6 @@ const addMaterConfirm = () => {
 };
 
 const deleteMater = (row: any) => {
-
-
   ElMessageBox.confirm("确定删除", "确认操作", {
     confirmButtonText: "确定",
     cancelButtonText: "取消",
@@ -429,20 +434,38 @@ const deleteMater = (row: any) => {
       });
     });
 };
-const handleExceed = () => {
-  console.log(111);
 
+const handleExceed=(files:any)=>{
+  upload.value.clearFiles()
+  const file = files[0]
+  file.uid = genFileId()
+  upload.value!.handleStart(file)
+  
 }
-
+const handleRemove=()=>{
+  editTempForm.value.Template_File=""
+  addTempForm.value.Template_File=""
+}
 const handleFileUpload = (data: any) => {
+  // console.log(data);
+  
   convertFileToBase64(data.file)
 }
 const convertFileToBase64 = (file: any) => {
   const reader = new FileReader();
   reader.readAsDataURL(file);
   reader.onload = (e: any) => {
-    addTempForm.value.Template_File=e.target.result
-    console.log(addTempForm.value);
+    let data = e.target.result
+    let arr = data.split(",")
+    console.log( arr[1]);
+    
+    if (editVisible.value) {
+      editTempForm.value.Template_File = arr[1]
+    }
+    if (addVisible.value) {
+      addTempForm.value.Template_File = arr[1]
+    }
+
   };
 }
 const handleSizeChange = (val: any) => {
