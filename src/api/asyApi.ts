@@ -252,13 +252,11 @@ export function EolManualTestStationMoveOut(data:any) {
 }
 
 //
-export function eolQueryDefectCode(data:any) {
+export function EolStartUpQrCode(data:any) {
     return request({
-        url: "/api/EolManualTest/QueryDefectCode",
+        url: "/api/EolManualTest/EolStartUpQrCode",
         method: "post",
-        params:{
-            containerName:data
-        }
+       data
     })
 }
 

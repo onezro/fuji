@@ -68,16 +68,21 @@
                         --el-switch-off-color: #13ce66;
                       " :active-value="'NG'" :inactive-value="'OK'" active-text="NG" inactive-text="OK" />
                   </el-form-item>
-                </el-form>
-                <div class="mb-2">
-                  <el-button :type="isAuto ? 'danger' : 'primary'" :disabled="form.MfgOrderName == ''"
+                  <el-form-item class="mb-2">
+                    <el-button :type="isAuto ? 'danger' : 'primary'" :disabled="form.MfgOrderName == ''"
                     @click="autoPrint">{{ isAuto ? "关闭自动打印" : "自动打印" }}</el-button>
                   <el-button type="warning" :disabled="form.MfgOrderName == ''" @click="print">手动打印</el-button>
-                  <!-- <el-button type="success" :disabled="form.MfgOrderName == ''" @click="print">补打条码</el-button> -->
+                  </el-form-item>
+                </el-form>
+                <!-- <div class="mb-2">
+                
+                
+                </div> -->
+                <div class="text-xl font-bold text-[#f48000]">
+                  {{ barMsg }}
                 </div>
-                <div class="text-xl font-bold" :style="{ 'color': isGo ? '#00B400' : '#e6a23c' }"
-                  v-show="msgType === true || msgTitle === ''">
-                  {{ msgTitle === "" ? "请扫描MES条码" : msgTitle }}
+                <div class="text-xl font-bold text-[#00B400]" v-show="msgType === true || msgTitle === ''">
+                  {{ msgTitle }}
                 </div>
                 <div class="text-xl font-bold text-[red]" v-show="msgType === false && msgTitle !== ''">
                   {{ msgTitle }}
@@ -481,6 +486,7 @@ const isKeyForm = ref({
   txnDate: "",
 });
 const isGo = ref(true)
+const barMsg = ref("")
 
 onBeforeMount(() => {
   clearInterval(timer.value);
@@ -529,7 +535,12 @@ const getKeyMaterial = () => {
     if (barData.value.length !== 0) {
       if (barData.value[0].IssueControl == 1) {
         msgType.value = true;
-        msgTitle.value = `请先扫描关键物料${barData.value[0].MaterialName}`;
+        msgTitle.value = ``;
+        barMsg.value = `请先扫描关键物料${barData.value[0].MaterialName}`
+      } else {
+        msgType.value = true;
+        msgTitle.value = ``;
+        barMsg.value = `请先扫描批次物料${barData.value[0].MaterialName}`
       }
     }
   });
@@ -726,13 +737,19 @@ const verifyBarCode = (barCodeData: any) => {
         barData.value[keyIndex].QtyRequired
       ) {
         msgType.value = true;
-        msgTitle.value = `请继续扫描${barData.value[keyIndex].IssueControl == 1 ? "关键料" : "批次料"
-          }${barData.value[keyIndex].MaterialName}`;
+        // msgTitle.value = `请继续扫描${barData.value[keyIndex].IssueControl == 1 ? "关键料" : "批次料"
+        //   }${barData.value[keyIndex].MaterialName}`;
+        barMsg.value = `请继续扫描${barData.value[keyIndex].IssueControl == 1 ? "关键料" : "批次料"
+        }${barData.value[keyIndex].MaterialName}`;
       } else {
         if (isKeyEmpty.value !== -1) {
           msgType.value = true;
-          msgTitle.value = `请继续扫描${barData.value[isKeyEmpty.value].IssueControl == 1 ? "关键料" : "批次料"
-            }${barData.value[isKeyEmpty.value].MaterialName}`;
+          // msgTitle.value = `请继续扫描${barData.value[isKeyEmpty.value].IssueControl == 1 ? "关键料" : "批次料"
+          //   }${barData.value[isKeyEmpty.value].MaterialName}`;
+          barMsg.value = `请继续扫描${barData.value[isKeyEmpty.value].IssueControl == 1
+              ? "关键料"
+              : "批次料"
+              }${barData.value[isKeyEmpty.value].MaterialName}`;
         } else {
           msgType.value = true;
           msgTitle.value = `请扫描MES条码`
