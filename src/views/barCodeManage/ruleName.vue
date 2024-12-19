@@ -1,15 +1,21 @@
 <template>
     <div class="p-2">
         <el-card shadow="always" :body-style="{ padding: '8px 8px 0 8px' }">
-            <div class="pb-2 flex justify-between">
+            <div class="pb-1 flex justify-between">
                 <el-button type="primary" @click="openAdd" size="small">添加</el-button>
-                <div class="flex">
-                    <el-input v-model.trim="getForm.Temppara_No" style="width: 240px" clearable placeholder="请输入"
-                        size="small" @change="getData" @clear="getData">
-                        <template #append>
-                            <el-button type="primary" icon="Search" size="small" @click="getData"></el-button>
-                        </template></el-input>
-                </div>
+                <el-form ref="formRef" size="small" :model="getForm" label-width="auto" :inline="true">
+                    <el-form-item label="规则编码" prop="ProductName" class="mb-1">
+                        <el-input v-model="getForm.Temppara_No" style="width: 160px" clearable @clear="getData"
+                            @change="getData" />
+                    </el-form-item>
+                    <el-form-item label="规则描述" prop="ProductDescription" class="mb-1">
+                        <el-input v-model="getForm.Temppara_Name" style="width: 160px" clearable @clear="getData"
+                            @change="getData" />
+                    </el-form-item>
+                    <el-form-item class="mb-2">
+                        <el-button type="primary" @click="getData">查询</el-button>
+                    </el-form-item>
+                </el-form>
             </div>
             <table-tem :show-index="true" size="small" :tableData="tableData" :tableHeight="tableHeight"
                 :columnData="columnData" :pageObj="pageObj" @handleSizeChange="handleSizeChange"
@@ -25,7 +31,7 @@
                     <el-input v-model="addForm.Temppara_Name" style="width: 240px" />
                 </el-form-item>
                 <el-form-item label="取值规则" prop="Temppara_Expression">
-                    <el-select v-model="addForm.Temppara_Expression" placeholder="" style="width: 240px" >
+                    <el-select v-model="addForm.Temppara_Expression" placeholder="" style="width: 240px">
                         <el-option v-for="e in expressionList" :key="e.Expression_Name"
                             :label="e.Expression_Description" :value="e.Expression_Name" />
                     </el-select>
@@ -62,6 +68,7 @@ import { useUserStoreWithOut } from "@/stores/modules/user";
 const userStore = useUserStoreWithOut();
 const getForm = ref({
     Temppara_No: "",
+    Temppara_Name: ""
 });
 const tableData = ref([]);
 const tableHeight = ref(0);
@@ -100,7 +107,7 @@ const handleDelete = (row: any) => {
         });
 };
 const columnData = ref([
-   
+
     {
         text: true,
         prop: "Temppara_No",

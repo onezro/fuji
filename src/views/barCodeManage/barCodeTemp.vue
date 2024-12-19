@@ -26,16 +26,18 @@
       </div>
       <div class="flex">
         <div class="w-[calc(100%-408px)]">
-          <el-table :data="tableData" size="small" :style="{ width: '100%' }" :height="tableHeight"
+          <el-table :data="tableData.slice(
+      (pageObj.currentPage - 1) * pageObj.pageSize,
+      pageObj.currentPage * pageObj.pageSize
+    )
+      " size="small" :style="{ width: '100%' }" :height="tableHeight"
             :tooltip-effect="'dark'" border fit highlight-current-row @cell-click="cellClick">
             <el-table-column prop="Template_Name" label="模板名称" width="180" :show-overflow-tooltip="true" />
             <el-table-column prop="Template_EnableExternal" label="是否启用外部码" width="120" align="center">
               <template #default="scope">
-
                 <el-tag effect="plain" :type="scope.row.Template_EnableExternal ? 'primary' : 'info'">{{
                   scope.row.Template_EnableExternal ? '是' : '否'
                 }}</el-tag>
-
               </template>
             </el-table-column>
             <el-table-column prop="Template_UpdateOn" label="更新时间" width="180" />
@@ -43,10 +45,8 @@
             <el-table-column prop="Template_Remark" label="备注" :show-overflow-tooltip="true" min-width="180" />
             <el-table-column prop="Template_Enable" label="是否启用" width="80" align="center">
               <template #default="scope">
-
                 <el-tag :type="scope.row.Template_Enable ? 'primary' : 'info'">{{ scope.row.Template_Enable ? '是' : '否'
                   }}</el-tag>
-
               </template>
             </el-table-column>
             <el-table-column label="操作" width="120" fixed="right" align="center">
@@ -65,6 +65,13 @@
               </div>
             </template>
           </el-table>
+          <div class="mt-2">
+              <el-pagination :size="'default'" background @size-change="handleSizeChange"
+                @current-change="handleCurrentChange" :pager-count="5" :current-page="pageObj.currentPage"
+                :page-size="pageObj.pageSize" :page-sizes="[30, 50, 100, 200, 300]"
+                layout="total,sizes, prev, pager, next" :total="tableData.length">
+              </el-pagination>
+            </div>
         </div>
         <div class="w-[400px] ml-2">
           <div class="mb-2">
@@ -101,9 +108,8 @@
           <el-checkbox v-model="addTempForm.TemplateEnable" label="启用" class="ml-3" />
         </el-form-item>
         <el-form-item label="模板文件" prop="TemplateName">
-          <!-- <el-input v-model="addTempForm.TemplateName" style="width: 240px" disabled/> -->
           <el-upload ref="upload" class="upload-demo" accept=".frx" action="" :file-list="fileList" style="width: 240px" :limit="1" 
-          :on-exceed="handleExceed"  :http-request="handleFileUpload"  :on-remove="handleRemove" :auto-upload="true">
+          :on-exceed="handleExceed"   :http-request="handleFileUpload"  :on-remove="handleRemove" :auto-upload="true">
             <el-button size="small" type="primary">点击上传</el-button>
             <div slot="tip" class="el-upload__tip">只能上传一个文件</div>
           </el-upload>
@@ -192,7 +198,6 @@ import {
   reactive,
 } from "vue";
 import { genFileId } from 'element-plus'
-import type { UploadInstance, UploadProps, UploadRawFile } from 'element-plus'
 import { ElNotification, ElMessageBox } from "element-plus";
 import { useUserStoreWithOut } from "@/stores/modules/user";
 const userStore = useUserStoreWithOut();
@@ -439,16 +444,16 @@ const handleExceed=(files:any)=>{
   upload.value.clearFiles()
   const file = files[0]
   file.uid = genFileId()
-  upload.value!.handleStart(file)
-  
+  upload.value.handleStart(file)
+  convertFileToBase64(file)
 }
 const handleRemove=()=>{
   editTempForm.value.Template_File=""
   addTempForm.value.Template_File=""
 }
+
 const handleFileUpload = (data: any) => {
   // console.log(data);
-  
   convertFileToBase64(data.file)
 }
 const convertFileToBase64 = (file: any) => {
@@ -457,8 +462,6 @@ const convertFileToBase64 = (file: any) => {
   reader.onload = (e: any) => {
     let data = e.target.result
     let arr = data.split(",")
-    console.log( arr[1]);
-    
     if (editVisible.value) {
       editTempForm.value.Template_File = arr[1]
     }
@@ -477,10 +480,13 @@ const handleCurrentChange = (val: any) => {
 };
 const getScreenHeight = () => {
   nextTick(() => {
-    tableHeight.value = window.innerHeight - 145.5;
+    tableHeight.value = window.innerHeight - 195.5;
     tableHeight1.value = window.innerHeight - 180;
   });
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.el-pagination {
+  justify-content: center;
+}</style>

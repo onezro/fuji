@@ -12,30 +12,14 @@
     <div class="w-full flex-1 flex">
       <div class="setwidth w-[320px]">
         <div class="w-full h-full box">
-          <div
-            class="h-[35px] flex items-center text-xl text-[#fff] bg-[#006487]"
-          >
+          <div class="h-[35px] flex items-center text-xl text-[#fff] bg-[#006487]">
             <span class="ml-5">基本信息</span>
           </div>
-          <div
-            class="p-[10px] overflow-auto custom-scrollbar-hidden"
-            :style="{ height: formHeight + 'px' }"
-          >
-            <el-form
-              class="inbound"
-              ref="formRef"
-              :model="form"
-              label-width="auto"
-            >
-              <el-form-item
-                size="default"
-                v-for="f in formHeader"
-                :key="f.value"
-                :label="f.lable"
-              >
+          <div class="p-[10px] overflow-auto custom-scrollbar-hidden" :style="{ height: formHeight + 'px' }">
+            <el-form class="inbound" ref="formRef" :model="form" label-width="auto">
+              <el-form-item size="default" v-for="f in formHeader" :key="f.value" :label="f.lable">
                 <span class="font-bold text-lg leading-[30px]">
-                  {{ formText(f.value) }}</span
-                >
+                  {{ formText(f.value) }}</span>
               </el-form-item>
             </el-form>
           </div>
@@ -44,72 +28,35 @@
       <div class="w-[calc(100%-320px)]">
         <div class="w-full h-full">
           <div>
-            <div
-              class="h-[35px] flex items-center justify-between text-xl text-[#fff] bg-[#006487]"
-            >
+            <div class="h-[35px] flex items-center justify-between text-xl text-[#fff] bg-[#006487]">
               <span class="ml-5"> 扫描条码</span>
               <div class="pr-2">
-                <el-button
-                  type="warning"
-                  @click="(dialogVisible = true), getOrderList()"
-                  >计划开工</el-button
-                >
+                <el-button type="warning" @click="(dialogVisible = true), getOrderList()">计划开工</el-button>
               </div>
             </div>
             <div class="h-[120px] p-5">
-              <el-form
-                class="inbound"
-                ref="formRef"
-                :model="form"
-                label-width="auto"
-                @submit.native.prevent
-              >
+              <el-form class="inbound" ref="formRef" :model="form" label-width="auto" @submit.native.prevent>
                 <el-form-item label="扫描条码">
-                  <el-input
-                    v-model="barCode"
-                    ref="barCodeRef"
-                    style="width: 500px"
-                    placeholder="请扫描条码"
-                    @keyup.enter="choiceOrder()"
-                  />
+                  <el-input v-model="barCode" ref="barCodeRef" style="width: 500px" placeholder="请扫描条码"
+                    @keyup.enter="choiceOrder()" />
                 </el-form-item>
               </el-form>
-              <div
-                class="text-xl font-bold text-[#00B400]"
-                v-show="msgType === true || msgTitle === ''"
-              >
+              <div class="text-xl font-bold text-[#00B400]" v-show="msgType === true || msgTitle === ''">
                 {{ msgTitle === "" ? "请扫描批次条码" : msgTitle }}
               </div>
-              <div
-                class="text-xl font-bold text-[red]"
-                v-show="msgType === false && msgTitle !== ''"
-              >
+              <div class="text-xl font-bold text-[red]" v-show="msgType === false && msgTitle !== ''">
                 {{ msgTitle }}
               </div>
             </div>
           </div>
           <div class="flex flex-col flex-1">
-            <div
-              class="h-[35px] flex items-center text-xl justify-between text-[#fff] bg-[#006487]"
-            >
+            <div class="h-[35px] flex items-center text-xl justify-between text-[#fff] bg-[#006487]">
               <span class="ml-5"> PCB条码列表</span>
               <div class="h-full flex items-center">
-                <el-checkbox-group
-                  v-model="checkList"
-                  class="laser-table-filter"
-                >
-                  <el-checkbox
-                    :label="`未释放(${notReleased.length})`"
-                    value="未释放"
-                  />
-                  <el-checkbox
-                    :label="`待镭雕(${awaitLaser.length})`"
-                    value="待镭雕"
-                  />
-                  <el-checkbox
-                    :label="`已完成(${Completed.length})`"
-                    value="已完成"
-                  />
+                <el-checkbox-group v-model="checkList" class="laser-table-filter">
+                  <el-checkbox :label="`未释放(${notReleased.length})`" value="未释放" />
+                  <el-checkbox :label="`待镭雕(${awaitLaser.length})`" value="待镭雕" />
+                  <el-checkbox :label="`已完成(${Completed.length})`" value="已完成" />
                 </el-checkbox-group>
                 <el-icon @click="refreshClick()" class="mx-4">
                   <RefreshRight />
@@ -117,38 +64,22 @@
               </div>
             </div>
             <div class="h-full">
-              <table-tem
-                :showIndex="true"
-                :tableData="filteredData"
-                :tableHeight="tableHeight"
-                :columnData="columnData"
-                :pageObj="pageObj"
-                @handleSizeChange="handleSizeChange"
-                @handleCurrentChange="handleCurrentChange"
-              ></table-tem>
+              <table-tem :showIndex="true" :tableData="filteredData" :tableHeight="tableHeight" :columnData="columnData"
+                :pageObj="pageObj" @handleSizeChange="handleSizeChange"
+                @handleCurrentChange="handleCurrentChange"></table-tem>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <el-dialog
-      v-model="dialogVisible"
-      title="生产计划列表"
-      width="90%"
-      align-center
-    >
+    <el-dialog v-model="dialogVisible" title="生产计划列表" width="90%" align-center>
       <template #header>
         <div class="custom-dialog-title flex items-center justify-between">
           <div>生产计划列表</div>
           <!-- 在标题右侧插入一个按钮 -->
-          <el-input
-            v-model="workOrderInput"
-            style="width: 400px"
-            placeholder="请输入"
-          >
+          <el-input v-model="workOrderInput" style="width: 400px" placeholder="请输入">
             <template #append>
-              <el-button type="primary" icon="Search"></el-button> </template
-          ></el-input>
+              <el-button type="primary" icon="Search"></el-button> </template></el-input>
         </div>
       </template>
       <!-- <el-table
@@ -164,87 +95,26 @@
           :label="item.lable"
         />
       </el-table> -->
-      <el-table
-        ref="taskTableRef"
-        class="test"
-        :header-cell-class-name="cellClass"
-        stripe
-        border
-        :data="workOrderList1"
-        style="width: 100%"
-        :height="'50vh'"
-        @select="selectClick"
-        :tooltip-effect="'dark'"
-      >
+      <el-table ref="taskTableRef" class="test" :header-cell-class-name="cellClass" stripe border :data="workOrderList1"
+        style="width: 100%" :height="'50vh'" @select="selectClick" :tooltip-effect="'dark'">
         <el-table-column type="selection" width="55" />
-        <el-table-column
-          prop="MfgOrderName"
-          label="生产计划号"
-          width="150"
-          :min-width="100"
-        ></el-table-column>
-        <el-table-column
-          prop="ProductName"
-          label="产品编码"
-          width="150"
-          :min-width="150"
-        ></el-table-column>
-        <el-table-column
-          prop="ProductDesc"
-          label="产品描述"
-          :show-overflow-tooltip="true"
-          :min-width="flexColumnWidth('产品描述', 'ProductDesc')"
-        ></el-table-column>
-        <el-table-column
-          prop="MfgLineDesc"
-          label="产线"
-          width="150"
-          :min-width="150"
-        ></el-table-column>
-        <el-table-column
-          prop="OrderStatusDesc"
-          label="状态"
-          width="100"
-          :min-width="100"
-        ></el-table-column>
-        <el-table-column
-          prop="PlannedStartDate"
-          label="开始时间"
-          width="180"
-          :min-width="180"
-        ></el-table-column>
-        <el-table-column
-          prop="PlannedCompletionDate"
-          label="结束时间"
-          width="180"
-          :min-width="180"
-        ></el-table-column>
-        <el-table-column
-          prop="Side"
-          label="面号"
-          width="80"
-          :min-width="80"
-        ></el-table-column>
-        <el-table-column
-          prop="Qty"
-          label="数量"
-          width="100"
-          :min-width="100"
-        ></el-table-column>
+        <el-table-column prop="MfgOrderName" label="生产计划号" width="150" :min-width="100"></el-table-column>
+        <el-table-column prop="ProductName" label="产品编码" width="150" :min-width="150"></el-table-column>
+        <el-table-column prop="ProductDesc" label="产品描述" :show-overflow-tooltip="true"
+          :min-width="flexColumnWidth('产品描述', 'ProductDesc')"></el-table-column>
+        <el-table-column prop="MfgLineDesc" label="产线" width="150" :min-width="150"></el-table-column>
+        <el-table-column prop="OrderStatusDesc" label="状态" width="100" :min-width="100"></el-table-column>
+        <el-table-column prop="PlannedStartDate" label="开始时间" width="180" :min-width="180"></el-table-column>
+        <el-table-column prop="PlannedCompletionDate" label="结束时间" width="180" :min-width="180"></el-table-column>
+        <el-table-column prop="Side" label="面号" width="80" :min-width="80"></el-table-column>
+        <el-table-column prop="Qty" label="数量" width="100" :min-width="100"></el-table-column>
         <!-- <el-table-column v-for="item in formHeader" :prop="item.value" :label="item.lable"
           :min-width="flexColumnWidth(item.lable, item.value)" /> -->
       </el-table>
       <div class="mt-3">
-        <el-pagination
-          background
-          @size-change="handleSizeChange1"
-          @current-change="handleCurrentChange1"
-          :current-page="pageObj.currentPage"
-          :page-size="pageObj1.pageSize"
-          :page-sizes="[5, 10, 20, 50, 100]"
-          layout="total,sizes, prev, pager, next, jumper"
-          :total="workOrderList.length"
-        >
+        <el-pagination background @size-change="handleSizeChange1" @current-change="handleCurrentChange1"
+          :current-page="pageObj.currentPage" :page-size="pageObj1.pageSize" :page-sizes="[5, 10, 20, 50, 100]"
+          layout="total,sizes, prev, pager, next, jumper" :total="workOrderList.length">
         </el-pagination>
       </div>
       <template #footer>
@@ -254,16 +124,8 @@
         </div>
       </template>
     </el-dialog>
-    <el-dialog
-      v-model="feedVisible"
-      title="物料上料"
-      width="90%"
-      align-center
-      class="saveAsDialog"
-      :append-to-body="true"
-      :close-on-click-modal="false"
-      :close-on-press-escape="false"
-    >
+    <el-dialog v-model="feedVisible" title="物料上料" width="90%" align-center class="saveAsDialog" :append-to-body="true"
+      :close-on-click-modal="false" :close-on-press-escape="false">
       <feedTemp :form="feedForm" :form-header="FeedHeader" />
       <template #footer>
         <span class="dialog-footer">
@@ -693,8 +555,8 @@ const sureClick = () => {
       //   },
       // });
       ElMessageBox.confirm(data.msg, "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
+        confirmButtonText: "是",
+        cancelButtonText: "否",
         type: "warning",
       })
         .then(() => {
@@ -711,7 +573,7 @@ const sureClick = () => {
           barCodeRef.value.focus();
         })
         .catch(() => {
-          
+
         });
     }
     checkList.value = ["待镭雕", "未释放"];

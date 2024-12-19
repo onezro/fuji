@@ -1677,18 +1677,13 @@ const addTempConfirm = () => {
             type: res.success ? "success" : "error",
         });
         if (res.success) {
-            // ElNotification({
-            //     title: "提示信息",
-            //     message: res.msg,
-            //     type: "success",
-            // });
-
             addForm.value.tempcontent01 = [];
             addForm.value.tempcontent02 = [];
             addForm.value.tempcontent03 = [];
             addForm.value.tempcontent04 = [];
             addForm.value.tempcontent05 = [];
             addForm.value.tempcontent06 = [];
+            getBarCodeRule_TemContentRuleAdd()
             getData();
         }
     });
@@ -1731,6 +1726,28 @@ const editTempConfirm = () => {
     });
 };
 
+const getBarCodeRule_TemContentRuleAdd = () => {
+    QueryBarCodeRule_TemContentRule({
+        ProductName: addForm.value.ProductName,
+    }).then((res: any) => {
+        addForm.value.ProductName = res.content.TemplatePartNum;
+        addForm.value.RuleName = res.content.TemplateRuleName;
+        addForm.value.TemplateRemark = res.content.TemplateRemark;
+        addForm.value.TemplateBox = res.content.TemplateBox;
+        addForm.value.TemplateFuselage = res.content.TemplateFuselage;
+        addForm.value.Template01 = res.content.Template01;
+        addForm.value.Template02 = res.content.Template02;
+        addForm.value.Template03 = res.content.Template03;
+        addForm.value.tempcontent01 = res.content.tempcontent01;
+        addForm.value.tempcontent02 = res.content.tempcontent02;
+        addForm.value.tempcontent03 = res.content.tempcontent03;
+        addForm.value.tempcontent04 = res.content.tempcontent04;
+        addForm.value.tempcontent05 = res.content.tempcontent05;
+        addForm.value.tempcontent06 = res.content.tempcontent06;
+        // getRuleData();
+        // getBasMaterialData(res.content.TemplatePartNum);
+    });
+};
 const getBarCodeRule_TemContentRule = () => {
     QueryBarCodeRule_TemContentRule({
         ProductName: ProductName.value,
