@@ -10,10 +10,12 @@
             label-width="85px"
           >
             <el-form-item label="工单">
-              <el-select size="small" style="width: 100px" v-model="selectForm.orderNumber">
-                <el-option v-for="item in orderList" :key="item.value" :label="item.lable" :value="item.value">
-                </el-option>
-              </el-select>
+              <el-input
+                v-model="order"
+                class="input-with-select"
+                @keyup.enter.native="getData(order)"
+              >
+              </el-input>
               <!-- <el-select-v2
       v-model="value"
       :options="options"
@@ -64,21 +66,39 @@
           </el-form>
         </div>
         <div class="table_container">
+          <div class="flex justify-between">
+            <div></div>
+            <el-button size="small" type="">入库</el-button>
+          </div>
           <el-table size="small" :data="tableData.slice(
             (currentPage - 1) * pageSize,
             currentPage * pageSize
           )
-            " border :height="tableHeight" row-key="step1" style="width: 100%">
+            " border :height="tableHeight" row-key="step1" style="width: 100%"
+            @selection-change="handleSelectionChange"
+            >
+            <el-table-column
+              type="selection"
+              width="45"
+               label="选择"
+                align="center"
+            />
             <el-table-column type="index" label="序号" width="50" align="center">
             </el-table-column>
-            <el-table-column prop="InspectOrder" label="送检单号" width="180" align="center":min-width="flexColumnWidth('送检单号', 'TotalUses')">
+            <el-table-column prop="InspectionOrder" label="送检单号" width="180" align="center" :min-width="flexColumnWidth('送检单号', 'InspectionOrder')">
             </el-table-column>
-            <el-table-column prop="StepName" label="包装箱号" align="center":min-width="flexColumnWidth('包装箱号', 'TotalUses')"> </el-table-column>
-            <el-table-column prop="Remark" label="包装箱数量" align="center":min-width="flexColumnWidth('v', 'TotalUses')"> </el-table-column>
-            <el-table-column prop="StepName" label="MES产品数量" align="center":min-width="flexColumnWidth('MES产品数量', 'TotalUses')"> </el-table-column>
-            <el-table-column prop="Remark" label="时间" align="center":min-width="flexColumnWidth('时间', 'TotalUses')"> </el-table-column>
-            <el-table-column prop="StepName" label="送检结果" align="center":min-width="flexColumnWidth('送检结果', 'TotalUses')"> </el-table-column>
-            <el-table-column prop="Remark" label="入库状况" align="center":min-width="flexColumnWidth('入库状况', 'TotalUses')"> </el-table-column>
+            <el-table-column prop="PackagingBoxNumber" label="包装箱号" align="center":min-width="flexColumnWidth('包装箱号', 'PackagingBoxNumber')"> </el-table-column>
+            <el-table-column prop="StorageQty" label="包装箱数量" align="center":min-width="flexColumnWidth('包装箱数量', 'StorageQty')"> </el-table-column>
+            <el-table-column prop="Quantity" label="MES产品数量" align="center":min-width="flexColumnWidth('MES产品数量', 'Quantity')"> </el-table-column>
+            <el-table-column prop="InspectionTime" label="时间" align="center":min-width="flexColumnWidth('时间', 'InspectionTime')"> </el-table-column>
+            <el-table-column prop="QAResult" label="送检结果" align="center":min-width="flexColumnWidth('送检结果', 'QAResult')">
+              <template #default="scope">
+                <div>
+                  {{ scope.row.QAResult === 'Y' ? "合格" : "不合格" }}
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column prop="StorageSta" label="入库状况" align="center":min-width="flexColumnWidth('入库状况', 'StorageSta')"> </el-table-column>
           </el-table>
           <div class="block" style="margin-top: 15px">
             <el-pagination align="center" background @size-change="handleSizeChange" @current-change="handleCurrentChange"
@@ -93,13 +113,15 @@
   
   <script lang="ts" setup>
   import {shortcuts} from "@/utils/dataMenu"
-  import { getCheckResults } from "@/api/operate";
+  import { ProductInspectDetailsHistory } from "@/api/asyApi";
   import type { InspectionResult } from "@/typing";
   import { ref, reactive, watch, nextTick, onMounted, onBeforeMount, onBeforeUnmount } from 'vue'
-  const tableData = ref<any>([{}]);
+  const tableData = ref<any>([]);
   const pageSize = ref(10);
   const currentPage = ref(1);
   const tableHeight = ref(0);
+  const order = ref('');
+  const choiceList = ref([])
   const getDataText = reactive({
     inspectType: "",
     inspect: "",
@@ -155,6 +177,16 @@
   onBeforeUnmount(() => {
     window.addEventListener("resize", getScreenHeight);
   })
+
+  
+const handleSelectionChange = (data: any) => {
+};
+
+const getData = (str:any) => {
+  ProductInspectDetailsHistory({MfgOrderName:str}).then((res:any) => {
+    tableData.value = res.content;
+  })
+}
   
 const getMaxLength = (arr: any) => {
   return arr.reduce((acc: any, item: any) => {

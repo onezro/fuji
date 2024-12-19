@@ -363,5 +363,14 @@ export function QuerySMTDefectRecordDetail(data: any) {
     });
   }
 
+  //成品送检历史记录
+  export function ProductInspectDetailsHistory(data: any) {
+    return request({
+      url: "/api/FinishedProductInspect/ProductInspectDetailsHistory",
+      method: "post",
+      data,
+    });
+  }
+
 
 

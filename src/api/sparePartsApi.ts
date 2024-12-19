@@ -314,3 +314,107 @@ export function addPartsScrapData(data: any){
         data
     });
 }
+
+//根据条件查询设备故障代码维护
+export function GetEquipmentErrorCodeList(data: any){
+    return request({
+        url: "/api/resourceRepair/GetEquipmentErrorCodeList",
+        method: "post",
+        data
+    });
+}
+
+//故障代码增加
+export function faultAdd(data: any){
+    return request({
+        url: "/api/resourceRepair/add",
+        method: "post",
+        data
+    });
+}
+
+//故障代码删除
+export function faultDelete(data: any){
+    return request({
+        url: "/api/resourceRepair/delete",
+        method: "post",
+        data
+    });
+}
+
+//故障代码更改
+export function faultUpdate(data: any){
+    return request({
+        url: "/api/resourceRepair/update",
+        method: "post",
+        data
+    });
+}
+
+//根据条件查询设备故障记录
+export function findEquipmentErrorRecord(data: any){
+    return request({
+        url: "/api/resourceRepair/findEquipmentErrorRecord",
+        method: "post",
+        data
+    });
+}
+
+//添加设备故障记录
+export function addEquipmentErrorRecord(data: any){
+    return request({
+        url: "/api/resourceRepair/addEquipmentErrorRecord",
+        method: "post",
+        data
+    });
+}
+
+//开始维修
+export function updateStartRepair(data: any){
+    return request({
+        url: "/api/resourceRepair/updateStartRepair",
+        method: "post",
+        data
+    });
+}
+
+//结束维修
+export function updateEndRepair(data: any){
+    return request({
+        url: "/api/resourceRepair/updateEndRepair",
+        method: "post",
+        data
+    });
+}
+
+//确认维修
+export function RepairConfirm(type:any,data: any){
+    return request({
+        url: "/api/resourceRepair/RepairConfirm",
+        method: "post",
+        data,
+        params:{
+            type
+        }
+    });
+}
+
+//查询首检机记录
+export function QueryIOT_FirstArticleData(data: any){
+    return request({
+        url: "/api/firstinspect/QueryIOT_FirstArticleData",
+        method: "post",
+        data,
+    });
+}
+
+//查询首检机表头记录
+export function QueryIOT_FirstArticleData_Head(data: any){
+    return request({
+        url: "/api/firstinspect/QueryIOT_FirstArticleData_Head",
+        method: "post",
+        params:{
+            guid:data
+        }
+    });
+}
