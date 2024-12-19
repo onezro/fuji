@@ -217,76 +217,76 @@
         :inline="true"
       >
         <el-form-item label="结论">
-          <el-input v-model="recordForm.TestResult" style="width: 220px" />
+          <el-input v-model="recordForm.TestResult" style="width: 220px" disabled />
         </el-form-item>
         <el-form-item label="测试类型">
-          <el-input v-model="recordForm.TestTypes" style="width: 220px" />
+          <el-input v-model="recordForm.TestTypes" style="width: 220px" disabled />
         </el-form-item>
         <el-form-item label="BOM版本">
-          <el-input v-model="recordForm.BomVsion" style="width: 220px" />
+          <el-input v-model="recordForm.BomVsion" style="width: 220px" disabled />
         </el-form-item>
         <el-form-item label="公司">
-          <el-input v-model="recordForm.Supplier" style="width: 220px" />
+          <el-input v-model="recordForm.Supplier" style="width: 220px" disabled />
         </el-form-item>
         <el-form-item label="班别">
-          <el-input v-model="recordForm.ClassPlease" style="width: 220px" />
+          <el-input v-model="recordForm.ClassPlease" style="width: 220px" disabled />
         </el-form-item>
         <el-form-item label="检查总数">
-          <el-input v-model="recordForm.TestTotal" style="width: 220px" />
+          <el-input v-model="recordForm.TestTotal" style="width: 220px" disabled />
         </el-form-item>
         <el-form-item label="机种名称">
-          <el-input v-model="recordForm.ProgramName" style="width: 220px" />
+          <el-input v-model="recordForm.ProgramName" style="width: 220px" disabled />
         </el-form-item>
         <el-form-item label="A/B面">
-          <el-input v-model="recordForm.DontFace" style="width: 220px" />
+          <el-input v-model="recordForm.DontFace" style="width: 220px" disabled />
         </el-form-item>
         <el-form-item label="通过数">
-          <el-input v-model="recordForm.NumberPasses" style="width: 220px" />
+          <el-input v-model="recordForm.NumberPasses" style="width: 220px" disabled />
         </el-form-item>
         <el-form-item label="通过数" class="opacity-0">
-          <el-input v-model="recordForm.NumberPasses" style="width: 220px" />
+          <el-input v-model="recordForm.NumberPasses" style="width: 220px" disabled />
         </el-form-item>
         <el-form-item label="序列号">
-          <el-input v-model="recordForm.SerialNumber" style="width: 220px" />
+          <el-input v-model="recordForm.SerialNumber" style="width: 220px" disabled />
         </el-form-item>
         <el-form-item label="未通过">
-          <el-input v-model="recordForm.TestFail" style="width: 220px" />
+          <el-input v-model="recordForm.TestFail" style="width: 220px" disabled />
         </el-form-item>
         <el-form-item label="工单号" class="opacity-0">
-          <el-input v-model="recordForm.TestTypes" style="width: 220px" />
+          <el-input v-model="recordForm.TestTypes" style="width: 220px" disabled />
         </el-form-item>
         <el-form-item label="工单号">
-          <el-input v-model="recordForm.TestTypes" style="width: 220px" />
+          <el-input v-model="recordForm.TestTypes" style="width: 220px" disabled />
         </el-form-item>
         <el-form-item label="未检测">
-          <el-input v-model="recordForm.NotDetected" style="width: 220px" />
+          <el-input v-model="recordForm.NotDetected" style="width: 220px" disabled />
         </el-form-item>
         <el-form-item label="生产线别" class="opacity-0">
-          <el-input v-model="recordForm.TestLine" style="width: 220px" />
+          <el-input v-model="recordForm.TestLine" style="width: 220px" disabled />
         </el-form-item>
         <el-form-item label="生产线别">
-          <el-input v-model="recordForm.TestLine" style="width: 220px" />
+          <el-input v-model="recordForm.TestLine" style="width: 220px" disabled />
         </el-form-item>
         <el-form-item label="通过率">
-          <el-input v-model="recordForm.PassingRate" style="width: 220px" />
+          <el-input v-model="recordForm.PassingRate" style="width: 220px" disabled />
         </el-form-item>
         <el-form-item label="生产日期" class="opacity-0">
-          <el-input v-model="recordForm.DateManufacture" style="width: 220px" />
+          <el-input v-model="recordForm.DateManufacture" style="width: 220px" disabled />
         </el-form-item>
         <el-form-item label="生产日期">
-          <el-input v-model="recordForm.DateManufacture" style="width: 220px" />
+          <el-input v-model="recordForm.DateManufacture" style="width: 220px" disabled />
         </el-form-item>
         <el-form-item label="检测员">
-          <el-input v-model="recordForm.Inspector" style="width: 220px" />
+          <el-input v-model="recordForm.Inspector" style="width: 220px" disabled />
         </el-form-item>
         <el-form-item label="生产周期">
-          <el-input v-model="recordForm.ProductionCycle" style="width: 220px" />
+          <el-input v-model="recordForm.ProductionCycle" style="width: 220px" disabled />
         </el-form-item>
         <el-form-item label="打印时间">
-          <el-input v-model="recordForm.PrintTime" style="width: 220px" />
+          <el-input v-model="recordForm.PrintTime" style="width: 220px" disabled />
         </el-form-item>
         <el-form-item label="批次数量">
-          <el-input v-model="recordForm.BatchQuantity" style="width: 220px" />
+          <el-input v-model="recordForm.BatchQuantity" style="width: 220px" disabled />
         </el-form-item>
       </el-form>
 
