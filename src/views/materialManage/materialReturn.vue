@@ -2,7 +2,7 @@
   <div class="p-[10px]">
     <el-card shadow="always" :body-style="{ padding: '10px' }">
       <div ref="headerRef">
-<<<<<<< HEAD
+
         <el-form
           ref="formRef"
           class="form"
@@ -22,9 +22,7 @@
               @change="dateChange"
             />
           </el-form-item>
-=======
-        <el-form ref="formRef" class="form" :inline="true" size="small" label-width="auto">
->>>>>>> b8cc0d2f4f6579a17126b413a95c528283a3c757
+
           <el-form-item label="生产计划号" class="mb-2">
             <el-input v-model="historyForm.MfgOrderName" placeholder=""></el-input>
           </el-form-item>
@@ -33,13 +31,7 @@
               <el-option v-for="item in returnTypeList" :key="item.Value" :label="item.Text" :value="item.Value" />
             </el-select>
           </el-form-item>
-<<<<<<< HEAD
-=======
-          <el-form-item label="日期" class="mb-2">
-            <el-date-picker :shortcuts="shortcuts" v-model="date" value-format="YYYY-MM-DD" type="daterange"
-              range-separator="到" size="small" style="width: 250px" @change="dateChange" />
-          </el-form-item>
->>>>>>> b8cc0d2f4f6579a17126b413a95c528283a3c757
+
           <el-form-item label="" class="mb-2">
             <el-button type="primary" @click="getHistory()">查询</el-button>
           </el-form-item>
@@ -76,7 +68,7 @@
               <div>{{ returnTypeText(scope.row.QualityIsGood) }}</div>
             </template>
           </el-table-column>
-<<<<<<< HEAD
+
           <el-table-column
             prop="MfgOrderName"
             label="生产计划号"
@@ -106,18 +98,7 @@
             label="产品描述"
             :min-width="flexColumnWidthHis('产品描述', 'ProductDesc')"
           ></el-table-column>
-=======
-          <el-table-column prop="MfgOrderName" label="生产计划号" :min-width="flexColumnWidthHis('生产计划号', 'MfgOrderName')"
-            align="center"></el-table-column>
-          <el-table-column prop="BD_ProductModel" label="产品机型"
-            :min-width="flexColumnWidthHis('产品机型', 'BD_ProductModel')" align="center"></el-table-column>
-          <el-table-column prop="ChangeOrderName" label="转单计划号"
-            :min-width="flexColumnWidthHis('转单计划号', 'ChangeOrderName')" align="center"></el-table-column>
-          <el-table-column prop="ProductName" label="产品编码" :min-width="flexColumnWidthHis('产品编码', 'ProductName')"
-            align="center"></el-table-column>
-          <el-table-column prop="ProductDesc" label="产品描述"
-            :min-width="flexColumnWidthHis('产品描述', 'ProductDesc')"></el-table-column>
->>>>>>> b8cc0d2f4f6579a17126b413a95c528283a3c757
+
           <!-- <el-table-column
             prop="OrderStatusDesc"
             label="生产计划号状态"
