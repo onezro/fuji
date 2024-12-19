@@ -548,6 +548,7 @@ const geTodayData = () => {
 
 //扫描
 const getChange = () => {
+
   let barCodeData = barCode.value;
   if (stopsForm.value.OrderName == "") {
     msgTitle.value = "请先选择生产计划号";
@@ -564,7 +565,6 @@ const getChange = () => {
         if (isKeyZero.value == -1) {
           if (isKeyEmpty.value == -1) {
             if (isNoKeyZero.value == -1) {
-             
               if (checkStringType(barCodeData) == "SCR") {
                 stopsForm.value.BarCode = barCodeData;
                 goStop();
@@ -611,7 +611,6 @@ const goStop = () => {
   ScreeSMTCompBindMoveStd(stopsForm.value).then((res: any) => {
     msgTitle.value = res.msg;
     msgType.value = res.success;
-    isGo.value = true;
     stopsForm.value.BarCode = "";
     stopsForm.value.result = "OK";
     barCode.value = "";
@@ -809,8 +808,7 @@ const getKeyMaterial = () => {
     if (barData.value.length !== 0) {
       if (barData.value[0].IssueControl == 1) {
         // isGo.value=fa
-        msgType.value = true;
-            msgTitle.value=''
+       
         // msgTitle.value = `请先扫描关键物料${barData.value[0].MaterialName}`;
         barMsg.value = `请先扫描关键物料${barData.value[0].MaterialName}`;
       }
@@ -830,6 +828,8 @@ const tableRowClassName = (val: any) => {
 const getOrderData = () => {
   isLoding.value = "is-loading";
   defaultSelectVal.value = [];
+   msgType.value = true;
+            msgTitle.value=''
   OrderQuery({
     lineName: opui.line,
     OrderTypeName: "Assembly",

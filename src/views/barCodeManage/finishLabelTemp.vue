@@ -55,7 +55,7 @@
                             <el-form ref="formRef" size="small" :model="form" :inline="true" label-width="auto">
                                 <el-form-item label="规则名称" prop="TempRlueName">
                                     <el-select-v2 v-model="form.TempRlueName" :options="ruleData" filterable
-                                        :props="ruleProps" style="width: 160px">
+                                        :props="ruleProps" style="width: 160px" @change="changeRlueName">
                                         <!-- <template #default="{ item }">
                                             <span style="margin-right: 8px; font-size: 12px">{{ item.Temppara_Name }}</span>
                                             <span style="color: var(--el-text-color-secondary); font-size: 12px">
@@ -1274,6 +1274,8 @@ const getRuleNameData = (data:any) => {
 const changeRlueName=(val:any)=>{
     form.value.TempRluePrefixSuffix01=""
     let isDisable=cloneDeep(ruleData.value.find((f:any)=>f.Temppara_No==val)) 
+    // console.log(isDisable);
+    
     if(isDisable.Expression_Name=='Customized'){
         isDisable1.value=false
         isDisable2.value=false
@@ -1415,6 +1417,51 @@ const addDelete = () => {
     // console.log(deleteData.value);
     if (activeName.value == "TemplateBox") {
         addForm.value.tempcontent01 = addForm.value.tempcontent01.filter(
+            (item: any) => {
+                return !deleteData.value.some(
+                    (delItem: any) => delItem.TempRlueName === item.TempRlueName
+                );
+            }
+        );
+    }
+    if (activeName.value == "TemplateFuselage") {
+        addForm.value.tempcontent02 = addForm.value.tempcontent02.filter(
+            (item: any) => {
+                return !deleteData.value.some(
+                    (delItem: any) => delItem.TempRlueName === item.TempRlueName
+                );
+            }
+        );
+    }
+    if (activeName.value == "Template01") {
+        addForm.value.tempcontent03 = addForm.value.tempcontent03.filter(
+            (item: any) => {
+                return !deleteData.value.some(
+                    (delItem: any) => delItem.TempRlueName === item.TempRlueName
+                );
+            }
+        );
+    }
+    if (activeName.value == "Template02") {
+        addForm.value.tempcontent04 = addForm.value.tempcontent04.filter(
+            (item: any) => {
+                return !deleteData.value.some(
+                    (delItem: any) => delItem.TempRlueName === item.TempRlueName
+                );
+            }
+        );
+    }
+    if (activeName.value == "Template03") {
+        addForm.value.tempcontent05 = addForm.value.tempcontent05.filter(
+            (item: any) => {
+                return !deleteData.value.some(
+                    (delItem: any) => delItem.TempRlueName === item.TempRlueName
+                );
+            }
+        );
+    }
+    if (activeName.value == "Template04") {
+        addForm.value.tempcontent06 = addForm.value.tempcontent06.filter(
             (item: any) => {
                 return !deleteData.value.some(
                     (delItem: any) => delItem.TempRlueName === item.TempRlueName
@@ -1595,6 +1642,15 @@ const editDelete = () => {
             }
         );
     }
+    if (activeName.value == "Template04") {
+        editForm.value.tempcontent06 = editForm.value.tempcontent06.filter(
+            (item: any) => {
+                return !deleteData.value.some(
+                    (delItem: any) => delItem.TempRlueName === item.TempRlueName
+                );
+            }
+        );
+    }
 };
 //添加取消
 const addTempCancel = () => {
@@ -1621,18 +1677,13 @@ const addTempConfirm = () => {
             type: res.success ? "success" : "error",
         });
         if (res.success) {
-            // ElNotification({
-            //     title: "提示信息",
-            //     message: res.msg,
-            //     type: "success",
-            // });
-
             addForm.value.tempcontent01 = [];
             addForm.value.tempcontent02 = [];
             addForm.value.tempcontent03 = [];
             addForm.value.tempcontent04 = [];
             addForm.value.tempcontent05 = [];
             addForm.value.tempcontent06 = [];
+            getBarCodeRule_TemContentRuleAdd()
             getData();
         }
     });
@@ -1675,6 +1726,28 @@ const editTempConfirm = () => {
     });
 };
 
+const getBarCodeRule_TemContentRuleAdd = () => {
+    QueryBarCodeRule_TemContentRule({
+        ProductName: addForm.value.ProductName,
+    }).then((res: any) => {
+        addForm.value.ProductName = res.content.TemplatePartNum;
+        addForm.value.RuleName = res.content.TemplateRuleName;
+        addForm.value.TemplateRemark = res.content.TemplateRemark;
+        addForm.value.TemplateBox = res.content.TemplateBox;
+        addForm.value.TemplateFuselage = res.content.TemplateFuselage;
+        addForm.value.Template01 = res.content.Template01;
+        addForm.value.Template02 = res.content.Template02;
+        addForm.value.Template03 = res.content.Template03;
+        addForm.value.tempcontent01 = res.content.tempcontent01;
+        addForm.value.tempcontent02 = res.content.tempcontent02;
+        addForm.value.tempcontent03 = res.content.tempcontent03;
+        addForm.value.tempcontent04 = res.content.tempcontent04;
+        addForm.value.tempcontent05 = res.content.tempcontent05;
+        addForm.value.tempcontent06 = res.content.tempcontent06;
+        // getRuleData();
+        // getBasMaterialData(res.content.TemplatePartNum);
+    });
+};
 const getBarCodeRule_TemContentRule = () => {
     QueryBarCodeRule_TemContentRule({
         ProductName: ProductName.value,

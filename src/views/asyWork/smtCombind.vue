@@ -825,7 +825,7 @@ const getKeyMaterial = () => {
     if (barData.value.length !== 0) {
       if (barData.value[0].IssueControl == 1) {
         msgType.value = true;
-        msgTitle.value = "";
+        // msgTitle.value = "";
         // msgTitle.value = `请先扫描关键物料${barData.value[0].MaterialName}`;
         barMsg.value = `请先扫描关键物料${barData.value[0].MaterialName}`;
       }
