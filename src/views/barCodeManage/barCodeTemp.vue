@@ -32,7 +32,19 @@
     )
       " size="small" :style="{ width: '100%' }" :height="tableHeight"
             :tooltip-effect="'dark'" border fit highlight-current-row @cell-click="cellClick">
-            <el-table-column prop="Template_Name" label="模板名称" width="180" :show-overflow-tooltip="true" />
+            <el-table-column type="index" align="center" fixed label="序号" width="50"
+      >
+        <template #default="scope">
+          <span>{{ scope.$index+pageObj.pageSize* (pageObj.currentPage-1) +1}}</span>
+        </template>
+      </el-table-column>
+            <el-table-column prop="Template_Name" label="模板名称" width="180" :show-overflow-tooltip="true" fixed/>
+            <el-table-column prop="Template_Enable" label="是否启用" width="80" align="center">
+              <template #default="scope">
+                <el-tag :type="scope.row.Template_Enable ? 'primary' : 'info'">{{ scope.row.Template_Enable ? '是' : '否'
+                  }}</el-tag>
+              </template>
+            </el-table-column>
             <el-table-column prop="Template_EnableExternal" label="是否启用外部码" width="120" align="center">
               <template #default="scope">
                 <el-tag effect="plain" :type="scope.row.Template_EnableExternal ? 'primary' : 'info'">{{
@@ -40,15 +52,12 @@
                 }}</el-tag>
               </template>
             </el-table-column>
+
+          
+            <el-table-column prop="Template_UpdateBy" label="更新人" width="120" />
             <el-table-column prop="Template_UpdateOn" label="更新时间" width="180" />
-            <el-table-column prop="Template_UpdateBy" label="更新人" />
-            <el-table-column prop="Template_Remark" label="备注" :show-overflow-tooltip="true" min-width="180" />
-            <el-table-column prop="Template_Enable" label="是否启用" width="80" align="center">
-              <template #default="scope">
-                <el-tag :type="scope.row.Template_Enable ? 'primary' : 'info'">{{ scope.row.Template_Enable ? '是' : '否'
-                  }}</el-tag>
-              </template>
-            </el-table-column>
+            <el-table-column prop="Template_Remark" label="备注" :show-overflow-tooltip="true"  />
+           
             <el-table-column label="操作" width="120" fixed="right" align="center">
               <template #default="scope">
                 <el-tooltip content="编辑" placement="top">
@@ -79,6 +88,7 @@
           </div>
           <el-table :data="materialData" size="small" :style="{ width: '100%' }" :height="tableHeight1"
             :tooltip-effect="'dark'" border fit>
+
             <el-table-column prop="ProductName" label="组件编码" width="120" />
             <el-table-column prop="Description" label="组件描述" :show-overflow-tooltip="true" />
             <el-table-column label="操作" width="80" fixed="right" align="center">
@@ -480,7 +490,7 @@ const handleCurrentChange = (val: any) => {
 };
 const getScreenHeight = () => {
   nextTick(() => {
-    tableHeight.value = window.innerHeight - 195.5;
+    tableHeight.value = window.innerHeight - 185;
     tableHeight1.value = window.innerHeight - 180;
   });
 };
