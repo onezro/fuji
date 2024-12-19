@@ -9,6 +9,18 @@
           size="small"
           label-width="auto"
         >
+          <el-form-item label="日期" class="mb-2">
+            <el-date-picker
+              :shortcuts="shortcuts"
+              v-model="date"
+              value-format="YYYY-MM-DD"
+              type="daterange"
+              range-separator="到"
+              size="small"
+              style="width: 250px"
+              @change="dateChange"
+            />
+          </el-form-item>
           <el-form-item label="生产计划号" class="mb-2">
             <el-input
               v-model="historyForm.MfgOrderName"
@@ -29,18 +41,6 @@
                 :value="item.Value"
               />
             </el-select>
-          </el-form-item>
-          <el-form-item label="日期" class="mb-2">
-            <el-date-picker
-              :shortcuts="shortcuts"
-              v-model="date"
-              value-format="YYYY-MM-DD"
-              type="daterange"
-              range-separator="到"
-              size="small"
-              style="width: 250px"
-              @change="dateChange"
-            />
           </el-form-item>
           <el-form-item label="" class="mb-2">
             <el-button type="primary" @click="getHistory()">查询</el-button>
@@ -118,9 +118,9 @@
             align="center"
           ></el-table-column>
           <el-table-column
-            prop="ChangeOrderName"
-            label="转单计划号"
-            :min-width="flexColumnWidthHis('转单计划号', 'ChangeOrderName')"
+            prop="QualityReason"
+            label="退料原因"
+            :min-width="flexColumnWidthHis('退料原因', 'QualityReason')"
             align="center"
           ></el-table-column>
           <el-table-column
