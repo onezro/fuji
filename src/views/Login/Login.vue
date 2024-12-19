@@ -20,8 +20,8 @@ const { currentRoute, addRoute, push } = useRouter();
 const appStore = useAppStore();
 const version = ref("");
 const form = ref({
-  EmployeeName: "CamstarAdmin",
-  DocManagerUser: "123456",
+  EmployeeName: "",
+  DocManagerUser: "",
   EmployeeId: "",
   CanLogin: 0,
   FullName: "",
@@ -46,7 +46,15 @@ onBeforeMount(() => {
     version.value = res.content.CurrentVer;
   });
 });
-onMounted(() => {});
+onMounted(() => {
+  if(localStorage.getItem('LOGINFORM')){
+    let data=localStorage.getItem('LOGINFORM')
+    if(data!==null){
+      let formData=JSON.parse(data)
+      form.value=formData
+    }
+  }
+});
 const loginClick = () => {
   // axios.get("http://localhost:5173/login.json").then((data) => {
   //   let res = data.data;
@@ -64,6 +72,7 @@ const loginClick = () => {
   empolyeeLogin(form.value).then((data: any) => {
     const dataText = data.content;
     if (data.code == 100200) {
+      localStorage.setItem('LOGINFORM',JSON.stringify(form.value))
       localStorage.setItem("OPCENTER_ROLE", form.value.EmployeeName);
       setToken(dataText.Token);
       if (appStore.getSystemType && localStorage.getItem("OPUIData")) {

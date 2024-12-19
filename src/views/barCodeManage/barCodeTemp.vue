@@ -101,12 +101,12 @@
           <el-checkbox v-model="addTempForm.TemplateEnable" label="启用" class="ml-3" />
         </el-form-item>
         <el-form-item label="模板文件" prop="TemplateName">
-          <el-input v-model="addTempForm.TemplateName" style="width: 240px" disabled/>
-          <!-- <el-upload ref="upload" class="upload-demo" action="" style="width: 240px" :limit="1"
-            :on-exceed="handleExceed" :http-request="handleFileUpload" :auto-upload="false">
+          <!-- <el-input v-model="addTempForm.TemplateName" style="width: 240px" disabled/> -->
+          <el-upload ref="upload" class="upload-demo" accept=".frx" action="" style="width: 240px" :limit="1"
+            :on-exceed="handleExceed"    :http-request="handleFileUpload" :auto-upload="true">
             <el-button size="small" type="primary">点击上传</el-button>
             <div slot="tip" class="el-upload__tip">只能上传一个文件</div>
-          </el-upload> -->
+          </el-upload>
           <el-checkbox v-model="addTempForm.TemplateEnableExternal" label="外部码" class="ml-3" />
         </el-form-item>
         <el-form-item label="备注" prop="TemplateRemark">
@@ -128,10 +128,10 @@
           <el-input v-model="editTempForm.TemplateName" disabled style="width: 240px" />
           <el-checkbox v-model="editTempForm.TemplateEnable" label="启用" class="ml-3" />
         </el-form-item>
-        <el-form-item label="模板文件" prop="Template_File">
+        <!-- <el-form-item label="模板文件" prop="Template_File">
           <el-input v-model="editTempForm.Template_File" style="width: 240px" />
           <el-checkbox v-model="editTempForm.TemplateEnableExternal" label="外部码" class="ml-3" />
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="备注" prop="TemplateRemark">
           <el-input v-model="editTempForm.TemplateRemark" type="textarea" style="width: 240px"
             :autoSize="{ minRows: 4, maxRows: 6 }" />
@@ -291,7 +291,7 @@ const addCancel = () => {
 };
 
 const addConfirm = () => {
-  addTempForm.value.Template_File = addTempForm.value.TemplateName
+  // addTempForm.value.Template_File = addTempForm.value.TemplateName
   InsertBarCodeTemplate(addTempForm.value).then((res: any) => {
     // ElNotification({
     //         title: "提示信息",
@@ -433,6 +433,7 @@ const handleExceed = () => {
   console.log(111);
 
 }
+
 const handleFileUpload = (data: any) => {
   convertFileToBase64(data.file)
 }
@@ -440,7 +441,8 @@ const convertFileToBase64 = (file: any) => {
   const reader = new FileReader();
   reader.readAsDataURL(file);
   reader.onload = (e: any) => {
-    console.log(e.target.result);
+    addTempForm.value.Template_File=e.target.result
+    console.log(addTempForm.value);
   };
 }
 const handleSizeChange = (val: any) => {

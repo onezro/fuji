@@ -105,23 +105,14 @@
               <template #append>
                 <el-button icon="Search" />
               </template>
-            </el-input> -->
-          <el-form
-          @submit.native.prevent
-            ref="formRef"
-            class="form flex items-start"
-            :inline="true"
-            size="small"
-            label-width="85px"
-          >
-            <el-form-item label="查询编码" class="mb-0" style="margin-right: 0;">
-            <el-input
-              v-model.trim="searchText"
-              size="small"
-              style="width: 250px"
-              @keyup.enter.native="filterFeedTableData"></el-input>
-            </el-form-item>
-          </el-form>
+</el-input> -->
+            <el-form @submit.native.prevent ref="formRef" class="form flex items-start" :inline="true" size="small"
+              label-width="85px">
+              <el-form-item label="查询编码" class="mb-0" style="margin-right: 0;">
+                <el-input v-model.trim="searchText" size="small" style="width: 250px"
+                  @keyup.enter.native="filterFeedTableData"></el-input>
+              </el-form-item>
+            </el-form>
           </div>
           <el-table :data="filterTableData
             " size="small" stripe border fit :tooltip-effect="'dark'" :height="400" ref="tableRef"
@@ -731,6 +722,15 @@ const columnData = reactive([
 ]);
 
 const detailedData = reactive([
+  
+{
+    text: true,
+    prop: "ContainerName",
+    label: "物料批次条码",
+    width: "",
+    min: true,
+    align: "1",
+  },
   {
     text: true,
     prop: "ProductName",

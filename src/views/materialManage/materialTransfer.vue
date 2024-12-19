@@ -1240,6 +1240,15 @@ const columnData = reactive([
 ]);
 
 const detailedData = reactive([
+
+{
+    text: true,
+    prop: "ContainerName",
+    label: "物料批次条码",
+    width: "",
+    min: true,
+    align: "1",
+  },
   {
     text: true,
     prop: "materialName",
