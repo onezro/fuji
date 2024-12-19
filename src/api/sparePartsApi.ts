@@ -398,3 +398,23 @@ export function RepairConfirm(type:any,data: any){
         }
     });
 }
+
+//查询首检机记录
+export function QueryIOT_FirstArticleData(data: any){
+    return request({
+        url: "/api/firstinspect/QueryIOT_FirstArticleData",
+        method: "post",
+        data,
+    });
+}
+
+//查询首检机表头记录
+export function QueryIOT_FirstArticleData_Head(data: any){
+    return request({
+        url: "/api/firstinspect/QueryIOT_FirstArticleData_Head",
+        method: "post",
+        params:{
+            guid:data
+        }
+    });
+}
