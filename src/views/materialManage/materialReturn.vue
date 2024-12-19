@@ -292,6 +292,21 @@
                 />
               </el-select>
             </el-form-item>
+            <el-form-item label="退料原因">
+              <el-select
+                v-model="returnReason"
+                placeholder="Select"
+                style="width: 152px"
+                @change="typeChange"
+              >
+                <el-option
+                  v-for="item in returnReasonList"
+                  :key="item.Value"
+                  :label="item.Text"
+                  :value="item.Value"
+                />
+              </el-select>
+            </el-form-item>
             <br />
             <el-form-item label="产品描述">
               <el-input
@@ -530,7 +545,9 @@ const detailedTable = ref<any[]>([]);
 const detailedHeight = ref(0);
 const choiceId = ref("");
 const returnType = ref("1");
+const returnReason = ref("");
 const returnTypeList = ref<any[]>([]);
+const returnReasonList = ref<any[]>([]);
 const iReturnTypeList = ref<any[]>([]);
 const table = ref();
 const detailedPageObj = ref({
@@ -727,6 +744,10 @@ const getTypeList = () => {
     iReturnTypeList.value = res.content;
     returnTypeList.value = res.content;
   });
+  GetComboBoxList("ReturnReason").then((res: any) => {
+    returnReasonList.value = res.content;
+    returnReason.value = res.content[0]
+  });
 };
 
 //根据名称值获取名称
@@ -894,6 +915,7 @@ const handleSelectionChange = (data: any) => {
           materialName: item.CompName,
           EmployeeName: loginName,
           QualityIsGood: returnType.value,
+          QualityReason:returnReason.value,
           ERPOrder: form.value.ERPOrder,
           OrderType: selectType.value,
           AvailableQty: item.Qty,
@@ -907,6 +929,7 @@ const handleSelectionChange = (data: any) => {
           materialName: item.CompName,
           EmployeeName: loginName,
           QualityIsGood: returnType.value,
+          QualityReason:returnReason.value,
           ERPOrder: form.value.ERPOrder,
         };
       }
