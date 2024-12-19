@@ -342,12 +342,12 @@
             @selection-change="handleSelectionChange"
             :row-class-name="tableRowClassName"
           >
-            <el-table-column
+            <!-- <el-table-column
               type="selection"
               width="55"
               :selectable="selectable"
               :min-width="flexColumnWidth('选择', 'CompID')"
-            />
+            /> -->
             <el-table-column
               type="index"
               label="序号"
@@ -804,9 +804,9 @@ const filterFeedTableData = () => {
     filterTableData.value = feedTableData.value;
     return;
   }
-  filterTableData.value = feedTableData.value.filter((f: any) => 
-  f.MaterialName.toLowerCase().includes(searchText.value.toLowerCase())
-);
+  filterTableData.value = feedTableData.value.filter((f: any) =>
+    f.MaterialName.toLowerCase().includes(searchText.value.toLowerCase())
+  );
 };
 
 //获取历史物料退料申请记录
@@ -950,6 +950,7 @@ const getTextWidthHis = (str: string) => {
   // console.log(width);
   return width;
 };
+
 //选中物料框
 const handleSelectionChange = (data: any) => {
   // choiceList.value = data.map((item: any) => {
@@ -996,6 +997,20 @@ const applyFor = () => {
     });
     return;
   }
+  let pass = false;
+  feedTableData.value.forEach((element: any) => {
+    if (element.MaterialQueue) {
+      ElNotification({
+        title: "提示信息",
+        message: `物料条码（${element.CompID}）已上料 不可传产`,
+        type: "warning",
+      });
+      pass = true;
+    }
+  });
+  if (pass) {
+    return
+  }
   // if (form.value.CompId === "") {
   //   return;
   // }
@@ -1004,7 +1019,6 @@ const applyFor = () => {
   //     return;
   //   }
   // });
-  console.log(choiceList.value);
   ApplyChangeOrderMaterialRequired(choiceList.value).then((res: any) => {
     if (res && res.success) {
       ElNotification({
@@ -1240,8 +1254,7 @@ const columnData = reactive([
 ]);
 
 const detailedData = reactive([
-
-{
+  {
     text: true,
     prop: "ContainerName",
     label: "物料批次条码",

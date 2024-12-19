@@ -36,6 +36,7 @@
             v-model="searchForm.TestLine"
             placeholder=""
             style="width: 150px"
+            clearable
           >
             <el-option
               v-for="item in ['L1','L2','L3']"

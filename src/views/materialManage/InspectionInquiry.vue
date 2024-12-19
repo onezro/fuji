@@ -121,7 +121,7 @@
   const currentPage = ref(1);
   const tableHeight = ref(0);
   const order = ref('');
-  const choiceList = ref([])
+  const choiceList = ref<any[]>([])
   const getDataText = reactive({
     inspectType: "",
     inspect: "",

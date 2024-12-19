@@ -2,44 +2,101 @@
   <div class="p-[10px]">
     <el-card shadow="always" :body-style="{ padding: '10px' }">
       <div ref="headerRef">
-        <el-form ref="formRef" class="form" :inline="true" size="small" label-width="auto">
+        <el-form
+          ref="formRef"
+          class="form"
+          :inline="true"
+          size="small"
+          label-width="auto"
+        >
           <el-form-item label="生产计划号" class="mb-2">
-            <el-input v-model="historyForm.MfgOrderName" placeholder=""></el-input>
+            <el-input
+              v-model="historyForm.MfgOrderName"
+              placeholder=""
+            ></el-input>
           </el-form-item>
           <el-form-item label="申请类型" class="mb-2">
-            <el-select v-model="historyForm.RequestType" placeholder="" style="width: 150px" clearable>
-              <el-option v-for="item in iApplyTypeList" :key="item.Value" :label="item.Text" :value="item.Value" />
+            <el-select
+              v-model="historyForm.RequestType"
+              placeholder=""
+              style="width: 150px"
+              clearable
+            >
+              <el-option
+                v-for="item in iApplyTypeList"
+                :key="item.Value"
+                :label="item.Text"
+                :value="item.Value"
+              />
             </el-select>
           </el-form-item>
           <el-form-item label="日期" class="mb-2">
-            <el-date-picker :shortcuts="shortcuts" v-model="date" value-format="YYYY-MM-DD" type="daterange"
-              range-separator="到" size="small" style="width: 250px" @change="dateChange" />
+            <el-date-picker
+              :shortcuts="shortcuts"
+              v-model="date"
+              value-format="YYYY-MM-DD"
+              type="daterange"
+              range-separator="到"
+              size="small"
+              style="width: 250px"
+              @change="dateChange"
+            />
           </el-form-item>
           <el-form-item label="" class="mb-2">
             <el-button type="primary" @click="getHistory()">查询</el-button>
           </el-form-item>
           <el-form-item label="" class="mb-2">
-            <el-button type="warning" @click="(dialogVisible = true), findOrderData()">申请</el-button>
+            <el-button
+              type="warning"
+              @click="(dialogVisible = true), findOrderData()"
+              >申请</el-button
+            >
           </el-form-item>
         </el-form>
       </div>
       <div class="table_container">
-        <table-tem :show-index="true" size="small" :tableData="historyTable" :tableHeight="hisHeight"
-          :columnData="columnData" :pageObj="pageObjHis" @handleSizeChange="handleSizeChangeHis"
-          @handleCurrentChange="handleCurrentChangeHis" @rowClick="rowClick">
+        <table-tem
+          :show-index="true"
+          size="small"
+          :tableData="historyTable"
+          :tableHeight="hisHeight"
+          :columnData="columnData"
+          :pageObj="pageObjHis"
+          @handleSizeChange="handleSizeChangeHis"
+          @handleCurrentChange="handleCurrentChangeHis"
+          @rowClick="rowClick"
+        >
         </table-tem>
       </div>
       <div class="w-full">
-        <table-tem size="small" :show-index="true" :tableData="detailedTable" :tableHeight="detailedHeight"
-          :columnData="detailedData" :pageObj="detailedPageObj">
+        <table-tem
+          size="small"
+          :show-index="true"
+          :tableData="detailedTable"
+          :tableHeight="detailedHeight"
+          :columnData="detailedData"
+          :pageObj="detailedPageObj"
+        >
         </table-tem>
       </div>
     </el-card>
 
-    <el-dialog v-model="dialogVisible" width="85%" title="物料申请" align-center>
+    <el-dialog
+      v-model="dialogVisible"
+      width="85%"
+      title="物料申请"
+      align-center
+      @close="close()"
+    >
       <div class="w-full">
         <div ref="headerRef">
-          <el-form ref="formRef" class="form" :inline="true" size="small" label-width="85px">
+          <el-form
+            ref="formRef"
+            class="form"
+            :inline="true"
+            size="small"
+            label-width="85px"
+          >
             <!-- <div>
               </div> -->
             <el-form-item label="生产计划号">
@@ -58,43 +115,87 @@
               </el-select> -->
               <!-- <el-select-v2 v-model="form.MfgOrderName" :options="orderList" filterable
               :props="orderProps" style="width: 180px"  @change="orderChange"/> -->
-              <el-input v-model="form.MfgOrderName" class="input-with-select"
-                @keyup.enter.native="orderChange(form.MfgOrderName)" style="width: 152px">
+              <el-input
+                v-model="form.MfgOrderName"
+                class="input-with-select"
+                @keyup.enter.native="orderChange(form.MfgOrderName)"
+                style="width: 152px"
+              >
               </el-input>
             </el-form-item>
             <el-form-item label="产品机型">
-              <el-input v-model="form.BD_ProductModel" style="width: 152px" class="input-with-select" disabled>
+              <el-input
+                v-model="form.BD_ProductModel"
+                style="width: 152px"
+                class="input-with-select"
+                disabled
+              >
               </el-input>
             </el-form-item>
             <el-form-item label="产品编码">
-              <el-input v-model="form.ProductName" style="width: 152px" class="input-with-select" disabled>
+              <el-input
+                v-model="form.ProductName"
+                style="width: 152px"
+                class="input-with-select"
+                disabled
+              >
               </el-input>
             </el-form-item>
             <el-form-item label="计划数量">
-              <el-input v-model="form.Qty" style="width: 152px" class="input-with-select" disabled>
+              <el-input
+                v-model="form.Qty"
+                style="width: 152px"
+                class="input-with-select"
+                disabled
+              >
               </el-input>
             </el-form-item>
             <el-form-item label="产线">
-              <el-input v-model="form.MfgLineDesc" style="width: 152px" class="input-with-select" disabled>
+              <el-input
+                v-model="form.MfgLineDesc"
+                style="width: 152px"
+                class="input-with-select"
+                disabled
+              >
               </el-input>
             </el-form-item>
             <el-form-item label="计划开始时间">
-              <el-input v-model="form.PlannedCompletionDate" style="width: 152px" class="input-with-select" disabled>
+              <el-input
+                v-model="form.PlannedCompletionDate"
+                style="width: 152px"
+                class="input-with-select"
+                disabled
+              >
               </el-input>
             </el-form-item>
             <el-form-item label="工单">
-              <el-input v-model="form.ERPOrder" style="width: 152px" class="input-with-select" disabled>
+              <el-input
+                v-model="form.ERPOrder"
+                style="width: 152px"
+                class="input-with-select"
+                disabled
+              >
               </el-input>
             </el-form-item>
             <el-form-item label="申请类型">
               <el-select v-model="applyType" style="width: 152px">
-                <el-option v-for="item in applyTypeList" :key="item.Value" :label="item.Text" :value="item.Value" />
+                <el-option
+                  v-for="item in applyTypeList"
+                  :key="item.Value"
+                  :label="item.Text"
+                  :value="item.Value"
+                />
               </el-select>
             </el-form-item>
             <br />
             <el-form-item label="产品描述">
-              <el-input style="width: 420px" type="textarea" v-model="form.ProductDesc" class="input-with-select"
-                disabled>
+              <el-input
+                style="width: 420px"
+                type="textarea"
+                v-model="form.ProductDesc"
+                class="input-with-select"
+                disabled
+              >
               </el-input>
             </el-form-item>
           </el-form>
@@ -106,20 +207,57 @@
                 <el-button icon="Search" />
               </template>
 </el-input> -->
-            <el-form @submit.native.prevent ref="formRef" class="form flex items-start" :inline="true" size="small"
-              label-width="85px">
-              <el-form-item label="查询编码" class="mb-0" style="margin-right: 0;">
-                <el-input v-model.trim="searchText" size="small" style="width: 250px"
-                  @keyup.enter.native="filterFeedTableData"></el-input>
+            <el-form
+              @submit.native.prevent
+              ref="formRef"
+              class="form flex items-start"
+              :inline="true"
+              size="small"
+              label-width="85px"
+            >
+              <el-form-item
+                label="查询编码"
+                class="mb-0"
+                style="margin-right: 0"
+              >
+                <el-input
+                  v-model.trim="searchText"
+                  size="small"
+                  style="width: 250px"
+                  @keyup.enter.native="filterFeedTableData"
+                ></el-input>
               </el-form-item>
             </el-form>
           </div>
-          <el-table :data="filterTableData
-            " size="small" stripe border fit :tooltip-effect="'dark'" :height="400" ref="tableRef"
-            @selection-change="handleSelectionChange">
-            <el-table-column type="selection" width="55" :selectable="selectable" />
-            <el-table-column type="index" label="序号" width="50" align="center" fixed />
-            <el-table-column prop="MaterialName" label="物料编码" :min-width="150" width="150">
+          <el-table
+            :data="filterTableData"
+            size="small"
+            stripe
+            border
+            fit
+            :tooltip-effect="'dark'"
+            :height="400"
+            ref="tableRef"
+            @selection-change="handleSelectionChange"
+          >
+            <el-table-column
+              type="selection"
+              width="55"
+              :selectable="selectable"
+            />
+            <el-table-column
+              type="index"
+              label="序号"
+              width="50"
+              align="center"
+              fixed
+            />
+            <el-table-column
+              prop="MaterialName"
+              label="物料编码"
+              :min-width="150"
+              width="150"
+            >
             </el-table-column>
             <!-- <el-form-item label="申请类型">
               <el-select
@@ -135,20 +273,41 @@
                   />
                 </el-select>
             </el-form-item> -->
-            <el-table-column prop="MaterialDesc" label="物料描述" :show-overflow-tooltip="true" width="200">
+            <el-table-column
+              prop="MaterialDesc"
+              label="物料描述"
+              :show-overflow-tooltip="true"
+              width="200"
+            >
             </el-table-column>
 
-            <el-table-column prop="isMater" label="主料" width="100" :min-width="100" align="center">
+            <el-table-column
+              prop="isMater"
+              label="主料"
+              width="100"
+              :min-width="100"
+              align="center"
+            >
               <template #default="scope">
                 <span v-if="scope.row.isMater === 1">是</span>
-                <span v-if="scope.row.isMater === 0">否{{ `(${scope.row.originalMaterialName})` }}</span>
+                <span v-if="scope.row.isMater === 0"
+                  >否{{ `(${scope.row.originalMaterialName})` }}</span
+                >
               </template>
             </el-table-column>
-            <el-table-column prop="SpecName" label="工序编码" align="center"
-              :min-width="flexColumnWidth('使用工序', 'SpecDesc')">
+            <el-table-column
+              prop="SpecName"
+              label="工序编码"
+              align="center"
+              :min-width="flexColumnWidth('使用工序', 'SpecDesc')"
+            >
             </el-table-column>
-            <el-table-column prop="SpecDesc" label="工序名称" align="center"
-              :min-width="flexColumnWidth('使用工序', 'SpecDesc')">
+            <el-table-column
+              prop="SpecDesc"
+              label="工序名称"
+              align="center"
+              :min-width="flexColumnWidth('使用工序', 'SpecDesc')"
+            >
             </el-table-column>
 
             <!-- <el-table-column
@@ -162,17 +321,33 @@
                 <span v-if="scope.row.isLoadQueue === 0">否</span>
               </template>
             </el-table-column> -->
-            <el-table-column prop="UOMName" align="center" label="单位" flexible>
+            <el-table-column
+              prop="UOMName"
+              align="center"
+              label="单位"
+              flexible
+            >
             </el-table-column>
-            <el-table-column prop="QtyRequired" align="center" label="单件用量"
-              :min-width="flexColumnWidth('单件用量', 'QtyRequired')">
+            <el-table-column
+              prop="QtyRequired"
+              align="center"
+              label="单件用量"
+              :min-width="flexColumnWidth('单件用量', 'QtyRequired')"
+            >
             </el-table-column>
-            <el-table-column prop="TotalQtyRequired" align="center" label="需求量"
-              :min-width="flexColumnWidth('需求量', 'TotalQtyRequired')">
+            <el-table-column
+              prop="TotalQtyRequired"
+              align="center"
+              label="需求量"
+              :min-width="flexColumnWidth('需求量', 'TotalQtyRequired')"
+            >
             </el-table-column>
             <el-table-column prop="RequestQty" align="center" label="请求数量">
               <template #default="scope">
-                <el-input v-model="scope.row.RequestQty" @input="handleInput(scope.row)">
+                <el-input
+                  v-model="scope.row.RequestQty"
+                  @input="handleInput(scope.row)"
+                >
                 </el-input>
               </template>
             </el-table-column>
@@ -190,9 +365,7 @@
 </template>
 
 <script lang="ts" setup>
-import {
-  ElNotification,
-} from "element-plus";
+import { ElNotification } from "element-plus";
 import tableTem from "@/components/tableTem/index.vue";
 import { useUserStoreWithOut } from "@/stores/modules/user";
 import {
@@ -201,7 +374,7 @@ import {
   SubmitMaterialRequest,
   QueryMaterialRequest,
   QueryMaterialRequestDetail,
-  GetComboBoxList
+  GetComboBoxList,
 } from "@/api/operate";
 import { cloneDeep } from "lodash-es";
 import {
@@ -235,7 +408,7 @@ const historyTable = ref<any>([]);
 const date = ref<any[]>([]);
 const detailedTable = ref<any[]>([]);
 const detailedHeight = ref(0);
-const applyType = ref('5');
+const applyType = ref("5");
 const applyTypeList = ref<any[]>();
 const iApplyTypeList = ref<any[]>();
 const detailedPageObj = ref({
@@ -296,7 +469,7 @@ const form = ref<formTS>({
   MfgLineDesc: "",
   WorkCenterName: "",
   ERPOrder: "",
-  RequestTypeName: ""
+  RequestTypeName: "",
 });
 
 const historyForm = ref<historyFormTS>({
@@ -305,12 +478,12 @@ const historyForm = ref<historyFormTS>({
   requestStartDate: "",
   requestEndDate: "",
 });
-const tableRef = ref()
+const tableRef = ref();
 const orderProps = ref({
   label: "MfgOrderName",
   value: "MfgOrderName",
-})
-const searchText = ref("")
+});
+const searchText = ref("");
 const filterTableData = ref([]);
 // const filterTableData=computed(()=>{
 //   if(searchText.value==""){
@@ -321,8 +494,7 @@ const filterTableData = ref([]);
 // watch(
 
 // );
-onBeforeMount(() => {
-});
+onBeforeMount(() => {});
 
 onMounted(() => {
   const today = new Date();
@@ -362,14 +534,13 @@ const findOrderData = () => {
 };
 //选中生产计划号
 const orderChange = (data: any) => {
-
-  if (!orderList.value.some(obj => obj.MfgOrderName === data)) {
+  if (!orderList.value.some((obj) => obj.MfgOrderName === data)) {
     ElNotification({
       title: "提示信息",
-      message: '未找到此生产计划号',
+      message: "未找到此生产计划号",
       type: "warning",
     });
-    return
+    return;
   }
   orderList.value.forEach((item: any) => {
     if (item.MfgOrderName === form.value.MfgOrderName) {
@@ -465,11 +636,11 @@ const getMaxLength = (arr: any) => {
 
 //根据名称获取配置值
 const getTypeList = () => {
-  GetComboBoxList('RequestType').then((res: any) => {
+  GetComboBoxList("RequestType").then((res: any) => {
     iApplyTypeList.value = res.content;
     applyTypeList.value = [res.content[1], res.content[2]];
-  })
-}
+  });
+};
 
 const getTextWidth = (str: string) => {
   let width = 0;
@@ -512,7 +683,6 @@ const handleSelectionChange = (data: any) => {
         SpecName: item.SpecName,
         ERPRouteName: item.BD_ERPSpecName,
         QtyRequired: item.QtyRequired,
-
       };
     });
   console.log(choiceList.value, data);
@@ -544,7 +714,7 @@ const applyFor = () => {
     MfgOrderQty: form.value.Qty,
     MfgLineName: form.value.MfgLineName,
     userAccount: loginName,
-    ERPOrder: form.value.ERPOrder
+    ERPOrder: form.value.ERPOrder,
   }).then((res: any) => {
     if (res.success) {
       ElNotification({
@@ -564,13 +734,13 @@ const applyFor = () => {
 //搜索编码
 const filterFeedTableData = () => {
   if (searchText.value == "") {
-    filterTableData.value = feedTableData.value
-    return
+    filterTableData.value = feedTableData.value;
+    return;
   }
   filterTableData.value = feedTableData.value.filter((f: any) =>
     f.MaterialName.toLowerCase().includes(searchText.value.toLowerCase())
   );
-}
+};
 
 const dateChange = () => {
   if (date.value !== null && date.value.length !== 0) {
@@ -622,6 +792,29 @@ const handleInput = (data: any) => {
   if (data.RequestQty == "") {
     tableRef.value.clearSelection();
   }
+};
+
+const close = () => {
+  feedTableData.value = [];
+  filterTableData.value = [];
+  form.value = {
+    MfgOrderName: "",
+    PlannedStartDate: "",
+    PlannedCompletionDate: "",
+    Qty: 0,
+    ProductName: "",
+    BD_ProjectNo: null,
+    BD_ProductModel: "",
+    ProductDesc: "",
+    UOMName: "",
+    OrderStatusName: "",
+    OrderStatusDesc: "",
+    MfgLineName: "",
+    MfgLineDesc: "",
+    WorkCenterName: "",
+    ERPOrder: "",
+    RequestTypeName: "",
+  };
 };
 
 const handleSizeChange = (val: any) => {
@@ -718,12 +911,11 @@ const columnData = reactive([
     width: "",
     min: true,
     align: "center",
-  }
+  },
 ]);
 
 const detailedData = reactive([
-  
-{
+  {
     text: true,
     prop: "ContainerName",
     label: "物料批次条码",
