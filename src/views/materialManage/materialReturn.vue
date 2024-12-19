@@ -29,10 +29,6 @@
               <el-option v-for="item in returnTypeList" :key="item.Value" :label="item.Text" :value="item.Value" />
             </el-select>
           </el-form-item>
-          <el-form-item label="日期" class="mb-2">
-            <el-date-picker :shortcuts="shortcuts" v-model="date" value-format="YYYY-MM-DD" type="daterange"
-              range-separator="到" size="small" style="width: 250px" @change="dateChange" />
-          </el-form-item>
           <el-form-item label="" class="mb-2">
             <el-button type="primary" @click="getHistory()">查询</el-button>
           </el-form-item>
@@ -174,6 +170,11 @@
             <el-form-item label="退料类型">
               <el-select v-model="returnType" placeholder="Select" style="width: 152px" @change="typeChange">
                 <el-option v-for="item in iReturnTypeList" :key="item.Value" :label="item.Text" :value="item.Value" />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="退料原因">
+              <el-select v-model="returnReason" placeholder="Select" style="width: 152px">
+                <el-option v-for="item in returnReasonList" :key="item.Value" :label="item.Text" :value="item.Value" />
               </el-select>
             </el-form-item>
             <br />
@@ -346,6 +347,8 @@ const detailedHeight = ref(0);
 const choiceId = ref("");
 const returnType = ref("1");
 const returnTypeList = ref<any[]>([]);
+const returnReason = ref("1");
+const returnReasonList = ref<any[]>([]);
 const iReturnTypeList = ref<any[]>([]);
 const table = ref();
 const detailedPageObj = ref({
@@ -542,6 +545,10 @@ const getTypeList = () => {
     iReturnTypeList.value = res.content;
     returnTypeList.value = res.content;
   });
+  GetComboBoxList("ReturnReason").then((res: any) => {
+    returnReasonList.value = res.content;
+    returnReason.value = res.content[0]
+  });
 };
 
 //根据名称值获取名称
@@ -709,6 +716,7 @@ const handleSelectionChange = (data: any) => {
           materialName: item.CompName,
           EmployeeName: loginName,
           QualityIsGood: returnType.value,
+          QualityReason: returnReason.value,
           ERPOrder: form.value.ERPOrder,
           OrderType: selectType.value,
           AvailableQty: item.Qty,
@@ -722,6 +730,7 @@ const handleSelectionChange = (data: any) => {
           materialName: item.CompName,
           EmployeeName: loginName,
           QualityIsGood: returnType.value,
+          QualityReason: returnReason.value,
           ERPOrder: form.value.ERPOrder,
         };
       }

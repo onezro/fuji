@@ -233,7 +233,7 @@ const typeList = ref([
 const tableData = ref([]);
 const tableHeight = ref(0);
 const pageObj = ref({
-  pageSize: 30,
+  pageSize: 100,
   currentPage: 1,
 });
 const materialData = ref([]);
