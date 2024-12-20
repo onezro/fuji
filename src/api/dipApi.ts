@@ -1,4 +1,4 @@
-import request from "@/utils/dipRequest";
+import request from "@/request/dipRequest";
 
 //获取插件生产计划号信息
 export function QueryWorkOrderInfo() {
@@ -105,6 +105,14 @@ export function UnbindTools(data: any) {
     params:{
       tool:data
     }
+  });
+}
+//更换
+export function AgainBindTools(data: any) {
+  return request({
+    url: "/api/plugin/AgainBindTools",
+    method: "post",
+   data
   });
 }
 

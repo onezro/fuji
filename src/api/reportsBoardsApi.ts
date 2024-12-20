@@ -1,4 +1,4 @@
-import request from "@/utils/request";
+import request from "@/request/opRequest";
 //查询烧录机子座使用记录
 export function getBurningData(data: any){
     return request({

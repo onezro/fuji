@@ -1,5 +1,5 @@
-import request from "@/utils/smtMessage";
-import requestNoMessage from "@/utils/smtNoMessage";
+import request from "@/request/smtMessage";
+import requestNoMessage from "@/request/smtNoMessage";
 
 //镭雕
 export function getLaserWorkOrder(data: any) {

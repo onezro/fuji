@@ -1,5 +1,5 @@
-import request from "@/utils/request";
-import request1 from "@/utils/plainTextApi";
+import request from "@/request/opRequest";
+import request1 from "@/request/plainTextApi";
 export function InsertInspect(data: any) {
     return request({
         url: "/api/firstinspect/Insert_Inspect_Info",
@@ -235,6 +235,14 @@ export function QueryToolInfo(data: any) {
         url: "/api/Tools/QueryToolInfo",
         method: "post",
         data,
+    });
+}
+//解除
+export function ReleaseToolTask(data: any) {
+    return request({
+        url: "/api/order/ReleaseToolTask",
+        method: "post",
+        params:data
     });
 }
 export function QueryTools(data: any) {

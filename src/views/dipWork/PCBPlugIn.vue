@@ -84,7 +84,10 @@
           <div>
             <div class="h-[35px] flex justify-between items-center text-lg text-[#fff] bg-[#006487]">
               <span class="ml-5"> 扫描条码</span>
-              <div><el-button type="warning" @click="toolsVisible = true">工治具解绑</el-button></div>
+              <div>
+                <el-button type="warning" @click="toolsVisible = true">工治具解绑</el-button>
+                <el-button color="#626aef" plain @click="toolNewVisible = true">工治具更换</el-button>
+              </div>
             </div>
             <div class="h-[150px] pt-3 pr-5 pl-5 flex">
               <div>
@@ -225,7 +228,6 @@
         <el-form-item label="治具编码">
           <el-input v-model="tools" ref="inputToolRef" @keyup.enter.native="getToolChange" />
         </el-form-item>
-
       </el-form>
       <div class="text-xl font-bold text-[#00B400]" v-show="msgToolType === true || msgToolTitle === ''">
         {{ msgToolTitle === "" ? "请扫描治具编码" : msgToolTitle }}
@@ -236,7 +238,32 @@
       <template #footer>
         <span class="dialog-footer">
           <el-button @click="toolsCancel">关闭</el-button>
-
+        </span>
+      </template>
+    </el-dialog>
+    <el-dialog v-model="toolNewVisible" draggable title="工治具更换" width="500px" :append-to-body="true"
+      :close-on-click-modal="false" :close-on-press-escape="false" align-center @open="toolNewOpen"
+      @close="toolNewCancel">
+      <el-form ref="toolNewFormRef" :model="toolNewForm" label-width="auto" @submit.native.prevent>
+        <el-form-item label="旧治具编码" prop="FromTools">
+          <el-input v-model="toolNewForm.FromTools" ref="toolOldRef" @keyup.enter.native="getToolOld" />
+        </el-form-item>
+        <el-form-item label="新治具编码" prop="ToTools">
+          <el-input v-model="toolNewForm.ToTools" ref="toolNewRef" @keyup.enter.native="getToolNew" />
+        </el-form-item>
+      </el-form>
+      <div class="text-xl font-bold text-[#f48000]">
+        {{ barMsg }}
+      </div>
+      <div class="text-xl font-bold text-[#00B400]" v-show="msgNewType === true || msgNewTitle === ''">
+        {{ msgNewTitle }}
+      </div>
+      <div class="text-xl font-bold text-[red]" v-show="msgNewType === false && msgNewTitle !== ''">
+        {{ msgNewTitle }}
+      </div>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="toolNewCancel">关闭</el-button>
         </span>
       </template>
     </el-dialog>
@@ -245,23 +272,21 @@
 
 <script lang="ts" setup>
 import tableTem from "@/components/tableTem/index.vue";
-import tableTemp from "@/components/tableTemp/index.vue";
-import badInfoTem from "@/components/badInfoTem/index.vue";
 import formTem from "@/components/formTem/index.vue";
-import feedTemp from "@/components/feedTemp/index.vue";
 import selectTa from "@/components/selectTable/index.vue";
 import { useAppStore } from "@/stores/modules/app";
 import { useUserStoreWithOut } from "@/stores/modules/user";
 import type { Formspan, FormHeader, OrderData } from "@/typing";
 import { checkStringType } from "@/utils/barcodeFormat";
-import { ElMessage, ElNotification, ElMessageBox } from "element-plus";
+import { ElNotification } from "element-plus";
 import {
   OrderQuery,
   PluginStationMoveOut,
   FindAllDevice,
   UpdateDevice,
   PIQueryMoveHistory,
-  UnbindTools
+  UnbindTools,
+  AgainBindTools
   // QueryOrderMaterialRequired,
 } from "@/api/dipApi";
 import {
@@ -576,14 +601,7 @@ const detailsColumn = ref([
     min: true,
     align: "1",
   },
-  // {
-  //   text: true,
-  //   prop: "QtyRequired",
-  //   label: "单量用量",
-  //   width: "",
-  //   min: true,
-  //   align: "1",
-  // },
+
   {
     text: true,
     prop: "LoadQueueQty",
@@ -592,14 +610,7 @@ const detailsColumn = ref([
     min: true,
     align: "1",
   },
-  // {
-  //   text: true,
-  //   prop: "level",
-  //   label: "已使用数量",
-  //   width: "",
-  //   min: true,
-  //   align: "1",
-  // },
+
   {
     text: true,
     prop: "level",
@@ -775,6 +786,20 @@ const tools = ref("")
 const inputToolRef = ref()
 const msgToolTitle = ref("");
 const msgToolType = ref(true);
+
+const toolNewVisible = ref(false)
+const toolNewForm = ref({
+  FromTools: "",
+  ToTools: "",
+  userAccount: userStore.getUserInfo
+})
+const toolNewFormRef = ref()
+const toolOldRef = ref()
+const toolNewRef = ref()
+const barMsg=ref("")
+const msgNewType=ref(true)
+const msgNewTitle=ref("")
+
 onBeforeMount(() => {
   getScreenHeight();
 });
@@ -989,7 +1014,6 @@ const getChange = (val: any) => {
     }
     barCode.value = "";
     if (stopsForm.value.ContainerName !== "" && stopsForm.value.tools !== "") {
-
       PluginStationMoveOut(stopsForm.value).then((res: any) => {
         msgTitle.value = res.msg;
         msgType.value = res.success;
@@ -1035,6 +1059,35 @@ const getToolChange = () => {
     msgToolType.value = res.success;
     tools.value = ""
   })
+}
+const toolNewOpen = () => {
+  nextTick(() => {
+    if (toolOldRef.value) {
+      toolOldRef.value.focus()
+      barMsg.value='请先扫描旧治具编码'
+    }
+  });
+}
+const toolNewCancel = () => {
+  toolNewFormRef.value.resetFields()
+  toolNewVisible.value = false
+}
+const getToolOld = () => {
+  toolNewRef.value.focus()
+  if(toolNewForm.value.FromTools!==''){
+     barMsg.value='请扫描新治具编码'
+  }
+}
+const getToolNew = () => {
+    if(toolNewForm.value.FromTools!==''){
+      AgainBindTools(toolNewForm.value).then((res:any)=>{
+        msgNewTitle.value=res.msg
+        msgNewType.value=res.success
+        toolNewFormRef.value.resetFields()
+        toolOldRef.value.focus()
+         barMsg.value='请先扫描旧治具编码'
+      })
+    }
 }
 
 //分页

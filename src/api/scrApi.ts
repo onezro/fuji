@@ -1,4 +1,4 @@
-import request from "@/utils/scrRequest";
+import request from "@/request/scrRequest";
 //查询屏车间打印数据
 export function QueryScreEPrintData(data: any){
     return request({

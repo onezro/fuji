@@ -1,4 +1,4 @@
-import request from "@/utils/noLoRequest";
+import request from "@/request/noLoRequest";
 //查询周转箱列表
 export function QueryCarrierList(data: any) {
     return request({

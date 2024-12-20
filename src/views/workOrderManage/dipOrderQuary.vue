@@ -147,47 +147,47 @@
             <el-table :data="toolTableData" size="small" stripe border fit :height="400" row-key="ID"
               :tree-props="{ children: 'children' }">
               <el-table-column type="index" align="center" fixed label="序号" width="60" />
-              <el-table-column prop="TaskNo" label="计划任务单" :min-width="180"  fixed>
+              <el-table-column prop="TaskNo" label="计划任务单" :min-width="180" fixed>
                 <template #default="scope">
-                  {{scope.row.FID!==null? "":scope.row.TaskNo }}
+                  {{ scope.row.FID !== null ? "" : scope.row.TaskNo }}
                 </template>
               </el-table-column>
               <el-table-column prop="ProcedureDsc" label="工序" width="100" align="center" fixed>
               </el-table-column>
               <el-table-column label="任务状态" width="80" align="center" fixed>
                 <template #default="scope">
-                <div v-if="scope.row.FID==null"> <el-tag  effect="light" :type="scope.row.Status == 2 ? 'success' : 'info'">{{ scope.row.Status == 2 ? '完成' : '未完成'
-                    }}</el-tag></div>
-                 
+                  <div v-if="scope.row.FID == null">
+                    <el-tag effect="light" :type="scope.row.Status == 2 ? 'success' : 'info'">{{ scope.row.Status == 2 ?
+                      "完成" : "未完成" }}</el-tag>
+                  </div>
                 </template>
               </el-table-column>
-             
+
               <el-table-column prop="ToolsMold" label="工治具型号" :min-width="180">
               </el-table-column>
               <el-table-column prop="Amount" label="需求数量" :min-width="80" align="center">
                 <template #default="scope">
-                  {{scope.row.FID!==null? "":scope.row.Amount }}
+                  {{ scope.row.FID !== null ? "" : scope.row.Amount }}
                 </template>
               </el-table-column>
               <el-table-column prop="OutNum" label="出库数量" :min-width="80" align="center">
                 <template #default="scope">
-                  {{scope.row.FID!==null? "":scope.row.OutNum }}
+                  {{ scope.row.FID !== null ? "" : scope.row.OutNum }}
                 </template>
               </el-table-column>
               <el-table-column prop="CompID" label="工治具编码" :min-width="180">
-               
               </el-table-column>
               <el-table-column prop="CreatedBy" label="操作人" :min-width="120" align="center">
               </el-table-column>
               <el-table-column prop="CreatedOn" label="操作时间" :min-width="150" align="center">
               </el-table-column>
-              <!-- <el-table-column  label="操作" :width="80" align="center" fixed="right">
+              <el-table-column label="操作" :width="80" align="center" fixed="right">
                 <template #default="scope">
-                  <el-tooltip content="还原" placement="top">
-              <el-button type="primary" icon="Refresh" size="small" @click.prevent="handleRestore(scope.row)" />
-            </el-tooltip>
+                  <el-tooltip content="解除" placement="top" v-if="scope.row.FID == null">
+                    <el-button :disabled="scope.row.Status!==2" type="primary" icon="Unlock" size="small" @click.prevent="handleRestore(scope.row)" />
+                  </el-tooltip>
                 </template>
-              </el-table-column> -->
+              </el-table-column>
             </el-table>
           </el-tab-pane>
         </el-tabs>
@@ -257,7 +257,8 @@ import {
   findShelf,
   OrderOnline,
   QueryOrderLine,
-  OrderOffline
+  OrderOffline,
+  ReleaseToolTask,
 } from "@/api/operate";
 import {
   ref,
@@ -384,15 +385,13 @@ watch(
       searchForm.value.PlanStartTime = "";
       searchForm.value.PlanEndTime = "";
       getTableData();
-      return
+      return;
     }
     if (newVal !== oldVal) {
       searchForm.value.PlanStartTime = newVal[0];
       searchForm.value.PlanEndTime = newVal[1];
       getTableData();
     }
-
-
   }
 );
 const isOffline = computed(() => {
@@ -419,7 +418,7 @@ const rowClick = (val: any) => {
     if (res.success) {
       // let data = cloneDeep(feedOrganData(res.content));
 
-      feedTableData.value = res.content
+      feedTableData.value = res.content;
     }
   });
 };
@@ -545,9 +544,6 @@ const columnData = reactive([
   },
 ]);
 
-
-
-
 onBeforeMount(() => {
   getScreenHeight();
   let end: string = setTodayDate();
@@ -629,9 +625,7 @@ const toolOrganData = (organizations: any) => {
       }
     }
   });
-  return Array.from(organizationMap.values()).filter(
-    (org) => org.FID == null
-  );
+  return Array.from(organizationMap.values()).filter((org) => org.FID == null);
 };
 
 const tabChange = (name: any) => {
@@ -650,7 +644,7 @@ const tabChange = (name: any) => {
       if (res.success) {
         // let data = cloneDeep(feedOrganData(res.content));
 
-        feedTableData.value = res.content
+        feedTableData.value = res.content;
       }
     });
   } else if (name === "工艺流程") {
@@ -669,10 +663,18 @@ const tabChange = (name: any) => {
       if (!res || res.content.lenght === 0) {
         return;
       }
-      toolTableData.value = toolOrganData(res.content)
+      toolTableData.value = toolOrganData(res.content);
     });
   }
 };
+const getToolData=()=>{
+  QueryOrderToolsData(orderChoice.value).then((res: any) => {
+      if (!res || res.content.lenght === 0) {
+        return;
+      }
+      toolTableData.value = toolOrganData(res.content);
+    });
+}
 
 const pageObj = ref({
   pageSize: 30,
@@ -696,7 +698,7 @@ const openOrderOnline = () => {
   orderOnlineVisible.value = true;
   let data = cloneDeep(onlineData.value);
   orderOnlineForm.value.OrderNumber = data[0].MfgOrderName;
-  orderOnlineForm.value.LineNumber = data[0].MfgLineName
+  orderOnlineForm.value.LineNumber = data[0].MfgLineName;
   QueryOrderLine(data[0].OrderTypeName).then((res: any) => {
     onlineList.value = res.content;
   });
@@ -705,7 +707,7 @@ const openOrderOnline = () => {
   // });
 };
 const openOrderOffline = () => {
-  let data = cloneDeep(onlineData.value)
+  let data = cloneDeep(onlineData.value);
 
   OrderOffline({
     OrderNumber: data[0].MfgOrderName,
@@ -777,13 +779,26 @@ const orderUnlock = () => {
   });
 };
 const handleRestore = (val: any) => {
-  ElMessageBox.confirm("确定还原", "确认操作", {
+  let data = {
+    ToolTaskDetailId: val.ID,
+    orderName: orderName.value,
+  };
+  ElMessageBox.confirm("确定解除", "确认操作", {
     confirmButtonText: "确定",
     cancelButtonText: "取消",
     type: "warning",
   })
     .then(() => {
-
+      ReleaseToolTask(data).then((res: any) => {
+        ElNotification({
+          title: "提示信息",
+          message: res.msg,
+          type: "success",
+        });
+        if(res.success){
+          getToolData()
+        }
+      });
     })
     .catch(() => {
       ElNotification({
@@ -792,7 +807,7 @@ const handleRestore = (val: any) => {
         type: "info",
       });
     });
-}
+};
 
 const getScreenHeight = () => {
   nextTick(() => {
@@ -824,7 +839,6 @@ const getScreenHeight = () => {
 .demo-tabs .el-tabs__content {
   padding: 5px;
 }
-
 
 .demo-tabs.el-tabs--border-card>.el-tabs__header .el-tabs__item {
   color: #fff;

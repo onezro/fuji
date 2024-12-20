@@ -109,13 +109,13 @@ service.interceptors.response.use(
         removeToken()
         router.push('/login');
       }
-      else {
-        ElNotification({
-          title: "提示信息",
-          message: response.data.msg,
-          type: "error",
-        });
-      }
+      // else {
+      //   ElNotification({
+      //     title: "提示信息",
+      //     message: response.data.msg,
+      //     type: "error",
+      //   });
+      // }
 
     }
   },

@@ -1,4 +1,4 @@
-import request from "@/utils/asyRequest";
+import request from "@/request/asyRequest";
 //扫码保存
 export function CleanCodeSave(data:any) {
     return request({

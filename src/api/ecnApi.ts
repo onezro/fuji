@@ -1,4 +1,4 @@
-import request from "@/utils/ecnRequest";
+import request from "@/request/ecnRequest";
 //ECN查询
 export function GetECNorder(data: any) {
     return request({

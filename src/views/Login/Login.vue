@@ -27,6 +27,8 @@ const form = ref({
   FullName: "",
 });
 const redirect = ref<string>("");
+const userNameRef=ref()
+const passwordRef=ref()
 
 watch(
   () => currentRoute.value,
@@ -47,11 +49,16 @@ onBeforeMount(() => {
   });
 });
 onMounted(() => {
-  if(localStorage.getItem('LOGINFORM')){
-    let data=localStorage.getItem('LOGINFORM')
-    if(data!==null){
-      let formData=JSON.parse(data)
-      form.value=formData
+  if (localStorage.getItem('LOGINNAME')) {
+    let data = localStorage.getItem('LOGINNAME')
+    if (data !== null) {
+      // let formData=JSON.parse(data)
+      form.value.EmployeeName = data
+      if (form.value.EmployeeName !== "") {
+        passwordRef.value.focus()
+      }else{
+        userNameRef.value.focus()
+      }
     }
   }
 });
@@ -72,7 +79,7 @@ const loginClick = () => {
   empolyeeLogin(form.value).then((data: any) => {
     const dataText = data.content;
     if (data.code == 100200) {
-      localStorage.setItem('LOGINFORM',JSON.stringify(form.value))
+      localStorage.setItem('LOGINNAME', form.value.EmployeeName)
       localStorage.setItem("OPCENTER_ROLE", form.value.EmployeeName);
       setToken(dataText.Token);
       if (appStore.getSystemType && localStorage.getItem("OPUIData")) {
@@ -102,51 +109,26 @@ const switchSystems = () => {
 </script>
 
 <template>
-  <div
-    class="w-[100vw] h-[100vh] bg-no-repeat bg-cover bg-[url('../assets/bg.jpg')]"
-  >
+  <div class="w-[100vw] h-[100vh] bg-no-repeat bg-cover bg-[url('../assets/bg.jpg')]">
     <div class="w-[100%] absolute h-[100%] flex bg-[#00000036]">
       <!-- <div class="m-auto"> -->
       <div class="m-auto bg-white p-4 rounded-2xl shadow-2xl">
-        <el-form
-          ref="formRef"
-          label-position="top"
-          :model="form"
-          label-width="auto"
-        >
+        <el-form ref="formRef" label-position="top" :model="form" label-width="auto">
           <h2 class="text-center text-2xl font-bold p-2.5 mb-5">
             {{ appStore.getSystemType ? "OPUI登录" : "Portal登录" }}
           </h2>
-          <el-form-item label="用户名" prop="userName"
-            ><el-input
-              v-model="form.EmployeeName"
-              size="large"
-              class="w-[440px]"
-              placeholder="请输入用户名"
-          /></el-form-item>
-          <el-form-item label="密码" prop="password"
-            ><el-input
-              v-model="form.DocManagerUser"
-              size="large"
-              class="w-[440px]"
-              type="password"
-              placeholder="请输入密码"
-              show-password
-              @keyup.enter.native="loginClick"
-          /></el-form-item>
+          <el-form-item label="用户名" prop="userName"><el-input ref="userNameRef" v-model="form.EmployeeName" size="large" class="w-[440px]"
+              placeholder="请输入用户名" /></el-form-item>
+          <el-form-item label="密码" prop="password"><el-input ref="passwordRef" v-model="form.DocManagerUser" size="large"
+              class="w-[440px]" type="password" placeholder="请输入密码" show-password
+              @keyup.enter.native="loginClick" /></el-form-item>
           <el-form-item class="mt-5">
-            <el-button
-              @click="loginClick"
-              size="large"
-              class="w-[440px]"
-              type="primary"
-              ><span class="font-bold">登录</span></el-button
-            >
+            <el-button @click="loginClick" size="large" class="w-[440px]" type="primary"><span
+                class="font-bold">登录</span></el-button>
           </el-form-item>
           <el-form-item>
-            <el-button @click="switchSystems" size="large" class="w-[440px]"
-              ><span class="text-[#e6b33c] font-bold">切换系统</span></el-button
-            >
+            <el-button @click="switchSystems" size="large" class="w-[440px]"><span
+                class="text-[#e6b33c] font-bold">切换系统</span></el-button>
           </el-form-item>
           <!-- <div class="text-center">
               当前为<span class="text-lg text-[#e6b33c] font-bold">{{
@@ -183,19 +165,23 @@ const switchSystems = () => {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 2rem; /* 使用Tailwind的间距类作为参考 */
+  padding: 2rem;
+  /* 使用Tailwind的间距类作为参考 */
   box-sizing: border-box;
-  border: 1px solid #ccc; /* 可选，仅用于视觉分隔 */
+  border: 1px solid #ccc;
+  /* 可选，仅用于视觉分隔 */
 }
 
 .front {
   z-index: 2;
-  background-color: white; /* 可选 */
+  background-color: white;
+  /* 可选 */
 }
 
 .back {
   transform: rotateY(180deg);
-  background-color: #f8fafc; /* 可选，使用Tailwind颜色类作为参考 */
+  background-color: #f8fafc;
+  /* 可选，使用Tailwind颜色类作为参考 */
 }
 
 .is-flipped .front {

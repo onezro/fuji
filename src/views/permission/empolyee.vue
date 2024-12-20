@@ -343,6 +343,7 @@ const handleNodeClick = (data: any) => {
 const refreshData = () => {
   isLoding.value = 'is-loading'
   currentPage.value = 1
+  searchName.value=""
   // tableData1.value = tableData.value
   getData();
   // getOrgan();
@@ -468,9 +469,16 @@ const onSubmit = () => {
     formRef.value.resetFields();
     // console.log(this.form.roleId);
   } else {
-    console.log(form.value);
-    addEmployeeRole(form.value).then((res) => {
-      getData();
+
+    addEmployeeRole(form.value).then((res:any) => {
+      // getData();
+      if(res.success){
+        ElNotification({
+            title: "提示",
+            message: res.msg,
+            type: "success",
+          });
+      }
       addVisible.value = false;
       formRef.value.resetFields();
     });
@@ -491,7 +499,7 @@ const handleClose = (tag: any) => {
         // console.log(data);
         if ((data.code = 100200)) {
           getHasRole();
-          getData();
+          // getData();
           ElNotification({
             title: "删除成功",
             // message: "取消操作",

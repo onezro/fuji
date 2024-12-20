@@ -1,4 +1,4 @@
-import request from "@/utils/request";
+import request from "@/request/opRequest";
 //备品备件类型
 //查询所有备件分类
 export function GetPartsClassList(data: any){

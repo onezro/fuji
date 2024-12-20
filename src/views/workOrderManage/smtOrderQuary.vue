@@ -185,13 +185,13 @@
               </el-table-column>
               <el-table-column prop="CreatedOn" label="操作时间" :min-width="150" align="center">
               </el-table-column>
-              <!-- <el-table-column  label="操作" :width="80" align="center" fixed="right">
+              <el-table-column  label="操作" :width="80" align="center" fixed="right">
                 <template #default="scope">
-                  <el-tooltip content="还原" placement="top">
-              <el-button type="primary" icon="Refresh" size="small" @click.prevent="handleRestore(scope.row)" />
-            </el-tooltip>
+                  <el-tooltip content="解除" placement="top" v-if="scope.row.FID == null">
+                    <el-button :disabled="scope.row.Status!==2" type="primary"  icon="Unlock" size="small" @click.prevent="handleRestore(scope.row)" />
+                  </el-tooltip>
                 </template>
-              </el-table-column> -->
+              </el-table-column>
             </el-table>
           </el-tab-pane>
         </el-tabs>
@@ -246,7 +246,7 @@
 
 <script lang="ts" setup>
 import { OrganData } from "@/utils/dataMenu";
-import { ElNotification } from "element-plus";
+import { ElNotification,ElMessageBox } from "element-plus";
 import { cloneDeep } from "lodash-es";
 import tableTem from "@/components/tableTem/index.vue";
 import { useUserStoreWithOut } from "@/stores/modules/user";
@@ -262,6 +262,7 @@ import {
   OrderOnline,
   QueryOrderLine,
   OrderOffline,
+  ReleaseToolTask
 } from "@/api/operate";
 import {
   ref,
@@ -677,6 +678,14 @@ const tabChange = (name: any) => {
     });
   }
 };
+const getToolData=()=>{
+  QueryOrderToolsData(orderChoice.value).then((res: any) => {
+      if (!res || res.content.lenght === 0) {
+        return;
+      }
+      toolTableData.value = toolOrganData(res.content);
+    });
+}
 
 const pageObj = ref({
   pageSize: 30,
@@ -782,6 +791,37 @@ const orderUnlock = () => {
     getTableData();
   });
 };
+const handleRestore = (val: any) => {
+  let data = {
+    ToolTaskDetailId: val.ID,
+    orderName: orderName.value,
+  };
+  ElMessageBox.confirm("确定解除", "确认操作", {
+    confirmButtonText: "确定",
+    cancelButtonText: "取消",
+    type: "warning",
+  })
+    .then(() => {
+      ReleaseToolTask(data).then((res: any) => {
+        ElNotification({
+          title: "提示信息",
+          message: res.msg,
+          type: "success",
+        });
+        if(res.success){
+          getToolData()
+        }
+      });
+    })
+    .catch(() => {
+      ElNotification({
+        title: "提示信息",
+        message: "取消操作",
+        type: "info",
+      });
+    });
+};
+
 
 const getScreenHeight = () => {
   nextTick(() => {
