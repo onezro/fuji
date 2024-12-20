@@ -105,17 +105,20 @@ service.interceptors.response.use(
       } else if (response.data.code == 100300) {
         return response.data;
       }
+      else if (response.data.code == 100500) {
+        return response.data;
+      }
       else if (response.data.code === 401) {
         removeToken()
         router.push('/login');
       }
-      else {
-        ElNotification({
-          title: "提示信息",
-          message: response.data.msg,
-          type: "error",
-        });
-      }
+      // else {
+      //   ElNotification({
+      //     title: "提示信息",
+      //     message: response.data.msg,
+      //     type: "error",
+      //   });
+      // }
 
     }
   },

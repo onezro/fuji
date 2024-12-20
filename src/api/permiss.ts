@@ -1,5 +1,5 @@
 import request from "@/request/request";
-
+import request1 from "@/request/isNo";
 //登录
 export function empolyeeLogin(data: any) {
     return request({
@@ -26,7 +26,7 @@ export function getInfo() {
 }
 
 export function getMenu() {
-    return request({
+    return request1({
         url: "/api/employee/findMenuBytoken",
         method: "post",
     });
