@@ -79,7 +79,7 @@
         </div>
       </div>
       <div class="table_container">
-        <table-tem size="small" :show-select="true" :tableData="tableData" :tableHeight="tableHeight"
+        <table-tem id="my-table" size="small" :show-select="true" :tableData="tableData" :tableHeight="tableHeight"
           :columnData="columnData" :pageObj="pageObj" @handleSizeChange="handleSizeChange"
           @handleCurrentChange="handleCurrentChange" @handleSelectionChange="handleSelectionChange"></table-tem>
       </div>

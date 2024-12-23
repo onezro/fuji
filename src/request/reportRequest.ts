@@ -30,7 +30,7 @@ const hideLoading = () => {
 };
 // 基地址
 const service = axios.create({
-  baseURL: '/controlApi',
+  baseURL: '/reportApi',
   // 5秒超时
   timeout: 1000 * 60,
 });
@@ -99,15 +99,9 @@ service.interceptors.response.use(
     //成功的返回
     if (response.status === 200) {
 
-      if (response.data.code == 100200 || !response.data.code) {
+      if (response.data.success) {
         // router.push({path: '/login'});
         return response.data;
-      } else if (response.data.code == 100300) {
-        return response.data;
-      }
-      else if (response.data.code === 401) {
-        removeToken()
-        router.push('/login');
       }
       else {
         ElNotification({

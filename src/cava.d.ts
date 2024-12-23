@@ -35,4 +35,4 @@ declare module 'af-table-column'
 declare module './useProps'
 declare module './useVirtualized'
 declare module '@/api/asyApi'
-
+declare module 'file-saver'
