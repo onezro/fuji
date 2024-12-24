@@ -11,22 +11,22 @@
                         <el-input style="width: 150px" v-model="getForm.order" placeholder="" clearable
                             @change="getData"></el-input>
                     </el-form-item> -->
-                      <el-form-item label="物料编码" class="mb-2">
-                        <el-input style="width: 150px" v-model="getForm.order" placeholder="" clearable
+                    <el-form-item label="物料编码" class="mb-2">
+                        <el-input style="width: 150px" v-model="getForm.ContainerName" placeholder="" clearable
                             @change="getData"></el-input>
                     </el-form-item>
                     <el-form-item label="物料批次码" class="mb-2">
-                        <el-input style="width: 150px" v-model="getForm.pcb" placeholder="" clearable
+                        <el-input style="width: 150px" v-model="getForm.MaterialName" placeholder="" clearable
                             @change="getData"></el-input>
                     </el-form-item>
-                    <el-form-item label="物料唯一码" class="mb-2">
+                    <!-- <el-form-item label="物料唯一码" class="mb-2">
                         <el-input style="width: 150px" v-model="getForm.pcb" placeholder="" clearable
                             @change="getData"></el-input>
-                    </el-form-item>
-                  
-                    <el-form-item  class="mb-2">
+                    </el-form-item> -->
+
+                    <el-form-item class="mb-2">
                         <el-button type="primary" @click="getData()">查询</el-button>
-                        <el-button type="warning" >导出</el-button>
+                        <el-button type="warning">导出</el-button>
                     </el-form-item>
                     <!-- <el-form-item  class="mb-2">
                        
@@ -37,14 +37,16 @@
                 :columnData="columnData" :pageObj="pageObj" @handleSizeChange="handleSizeChange"
                 @handleCurrentChange="handleCurrentChange" @rowClick="rowClick">
             </table-tem>
-            <table-temp :show-index="true" size="small" :tableData="detailData" :tableHeight="detailHeight"
-                :columnData="detailColumn">
-            </table-temp>
+            <table-tem :show-index="true" size="small" :tableData="detailData" :tableHeight="detailHeight"
+                :columnData="detailColumn" :pageObj="pageObj1" @handleSizeChange="handleSizeChange1"
+                @handleCurrentChange="handleCurrentChange1">
+            </table-tem>
         </el-card>
     </div>
 </template>
 
 <script setup lang="ts">
+import { QueryMaterialCode, QueryContainerDetail } from "@/api/report";
 import {
     ref,
     reactive,
@@ -59,11 +61,10 @@ import tableTem from "@/components/tableTem/index.vue";
 import tableTemp from "@/components/tableTemp/index.vue";
 import { shortcuts, setTodayDate, setLastDate } from "@/utils/dataMenu";
 const getForm = ref({
-    order: "",
-    PlanStartTime: "",
-    PlanEndTime: "",
-   
-    pcb:""
+    ContainerName: "",
+    MaterialName: "",
+    StartTime: "",
+    EndTime: "",
 });
 const searchDate = ref<any[]>([]);
 const headerRef = ref();
@@ -75,17 +76,17 @@ const pageObj = ref({
     currentPage: 1,
 });
 const columnData = reactive([
-{
+    {
         text: true,
-        prop: "Qty",
+        prop: "ContainerName",
         label: "物料条码",
         width: "",
         min: true,
         align: "1",
     },
-{
+    {
         text: true,
-        prop: "Qty",
+        prop: "MaterialName",
         label: "物料编码",
         width: "",
         min: true,
@@ -100,12 +101,11 @@ const columnData = reactive([
         align: "1",
     },
 ]);
-const detailData = ref([])
+const detailData = ref([]);
 const detailColumn = reactive([
-
     {
         text: true,
-        prop: "ERPOrder",
+        prop: "PlannedStartDate",
         label: "生产时间",
         width: "",
         min: true,
@@ -113,7 +113,7 @@ const detailColumn = reactive([
     },
     {
         text: true,
-        prop: "ERPOrder",
+        prop: "WorkCenterName",
         label: "车间",
         width: "",
         min: true,
@@ -121,7 +121,7 @@ const detailColumn = reactive([
     },
     {
         text: true,
-        prop: "Qty",
+        prop: "MfgLineDesc",
         label: "产线",
         width: "",
         min: true,
@@ -137,7 +137,7 @@ const detailColumn = reactive([
     },
     {
         text: true,
-        prop: "Qty",
+        prop: "MfgOrderName",
         label: "计划单号",
         width: "",
         min: true,
@@ -145,7 +145,7 @@ const detailColumn = reactive([
     },
     {
         text: true,
-        prop: "Qty",
+        prop: "ProductModel",
         label: "机型",
         width: "",
         min: true,
@@ -153,7 +153,7 @@ const detailColumn = reactive([
     },
     {
         text: true,
-        prop: "Qty",
+        prop: "productName",
         label: "产品编码",
         width: "",
         min: true,
@@ -161,7 +161,7 @@ const detailColumn = reactive([
     },
     {
         text: true,
-        prop: "Qty",
+        prop: "OrderStatusDesc",
         label: "工单状态",
         width: "",
         min: true,
@@ -175,21 +175,24 @@ const detailColumn = reactive([
         min: true,
         align: "1",
     },
-])
-
+]);
+const pageObj1 = ref({
+    pageSize: 100,
+    currentPage: 1,
+});
 
 watch(
     () => searchDate.value,
     (newVal: any, oldVal: any) => {
         if (newVal === null) {
-            getForm.value.PlanStartTime = "";
-            getForm.value.PlanEndTime = "";
+            getForm.value.StartTime = "";
+            getForm.value.EndTime = "";
             getData();
             return;
         }
         if (newVal !== oldVal) {
-            getForm.value.PlanStartTime = newVal[0];
-            getForm.value.PlanEndTime = newVal[1];
+            getForm.value.StartTime = newVal[0];
+            getForm.value.EndTime = newVal[1];
             getData();
         }
     }
@@ -201,8 +204,16 @@ onBeforeMount(() => {
     searchDate.value = [start, end];
 });
 
-const getData = () => { };
-const rowClick = () => { };
+const getData = () => {
+    QueryMaterialCode(getForm.value).then((res: any) => { 
+        tableData.value=res.content
+    });
+};
+const rowClick = (val:any) => {
+    QueryContainerDetail(val.ContainerName).then((res:any)=>{
+        detailData.value=res.content
+    })
+ };
 const handleSizeChange = (val: any) => {
     pageObj.value.currentPage = 1;
     pageObj.value.pageSize = val;
@@ -210,12 +221,17 @@ const handleSizeChange = (val: any) => {
 const handleCurrentChange = (val: any) => {
     pageObj.value.currentPage = val;
 };
+const handleSizeChange1 = (val: any) => {
+    pageObj1.value.currentPage = 1;
+    pageObj1.value.pageSize = val;
+};
+const handleCurrentChange1 = (val: any) => {
+    pageObj1.value.currentPage = val;
+};
 const getScreenHeight = () => {
     nextTick(() => {
-        tableHeight.value =
-            (window.innerHeight - 195)*0.6
-        detailHeight.value =
-            (window.innerHeight - 195) * 0.4;
+        tableHeight.value = (window.innerHeight - 245) * 0.6;
+        detailHeight.value = (window.innerHeight - 245) * 0.4;
     });
 };
 </script>

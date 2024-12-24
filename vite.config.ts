@@ -51,7 +51,11 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/asyApi/, '') 
       },
-      
+     '/reportApi': {
+      target: 'http://192.168.9.50:12014',
+      changeOrigin: true,
+      rewrite: (path) => path.replace(/^\/reportApi/, '') 
+    },
     }
   }
 })

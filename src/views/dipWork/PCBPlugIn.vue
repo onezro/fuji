@@ -992,8 +992,10 @@ const getChange = (val: any) => {
       // moveUp(toolList.value[toolData])
       stopsForm.value.tools = toolList.value[toolData].ToolName;
       checked.value[0] = toolList.value[toolData].ToolName;
-      // listContainer.value.scrollTop =-100
-      console.log(listContainer.value.scrollTop);
+      
+      const targetItem:any = toolList.value.find((item:any) => item.ToolName === barCode.value)
+      toolList.value.splice(toolData, 1);
+      toolList.value.unshift(targetItem);
       if (stopsForm.value.ContainerName == "") {
         msgTitle.value = "请扫描PCB条码";
         msgType.value = true;
@@ -1071,6 +1073,7 @@ const toolNewOpen = () => {
 const toolNewCancel = () => {
   toolNewFormRef.value.resetFields()
   toolNewVisible.value = false
+  inputRef.value.focus()
 }
 const getToolOld = () => {
   toolNewRef.value.focus()
@@ -1109,7 +1112,6 @@ const detailsCurrentChange = (val: any) => {
 const getScreenHeight = () => {
   nextTick(() => {
     leftBoxH.value = window.innerHeight - 120;
-    console.log(leftBoxH.value);
     tableHeight.value = window.innerHeight - 432; //428
   });
 };
