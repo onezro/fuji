@@ -716,7 +716,7 @@ const verifyBarCode = (barCodeData: any) => {
         } else {
           msgType.value = true;
           // msgTitle.value=`请扫描MES条码`
-          barMsg.value = `请扫描MES屏条码`;
+          barMsg.value = `请扫描MES条码`;
         }
       }
       // if (isKeyEmpty.value == -1 && stopsForm.value.BarCode != '') {

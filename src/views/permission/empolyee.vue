@@ -4,8 +4,8 @@
       <template #header>
         <div class="card-header flex justify-between items-center">
           <div class="flex gap-[5px] items-center">
-            <img style="width: 24px; height: 24px" src="../../assets/svgs/or.svg" alt="">
-            <div class="h-[24px] box-border pt-[3px]"> BICV-组织</div>
+            <img style="width: 24px; height: 24px" src="../../assets/svgs/or.svg" alt="" />
+            <div class="h-[24px] box-border pt-[3px]">BICV-组织</div>
           </div>
 
           <el-tooltip content="重置" placement="right">
@@ -16,7 +16,7 @@
         </div>
       </template>
       <el-scrollbar class="h-[calc(100vh-160px)]">
-        <el-tree style="max-width: 600px"  highlight-current :data="organTree" :expand-on-click-node="false" :props="{
+        <el-tree style="max-width: 600px" highlight-current :data="organTree" :expand-on-click-node="false" :props="{
           children: 'children',
           label: 'OrganizationName',
         }" @node-click="handleNodeClick" />
@@ -25,8 +25,7 @@
 
     <el-card shadow="always" :body-style="{ padding: '8px 8px 0 8px' }" class="flex-1">
       <div class="mb-2 flex justify-between">
-        <div>
-        </div>
+        <div></div>
         <div>
           <el-input v-model="searchName" clearable placeholder="请输入">
             <template #append>
@@ -37,9 +36,12 @@
       <el-table size="small" :data="tableData1.slice((currentPage - 1) * pageSize, currentPage * pageSize)
         " border :height="tableHeight" stripe>
         <el-table-column label="序号" type="index" width="60" align="center"></el-table-column>
-        <el-table-column label="工号" prop="employeeName"   min-width="100"> </el-table-column>
-        <el-table-column label="员工姓名" prop="fullName" min-width="100"> </el-table-column>
-        <el-table-column label="职称" prop="title" :min-width="flexColumnWidth('职称','title')"> </el-table-column>
+        <el-table-column label="工号" prop="employeeName" min-width="100">
+        </el-table-column>
+        <el-table-column label="员工姓名" prop="fullName" min-width="100">
+        </el-table-column>
+        <el-table-column label="职称" prop="title" :min-width="flexColumnWidth('职称', 'title')">
+        </el-table-column>
         <el-table-column label="组织" prop="OrganizationName" :min-width="170">
         </el-table-column>
         <el-table-column fixed="right" label="操作" width="120" align="center">
@@ -48,19 +50,14 @@
               <el-button type="primary" icon="EditPen" size="small" @click="handleEdit(scope.row)" />
             </el-tooltip>
             <el-tooltip content="密码重置" placement="top">
-              <el-button
-                type="danger"
-                icon="RefreshLeft"
-                size="small"
-                @click="handleRest(scope.row)"
-              />
+              <el-button type="danger" icon="RefreshLeft" size="small" @click="handleRest(scope.row)" />
             </el-tooltip>
           </template>
         </el-table-column>
       </el-table>
       <div class="mt-2">
-        <el-pagination  background @size-change="handleSizeChange" @current-change="handleCurrentChange"
-          :current-page="currentPage" :page-size="pageSize" :page-sizes="[30, 50, 100,150,200]"
+        <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange"
+          :current-page="currentPage" :page-size="pageSize" :page-sizes="[30, 50, 100, 150, 200]"
           layout="total,sizes, prev, pager, next, jumper" :total="tableData1.length">
         </el-pagination>
       </div>
@@ -72,12 +69,18 @@
           <el-input v-model="roleName" disabled></el-input>
         </el-form-item>
         <el-form-item label="当前角色" prop="role">
-          <el-tag :key="tag.Id" v-for="tag in hasRole" closable :disable-transitions="false" @close="handleClose(tag)">
+          <el-tag :key="tag.RoleID" v-for="tag in hasRole" closable :disable-transitions="false" @close="handleClose(tag)">
             {{ tag.RoleName }}
           </el-tag>
         </el-form-item>
-        <el-form-item label="角色" prop="roleId">
-          <el-select v-model="form.roleId" placeholder="请选择角色" clearable="">
+        <!-- <el-form-item label="角色" prop="roleId">
+          <el-select v-model="form.roleId"  placeholder="请选择角色" :clearable="false">
+            <el-option v-for="item in noRole" :key="item.value" :label="item.lable" :value="item.value">
+            </el-option>
+          </el-select>
+        </el-form-item> -->
+        <el-form-item label="角色" prop="roleIdArr">
+          <el-select v-model="form.roleIdArr" multiple >
             <el-option v-for="item in noRole" :key="item.value" :label="item.lable" :value="item.value">
             </el-option>
           </el-select>
@@ -147,7 +150,7 @@ import {
   deleteEmployee,
   addEmployee,
   getOrganization,
-  ResetPwd
+  ResetPwd,
 } from "@/api/permiss";
 import { ElMessage, ElMessageBox, ElNotification } from "element-plus";
 import {
@@ -163,7 +166,7 @@ import {
 } from "vue";
 
 interface Tag {
-  Id: string;
+  RoleID: string;
   RoleName: string;
 }
 
@@ -190,14 +193,13 @@ interface EditForm {
   UpdateDate: string;
 }
 
-
 interface OrganTree {
   Notes: string;
   OrganizationId: string;
   OrganizationName: string;
   OrganizationNumber: string;
   ParentOrganizationId: string;
-  children: OrganTree[]
+  children: OrganTree[];
 }
 const userStore = useUserStoreWithOut();
 const tableData = ref<Table[]>([]);
@@ -211,6 +213,7 @@ const form = ref({
   employeeId: "",
   id: 0,
   roleId: "",
+  roleIdArr:[],
   IsDelete: "",
   CreateBy: userStore.getUserInfo,
   CreateDate: "",
@@ -236,14 +239,14 @@ const editRef = ref();
 const searchName = ref("");
 const tableData1 = ref<Table[]>([]);
 const organTree = ref<OrganTree[]>([]);
-const isLoding = ref('')
-const restVisible=ref(false)
-const reFormRef=ref()
-const rePwForm=ref({
-  employeeName: '',
-  pwd: '',
-  confirmPwd: ''
-})
+const isLoding = ref("");
+const restVisible = ref(false);
+const reFormRef = ref();
+const rePwForm = ref({
+  employeeName: "",
+  pwd: "",
+  confirmPwd: "",
+});
 const equalToPassword = (rule: any, value: any, callback: any) => {
   if (rePwForm.value.pwd !== value) {
     // console.log('两次输入的密码不一致');
@@ -252,17 +255,14 @@ const equalToPassword = (rule: any, value: any, callback: any) => {
   } else {
     callback();
   }
-}
+};
 const rules = reactive<any>({
-  pwd: [
-    { required: true, message: '请输入新密码', trigger: 'blur' },
-  ],
+  pwd: [{ required: true, message: "请输入新密码", trigger: "blur" }],
   confirmPwd: [
     { required: true, trigger: "blur", message: "请再次输入您的密码" },
-    { required: true, validator: equalToPassword, trigger: "blur" }
+    { required: true, validator: equalToPassword, trigger: "blur" },
   ],
-
-})
+});
 onBeforeMount(() => {
   getScreenHeight();
 });
@@ -288,7 +288,7 @@ watch(
   }
 );
 const table1 = (newdata: any) => {
-  let searchName = newdata.toLowerCase()
+  let searchName = newdata.toLowerCase();
   return tableData.value.filter((v: any) => {
     return Object.keys(v).some((key) => {
       return String(v[key]).toLowerCase().indexOf(searchName) > -1;
@@ -298,7 +298,7 @@ const table1 = (newdata: any) => {
 
 const noRole = computed(() => {
   const data = optionArr.value.filter(
-    (item: any) => !hasRole.value.some((ele) => ele.Id == item.value)
+    (item: any) => !hasRole.value.some((ele) => ele.RoleID == item.value)
   );
   return data;
 });
@@ -313,7 +313,7 @@ const getOrgan = () => {
   getOrganization().then((data: any) => {
     if (data.code == 100200) {
       // const dataText = JSON.parse(data.content);
-      organTree.value = OrganData(data.content)
+      organTree.value = OrganData(data.content);
       // console.log(organTree.value);
     }
   });
@@ -332,26 +332,27 @@ const OrganData = (organizations: any) => {
       }
     }
   });
-  return Array.from(organizationMap.values()).filter(org => org.ParentOrganizationId === null);
-}
+  return Array.from(organizationMap.values()).filter(
+    (org) => org.ParentOrganizationId === null
+  );
+};
 
 const handleNodeClick = (data: any) => {
   // console.log(data)
-  tableData1.value = table1(data.OrganizationId)
-
-}
+  tableData1.value = table1(data.OrganizationId);
+};
 const refreshData = () => {
-  isLoding.value = 'is-loading'
-  currentPage.value = 1
-  searchName.value=""
+  isLoding.value = "is-loading";
+  currentPage.value = 1;
+  searchName.value = "";
   // tableData1.value = tableData.value
   getData();
   // getOrgan();
   let timer = setTimeout(() => {
-    isLoding.value = ''
-    clearTimeout(timer)
-  }, 2000)
-}
+    isLoding.value = "";
+    clearTimeout(timer);
+  }, 2000);
+};
 
 const getRoleMeun = () => {
   getAllRole().then((data: any) => {
@@ -376,8 +377,8 @@ const editSubmit = () => {
       getData();
       editVisible.value = false;
       ElNotification({
-        title: "添加成功",
-        // message: "取消操作",
+        title: "提示",
+        message: "添加成功",
         type: "success",
       });
     }
@@ -388,11 +389,13 @@ const getHasRole = () => {
   findEmployeeRoles(form.value.employeeId).then((data: any) => {
     if (data.code == 100200) {
       //  console.log(data);
-      hasRole.value = data.content
+      hasRole.value = data.content;
+
     } else {
-      ElMessage({
-        type: "error",
+      ElNotification({
+        title: "提示",
         message: data.msg,
+        type: "error",
       });
     }
   });
@@ -443,7 +446,7 @@ const dataPrecc = (data: any) => {
 
 const handleEdit = (row: any) => {
   // console.log(row);
-  addVisible.value = true;
+
   roleName.value = row.fullName;
   // form.value.roleId = row.RoleId;
   form.value.employeeId = row.employeeId;
@@ -451,15 +454,22 @@ const handleEdit = (row: any) => {
     if (data.content == null || data.content == undefined) {
       hasRole.value = [];
     } else {
-      // const dataText = JSON.parse(data.content);
-      hasRole.value = data.content
+      hasRole.value = data.content;
+      // form.value.roleIdArr=data.content.map((d:any)=>d.RoleID)
+      // console.log( hasRole.value);
     }
+    addVisible.value = true;
   });
 };
 const addCancel = () => {
   addVisible.value = false;
 };
+const removeTag=(val:any)=>{
+console.log(val);
+
+}
 const onSubmit = () => {
+  form.value.roleId= form.value.roleIdArr.join(",")
   if (
     form.value.roleId == "" ||
     form.value.roleId == undefined ||
@@ -467,8 +477,8 @@ const onSubmit = () => {
   ) {
     addVisible.value = false;
     formRef.value.resetFields();
-    // console.log(this.form.roleId);
   } else {
+    console.log(form.value);
 
     addEmployeeRole(form.value).then((res:any) => {
       // getData();
@@ -501,48 +511,44 @@ const handleClose = (tag: any) => {
           getHasRole();
           // getData();
           ElNotification({
-            title: "删除成功",
-            // message: "取消操作",
+            title: "提示",
+            message: "删除成功",
             type: "success",
           });
         } else {
           ElNotification({
-            title: "删除失败",
-            // message: "取消操作",
+            title: "提示",
+            message: "删除失败",
             type: "error",
           });
         }
       });
     })
     .catch(() => {
-      ElMessage({
-        type: "info",
+      ElNotification({
+        title: "提示",
         message: "取消操作",
+        type: "info",
       });
-      //   ElNotification({
-      //     title: "取消操作",
-      //     // message: "取消操作",
-      //     type: "info",
-      //   });
     });
 };
 
-const  handleRest=(row:any)=>{
-// console.log(row);
-rePwForm.value.employeeName=row.employeeName
-restVisible.value=true
-}
+const handleRest = (row: any) => {
+  // console.log(row);
+  rePwForm.value.employeeName = row.employeeName;
+  restVisible.value = true;
+};
 const upDateCancel = () => {
-  restVisible.value = false
+  restVisible.value = false;
   reFormRef.value.resetFields();
-}
+};
 const upDateSubmit = () => {
   reFormRef.value.validate((valid: any) => {
     if (valid) {
       let data = {
         employeeName: rePwForm.value.employeeName,
-        pwd: rePwForm.value.pwd
-      }
+        pwd: rePwForm.value.pwd,
+      };
       ResetPwd(data).then((res: any) => {
         // console.log(data)
         if (res.code == 100200) {
@@ -558,15 +564,14 @@ const upDateSubmit = () => {
             type: "error",
           });
         }
-        restVisible.value = false
-      })
-
+        restVisible.value = false;
+      });
     } else {
       console.log("error submit!!");
       return false;
     }
-  })
-}
+  });
+};
 const handleDelete = (row: any) => {
   ElMessageBox.confirm("确定删除", "确认操作", {
     confirmButtonText: "确定",
