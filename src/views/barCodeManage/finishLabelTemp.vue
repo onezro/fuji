@@ -467,7 +467,7 @@
             <el-form ref="editFormRef" size="small" :model="editForm" :inline="true" label-width="auto">
                 <el-form-item label="物料编码" prop="ProductName">
                     <el-select-v2 v-model="editForm.ProductName" :options="materData" disabled filterable :props="props"
-                        style="width: 180px" @change="getBasMaterialData" />
+                        style="width: 180px"  />
                 </el-form-item>
                 <el-form-item label="物料描述" prop="ProductDescript">
                     <el-input v-model="ProductDescript" disabled style="width: 240px" />
@@ -970,6 +970,7 @@ const pageObj = ref({
 const ProductName = ref("");
 const handleEdit = (row: any) => {
     ProductName.value = row.Template_PartNum;
+    ProductDescript.value=row.Description
     QueryBarCodeRule_TemContentRule({
         ProductName: row.Template_PartNum,
     }).then((res: any) => {
@@ -1780,8 +1781,10 @@ const getBarCodeRule_TemContentRule = () => {
 };
 
 const getBasMaterialData = (val: any) => {
+    
     let data: any = materData.value.find((m: any) => m.ProductName === val);
     if (data != undefined) {
+        
         ProductDescript.value = data.Description;
     }
     QueryProductNameTemplateName({ ProductName: val }).then((res: any) => {

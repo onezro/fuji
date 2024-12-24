@@ -478,7 +478,7 @@ const onSubmit = () => {
     addVisible.value = false;
     formRef.value.resetFields();
   } else {
-    console.log(form.value);
+    // console.log(form.value);
 
     addEmployeeRole(form.value).then((res:any) => {
       // getData();
