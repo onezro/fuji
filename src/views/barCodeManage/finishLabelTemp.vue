@@ -49,7 +49,7 @@
                             <!-- <el-input v-model="addForm.TemplateBox" style="width: 160px" /> -->
                             <el-select-v2 v-model="addForm.TemplateBox" :options="tempList" filterable
                                 :props="tempProps" style="width: 160px" @change="getRuleNameData(addForm.TemplateBox)"/>
-                            <span>特殊规则:[yyM]/[yyMM]/[yyyyMM]年月;[yyWW]年周;[yyMMdd]年月日;[SN:长度:起始流水]流水号:长度:起始流水</span>
+                            <span>特殊规则:[yyM]/[yyMM]/[yyyyMM]年月;[yyWW]年周;[yyMMdd]年月日;[SN:长度:起始流水]流水号:长度:起始流水;[YMC]年月代码;[YMC]年月代码</span>
                         </el-form-item>
                         <div class="flex">
                             <el-form ref="formRef" size="small" :model="form" :inline="true" label-width="auto">
@@ -121,7 +121,7 @@
                         <el-form-item label="模板" prop="TemplateFuselage" label-width="68px">
                             <el-select-v2 v-model="addForm.TemplateFuselage" :options="tempList" filterable
                                 :props="tempProps" style="width: 160px" @change="getRuleNameData(addForm.TemplateFuselage)"/>
-                            <span>特殊规则:[yyM]/[yyMM]/[yyyyMM]年月;[yyWW]年周;[yyMMdd]年月日;[SN:长度:起始流水]流水号:长度:起始流水</span>
+                            <span>特殊规则:[yyM]/[yyMM]/[yyyyMM]年月;[yyWW]年周;[yyMMdd]年月日;[SN:长度:起始流水]流水号:长度:起始流水;[YMC]年月代码</span>
                             <!-- <el-input v-model="addForm.TemplateFuselage" style="width: 160px" /> -->
                         </el-form-item>
                         <div class="flex">
@@ -189,7 +189,7 @@
                         <el-form-item label="模板" prop="Template01" label-width="68px">
                             <el-select-v2 v-model="addForm.Template01" :options="tempList" filterable :props="tempProps"
                                 style="width: 160px"  @change="getRuleNameData(addForm.Template01)"/>
-                            <span>特殊规则:[yyM]/[yyMM]/[yyyyMM]年月;[yyWW]年周;[yyMMdd]年月日;[SN:长度:起始流水]流水号:长度:起始流水</span>
+                            <span>特殊规则:[yyM]/[yyMM]/[yyyyMM]年月;[yyWW]年周;[yyMMdd]年月日;[SN:长度:起始流水]流水号:长度:起始流水;[YMC]年月代码</span>
                             <!-- <el-input v-model="addForm.Template01" style="width: 160px" /> -->
                         </el-form-item>
                         <div class="flex">
@@ -257,7 +257,7 @@
                         <el-form-item label="模板" prop="Template02" label-width="68px">
                             <el-select-v2 v-model="addForm.Template02" :options="tempList" filterable :props="tempProps"
                                 style="width: 160px"  @change="getRuleNameData(addForm.Template02)"/>
-                            <span>特殊规则:[yyM]/[yyMM]/[yyyyMM]年月;[yyWW]年周;[yyMMdd]年月日;[SN:长度:起始流水]流水号:长度:起始流水</span>
+                            <span>特殊规则:[yyM]/[yyMM]/[yyyyMM]年月;[yyWW]年周;[yyMMdd]年月日;[SN:长度:起始流水]流水号:长度:起始流水;[YMC]年月代码</span>
                             <!-- <el-input v-model="addForm.Template02" style="width: 160px" /> -->
                         </el-form-item>
                         <div class="flex">
@@ -325,7 +325,7 @@
                         <el-form-item label="模板" prop="Template03" label-width="68px">
                             <el-select-v2 v-model="addForm.Template03" :options="tempList" filterable :props="tempProps"
                                 style="width: 160px" @change="getRuleNameData(addForm.Template03)"/>
-                            <span>特殊规则:[yyM]/[yyMM]/[yyyyMM]年月;[yyWW]年周;[yyMMdd]年月日;[SN:长度:起始流水]流水号:长度:起始流水</span>
+                            <span>特殊规则:[yyM]/[yyMM]/[yyyyMM]年月;[yyWW]年周;[yyMMdd]年月日;[SN:长度:起始流水]流水号:长度:起始流水;[YMC]年月代码</span>
                             <!-- <el-input v-model="addForm.Template03" style="width: 160px" /> -->
                         </el-form-item>
                         <div class="flex">
@@ -391,7 +391,7 @@
                     </el-tab-pane>
                     <el-tab-pane label="公用流水" name="Template04">
                         <div class="mb-3 mt-3 text-xs">
-                            特殊规则:[yyM]/[yyMM]/[yyyyMM]年月;[yyWW]年周;[yyMMdd]年月日;[SN:长度:起始流水]流水号:长度:起始流水
+                            特殊规则:[yyM]/[yyMM]/[yyyyMM]年月;[yyWW]年周;[yyMMdd]年月日;[SN:长度:起始流水]流水号:长度:起始流水;[YMC]年月代码
                         </div>
                         <!-- <el-input v-model="addForm.Template03" style="width: 160px" /> -->
 
@@ -467,7 +467,7 @@
             <el-form ref="editFormRef" size="small" :model="editForm" :inline="true" label-width="auto">
                 <el-form-item label="物料编码" prop="ProductName">
                     <el-select-v2 v-model="editForm.ProductName" :options="materData" disabled filterable :props="props"
-                        style="width: 180px" @change="getBasMaterialData" />
+                        style="width: 180px"  />
                 </el-form-item>
                 <el-form-item label="物料描述" prop="ProductDescript">
                     <el-input v-model="ProductDescript" disabled style="width: 240px" />
@@ -484,7 +484,7 @@
                             <!-- <el-input v-model="addForm.TemplateBox" style="width: 160px" /> -->
                             <el-select-v2 v-model="editForm.TemplateBox" :options="tempList" filterable
                                 :props="tempProps" style="width: 160px"  @change="getRuleNameData(editForm.TemplateBox)"/>
-                            <span>特殊规则:[yyM]/[yyMM]/[yyyyMM]年月;[yyWW]年周;[yyMMdd]年月日;[SN:长度:起始流水]流水号:长度:起始流水</span>
+                            <span>特殊规则:[yyM]/[yyMM]/[yyyyMM]年月;[yyWW]年周;[yyMMdd]年月日;[SN:长度:起始流水]流水号:长度:起始流水;[YMC]年月代码</span>
                         </el-form-item>
                         <div class="flex">
                             <el-form ref="formRef" size="small" :model="form" :inline="true" label-width="auto">
@@ -550,7 +550,7 @@
                         <el-form-item label="模板" prop="TemplateFuselage" label-width="68px">
                             <el-select-v2 v-model="editForm.TemplateFuselage" :options="tempList" filterable
                                 :props="tempProps" style="width: 160px" @change="getRuleNameData(editForm.TemplateFuselage)"/>
-                            <span>特殊规则:[yyM]/[yyMM]/[yyyyMM]年月;[yyWW]年周;[yyMMdd]年月日;[SN:长度:起始流水]流水号:长度:起始流水</span>
+                            <span>特殊规则:[yyM]/[yyMM]/[yyyyMM]年月;[yyWW]年周;[yyMMdd]年月日;[SN:长度:起始流水]流水号:长度:起始流水;[YMC]年月代码</span>
                             <!-- <el-input v-model="addForm.TemplateFuselage" style="width: 160px" /> -->
                         </el-form-item>
                         <div class="flex">
@@ -619,7 +619,7 @@
                         <el-form-item label="模板" prop="Template01" label-width="68px">
                             <el-select-v2 v-model="editForm.Template01" :options="tempList" filterable
                                 :props="tempProps" style="width: 160px"  @change="getRuleNameData(editForm.Template01)"/>
-                            <span>特殊规则:[yyM]/[yyMM]/[yyyyMM]年月;[yyWW]年周;[yyMMdd]年月日;[SN:长度:起始流水]流水号:长度:起始流水</span>
+                            <span>特殊规则:[yyM]/[yyMM]/[yyyyMM]年月;[yyWW]年周;[yyMMdd]年月日;[SN:长度:起始流水]流水号:长度:起始流水;[YMC]年月代码</span>
                             <!-- <el-input v-model="addForm.Template01" style="width: 160px" /> -->
                         </el-form-item>
                         <div class="flex">
@@ -688,7 +688,7 @@
                         <el-form-item label="模板" prop="Template02" label-width="68px">
                             <el-select-v2 v-model="editForm.Template02" :options="tempList" filterable
                                 :props="tempProps" style="width: 160px"  @change="getRuleNameData(editForm.Template02)"/>
-                            <span>特殊规则:[yyM]/[yyMM]/[yyyyMM]年月;[yyWW]年周;[yyMMdd]年月日;[SN:长度:起始流水]流水号:长度:起始流水</span>
+                            <span>特殊规则:[yyM]/[yyMM]/[yyyyMM]年月;[yyWW]年周;[yyMMdd]年月日;[SN:长度:起始流水]流水号:长度:起始流水;[YMC]年月代码</span>
                             <!-- <el-input v-model="addForm.Template02" style="width: 160px" /> -->
                         </el-form-item>
                         <div class="flex">
@@ -757,7 +757,7 @@
                         <el-form-item label="模板" prop="Template03" label-width="68px">
                             <el-select-v2 v-model="editForm.Template03" :options="tempList" filterable
                                 :props="tempProps" style="width: 160px"  @change="getRuleNameData(editForm.Template03)"/>
-                            <span>特殊规则:[yyM]/[yyMM]/[yyyyMM]年月;[yyWW]年周;[yyMMdd]年月日;[SN:长度:起始流水]流水号:长度:起始流水</span>
+                            <span>特殊规则:[yyM]/[yyMM]/[yyyyMM]年月;[yyWW]年周;[yyMMdd]年月日;[SN:长度:起始流水]流水号:长度:起始流水;[YMC]年月代码</span>
                             <!-- <el-input v-model="addForm.Template03" style="width: 160px" /> -->
                         </el-form-item>
                         <div class="flex">
@@ -824,7 +824,7 @@
                     </el-tab-pane>
                     <el-tab-pane label="公用流水" name="Template04">
                         <div class="mb-3 mt-3 text-xs">
-                            特殊规则:[yyM]/[yyMM]/[yyyyMM]年月;[yyWW]年周;[yyMMdd]年月日;[SN:长度:起始流水]流水号:长度:起始流水
+                            特殊规则:[yyM]/[yyMM]/[yyyyMM]年月;[yyWW]年周;[yyMMdd]年月日;[SN:长度:起始流水]流水号:长度:起始流水;[YMC]年月代码
                         </div>
                         <!-- <el-input v-model="addForm.Template03" style="width: 160px" /> -->
 
@@ -970,6 +970,7 @@ const pageObj = ref({
 const ProductName = ref("");
 const handleEdit = (row: any) => {
     ProductName.value = row.Template_PartNum;
+    ProductDescript.value=row.Description
     QueryBarCodeRule_TemContentRule({
         ProductName: row.Template_PartNum,
     }).then((res: any) => {
@@ -1239,7 +1240,7 @@ onBeforeMount(() => {
 onMounted(() => {
     window.addEventListener("resize", getScreenHeight);
     getData();
-    getMesData();
+    // getMesData();
 });
 onBeforeUnmount(() => {
     window.addEventListener("resize", getScreenHeight);
@@ -1299,7 +1300,14 @@ const getRuleData = () => {
     });
 };
 const openAddTemp = () => {
-    addTempVisible.value = true;
+   
+    QueryTeplateExistProductNameNews({
+        ProductName: "",
+        ProductDescript: "",
+    }).then((res: any) => {
+        materData.value = res.content;
+        addTempVisible.value = true;
+    });
     // getRuleData();
 };
 const addItem = () => {
@@ -1773,8 +1781,10 @@ const getBarCodeRule_TemContentRule = () => {
 };
 
 const getBasMaterialData = (val: any) => {
+    
     let data: any = materData.value.find((m: any) => m.ProductName === val);
     if (data != undefined) {
+        
         ProductDescript.value = data.Description;
     }
     QueryProductNameTemplateName({ ProductName: val }).then((res: any) => {
