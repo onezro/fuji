@@ -372,5 +372,36 @@ export function QuerySMTDefectRecordDetail(data: any) {
     });
   }
 
+  //查询未入库的信息
+  export function QueryPartNotStorageInfo(data: any) {
+    return request({
+      url: "/api/FinishedProductInspect/QueryPartNotStorageInfo",
+      method: "post",
+      params: {
+        InspectionOrder: data
+      },
+    });
+  }
+
+  //入库
+  export function FinishedProductStorage(data: any) {
+    return request({
+      url: "/api/FinishedProductInspect/FinishedProductStorage",
+      method: "post",
+      data
+    });
+  }
+
+  //获取工单详细
+  export function MfgOrderDetail(data: any) {
+    return request({
+      url: "/api/FinishedProductInspect/MfgOrderDetail",
+      method: "post",
+      params:{
+        mfgOrderName:data
+      }
+    });
+  }
+
 
 
