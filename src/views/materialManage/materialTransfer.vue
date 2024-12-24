@@ -27,7 +27,7 @@
               placeholder=""
             ></el-input>
           </el-form-item>
-          <el-form-item label="退料类型" class="mb-2">
+          <el-form-item label="申请类型" class="mb-2">
             <el-select
               v-model="historyForm.QualityIsGood"
               placeholder=""
@@ -646,7 +646,7 @@ onMounted(() => {
   historyForm.value.requestEndDate = formattedTodayDate;
   date.value = [formattedDate, formattedTodayDate];
   getHistory();
-  //   getTypeList();
+    getTypeList();
   getScreenHeight();
   findOrderData();
   window.addEventListener("resize", getScreenHeight);
@@ -781,7 +781,7 @@ const transferChange = (data: any) => {
 
 //根据名称获取配置值
 const getTypeList = () => {
-  GetComboBoxList("ReturnType").then((res: any) => {
+  GetComboBoxList("ConvertType").then((res: any) => {
     iReturnTypeList.value = res.content;
     returnTypeList.value = res.content;
   });
