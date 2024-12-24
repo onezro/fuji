@@ -834,7 +834,7 @@ const columnData = reactive([
   {
     text: true,
     prop: "BD_RequestNo",
-    label: "申请编号",
+    label: "单号",
     width: "",
     min: true,
     align: "center",
@@ -915,14 +915,6 @@ const columnData = reactive([
 ]);
 
 const detailedData = reactive([
-  {
-    text: true,
-    prop: "ContainerName",
-    label: "物料批次条码",
-    width: "",
-    min: true,
-    align: "1",
-  },
   {
     text: true,
     prop: "ProductName",

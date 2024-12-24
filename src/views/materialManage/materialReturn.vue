@@ -57,7 +57,7 @@
           " size="small" stripe border fit :tooltip-effect="'dark'" :height="hisHeight"
           @selection-change="handleSelectionChange" @rowClick="rowClick">
           <el-table-column type="index" label="序号" width="50" align="center" />
-          <el-table-column prop="ApplyNo" label="退料单号" :min-width="flexColumnWidthHis('退料单号', 'ApplyNo')"
+          <el-table-column prop="ApplyNo" label="单号" :min-width="flexColumnWidthHis('单号', 'ApplyNo')"
             align="center"></el-table-column>
           <el-table-column prop="QualityIsGood" label="申请类型" :min-width="flexColumnWidthHis('申请类型型', 'QualityIsGood')"
             align="center">
@@ -173,7 +173,7 @@
               </el-select>
             </el-form-item>
             <el-form-item label="退料原因">
-              <el-select v-model="returnReason" placeholder="Select" style="width: 152px">
+              <el-select v-model="returnReason" placeholder="Select" style="width: 152px" @change="console.log(returnReason)">
                 <el-option v-for="item in returnReasonList" :key="item.Value" :label="item.Text" :value="item.Value" />
               </el-select>
             </el-form-item>
@@ -547,7 +547,7 @@ const getTypeList = () => {
   });
   GetComboBoxList("ReturnReason").then((res: any) => {
     returnReasonList.value = res.content;
-    returnReason.value = res.content[0]
+    returnReason.value = res.content[0].Value;
   });
 };
 
@@ -895,7 +895,7 @@ const columnData = reactive([
   {
     text: true,
     prop: "ApplyNo",
-    label: "退料单号",
+    label: "单号",
     width: "",
     min: true,
     align: "center",

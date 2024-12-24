@@ -92,7 +92,7 @@
           />
           <el-table-column
             prop="ApplyNo"
-            label="退料单号"
+            label="单号"
             :min-width="flexColumnWidthHis('退料单号', 'ApplyNo')"
             align="center"
           ></el-table-column>
