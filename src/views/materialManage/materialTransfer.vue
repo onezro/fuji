@@ -45,13 +45,13 @@
           <el-form-item label="" class="mb-2">
             <el-button type="primary" @click="getHistory()">查询</el-button>
           </el-form-item>
-          <el-form-item label="" class="mb-2">
+          <!-- <el-form-item label="" class="mb-2">
             <el-button
               type="warning"
               @click="(dialogVisible = true), findOrderData()"
               >申请</el-button
             >
-          </el-form-item>
+          </el-form-item> -->
         </el-form>
       </div>
       <div class="table_container">
