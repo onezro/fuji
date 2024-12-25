@@ -24,7 +24,7 @@
           <el-form-item label="生产计划号" class="mb-2">
             <el-input v-model="historyForm.MfgOrderName" placeholder=""></el-input>
           </el-form-item>
-          <el-form-item label="退料类型" class="mb-2">
+          <el-form-item label="申请类型" class="mb-2">
             <el-select v-model="historyForm.QualityIsGood" placeholder="" style="width: 150px" clearable>
               <el-option v-for="item in returnTypeList" :key="item.Value" :label="item.Text" :value="item.Value" />
             </el-select>
@@ -167,7 +167,7 @@
               <el-input v-model="form.PlannedCompletionDate" style="width: 152px" class="input-with-select" disabled>
               </el-input>
             </el-form-item>
-            <el-form-item label="退料类型">
+            <el-form-item label="申请类型">
               <el-select v-model="returnType" placeholder="Select" style="width: 152px" @change="typeChange">
                 <el-option v-for="item in iReturnTypeList" :key="item.Value" :label="item.Text" :value="item.Value" />
               </el-select>
