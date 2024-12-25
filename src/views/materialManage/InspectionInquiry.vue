@@ -374,12 +374,12 @@ const rowKey = (row: any) => {
 };
 
 const selectable = (row: any) => {
-  if (row.QAResult === "N" || row.QAResult === null) {
-    return false;
-  }
-  if (row.StorageSta === "StorageHalfway" || row.StorageSta === "Storage") {
-    return false;
-  }
+  // if (row.QAResult === "N" || row.QAResult === null) {
+  //   return false;
+  // }
+  // if (row.StorageSta === "StorageHalfway" || row.StorageSta === "Storage") {
+  //   return false;
+  // }
   return true;
 };
 
@@ -414,14 +414,14 @@ const getTextWidth = (str: string) => {
 };
 
 const inStore = () => {
-  if (choiceList.value.length === 0) {
-      ElNotification({
-        title: "提示信息",
-        message: '请选择',
-        type: "warning",
-      });
-      return;
-  }
+  // if (choiceList.value.length === 0) {
+  //     ElNotification({
+  //       title: "提示信息",
+  //       message: '请选择',
+  //       type: "warning",
+  //     });
+  //     return;
+  // }
   let arr: any = [];
   choiceList.value.forEach((element) => {
     if (
