@@ -974,6 +974,7 @@ const handleSelectionChange = (data: any) => {
           Amount: item.Amount,
           Qty: item.Qty,
           MaterialQueue: item.MaterialQueue,
+          EmployeeName: loginName,
         };
       } else {
         return {
@@ -982,6 +983,7 @@ const handleSelectionChange = (data: any) => {
           Amount: item.Amount,
           Qty: item.Qty,
           MaterialQueue: item.MaterialQueue,
+          EmployeeName: loginName,
         };
       }
     });
