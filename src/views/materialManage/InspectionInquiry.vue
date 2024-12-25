@@ -43,11 +43,7 @@
             </el-input>
           </el-form-item>
           <el-form-item label="计划数量">
-            <el-input
-              v-model="selectForm.QTY"
-              style="width: 152px"
-              disabled
-            >
+            <el-input v-model="selectForm.QTY" style="width: 152px" disabled>
             </el-input>
           </el-form-item>
           <el-form-item label="产品描述">
@@ -63,9 +59,13 @@
       </div>
       <div class="table_container">
         <div class="flex justify-between">
-          <div></div>
+          <div>
+            <el-button size="small" type="" class="mr-4" @click="getData(order)"
+              >刷新</el-button
+            >
+          </div>
           <div class="flex items-center">
-            <el-button size="small" type="" class="mr-4" @click="inStore"
+            <el-button size="small" type="primary" class="mr-4" @click="inStore"
               >入库</el-button
             >
             <el-checkbox v-model="IsPrint">是否打印</el-checkbox>
@@ -79,9 +79,10 @@
               currentPage * pageSize
             )
           "
+          ref="multipleTable"
           border
           :height="tableHeight"
-          row-key="step1"
+          :row-key="rowKey"
           style="width: 100%"
           @selection-change="handleSelectionChange"
         >
@@ -91,6 +92,7 @@
             label="选择"
             align="center"
             :selectable="selectable"
+            :reserve-selection="true"
           />
           <el-table-column type="index" label="序号" width="50" align="center">
           </el-table-column>
@@ -269,6 +271,8 @@ const tableHeight = ref(0);
 const order = ref("");
 const choiceList = ref<any[]>([]);
 const filterTableData = ref<any[]>([]);
+const interval = ref<any>(null);
+const multipleTable = ref();
 const IsPrint = ref(false);
 const getDataText = reactive({
   inspectType: "",
@@ -321,9 +325,13 @@ onBeforeMount(() => {
 });
 
 onMounted(() => {
+  // interval.value = setInterval(() => {
+  //   getData(order.value);
+  // }, 2000);
   window.addEventListener("resize", getScreenHeight);
 });
 onBeforeUnmount(() => {
+  // clearInterval(interval.value);
   window.addEventListener("resize", getScreenHeight);
 });
 
@@ -332,16 +340,18 @@ const handleSelectionChange = (data: any) => {
 };
 
 const getData = (str: any) => {
-  ProductInspectDetailsHistory({ MfgOrderName: str }).then((res: any) => {
-    if (res.success) {
-      tableData.value = res.content;
-    }
-  });
-  MfgOrderDetail(str).then((res: any) => {
-    if (res.success) {
-      selectForm.value = res.content[0];
-    }
-  });
+  if (str) {
+    ProductInspectDetailsHistory({ MfgOrderName: str }).then((res: any) => {
+      if (res.success) {
+        tableData.value = res.content;
+      }
+    });
+    MfgOrderDetail(str).then((res: any) => {
+      if (res.success) {
+        selectForm.value = res.content[0];
+      }
+    });
+  }
 };
 
 const getDetail = (order: any) => {
@@ -359,13 +369,15 @@ const getDetail = (order: any) => {
   });
 };
 
+const rowKey = (row: any) => {
+  return row.PackagingBoxNumber;
+};
+
 const selectable = (row: any) => {
-  if (row.QAResult === "N") {
+  if (row.QAResult === "N" || row.QAResult === null) {
     return false;
   }
   if (row.StorageSta === "StorageHalfway" || row.StorageSta === "Storage") {
-    console.log(1);
-
     return false;
   }
   return true;
@@ -402,11 +414,28 @@ const getTextWidth = (str: string) => {
 };
 
 const inStore = () => {
+  if (choiceList.value.length === 0) {
+      ElNotification({
+        title: "提示信息",
+        message: '请选择',
+        type: "warning",
+      });
+      return;
+  }
+  let arr: any = [];
+  choiceList.value.forEach((element) => {
+    if (
+      arr.some((obj: any) => obj.InspectionOrder === element.InspectionOrder)
+    ) {
+    } else {
+      arr.push(element);
+    }
+  });
   FinishedProductStorage({
     userAccount: loginName,
     Remark: "",
     IsPrint: IsPrint.value,
-    items: choiceList.value,
+    items: arr,
   }).then((res: any) => {
     if (res.success) {
       ElNotification({
@@ -414,6 +443,7 @@ const inStore = () => {
         message: res.msg,
         type: "success",
       });
+      multipleTable.value.clearSelection();
       getData(order.value);
     } else {
       ElNotification({
@@ -442,7 +472,7 @@ const handleCurrentChange = (val: any) => {
 
 const getScreenHeight = () => {
   nextTick(() => {
-    tableHeight.value = window.innerHeight - 280;
+    tableHeight.value = window.innerHeight - 310;
   });
 };
 </script>
