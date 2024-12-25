@@ -1,8 +1,5 @@
 <template>
     <div class="flex flex-col w-full h-full">
-      <!-- <div class="h-[40px] min-h-[40px] pl-2 pr-2 flex justify-between items-center">
-        <span class="text-[1.2rem]"> {{ opui.stationDec }} </span>
-      </div> -->
       <div class="w-full flex-1 flex">
         <!-- <div class="w-[calc(100%-350px)]"> -->
   
@@ -10,9 +7,6 @@
           <div>
             <div class="h-[35px] flex items-center justify-between text-lg text-[#fff] bg-[#006487]">
               <span class="ml-5"> 扫描条码</span>
-              <div>
-                <el-button type="warning" @click="reginVisible = true">维修登记</el-button>
-              </div>
             </div>
             <div class="h-[120px] p-5">
               <el-form class="inbound" ref="formRef" :inline="true" :model="form" label-width="auto"
