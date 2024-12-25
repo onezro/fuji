@@ -66,7 +66,7 @@
           </div>
           <div class="flex items-center">
             <el-button size="small" type="primary" class="mr-4" @click="inStore"
-              >入库</el-button
+              >申请入库</el-button
             >
             <el-checkbox v-model="IsPrint">是否打印</el-checkbox>
           </div>
