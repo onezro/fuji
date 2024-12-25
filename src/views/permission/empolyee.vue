@@ -69,7 +69,7 @@
           <el-input v-model="roleName" disabled></el-input>
         </el-form-item>
         <el-form-item label="当前角色" prop="role">
-          <el-tag :key="tag.RoleID" v-for="tag in hasRole" closable :disable-transitions="false" @close="handleClose(tag)">
+          <el-tag class="mb-2" :key="tag.RoleID" v-for="tag in hasRole" closable :disable-transitions="false" @close="handleClose(tag)">
             {{ tag.RoleName }}
           </el-tag>
         </el-form-item>
@@ -389,6 +389,10 @@ const getHasRole = () => {
   findEmployeeRoles(form.value.employeeId).then((data: any) => {
     if (data.code == 100200) {
       //  console.log(data);
+      if(data.content==null){
+        hasRole.value=[]
+        return
+      }
       hasRole.value = data.content;
 
     } else {

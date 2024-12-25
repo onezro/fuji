@@ -100,7 +100,7 @@ export function InspectionStationMoveOut(data: any) {
 //解绑
 export function UnbindTools(data: any) {
   return request({
-    url: "/api/inspection/UnbindTools",
+    url: "/api/plugin/UnbindTools",
     method: "post",
     params:{
       tool:data
