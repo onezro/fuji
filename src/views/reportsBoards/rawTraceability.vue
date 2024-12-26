@@ -27,7 +27,7 @@
                 @handleCurrentChange="handleCurrentChange" @rowClick="rowClick">
             </table-tem>
             <table-tem :show-index="true" size="small" :tableData="detailData" :tableHeight="detailHeight"
-                :columnData="detailColumn" :pageObj="pageObj1" @handleSizeChange="handleSizeChange1"
+                :columnData="detailColumn" :page-size="getDetailForm.pageSize" :current-page="getDetailForm.currentPage" :total="total2" @handleSizeChange="handleSizeChange1"
                 @handleCurrentChange="handleCurrentChange1">
             </table-tem>
         </el-card>
@@ -55,7 +55,7 @@ const getForm = ref({
     StartTime: "",
     EndTime: "",
     pageSize:100,
-    currentPage:1
+    currentPage:0
 });
 const searchDate = ref<any[]>([]);
 const headerRef = ref();
@@ -94,6 +94,13 @@ const columnData = reactive([
         align: "1",
     },
 ]);
+const getDetailForm=ref({
+    ContainerName: "",
+  MaterialName: "",
+  pageSize:30,
+  currentPage: 0
+})
+const total2=ref(0)
 const detailData = ref([]);
 const detailColumn = reactive([
     {
@@ -169,6 +176,7 @@ const detailColumn = reactive([
         align: "1",
     },
 ]);
+
 const pageObj1 = ref({
     pageSize: 100,
     currentPage: 1,
@@ -199,12 +207,15 @@ onBeforeMount(() => {
 
 const getData = () => {
     QueryMaterialCode(getForm.value).then((res: any) => { 
-        tableData.value=res.content
+        total1.value=res.content.total
+        tableData.value=res.content.data
     });
 };
 const rowClick = (val:any) => {
-    QueryContainerDetail(val.ContainerName).then((res:any)=>{
-        detailData.value=res.content
+    getDetailForm.value.ContainerName=val.ContainerName
+    QueryContainerDetail( getDetailForm.value).then((res:any)=>{
+        total2.value=res.content.total
+        detailData.value=res.content.data
     })
  };
 const handleSizeChange = (val: any) => {
@@ -217,11 +228,11 @@ const handleCurrentChange = (val: any) => {
     getData()
 };
 const handleSizeChange1 = (val: any) => {
-    pageObj1.value.currentPage = 1;
-    pageObj1.value.pageSize = val;
+    getDetailForm.value.currentPage = 1;
+    getDetailForm.value.pageSize = val;
 };
 const handleCurrentChange1 = (val: any) => {
-    pageObj1.value.currentPage = val;
+    getDetailForm.value.currentPage = val;
 };
 const getScreenHeight = () => {
     nextTick(() => {

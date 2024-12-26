@@ -942,7 +942,7 @@ const detailedData = reactive([
   {
     text: true,
     prop: "QtyRequested",
-    label: "请求数量",
+    label: "数量",
     width: "",
     min: true,
     align: "center",

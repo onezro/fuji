@@ -420,6 +420,16 @@ export function GetContainerComponentNew(data: any) {
     });
   }
 
+  //查询未入库的信息
+  export function InspectDetail(data: any) {
+    return request({
+      url: "/api/FinishedProductInspect/InspectDetail",
+      method: "post",
+      params: {
+        InspectionOrder: data
+      },
+    });
+  }
   //条码绑定
   export function AssociateOldContainerAndNewMfg(data: any) {
     return request({
