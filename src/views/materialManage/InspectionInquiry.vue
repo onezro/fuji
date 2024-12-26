@@ -61,7 +61,7 @@
         <div class="flex justify-between">
           <div>
             <el-button size="small" type="" class="mr-4" @click="getData(order)"
-              >刷新</el-button
+              >查询</el-button
             >
           </div>
           <div class="flex items-center">
@@ -111,21 +111,6 @@
                 {{ scope.row.InspectionOrder }}
               </div>
             </template>
-          </el-table-column>
-          <el-table-column
-            prop="PackagingBoxNumber"
-            label="包装箱号"
-            align="center"
-            :min-width="flexColumnWidth('包装箱号', 'PackagingBoxNumber')"
-          >
-          </el-table-column>
-          <!-- <el-table-column prop="StorageQty" label="包装箱数量" align="center":min-width="flexColumnWidth('包装箱数量', 'StorageQty')"> </el-table-column> -->
-          <el-table-column
-            prop="Quantity"
-            label="MES产品数量"
-            align="center"
-            :min-width="flexColumnWidth('MES产品数量', 'Quantity')"
-          >
           </el-table-column>
           <el-table-column
             prop="InspectionTime"
@@ -187,44 +172,98 @@
     <el-dialog
       v-model="dialogVisible"
       width="70%"
-      title="未入库的成品信息"
+      title="单号详情"
       align-center
       @close="filterTableData = []"
     >
       <div class="w-full">
         <div class="table_container">
-          <el-table
-            :data="filterTableData"
-            size="small"
-            stripe
-            border
-            fit
-            :tooltip-effect="'dark'"
-            :height="400"
-            ref="tableRef"
-          >
-            <el-table-column
-              type="index"
-              label="序号"
-              width="50"
-              align="center"
-              fixed
-            />
-            <el-table-column
-              prop="ContainerName"
-              label="成品条码"
-              :min-width="150"
-            >
-            </el-table-column>
-            <el-table-column prop="InspectionOrder" label="送检单">
-            </el-table-column>
+          <el-tabs v-model="activeName" type="border-card" class="demo-tabs">
+            <el-tab-pane label="未入库的成品信息" name="shelveMaterial">
+              <el-table
+                :data="filterTableData"
+                size="small"
+                stripe
+                border
+                fit
+                :tooltip-effect="'dark'"
+                :height="400"
+                ref="tableRef"
+              >
+                <el-table-column
+                  type="index"
+                  label="序号"
+                  width="50"
+                  align="center"
+                  fixed
+                />
+                <el-table-column
+                  prop="ContainerName"
+                  label="成品条码"
+                  :min-width="150"
+                >
+                </el-table-column>
+                <el-table-column prop="InspectionOrder" label="送检单">
+                </el-table-column>
 
-            <el-table-column
-              prop="PackagingBoxNumber"
-              label="箱条码"
-              align="center"
-            ></el-table-column>
-          </el-table>
+                <el-table-column
+                  prop="PackagingBoxNumber"
+                  label="箱条码"
+                  align="center"
+                ></el-table-column>
+              </el-table>
+            </el-tab-pane>
+            <el-tab-pane label="箱信息" name="boxMaterial">
+              <el-table
+                :data="boxTableData"
+                size="small"
+                stripe
+                border
+                fit
+                :tooltip-effect="'dark'"
+                :height="400"
+                ref="tableRef"
+              >
+                <el-table-column
+                  type="index"
+                  label="序号"
+                  width="50"
+                  align="center"
+                  fixed
+                />
+                <el-table-column
+                  prop="ContainerName"
+                  label="成品条码"
+                  :min-width="150"
+                >
+                </el-table-column>
+                <el-table-column prop="InspectionOrder" label="送检单">
+                </el-table-column>
+                <el-table-column
+                  prop="PackagingBoxNumber"
+                  label="箱条码"
+                  align="center"
+                ></el-table-column>
+                <el-table-column
+                  prop="Quantity"
+                  label="MES产品数量"
+                  align="center"
+                >
+                </el-table-column>
+                <el-table-column
+                  prop="State"
+                  label="送检结果"
+                  align="center"
+                >
+                  <template #default="scope">
+                    <div v-if="scope.row.State === 'Y'">合格</div>
+                    <div v-if="scope.row.QAResulStatet === 'N'">不合格</div>
+                    <div v-if="scope.row.State === null">送检中</div>
+                  </template>
+                </el-table-column>
+              </el-table>
+            </el-tab-pane>
+          </el-tabs>
         </div>
       </div>
       <!-- <template #footer>
@@ -251,6 +290,7 @@ import {
   QueryPartNotStorageInfo,
   FinishedProductStorage,
   MfgOrderDetail,
+  InspectDetail,
 } from "@/api/asyApi";
 import type { InspectionResult } from "@/typing";
 import {
@@ -271,9 +311,11 @@ const tableHeight = ref(0);
 const order = ref("");
 const choiceList = ref<any[]>([]);
 const filterTableData = ref<any[]>([]);
+const boxTableData = ref<any[]>([]);
 const interval = ref<any>(null);
 const multipleTable = ref();
 const IsPrint = ref(false);
+const activeName = ref("shelveMaterial");
 const getDataText = reactive({
   inspectType: "",
   inspect: "",
@@ -354,7 +396,18 @@ const getData = (str: any) => {
   }
 };
 
-const getDetail = (order: any) => {
+const getDetail = async (order: any) => {
+  await InspectDetail(order).then((res: any) => {
+    if (res.success) {
+      boxTableData.value = res.content;
+    } else {
+      ElNotification({
+        title: "提示信息",
+        message: res.msg,
+        type: "error",
+      });
+    }
+  });
   QueryPartNotStorageInfo(order).then((res: any) => {
     if (res.success) {
       dialogVisible.value = true;

@@ -403,5 +403,17 @@ export function QuerySMTDefectRecordDetail(data: any) {
     });
   }
 
+  //查询未入库的信息
+  export function InspectDetail(data: any) {
+    return request({
+      url: "/api/FinishedProductInspect/InspectDetail",
+      method: "post",
+      params: {
+        InspectionOrder: data
+      },
+    });
+  }
+
+
 
 
