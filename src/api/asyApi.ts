@@ -429,4 +429,3 @@ export function GetContainerComponentNew(data: any) {
     });
   }
 
-

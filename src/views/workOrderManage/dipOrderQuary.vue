@@ -183,8 +183,8 @@
               </el-table-column>
               <el-table-column label="操作" :width="80" align="center" fixed="right">
                 <template #default="scope">
-                  <el-tooltip content="解除" placement="top" v-if="scope.row.FID == null">
-                    <el-button :disabled="scope.row.Status!==2" type="primary" icon="Unlock" size="small" @click.prevent="handleRestore(scope.row)" />
+                  <el-tooltip content="解除并重置" placement="top" v-if="scope.row.FID == null">
+                    <el-button :disabled="scope.row.Status!==2" type="warning" icon="Refresh" size="small" @click.prevent="handleRestore(scope.row)" />
                   </el-tooltip>
                 </template>
               </el-table-column>
