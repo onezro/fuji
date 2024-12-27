@@ -1,7 +1,7 @@
 const regexPcb = /^P\d+$/; // PCB
 
 const regexResult = /^(OK|NG)$/i; // OK NG
-const regexBDY = /^BDY.*$/; // BDY
+const regexBDY = /^BD.*$/; // BDY
 const regexSCR = /^S[A-Za-z\d]+$/;
 // 工装治具
 

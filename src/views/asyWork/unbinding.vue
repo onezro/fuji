@@ -88,7 +88,7 @@
         <div class="h-[30px] pl-3 flex items-center text-base text-[#fff] bg-[#006487]">
           解绑
         </div>
-        <table-temp :showIndex="true" :show-select="true" :tableData="bindtableData" :tableHeight="300"
+        <table-temp ref="tableRef" :showIndex="true" :show-select="true" :tableData="bindtableData" :tableHeight="300"
           :columnData="bindColumn" @handleSelectionChange="handleSelectionChange"></table-temp>
       </div>
       <template #footer>
@@ -298,8 +298,8 @@ const bindColumn = reactive([
 
   {
     text: true,
-    prop: "绑定类型",
-    label: "compType",
+    prop: "compType",
+    label: "绑定类型",
     width: "",
     align: "1",
   },
@@ -311,6 +311,7 @@ const bindColumn = reactive([
     align: "1",
   },
 ]);
+const tableRef=ref()
 
 onBeforeMount(() => {
   getScreenHeight();
@@ -412,6 +413,8 @@ const formText = (data: string) => {
 const handleSelectionChange = (data: any) => {
   let content = cloneDeep(data);
   changeList.value = content;
+  console.log(changeList.value);
+  
 };
 
 //过站
@@ -424,6 +427,10 @@ const getChange = () => {
     if (res.success) {
       bindVisible.value = true;
       bindtableData.value = res.content;
+      bindtableData.value.forEach((row:any)=>{
+        tableRef.value.toggleRowSelection(row)
+      })
+    
     }
     barCode.value = "";
   });
@@ -435,26 +442,26 @@ const bindCancel = () => {
 };
 const bindSubmit = () => {
   let data: BindFrom = {
-    MfgOrderName: "",
-    ProductContainer: "",
+    MfgOrderName: stopsForm.value.MfgOrderName,
+    ProductContainer: stopsForm.value.ContainerName,
     compcontent: [],
-    workstationName: "",
+    workstationName: opui.station,
     userAccount: userStore.getUserInfo,
   };
   data.compcontent = changeList.value.map((c: any) => {
     return {
-      CompType: c.CompType,
-      Contents: c.Contents,
+      CompType: c.compType,
+      Contents: c.CompContent,
     };
   });
   DisAssemblySynthesis(data).then((res: any) => {
-    // msgType.value = res.success;
-    // msgTitle.value = res.msg;
-    ElNotification({
-      title: "提示信息",
-      message: res.msg,
-      type: res.success ? "success" : "error",
-    });
+    msgType.value = res.success;
+    msgTitle.value = res.msg;
+    // ElNotification({
+    //   title: "提示信息",
+    //   message: res.msg,
+    //   type: res.success ? "success" : "error",
+    // });
     if (res.success) {
       changeList.value = [];
       bindtableData.value = [];

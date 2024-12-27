@@ -26,8 +26,8 @@
                 </el-tooltip>
               </el-form-item>
               <el-form-item v-for="f in formHeader" :key="f.value" :label="f.label">
-                <span class="font-bold text-lg leading-[30px]" :class="f.value == 'passNum' ? 'text-[#00B400]' : ''">
-                  {{ formText(f.value) }}</span>
+                <div class="font-bold text-lg leading-[30px] w-full" :class="[f.value == 'TodayNum' ? 'text-[#00B400] text-center' : '',f.value == 'TotalNum' ? 'text-[#006487] text-center':'']">
+                  {{ formText(f.value) }}</div>
               </el-form-item>
             </el-form>
           </div>
@@ -40,7 +40,7 @@
             <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
               <span class="ml-5"> 扫描条码</span>
             </div>
-            <div class="h-[60px] pt-3 pr-5 pl-5">
+            <div class="h-[100px] pt-3 pr-5 pl-5">
               <el-form class="inbound" ref="formRef" :inline="true" :model="form" label-width="auto"
                 @submit.native.prevent>
                 <el-form-item label="扫描条码" class="mb-2">
@@ -90,7 +90,7 @@
           <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
             <span class="ml-5">当前MES码</span>
           </div>
-          <div class="h-[60px] pt-3 pr-5 pl-5">
+          <div class="h-[100px] pt-3 pr-5 pl-5">
             <el-form class="inbound" ref="formRef" :inline="true" :model="form" label-width="auto"
               @submit.native.prevent>
               <el-form-item label="" class="mb-2">
@@ -622,8 +622,8 @@ const materialCurrentChange = (val: any) => {
 
 const getScreenHeight = () => {
   nextTick(() => {
-    tableHeight.value = window.innerHeight - 220;
-    boxHeight.value = window.innerHeight - 400;
+    tableHeight.value = window.innerHeight - 255;
+    boxHeight.value = window.innerHeight - 440;
   });
 };
 </script>
