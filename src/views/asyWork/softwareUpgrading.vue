@@ -26,10 +26,45 @@
                 </el-tooltip>
               </el-form-item>
               <el-form-item v-for="f in formHeader" :key="f.value" :label="f.label">
-                <div class="font-bold text-lg leading-[30px] w-full" :class="[f.value == 'TodayNum' ? 'text-[#00B400] text-center' : '',f.value == 'TotalNum' ? 'text-[#006487] text-center':'']">
-                  {{ formText(f.value) }}</div>
+                <div class="font-bold text-lg leading-[30px] w-full" :class="[
+                  f.value == 'TodayNum' ? 'text-[#00B400] text-center' : '',
+                  f.value == 'TotalNum' ? 'text-[#006487] text-center' : '',
+                ]">
+                  {{ formText(f.value) }}
+                </div>
               </el-form-item>
+              
+              <el-form-item label="过序汇总" class="item-form">
+                <div class="flex justify-center items-center gap-4 p-1  border-2 border-solid border-[#f48000] pl-10 pr-10">
+                <div class="font-bold text-xl  text-center  text-[#f48000]">
+                  {{ form.TotalNum }}
+                </div> </div>
+              </el-form-item>
+           
+          
+              <el-form-item label="当日过序" class="item-form">
+                <div class="flex justify-center items-center gap-4 p-1 border-2 border-solid  border-[#09bb07] pl-10 pr-10 ">
+                <div class="font-bold text-xl  text-center  text-[#09bb07]">
+                  {{ form.TodayNum }}
+                </div>
+              </div>
+              </el-form-item>
+           
             </el-form>
+            <!-- <div class="flex justify-center items-center pt-1 mb-2 border-2 border-solid border-[#f48000]">
+              <el-form-item label="过序汇总" class="mb-1">
+                <div class="font-bold text-xl text-[#f48000]">
+                  {{ form.TotalNum }}
+                </div>
+              </el-form-item>
+            </div>
+            <div class="flex justify-center items-center gap-4 p-1 border-2 border-solid border-[#09bb07]">
+              <el-form-item label="当日过序" class="mb-1 text-[#09bb07]">
+                <div class="font-bold text-xl leading-[30px] text-[#09bb07]">
+                  {{ form.TodayNum }}
+                </div>
+              </el-form-item>
+            </div> -->
           </div>
         </div>
       </div>
@@ -241,20 +276,20 @@ const formHeader = reactive<InstanceType<typeof FormHeader>[]>([
     type: "textarea",
     width: 300,
   },
-  {
-    label: "工序汇总",
-    value: "TotalNum",
-    disabled: true,
-    type: "input",
-    width: "",
-  },
-  {
-    label: "当日过序",
-    value: "TodayNum",
-    disabled: true,
-    type: "input",
-    width: "",
-  },
+  // {
+  //   label: "工序汇总",
+  //   value: "TotalNum",
+  //   disabled: true,
+  //   type: "input",
+  //   width: "",
+  // },
+  // {
+  //   label: "当日过序",
+  //   value: "TodayNum",
+  //   disabled: true,
+  //   type: "input",
+  //   width: "",
+  // },
 ]);
 const columnData1 = reactive([
   {
@@ -329,7 +364,7 @@ const defaultSelectVal = ref<string[]>([]);
 const isLoding = ref("");
 const isActive = ref(false);
 
-const errorRow = ref('')
+const errorRow = ref("");
 
 onBeforeMount(() => {
   getScreenHeight();
@@ -385,7 +420,8 @@ const geTodayData = () => {
 //获取工单软件信息
 const getOrderMess = () => {
   // console.log(form.value.BD_ProductModel);
-  let ProductModel=form.value.BD_ProductModel==null?"":form.value.BD_ProductModel
+  let ProductModel =
+    form.value.BD_ProductModel == null ? "" : form.value.BD_ProductModel;
   QueryOrderSoftwareInfo(ProductModel).then((res: any) => {
     if (res.content) {
       tableData1.value = res.content.SoftwareList;
@@ -412,7 +448,7 @@ const reset = () => {
 const handleSelectionChange = (data: any) => {
   let content = cloneDeep(data);
   // console.log(data);
-  
+
   changeList.value = content;
 };
 
@@ -436,7 +472,6 @@ const scan = () => {
         }
       }
     });
-
   } else {
     if (SoftwareStatus.value) {
       AutoComparisonInfoMovestd({
@@ -455,7 +490,7 @@ const scan = () => {
           currentCode.value = "";
         } else {
           if (res.content) {
-            errorRow.value = res.content.SoftwareName
+            errorRow.value = res.content.SoftwareName;
             console.log(errorRow);
           }
           typeColor.value = "red";
@@ -538,17 +573,12 @@ const getOrderData = () => {
   );
 };
 
-const tableRowClassName = ({
-  row,
-}: {
-  row: any;
-  rowIndex: number;
-}) => {
+const tableRowClassName = ({ row }: { row: any; rowIndex: number }) => {
   // 在这里判断行数据是否符合条件
   if (row.SoftwareName === errorRow.value) {
     tableData1.value = tableData1.value;
     return "has-material-row";
-  }else {
+  } else {
   }
   return "";
 };
@@ -567,7 +597,7 @@ const radioChange = (args: any) => {
     // detailsData.value = []
     tableData1.value = [];
   } else {
-    if (args[1] !== form.value.MfgOrderName ||form.value.MfgOrderName == "") {
+    if (args[1] !== form.value.MfgOrderName || form.value.MfgOrderName == "") {
       form.value.MfgOrderName = args[0].MfgOrderName;
       form.value.ProductName = args[0].ProductName;
       form.value.ProductDesc = args[0].ProductDesc;
@@ -581,12 +611,12 @@ const radioChange = (args: any) => {
       form.value.ERPOrder = args[0].ERPOrder;
       stopsForm.value.orderName = args[0].MfgOrderName;
       hisForm.value.MfgOrderName = args[0].MfgOrderName;
-    
+
       // getMaterialRequired();
     } else {
     }
-    msgType.value=true
-    msgTitle.value=''
+    msgType.value = true;
+    msgTitle.value = "";
     getHisData();
     getOrderMess();
   }
@@ -631,6 +661,9 @@ const getScreenHeight = () => {
 <style lang="scss">
 .inbound .el-form-item__label {
   font-size: 16px;
+}
+.item-form .el-form-item__label-wrap{
+  align-items: center;
 }
 
 .setwidth {
@@ -717,6 +750,6 @@ const getScreenHeight = () => {
 }
 
 .my-table .has-material-row {
-  --el-table-tr-bg-color:rgb(255 243 243);
+  --el-table-tr-bg-color: rgb(255 243 243);
 }
 </style>

@@ -340,6 +340,13 @@ export function OrderOffline(data: any) {
         data
     });
 }
+export function OrderWorkFlow(data: any) {
+    return request({
+        url: "/api/order/OrderWorkFlow",
+        method: "post",
+        data
+    });
+}
 //ECN查询
 export function GetECNorder(data: any) {
     return request({

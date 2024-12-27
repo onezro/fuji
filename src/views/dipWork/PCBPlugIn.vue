@@ -13,6 +13,7 @@
           <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
             <span class="ml-5">工装治具</span>
           </div>
+          <!-- <el-scrollbar :height="leftBoxH + 'px'" class="p-3"> -->
           <div class="p-3 overflow-y-auto" :style="{ height: leftBoxH + 'px' }" ref="listContainer">
             <el-checkbox-group v-model="checked">
               <el-card shadow="always" class="mb-2" :class="{ 'active': t.ToolName === checked[0] }"
@@ -77,6 +78,7 @@
               </el-card>
             </el-checkbox-group>
           </div>
+           <!-- </el-scrollbar> -->
         </div>
       </div>
       <div class="w-[calc(100%-350px)]">
@@ -1051,6 +1053,8 @@ const toolsOpen = () => {
 const toolsCancel = () => {
   tools.value = ""
   toolsVisible.value = false
+  msgToolTitle.value = '';
+  msgToolType.value = true;
   inputRef.value.focus()
   getFocus()
 }
@@ -1073,6 +1077,9 @@ const toolNewOpen = () => {
 const toolNewCancel = () => {
   toolNewFormRef.value.resetFields()
   toolNewVisible.value = false
+   barMsg.value='请先扫描旧治具编码'
+   msgNewTitle.value=""
+   msgNewType.value=true
   inputRef.value.focus()
 }
 const getToolOld = () => {
