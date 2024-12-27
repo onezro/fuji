@@ -403,6 +403,23 @@ export function QuerySMTDefectRecordDetail(data: any) {
     });
   }
 
+//获取解绑数据
+export function GetContainerComponentNew(data: any) {
+    return request({
+      url: "/api/ReturnRepair/GetContainerComponentNew",
+      method: "post",
+      data
+    });
+  }
+//组件解绑
+  export function DisAssemblySynthesis(data: any) {
+    return request({
+      url: "/api/ReturnRepair/DisAssemblySynthesis",
+      method: "post",
+      data
+    });
+  }
+
   //查询未入库的信息
   export function InspectDetail(data: any) {
     return request({
@@ -413,7 +430,12 @@ export function QuerySMTDefectRecordDetail(data: any) {
       },
     });
   }
-
-
-
+  //条码绑定
+  export function AssociateOldContainerAndNewMfg(data: any) {
+    return request({
+      url: "/api/ReturnRepair/AssociateOldContainerAndNewMfg",
+      method: "post",
+      data
+    });
+  }
 

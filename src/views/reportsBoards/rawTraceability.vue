@@ -7,10 +7,6 @@
                         <el-date-picker :shortcuts="shortcuts" v-model="searchDate" value-format="YYYY-MM-DD"
                             type="daterange" range-separator="-" size="small" style="width: 200px" clearable />
                     </el-form-item>
-                    <!-- <el-form-item label="计划单号" class="mb-2">
-                        <el-input style="width: 150px" v-model="getForm.order" placeholder="" clearable
-                            @change="getData"></el-input>
-                    </el-form-item> -->
                     <el-form-item label="物料编码" class="mb-2">
                         <el-input style="width: 150px" v-model="getForm.ContainerName" placeholder="" clearable
                             @change="getData"></el-input>
@@ -19,26 +15,19 @@
                         <el-input style="width: 150px" v-model="getForm.MaterialName" placeholder="" clearable
                             @change="getData"></el-input>
                     </el-form-item>
-                    <!-- <el-form-item label="物料唯一码" class="mb-2">
-                        <el-input style="width: 150px" v-model="getForm.pcb" placeholder="" clearable
-                            @change="getData"></el-input>
-                    </el-form-item> -->
-
                     <el-form-item class="mb-2">
                         <el-button type="primary" @click="getData()">查询</el-button>
                         <el-button type="warning">导出</el-button>
                     </el-form-item>
-                    <!-- <el-form-item  class="mb-2">
-                       
-                    </el-form-item> -->
                 </el-form>
             </div>
+
             <table-tem :show-index="true" size="small" :tableData="tableData" :tableHeight="tableHeight"
-                :columnData="columnData" :pageObj="pageObj" @handleSizeChange="handleSizeChange"
+                :columnData="columnData" :page-size="getForm.pageSize" :current-page="getForm.currentPage" :total="total1" @handleSizeChange="handleSizeChange"
                 @handleCurrentChange="handleCurrentChange" @rowClick="rowClick">
             </table-tem>
             <table-tem :show-index="true" size="small" :tableData="detailData" :tableHeight="detailHeight"
-                :columnData="detailColumn" :pageObj="pageObj1" @handleSizeChange="handleSizeChange1"
+                :columnData="detailColumn" :page-size="getDetailForm.pageSize" :current-page="getDetailForm.currentPage" :total="total2" @handleSizeChange="handleSizeChange1"
                 @handleCurrentChange="handleCurrentChange1">
             </table-tem>
         </el-card>
@@ -57,7 +46,7 @@ import {
     onBeforeMount,
     onBeforeUnmount,
 } from "vue";
-import tableTem from "@/components/tableTem/index.vue";
+import tableTem from "@/components/tableTem/noAuto.vue";
 import tableTemp from "@/components/tableTemp/index.vue";
 import { shortcuts, setTodayDate, setLastDate } from "@/utils/dataMenu";
 const getForm = ref({
@@ -65,14 +54,18 @@ const getForm = ref({
     MaterialName: "",
     StartTime: "",
     EndTime: "",
+    pageSize:100,
+    currentPage:0
 });
 const searchDate = ref<any[]>([]);
 const headerRef = ref();
 const tableHeight = ref(0);
 const detailHeight = ref(0);
 const tableData = ref<any>([]);
+const total1=ref(1)
 const pageObj = ref({
     pageSize: 100,
+    total:0,
     currentPage: 1,
 });
 const columnData = reactive([
@@ -101,6 +94,13 @@ const columnData = reactive([
         align: "1",
     },
 ]);
+const getDetailForm=ref({
+    ContainerName: "",
+  MaterialName: "",
+  pageSize:30,
+  currentPage: 0
+})
+const total2=ref(0)
 const detailData = ref([]);
 const detailColumn = reactive([
     {
@@ -176,6 +176,7 @@ const detailColumn = reactive([
         align: "1",
     },
 ]);
+
 const pageObj1 = ref({
     pageSize: 100,
     currentPage: 1,
@@ -206,27 +207,32 @@ onBeforeMount(() => {
 
 const getData = () => {
     QueryMaterialCode(getForm.value).then((res: any) => { 
-        tableData.value=res.content
+        total1.value=res.content.total
+        tableData.value=res.content.data
     });
 };
 const rowClick = (val:any) => {
-    QueryContainerDetail(val.ContainerName).then((res:any)=>{
-        detailData.value=res.content
+    getDetailForm.value.ContainerName=val.ContainerName
+    QueryContainerDetail( getDetailForm.value).then((res:any)=>{
+        total2.value=res.content.total
+        detailData.value=res.content.data
     })
  };
 const handleSizeChange = (val: any) => {
-    pageObj.value.currentPage = 1;
-    pageObj.value.pageSize = val;
+    getForm.value.currentPage = 1;
+    getForm.value.pageSize = val;
+    getData()
 };
 const handleCurrentChange = (val: any) => {
-    pageObj.value.currentPage = val;
+    getForm.value.currentPage = val;
+    getData()
 };
 const handleSizeChange1 = (val: any) => {
-    pageObj1.value.currentPage = 1;
-    pageObj1.value.pageSize = val;
+    getDetailForm.value.currentPage = 1;
+    getDetailForm.value.pageSize = val;
 };
 const handleCurrentChange1 = (val: any) => {
-    pageObj1.value.currentPage = val;
+    getDetailForm.value.currentPage = val;
 };
 const getScreenHeight = () => {
     nextTick(() => {

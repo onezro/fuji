@@ -13,3 +13,18 @@ export function QueryContainerDetail(data: any) {
         data,
     });
 }
+export function QueryMESContainer(data: any) {
+    return request({
+      url: "/api/BurningData/QueryMESContainer",
+      method: "post",
+      data
+    });
+  }
+
+  export function InsequenceRetraceFirstInfo(data: any) {
+    return request({
+      url: "/api/BurningData/InsequenceRetraceFirstInfo",
+      method: "post",
+      data
+    });
+  }
