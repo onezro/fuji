@@ -9,7 +9,7 @@
           size="small"
           label-width="auto"
         >
-          <el-form-item label="日期" class="mb-2">
+          <el-form-item label="申请日期" class="mb-2">
             <el-date-picker
               :shortcuts="shortcuts"
               v-model="date"
@@ -120,8 +120,8 @@
           ></el-table-column>
           <el-table-column
             prop="ChangeOrderName"
-            label="转单计划号"
-            :min-width="flexColumnWidthHis('转单计划号', 'ChangeOrderName')"
+            label="目标计划号"
+            :min-width="flexColumnWidthHis('目标计划号', 'ChangeOrderName')"
             align="center"
           ></el-table-column>
           <el-table-column

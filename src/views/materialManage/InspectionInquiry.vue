@@ -124,6 +124,11 @@
             label="送检结果"
             align="center"
             :min-width="flexColumnWidth('送检结果', 'QAResult')"
+            :filters="[
+              { text: '合格', value: 'Y' },
+              { text: '不合格', value: 'N' },
+              { text: '送检中', value: null },
+            ]"
           >
             <template #default="scope">
               <div v-if="scope.row.QAResult === 'Y'">合格</div>
@@ -250,11 +255,7 @@
                   align="center"
                 >
                 </el-table-column>
-                <el-table-column
-                  prop="State"
-                  label="送检结果"
-                  align="center"
-                >
+                <el-table-column prop="State" label="送检结果" align="center">
                   <template #default="scope">
                     <div v-if="scope.row.State === 'Y'">合格</div>
                     <div v-if="scope.row.QAResulStatet === 'N'">不合格</div>

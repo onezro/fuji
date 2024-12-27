@@ -9,7 +9,7 @@
           size="small"
           label-width="auto"
         >
-          <el-form-item label="日期" class="mb-2">
+          <el-form-item label="申请日期" class="mb-2">
             <el-date-picker
               :shortcuts="shortcuts"
               v-model="date"

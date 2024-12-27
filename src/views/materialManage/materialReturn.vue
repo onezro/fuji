@@ -9,7 +9,7 @@
           size="small"
           label-width="auto"
         >
-          <el-form-item label="日期" class="mb-2">
+          <el-form-item label="申请日期" class="mb-2">
             <el-date-picker
               :shortcuts="shortcuts"
               v-model="date"
@@ -173,7 +173,7 @@
               </el-select>
             </el-form-item>
             <el-form-item label="退料原因">
-              <el-select v-model="returnReason" placeholder="Select" style="width: 152px" @change="console.log(returnReason)">
+              <el-select v-model="returnReason" placeholder="" style="width: 152px" :disabled="returnType === '1'">
                 <el-option v-for="item in returnReasonList" :key="item.Value" :label="item.Text" :value="item.Value" />
               </el-select>
             </el-form-item>
@@ -347,7 +347,7 @@ const detailedHeight = ref(0);
 const choiceId = ref("");
 const returnType = ref("1");
 const returnTypeList = ref<any[]>([]);
-const returnReason = ref("1");
+const returnReason = ref("");
 const returnReasonList = ref<any[]>([]);
 const iReturnTypeList = ref<any[]>([]);
 const table = ref();
@@ -547,7 +547,7 @@ const getTypeList = () => {
   });
   GetComboBoxList("ReturnReason").then((res: any) => {
     returnReasonList.value = res.content;
-    returnReason.value = res.content[0].Value;
+    // returnReason.value = res.content[0].Value;
   });
 };
 
@@ -847,6 +847,11 @@ const tableRowClassName = ({
 //改变
 const typeChange = () => {
   table.value.clearSelection();
+  if (returnType.value === "1") {
+    returnReason.value = '';
+  }else {
+    returnReason.value = returnReasonList.value[0].Value;
+  }
 };
 
 const close = () => {
