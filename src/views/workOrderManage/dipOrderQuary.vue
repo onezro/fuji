@@ -259,6 +259,7 @@ import {
   QueryOrderLine,
   OrderOffline,
   ReleaseToolTask,
+  OrderWorkFlow
 } from "@/api/operate";
 import {
   ref,
@@ -648,16 +649,22 @@ const tabChange = (name: any) => {
       }
     });
   } else if (name === "工艺流程") {
-    findProductSpec(productChoice.value).then((res: any) => {
-      if (!res || res.content.lenght === 0) {
-        return;
+    OrderWorkFlow({ orderName: orderChoice.value }).then((res: any) => {
+      if (res.content != null && res.content.lenght != 0) {
+        productObj.value = {
+          WorkflowDesc: res.content[0].WorkflowDesc,
+          WorkflowName: res.content[0].WorkflowName,
+        };
+        productTableData.value = res.content;
+      } else {
+        productObj.value = {
+          WorkflowDesc: "",
+          WorkflowName: "",
+        };
+        productTableData.value = []
       }
-      productObj.value = {
-        WorkflowDesc: res.content[0].WorkflowDesc,
-        WorkflowName: res.content[0].WorkflowName,
-      };
-      productTableData.value = res.content;
-    });
+
+    })
   } else if (name === "工治具明细") {
     QueryOrderToolsData(orderChoice.value).then((res: any) => {
       if (!res || res.content.lenght === 0) {

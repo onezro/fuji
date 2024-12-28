@@ -185,10 +185,11 @@
               </el-table-column>
               <el-table-column prop="CreatedOn" label="操作时间" :min-width="150" align="center">
               </el-table-column>
-              <el-table-column  label="操作" :width="80" align="center" fixed="right">
+              <el-table-column label="操作" :width="80" align="center" fixed="right">
                 <template #default="scope">
                   <el-tooltip content="解除并重置" placement="top" v-if="scope.row.FID == null">
-                    <el-button :disabled="scope.row.Status!==2" type="warning"  icon="Refresh" size="small" @click.prevent="handleRestore(scope.row)" />
+                    <el-button :disabled="scope.row.Status !== 2" type="warning" icon="Refresh" size="small"
+                      @click.prevent="handleRestore(scope.row)" />
                   </el-tooltip>
                 </template>
               </el-table-column>
@@ -246,7 +247,7 @@
 
 <script lang="ts" setup>
 import { OrganData } from "@/utils/dataMenu";
-import { ElNotification,ElMessageBox } from "element-plus";
+import { ElNotification, ElMessageBox } from "element-plus";
 import { cloneDeep } from "lodash-es";
 import tableTem from "@/components/tableTem/index.vue";
 import { useUserStoreWithOut } from "@/stores/modules/user";
@@ -262,7 +263,8 @@ import {
   OrderOnline,
   QueryOrderLine,
   OrderOffline,
-  ReleaseToolTask
+  ReleaseToolTask,
+  OrderWorkFlow
 } from "@/api/operate";
 import {
   ref,
@@ -656,16 +658,32 @@ const tabChange = (name: any) => {
       }
     });
   } else if (name === "工艺流程") {
-    findProductSpec(productChoice.value).then((res: any) => {
-      if (!res || res.content.lenght === 0) {
-        return;
+    OrderWorkFlow({ orderName: orderChoice.value }).then((res: any) => {
+      if (res.content != null && res.content.lenght != 0) {
+        productObj.value = {
+          WorkflowDesc: res.content[0].WorkflowDesc,
+          WorkflowName: res.content[0].WorkflowName,
+        };
+        productTableData.value = res.content;
+      } else {
+        productObj.value = {
+          WorkflowDesc: "",
+          WorkflowName: "",
+        };
+        productTableData.value = []
       }
-      productObj.value = {
-        WorkflowDesc: res.content[0].WorkflowDesc,
-        WorkflowName: res.content[0].WorkflowName,
-      };
-      productTableData.value = res.content;
-    });
+
+    })
+    // findProductSpec(productChoice.value).then((res: any) => {
+    //   if (!res || res.content.lenght === 0) {
+    //     return;
+    //   }
+    //   productObj.value = {
+    //     WorkflowDesc: res.content[0].WorkflowDesc,
+    //     WorkflowName: res.content[0].WorkflowName,
+    //   };
+    //   productTableData.value = res.content;
+    // });
   } else if (name === "工治具明细") {
     QueryOrderToolsData(orderChoice.value).then((res: any) => {
       if (!res || res.content.lenght === 0) {
@@ -678,13 +696,13 @@ const tabChange = (name: any) => {
     });
   }
 };
-const getToolData=()=>{
+const getToolData = () => {
   QueryOrderToolsData(orderChoice.value).then((res: any) => {
-      if (!res || res.content.lenght === 0) {
-        return;
-      }
-      toolTableData.value = toolOrganData(res.content);
-    });
+    if (!res || res.content.lenght === 0) {
+      return;
+    }
+    toolTableData.value = toolOrganData(res.content);
+  });
 }
 
 const pageObj = ref({
@@ -808,7 +826,7 @@ const handleRestore = (val: any) => {
           message: res.msg,
           type: "success",
         });
-        if(res.success){
+        if (res.success) {
           getToolData()
         }
       });
