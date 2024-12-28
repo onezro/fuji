@@ -22,18 +22,35 @@
             />
           </el-form-item>
           <el-form-item label="生产计划号" class="mb-2">
-            <el-input v-model="historyForm.MfgOrderName" placeholder=""></el-input>
+            <el-input
+              v-model="historyForm.MfgOrderName"
+              placeholder=""
+            ></el-input>
           </el-form-item>
           <el-form-item label="申请类型" class="mb-2">
-            <el-select v-model="historyForm.QualityIsGood" placeholder="" style="width: 150px" clearable>
-              <el-option v-for="item in returnTypeList" :key="item.Value" :label="item.Text" :value="item.Value" />
+            <el-select
+              v-model="historyForm.QualityIsGood"
+              placeholder=""
+              style="width: 150px"
+              clearable
+            >
+              <el-option
+                v-for="item in returnTypeList"
+                :key="item.Value"
+                :label="item.Text"
+                :value="item.Value"
+              />
             </el-select>
           </el-form-item>
           <el-form-item label="" class="mb-2">
             <el-button type="primary" @click="getHistory()">查询</el-button>
           </el-form-item>
           <el-form-item label="" class="mb-2">
-            <el-button type="warning" @click="(dialogVisible = true), findOrderData()">申请</el-button>
+            <el-button
+              type="warning"
+              @click="(dialogVisible = true), findOrderData()"
+              >申请</el-button
+            >
           </el-form-item>
         </el-form>
       </div>
@@ -50,17 +67,39 @@
           @rowClick="rowClick"
         >
         </table-tem> -->
-        <el-table :data="historyTable.slice(
-          (pageObjHis.currentPage - 1) * pageObjHis.pageSize,
-          pageObjHis.currentPage * pageObjHis.pageSize
-        )
-          " size="small" stripe border fit :tooltip-effect="'dark'" :height="hisHeight"
-          @selection-change="handleSelectionChange" @rowClick="rowClick">
-          <el-table-column type="index" label="序号" width="50" align="center" />
-          <el-table-column prop="ApplyNo" label="单号" :min-width="flexColumnWidthHis('单号', 'ApplyNo')"
-            align="center"></el-table-column>
-          <el-table-column prop="QualityIsGood" label="申请类型" :min-width="flexColumnWidthHis('申请类型型', 'QualityIsGood')"
-            align="center">
+        <el-table
+          :data="
+            historyTable.slice(
+              (pageObjHis.currentPage - 1) * pageObjHis.pageSize,
+              pageObjHis.currentPage * pageObjHis.pageSize
+            )
+          "
+          size="small"
+          stripe
+          border
+          fit
+          :tooltip-effect="'dark'"
+          :height="hisHeight"
+          @rowClick="rowClick"
+        >
+          <el-table-column
+            type="index"
+            label="序号"
+            width="50"
+            align="center"
+          />
+          <el-table-column
+            prop="ApplyNo"
+            label="单号"
+            :min-width="flexColumnWidthHis('单号', 'ApplyNo')"
+            align="center"
+          ></el-table-column>
+          <el-table-column
+            prop="QualityIsGood"
+            label="申请类型"
+            :min-width="flexColumnWidthHis('申请类型型', 'QualityIsGood')"
+            align="center"
+          >
             <template #default="scope">
               <div>{{ returnTypeText(scope.row.QualityIsGood) }}</div>
             </template>
@@ -82,7 +121,11 @@
             label="退料原因"
             :min-width="flexColumnWidthHis('退料原因', 'QualityReason')"
             align="center"
-          ></el-table-column>
+          >
+            <template #default="scope">
+              <div>{{ returnTypeReason(scope.row.QualityReason) }}</div>
+            </template>
+          </el-table-column>
           <el-table-column
             prop="ProductName"
             label="产品编码"
@@ -92,6 +135,8 @@
           <el-table-column
             prop="ProductDesc"
             label="产品描述"
+      width="350"
+      show-overflow-tooltip
             :min-width="flexColumnWidthHis('产品描述', 'ProductDesc')"
           ></el-table-column>
           <!-- <el-table-column
@@ -99,33 +144,75 @@
             label="生产计划号状态"
             :min-width="flexColumnWidthHis('生产计划号状态', 'OrderStatusDesc')"
           ></el-table-column> -->
-          <el-table-column prop="Qty" label="计划数量" :min-width="flexColumnWidthHis('计划数量', 'Qty')"></el-table-column>
-          <el-table-column prop="PlannedStartDate" label="计划开始时间"
-            :min-width="flexColumnWidthHis('计划开始时间', 'PlannedStartDate')" align="center"></el-table-column>
-          <el-table-column prop="ApplyTime" label="申请时间" :min-width="flexColumnWidthHis('申请时间', 'ApplyTime')"
-            align="center"></el-table-column>
-          <el-table-column prop="Applicant" label="申请人" :min-width="flexColumnWidthHis('申请人', 'Applicant')"
-            align="center"></el-table-column>
+          <el-table-column
+            prop="Qty"
+            label="计划数量"
+            :min-width="flexColumnWidthHis('计划数量', 'Qty')"
+          ></el-table-column>
+          <el-table-column
+            prop="PlannedStartDate"
+            label="计划开始时间"
+            :min-width="flexColumnWidthHis('计划开始时间', 'PlannedStartDate')"
+            align="center"
+          ></el-table-column>
+          <el-table-column
+            prop="ApplyTime"
+            label="申请时间"
+            :min-width="flexColumnWidthHis('申请时间', 'ApplyTime')"
+            align="center"
+          ></el-table-column>
+          <el-table-column
+            prop="Applicant"
+            label="申请人"
+            :min-width="flexColumnWidthHis('申请人', 'Applicant')"
+            align="center"
+          ></el-table-column>
         </el-table>
         <div class="mt-2 mb-2">
-          <el-pagination :size="'default'" background @size-change="handleSizeChangeHis"
-            @current-change="handleCurrentChangeHis" :pager-count="5" :current-page="pageObjHis.currentPage"
-            :page-size="pageObjHis.pageSize" :page-sizes="[30, 50, 100, 200, 300]"
-            layout="total,sizes, prev, pager, next" :total="historyTable.length">
+          <el-pagination
+            :size="'default'"
+            background
+            @size-change="handleSizeChangeHis"
+            @current-change="handleCurrentChangeHis"
+            :pager-count="5"
+            :current-page="pageObjHis.currentPage"
+            :page-size="pageObjHis.pageSize"
+            :page-sizes="[30, 50, 100, 200, 300]"
+            layout="total,sizes, prev, pager, next"
+            :total="historyTable.length"
+          >
           </el-pagination>
         </div>
       </div>
       <div class="w-full">
-        <table-tem size="small" :show-index="true" :tableData="detailedTable" :tableHeight="detailedHeight"
-          :columnData="detailedData" :pageObj="detailedPageObj">
+        <table-tem
+          size="small"
+          :show-index="true"
+          :tableData="detailedTable"
+          :tableHeight="detailedHeight"
+          :columnData="detailedData"
+          :pageObj="detailedPageObj"
+        >
         </table-tem>
       </div>
     </el-card>
 
-    <el-dialog v-model="dialogVisible" width="80%" title="退料申请" align-center :close="close()">
+    <el-dialog
+      v-model="dialogVisible"
+      width="80%"
+      title="退料申请"
+      align-center
+      :close="close()"
+    >
       <div class="w-full">
         <div ref="headerRef">
-          <el-form ref="formRef" class="form" :inline="true" size="small" label-width="85px">
+          <el-form
+            ref="formRef"
+            class="form"
+            :inline="true"
+            size="small"
+            label-width="85px"
+          >
             <el-form-item label="生产计划号">
               <!-- <el-select
                 v-model="form.MfgOrderName"
@@ -141,46 +228,99 @@
                   :value="item.MfgOrderName"
                 />
               </el-select>  -->
-              <el-input v-model="form.MfgOrderName" class="input-with-select"
-                @keyup.enter.native="orderChange(form.MfgOrderName)">
+              <el-input
+                v-model="form.MfgOrderName"
+                class="input-with-select"
+                @keyup.enter.native="orderChange(form.MfgOrderName)"
+              >
               </el-input>
               <!-- <el-select-v2 v-model="form.MfgOrderName" :options="orderList" filterable
                 :props="orderProps" style="width: 180px"  @change="orderChange"/> -->
             </el-form-item>
             <el-form-item label="产品机型">
-              <el-input v-model="form.BD_ProductModel" style="width: 152px" class="input-with-select" disabled>
+              <el-input
+                v-model="form.BD_ProductModel"
+                style="width: 152px"
+                class="input-with-select"
+                disabled
+              >
               </el-input>
             </el-form-item>
             <el-form-item label="产品编码">
-              <el-input v-model="form.ProductName" style="width: 152px" class="input-with-select" disabled>
+              <el-input
+                v-model="form.ProductName"
+                style="width: 152px"
+                class="input-with-select"
+                disabled
+              >
               </el-input>
             </el-form-item>
             <el-form-item label="计划数量">
-              <el-input v-model="form.Qty" style="width: 152px" class="input-with-select" disabled>
+              <el-input
+                v-model="form.Qty"
+                style="width: 152px"
+                class="input-with-select"
+                disabled
+              >
               </el-input>
             </el-form-item>
             <el-form-item label="产线">
-              <el-input v-model="form.MfgLineDesc" style="width: 152px" class="input-with-select" disabled>
+              <el-input
+                v-model="form.MfgLineDesc"
+                style="width: 152px"
+                class="input-with-select"
+                disabled
+              >
               </el-input>
             </el-form-item>
             <el-form-item label="计划开始时间">
-              <el-input v-model="form.PlannedCompletionDate" style="width: 152px" class="input-with-select" disabled>
+              <el-input
+                v-model="form.PlannedCompletionDate"
+                style="width: 152px"
+                class="input-with-select"
+                disabled
+              >
               </el-input>
             </el-form-item>
             <el-form-item label="申请类型">
-              <el-select v-model="returnType" placeholder="Select" style="width: 152px" @change="typeChange">
-                <el-option v-for="item in iReturnTypeList" :key="item.Value" :label="item.Text" :value="item.Value" />
+              <el-select
+                v-model="returnType"
+                placeholder="Select"
+                style="width: 152px"
+                @change="typeChange"
+              >
+                <el-option
+                  v-for="item in iReturnTypeList"
+                  :key="item.Value"
+                  :label="item.Text"
+                  :value="item.Value"
+                />
               </el-select>
             </el-form-item>
             <el-form-item label="退料原因">
-              <el-select v-model="returnReason" placeholder="" style="width: 152px" :disabled="returnType === '1'">
-                <el-option v-for="item in returnReasonList" :key="item.Value" :label="item.Text" :value="item.Value" />
+              <el-select
+                v-model="returnReason"
+                placeholder=""
+                style="width: 152px"
+                :disabled="returnType === '1'"
+              >
+                <el-option
+                  v-for="item in returnReasonList"
+                  :key="item.Value"
+                  :label="item.Text"
+                  :value="item.Value"
+                />
               </el-select>
             </el-form-item>
             <br />
             <el-form-item label="产品描述">
-              <el-input style="width: 420px" type="textarea" v-model="form.ProductDesc" class="input-with-select"
-                disabled>
+              <el-input
+                style="width: 420px"
+                type="textarea"
+                v-model="form.ProductDesc"
+                class="input-with-select"
+                disabled
+              >
               </el-input>
             </el-form-item>
           </el-form>
@@ -197,15 +337,29 @@
                 <el-button @click="filterFeedTableData" icon="Search" />
               </template>
             </el-input> -->
-            <el-form @submit.native.prevent ref="formRef" class="form flex items-start" :inline="true" size="small"
-              label-width="85px">
-              <el-form-item label="查询编码" class="mb-0" style="margin-right: 0;">
-                <el-input v-model.trim="searchText" size="small" style="width: 250px"
-                  @keyup.enter.native="filterFeedTableData"></el-input>
+            <el-form
+              @submit.native.prevent
+              ref="formRef"
+              class="form flex items-start"
+              :inline="true"
+              size="small"
+              label-width="85px"
+            >
+              <el-form-item
+                label="查询编码"
+                class="mb-0"
+                style="margin-right: 0"
+              >
+                <el-input
+                  v-model.trim="searchText"
+                  size="small"
+                  style="width: 250px"
+                  @keyup.enter.native="filterFeedTableData"
+                ></el-input>
               </el-form-item>
             </el-form>
           </div>
-          <el-table ref="table" :data="filterTableData" size="small" border fit :tooltip-effect="'dark'" :height="400"
+          <!-- <el-table ref="table" :data="filterTableData" size="small" border fit :tooltip-effect="'dark'" :height="400"
             row-key="MaterialName" :tree-props="{ children: 'children' }" @selection-change="handleSelectionChange"
             :row-class-name="tableRowClassName">
             <el-table-column type="selection" width="55" :selectable="selectable"
@@ -215,35 +369,10 @@
             </el-table-column>
             <el-table-column prop="CompName" label="物料编码" :min-width="flexColumnWidth('物料编码', 'CompName')">
             </el-table-column>
-
-            <!-- <el-table-column
-                prop="isMater"
-                label="主料"
-                width="150"
-                :min-width="150"
-              >
-                <template #default="scope">
-                  <span v-if="scope.row.isMater === 1">是</span>
-                  <span v-if="scope.row.isMater === 0"
-                    >否{{ `(${scope.row.originalMaterialName})` }}</span
-                  >
-                </template>
-              </el-table-column> -->
             <el-table-column prop="Amount" label="初始数量" align="center" :min-width="flexColumnWidth('初始数量', 'Amount')">
             </el-table-column>
             <el-table-column prop="Qty" label="可退数量" align="center" :min-width="flexColumnWidth('可退数量', 'Qty')">
             </el-table-column>
-            <!-- <el-table-column
-                prop="isLoadQueue"
-                align="center"
-                label="允许上料"
-                :min-width="flexColumnWidth('允许上料：（是否）', 'isLoadoueue')"
-              >
-                <template #default="scope">
-                  <span v-if="scope.row.isLoadQueue === 1">是</span>
-                  <span v-if="scope.row.isLoadQueue === 0">否</span>
-                </template>
-              </el-table-column> -->
             <el-table-column v-if="returnType === '1'" prop="Qty" align="center" label="请求退料数量"
               :min-width="flexColumnWidth('请求数量', 'Qty')">
             </el-table-column>
@@ -262,25 +391,53 @@
                 </div>
               </template>
             </el-table-column>
-            <!-- <el-table-column prop="QualityIsGood" align="center" label="是否良品"
-              :min-width="flexColumnWidth('是否良品是否良品', 'QualityIsGood')">
-              <template #default="scope">
-                <el-select
-                  v-model="scope.row.QualityIsGood"
-                  placeholder="Select"
-                  size="large"
-                  style="width: 150px"
-                >
-                  <el-option
-                    v-for="item in [{label:'良品',value:1},{label:'不良品',value:2},{label:'未知',value:0},]"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value"
-                  />
-                </el-select>
+          </el-table> -->
+          <vxe-table
+            border
+            height="400"
+            size="small"
+            ref="tableRef"
+            :data="filterTableData"
+            :checkbox-config="checkboxConfig"
+            :scroll-y="{ enabled: true, gt: 0 }"
+          >
+            <vxe-column type="checkbox" title="" width="40"></vxe-column>
+            <vxe-column type="seq" width="60"></vxe-column>
+            <vxe-column field="CompID" title="物料批次条码"> </vxe-column>
+            <vxe-column field="CompName" title="物料编码"> </vxe-column>
+            <vxe-column field="Amount" title="初始数量" align="center">
+            </vxe-column>
+            <vxe-column field="Qty" title="可退数量" align="center">
+            </vxe-column>
+            <vxe-column
+              v-if="returnType === '1'"
+              align="center"
+              field="Qty"
+              title="请求数量"
+            >
+            </vxe-column>
+            <vxe-column
+              align="center"
+              v-if="returnType !== '1'"
+              field="RequestQty"
+              title="请求退料数量"
+              min-width="60"
+            >
+              <template #default="{ row, column, rowIndex, columnIndex }">
+                <el-input v-model="row.RequestQty" @input="handleInput(row)"></el-input>
               </template>
-            </el-table-column> -->
-          </el-table>
+            </vxe-column>
+            <vxe-column field="MaterialQueue" title="状态" align="center">
+              <template #default="{ row, column, rowIndex, columnIndex }">
+                <span style="color: red" v-show="row.MaterialQueue">{{
+                  "不可退料"
+                }}</span>
+                <span style="color: #009000" v-show="!row.MaterialQueue">{{
+                  "可退料"
+                }}</span>
+              </template>
+            </vxe-column>
+          </vxe-table>
         </div>
       </div>
       <template #footer>
@@ -325,6 +482,7 @@ import {
   onBeforeMount,
   onBeforeUnmount,
 } from "vue";
+import type { VxeTablePropTypes } from "vxe-table";
 const tableData = ref<any>([]);
 const pageSize = ref(10);
 const currentPage = ref(1);
@@ -351,6 +509,7 @@ const returnReason = ref("");
 const returnReasonList = ref<any[]>([]);
 const iReturnTypeList = ref<any[]>([]);
 const table = ref();
+const tableRef = ref();
 const detailedPageObj = ref({
   pageSize: 10000000,
   currentPage: 1,
@@ -418,14 +577,14 @@ const historyForm = ref<historyFormTS>({
   requestStartDate: "",
   requestEndDate: "",
   QualityIsGood: "",
-  OperationType: "R"
+  OperationType: "R",
 });
 const orderProps = ref({
   label: "MfgOrderName",
   value: "MfgOrderName",
 });
 const searchText = ref("");
-const filterTableData = ref([])
+const filterTableData = ref([]);
 // const filterTableData = computed(() => {
 //   if (searchText.value == "") {
 //     return feedTableData.value;
@@ -440,14 +599,30 @@ const filterTableData = ref([])
 //搜索编码
 const filterFeedTableData = () => {
   if (searchText.value == "") {
-    filterTableData.value = feedTableData.value
-    return
+    filterTableData.value = feedTableData.value;
+    return;
   }
-  filterTableData.value = feedTableData.value.filter((f: any) =>
-    f.CompName.toLowerCase().includes(searchText.value.toLowerCase())
+  filterTableData.value = feedTableData.value.filter((f: any) =>{
+    return f.CompName.toLowerCase().includes(searchText.value.toLowerCase())
+  }
   );
-}
-onBeforeMount(() => { });
+};
+onBeforeMount(() => {});
+
+const checkboxConfig = reactive<VxeTablePropTypes.CheckboxConfig<any>>({
+  labelField: "name",
+  visibleMethod({ row }) {
+    if (row.MaterialQueue) {
+      return false;
+    } else if (returnType.value === "1") {
+      return true;
+    } else if (row.Qty === 0 || !row.RequestQty) {
+      return false;
+    } else {
+      return true;
+    }
+  },
+});
 
 onMounted(() => {
   const today = new Date();
@@ -514,6 +689,7 @@ const orderChange = (data: any) => {
     });
     return;
   }
+  tableRef.value.clearCheckboxRow();
   orderList.value.forEach((item: any) => {
     if (item.MfgOrderName === data) {
       form.value.MfgOrderName = item.MfgOrderName;
@@ -721,6 +897,7 @@ const handleSelectionChange = (data: any) => {
           OrderType: selectType.value,
           AvailableQty: item.Qty,
           InitQty: item.Amount,
+          ERPSpec:item.BD_ERPSpecName
         };
       } else {
         return {
@@ -732,6 +909,7 @@ const handleSelectionChange = (data: any) => {
           QualityIsGood: returnType.value,
           QualityReason: returnReason.value,
           ERPOrder: form.value.ERPOrder,
+          ERPSpec:item.BD_ERPSpecName
         };
       }
     });
@@ -739,6 +917,38 @@ const handleSelectionChange = (data: any) => {
 };
 //申请退料
 const applyFor = () => {
+  choiceList.value = tableRef.value.getCheckboxRecords()
+    .filter((item: any) => item.Qty && item.Qty != 0)
+    .map((item: any) => {
+      if (returnType.value === "1") {
+        return {
+          mfgOrder: item.OrderID,
+          Qty: item.Qty,
+          ContainerName: item.CompID,
+          materialName: item.CompName,
+          EmployeeName: loginName,
+          QualityIsGood: returnType.value,
+          QualityReason: returnReason.value,
+          ERPOrder: form.value.ERPOrder,
+          OrderType: selectType.value,
+          AvailableQty: item.Qty,
+          InitQty: item.Amount,
+          ERPSpec:item.BD_ERPSpecName
+        };
+      } else {
+        return {
+          mfgOrder: item.OrderID,
+          Qty: item.RequestQty,
+          ContainerName: item.CompID,
+          materialName: item.CompName,
+          EmployeeName: loginName,
+          QualityIsGood: returnType.value,
+          QualityReason: returnReason.value,
+          ERPOrder: form.value.ERPOrder,
+          ERPSpec:item.BD_ERPSpecName
+        };
+      }
+    });
   if (choiceList.value.length === 0) {
     ElNotification({
       title: "提示信息",
@@ -767,6 +977,7 @@ const applyFor = () => {
       // getFeedTableData(selectOrder.value, selectType.value);
       feedTableData.value = [];
       filterTableData.value = [];
+      getHistory();
       dialogVisible.value = false;
     }
   });
@@ -809,9 +1020,21 @@ const rowClick = (val: any) => {
   }
 };
 
+const returnTypeReason = (str:any) => {
+  let reason = '';
+  returnReasonList.value.forEach(element => {
+    if (element.Value === str) {
+      reason = element.Text
+    }
+  });
+  return reason;
+}
+
 //判断请求数量是否大于需求量
 const handleInput = (data: any) => {
   if (data.RequestQty !== undefined || data.RequestQty !== "") {
+    console.log(data);
+    
     const num = data.RequestQty.replace(/^0+|[^0-9]/g, "");
     data.RequestQty = num;
     if (num > data.Qty) {
@@ -824,7 +1047,7 @@ const handleInput = (data: any) => {
     }
   }
   if (data.RequestQty == "") {
-    table.value.clearSelection();
+    // table.value.clearSelection();
   }
 };
 
@@ -846,18 +1069,19 @@ const tableRowClassName = ({
 
 //改变
 const typeChange = () => {
-  table.value.clearSelection();
+  // table.value.clearSelection();
+  tableRef.value.clearCheckboxRow();
   if (returnType.value === "1") {
-    returnReason.value = '';
-  }else {
+    returnReason.value = "";
+  } else {
     returnReason.value = returnReasonList.value[0].Value;
   }
 };
 
 const close = () => {
   feedTableData.value = [];
-  filterTableData.value = []
-}
+  filterTableData.value = [];
+};
 
 const handleSizeChange = (val: any) => {
   currentPage.value = 1;
@@ -989,7 +1213,7 @@ const columnData = reactive([
 ]);
 
 const detailedData = reactive([
-{
+  {
     text: true,
     prop: "ContainerName",
     label: "物料批次条码",

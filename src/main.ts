@@ -20,17 +20,19 @@ import './permission'
 // import AFTableColumn from 'af-table-column'
 
 // import 'element-plus/dist/index.css'
-
-
+import 'xe-utils'
+import VXETable from 'vxe-table'
+import 'vxe-table/lib/style.css'
 
 const app = createApp(App)
 // app.directive(ClickOutside)
 // app.use(AFTableColumn)
+app.use(VXETable)
 app.use(ElementPlus, {locale:zhCN,size: ''})
 // app.use(TuiPlus)
 app.use(createPinia())
 app.use(router)
-for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
+for (const [key, component] of Object.entries(ElementPlusIconsVue)) { 
     app.component(key, component)
 }
 

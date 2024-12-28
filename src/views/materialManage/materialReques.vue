@@ -229,7 +229,7 @@
               </el-form-item>
             </el-form>
           </div>
-          <el-table
+          <!-- <el-table
             :data="filterTableData"
             size="small"
             stripe
@@ -259,20 +259,6 @@
               width="150"
             >
             </el-table-column>
-            <!-- <el-form-item label="申请类型">
-              <el-select
-                  v-model="applyType"
-                  placeholder="Select"
-                  style="width: 150px"
-                >
-                  <el-option
-                    v-for="item in applyTypeList"
-                    :key="item.value"
-                    :label="item.text"
-                    :value="item.value"
-                  />
-                </el-select>
-            </el-form-item> -->
             <el-table-column
               prop="MaterialDesc"
               label="物料描述"
@@ -309,18 +295,6 @@
               :min-width="flexColumnWidth('使用工序', 'SpecDesc')"
             >
             </el-table-column>
-
-            <!-- <el-table-column
-              prop="isLoadQueue"
-              align="center"
-              label="允许上料"
-              :min-width="flexColumnWidth('允许上料：（是否）', 'isLoadoueue')"
-            >
-              <template #default="scope">
-                <span v-if="scope.row.isLoadQueue === 1">是</span>
-                <span v-if="scope.row.isLoadQueue === 0">否</span>
-              </template>
-            </el-table-column> -->
             <el-table-column
               prop="UOMName"
               align="center"
@@ -351,7 +325,50 @@
                 </el-input>
               </template>
             </el-table-column>
-          </el-table>
+          </el-table> -->
+          <vxe-table
+            border
+            height="400"
+            size="small"
+            ref="tableApplyRef"
+            :data="filterTableData"
+            :checkbox-config="checkboxConfig"
+            :scroll-y="{ enabled: true, gt: 0 }"
+          >
+            <vxe-column type="checkbox" title="" width="40"></vxe-column>
+            <vxe-column type="seq" width="60"></vxe-column>
+            <vxe-column field="MaterialName" title="物料编码"> </vxe-column>
+            <vxe-column field="MaterialDesc" title="物料描述"  show-header-overflow show-overflow="title" show-footer-overflow> </vxe-column>
+            <vxe-column field="isMater" title="主料" align="center">
+              <template #default="{ row, column, rowIndex, columnIndex }">
+                <span v-if="row.isMater === 1">是</span>
+                <span v-if="row.isMater === 0"
+                  >否{{ `(${row.originalMaterialName})` }}</span
+                >
+              </template>
+            </vxe-column>
+            <vxe-column field="SpecName" title="工序编码" align="center">
+            </vxe-column>
+            <vxe-column field="SpecDesc" title="工序名称" align="center">
+            </vxe-column>
+            <vxe-column field="UOMName" title="单位" align="center">
+            </vxe-column>
+            <vxe-column field="QtyRequired" title="单件用量" align="center">
+            </vxe-column>
+            <vxe-column field="TotalQtyRequired" title="需求量" align="center">
+            </vxe-column>
+            <vxe-column
+              align="center"
+              field="RequestQty"
+              title="请求退料数量"
+              min-width="60"
+            >
+              <template #default="{ row, column, rowIndex, columnIndex }">
+                <el-input v-model="row.RequestQty" @input="handleInput(row)">
+                </el-input>
+              </template>
+            </vxe-column>
+          </vxe-table>
         </div>
       </div>
       <template #footer>
@@ -388,6 +405,7 @@ import {
   onBeforeUnmount,
 } from "vue";
 import { shortcuts } from "@/utils/dataMenu";
+import type { VxeTablePropTypes } from "vxe-table";
 const tableData = ref<any>([]);
 const pageSize = ref(10);
 const currentPage = ref(1);
@@ -411,6 +429,7 @@ const detailedHeight = ref(0);
 const applyType = ref("5");
 const applyTypeList = ref<any[]>();
 const iApplyTypeList = ref<any[]>();
+const tableApplyRef = ref();
 const detailedPageObj = ref({
   pageSize: 10000000,
   currentPage: 1,
@@ -689,6 +708,23 @@ const handleSelectionChange = (data: any) => {
 };
 //申请物料
 const applyFor = () => {
+  choiceList.value = tableApplyRef.value.getCheckboxRecords()
+    .filter((item: any) => item.RequestQty && item.RequestQty != 0)
+    .map((item: any) => {
+      return {
+        MaterialName: item.MaterialName,
+        RequestQty: item.RequestQty ? item.RequestQty : "0",
+        TotalQtyRequired: item.TotalQtyRequired,
+        originalMaterialName: item.originalMaterialName,
+        isMater: item.isMater,
+        UOMName: form.value.UOMName,
+        MaterialDesc: item.MaterialDesc,
+        OriginalMaterialName: item.OriginalMaterialName,
+        SpecName: item.SpecName,
+        ERPRouteName: item.BD_ERPSpecName,
+        QtyRequired: item.QtyRequired,
+      };
+    });
   if (choiceList.value.length === 0) {
     ElNotification({
       title: "请选择申请行",
@@ -724,9 +760,9 @@ const applyFor = () => {
       });
       // findOrderData();
       // getFeedTableData(form.value.MfgOrderName);
-      feedTableData.value = [];
-      filterTableData.value = [];
-      dialogVisible.value = true;
+      close();
+      getHistory();
+      dialogVisible.value = false;
     }
   });
 };
@@ -816,6 +852,17 @@ const close = () => {
     RequestTypeName: "",
   };
 };
+
+const checkboxConfig = reactive<VxeTablePropTypes.CheckboxConfig<any>>({
+  labelField: "name",
+  visibleMethod({ row }) {
+    if (!row.RequestQty) {
+      return false;
+    } else {
+      return true;
+    }
+  },
+});
 
 const handleSizeChange = (val: any) => {
   currentPage.value = 1;
