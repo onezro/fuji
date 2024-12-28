@@ -133,6 +133,8 @@
           <el-table-column
             prop="ProductDesc"
             label="产品描述"
+            width="350"
+            show-overflow-tooltip
             :min-width="flexColumnWidthHis('产品描述', 'ProductDesc')"
           ></el-table-column>
           <!-- <el-table-column
@@ -646,7 +648,7 @@ onMounted(() => {
   historyForm.value.requestEndDate = formattedTodayDate;
   date.value = [formattedDate, formattedTodayDate];
   getHistory();
-    getTypeList();
+  getTypeList();
   getScreenHeight();
   findOrderData();
   window.addEventListener("resize", getScreenHeight);
@@ -1011,7 +1013,7 @@ const applyFor = () => {
     }
   });
   if (pass) {
-    return
+    return;
   }
   // if (form.value.CompId === "") {
   //   return;
