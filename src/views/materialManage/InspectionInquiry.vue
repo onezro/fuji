@@ -26,10 +26,22 @@
             <!-- <el-select-v2 v-model="form.MfgOrderName" :options="orderList" filterable
                 :props="orderProps" style="width: 180px"  @change="orderChange"/> -->
           </el-form-item>
+          <el-form-item label="申请日期" class="mb-2">
+            <el-date-picker
+              :shortcuts="shortcuts"
+              v-model="date"
+              value-format="YYYY-MM-DD"
+              type="daterange"
+              range-separator="到"
+              size="small"
+              style="width: 240px"
+              @change="dateChange"
+            />
+          </el-form-item>
           <el-form-item label="产品机型">
             <el-input
               v-model="selectForm.ProductModel"
-              style="width: 152px"
+              style="width: 132px"
               disabled
             >
             </el-input>
@@ -37,7 +49,7 @@
           <el-form-item label="产品编码">
             <el-input
               v-model="selectForm.ProductName"
-              style="width: 152px"
+              style="width: 132px"
               disabled
             >
             </el-input>
@@ -55,6 +67,11 @@
             >
             </el-input>
           </el-form-item>
+          <!-- <el-form-item label=" ">
+            <el-button size="small" type="" class="mr-4" @click="getData(order)"
+              >查询</el-button
+            >
+          </el-form-item> -->
         </el-form>
       </div>
       <div class="table_container">
@@ -64,12 +81,12 @@
               >查询</el-button
             >
           </div>
-          <div class="flex items-center">
+          <!-- <div class="flex items-center">
             <el-button size="small" type="primary" class="mr-4" @click="inStore"
               >申请入库</el-button
             >
             <el-checkbox v-model="IsPrint">是否打印</el-checkbox>
-          </div>
+          </div> -->
         </div>
         <el-table
           size="small"
@@ -86,37 +103,29 @@
           style="width: 100%"
           @selection-change="handleSelectionChange"
         >
-          <el-table-column
+          <!-- <el-table-column
             type="selection"
             width="45"
             label="选择"
             align="center"
             :selectable="selectable"
             :reserve-selection="true"
-          />
+          /> -->
           <el-table-column type="index" label="序号" width="50" align="center">
           </el-table-column>
           <el-table-column
-            prop="InspectionOrder"
+            prop="QAOrder"
             label="送检单号"
             width="180"
             align="center"
-            :min-width="flexColumnWidth('送检单号', 'InspectionOrder')"
+            :min-width="flexColumnWidth('送检单号', 'QAOrder')"
           >
-            <template #default="scope">
-              <div
-                class="underline font-bold text-[#006487] cursor-pointer"
-                @click="getDetail(scope.row.InspectionOrder)"
-              >
-                {{ scope.row.InspectionOrder }}
-              </div>
-            </template>
           </el-table-column>
           <el-table-column
-            prop="InspectionTime"
+            prop="ScanTime"
             label="时间"
             align="center"
-            :min-width="flexColumnWidth('时间', 'InspectionTime')"
+            :min-width="flexColumnWidth('时间', 'ScanTime')"
           >
           </el-table-column>
           <el-table-column
@@ -146,12 +155,12 @@
               <div v-if="scope.row.StorageSta === 'TreatStorage'">待入库</div>
               <div v-if="scope.row.StorageSta === 'StoragePart'">
                 {{
-                  `已入库（${scope.row.StorageQty}/${scope.row.QuantityOfBoxs}）`
+                  `已入库`
                 }}
               </div>
               <div v-if="scope.row.StorageSta === 'StorageHalfway'">
                 {{
-                  `入库中（${scope.row.StorageQty}/${scope.row.QuantityOfBoxs}）`
+                  `入库中`
                 }}
               </div>
               <div v-if="scope.row.StorageSta === 'Storage'">入库完成</div>
@@ -315,6 +324,7 @@ const filterTableData = ref<any[]>([]);
 const boxTableData = ref<any[]>([]);
 const interval = ref<any>(null);
 const multipleTable = ref();
+const date = ref();
 const IsPrint = ref(false);
 const activeName = ref("shelveMaterial");
 const getDataText = reactive({
@@ -343,6 +353,11 @@ const orderList = ref([
 ]);
 const value1 = ref([]);
 const dialogVisible = ref(false);
+const searchForm = ref({
+  MfgOrderName: "",
+  StartTime: "",
+  EndTime: "",
+});
 
 watch(
   () => value1.value,
@@ -382,19 +397,30 @@ const handleSelectionChange = (data: any) => {
   choiceList.value = data;
 };
 
+const dateChange = () => {
+  if (date.value !== null && date.value.length !== 0) {
+    searchForm.value.StartTime = date.value[0];
+    searchForm.value.EndTime  = date.value[1];
+  } else {
+    searchForm.value.StartTime = "";
+    searchForm.value.EndTime  = "";
+  }
+};
+
 const getData = (str: any) => {
   if (str) {
-    ProductInspectDetailsHistory({ MfgOrderName: str }).then((res: any) => {
-      if (res.success) {
-        tableData.value = res.content;
-      }
-    });
-    MfgOrderDetail(str).then((res: any) => {
-      if (res.success) {
-        selectForm.value = res.content[0];
-      }
-    });
+  
+  MfgOrderDetail(str).then((res: any) => {
+    if (res.success) {
+      selectForm.value = res.content[0];
+    }
+  });
   }
+  ProductInspectDetailsHistory(searchForm.value).then((res: any) => {
+    if (res.success) {
+      tableData.value = res.content;
+    }
+  });
 };
 
 const getDetail = async (order: any) => {
