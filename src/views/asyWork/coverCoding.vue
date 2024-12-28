@@ -70,8 +70,8 @@
                   </el-form-item>
                   <el-form-item class="mb-2">
                     <el-button :type="isAuto ? 'danger' : 'primary'" :disabled="form.MfgOrderName == ''"
-                    @click="autoPrint">{{ isAuto ? "关闭自动打印" : "自动打印" }}</el-button>
-                  <el-button type="warning" :disabled="form.MfgOrderName == ''" @click="print">手动打印</el-button>
+                      @click="autoPrint">{{ isAuto ? "关闭自动打印" : "自动打印" }}</el-button>
+                    <el-button type="warning" :disabled="form.MfgOrderName == ''" @click="print">手动打印</el-button>
                   </el-form-item>
                 </el-form>
                 <!-- <div class="mb-2">
@@ -110,7 +110,8 @@
                   <el-table-column prop="QtyRequired" label="剩余数量" width="80" align="center">
                     <template #default="scope">
                       <span>{{ scope.row.IssueControl == 1 ?
-                        (scope.row.remainQty == null ? 0 : scope.row.remainQty) : (scope.row.Qty == null ? 0 : scope.row.Qty)
+                        (scope.row.remainQty == null ? 0 : scope.row.remainQty) : (scope.row.Qty == null ? 0 :
+                          scope.row.Qty)
                         }}</span>
                     </template>
                   </el-table-column>
@@ -151,11 +152,11 @@
               <el-table-column prop="ContainerName" label="成品条码" width="180" />
               <el-table-column label="PCB组件条码">
                 <template #default="scope">
-                  <div v-if="scope.row.BindContainerName!==null">SN1：{{ scope.row.BindContainerName }}</div>
-                  <div v-if="scope.row.BindContainerName2!==null">SN2：{{ scope.row.BindContainerName2 }}</div>
-                  <div v-if="scope.row.BindContainerName3!=null">SN3：{{ scope.row.BindContainerName3 }}</div>
-                  <div v-if="scope.row.BindContainerName4!=null">SN4：{{ scope.row.BindContainerName4 }}</div>
-                  <div v-if="scope.row.BindContainerName5!=null">SN5：{{ scope.row.BindContainerName5 }}</div>
+                  <div v-if="scope.row.BindContainerName !== null">SN1：{{ scope.row.BindContainerName }}</div>
+                  <div v-if="scope.row.BindContainerName2 !== null">SN2：{{ scope.row.BindContainerName2 }}</div>
+                  <div v-if="scope.row.BindContainerName3 != null">SN3：{{ scope.row.BindContainerName3 }}</div>
+                  <div v-if="scope.row.BindContainerName4 != null">SN4：{{ scope.row.BindContainerName4 }}</div>
+                  <div v-if="scope.row.BindContainerName5 != null">SN5：{{ scope.row.BindContainerName5 }}</div>
                 </template>
               </el-table-column>
               <el-table-column prop="fullname" label="扫描人" width="180" />
@@ -368,7 +369,7 @@ const columnData1 = reactive([
   },
   {
     text: true,
-      prop: "fullname",
+    prop: "fullname",
     label: "扫描人",
     width: "",
     align: "1",
@@ -535,7 +536,7 @@ const getKeyMaterial = () => {
     if (barData.value.length !== 0) {
       if (barData.value[0].IssueControl == 1) {
         msgType.value = true;
-      
+
         barMsg.value = `请先扫描关键物料${barData.value[0].MaterialName}`
       } else {
         msgType.value = true;
@@ -740,16 +741,16 @@ const verifyBarCode = (barCodeData: any) => {
         // msgTitle.value = `请继续扫描${barData.value[keyIndex].IssueControl == 1 ? "关键料" : "批次料"
         //   }${barData.value[keyIndex].MaterialName}`;
         barMsg.value = `请继续扫描${barData.value[keyIndex].IssueControl == 1 ? "关键料" : "批次料"
-        }${barData.value[keyIndex].MaterialName}`;
+          }${barData.value[keyIndex].MaterialName}`;
       } else {
         if (isKeyEmpty.value !== -1) {
           msgType.value = true;
           // msgTitle.value = `请继续扫描${barData.value[isKeyEmpty.value].IssueControl == 1 ? "关键料" : "批次料"
           //   }${barData.value[isKeyEmpty.value].MaterialName}`;
           barMsg.value = `请继续扫描${barData.value[isKeyEmpty.value].IssueControl == 1
-              ? "关键料"
-              : "批次料"
-              }${barData.value[isKeyEmpty.value].MaterialName}`;
+            ? "关键料"
+            : "批次料"
+            }${barData.value[isKeyEmpty.value].MaterialName}`;
         } else {
           msgType.value = true;
           msgTitle.value = `请扫描MES条码`
@@ -837,7 +838,7 @@ const radioChange = (args: any) => {
     }
     getKeyMaterial();
     getHisData();
-   
+
     // orderTable.value.data.forEach((v: any) => {
     //   if (v.MfgOrderName == args[1]) {
   }
@@ -910,8 +911,11 @@ const print = () => {
 };
 
 const printData = () => {
-  CoverInstallPrint({orderNumber:form.value.MfgOrderName,
-    workStation:opui.station
+  CoverInstallPrint({
+    OrderName: form.value.MfgOrderName,
+    workstationName: opui.station,
+     userAccount: userStore.getUserInfo
+
   }).then((res: any) => {
     msgType.value = res.success;
     if (res.success) {
@@ -1023,6 +1027,7 @@ const getScreenHeight = () => {
   color: white !important;
   font-size: 1.1rem;
 }
+
 .el-pagination {
   justify-content: center;
 }

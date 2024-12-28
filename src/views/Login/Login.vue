@@ -136,9 +136,9 @@ const switchSystems = () => {
                 }}</span>你可以切换为<span class="text-lg text-[#006487] font-bold underline cursor-pointer"
                 @click="switchSystems">{{ appStore.getSystemType ? "系统端" : "操作端" }}</span>
             </div> -->
-          <div class="flex justify-between">
+          <div class="flex justify-end">
             <!-- <span></span> -->
-            <el-link href="http://192.168.9.50:8022/Chrome_apk/android.aichrome.apk">浏览器下载</el-link>
+            <!-- <el-link href="http://192.168.9.50:8022/Chrome_apk/android.aichrome.apk">浏览器下载</el-link> -->
             <span class="text-[#7c7c7c]">{{ version }}</span>
           </div>
         </el-form>

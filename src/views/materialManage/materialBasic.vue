@@ -71,6 +71,18 @@
           <el-form ref="editFormRef" :model="editForm" label-width="auto" class="h-[240px]">
             <el-form-item label="产品机型" prop="BD_ProductModel" class="flex items-center">
               <el-input v-model="editForm.BD_ProductModel" style="width: 250px" />
+              <div class="ml-3">
+                <el-form-item label="老化时长" prop="BD_AgingDuration">
+                  <el-input type="number" v-model.number="editForm.BD_AgingDuration" style="width: 250px">
+                    <template #append>分钟</template>
+                  </el-input>
+
+                </el-form-item>
+              </div>
+            
+            </el-form-item>
+            <el-form-item label="芯片类型" prop="BD_ChipType" class="flex items-center">
+              <el-input v-model="editForm.BD_ChipType" style="width: 250px" />
               <el-checkbox v-model="editForm.BD_IsICCID" label="ICCID物料" class="ml-3"
                 @change="editForm.BD_ICCIDType = ''" />
 
@@ -79,31 +91,20 @@
                 <el-option v-for="c in cardList" :label="c.Text" :value="c.Value" :key="c.Value" />
 
               </el-select>
-            </el-form-item>
-            <el-form-item label="芯片类型" prop="BD_ChipType" class="flex items-center">
-              <el-input v-model="editForm.BD_ChipType" style="width: 250px" />
-              <el-checkbox v-model="editForm.BD_IsActivate" label="激活物料" class="ml-3" />
+             
             </el-form-item>
 
             <el-form-item label="软件版本" prop="BD_SoftVersion">
               <el-input v-model="editForm.BD_SoftVersion" style="width: 250px" />
+              <el-checkbox v-model="editForm.BD_IsActivate" label="激活物料" class="ml-3" />
+            
+            </el-form-item>
+
+            <el-form-item label="校验和" prop="BD_CheckSum">
+              <el-input v-model="editForm.BD_CheckSum" style="width: 250px" />
               <el-checkbox v-model="editForm.BD_IsSubsidiary" label="辅料" class="ml-3" />
             </el-form-item>
-          
-                <el-form-item label="校验和" prop="BD_CheckSum">
-                  <el-input v-model="editForm.BD_CheckSum" style="width: 250px" />
-                  <div class="ml-3">
-                  <el-form-item label="老化时间" prop="BD_AgingDuration">
-                  <el-input v-model.number="editForm.BD_AgingDuration" style="width: 250px" >
-                    <template #append>分钟</template>
-                  </el-input>
 
-                </el-form-item>
-              </div>
-                </el-form-item>
-           
-              
-           
 
             <el-form-item label="拼板数" prop="BD_CheckSum">
               <el-input v-model="editForm.ES_PinCount" style="width: 250px" />
@@ -571,10 +572,10 @@ const editOnSubmit = () => {
         message: res.msg,
         type: "success",
       });
-      if(res.success){
+      if (res.success) {
         onSubmit();
       }
-     
+
     });
   }
   if (activeName.value == "msd") {

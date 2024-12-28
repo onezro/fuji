@@ -703,7 +703,7 @@ const verifyBarCode = (barCodeData: any) => {
           //   }${barData.value[isKeyEmpty.value].MaterialName}`;
         } else {
           msgType.value = true;
-          barMsg.value = `请扫描MES条码`
+          barMsg.value = `请扫描MES屏条码`
           // msgTitle.value = `请扫描MES条码`
         }
       }
