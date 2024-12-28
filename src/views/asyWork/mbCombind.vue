@@ -157,7 +157,7 @@
                   <div v-if="scope.row.BindContainerName5 != null">SN5：{{ scope.row.BindContainerName5 }}</div>
                 </template>
               </el-table-column>
-              <el-table-column prop="BD_EmployeeName" label="扫描人" width="180" />
+              <el-table-column prop="fullname" label="扫描人" width="180" />
               <el-table-column prop="TxnDate" label="扫描时间" width="180" />
             </el-table>
             <div class="mt-2 mb-2">
@@ -359,7 +359,7 @@ const columnData1 = reactive([
 
   {
     text: true,
-    prop: "BD_EmployeeName",
+      prop: "fullname",
     label: "扫描人",
     width: "",
     align: "1",
@@ -703,7 +703,7 @@ const verifyBarCode = (barCodeData: any) => {
           //   }${barData.value[isKeyEmpty.value].MaterialName}`;
         } else {
           msgType.value = true;
-          barMsg.value = `请扫描MES条码`
+          barMsg.value = `请扫描MES屏条码`
           // msgTitle.value = `请扫描MES条码`
         }
       }

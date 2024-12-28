@@ -152,7 +152,7 @@
                 </template>
               </el-table-column>
               <el-table-column prop="VirtualContainer" label="虚拟条码" />
-              <el-table-column prop="UpdatedBy" label="扫描人" />
+              <el-table-column prop="fullname" label="扫描人" />
               <el-table-column prop="UpdatedOn" label="扫描时间" />
             </el-table>
             <div class="mt-2 mb-2">
@@ -354,7 +354,7 @@ const columnData1 = reactive([
   // },
   {
     text: true,
-    prop: "BD_EmployeeName",
+      prop: "fullname",
     label: "扫描人",
     width: "",
     align: "1",

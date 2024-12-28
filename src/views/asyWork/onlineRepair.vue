@@ -135,7 +135,7 @@
               <el-form-item label="返修工序" prop="WorkFlowStep">
                 <el-select v-model="repairForm.WorkFlowStep" placeholder="请选择" style="width: 200px"
                   :disabled="isAction">
-                  <el-option v-for="item in specList" :key="item.WorkflowStepName" :label="item.WorkflowStepName"
+                  <el-option v-for="item in specList" :key="item.WorkflowStepName" :label="item.Description"
                     :value="item.WorkflowStepName" />
                 </el-select>
               </el-form-item>
@@ -222,7 +222,7 @@
             <div class="flex items-start">
               <el-form-item label="跳站工序" prop="WorkFlowStep">
                 <el-select v-model="repairForm.WorkFlowStep" placeholder="请选择" style="width: 200px">
-                  <el-option v-for="item in specList" :key="item.WorkflowStepName" :label="item.WorkflowStepName"
+                  <el-option v-for="item in specList" :key="item.WorkflowStepName" :label="item.Description"
                     :value="item.WorkflowStepName" />
                 </el-select>
               </el-form-item>
@@ -276,6 +276,7 @@ import { ElMessage, ElMessageBox, ElNotification } from "element-plus";
 interface Spec {
   WorkflowName: string;
   WorkflowStepName: string;
+  Description:string
 }
 interface ActionList {
   Description: string;
@@ -379,7 +380,7 @@ const columnData = reactive([
   },
   {
     text: true,
-    prop: "CreatedBy",
+    prop: "fullname",
     label: "维修人",
     width: "150",
     // min: true,
