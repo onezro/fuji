@@ -46,7 +46,7 @@
           <el-button type="primary" @click="onSubmit">查询</el-button>
           <el-button type="warning" @click="onEditSubmit"
             :disabled="selectData.length === 1 ? false : true">修改物料属性</el-button>
-            <!-- <input type="file" accept="image/*;capture=camera" @change="onFileChange">   -->
+          <!-- <input type="file" accept="image/*;capture=camera" @change="onFileChange">   -->
           <!-- <el-button type="info" @click="onQuerySubmit"
             :disabled="selectData.length === 1 ? false : true">产品BOM</el-button> -->
         </el-form-item>
@@ -56,7 +56,7 @@
         @handleCurrentChange="handleCurrentChange" @handleSelectionChange="handleSelectionChange">
       </tableTem>
     </el-card>
-    <el-dialog v-model="editVisible" draggable title="修改物料属性" width="750px" :append-to-body="true"
+    <el-dialog v-model="editVisible" draggable title="修改物料属性" width="800px" :append-to-body="true"
       :close-on-click-modal="false" :close-on-press-escape="false" align-center>
       <div>
         <el-form-item label="物料编码" prop="ProductName">
@@ -71,12 +71,13 @@
           <el-form ref="editFormRef" :model="editForm" label-width="auto" class="h-[240px]">
             <el-form-item label="产品机型" prop="BD_ProductModel" class="flex items-center">
               <el-input v-model="editForm.BD_ProductModel" style="width: 250px" />
-              <el-checkbox v-model="editForm.BD_IsICCID" label="ICCID物料" class="ml-3" @change="editForm.BD_ICCIDType = ''" />
+              <el-checkbox v-model="editForm.BD_IsICCID" label="ICCID物料" class="ml-3"
+                @change="editForm.BD_ICCIDType = ''" />
 
-              <el-select v-model="editForm.BD_ICCIDType" placeholder=""  class="ml-3"  style="width: 150px"
+              <el-select v-model="editForm.BD_ICCIDType" placeholder="" class="ml-3" style="width: 150px"
                 :disabled="!editForm.BD_IsICCID">
-                <el-option  v-for="c in cardList" :label="c.Text" :value="c.Value" :key="c.Value"/>
-                
+                <el-option v-for="c in cardList" :label="c.Text" :value="c.Value" :key="c.Value" />
+
               </el-select>
             </el-form-item>
             <el-form-item label="芯片类型" prop="BD_ChipType" class="flex items-center">
@@ -86,10 +87,24 @@
 
             <el-form-item label="软件版本" prop="BD_SoftVersion">
               <el-input v-model="editForm.BD_SoftVersion" style="width: 250px" />
+              <el-checkbox v-model="editForm.BD_IsSubsidiary" label="辅料" class="ml-3" />
             </el-form-item>
-            <el-form-item label="校验和" prop="BD_CheckSum">
-              <el-input v-model="editForm.BD_CheckSum" style="width: 250px" />
-            </el-form-item>
+          
+                <el-form-item label="校验和" prop="BD_CheckSum">
+                  <el-input v-model="editForm.BD_CheckSum" style="width: 250px" />
+                  <div class="ml-3">
+                  <el-form-item label="老化时间" prop="BD_AgingDuration">
+                  <el-input v-model.number="editForm.BD_AgingDuration" style="width: 250px" >
+                    <template #append>分钟</template>
+                  </el-input>
+
+                </el-form-item>
+              </div>
+                </el-form-item>
+           
+              
+           
+
             <el-form-item label="拼板数" prop="BD_CheckSum">
               <el-input v-model="editForm.ES_PinCount" style="width: 250px" />
             </el-form-item>
@@ -296,9 +311,11 @@ const editForm = ref({
   BD_ChipType: "",
   BD_SoftVersion: "",
   BD_IsICCID: "",
-  BD_ICCIDType:"",
+  BD_ICCIDType: "",
   BD_IsActivate: "",
-  ES_PinCount:""
+  ES_PinCount: "",
+  BD_IsSubsidiary: "",
+  BD_AgingDuration: ""
 });
 const editFormHeader = reactive([
   {
@@ -460,7 +477,7 @@ const packeForm = ref({
   zxrl: "",
   numType: "",
 });
-const cardList=ref<any[]>([])
+const cardList = ref<any[]>([])
 
 onBeforeMount(() => {
   getScreenHeight();
@@ -476,9 +493,9 @@ onBeforeUnmount(() => {
   window.addEventListener("resize", getScreenHeight);
 });
 
-const getCardData=()=>{
-  GetComboBoxList('ICCIDType').then((res:any)=>{
-    cardList.value=res.content
+const getCardData = () => {
+  GetComboBoxList('ICCIDType').then((res: any) => {
+    cardList.value = res.content
   })
 }
 //
@@ -540,13 +557,13 @@ const editOnSubmit = () => {
   // editFormRef.value.resetFields();
   if (activeName.value == "base") {
     // console.log(editForm.value);
-    if (editForm.value.BD_IsICCID&&editForm.value.BD_ICCIDType === '') {
-        ElNotification({
-          title: "提示信息",
-          message: "ICCID物料类型不能为空",
-          type: "warning",
-        });
-        return;
+    if (editForm.value.BD_IsICCID && editForm.value.BD_ICCIDType === '') {
+      ElNotification({
+        title: "提示信息",
+        message: "ICCID物料类型不能为空",
+        type: "warning",
+      });
+      return;
     }
     UpdateProductProperty(editForm.value).then((res: any) => {
       ElNotification({
@@ -554,7 +571,10 @@ const editOnSubmit = () => {
         message: res.msg,
         type: "success",
       });
-      onSubmit();
+      if(res.success){
+        onSubmit();
+      }
+     
     });
   }
   if (activeName.value == "msd") {
@@ -627,8 +647,8 @@ const getScreenHeight = () => {
     tableHeight.value = window.innerHeight - 185;
   });
 };
-const onFileChange=()=>{
-  
+const onFileChange = () => {
+
 }
 </script>
 

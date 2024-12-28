@@ -255,7 +255,7 @@ const columnData1 = reactive([
 
   {
     text: true,
-    prop: "BD_EmployeeName",
+      prop: "fullname",
     label: "扫描人",
     width: "",
     align: "1",

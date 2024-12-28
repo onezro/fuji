@@ -144,7 +144,7 @@
             placeholder=""
           /> -->
           <el-select v-model="form.procedurecode" placeholder="" filterable style="width: 240px" @change="codeChoice">
-            <el-option v-for="item in procedurecodeList" :key="item" :label="item.SpecName" :value="item.SpecName" />
+            <el-option v-for="item in procedurecodeList" :key="item" :label="item.SpecDesc" :value="item.SpecName" />
           </el-select>
         </el-form-item>
         <el-form-item label="产品描述" prop="productdsc">
