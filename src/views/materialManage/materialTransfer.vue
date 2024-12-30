@@ -1282,14 +1282,14 @@ const detailedData = reactive([
     min: true,
     align: "left",
   },
-  // {
-  //   text: true,
-  //   prop: "UOMName",
-  //   label: "单位",
-  //   width: "",
-  //   min: true,
-  //   align: "center",
-  // },
+  {
+    text: true,
+    prop: "UOMName",
+    label: "单位",
+    width: "",
+    min: true,
+    align: "center",
+  },
   {
     text: true,
     prop: "Qty",
