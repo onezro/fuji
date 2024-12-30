@@ -35,7 +35,7 @@
               </el-form-item>
               
               <el-form-item label="过序汇总" class="item-form">
-                <div class="flex justify-center items-center gap-4 p-1  border-2 border-solid border-[#f48000] pl-10 pr-10">
+                <div class="flex justify-center items-center gap-4 p-1  border-2 border-solid border-[#f48000] w-28">
                 <div class="font-bold text-xl  text-center  text-[#f48000]">
                   {{ form.TotalNum }}
                 </div> </div>
@@ -43,7 +43,7 @@
            
           
               <el-form-item label="当日过序" class="item-form">
-                <div class="flex justify-center items-center gap-4 p-1 border-2 border-solid  border-[#09bb07] pl-10 pr-10 ">
+                <div class="flex justify-center items-center gap-4 p-1 border-2 border-solid  border-[#09bb07] w-28 ">
                 <div class="font-bold text-xl  text-center  text-[#09bb07]">
                   {{ form.TodayNum }}
                 </div>

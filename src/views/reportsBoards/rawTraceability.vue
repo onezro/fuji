@@ -1,6 +1,6 @@
 <template>
     <div class="p-2">
-        <el-card shadow="always" :body-style="{ padding: '8px' }">
+        <el-card shadow="always" :body-style="{ padding: '8px 8px 0 8px' }">
             <div ref="headerRef">
                 <el-form ref="formRef" :inline="true" size="small">
                     <el-form-item label="时间" class="mb-2">
@@ -9,26 +9,27 @@
                     </el-form-item>
                     <el-form-item label="物料编码" class="mb-2">
                         <el-input style="width: 150px" v-model="getForm.ContainerName" placeholder="" clearable
-                            @change="getData"></el-input>
+                            @change="changeForm"></el-input>
                     </el-form-item>
                     <el-form-item label="物料批次码" class="mb-2">
                         <el-input style="width: 150px" v-model="getForm.MaterialName" placeholder="" clearable
-                            @change="getData"></el-input>
+                            @change="changeForm"></el-input>
                     </el-form-item>
                     <el-form-item class="mb-2">
-                        <el-button type="primary" @click="getData()">查询</el-button>
+                        <el-button type="primary" @click="changeForm">查询</el-button>
                         <el-button type="warning">导出</el-button>
                     </el-form-item>
                 </el-form>
             </div>
 
             <table-tem :show-index="true" size="small" :tableData="tableData" :tableHeight="tableHeight"
-                :columnData="columnData" :page-size="getForm.pageSize" :current-page="getForm.currentPage" :total="total1" @handleSizeChange="handleSizeChange"
-                @handleCurrentChange="handleCurrentChange" @rowClick="rowClick">
+                :columnData="columnData" :page-size="getForm.pageSize" :current-page="getForm.currentPage"
+                :total="total1" @handleSizeChange="handleSizeChange" @handleCurrentChange="handleCurrentChange"
+                @rowClick="rowClick">
             </table-tem>
             <table-tem :show-index="true" size="small" :tableData="detailData" :tableHeight="detailHeight"
-                :columnData="detailColumn" :page-size="getDetailForm.pageSize" :current-page="getDetailForm.currentPage" :total="total2" @handleSizeChange="handleSizeChange1"
-                @handleCurrentChange="handleCurrentChange1">
+                :columnData="detailColumn" :page-size="getDetailForm.pageSize" :current-page="getDetailForm.currentPage"
+                :total="total2" @handleSizeChange="handleSizeChange1" @handleCurrentChange="handleCurrentChange1">
             </table-tem>
         </el-card>
     </div>
@@ -54,20 +55,15 @@ const getForm = ref({
     MaterialName: "",
     StartTime: "",
     EndTime: "",
-    pageSize:100,
-    currentPage:0
+    pageSize: 100,
+    currentPage: 1
 });
 const searchDate = ref<any[]>([]);
 const headerRef = ref();
 const tableHeight = ref(0);
 const detailHeight = ref(0);
 const tableData = ref<any>([]);
-const total1=ref(1)
-const pageObj = ref({
-    pageSize: 100,
-    total:0,
-    currentPage: 1,
-});
+const total1 = ref(1)
 const columnData = reactive([
     {
         text: true,
@@ -94,13 +90,13 @@ const columnData = reactive([
         align: "1",
     },
 ]);
-const getDetailForm=ref({
+const getDetailForm = ref({
     ContainerName: "",
-  MaterialName: "",
-  pageSize:30,
-  currentPage: 0
+    MaterialName: "",
+    pageSize: 30,
+    currentPage: 1
 })
-const total2=ref(0)
+const total2 = ref(0)
 const detailData = ref([]);
 const detailColumn = reactive([
     {
@@ -177,10 +173,7 @@ const detailColumn = reactive([
     },
 ]);
 
-const pageObj1 = ref({
-    pageSize: 100,
-    currentPage: 1,
-});
+
 
 watch(
     () => searchDate.value,
@@ -188,12 +181,18 @@ watch(
         if (newVal === null) {
             getForm.value.StartTime = "";
             getForm.value.EndTime = "";
+            getForm.value.currentPage = 1
+            detailData.value = []
+            getDetailForm.value.currentPage = 1
             getData();
             return;
         }
         if (newVal !== oldVal) {
             getForm.value.StartTime = newVal[0];
             getForm.value.EndTime = newVal[1];
+            getForm.value.currentPage = 1
+            detailData.value = []
+            getDetailForm.value.currentPage = 1
             getData();
         }
     }
@@ -205,26 +204,39 @@ onBeforeMount(() => {
     searchDate.value = [start, end];
 });
 onMounted(() => {
-  window.addEventListener("resize", getScreenHeight);
-
+    window.addEventListener("resize", getScreenHeight);
+    //   getData();
 });
 onBeforeUnmount(() => {
-  window.addEventListener("resize", getScreenHeight);
+    window.addEventListener("resize", getScreenHeight);
 });
-
+const changeForm = () => {
+    getForm.value.currentPage = 1
+    detailData.value = []
+    getDetailForm.value.currentPage = 1
+    getData()
+}
 const getData = () => {
-    QueryMaterialCode(getForm.value).then((res: any) => { 
-        total1.value=res.content.total
-        tableData.value=res.content.data
+    QueryMaterialCode(getForm.value).then((res: any) => {
+        if (res.content.length !== 0) {
+            total1.value = res.content[0].TotalCount
+        } else {
+            total1.value = 0
+        }
+        tableData.value = res.content
     });
 };
-const rowClick = (val:any) => {
-    getDetailForm.value.ContainerName=val.ContainerName
-    QueryContainerDetail( getDetailForm.value).then((res:any)=>{
-        total2.value=res.content.total
-        detailData.value=res.content.data
+const rowClick = (val: any) => {
+    getDetailForm.value.ContainerName = val.ContainerName
+    QueryContainerDetail(getDetailForm.value).then((res: any) => {
+        if (res.content.length !== 0) {
+            total2.value = res.content[0].TotalCount
+        } else {
+            total2.value = 0
+        }
+        detailData.value = res.content
     })
- };
+};
 const handleSizeChange = (val: any) => {
     getForm.value.currentPage = 1;
     getForm.value.pageSize = val;
@@ -243,8 +255,8 @@ const handleCurrentChange1 = (val: any) => {
 };
 const getScreenHeight = () => {
     nextTick(() => {
-        tableHeight.value = (window.innerHeight - 245) * 0.6;
-        detailHeight.value = (window.innerHeight - 245) * 0.4;
+        tableHeight.value = (window.innerHeight - 235) * 0.6;
+        detailHeight.value = (window.innerHeight - 235) * 0.4;
     });
 };
 </script>

@@ -1,4 +1,5 @@
 import request from "@/request/reportRequest";
+//原材料
 export function QueryMaterialCode(data: any) {
     return request({
         url: "/api/BurningData/QueryMaterialCode",
@@ -6,6 +7,7 @@ export function QueryMaterialCode(data: any) {
         data,
     });
 }
+//原材料
 export function QueryContainerDetail(data: any) {
     return request({
         url: "/api/BurningData/QueryContainerDetail",
@@ -13,6 +15,7 @@ export function QueryContainerDetail(data: any) {
         data,
     });
 }
+//MES条码追溯
 export function QueryMESContainer(data: any) {
     return request({
       url: "/api/BurningData/QueryMESContainer",
@@ -21,10 +24,36 @@ export function QueryMESContainer(data: any) {
     });
   }
 
-  export function InsequenceRetraceFirstInfo(data: any) {
+//过序追溯
+export function InsequenceRetraceFirstInfo(data: any) {
     return request({
       url: "/api/BurningData/InsequenceRetraceFirstInfo",
       method: "post",
       data
     });
   }
+  //过序追溯
+  export function InsequenceRetraceTwoInfo(data: any) {
+    return request({
+      url: "/api/BurningData/InsequenceRetraceTwoInfo",
+      method: "post",
+      data
+    });
+  }
+
+//获取线体
+export function QuertAllMfgLineInfo() {
+  return request({
+    url: "/api/BurningData/QuertAllMfgLineInfo",
+    method: "post",
+    
+  });
+}
+//获取工序
+export function QuertAllSpecNameInfo() {
+  return request({
+    url: "/api/BurningData/QuertAllSpecNameInfo",
+    method: "post",
+  
+  });
+}

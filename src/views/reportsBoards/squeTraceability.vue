@@ -1,6 +1,6 @@
 <template>
     <div class="p-2">
-        <el-card shadow="always" :body-style="{ padding: '8px' }">
+        <el-card shadow="always" :body-style="{ padding: '8px 8px 0 8px' }">
             <div ref="headerRef">
                 <el-form ref="formRef" :inline="true" size="small">
                     <el-form-item label="时间" class="mb-2">
@@ -8,29 +8,32 @@
                             type="daterange" range-separator="-" size="small" style="width: 200px" clearable />
                     </el-form-item>
                     <el-form-item label="计划单号" class="mb-2">
-                        <el-input style="width: 150px" v-model="getForm.order" placeholder="" clearable
-                            @change="getData"></el-input>
+                        <el-input style="width: 130px" v-model="getForm.MfgOrderName" placeholder="" clearable
+                            @change="changeForm"></el-input>
                     </el-form-item>
-                      <el-form-item label="产品编码" class="mb-2">
-                        <el-input style="width: 150px" v-model="getForm.order" placeholder="" clearable
-                            @change="getData"></el-input>
+                    <el-form-item label="产品编码" class="mb-2">
+                        <el-input style="width: 130px" v-model="getForm.ProductName" placeholder="" clearable
+                            @change="changeForm"></el-input>
                     </el-form-item>
                     <el-form-item label="MES条码" class="mb-2">
-                        <el-input style="width: 150px" v-model="getForm.pcb" placeholder="" clearable
-                            @change="getData"></el-input>
-                    </el-form-item>
-                    <el-form-item label="工序" class="mb-2">
-                        <el-input style="width: 150px" v-model="getForm.pcb" placeholder="" clearable
-                            @change="getData"></el-input>
+                        <el-input style="width: 130px" v-model="getForm.ContainerName" placeholder="" clearable
+                            @change="changeForm"></el-input>
                     </el-form-item>
                     <el-form-item label="产线" class="mb-2">
-                        <el-input style="width: 150px" v-model="getForm.pcb" placeholder="" clearable
-                            @change="getData"></el-input>
+                        <el-select v-model="getForm.Line" placeholder="" style="width: 130px">
+                            <el-option v-for="p in lineList" :label="p.Description" :value="p.MfgLineName" :key="p.MfgLineName" />
+                        </el-select>
                     </el-form-item>
-                  
-                    <el-form-item  class="mb-2">
-                        <el-button type="primary" @click="getData()">查询</el-button>
-                        <el-button type="warning" >导出</el-button>
+                    <el-form-item label="工序" class="mb-2">
+                        <el-select v-model="getForm.SpecName" placeholder="" style="width: 130px">
+                            <el-option v-for="p in specnList" :label="p.Description" :value="p.SpecName" :key="p.SpecName" />
+                        </el-select>
+                    </el-form-item>
+
+
+                    <el-form-item class="mb-2">
+                        <el-button type="primary" @click="changeForm()">查询</el-button>
+                        <el-button type="warning">导出</el-button>
                     </el-form-item>
                     <!-- <el-form-item  class="mb-2">
                        
@@ -38,17 +41,24 @@
                 </el-form>
             </div>
             <table-tem :show-index="true" size="small" :tableData="tableData" :tableHeight="tableHeight"
-                :columnData="columnData" :pageObj="pageObj" @handleSizeChange="handleSizeChange"
+                :columnData="columnData" :page-size="getForm.pageSize" :current-page="getForm.currentPage" :total="total1" @handleSizeChange="handleSizeChange"
                 @handleCurrentChange="handleCurrentChange" @rowClick="rowClick">
             </table-tem>
-            <table-temp :show-index="true" size="small" :tableData="detailData" :tableHeight="detailHeight"
-                :columnData="detailColumn">
-            </table-temp>
+            <table-tem :show-index="true" size="small" :tableData="detailData" :tableHeight="detailHeight"
+                :columnData="detailColumn" :page-size="getDetailForm.pageSize" :current-page="getDetailForm.currentPage" :total="total2" @handleSizeChange="handleSizeChange1"
+                @handleCurrentChange="handleCurrentChange1">
+            </table-tem>
         </el-card>
     </div>
 </template>
 
 <script setup lang="ts">
+import {
+    QuertAllMfgLineInfo,
+    QuertAllSpecNameInfo,
+    InsequenceRetraceFirstInfo,
+    InsequenceRetraceTwoInfo,
+} from "@/api/report";
 import {
     ref,
     reactive,
@@ -59,29 +69,33 @@ import {
     onBeforeMount,
     onBeforeUnmount,
 } from "vue";
-import tableTem from "@/components/tableTem/index.vue";
+import tableTem from "@/components/tableTem/noAuto.vue";
 import tableTemp from "@/components/tableTemp/index.vue";
 import { shortcuts, setTodayDate, setLastDate } from "@/utils/dataMenu";
 const getForm = ref({
-    order: "",
-    PlanStartTime: "",
-    PlanEndTime: "",
-   
-    pcb:""
+    MfgOrderName: "",
+    ProductName: "",
+    ContainerName: "",
+    SpecName: "",
+    Line: "",
+    MaterialName: "",
+    StartTime: "",
+    EndTime: "",
+    pageSize: 100,
+    currentPage: 1,
 });
 const searchDate = ref<any[]>([]);
+const lineList = ref<any[]>([]);
+const specnList = ref<any[]>([]);
 const headerRef = ref();
 const tableHeight = ref(0);
 const detailHeight = ref(0);
 const tableData = ref<any>([]);
-const pageObj = ref({
-    pageSize: 100,
-    currentPage: 1,
-});
+const total1=ref(0)
 const columnData = reactive([
     {
         text: true,
-        prop: "Side",
+        prop: "ContainerName",
         label: "MES条码",
         width: "",
         min: true,
@@ -90,7 +104,7 @@ const columnData = reactive([
 
     {
         text: true,
-        prop: "Side",
+        prop: "MfgOrderName",
         label: "计划单号",
         width: "",
         min: true,
@@ -98,7 +112,7 @@ const columnData = reactive([
     },
     {
         text: true,
-        prop: "Qty",
+        prop: "ProductModel",
         label: "机型",
         width: "",
         min: true,
@@ -106,7 +120,7 @@ const columnData = reactive([
     },
     {
         text: true,
-        prop: "ERPOrder",
+        prop: "productName",
         label: "产品编码",
         width: "",
         min: true,
@@ -115,10 +129,10 @@ const columnData = reactive([
 
     {
         text: true,
-        prop: "Side",
-        label: "产品名称",
-        width: "",
-        min: true,
+        prop: "Description",
+        label: "产品描述",
+        width: "250",
+        // min: true,
         align: "1",
     },
     {
@@ -138,19 +152,25 @@ const columnData = reactive([
         align: "1",
     },
 ]);
-const detailData = ref([])
+const getDetailForm=ref({
+    ContainerName: "",
+  pageSize:30,
+  currentPage: 1
+})
+const total2=ref(0)
+const detailData = ref([]);
 const detailColumn = reactive([
     {
         text: true,
-        prop: "Side",
-        label: "工序名称",
+        prop: "SpecDesc",
+        label: "工序",
         width: "",
         min: true,
         align: "1",
     },
     {
         text: true,
-        prop: "ERPOrder",
+        prop: "PlannedStartDate",
         label: "生产时间",
         width: "",
         min: true,
@@ -158,15 +178,15 @@ const detailColumn = reactive([
     },
     {
         text: true,
-        prop: "Qty",
-        label: "产线名称",
+        prop: "MfgLineName",
+        label: "产线",
         width: "",
         min: true,
         align: "1",
     },
     {
         text: true,
-        prop: "Qty",
+        prop: "MaterialName",
         label: "原材料编码",
         width: "",
         min: true,
@@ -190,8 +210,8 @@ const detailColumn = reactive([
     },
     {
         text: true,
-        prop: "Qty",
-        label: "原材料名称",
+        prop: "MaterialDesc",
+        label: "原材料描述",
         width: "",
         min: true,
         align: "1",
@@ -204,21 +224,26 @@ const detailColumn = reactive([
         min: true,
         align: "1",
     },
-])
-
+]);
 
 watch(
     () => searchDate.value,
     (newVal: any, oldVal: any) => {
         if (newVal === null) {
-            getForm.value.PlanStartTime = "";
-            getForm.value.PlanEndTime = "";
+            getForm.value.StartTime = "";
+            getForm.value.EndTime = "";
+            getForm.value.currentPage=1
+    detailData.value=[]
+    getDetailForm.value.currentPage=1
             getData();
             return;
         }
         if (newVal !== oldVal) {
-            getForm.value.PlanStartTime = newVal[0];
-            getForm.value.PlanEndTime = newVal[1];
+            getForm.value.StartTime = newVal[0];
+            getForm.value.EndTime = newVal[1];
+            getForm.value.currentPage=1
+    detailData.value=[]
+    getDetailForm.value.currentPage=1
             getData();
         }
     }
@@ -229,22 +254,75 @@ onBeforeMount(() => {
     let start: string = setLastDate();
     searchDate.value = [start, end];
 });
+onMounted(() => {
+    window.addEventListener("resize", getScreenHeight);
+    //   getData();
+    getLine()
+    getSpecn()
+});
+onBeforeUnmount(() => {
+    window.addEventListener("resize", getScreenHeight);
+});
 
-const getData = () => { };
-const rowClick = () => { };
+
+const getLine = () => {
+    QuertAllMfgLineInfo().then((res: any) => {
+        lineList.value = res.content
+    })
+}
+const getSpecn = () => {
+    QuertAllSpecNameInfo().then((res: any) => {
+        specnList.value = res.content
+    })
+}
+const changeForm=()=>{
+    getForm.value.currentPage=1
+    detailData.value=[]
+    getDetailForm.value.currentPage=1
+    getData()
+}
+
+const getData = () => { 
+    InsequenceRetraceFirstInfo(getForm.value).then((res:any)=>{
+        if(res.content.length!==0){
+            total1.value=res.content[0].TotalCount
+        }else{
+            total1.value=0
+        }
+        tableData.value=res.content
+    })
+};
+const rowClick = (val:any) => {
+    getDetailForm.value.ContainerName=val.ContainerName
+    InsequenceRetraceTwoInfo( getDetailForm.value).then((res:any)=>{
+        if(res.content.length!==0){
+            total2.value=res.content[0].TotalCount
+        }else{
+            total2.value=0
+        }
+        detailData.value=res.content
+    })
+ };
 const handleSizeChange = (val: any) => {
-    pageObj.value.currentPage = 1;
-    pageObj.value.pageSize = val;
+    getForm.value.currentPage = 1;
+    getForm.value.pageSize = val;
+    getData()
 };
 const handleCurrentChange = (val: any) => {
-    pageObj.value.currentPage = val;
+    getForm.value.currentPage = val;
+    getData()
+};
+const handleSizeChange1 = (val: any) => {
+    getDetailForm.value.currentPage = 1;
+    getDetailForm.value.pageSize = val;
+};
+const handleCurrentChange1 = (val: any) => {
+    getDetailForm.value.currentPage = val;
 };
 const getScreenHeight = () => {
     nextTick(() => {
-        tableHeight.value =
-            (window.innerHeight - 225) * 0.6;
-        detailHeight.value =
-            (window.innerHeight - 225) * 0.4;
+        tableHeight.value = (window.innerHeight - 265) * 0.6;
+        detailHeight.value = (window.innerHeight - 265) * 0.4;
     });
 };
 </script>

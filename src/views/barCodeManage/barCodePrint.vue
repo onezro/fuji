@@ -8,20 +8,20 @@
                             type="daterange" range-separator="-" size="small" style="width: 200px" clearable />
                     </el-form-item>
                     <el-form-item label="条码类型" class="mb-2">
-                        <el-select v-model="getForm.ReprintType" placeholder="" style="width: 100px">
+                        <el-select v-model="getForm.ReprintType" placeholder="" style="width: 100px" @change="changeForm">
                             <el-option v-for="p in printTypeList" :label="p.Text" :value="p.Value" :key="p.Value" />
                         </el-select>
                     </el-form-item>
                     <el-form-item label="条码" class="mb-2">
                         <el-input style="width: 150px" v-model="getForm.ContainerName" placeholder="" clearable
-                            @change="getData"></el-input>
+                            @change="changeForm"></el-input>
                     </el-form-item>
                     <el-form-item label="工站" class="mb-2">
                         <el-input style="width: 150px" v-model="getForm.Workstation" placeholder="" clearable
-                            @change="getData"></el-input>
+                            @change="changeForm"></el-input>
                     </el-form-item>
                     <el-form-item class="mb-2">
-                        <el-button type="primary" @click="getData()">查询</el-button>
+                        <el-button type="primary" @click="changeForm">查询</el-button>
                         <el-button type="warning" :disabled="changeList.length == 0"
                             @click="openRePrint()">补打</el-button>
                     </el-form-item>
@@ -79,17 +79,6 @@ const searchDate = ref<any[]>([]);
 const printTypeList = ref<any[]>([]);
 const tableHeight = ref(0);
 const tableData = ref([
-    {
-        RowNumber: 1,
-        LogGuid: "342ceddf-338e-4a6b-877f-6300441a9a91",
-        ReprintType: "GBDM",
-        WorkStation: "BICV-ASY-0002",
-        ContainerName: "BDYA2412300002",
-        ReprintCount: 0,
-        ReprintReason: "2341241234",
-        CreatedBy: "CamstarAdmin",
-        allcount: 3,
-    },
 ]);
 const total = ref(0);
 const columnData = reactive([
@@ -151,12 +140,14 @@ watch(
         if (newVal === null) {
             getForm.value.ReprintStartTime = "";
             getForm.value.ReprintEndTime = "";
+            getForm.value.PageNumber=1
             getData();
             return;
         }
         if (newVal !== oldVal) {
             getForm.value.ReprintStartTime = newVal[0];
             getForm.value.ReprintEndTime = newVal[1];
+            getForm.value.PageNumber=1
             getData();
         }
     }
@@ -177,6 +168,10 @@ onBeforeUnmount(() => {
     window.addEventListener("resize", getScreenHeight);
 });
 
+const changeForm=()=>{
+    getForm.value.PageNumber=1
+    getData()
+}
 const getPrintType = () => {
     GetComboBoxList("ReprintType").then((res: any) => {
         printTypeList.value = res.content;
