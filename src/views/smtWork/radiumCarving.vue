@@ -571,6 +571,7 @@ const sureClick = () => {
           form.ERPOrder = choiceRow.value.ERPOrder;
           dialogVisible.value = false;
           barCodeRef.value.focus();
+          
         })
         .catch(() => {
 
