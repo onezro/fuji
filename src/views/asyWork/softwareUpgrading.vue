@@ -442,6 +442,7 @@ const reset = () => {
   msgType.value = true;
   typeColor.value = "grey";
   isActive.value = false;
+  inputRef.value.focus()
 };
 
 //选中
