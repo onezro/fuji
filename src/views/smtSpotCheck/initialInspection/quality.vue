@@ -246,7 +246,7 @@
               disabled
             ></el-input>
           </el-form-item>
-          <el-form-item label="生产生产计划号" class="mb-2">
+          <el-form-item label="生产计划号" class="mb-2">
             <el-input
               v-model="form.orderNo"
               style="width: 220px"
