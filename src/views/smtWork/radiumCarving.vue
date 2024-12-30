@@ -571,7 +571,6 @@ const sureClick = () => {
           form.ERPOrder = choiceRow.value.ERPOrder;
           dialogVisible.value = false;
           barCodeRef.value.focus();
-          
         })
         .catch(() => {
 
@@ -591,6 +590,9 @@ const refreshClick = () => {
     orderName: form.MfgOrderName,
     IsVerify: true,
   }).then((data: any) => {
+    if (!data.success) {
+      return;
+    }
     Completed.value = [];
     awaitLaser.value = [];
     notReleased.value = [];
@@ -598,6 +600,8 @@ const refreshClick = () => {
     // if(data.success){
 
     // }
+    console.log(data);
+    
     tableData.value = data.content;
     checkList.value = ["待镭雕", "未释放"];
     Completed.value = tableData.value.filter(
