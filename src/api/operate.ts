@@ -774,3 +774,21 @@ export function GetTempLabeReportParameter(data: any) {
         data
     })
 }
+
+//补打记录
+export function QueryReprintRecord(data: any) {
+    return request({
+        url: "/api/Reprint/QueryReprintRecord",
+        method: "post",
+        data
+    })
+}
+
+//补打
+export function Reprint(data: any) {
+    return request({
+        url: "/api/Reprint/Reprint",
+        method: "post",
+        data
+    })
+}

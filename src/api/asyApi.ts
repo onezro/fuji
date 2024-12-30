@@ -71,7 +71,7 @@ export function CoverInstallPrint(data:any) {
     return request({
         url: "/api/CoverInstall/CoverInstallPrint",
         method: "post",
-        params:data
+       data
     });
 }
 //查询关键物料

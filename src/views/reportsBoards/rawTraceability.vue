@@ -204,6 +204,13 @@ onBeforeMount(() => {
     let start: string = setLastDate();
     searchDate.value = [start, end];
 });
+onMounted(() => {
+  window.addEventListener("resize", getScreenHeight);
+
+});
+onBeforeUnmount(() => {
+  window.addEventListener("resize", getScreenHeight);
+});
 
 const getData = () => {
     QueryMaterialCode(getForm.value).then((res: any) => { 
