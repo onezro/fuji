@@ -18,7 +18,7 @@ export function QueryContainerDetail(data: any) {
 //MES条码追溯
 export function QueryMESContainer(data: any) {
     return request({
-      url: "/api/BurningData/QueryMESContainer",
+      url: "/api/BurningData/QueryMESContainerTracedBack",
       method: "post",
       data
     });
