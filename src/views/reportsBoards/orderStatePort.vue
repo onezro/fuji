@@ -44,23 +44,27 @@
         :tableData="tableData"
         :tableHeight="tableHeight"
         :columnData="columnData"
-        :pageObj="{
-          pageSize: getForm.PageSize,
-          currentPage: getForm.PageNumber
-        }"
+        :page-size="getForm.PageSize"
+        :current-page="getForm.PageNumber"
         @handleSizeChange="handleSizeChange"
         @handleCurrentChange="handleCurrentChange"
         @rowClick="rowClick"
+        :total="total1"
       >
       </noAuto>
-      <table-temp
+      <noAuto
         :show-index="true"
         size="small"
         :tableData="detailData"
         :tableHeight="detailHeight"
         :columnData="detailColumn"
+        :page-size="detailForm.PageSize"
+        :current-page="detailForm.PageNumber"
+        @handleSizeChange="handleSizeChange1"
+        @handleCurrentChange="handleCurrentChange1"
+        :total="total2"
       >
-      </table-temp>
+      </noAuto>
     </el-card>
   </div>
 </template>
@@ -98,7 +102,17 @@ const getForm = ref({
   PageNumber: 1,
   PageSize: 100,
 });
+const detailForm = ref({
+  PlanNo: "",
+  PlanStartTime: "",
+  PlanEndTime: "",
+  OrderTypeName: "",
+  PageNumber: 1,
+  PageSize: 100,
+});
 const searchDate = ref<any[]>([]);
+const total1 = ref(0);
+const total2 = ref(0);
 const headerRef = ref();
 const tableHeight = ref(0);
 const detailHeight = ref(0);
@@ -111,7 +125,7 @@ const OrderTypeList = ref<any[]>([]);
 const columnData = reactive([
   {
     text: true,
-    prop: "Side",
+    prop: "PlannedStartDate",
     label: "生产时间",
     width: "",
     min: true,
@@ -119,7 +133,7 @@ const columnData = reactive([
   },
   {
     text: true,
-    prop: "ERPOrder",
+    prop: "WorkCenterDesc",
     label: "车间",
     width: "",
     min: true,
@@ -127,7 +141,7 @@ const columnData = reactive([
   },
   {
     text: true,
-    prop: "Qty",
+    prop: "MfgLineDesc",
     label: "产线名称",
     width: "",
     min: true,
@@ -135,7 +149,7 @@ const columnData = reactive([
   },
   {
     text: true,
-    prop: "Side",
+    prop: "MfgOrderName",
     label: "计划单号",
     width: "",
     min: true,
@@ -143,7 +157,7 @@ const columnData = reactive([
   },
   {
     text: true,
-    prop: "ERPOrder",
+    prop: "ProductName",
     label: "产品编码",
     width: "",
     min: true,
@@ -151,7 +165,7 @@ const columnData = reactive([
   },
   {
     text: true,
-    prop: "Qty",
+    prop: "ProductModel",
     label: "机型",
     width: "",
     min: true,
@@ -159,7 +173,7 @@ const columnData = reactive([
   },
   {
     text: true,
-    prop: "Side",
+    prop: "OrderStatusDesc",
     label: "工单状态",
     width: "",
     min: true,
@@ -167,7 +181,7 @@ const columnData = reactive([
   },
   {
     text: true,
-    prop: "ERPOrder",
+    prop: "WorkflowName",
     label: "工艺流程",
     width: "",
     min: true,
@@ -183,7 +197,7 @@ const columnData = reactive([
   },
   {
     text: true,
-    prop: "ERPOrder",
+    prop: "countnum",
     label: "完成数量",
     width: "",
     min: true,
@@ -191,7 +205,7 @@ const columnData = reactive([
   },
   {
     text: true,
-    prop: "Qty",
+    prop: "onlinenum",
     label: "在制数量",
     width: "",
     min: true,
@@ -202,7 +216,7 @@ const detailData = ref([]);
 const detailColumn = reactive([
   {
     text: true,
-    prop: "Side",
+    prop: "ERPOrder",
     label: "工单号码",
     width: "",
     min: true,
@@ -210,7 +224,15 @@ const detailColumn = reactive([
   },
   {
     text: true,
-    prop: "ERPOrder",
+    prop: "MfgOrderName",
+    label: "生产计划号",
+    width: "",
+    min: true,
+    align: "1",
+  },
+  {
+    text: true,
+    prop: "SpecName",
     label: "工序序号",
     width: "",
     min: true,
@@ -218,20 +240,20 @@ const detailColumn = reactive([
   },
   {
     text: true,
-    prop: "Qty",
+    prop: "SpecDesc",
     label: "工序名称",
     width: "",
     min: true,
     align: "1",
   },
-  {
-    text: true,
-    prop: "Qty",
-    label: "生产数量",
-    width: "",
-    min: true,
-    align: "1",
-  },
+//   {
+//     text: true,
+//     prop: "Qty",
+//     label: "生产数量",
+//     width: "",
+//     min: true,
+//     align: "1",
+//   },
 ]);
 
 watch(
@@ -243,11 +265,6 @@ watch(
     //     getData();
     //     return;
     // }
-    console.log(
-      isDateWithinLastThreeMonths(newVal[0]),
-      newVal[0],
-      new Date(newVal[0])
-    );
 
     if (!isDateWithinLastThreeMonths(newVal[0])) {
       ElNotification({
@@ -284,6 +301,7 @@ const getData = () => {
   PlanProgressQuery(getForm.value).then((res: any) => {
     if (res && res.success) {
       tableData.value = res.content;
+      total1.value = res.total;
     }
   });
 };
@@ -343,7 +361,17 @@ const isDateWithinLastThreeMonths = (inputDateStr: any) => {
   // 比较输入日期和三个月前的日期
   return inputDate >= threeMonthsAgo;
 };
-const rowClick = () => {};
+const getDetail = () => {
+  QueryOrderContainer(detailForm.value).then((res: any) => {
+    if (res && res.success) {
+      detailData.value = res.content;
+    }
+  });
+};
+const rowClick = (row: any) => {
+    detailForm.value.PlanNo = row.MfgOrderName;
+    getDetail();
+};
 const handleSizeChange = (val: any) => {
   getForm.value.PageNumber = 1;
   getForm.value.PageSize = val;
@@ -353,10 +381,19 @@ const handleCurrentChange = (val: any) => {
   getForm.value.PageNumber = val;
   getData();
 };
+const handleSizeChange1 = (val: any) => {
+  detailForm.value.PageNumber = 1;
+  detailForm.value.PageSize = val;
+  getDetail();
+};
+const handleCurrentChange1 = (val: any) => {
+  detailForm.value.PageNumber = val;
+  getDetail();
+};
 const getScreenHeight = () => {
   nextTick(() => {
-    tableHeight.value = (window.innerHeight - 195) * 0.6;
-    detailHeight.value = (window.innerHeight - 195) * 0.4;
+    tableHeight.value = (window.innerHeight - 245) * 0.5;
+    detailHeight.value = (window.innerHeight - 245) * 0.5;
   });
 };
 </script>
