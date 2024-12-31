@@ -91,10 +91,7 @@
         <el-table
           size="small"
           :data="
-            tableData.slice(
-              (currentPage - 1) * pageSize,
-              currentPage * pageSize
-            )
+            tableData
           "
           ref="multipleTable"
           border

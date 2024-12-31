@@ -591,6 +591,7 @@ const refreshClick = () => {
     IsVerify: true,
   }).then((data: any) => {
     if (!data.success) {
+      tableData.value = [];
       return;
     }
     Completed.value = [];
