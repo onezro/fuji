@@ -13,8 +13,10 @@
           <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
             <span class="ml-5">工装治具</span>
           </div>
-          <!-- <el-scrollbar :height="leftBoxH + 'px'" class="p-3"> -->
-          <div class="p-3 overflow-y-auto" :style="{ height: leftBoxH + 'px' }" ref="listContainer">
+          <div>
+          <el-scrollbar :height="leftBoxH + 'px'" >
+            <div class="p-3">
+          <!-- <div class="p-3 overflow-y-auto" :style="{ height: leftBoxH + 'px' }" ref="listContainer"> -->
             <el-checkbox-group v-model="checked">
               <el-card shadow="always" class="mb-2" :class="{ 'active': t.ToolName === checked[0] }"
                 :body-style="{ padding: '8px' }" v-for="t in toolList" :key="t.ToolName">
@@ -78,7 +80,8 @@
               </el-card>
             </el-checkbox-group>
           </div>
-           <!-- </el-scrollbar> -->
+           </el-scrollbar>
+          </div>
         </div>
       </div>
       <div class="w-[calc(100%-350px)]">

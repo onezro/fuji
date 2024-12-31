@@ -54,6 +54,5 @@ export function QuertAllSpecNameInfo() {
   return request({
     url: "/api/BurningData/QuertAllSpecNameInfo",
     method: "post",
-  
   });
 }
