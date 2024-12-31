@@ -570,6 +570,7 @@ const sureClick = () => {
           form.Side = choiceRow.value.Side;
           form.ERPOrder = choiceRow.value.ERPOrder;
           dialogVisible.value = false;
+          refreshClick()
           barCodeRef.value.focus();
         })
         .catch(() => {
@@ -588,7 +589,7 @@ const refreshClick = () => {
   }
   OrderSNQuery({
     orderName: form.MfgOrderName,
-    IsVerify: true,
+    IsVerify: false,
   }).then((data: any) => {
     if (!data.success) {
       tableData.value = [];
