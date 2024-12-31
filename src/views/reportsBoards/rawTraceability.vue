@@ -17,7 +17,7 @@
                     </el-form-item>
                     <el-form-item class="mb-2">
                         <el-button type="primary" @click="changeForm">查询</el-button>
-                        <el-button type="warning">导出</el-button>
+                        <!-- <el-button type="warning">导出</el-button> -->
                     </el-form-item>
                 </el-form>
             </div>

@@ -33,7 +33,7 @@
 
                     <el-form-item class="mb-2">
                         <el-button type="primary" @click="changeForm()">查询</el-button>
-                        <el-button type="warning">导出</el-button>
+                        <el-button type="warning" disabled>导出</el-button>
                     </el-form-item>
                     <!-- <el-form-item  class="mb-2">
                        
@@ -44,10 +44,9 @@
                 :columnData="columnData" :page-size="getForm.pageSize" :current-page="getForm.currentPage" :total="total1" @handleSizeChange="handleSizeChange"
                 @handleCurrentChange="handleCurrentChange" @rowClick="rowClick">
             </table-tem>
-            <table-tem :show-index="true" size="small" :tableData="detailData" :tableHeight="detailHeight"
-                :columnData="detailColumn" :page-size="getDetailForm.pageSize" :current-page="getDetailForm.currentPage" :total="total2" @handleSizeChange="handleSizeChange1"
-                @handleCurrentChange="handleCurrentChange1">
-            </table-tem>
+            <table-temp :show-index="true" size="small" :tableData="detailData" :tableHeight="detailHeight"
+                :columnData="detailColumn" >
+            </table-temp>
         </el-card>
     </div>
 </template>
@@ -321,8 +320,8 @@ const handleCurrentChange1 = (val: any) => {
 };
 const getScreenHeight = () => {
     nextTick(() => {
-        tableHeight.value = (window.innerHeight - 265) * 0.6;
-        detailHeight.value = (window.innerHeight - 265) * 0.4;
+        tableHeight.value = (window.innerHeight - 220) * 0.6;
+        detailHeight.value = (window.innerHeight - 220) * 0.4;
     });
 };
 </script>

@@ -208,7 +208,7 @@
             </div>
             <table-tem :showIndex="true" :tableData="changeData" :tableHeight="tableHeight" :columnData="columnData1"
               :pageObj="pageObj" @handleSizeChange="handleSizeChange"
-              @handleCurrentChange="handleCurrentChange"></table-tem>
+              @handleCurrentChange="handleCurrentChange"></table-tem>  
           </div>
         </div>
       </div>
