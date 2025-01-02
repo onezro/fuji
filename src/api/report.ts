@@ -74,10 +74,32 @@ export function PlanProgressQuery(data:any) {
   });
 }
 
-//查询计划号条码数据
+//MES条码查询
 export function QueryOrderContainer(data: any) {
   return request({
     url: "/api/PlantProgressQuery/QueryOrderContainer",
+    method: "post",
+    params:{
+      containername:data
+    }
+  });
+}
+
+//条码清单
+export function QueryMESBarCode(data: any) {
+  return request({
+    url: "/api/QueryMESContainer/QueryMESBarCode",
+    method: "post",
+    params:{
+      containername:data
+    }
+  });
+}
+
+//XLX文件读取
+export function ParseXlsxFile(data: any) {
+  return request({
+    url: "/api/QueryMESContainer/ParseXlsxFile",
     method: "post",
     data
   });

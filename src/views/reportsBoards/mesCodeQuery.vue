@@ -1,5 +1,5 @@
 <template>  <div class="p-2 flex gap-[10px]">
-  <el-card shadow="always" :body-style="{ padding: '8px' }" class="w-[450px] h-[calc(100vh-97px)]">
+  <el-card shadow="always" :body-style="{ padding: '8px' }" class="w-[500px] h-[calc(100vh-97px)]">
     <div ref="headerRef">
         <el-form ref="formRef" :inline="true" size="small">
           <el-form-item label="MES条码" class="mb-2">
