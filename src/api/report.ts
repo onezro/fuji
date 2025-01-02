@@ -2,7 +2,7 @@ import request from "@/request/reportRequest";
 //原材料
 export function QueryMaterialCode(data: any) {
     return request({
-        url: "/api/BurningData/QueryMaterialCode",
+        url: "/api/RawMaterialsTracedbackQuery/QueryMaterialCode",
         method: "post",
         data,
     });
@@ -10,15 +10,15 @@ export function QueryMaterialCode(data: any) {
 //原材料
 export function QueryContainerDetail(data: any) {
     return request({
-        url: "/api/BurningData/QueryContainerDetail",
+        url: "/api/RawMaterialsTracedbackQuery/QueryContainerDetail",
         method: "post",
         data,
     });
 }
 //MES条码追溯
-export function QueryMESContainer(data: any) {
+export function QueryMESContainerTracedBack(data: any) {
     return request({
-      url: "/api/BurningData/QueryMESContainerTracedBack",
+      url: "/api/RawMaterialsTracedbackQuery/QueryMESContainerTracedBack",
       method: "post",
       data
     });
@@ -27,7 +27,7 @@ export function QueryMESContainer(data: any) {
 //过序追溯
 export function InsequenceRetraceFirstInfo(data: any) {
     return request({
-      url: "/api/BurningData/InsequenceRetraceFirstInfo",
+      url: "/api/RawMaterialsTracedbackQuery/InsequenceRetraceFirstInfo",
       method: "post",
       data
     });
@@ -35,7 +35,7 @@ export function InsequenceRetraceFirstInfo(data: any) {
   //过序追溯
   export function InsequenceRetraceTwoInfo(data: any) {
     return request({
-      url: "/api/BurningData/InsequenceRetraceTwoInfo",
+      url: "/api/RawMaterialsTracedbackQuery/InsequenceRetraceTwoInfo",
       method: "post",
       data
     });
@@ -44,7 +44,7 @@ export function InsequenceRetraceFirstInfo(data: any) {
 //获取线体
 export function QuertAllMfgLineInfo() {
   return request({
-    url: "/api/BurningData/QuertAllMfgLineInfo",
+    url: "/api/RawMaterialsTracedbackQuery/QuertAllMfgLineInfo",
     method: "post",
     
   });
@@ -52,7 +52,7 @@ export function QuertAllMfgLineInfo() {
 //获取工序
 export function QuertAllSpecNameInfo() {
   return request({
-    url: "/api/BurningData/QuertAllSpecNameInfo",
+    url: "/api/RawMaterialsTracedbackQuery/QuertAllSpecNameInfo",
     method: "post",
   });
 }

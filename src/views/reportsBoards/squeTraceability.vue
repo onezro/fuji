@@ -5,7 +5,7 @@
                 <el-form ref="formRef" :inline="true" size="small">
                     <el-form-item label="时间" class="mb-2">
                         <el-date-picker :shortcuts="shortcuts" v-model="searchDate" value-format="YYYY-MM-DD"
-                            type="daterange" range-separator="-" size="small" style="width: 200px" clearable />
+                            type="daterange" range-separator="-" size="small" style="width: 200px" :disabled-date="disabledDate" :clearable="false" />
                     </el-form-item>
                     <el-form-item label="计划单号" class="mb-2">
                         <el-input style="width: 130px" v-model="getForm.MfgOrderName" placeholder="" clearable
@@ -33,7 +33,7 @@
 
                     <el-form-item class="mb-2">
                         <el-button type="primary" @click="changeForm()">查询</el-button>
-                        <el-button type="warning">导出</el-button>
+                        <el-button type="warning" disabled>导出</el-button>
                     </el-form-item>
                     <!-- <el-form-item  class="mb-2">
                        
@@ -44,10 +44,9 @@
                 :columnData="columnData" :page-size="getForm.pageSize" :current-page="getForm.currentPage" :total="total1" @handleSizeChange="handleSizeChange"
                 @handleCurrentChange="handleCurrentChange" @rowClick="rowClick">
             </table-tem>
-            <table-tem :show-index="true" size="small" :tableData="detailData" :tableHeight="detailHeight"
-                :columnData="detailColumn" :page-size="getDetailForm.pageSize" :current-page="getDetailForm.currentPage" :total="total2" @handleSizeChange="handleSizeChange1"
-                @handleCurrentChange="handleCurrentChange1">
-            </table-tem>
+            <table-temp :show-index="true" size="small" :tableData="detailData" :tableHeight="detailHeight"
+                :columnData="detailColumn" >
+            </table-temp>
         </el-card>
     </div>
 </template>
@@ -71,7 +70,7 @@ import {
 } from "vue";
 import tableTem from "@/components/tableTem/noAuto.vue";
 import tableTemp from "@/components/tableTemp/index.vue";
-import { shortcuts, setTodayDate, setLastDate } from "@/utils/dataMenu";
+import { shortcuts, setTodayDate, setLastDate,disabledDate } from "@/utils/dataMenu";
 const getForm = ref({
     MfgOrderName: "",
     ProductName: "",
@@ -321,8 +320,8 @@ const handleCurrentChange1 = (val: any) => {
 };
 const getScreenHeight = () => {
     nextTick(() => {
-        tableHeight.value = (window.innerHeight - 265) * 0.6;
-        detailHeight.value = (window.innerHeight - 265) * 0.4;
+        tableHeight.value = (window.innerHeight - 220) * 0.6;
+        detailHeight.value = (window.innerHeight - 220) * 0.4;
     });
 };
 </script>

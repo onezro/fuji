@@ -5,7 +5,7 @@
                 <el-form ref="formRef" :inline="true" size="small">
                     <el-form-item label="时间" class="mb-2">
                         <el-date-picker :shortcuts="shortcuts" v-model="searchDate" value-format="YYYY-MM-DD"
-                            type="daterange" range-separator="-" size="small" style="width: 200px" clearable />
+                            type="daterange" range-separator="-" size="small" style="width: 200px" :disabled-date="disabledDate" :clearable="false"/>
                     </el-form-item>
                     <el-form-item label="计划单号" class="mb-2">
                         <el-input style="width: 150px" v-model="getForm.MfgOrderName" placeholder="" clearable
@@ -26,7 +26,7 @@
 
                     <el-form-item class="mb-2">
                         <el-button type="primary" @click="changeForm()">查询</el-button>
-                        <el-button type="warning">导出</el-button>
+                        <!-- <el-button type="warning" >导出</el-button> -->
                     </el-form-item>
                     <!-- <el-form-item  class="mb-2">
                        
@@ -43,7 +43,7 @@
 </template>
 
 <script setup lang="ts">
-import { QueryMESContainer } from "@/api/report";
+import { QueryMESContainerTracedBack } from "@/api/report";
 import {
     ref,
     reactive,
@@ -56,7 +56,7 @@ import {
 } from "vue";
 import tableTem from "@/components/tableTem/noAuto.vue";
 
-import { shortcuts, setTodayDate, setLastDate } from "@/utils/dataMenu";
+import { shortcuts, setTodayDate, setLastDate ,disabledDate} from "@/utils/dataMenu";
 const getForm = ref({
     MfgOrderName: "",
     ContainerName: "",
@@ -264,7 +264,7 @@ const changeForm=()=>{
     getData()
 }
 const getData = () => { 
-    QueryMESContainer(getForm.value).then((res:any)=>{
+    QueryMESContainerTracedBack(getForm.value).then((res:any)=>{
         if(res.content.length!==0){
             total1.value=res.content[0].TotalCount
         }else{
