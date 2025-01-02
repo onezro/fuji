@@ -83,3 +83,34 @@ export function QueryOrderContainer(data: any) {
   });
 }
 
+//查询计划号条码数据
+export function QueryMESContainer(data: any) {
+  return request({
+    url: "/api/QueryMESContainer/QueryMESContainer",
+    method: "post",
+    params:{
+      containername:data
+    }
+  });
+}
+
+//条码清单
+export function QueryMESBarCode(data: any) {
+  return request({
+    url: "/api/QueryMESContainer/QueryMESBarCode",
+    method: "post",
+    params:{
+      containername:data
+    }
+  });
+}
+
+//XLX文件读取
+export function ParseXlsxFile(data: any) {
+  return request({
+    url: "/api/QueryMESContainer/ParseXlsxFile",
+    method: "post",
+    data
+  });
+}
+

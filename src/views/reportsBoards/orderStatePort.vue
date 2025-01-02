@@ -12,6 +12,7 @@
               range-separator="-"
               size="small"
               style="width: 200px"
+              :clearable="false"
             />
           </el-form-item>
           <el-form-item label="计划单号" class="mb-2">
@@ -23,7 +24,7 @@
               @change="getData"
             ></el-input>
           </el-form-item>
-          <el-form-item label="计划单号" class="mb-2">
+          <el-form-item label="计划类型" class="mb-2">
             <el-select v-model="getForm.OrderTypeName" style="width: 152px">
               <el-option
                 v-for="item in OrderTypeList"
@@ -94,6 +95,7 @@ import {
   QueryOrderType,
   QueryOrderContainer,
 } from "@/api/report";
+import { log } from "vxe-table";
 const getForm = ref({
   PlanNo: "",
   PlanStartTime: "",
@@ -216,20 +218,20 @@ const detailData = ref([]);
 const detailColumn = reactive([
   {
     text: true,
-    prop: "ERPOrder",
-    label: "工单号码",
+    prop: "containername",
+    label: "条码",
     width: "",
     min: true,
     align: "1",
   },
-  {
-    text: true,
-    prop: "MfgOrderName",
-    label: "生产计划号",
-    width: "",
-    min: true,
-    align: "1",
-  },
+  // {
+  //   text: true,
+  //   prop: "MfgOrderName",
+  //   label: "生产计划号",
+  //   width: "",
+  //   min: true,
+  //   align: "1",
+  // },
   {
     text: true,
     prop: "SpecName",
@@ -300,6 +302,11 @@ onMounted(() => {
 const getData = () => {
   PlanProgressQuery(getForm.value).then((res: any) => {
     if (res && res.success) {
+      if (res.content === null) {
+        tableData.value = [];
+        total1.value = 0;
+        return;
+      }
       tableData.value = res.content;
       total1.value = res.total;
     }
@@ -364,7 +371,13 @@ const isDateWithinLastThreeMonths = (inputDateStr: any) => {
 const getDetail = () => {
   QueryOrderContainer(detailForm.value).then((res: any) => {
     if (res && res.success) {
+      if (res.content === null) {
+        detailData.value = [];
+        total2.value = 0;
+        return;
+      }
       detailData.value = res.content;
+      total2.value = res.total;
     }
   });
 };
