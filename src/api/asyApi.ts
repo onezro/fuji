@@ -439,3 +439,13 @@ export function GetContainerComponentNew(data: any) {
     });
   }
 
+    //条码绑定
+    export function UpdateContainerNameToNewContainer(data: any) {
+      return request({
+        url: "/api/ReturnRepair/UpdateContainerNameToNewContainer",
+        method: "post",
+        data
+      });
+    }
+  
+

@@ -88,7 +88,7 @@ const columnData = reactive([
 
     {
         text: true,
-        prop: "WorkCenterName",
+        prop: "WorkCenterDesc",
         label: "车间",
         width: "",
         min: true,
@@ -104,7 +104,7 @@ const columnData = reactive([
     },
     {
         text: true,
-        prop: "ERPOrder",
+        prop: "Description",
         label: "工位",
         width: "",
         min: true,
@@ -145,7 +145,7 @@ const columnData = reactive([
     },
     {
         text: true,
-        prop: "MaterialName",
+        prop: "ContainerName",
         label: "物料编码",
         width: "",
         min: true,
@@ -153,7 +153,7 @@ const columnData = reactive([
     },
     {
         text: true,
-        prop: "Qty",
+        prop: "tuid",
         label: "物料唯一码",
         width: "",
         min: true,

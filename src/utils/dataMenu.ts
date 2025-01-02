@@ -39,6 +39,21 @@ export const OrganData = (organizations: any) => {
 
 export const shortcuts = [
   {
+    text: '近三个月',
+    value: () => {
+      const end = new Date();
+      let start = new Date(end);
+      start.setMonth(start.getMonth() - 3);
+      // 如果当前日期是1月或2月，并且回推后年份需要变更
+      if (start.getMonth() + 3 > end.getMonth()) {
+        start.setFullYear(start.getFullYear() - 1);
+      }
+      // 确保开始日期是所在月份的第一天
+      start.setDate(1);
+      return [start, end];
+    },
+  },
+  {
     text: '本月',
     value: () => {
       const end = new Date()
