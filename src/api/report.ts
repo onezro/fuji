@@ -74,10 +74,19 @@ export function PlanProgressQuery(data:any) {
   });
 }
 
-//MES条码查询
+//查询计划号条码数据
 export function QueryOrderContainer(data: any) {
   return request({
     url: "/api/PlantProgressQuery/QueryOrderContainer",
+    method: "post",
+    data
+  });
+}
+
+//查询计划号条码数据
+export function QueryMESContainer(data: any) {
+  return request({
+    url: "/api/QueryMESContainer/QueryMESContainer",
     method: "post",
     params:{
       containername:data
