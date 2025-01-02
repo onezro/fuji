@@ -5,7 +5,7 @@
                 <el-form ref="formRef" :inline="true" size="small">
                     <el-form-item label="时间" class="mb-2">
                         <el-date-picker :shortcuts="shortcuts" v-model="searchDate" value-format="YYYY-MM-DD"
-                            type="daterange" range-separator="-" size="small" style="width: 200px" clearable />
+                            type="daterange" range-separator="-" size="small" style="width: 200px" :disabled-date="disabledDate" :clearable="false"/>
                     </el-form-item>
                     <el-form-item label="计划单号" class="mb-2">
                         <el-input style="width: 150px" v-model="getForm.MfgOrderName" placeholder="" clearable
@@ -56,7 +56,7 @@ import {
 } from "vue";
 import tableTem from "@/components/tableTem/noAuto.vue";
 
-import { shortcuts, setTodayDate, setLastDate } from "@/utils/dataMenu";
+import { shortcuts, setTodayDate, setLastDate ,disabledDate} from "@/utils/dataMenu";
 const getForm = ref({
     MfgOrderName: "",
     ContainerName: "",
