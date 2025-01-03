@@ -358,7 +358,7 @@ const columnData1 = reactive([
   },
   {
     text: true,
-      prop: "fullname",
+    prop: "fullname",
     label: "扫描人",
     width: "",
     align: "1",
@@ -618,7 +618,7 @@ const getChange = () => {
 };
 //过站
 const goStop = () => {
-  
+
   CoverSMTCompBindMoveStd(stopsForm.value).then((res: any) => {
     msgTitle.value = res.msg;
     msgType.value = res.success;
@@ -626,7 +626,7 @@ const goStop = () => {
     stopsForm.value.BarCode = "";
     stopsForm.value.result = "OK";
     barCode.value = "";
-  
+
     if (res.success) {
       stopsForm.value.keyMaterialList = [];
       getKeyMaterial();
@@ -797,6 +797,9 @@ const radioChange = (args: any) => {
       keyForm.value.OrderName = args[0].MfgOrderName;
       keyForm.value.ProductName = args[0].ProductName;
       getBadForm.value.orderName = args[0].MfgOrderName;
+      msgType.value = true;
+      msgTitle.value = "";
+      stopsForm.value.keyMaterialList = [];
       // getKeyMaterial()
       // getHisData();
     } else {
