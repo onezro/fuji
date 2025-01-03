@@ -117,7 +117,7 @@ const detailColumn = reactive([
     },
     {
         text: true,
-        prop: "MfgLineDesc",
+        prop: "MfgLineDes",
         label: "产线",
         width: "",
         min: true,
@@ -125,7 +125,7 @@ const detailColumn = reactive([
     },
     {
         text: true,
-        prop: "Qty",
+        prop: "StationName",
         label: "工位",
         width: "",
         min: true,
@@ -141,7 +141,7 @@ const detailColumn = reactive([
     },
     {
         text: true,
-        prop: "ProductModel",
+        prop: "productModel",
         label: "机型",
         width: "",
         min: true,
@@ -149,7 +149,7 @@ const detailColumn = reactive([
     },
     {
         text: true,
-        prop: "productName",
+        prop: "ProductName",
         label: "产品编码",
         width: "",
         min: true,
@@ -165,7 +165,7 @@ const detailColumn = reactive([
     },
     {
         text: true,
-        prop: "Qty",
+        prop: "containername",
         label: "MES条码",
         width: "",
         min: true,

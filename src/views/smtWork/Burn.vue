@@ -362,7 +362,8 @@ const burnPrint = () => {
   let data1=BurnTableData.value.map((b:any)=>{
     return {
       ...b,
-      workStation:opui.station
+      workStation:opui.station,
+      userAccount: userStore.getUserInfo
     }
   })
 

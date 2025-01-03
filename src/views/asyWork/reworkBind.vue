@@ -50,13 +50,13 @@
                                     <el-input v-model.trim="barCode" ref="inputRef" :autofocus="inputFocus"
                                         style="width: 500px" placeholder="请扫描条码" @keyup.enter.native="getChange" />
                                 </el-form-item>
-                                <el-form-item :class="[stopsForm.ReplaceMesCode  ? 'switchok' : 'switchng']"
+                                <!-- <el-form-item :class="[stopsForm.ReplaceMesCode  ? 'switchok' : 'switchng']"
                                     class="mb-2">
                                     <el-switch v-model="stopsForm.ReplaceMesCode" size="large"
                                         style="zoom: 1.2;--el-switch-on-color:#13ce66 ;--el-switch-off-color:#ff4949 ;"
                                         :active-value="true" :inactive-value="false" active-text="新条码 "
                                         inactive-text="旧条码" />
-                                </el-form-item>
+                                </el-form-item> -->
                             </el-form>
                             <div class="text-xl font-bold text-[#00B400]" v-show="msgType === true || msgTitle === ''">
                                 {{ msgTitle === "" ? "请扫描成品条码" : msgTitle }}
@@ -355,9 +355,9 @@ const getChange = () => {
     AssociateOldContainerAndNewMfg(stopsForm.value).then((res: any) => {
         msgType.value = res.success;
         msgTitle.value = res.msg;
-        if (res.success) {
-            stopsForm.value.ReplaceMesCode = false
-        }
+        // if (res.success) {
+        //     stopsForm.value.ReplaceMesCode = false
+        // }
         barCode.value = "";
     });
 };

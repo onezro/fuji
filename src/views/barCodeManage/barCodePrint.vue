@@ -5,10 +5,10 @@
                 <el-form ref="formRef" :inline="true" size="small">
                     <el-form-item label="时间" class="mb-2">
                         <el-date-picker :shortcuts="shortcuts" v-model="searchDate" value-format="YYYY-MM-DD"
-                            type="daterange" range-separator="-" size="small" style="width: 200px" clearable />
+                            type="daterange" range-separator="-" size="small" style="width: 200px" :clearable="false" :disabled-date="disabledDate" />
                     </el-form-item>
                     <el-form-item label="条码类型" class="mb-2">
-                        <el-select v-model="getForm.ReprintType" placeholder="" style="width: 100px" @change="changeForm">
+                        <el-select v-model="getForm.ReprintType" placeholder="" style="width: 150px" @change="changeForm" clearable>
                             <el-option v-for="p in printTypeList" :label="p.Text" :value="p.Value" :key="p.Value" />
                         </el-select>
                     </el-form-item>
@@ -60,7 +60,7 @@ import {
     onBeforeMount,
     onBeforeUnmount,
 } from "vue";
-import { shortcuts, setTodayDate, setLastDate } from "@/utils/dataMenu";
+import { shortcuts, setTodayDate, setLastDate ,disabledDate} from "@/utils/dataMenu";
 import tableTem from "@/components/tableTem/noAuto.vue";
 import { cloneDeep } from "lodash-es";
 import { useUserStoreWithOut } from "@/stores/modules/user";

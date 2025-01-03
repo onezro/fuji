@@ -161,7 +161,7 @@ const detailData = ref([]);
 const detailColumn = reactive([
     {
         text: true,
-        prop: "SpecDesc",
+        prop: "SpecName",
         label: "工序",
         width: "",
         min: true,
@@ -169,7 +169,7 @@ const detailColumn = reactive([
     },
     {
         text: true,
-        prop: "PlannedStartDate",
+        prop: "TxnDate",
         label: "生产时间",
         width: "",
         min: true,
@@ -177,7 +177,7 @@ const detailColumn = reactive([
     },
     {
         text: true,
-        prop: "MfgLineName",
+        prop: "MfgLinedesc",
         label: "产线",
         width: "",
         min: true,
