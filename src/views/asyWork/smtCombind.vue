@@ -618,6 +618,7 @@ const getChange = () => {
 };
 //过站
 const goStop = () => {
+  
   CoverSMTCompBindMoveStd(stopsForm.value).then((res: any) => {
     msgTitle.value = res.msg;
     msgType.value = res.success;
@@ -625,10 +626,11 @@ const goStop = () => {
     stopsForm.value.BarCode = "";
     stopsForm.value.result = "OK";
     barCode.value = "";
+  
     if (res.success) {
       stopsForm.value.keyMaterialList = [];
-      getHisData();
       getKeyMaterial();
+      getHisData();
     }
     getFocus();
   });
@@ -845,6 +847,9 @@ const tableRowClassName = (val: any) => {
 const getOrderData = () => {
   isLoding.value = "is-loading";
   defaultSelectVal.value = [];
+  msgType.value = true;
+  msgTitle.value = "";
+  stopsForm.value.keyMaterialList = [];
   OrderQuery({
     lineName: opui.line,
     OrderTypeName: "Assembly",

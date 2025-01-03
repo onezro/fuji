@@ -100,7 +100,7 @@ import type { Formspan, FormHeader, OrderData } from "@/typing";
 
 import {
 
-    AssociateOldContainerAndNewMfg,
+    UpdateContainerNameToNewContainer,
     QueryMoveHistory,
     OrderQuery,
 } from "@/api/asyApi";
@@ -348,12 +348,9 @@ const handleSelectionChange = (data: any) => {
 const getChange = () => {
     let barCodeData = barCode.value;
     stopsForm.value.ContainerName = barCodeData;
-    AssociateOldContainerAndNewMfg(stopsForm.value).then((res: any) => {
+    UpdateContainerNameToNewContainer(stopsForm.value).then((res: any) => {
         msgType.value = res.success;
         msgTitle.value = res.msg;
-        // if (res.success) {
-        //     stopsForm.value.ReplaceMesCode = false
-        // }
         barCode.value = "";
     });
 };

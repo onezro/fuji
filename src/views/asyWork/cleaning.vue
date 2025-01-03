@@ -854,6 +854,9 @@ const tableRowClassName = (val: any) => {
 const getOrderData = () => {
   isLoding.value = "is-loading";
   defaultSelectVal.value = [];
+  msgType.value = true;
+  msgTitle.value = "";
+  stopsForm.value.keyMaterialList = [];
   OrderQuery({
     lineName: opui.line,
     OrderTypeName: "Assembly",
