@@ -119,6 +119,22 @@
           >
           </el-table-column>
           <el-table-column
+            prop="PackagingBoxNumber"
+            label="外箱条码"
+            width="180"
+            align="center"
+            :min-width="flexColumnWidth('外箱条码', 'PackagingBoxNumber')"
+          >
+          </el-table-column>
+          <el-table-column
+            prop="ContainerName"
+            label="成品条码"
+            width="180"
+            align="center"
+            :min-width="flexColumnWidth('成品条码', 'ContainerName')"
+          >
+          </el-table-column>
+          <el-table-column
             prop="ScanTime"
             label="时间"
             align="center"
@@ -161,6 +177,7 @@
                 }}
               </div>
               <div v-if="scope.row.StorageSta === 'Storage'">入库完成</div>
+              <div v-if="scope.row.StorageSta === 'InspectHalfway'"></div>
             </template>
           </el-table-column>
         </el-table>

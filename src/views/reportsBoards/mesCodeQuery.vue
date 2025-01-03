@@ -440,7 +440,6 @@ const getData = () => {
       }
       tableData.value = res.content;
     }
-    tableData.value = res.content;
   });
 };
 const rowClick = (row: any) => {

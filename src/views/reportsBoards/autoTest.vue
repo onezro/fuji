@@ -28,7 +28,7 @@
                 :columnData="columnData" :pageObj="pageObj" @handleSizeChange="handleSizeChange"
                 @handleCurrentChange="handleCurrentChange" @rowClick="rowClick">
             </table-tem>
-            <table-temp :show-index="true" size="small" :tableData="detailData" :tableHeight="detailHeight"
+            <table-temp size="small" :tableData="detailData" :tableHeight="detailHeight"
                 :columnData="detailColumn">
             </table-temp>
         </el-card>
@@ -49,6 +49,10 @@ import {
 import tableTem from "@/components/tableTem/index.vue";
 import tableTemp from "@/components/tableTemp/index.vue";
 import { shortcuts, setTodayDate, setLastDate } from "@/utils/dataMenu";
+import {
+    getAutoTestData,
+    GetAutoTestDetailsData
+} from "@/api/report";
 const getForm = ref({
     order: "",
     PlanStartTime: "",
@@ -56,6 +60,7 @@ const getForm = ref({
     TUID:"",
     pcb:""
 });
+const choiceRow = ref('')
 const searchDate = ref<any[]>([]);
 const headerRef = ref();
 const tableHeight = ref(0);
@@ -68,7 +73,7 @@ const pageObj = ref({
 const columnData = reactive([
     {
         text: true,
-        prop: "Side",
+        prop: "time",
         label: "生产时间",
         width: "",
         min: true,
@@ -77,7 +82,7 @@ const columnData = reactive([
 
     {
         text: true,
-        prop: "Side",
+        prop: "mfgorderName",
         label: "计划单号",
         width: "",
         min: true,
@@ -85,7 +90,7 @@ const columnData = reactive([
     },
     {
         text: true,
-        prop: "ERPOrder",
+        prop: "ProductName",
         label: "产品编码",
         width: "",
         min: true,
@@ -93,7 +98,7 @@ const columnData = reactive([
     },
     {
         text: true,
-        prop: "Qty",
+        prop: "BD_ProductModel",
         label: "机型",
         width: "",
         min: true,
@@ -101,7 +106,7 @@ const columnData = reactive([
     },
     {
         text: true,
-        prop: "Side",
+        prop: "factory",
         label: "车间",
         width: "",
         min: true,
@@ -109,7 +114,7 @@ const columnData = reactive([
     },
     {
         text: true,
-        prop: "ERPOrder",
+        prop: "MfgLineName",
         label: "产线",
         width: "",
         min: true,
@@ -117,7 +122,7 @@ const columnData = reactive([
     },
     {
         text: true,
-        prop: "Qty",
+        prop: "MESWorkStation",
         label: "测试工位",
         width: "",
         min: true,
@@ -125,7 +130,7 @@ const columnData = reactive([
     },
     {
         text: true,
-        prop: "ERPOrder",
+        prop: "Barcode",
         label: "MES条码",
         width: "",
         min: true,
@@ -133,7 +138,7 @@ const columnData = reactive([
     },
     {
         text: true,
-        prop: "Qty",
+        prop: "Tuid",
         label: "TUID号",
         width: "",
         min: true,
@@ -144,36 +149,60 @@ const detailData = ref([])
 const detailColumn = reactive([
     {
         text: true,
-        prop: "Side",
-        label: "测试内容",
+        prop: "SNDetail",
+        label: "序号",
+        width: "50",
+        min: true,
+        align: "center",
+    },
+    {
+        text: true,
+        prop: "Project",
+        label: "项目",
         width: "",
         min: true,
         align: "1",
     },
-    // {
-    //     text: true,
-    //     prop: "ERPOrder",
-    //     label: "工序序号",
-    //     width: "",
-    //     min: true,
-    //     align: "1",
-    // },
-    // {
-    //     text: true,
-    //     prop: "Qty",
-    //     label: "工序名称",
-    //     width: "",
-    //     min: true,
-    //     align: "1",
-    // },
-    // {
-    //     text: true,
-    //     prop: "Qty",
-    //     label: "生产数量",
-    //     width: "",
-    //     min: true,
-    //     align: "1",
-    // },
+    {
+        text: true,
+        prop: "LowerLimitValue",
+        label: "下限值",
+        width: "",
+        min: true,
+        align: "1",
+    },
+    {
+        text: true,
+        prop: "UpperLimitValue",
+        label: "上限值",
+        width: "",
+        min: true,
+        align: "1",
+    },
+    {
+        text: true,
+        prop: "TestValue",
+        label: "测试值",
+        width: "",
+        min: true,
+        align: "1",
+    },
+    {
+        text: true,
+        prop: "Unit",
+        label: "单位",
+        width: "",
+        min: true,
+        align: "1",
+    },
+    {
+        text: true,
+        prop: "IsPass",
+        label: "结果",
+        width: "",
+        min: true,
+        align: "1",
+    },
 ])
 
 
@@ -200,8 +229,25 @@ onBeforeMount(() => {
     searchDate.value = [start, end];
 });
 
-const getData = () => { };
-const rowClick = () => { };
+const getData = () => { 
+    getAutoTestData(getForm.value).then((res:any) => {
+    if (res.success && res.content !== null) {
+        tableData.value = res.content;
+    }
+    })
+};
+
+const rowClick = (row: any) => {
+    if (choiceRow.value === row.headId) {
+        return;  
+    }
+    choiceRow.value = row.headId;
+    GetAutoTestDetailsData(row.headId).then((res: any) => {
+    if (res && res.success && res.content !== null) {
+      detailData.value = res.content;
+    }
+  });
+};
 const handleSizeChange = (val: any) => {
     pageObj.value.currentPage = 1;
     pageObj.value.pageSize = val;
