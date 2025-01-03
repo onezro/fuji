@@ -114,3 +114,23 @@ export function ParseXlsxFile(data: any) {
   });
 }
 
+//查询自动测试数据
+export function getAutoTestData(data: any) {
+  return request({
+    url: "/api/AutoTestDataQuery/getAutoTestData",
+    method: "post",
+    data
+  });
+}
+
+//查询自动测试详情数据
+export function GetAutoTestDetailsData(data: any) {
+  return request({
+    url: "/api/AutoTestDataQuery/GetAutoTestDetailsData",
+    method: "post",
+    params:{
+      headId:data
+    }
+  });
+}
+

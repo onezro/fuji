@@ -3,7 +3,7 @@
     <el-card
       shadow="always"
       :body-style="{ padding: '8px' }"
-      class="w-[850px] h-[calc(100vh-97px)]"
+      class="w-[950px] h-[calc(100vh-97px)]"
     >
       <div ref="headerRef">
         <el-form
@@ -34,7 +34,7 @@
             </el-button>
           </el-form-item>
         </el-form>
-        <table-tem
+        <!-- <table-tem
           :show-index="true"
           size="small"
           :tableData="tableData"
@@ -47,7 +47,72 @@
           @handleCurrentChange="handleCurrentChange"
           @rowClick="rowClick"
         >
-        </table-tem>
+        </table-tem> -->
+        <el-table
+          :data="
+            tableData.slice(
+              (getForm.currentPage - 1) * getForm.pageSize,
+              getForm.currentPage * getForm.pageSize
+            )
+          "
+          size="small"
+          stripe
+          border
+          fit
+          :tooltip-effect="'dark'"
+          :height="tableHeight"
+          @rowClick="rowClick"
+        >
+          <el-table-column
+            type="index"
+            label="序号"
+            width="50"
+            align="center"
+          />
+          <el-table-column
+            prop="containername"
+            label="条码信息"
+            :min-width="flexColumnWidth('条码信息', 'containername')"
+            align="center"
+          ></el-table-column>
+          <el-table-column
+            prop="containerLevelName"
+            label="条码类型"
+            :min-width="flexColumnWidth('条码类型', 'containerLevelName')"
+            align="center"
+          ></el-table-column>
+          <el-table-column
+            prop="PlannedStartDate"
+            label="创建时间"
+            :min-width="flexColumnWidth('创建时间', 'PlannedStartDate')"
+            align="center"
+          ></el-table-column>
+          <el-table-column
+            prop="Status"
+            label="条码状态"
+            :min-width="flexColumnWidth('条码状态', 'Status')"
+            align="center"
+          >
+            <template #default="scope">
+              <div>{{ returnType(scope.row.Status) }}</div>
+            </template>
+          </el-table-column>
+        </el-table>
+        <div class="mt-2 mb-2 flex justify-around">
+          <el-pagination
+            :size="'default'"
+            background
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+            :pager-count="5"
+            :current-page="getForm.currentPage"
+            :page-size="getForm.pageSize"
+            :page-sizes="[30, 50, 100, 200, 300]"
+            layout="total,sizes, prev, pager, next"
+            :total=tableData.length
+          >
+          </el-pagination>
+        </div>
       </div>
     </el-card>
 
@@ -57,59 +122,59 @@
       class="flex-1"
     >
       <div>
-        <el-form ref="formRef" :inline="true" size="small" label-width="80px">
+        <el-form ref="formRef" :inline="true" label-width="100px">
           <el-form-item label="创建时间:" class="mb-2">
-            <div class="w-[150px]">
+            <div class="w-[200px]">
               {{ form.CreateTime }}
             </div>
           </el-form-item>
           <el-form-item label="条码类型:" class="mb-2">
-            <div class="w-[150px]">
+            <div class="w-[200px]">
               {{ form.ContainerType }}
             </div>
           </el-form-item>
           <el-form-item label="物料编码:" class="mb-2">
-            <div class="w-[150px]">
+            <div class="w-[200px]">
               {{ form.ContainerName }}
             </div>
           </el-form-item>
           <el-form-item label="物料批次码:" class="mb-2">
-            <div class="w-[150px]">
+            <div class="w-[200px]">
               {{ form.MaterialName }}
             </div>
           </el-form-item>
           <el-form-item label="供应商信息:" class="mb-2">
-            <div class="w-[150px]">
+            <div class="w-[200px]">
               {{ form.VendorName }}
             </div>
           </el-form-item>
           <el-form-item label="工单号:" class="mb-2">
-            <div class="w-[150px]">
+            <div class="w-[200px]">
               {{ form.MfgOrderName }}
             </div>
           </el-form-item>
           <el-form-item label="产品编码:" class="mb-2">
-            <div class="w-[150px]">
+            <div class="w-[200px]">
               {{ form.ProductName }}
             </div>
           </el-form-item>
           <el-form-item label="机型:" class="mb-2">
-            <div class="w-[150px]">
+            <div class="w-[200px]">
               {{ form.ProductModel }}
             </div>
           </el-form-item>
           <el-form-item label="装箱条码:" class="mb-2">
-            <div class="w-[150px]">
+            <div class="w-[200px]">
               {{ form.PackingBarcode }}
             </div>
           </el-form-item>
           <el-form-item label="条码状态:" class="mb-2">
-            <div class="w-[150px]">
+            <div class="w-[200px]">
               {{ returnType(form.Status) }}
             </div>
           </el-form-item>
           <el-form-item label="是否烧录:" class="mb-2">
-            <div class="w-[150px]">
+            <div class="w-[200px]">
               {{ form.IsBurn ? '是':'否' }}
             </div>
           </el-form-item>
@@ -122,7 +187,7 @@
             ></el-input>
           </el-form-item> -->
           <el-form-item label="是否测试:" class="mb-2">
-            <div class="w-[150px]">
+            <div class="w-[200px]">
               {{ form.IsBurnTEST ? '是':'否' }}
             </div>
           </el-form-item>
@@ -135,12 +200,12 @@
             ></el-input>
           </el-form-item> -->
           <el-form-item label="是否老化:" class="mb-2">
-            <div class="w-[150px]">
+            <div class="w-[200px]">
               {{ form.IsAging ? '是':'否' }}
             </div>
           </el-form-item>
           <el-form-item label="是否返修:" class="mb-2">
-            <div class="w-[150px]">
+            <div class="w-[200px]">
               {{ form.IsRepair ? '是':'否' }}
             </div>
           </el-form-item>
@@ -375,7 +440,6 @@ const getData = () => {
       }
       tableData.value = res.content;
     }
-    tableData.value = res.content;
   });
 };
 const rowClick = (row: any) => {
@@ -428,6 +492,46 @@ const getScreenHeight = () => {
     tableHeight.value = window.innerHeight - 195;
     detailHeight.value = (window.innerHeight - 225) * 0.4;
   });
+};
+
+
+
+//退料页面表格宽度分配
+const flexColumnWidth = (label: any, prop: any) => {
+  const arr = tableData?.value.map((x: { [x: string]: any }) => x[prop]);
+  arr.push(label); // 把每列的表头也加进去算
+  // console.log(arr);
+  return getMaxLength(arr) + 25 + "px";
+};
+
+const getMaxLength = (arr: any) => {
+  return arr.reduce((acc: any, item: any) => {
+    if (item) {
+      // console.log(acc,item);
+      const calcLen = getTextWidth(item);
+
+      if (acc < calcLen) {
+        acc = calcLen;
+      }
+    }
+    return acc;
+  }, 0);
+};
+
+const getTextWidth = (str: string) => {
+  let width = 0;
+  const html = document.createElement("span");
+  html.style.cssText = `padding: 0; margin: 0; border: 0; line-height: 1; font-size: ${13}px; font-family: Arial, sans-serif;`;
+  html.innerText = str; // 去除字符串前后的空白字符
+  document.body?.appendChild(html);
+
+  const spanElement = html; // 无需再次查询，直接使用创建的元素
+  if (spanElement) {
+    width = spanElement.offsetWidth;
+    spanElement.remove();
+  }
+  // console.log(width);
+  return width;
 };
 </script>
 

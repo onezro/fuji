@@ -360,7 +360,7 @@
             <vxe-column
               align="center"
               field="RequestQty"
-              title="请求退料数量"
+              title="请求数量"
               min-width="60"
             >
               <template #default="{ row, column, rowIndex, columnIndex }">
