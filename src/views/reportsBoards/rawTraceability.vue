@@ -228,6 +228,7 @@ const getData = () => {
 };
 const rowClick = (val: any) => {
     getDetailForm.value.ContainerName = val.ContainerName
+    getDetailForm.value.MaterialName=val.MaterialName
     QueryContainerDetail(getDetailForm.value).then((res: any) => {
         if (res.content.length !== 0) {
             total2.value = res.content[0].TotalCount

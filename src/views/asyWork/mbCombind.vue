@@ -150,11 +150,21 @@
 
               <el-table-column label="PCB组件条码">
                 <template #default="scope">
-                  <div v-if="scope.row.BindContainerName !== null">SN1：{{ scope.row.BindContainerName }}</div>
-                  <div v-if="scope.row.BindContainerName2 !== null">SN2：{{ scope.row.BindContainerName2 }}</div>
-                  <div v-if="scope.row.BindContainerName3 != null">SN3：{{ scope.row.BindContainerName3 }}</div>
-                  <div v-if="scope.row.BindContainerName4 != null">SN4：{{ scope.row.BindContainerName4 }}</div>
-                  <div v-if="scope.row.BindContainerName5 != null">SN5：{{ scope.row.BindContainerName5 }}</div>
+                  <div v-if="scope.row.BindContainerName !== null">
+                    SN1：{{ scope.row.BindContainerName }}
+                  </div>
+                  <div v-if="scope.row.BindContainerName2 !== null">
+                    SN2：{{ scope.row.BindContainerName2 }}
+                  </div>
+                  <div v-if="scope.row.BindContainerName3 != null">
+                    SN3：{{ scope.row.BindContainerName3 }}
+                  </div>
+                  <div v-if="scope.row.BindContainerName4 != null">
+                    SN4：{{ scope.row.BindContainerName4 }}
+                  </div>
+                  <div v-if="scope.row.BindContainerName5 != null">
+                    SN5：{{ scope.row.BindContainerName5 }}
+                  </div>
                 </template>
               </el-table-column>
               <el-table-column prop="fullname" label="扫描人" width="180" />
@@ -239,7 +249,7 @@ import {
   ScreeSMTCompBindMoveStd,
   QueryDefectCode,
   DefectProductRecord,
-  QueryMoveHistory
+  QueryMoveHistory,
 } from "@/api/asyApi";
 
 import {
@@ -359,7 +369,7 @@ const columnData1 = reactive([
 
   {
     text: true,
-      prop: "fullname",
+    prop: "fullname",
     label: "扫描人",
     width: "",
     align: "1",
@@ -478,7 +488,7 @@ const badVisible = ref(false);
 const changeList = ref([]);
 const BadtableData = ref([]);
 const isGo = ref(true);
-const barMsg = ref("")
+const barMsg = ref("");
 
 onBeforeMount(() => {
   getScreenHeight();
@@ -548,7 +558,6 @@ const geTodayData = () => {
 
 //扫描
 const getChange = () => {
-
   let barCodeData = barCode.value;
   if (stopsForm.value.OrderName == "") {
     msgTitle.value = "请先选择生产计划号";
@@ -686,8 +695,7 @@ const verifyBarCode = (barCodeData: any) => {
         }
       }
       if (
-        barData.value[keyIndex].barCount !==
-        barData.value[keyIndex].QtyRequired
+        barData.value[keyIndex].barCount !== barData.value[keyIndex].QtyRequired
       ) {
         msgType.value = true;
         barMsg.value = `请继续扫描${barData.value[keyIndex].IssueControl == 1 ? "关键料" : "批次料"
@@ -697,13 +705,15 @@ const verifyBarCode = (barCodeData: any) => {
       } else {
         if (isKeyEmpty.value !== -1) {
           msgType.value = true;
-          barMsg.value = `请继续扫描${barData.value[isKeyEmpty.value].IssueControl == 1 ? "关键料" : "批次料"
+          barMsg.value = `请继续扫描${barData.value[isKeyEmpty.value].IssueControl == 1
+              ? "关键料"
+              : "批次料"
             }${barData.value[isKeyEmpty.value].MaterialName}`;
           // msgTitle.value = `请继续扫描${barData.value[isKeyEmpty.value].IssueControl == 1 ? "关键料" : "批次料"
           //   }${barData.value[isKeyEmpty.value].MaterialName}`;
         } else {
           msgType.value = true;
-          barMsg.value = `请扫描MES屏条码`
+          barMsg.value = `请扫描MES屏条码`;
           // msgTitle.value = `请扫描MES条码`
         }
       }
@@ -778,7 +788,9 @@ const radioChange = (args: any) => {
       keyForm.value.OrderName = args[0].MfgOrderName;
       keyForm.value.ProductName = args[0].ProductName;
       getBadForm.value.orderName = args[0].MfgOrderName;
-
+      msgType.value = true;
+      msgTitle.value = "";
+      stopsForm.value.keyMaterialList = [];
       // getFocus()
     } else {
       // getHisData();
@@ -786,7 +798,6 @@ const radioChange = (args: any) => {
     }
     getKeyMaterial();
     getHisData();
-
   }
 };
 const getKeyMaterial = () => {
@@ -808,7 +819,7 @@ const getKeyMaterial = () => {
     if (barData.value.length !== 0) {
       if (barData.value[0].IssueControl == 1) {
         // isGo.value=fa
-       
+
         // msgTitle.value = `请先扫描关键物料${barData.value[0].MaterialName}`;
         barMsg.value = `请先扫描关键物料${barData.value[0].MaterialName}`;
       }
@@ -817,7 +828,7 @@ const getKeyMaterial = () => {
 };
 const tableRowClassName = (val: any) => {
   // console.log(val.row);
-  const isExitCode =barData.value.findIndex(
+  const isExitCode = barData.value.findIndex(
     (k: any) => k.QtyRequired == k.barCount
   );
   if (isExitCode !== -1) {
@@ -828,8 +839,9 @@ const tableRowClassName = (val: any) => {
 const getOrderData = () => {
   isLoding.value = "is-loading";
   defaultSelectVal.value = [];
-   msgType.value = true;
-            msgTitle.value=''
+  msgType.value = true;
+  msgTitle.value = "";
+  stopsForm.value.keyMaterialList = [];
   OrderQuery({
     lineName: opui.line,
     OrderTypeName: "Assembly",

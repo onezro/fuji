@@ -130,6 +130,15 @@ const columnData = reactive([
         min: true,
         align: "1",
     },
+    {
+        text: true,
+        prop: "CreatedOn",
+        label: "打印时间",
+        width: "180",
+        // min: true,
+        align: "1",
+    },
+    
 ]);
 const changeList = ref<any[]>([]);
 const rePrintVisible = ref(false);
