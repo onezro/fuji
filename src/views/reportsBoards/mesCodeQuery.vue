@@ -7,7 +7,6 @@
     >
       <div ref="headerRef">
         <el-form
-          ref="formRef"
           :inline="true"
           size="small"
           @submit.native.prevent
@@ -26,7 +25,7 @@
             <el-button class="relative" type="warning"
               >导入
               <input
-              ref="fileInput"
+                ref="fileInput"
                 class="absolute top-0 left-0 w-[47.6px] h-[24px] opacity-0"
                 type="file"
                 @change="fileUpload"
@@ -109,7 +108,7 @@
             :page-size="getForm.pageSize"
             :page-sizes="[30, 50, 100, 200, 300]"
             layout="total,sizes, prev, pager, next"
-            :total=tableData.length
+            :total="tableData.length"
           >
           </el-pagination>
         </div>
@@ -122,60 +121,60 @@
       class="flex-1"
     >
       <div>
-        <el-form ref="formRef" :inline="true" label-width="100px">
-          <el-form-item label="创建时间:" class="mb-2">
+        <el-form ref="formRef" :model="form" :inline="true" label-width="100px">
+          <el-form-item label="创建时间:" class="mb-2" prop="CreateTime">
             <div class="w-[200px]">
               {{ form.CreateTime }}
             </div>
           </el-form-item>
-          <el-form-item label="条码类型:" class="mb-2">
+          <el-form-item label="条码类型:" class="mb-2" prop="ContainerType">
             <div class="w-[200px]">
               {{ form.ContainerType }}
             </div>
           </el-form-item>
-          <el-form-item label="物料编码:" class="mb-2">
+          <el-form-item label="物料编码:" class="mb-2" prop="ContainerName">
             <div class="w-[200px]">
               {{ form.ContainerName }}
             </div>
           </el-form-item>
-          <el-form-item label="物料批次码:" class="mb-2">
+          <el-form-item label="物料批次码:" class="mb-2" prop="MaterialName">
             <div class="w-[200px]">
               {{ form.MaterialName }}
             </div>
           </el-form-item>
-          <el-form-item label="供应商信息:" class="mb-2">
+          <el-form-item label="供应商信息:" class="mb-2" prop="VendorName">
             <div class="w-[200px]">
               {{ form.VendorName }}
             </div>
           </el-form-item>
-          <el-form-item label="工单号:" class="mb-2">
+          <el-form-item label="工单号:" class="mb-2" prop="MfgOrderName">
             <div class="w-[200px]">
               {{ form.MfgOrderName }}
             </div>
           </el-form-item>
-          <el-form-item label="产品编码:" class="mb-2">
+          <el-form-item label="产品编码:" class="mb-2" prop="ProductName">
             <div class="w-[200px]">
               {{ form.ProductName }}
             </div>
           </el-form-item>
-          <el-form-item label="机型:" class="mb-2">
+          <el-form-item label="机型:" class="mb-2" prop="ProductModel">
             <div class="w-[200px]">
               {{ form.ProductModel }}
             </div>
           </el-form-item>
-          <el-form-item label="装箱条码:" class="mb-2">
+          <el-form-item label="装箱条码:" class="mb-2" prop="PackingBarcode">
             <div class="w-[200px]">
               {{ form.PackingBarcode }}
             </div>
           </el-form-item>
-          <el-form-item label="条码状态:" class="mb-2">
+          <el-form-item label="条码状态:" class="mb-2" prop="Status">
             <div class="w-[200px]">
               {{ returnType(form.Status) }}
             </div>
           </el-form-item>
-          <el-form-item label="是否烧录:" class="mb-2">
+          <el-form-item label="是否烧录:" class="mb-2" prop="IsBurn">
             <div class="w-[200px]">
-              {{ form.IsBurn ? '是':'否' }}
+              {{ form.IsBurn ? "是" : "否" }}
             </div>
           </el-form-item>
           <!-- <el-form-item label="是否升级" class="mb-2">
@@ -186,9 +185,9 @@
               disabled
             ></el-input>
           </el-form-item> -->
-          <el-form-item label="是否测试:" class="mb-2">
+          <el-form-item label="是否测试:" class="mb-2" prop="IsBurnTEST">
             <div class="w-[200px]">
-              {{ form.IsBurnTEST ? '是':'否' }}
+              {{ form.IsBurnTEST ? "是" : "否" }}
             </div>
           </el-form-item>
           <!-- <el-form-item label="是否维修" class="mb-2">
@@ -199,17 +198,17 @@
               disabled
             ></el-input>
           </el-form-item> -->
-          <el-form-item label="是否老化:" class="mb-2">
+          <el-form-item label="是否老化:" class="mb-2" prop="IsAging">
             <div class="w-[200px]">
-              {{ form.IsAging ? '是':'否' }}
+              {{ form.IsAging ? "是" : "否" }}
             </div>
           </el-form-item>
-          <el-form-item label="是否返修:" class="mb-2">
+          <el-form-item label="是否返修:" class="mb-2" prop="IsRepair">
             <div class="w-[200px]">
-              {{ form.IsRepair ? '是':'否' }}
+              {{ form.IsRepair ? "是" : "否" }}
             </div>
           </el-form-item>
-          <el-form-item label="产品描述:" class="mb-2">
+          <el-form-item label="产品描述:" class="mb-2" prop="Description">
             <div class="w-[300px]">
               {{ form.Description }}
             </div>
@@ -238,7 +237,7 @@ import {
   QueryMESBarCode,
   ParseXlsxFile,
 } from "@/api/report";
-
+import { ElNotification } from "element-plus";
 import { shortcuts, setTodayDate, setLastDate } from "@/utils/dataMenu";
 const containername = ref("");
 const getForm = ref({
@@ -270,12 +269,13 @@ const form = ref({
   ProductName: "",
 });
 const searchDate = ref<any[]>([]);
+const formRef = ref();
 const headerRef = ref();
 const tableHeight = ref(0);
 const detailHeight = ref(0);
 const tableData = ref<any>([]);
 const total1 = ref(1);
-const fileInput = ref()
+const fileInput = ref();
 const pageObj = ref({
   pageSize: 100,
   currentPage: 1,
@@ -418,18 +418,18 @@ const changeForm = () => {
   // getData();
 };
 
-const returnType = (number:any) => {
+const returnType = (number: any) => {
   if (number === 1) {
-    return '可使用'
-  } else if(number === 2) {
-    return'已关闭'
-  } else if(number === 3) {
-    return'已消耗'
-  } else if(number === 4) {
-    return'已发货'
+    return "可使用";
+  } else if (number === 2) {
+    return "已关闭";
+  } else if (number === 3) {
+    return "已消耗";
+  } else if (number === 4) {
+    return "已发货";
   }
-  return ''
-}
+  return "";
+};
 
 const getData = () => {
   QueryMESBarCode(containername.value).then((res: any) => {
@@ -438,6 +438,7 @@ const getData = () => {
         tableData.value = [];
         return;
       }
+      formRef.value.resetFields();
       tableData.value = res.content;
     }
   });
@@ -467,7 +468,13 @@ const fileUpload = (event: any) => {
             return;
           }
           tableData.value = res.content;
+          formRef.value.resetFields();
         }
+        ElNotification({
+          title: "提示信息",
+          message: res.msg,
+          type: res.success ? 'success':'warning',
+        });
         tableData.value = res.content;
       });
     };
@@ -478,7 +485,7 @@ const fileUpload = (event: any) => {
 
     reader.readAsDataURL(file); // 读取文件并转换为Data URL（Base64编码）
   }
-  fileInput.value.value = '';
+  fileInput.value.value = "";
 };
 const handleSizeChange = (val: any) => {
   getForm.value.currentPage = 1;
@@ -493,8 +500,6 @@ const getScreenHeight = () => {
     detailHeight.value = (window.innerHeight - 225) * 0.4;
   });
 };
-
-
 
 //退料页面表格宽度分配
 const flexColumnWidth = (label: any, prop: any) => {
