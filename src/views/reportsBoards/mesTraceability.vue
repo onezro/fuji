@@ -146,6 +146,14 @@ const columnData = reactive([
     {
         text: true,
         prop: "ContainerName",
+        label: "物料条码",
+        width: "",
+        min: true,
+        align: "1",
+    },
+    {
+        text: true,
+        prop: "MaterialName",
         label: "物料编码",
         width: "",
         min: true,
@@ -153,7 +161,7 @@ const columnData = reactive([
     },
     {
         text: true,
-        prop: "tuid",
+        prop: "materialsole",
         label: "物料唯一码",
         width: "",
         min: true,

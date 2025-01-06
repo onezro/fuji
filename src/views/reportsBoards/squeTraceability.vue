@@ -153,8 +153,6 @@ const columnData = reactive([
 ]);
 const getDetailForm=ref({
     ContainerName: "",
-  pageSize:30,
-  currentPage: 1
 })
 const total2=ref(0)
 const detailData = ref([]);
@@ -233,7 +231,7 @@ watch(
             getForm.value.EndTime = "";
             getForm.value.currentPage=1
     detailData.value=[]
-    getDetailForm.value.currentPage=1
+   
             getData();
             return;
         }
@@ -242,7 +240,7 @@ watch(
             getForm.value.EndTime = newVal[1];
             getForm.value.currentPage=1
     detailData.value=[]
-    getDetailForm.value.currentPage=1
+   
             getData();
         }
     }
@@ -277,7 +275,7 @@ const getSpecn = () => {
 const changeForm=()=>{
     getForm.value.currentPage=1
     detailData.value=[]
-    getDetailForm.value.currentPage=1
+ 
     getData()
 }
 
@@ -311,13 +309,7 @@ const handleCurrentChange = (val: any) => {
     getForm.value.currentPage = val;
     getData()
 };
-const handleSizeChange1 = (val: any) => {
-    getDetailForm.value.currentPage = 1;
-    getDetailForm.value.pageSize = val;
-};
-const handleCurrentChange1 = (val: any) => {
-    getDetailForm.value.currentPage = val;
-};
+
 const getScreenHeight = () => {
     nextTick(() => {
         tableHeight.value = (window.innerHeight - 220) * 0.6;
