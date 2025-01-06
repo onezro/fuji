@@ -95,8 +95,8 @@ const columnData = reactive([
         prop: "ReprintType",
         label: "类型",
         width: "",
-        min: true,
-        align: "1",
+        // min: true,
+        align: "center",
     },
     {
         text: true,
@@ -111,8 +111,8 @@ const columnData = reactive([
         prop: "ReprintCount",
         label: "补打次数",
         width: "",
-        min: true,
-        align: "1",
+        // min: true,
+        align: "center",
     },
     {
         text: true,
@@ -126,8 +126,8 @@ const columnData = reactive([
         text: true,
         prop: "CreatedBy",
         label: "操作人",
-        width: "",
-        min: true,
+        width: "150",
+        // min: true,
         align: "1",
     },
     {

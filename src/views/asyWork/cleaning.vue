@@ -821,6 +821,7 @@ const radioChange = (args: any) => {
 };
 const getKeyMaterial = () => {
   barData.value = [];
+  stopsForm.value.keyMaterialList = [];
   QueryCleanKeyMaterial(keyForm.value).then((res: any) => {
     barData.value = res.content;
     barData.value.sort((a, b) => a.IssueControl - b.IssueControl);

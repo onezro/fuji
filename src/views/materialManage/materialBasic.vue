@@ -268,6 +268,14 @@ const columnData = reactive([
   },
   {
     text: true,
+    prop: "BD_AgingDuration",
+    label: "老化时长(min)",
+    width: "100",
+    // min: true,
+    align: "1",
+  },
+  {
+    text: true,
     prop: "FirstClass",
     label: "一级分类",
     width: "100",

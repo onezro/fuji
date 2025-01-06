@@ -52,7 +52,7 @@ export const shortcuts = [
       }
       start.setFullYear(targetYear);
       start.setMonth(targetMonth);
-      start.setDate(1); // 确保是月份的第一天
+      // start.setDate(1); // 确保是月份的第一天
       return [start, end];
     },
   },

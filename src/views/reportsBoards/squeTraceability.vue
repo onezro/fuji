@@ -211,8 +211,8 @@ const detailColumn = reactive([
         text: true,
         prop: "MaterialDesc",
         label: "原材料描述",
-        width: "",
-        min: true,
+        width: "300",
+        // min: true,
         align: "1",
     },
     {

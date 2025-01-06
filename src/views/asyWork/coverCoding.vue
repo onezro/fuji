@@ -519,6 +519,7 @@ const formText = (data: string) => {
 //获取物料
 const getKeyMaterial = () => {
   barData.value = [];
+  stopsForm.value.keyMaterialList = [];
   QueryCoverKeyMaterial(keyForm.value).then((res: any) => {
     barData.value = res.content;
     barData.value.sort((a, b) => a.IssueControl - b.IssueControl);
