@@ -134,3 +134,12 @@ export function GetAutoTestDetailsData(data: any) {
   });
 }
 
+//成品送检历史记录
+export function ProductInspectDetailsHistory(data: any) {
+  return request({
+    url: "/api/ProductInspectDetailsHistoryQuery/ProductInspectDetailsHistory",
+    method: "post",
+    data
+  });
+}
+

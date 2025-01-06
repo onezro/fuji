@@ -11,9 +11,9 @@
         >
           <el-form-item label="工单">
             <el-input
-              v-model="order"
+              v-model="searchForm.MfgOrderName"
               class="input-with-select"
-              @keyup.enter.native="getData(order)"
+              @keyup.enter.native="inputGetData()"
             >
             </el-input>
             <!-- <el-select-v2
@@ -77,7 +77,7 @@
       <div class="table_container">
         <div class="flex justify-between">
           <div>
-            <el-button size="small" type="" class="mr-4" @click="getData(order)"
+            <el-button size="small" type="" class="mr-4" @click="getData()"
               >查询</el-button
             >
           </div>
@@ -90,9 +90,7 @@
         </div>
         <el-table
           size="small"
-          :data="
-            tableData
-          "
+          :data="tableData"
           ref="multipleTable"
           border
           :height="tableHeight"
@@ -111,9 +109,15 @@
           <el-table-column type="index" label="序号" width="50" align="center">
           </el-table-column>
           <el-table-column
+            prop="MfgOrderName"
+            label="工单号"
+            align="center"
+            :min-width="flexColumnWidth('工单号', 'MfgOrderName')"
+          >
+          </el-table-column>
+          <el-table-column
             prop="QAOrder"
             label="送检单号"
-            width="180"
             align="center"
             :min-width="flexColumnWidth('送检单号', 'QAOrder')"
           >
@@ -121,7 +125,6 @@
           <el-table-column
             prop="PackagingBoxNumber"
             label="外箱条码"
-            width="180"
             align="center"
             :min-width="flexColumnWidth('外箱条码', 'PackagingBoxNumber')"
           >
@@ -129,7 +132,6 @@
           <el-table-column
             prop="ContainerName"
             label="成品条码"
-            width="180"
             align="center"
             :min-width="flexColumnWidth('成品条码', 'ContainerName')"
           >
@@ -167,14 +169,10 @@
             <template #default="scope">
               <div v-if="scope.row.StorageSta === 'TreatStorage'">待入库</div>
               <div v-if="scope.row.StorageSta === 'StoragePart'">
-                {{
-                  `已入库`
-                }}
+                {{ `已入库` }}
               </div>
               <div v-if="scope.row.StorageSta === 'StorageHalfway'">
-                {{
-                  `入库中`
-                }}
+                {{ `入库中` }}
               </div>
               <div v-if="scope.row.StorageSta === 'Storage'">入库完成</div>
               <div v-if="scope.row.StorageSta === 'InspectHalfway'"></div>
@@ -187,11 +185,11 @@
             background
             @size-change="handleSizeChange"
             @current-change="handleCurrentChange"
-            :current-page="currentPage"
-            :page-size="pageSize"
+            :current-page="searchForm.CurrentPage"
+            :page-size="searchForm.PageSize"
             :page-sizes="[5, 10, 20, 50, 100]"
             layout="total,sizes, prev, pager, next, jumper"
-            :total="tableData.length"
+            :total="total"
           >
           </el-pagination>
         </div>
@@ -310,12 +308,12 @@ import {
 } from "element-plus";
 import { useUserStoreWithOut } from "@/stores/modules/user";
 import {
-  ProductInspectDetailsHistory,
   QueryPartNotStorageInfo,
   FinishedProductStorage,
   MfgOrderDetail,
   InspectDetail,
 } from "@/api/asyApi";
+import { ProductInspectDetailsHistory } from "@/api/report";
 import type { InspectionResult } from "@/typing";
 import {
   ref,
@@ -326,6 +324,7 @@ import {
   onBeforeMount,
   onBeforeUnmount,
 } from "vue";
+const total = ref(0);
 const userStore = useUserStoreWithOut();
 const loginName = userStore.getUserInfo;
 const tableData = ref<any>([]);
@@ -371,6 +370,8 @@ const searchForm = ref({
   MfgOrderName: "",
   StartTime: "",
   EndTime: "",
+  PageSize: 10,
+  CurrentPage: 1,
 });
 
 watch(
@@ -414,25 +415,42 @@ const handleSelectionChange = (data: any) => {
 const dateChange = () => {
   if (date.value !== null && date.value.length !== 0) {
     searchForm.value.StartTime = date.value[0];
-    searchForm.value.EndTime  = date.value[1];
+    searchForm.value.EndTime = date.value[1];
   } else {
     searchForm.value.StartTime = "";
-    searchForm.value.EndTime  = "";
+    searchForm.value.EndTime = "";
   }
 };
 
-const getData = (str: any) => {
-  if (str) {
-  
-  MfgOrderDetail(str).then((res: any) => {
-    if (res.success) {
-      selectForm.value = res.content[0];
-    }
-  });
+const inputGetData = () => {
+  if (searchForm.value.MfgOrderName) {
+    MfgOrderDetail(searchForm.value.MfgOrderName).then((res: any) => {
+      if (res.success) {
+        searchForm.value.CurrentPage = 1;
+        selectForm.value = res.content[0];
+      }
+    });
   }
   ProductInspectDetailsHistory(searchForm.value).then((res: any) => {
     if (res.success) {
       tableData.value = res.content;
+      total.value = res.total;
+    }
+  });
+};
+
+const getData = () => {
+  if (searchForm.value.MfgOrderName) {
+    MfgOrderDetail(searchForm.value.MfgOrderName).then((res: any) => {
+      if (res.success) {
+        selectForm.value = res.content[0];
+      }
+    });
+  }
+  ProductInspectDetailsHistory(searchForm.value).then((res: any) => {
+    if (res.success) {
+      tableData.value = res.content;
+      total.value = res.total;
     }
   });
 };
@@ -538,7 +556,7 @@ const inStore = () => {
         type: "success",
       });
       multipleTable.value.clearSelection();
-      getData(order.value);
+      getData();
     } else {
       ElNotification({
         title: "提示信息",
@@ -557,11 +575,13 @@ const flexColumnWidth = (label: any, prop: any) => {
 };
 
 const handleSizeChange = (val: any) => {
-  currentPage.value = 1;
-  pageSize.value = val;
+  searchForm.value.CurrentPage = 1;
+  searchForm.value.PageSize = val;
+  getData();
 };
 const handleCurrentChange = (val: any) => {
-  currentPage.value = val;
+  searchForm.value.CurrentPage = val;
+  getData();
 };
 
 const getScreenHeight = () => {
