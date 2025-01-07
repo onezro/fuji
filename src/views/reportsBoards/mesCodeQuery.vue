@@ -132,12 +132,12 @@
               {{ form.ContainerType }}
             </div>
           </el-form-item>
-          <el-form-item label="物料编码:" class="mb-2" prop="ContainerName">
+          <el-form-item label="条码:" class="mb-2" prop="ContainerName">
             <div class="w-[200px]">
               {{ form.ContainerName }}
             </div>
           </el-form-item>
-          <el-form-item label="物料批次码:" class="mb-2" prop="MaterialName">
+          <el-form-item label="物料编码:" class="mb-2" prop="MaterialName">
             <div class="w-[200px]">
               {{ form.MaterialName }}
             </div>

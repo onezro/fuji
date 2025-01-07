@@ -143,3 +143,39 @@ export function ProductInspectDetailsHistory(data: any) {
   });
 }
 
+//成品送检历史记录
+export function getBurningData(data: any) {
+  return request({
+    url: "/api/BurningDataQuery/getBurningData",
+    method: "post",
+    data
+  });
+}
+
+//成品送检历史记录
+export function GetBurnProgDataSiteInfo(data: any) {
+  return request({
+    url: "/api/BurningDataQuery/GetBurnProgDataSiteInfo",
+    method: "post",
+    data
+  });
+}
+
+//成品送检历史记录
+export function GetBurnProgDataSlotInfo(data: any) {
+  return request({
+    url: "/api/BurningDataQuery/GetBurnProgDataSlotInfo",
+    method: "post",
+    data
+  });
+}
+
+//成品送检历史记录
+export function OrderSNQuery(data: any) {
+  return request({
+    url: "/api/LaserDataQuery/OrderSNQuery",
+    method: "post",
+    data
+  });
+}
+
