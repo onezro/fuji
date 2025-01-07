@@ -136,7 +136,7 @@ const columnData = reactive([
     },
     {
         text: true,
-        prop: "ERPOrder",
+        prop: "WorkflowName",
         label: "工艺流程",
         width: "",
         min: true,
@@ -144,7 +144,7 @@ const columnData = reactive([
     },
     {
         text: true,
-        prop: "Qty",
+        prop: "tuid",
         label: "TUID号",
         width: "",
         min: true,

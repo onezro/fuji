@@ -823,13 +823,12 @@ const materialView = () => {
 const firstCancel = () => {
     firstVisible.value = false;
     firstForm.value.Station = "";
-    firstForm.value.issue_color = 3;
+    firstForm.value.issue_color = 1;
 };
 const firstSubmit = () => {
-    // console.log(firstForm.value);
+   
     firstFormRef.value.validate((valid: any) => {
         if (valid) {
-            // console.log(firstForm.value);
             msgTitle.value = ``;
             msgType.value = true;
             if (operateType.value == 1) {
@@ -853,7 +852,7 @@ const firstSubmit = () => {
             }
             firstVisible.value = false;
             firstForm.value.Station = "";
-            firstForm.value.issue_color = 3;
+            firstForm.value.issue_color = 1;
         } else {
             console.log("error submit!");
         }

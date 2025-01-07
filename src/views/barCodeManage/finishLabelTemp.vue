@@ -531,7 +531,7 @@
                         </div>
                         <el-table :data="editForm.tempcontent01" :style="{ width: '100%' }" stripe border fit
                             :height="250" size="small" @selection-change="handleSelectionChange"
-                            @row-dblclick="rowDblclick">
+                            @row-dblclick="rowDblclick" highlight-current-row>
                             <el-table-column type="selection" align="center" width="50"></el-table-column>
                             <el-table-column type="index" align="center" fixed label="序号" width="55" />
                             <el-table-column prop="TempRlueName" label="规则名称" width="100" fixed />
@@ -599,7 +599,7 @@
                         </div>
                         <el-table :data="editForm.tempcontent02" :style="{ width: '100%' }" stripe border fit
                             :height="250" size="small" @selection-change="handleSelectionChange"
-                            @row-dblclick="rowDblclick">
+                            @row-dblclick="rowDblclick" highlight-current-row>
                             <el-table-column type="selection" align="center" width="50"></el-table-column>
                             <el-table-column type="index" align="center" fixed label="序号" width="55" />
                             <el-table-column prop="TempRlueName" label="规则名称" width="100" fixed />
@@ -668,7 +668,7 @@
                         </div>
                         <el-table :data="editForm.tempcontent03" :style="{ width: '100%' }" stripe border fit
                             :height="250" size="small" @selection-change="handleSelectionChange"
-                            @row-dblclick="rowDblclick">
+                            @row-dblclick="rowDblclick" highlight-current-row>
                             <el-table-column type="selection" align="center" width="50"></el-table-column>
                             <el-table-column type="index" align="center" fixed label="序号" width="55" />
                             <el-table-column prop="TempRlueName" label="规则名称" width="100" fixed />
@@ -737,7 +737,7 @@
                         </div>
                         <el-table :data="editForm.tempcontent04" :style="{ width: '100%' }" stripe border fit
                             :height="250" size="small" @selection-change="handleSelectionChange"
-                            @row-dblclick="rowDblclick">
+                            @row-dblclick="rowDblclick" highlight-current-row>
                             <el-table-column type="selection" align="center" width="50"></el-table-column>
                             <el-table-column type="index" align="center" fixed label="序号" width="55" />
                             <el-table-column prop="TempRlueName" label="规则名称" width="100" fixed />
@@ -806,7 +806,7 @@
                         </div>
                         <el-table :data="editForm.tempcontent05" :style="{ width: '100%' }" stripe border fit
                             :height="250" size="small" @selection-change="handleSelectionChange"
-                            @row-dblclick="rowDblclick">
+                            @row-dblclick="rowDblclick" highlight-current-row>
                             <el-table-column type="selection" align="center" width="50"></el-table-column>
                             <el-table-column type="index" align="center" fixed label="序号" width="55" />
                             <el-table-column prop="TempRlueName" label="规则名称" width="100" fixed />
@@ -872,7 +872,7 @@
                         </div>
                         <el-table :data="editForm.tempcontent06" :style="{ width: '100%' }" stripe border fit
                             :height="250" size="small" @selection-change="handleSelectionChange"
-                            @row-dblclick="rowDblclick">
+                            @row-dblclick="rowDblclick" highlight-current-row>
                             <el-table-column type="selection" align="center" width="50"></el-table-column>
                             <el-table-column type="index" align="center" fixed label="序号" width="55" />
                             <el-table-column prop="TempRlueName" label="规则名称" width="100" fixed />
@@ -1104,6 +1104,14 @@ const columnData = ref([
         text: true,
         prop: "Template_Name03",
         label: "标签模板3",
+        // width: "600",
+        min: true,
+        align: "1",
+    },
+    {
+        text: true,
+        prop: "Template_Name04",
+        label: "公用流水",
         // width: "600",
         min: true,
         align: "1",
@@ -1492,6 +1500,13 @@ const editItem = () => {
                 message: `${form.value.TempRlueName}规则已存在`,
                 type: "error",
             });
+            // editForm.value.tempcontent01= editForm.value.tempcontent01.map((item:any)=>{
+            //     if(item.TempRlueName==form.value.TempRlueName){
+            //         return {...form.value}
+            //     }else{
+            //         return item
+            //     }
+            // })
         }
     }
     if (activeName.value == "TemplateFuselage") {
@@ -1582,22 +1597,6 @@ const editItem = () => {
         form.value.TempRlueEnable2 = false;
         form.value.TempRlueEnable3 = true;
     }
-
-    // if (activeName.value == "TemplateBox") {
-    //     editForm.value.tempcontent01.push({ ...form.value });
-    // }
-    // if (activeName.value == "TemplateFuselage") {
-    //     editForm.value.tempcontent02.push({ ...form.value });
-    // }
-    // if (activeName.value == "Template01") {
-    //     editForm.value.tempcontent03.push({ ...form.value });
-    // }
-    // if (activeName.value == "Template02") {
-    //     editForm.value.tempcontent04.push({ ...form.value });
-    // }
-    // if (activeName.value == "Template03") {
-    //     editForm.value.tempcontent05.push({ ...form.value });
-    // }
     isDisable1.value=true
     isDisable2.value=true
     formRef.value.resetFields();
@@ -1796,7 +1795,9 @@ const tabChange = () => {
     if (activeName.value == "TemplateBox") {
         form.value.TempRlueEnable1 = false;
         form.value.TempRlueEnable2 = true;
-        form.value.TempRlueEnable3 = false;
+        form.value.TempRlueEnable3 = false;   
+        if(addForm.value.TemplateBox=='') return
+        getRuleNameData(addForm.value.TemplateBox);
     } else if (activeName.value == "Template04") {
         form.value.TempRlueEnable1 = true;
         form.value.TempRlueEnable2 = false;
@@ -1806,6 +1807,23 @@ const tabChange = () => {
         form.value.TempRlueEnable1 = false;
         form.value.TempRlueEnable2 = false;
         form.value.TempRlueEnable3 = true;
+        if(activeName.value=="TemplateFuselage"){
+            if(addForm.value.TemplateFuselage=='') return
+            getRuleNameData(addForm.value.TemplateFuselage);
+        }else{
+           if(activeName.value=="Template01"){
+            if(addForm.value.Template01=='') return
+            getRuleNameData(addForm.value.Template01);
+           }
+           if(activeName.value=="Template02"){
+            if(addForm.value.Template02=='') return
+            getRuleNameData(addForm.value.Template02);
+           }
+           if(activeName.value=="Template03"){
+            if(addForm.value.Template03=='') return
+            getRuleNameData(addForm.value.Template03);
+           }
+        }
     }
 
     formRef.value.resetFields();
@@ -1816,6 +1834,7 @@ const tabChange1 = () => {
         form.value.TempRlueEnable1 = false;
         form.value.TempRlueEnable2 = true;
         form.value.TempRlueEnable3 = false;
+        if(editForm.value.Template01=='') return
         getRuleNameData(editForm.value.TemplateBox);
     } else if (activeName.value == "Template04") {
         form.value.TempRlueEnable1 = true;
@@ -1852,6 +1871,10 @@ const tabChange1 = () => {
 
 const rowDblclick = (row: any) => {
     // form.value = { ...row };
+    // console.log(form.value);
+    // console.log(row);
+    
+    // changeRlueName(row.TempRlueName)
 };
 const handleSizeChange = (val: any) => {
     pageObj.value.currentPage = 1;

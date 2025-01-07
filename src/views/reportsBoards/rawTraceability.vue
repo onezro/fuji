@@ -293,8 +293,8 @@ const handleCurrentChange1 = (val: any) => {
 };
 const getScreenHeight = () => {
   nextTick(() => {
-    tableHeight.value = (window.innerHeight - 185) * 0.6;
-    detailHeight.value = (window.innerHeight - 185) * 0.4;
+    tableHeight.value = (window.innerHeight - 190) * 0.6;
+    detailHeight.value = (window.innerHeight - 190) * 0.4;
   });
 };
 </script>

@@ -30,8 +30,8 @@
       </el-table>
       <div class="mt-2">
         <el-pagination  background @size-change="handleSizeChange" @current-change="handleCurrentChange"
-          :current-page="currentPage" :page-size="pageSize" :page-sizes="[5, 10, 20, 50, 100]"
-          layout="total,sizes, prev, pager, next, jumper" :total="tableData.length">
+          :current-page="currentPage" :page-size="pageSize" :page-sizes="[30, 50, 100, 200,300]"
+          layout="total,sizes, prev, pager, next" :total="tableData.length">
         </el-pagination>
       </div>
     </el-card>
@@ -129,7 +129,7 @@ interface EditForm {
 }
 const userStore = useUserStoreWithOut()
 const tableData = ref<any>([]);
-const pageSize = ref(10);
+const pageSize = ref(50);
 const currentPage = ref(1);
 const tableHeight = ref(0);
 const addVisible = ref(false);
@@ -384,7 +384,7 @@ const handleCurrentChange = (val: any) => {
 };
 const getScreenHeight = () => {
   nextTick(() => {
-    tableHeight.value = window.innerHeight - 194;
+    tableHeight.value = window.innerHeight - 188;
   });
 };
 

@@ -26,14 +26,14 @@
 
                     <el-form-item class="mb-2">
                         <el-button type="primary" @click="changeForm()">查询</el-button>
-                        <!-- <el-button type="warning" >导出</el-button> -->
+                        <!-- <el-button type="warning" @click="exportFile" :disabled="tableData.length==0">导出</el-button> -->
                     </el-form-item>
                     <!-- <el-form-item  class="mb-2">
                        
                     </el-form-item> -->
                 </el-form>
             </div>
-            <table-tem :show-index="true" size="small" :tableData="tableData" :tableHeight="tableHeight"
+            <table-tem id="mesTable" :show-index="true" size="small" :tableData="tableData" :tableHeight="tableHeight"
                 :columnData="columnData" :page-size="getForm.pageSize" :current-page="getForm.currentPage" :total="total1" @handleSizeChange="handleSizeChange"
                 @handleCurrentChange="handleCurrentChange" @rowClick="rowClick">
             </table-tem>
@@ -55,8 +55,8 @@ import {
     onBeforeUnmount,
 } from "vue";
 import tableTem from "@/components/tableTem/noAuto.vue";
-
 import { shortcuts, setTodayDate, setLastDate ,disabledDate} from "@/utils/dataMenu";
+import {exportElTableToExcel} from "@/utils/computeXLXS"
 const getForm = ref({
     MfgOrderName: "",
     ContainerName: "",
@@ -291,6 +291,9 @@ const handleCurrentChange = (val: any) => {
     getForm.value.currentPage = val;
     getData()
 };
+// const exportFile=()=>{
+//     exportElTableToExcel('mesTable',`MES条码追溯${1232}`)
+// }
 const getScreenHeight = () => {
     nextTick(() => {
         tableHeight.value = window.innerHeight - 195;

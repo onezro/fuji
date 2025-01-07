@@ -15,7 +15,7 @@ export  function getElTableColumnWidths(tableElement:any) {
     return Math.round((pixelWidth / pixelPerChar) * 256);
   }
 
-  export function exportElTableToExcel(tableId: string) {
+  export function exportElTableToExcel(tableId: string,xlsxName:any) {
     const table = document.getElementById(tableId);
     const worksheet = XLSX.utils.table_to_sheet(table);
     const workbook = XLSX.utils.book_new();
@@ -35,6 +35,6 @@ export  function getElTableColumnWidths(tableElement:any) {
     // 导出Excel文件
     const wbout = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
     const blob = new Blob([wbout], { type: 'application/octet-stream' });
-    saveAs(blob, 'table.xlsx');
+    saveAs(blob, `${xlsxName}.xlsx`);
   }
    
