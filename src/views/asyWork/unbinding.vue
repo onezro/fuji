@@ -82,8 +82,8 @@
         </div>
       </div>
     </div>
-    <el-dialog v-model="bindVisible" :title="stopsForm.MfgOrderName" width="60%" :append-to-body="true"
-      :close-on-click-modal="false" :close-on-press-escape="false" align-center @close="bindCancel">
+    <el-dialog v-model="bindVisible" :title="'生产计划号：'+stopsForm.MfgOrderName" width="60%" :append-to-body="true"
+      :close-on-click-modal="false" :close-on-press-escape="false" align-center @close="bindCancel" @open="openBind">
       <div>
         <div class="h-[30px] pl-3 flex items-center text-base text-[#fff] bg-[#006487]">
           解绑
@@ -128,7 +128,6 @@ import {
   watch,
 } from "vue";
 import { cloneDeep } from "lodash-es";
-import { ElNotification } from "element-plus";
 interface StopsForm {
   MfgOrderName: string;
   ContainerName: string;
@@ -348,7 +347,7 @@ const getFocus = () => {
 const getOrderData = () => {
   isLoding.value = "is-loading";
   defaultSelectVal.value = [];
-  OrderQuery({ lineName: opui.line, OrderTypeName: "Assembly" }).then(
+  OrderQuery({ lineName: opui.line }).then(
     (res: any) => {
       let data = res.content;
       let timer = setTimeout(() => {
@@ -426,16 +425,20 @@ const getChange = () => {
     msgTitle.value = res.msg;
     if (res.success) {
       bindVisible.value = true;
-      bindtableData.value = res.content;
-      bindtableData.value.forEach((row:any)=>{
-        tableRef.value.toggleRowSelection(row)
-      })
+      bindtableData.value = res.content
+     
     
     }
     barCode.value = "";
   });
 };
-
+const openBind=()=>{
+  nextTick(() => {
+    if ( tableRef.value) {
+      tableRef.value.toggleSelection( bindtableData.value)
+    }
+  });
+}
 const bindCancel = () => {
   bindVisible.value = false;
   bindtableData.value = [];

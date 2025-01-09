@@ -160,9 +160,9 @@ import { useAppStore } from "@/stores/modules/app";
 import { useUserStoreWithOut } from "@/stores/modules/user";
 import { checkStringType } from "@/utils/barcodeFormat";
 import type { Formspan, FormHeader, OrderData } from "@/typing";
-import { cloneDeep } from "lodash-es";
+
 import {
-  EolManualTestStationMoveOut,
+  JudgeEolManualTestContainer,
   EolStartUpQrCode,
   QueryMoveHistory,
   OrderQuery,
@@ -346,7 +346,7 @@ const formText = (data: string) => {
 const getOrderData = () => {
   isLoding.value = "is-loading";
   defaultSelectVal.value = [];
-  OrderQuery({ lineName: opui.line, OrderTypeName: "Assembly" }).then(
+  OrderQuery({ lineName: opui.line}).then(
     (res: any) => {
       let data = res.content;
       let timer = setTimeout(() => {
@@ -445,7 +445,7 @@ const getChange = () => {
   msgTitle.value = "";
   msgType.value = true;
   if (checkStringType(barCodeData) == "BDY") {
-    EolManualTestStationMoveOut({
+    JudgeEolManualTestContainer({
       OrderName: form.value.MfgOrderName,
       ContainerName: barCodeData,
       workstationName: opui.station,
@@ -455,32 +455,9 @@ const getChange = () => {
       msgTitle.value = res.msg;
       msgType.value = res.success;
       if (res.success) {
-        if (!res.content.IsTUIDQRCode) {
-          msgTitle.value = res.msg;
-          msgType.value = true;
-          barCode.value = '';
-          getHisData();
-          return;
-        }
         stopsForm.value.ContainerName = barCodeData;
         // form.value = { ...res.content[0] };
         // hisForm.value.MfgOrderName = res.content[0].MfgOrderName;
-        msgTitle.value = res.msg;
-        msgType.value = true;
-        // if (!SoftwareStatus.value) {
-        //   isActive.value = true;
-        //   GetPLCExternalCodeList({
-        //     OrderName: form.value.MfgOrderName,
-        //     userAccount: loginName,
-        //   }).then((res: any) => {
-        //     if (res.content) {
-        //       popTableData.value = res.content;
-        //       viewVisible.value = true;
-        //     }
-        //   });
-        // } else {
-        //   isActive.value = false;
-        // }
       } else {
         stopsForm.value.ContainerName = "";
       }

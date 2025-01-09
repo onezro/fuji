@@ -391,7 +391,7 @@ const getOrderData = () => {
     //     orderTable.value.data[0] = res.content
     // });
     // isLoding.value = "is-loading";
-    OrderQuery({ lineName: opui.line, OrderTypeName: "DIP" }).then((res: any) => {
+    OrderQuery({ lineName: opui.line}).then((res: any) => {
         let data = res.content;
         orderTable.value.data[0] = data[0] || [];
         let timer = setTimeout(() => {

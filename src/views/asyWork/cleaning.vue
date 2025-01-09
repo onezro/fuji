@@ -863,8 +863,8 @@ const getOrderData = () => {
   stopsForm.value.keyMaterialList = [];
   OrderQuery({
     lineName: opui.line,
-    OrderTypeName: "Assembly",
-    WorkStationName: opui.station,
+    // OrderTypeName: "Assembly",
+    // WorkStationName: opui.station,
   }).then((res: any) => {
     let data = res.content;
     let timer = setTimeout(() => {

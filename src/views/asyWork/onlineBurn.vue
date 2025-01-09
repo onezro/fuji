@@ -361,7 +361,7 @@ const formText = (data: string) => {
 const getOrderData = () => {
   isLoding.value = "is-loading";
   defaultSelectVal.value = [];
-  OrderQuery({ lineName: opui.line, OrderTypeName: "Assembly" }).then(
+  OrderQuery({ lineName: opui.line }).then(
     (res: any) => {
       let data = res.content;
       let timer = setTimeout(() => {

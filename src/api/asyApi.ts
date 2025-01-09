@@ -447,5 +447,12 @@ export function GetContainerComponentNew(data: any) {
         data
       });
     }
-  
+   
 
+    export function JudgeEolManualTestContainer(data: any) {
+      return request({
+        url: "/api/EolManualTest/JudgeEolManualTestContainer",
+        method: "post",
+        data
+      });
+    }

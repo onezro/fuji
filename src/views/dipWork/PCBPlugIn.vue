@@ -822,8 +822,8 @@ const getOrderData = () => {
   defaultSelectVal.value = []
   OrderQuery({
     lineName: opui.line,
-    OrderTypeName: "DIP",
-    WorkStationName: opui.station,
+    // OrderTypeName: "DIP",
+    // WorkStationName: opui.station,
   }).then((res: any) => {
     let data = res.content;
     let timer = setTimeout(() => {

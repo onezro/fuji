@@ -501,7 +501,7 @@ const getFocus = () => {
 const getOrderData = () => {
   isLoding.value = "is-loading";
   defaultSelectVal.value = [];
-  OrderQuery({ lineName: opui.line, OrderTypeName: "BURN" }).then(
+  OrderQuery({ lineName: opui.line }).then(
     (res: any) => {
       // console.log(res);
       // let timer = setTimeout(() => {
