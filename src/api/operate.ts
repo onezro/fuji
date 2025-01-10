@@ -792,3 +792,24 @@ export function Reprint(data: any) {
         data
     })
 }
+export function QuerySendMaterialCode(data: any) {
+    return request({
+        url: "/api/Material/QuerySendMaterialCode",
+        method: "post",
+        data
+    })
+}
+export function PrintSendMaterialCode(data: any) {
+    return request({
+        url: "/api/Material/PrintSendMaterialCode",
+        method: "post",
+        data
+    })
+}
+export function JudgeTempParaContent(data: any) {
+    return request({
+        url: "/api/BarCodeTemplate/JudgeTempParaContent",
+        method: "post",
+        data
+    })
+}

@@ -161,7 +161,7 @@ const columnData = reactive([
     },
     {
         text: true,
-        prop: "materialsole",
+        prop: "MaterialSole",
         label: "物料唯一码",
         width: "",
         min: true,
