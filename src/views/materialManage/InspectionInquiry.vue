@@ -9,23 +9,6 @@
           size="small"
           label-width="85px"
         >
-          <el-form-item label="工单">
-            <el-input
-              v-model="searchForm.MfgOrderName"
-              class="input-with-select"
-              @keyup.enter.native="inputGetData()"
-            >
-            </el-input>
-            <!-- <el-select-v2
-      v-model="value"
-      :options="options"
-      placeholder="Please select"
-      size="large"
-      style="width: 240px"
-    /> -->
-            <!-- <el-select-v2 v-model="form.MfgOrderName" :options="orderList" filterable
-                :props="orderProps" style="width: 180px"  @change="orderChange"/> -->
-          </el-form-item>
           <el-form-item label="申请日期" class="mb-2">
             <el-date-picker
               :shortcuts="shortcuts"
@@ -38,40 +21,30 @@
               @change="dateChange"
             />
           </el-form-item>
-          <el-form-item label="产品机型">
+          <el-form-item label="工单">
             <el-input
-              v-model="selectForm.ProductModel"
-              style="width: 132px"
-              disabled
+              v-model="searchForm.MfgOrderName"
+              class="input-with-select"
+              @keyup.enter.native="inputGetData()"
             >
             </el-input>
           </el-form-item>
-          <el-form-item label="产品编码">
+          <el-form-item label="送检单号">
             <el-input
-              v-model="selectForm.ProductName"
-              style="width: 132px"
-              disabled
+              v-model="searchForm.QAOrder"
+              class="input-with-select"
+              @keyup.enter.native="inputGetData()"
             >
             </el-input>
           </el-form-item>
-          <el-form-item label="计划数量">
-            <el-input v-model="selectForm.QTY" style="width: 152px" disabled>
-            </el-input>
-          </el-form-item>
-          <el-form-item label="产品描述">
+          <el-form-item label="成品条码">
             <el-input
-              style="width: 420px"
-              type="textarea"
-              v-model="selectForm.ProductDesc"
-              disabled
+              v-model="searchForm.ContainerName"
+              class="input-with-select"
+              @keyup.enter.native="inputGetData()"
             >
             </el-input>
           </el-form-item>
-          <!-- <el-form-item label=" ">
-            <el-button size="small" type="" class="mr-4" @click="getData(order)"
-              >查询</el-button
-            >
-          </el-form-item> -->
         </el-form>
       </div>
       <div class="table_container">
@@ -116,10 +89,10 @@
           >
           </el-table-column>
           <el-table-column
-            prop="QAOrder"
-            label="送检单号"
+            prop="ProductName"
+            label="产品编码"
             align="center"
-            :min-width="flexColumnWidth('送检单号', 'QAOrder')"
+            :min-width="flexColumnWidth('产品编码', 'ProductName')"
           >
           </el-table-column>
           <el-table-column
@@ -137,28 +110,79 @@
           >
           </el-table-column>
           <el-table-column
-            prop="ScanTime"
-            label="时间"
+            prop="ProductDescription"
+            label="产品描述"
             align="center"
-            :min-width="flexColumnWidth('时间', 'ScanTime')"
+            :min-width="flexColumnWidth('产品描述', 'ProductDescription')"
+          >
+          </el-table-column>
+          <el-table-column
+            prop="QAOrder"
+            label="送检单号"
+            align="center"
+            :min-width="flexColumnWidth('送检单号', 'QAOrder')"
+          >
+          </el-table-column>
+          <el-table-column
+            prop="ScanTime"
+            label="扫描时间"
+            align="center"
+            :min-width="flexColumnWidth('扫描时间', 'ScanTime')"
+          >
+          </el-table-column>
+          <el-table-column
+            prop="QATime"
+            label="检验时间"
+            align="center"
+            :min-width="flexColumnWidth('检验时间', 'QATime')"
+          >
+          </el-table-column>
+          <el-table-column
+            prop="ScanUser"
+            label="扫描人"
+            align="center"
+            :min-width="flexColumnWidth('扫描人', 'ScanUser')"
           >
           </el-table-column>
           <el-table-column
             prop="QAResult"
             label="送检结果"
             align="center"
+            width="80"
             :min-width="flexColumnWidth('送检结果', 'QAResult')"
             :filters="[
               { text: '合格', value: 'Y' },
               { text: '不合格', value: 'N' },
               { text: '送检中', value: null },
             ]"
+            :filter-method="filterHandler"
           >
             <template #default="scope">
               <div v-if="scope.row.QAResult === 'Y'">合格</div>
               <div v-if="scope.row.QAResult === 'N'">不合格</div>
               <div v-if="scope.row.QAResult === null">送检中</div>
             </template>
+          </el-table-column>
+          <el-table-column
+            prop="StorageOrder"
+            label="入库单号"
+            align="center"
+            :min-width="flexColumnWidth('入库单号', 'StorageOrder')"
+          >
+          </el-table-column>
+          <el-table-column
+            prop="StorageUser"
+            label="入库用户"
+            align="center"
+            :min-width="flexColumnWidth('入库用户', 'StorageUser')"
+          >
+          </el-table-column>
+          <el-table-column
+            prop="StorageTime"
+            label="入库时间"
+            align="center"
+            :min-width="flexColumnWidth('入库时间', 'StorageTime')"
+          >
           </el-table-column>
           <el-table-column
             prop="StorageSta"
@@ -370,6 +394,8 @@ const searchForm = ref({
   MfgOrderName: "",
   StartTime: "",
   EndTime: "",
+  QAOrder:"",
+  ContainerName:"",
   PageSize: 10,
   CurrentPage: 1,
 });
@@ -421,6 +447,15 @@ const dateChange = () => {
     searchForm.value.EndTime = "";
   }
 };
+
+const filterHandler = (
+  value: string,
+  row: any,
+  column: any
+) => {
+  const property = column['property']
+  return row[property] === value
+}
 
 const inputGetData = () => {
   if (searchForm.value.MfgOrderName) {
@@ -586,7 +621,7 @@ const handleCurrentChange = (val: any) => {
 
 const getScreenHeight = () => {
   nextTick(() => {
-    tableHeight.value = window.innerHeight - 310;
+    tableHeight.value = window.innerHeight - 240;
   });
 };
 </script>
