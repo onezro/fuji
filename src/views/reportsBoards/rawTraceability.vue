@@ -104,15 +104,7 @@ const total1 = ref(1);
 const columnData = reactive([
   {
     text: true,
-    prop: "ContainerName",
-    label: "物料条码",
-    width: "",
-    min: true,
-    align: "1",
-  },
-  {
-    text: true,
-    prop: "MaterialName",
+    prop: "MaterialSole",
     label: "物料编码",
     width: "",
     min: true,
@@ -120,8 +112,16 @@ const columnData = reactive([
   },
   {
     text: true,
-    prop: "MaterialSole",
-    label: "物料唯一码",
+    prop: "MaterialName",
+    label: "物料名称",
+    width: "",
+    min: true,
+    align: "1",
+  },
+  {
+    text: true,
+    prop: "ContainerName",
+    label: "物料批次码",
     width: "",
     min: true,
     align: "1",

@@ -120,7 +120,7 @@ const columnData = reactive([
     {
         text: true,
         prop: "productName",
-        label: "产品编码",
+        label: "物料编码",
         width: "",
         min: true,
         align: "1",
@@ -129,7 +129,7 @@ const columnData = reactive([
     {
         text: true,
         prop: "Description",
-        label: "产品描述",
+        label: "物料描述",
         width: "250",
         // min: true,
         align: "1",
@@ -138,6 +138,14 @@ const columnData = reactive([
         text: true,
         prop: "WorkflowName",
         label: "工艺流程",
+        width: "",
+        min: true,
+        align: "1",
+    },
+    {
+        text: true,
+        prop: "SpecDesc",
+        label: "工序",
         width: "",
         min: true,
         align: "1",
@@ -199,7 +207,7 @@ const detailColumn = reactive([
     },
     {
         text: true,
-        prop: "Qty",
+        prop: "containerSole",
         label: "原材料唯一码",
         width: "",
         min: true,
@@ -215,7 +223,7 @@ const detailColumn = reactive([
     },
     {
         text: true,
-        prop: "Qty",
+        prop: "BD_EmployeeName",
         label: "操作人",
         width: "",
         min: true,
