@@ -456,3 +456,34 @@ export function GetContainerComponentNew(data: any) {
         data
       });
     }
+   
+//扫码条码获取送检
+    export function ScanPackagingBoxNumberInfo(data: any) {
+      return request({
+        url: "/api/FinishedProductInspect/ScanPackagingBoxNumberInfo",
+        method: "post",
+        params: {
+          ContainerName:data
+        }
+      });
+    }
+   
+    //提交箱条码跳指定的站点
+        export function SavePackagingBoxNumber(data: any) {
+          return request({
+            url: "/api/FinishedProductInspect/SavePackagingBoxNumber",
+            method: "post",
+            data
+          });
+        }
+   
+        //查询工作流列表
+            export function InspectQueryWorkflowList(data: any) {
+              return request({
+                url: "/api/FinishedProductInspect/QueryWorkflowList",
+                method: "post",
+                params: {
+                  PackagingBoxNumber:data
+                }
+              });
+            }

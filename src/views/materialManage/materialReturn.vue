@@ -945,6 +945,9 @@ const applyFor = () => {
           QualityIsGood: returnType.value,
           QualityReason: returnReason.value,
           ERPOrder: form.value.ERPOrder,
+          OrderType: selectType.value,
+          AvailableQty: item.Qty,
+          InitQty: item.Amount,
           ERPSpec:item.BD_ERPSpecName
         };
       }
@@ -965,7 +968,7 @@ const applyFor = () => {
   //     return;
   //   }
   // });
-  console.log(choiceList.value);
+  // console.log(choiceList.value);
   OrderGoodMaterials(choiceList.value).then((res: any) => {
     if (res && res.success) {
       ElNotification({
