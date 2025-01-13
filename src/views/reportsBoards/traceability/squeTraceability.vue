@@ -213,6 +213,14 @@ const columnData = reactive([
   },
   {
     text: true,
+    prop: "MfgLineDes",
+    label: "产线",
+    width: "",
+    min: true,
+    align: "1",
+  },
+  {
+    text: true,
     prop: "SpecDesc",
     label: "工序",
     width: "",
