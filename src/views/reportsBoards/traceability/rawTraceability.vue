@@ -19,7 +19,7 @@
           <el-form-item label="物料编码" class="mb-2">
             <el-input
               style="width: 150px"
-              v-model="getForm.ContainerName"
+              v-model="getForm.MaterialSole"
               placeholder=""
               clearable
               @change="changeForm"
@@ -88,7 +88,7 @@ import {
   disabledDate,
 } from "@/utils/dataMenu";
 const getForm = ref({
-  ContainerName: "",
+  MaterialSole: "",
   MaterialName: "",
   StartTime: "",
   EndTime: "",
