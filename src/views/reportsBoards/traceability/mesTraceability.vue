@@ -274,7 +274,7 @@ const changeForm=()=>{
 const getData = () => { 
     QueryMESContainerTracedBack(getForm.value).then((res:any)=>{
         if(res.content.length!==0){
-            total1.value=res.content[0].TotalCount
+            total1.value=res.total
         }else{
             total1.value=0
         }
