@@ -969,7 +969,6 @@ const applyFor = () => {
   //   }
   // });
   console.log(choiceList.value);
-  return;
   OrderGoodMaterials(choiceList.value).then((res: any) => {
     if (res && res.success) {
       ElNotification({
