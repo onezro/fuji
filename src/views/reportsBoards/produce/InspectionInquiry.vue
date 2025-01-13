@@ -339,6 +339,7 @@ import {
 } from "@/api/asyApi";
 import { ProductInspectDetailsHistory } from "@/api/report";
 import type { InspectionResult } from "@/typing";
+import { cloneDeep } from "lodash-es";
 import {
   ref,
   reactive,
@@ -468,7 +469,8 @@ const inputGetData = () => {
   }
   ProductInspectDetailsHistory(searchForm.value).then((res: any) => {
     if (res.success) {
-      tableData.value = res.content;
+      tableData.value = cloneDeep([]);
+      tableData.value = cloneDeep(res.content);
       total.value = res.total;
     }
   });
@@ -484,7 +486,8 @@ const getData = () => {
   }
   ProductInspectDetailsHistory(searchForm.value).then((res: any) => {
     if (res.success) {
-      tableData.value = res.content;
+      tableData.value = cloneDeep([]);
+      tableData.value = cloneDeep(res.content);
       total.value = res.total;
     }
   });
@@ -517,7 +520,7 @@ const getDetail = async (order: any) => {
 };
 
 const rowKey = (row: any) => {
-  return row.PackagingBoxNumber;
+  return row.InspectionOrderGuid;
 };
 
 const selectable = (row: any) => {

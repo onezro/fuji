@@ -114,11 +114,6 @@
                 label="抽检结果"
                 align="center"
                 :min-width="flexColumnWidth('抽检结果', 'QAResult')"
-                :filters="[
-                  { text: '合格', value: 'Y' },
-                  { text: '不合格', value: 'N' },
-                  { text: '送检中', value: '' },
-                ]"
               >
                 <template #default="scope">
                   <div v-if="scope.row.QAResult === 'Y'">合格</div>
@@ -131,10 +126,6 @@
                 label="检验单结果"
                 align="center"
                 :min-width="flexColumnWidth('检验单结果', 'InSpecResult')"
-                :filters="[
-                  { text: '合格', value: 'Y' },
-                  { text: '不合格', value: 'N' },
-                ]"
               >
                 <template #default="scope">
                   <div v-if="scope.row.InSpecResult === 'Y'">合格</div>
