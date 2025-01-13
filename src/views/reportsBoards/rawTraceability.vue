@@ -177,7 +177,7 @@ const detailColumn = reactive([
   },
   {
     text: true,
-    prop: "productModel",
+    prop: "ProductModel",
     label: "机型",
     width: "",
     min: true,
@@ -201,7 +201,7 @@ const detailColumn = reactive([
   },
   {
     text: true,
-    prop: "containername",
+    prop: "containerName",
     label: "MES条码",
     width: "",
     min: true,

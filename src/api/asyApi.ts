@@ -457,13 +457,13 @@ export function GetContainerComponentNew(data: any) {
       });
     }
    
-//扫码外箱条码详情
-    export function ScanPackagingBoxNumber(data: any) {
+//扫码条码获取送检
+    export function ScanPackagingBoxNumberInfo(data: any) {
       return request({
-        url: "/api/FinishedProductInspect/ScanPackagingBoxNumber",
+        url: "/api/FinishedProductInspect/ScanPackagingBoxNumberInfo",
         method: "post",
         params: {
-          PackagingBoxNumber:data
+          ContainerName:data
         }
       });
     }

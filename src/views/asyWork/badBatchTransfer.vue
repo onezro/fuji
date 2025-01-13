@@ -8,70 +8,16 @@
             :inline="true"
             size="small"
             label-width="85px"
+            @submit.native.prevent
           >
             <el-form-item label="工单">
               <el-input
-                v-model="PackagingBoxNumber"
+                v-model="ContainerName"
                 class="input-with-select"
                 @keyup.enter.native="inputGetData()"
               >
               </el-input>
-              <!-- <el-select-v2
-        v-model="value"
-        :options="options"
-        placeholder="Please select"
-        size="large"
-        style="width: 240px"
-      /> -->
-              <!-- <el-select-v2 v-model="form.MfgOrderName" :options="orderList" filterable
-                  :props="orderProps" style="width: 180px"  @change="orderChange"/> -->
             </el-form-item>
-            <el-form-item label="申请日期" class="mb-2">
-              <el-date-picker
-                :shortcuts="shortcuts"
-                v-model="date"
-                value-format="YYYY-MM-DD"
-                type="daterange"
-                range-separator="到"
-                size="small"
-                style="width: 240px"
-                @change="dateChange"
-              />
-            </el-form-item>
-            <el-form-item label="产品机型">
-              <el-input
-                v-model="selectForm.ProductModel"
-                style="width: 132px"
-                disabled
-              >
-              </el-input>
-            </el-form-item>
-            <el-form-item label="产品编码">
-              <el-input
-                v-model="selectForm.ProductName"
-                style="width: 132px"
-                disabled
-              >
-              </el-input>
-            </el-form-item>
-            <el-form-item label="计划数量">
-              <el-input v-model="selectForm.QTY" style="width: 152px" disabled>
-              </el-input>
-            </el-form-item>
-            <el-form-item label="产品描述">
-              <el-input
-                style="width: 420px"
-                type="textarea"
-                v-model="selectForm.ProductDesc"
-                disabled
-              >
-              </el-input>
-            </el-form-item>
-            <!-- <el-form-item label=" ">
-              <el-button size="small" type="" class="mr-4" @click="getData(order)"
-                >查询</el-button
-              >
-            </el-form-item> -->
           </el-form>
         </div>
         <div class="table_container">
@@ -305,7 +251,7 @@
   import {
     InspectQueryWorkflowList,
     SavePackagingBoxNumber,
-    ScanPackagingBoxNumber
+    ScanPackagingBoxNumberInfo
   } from "@/api/asyApi";
   import { ProductInspectDetailsHistory } from "@/api/report";
   import type { InspectionResult } from "@/typing";
@@ -334,7 +280,7 @@
   const date = ref();
   const IsPrint = ref(false);
   const activeName = ref("shelveMaterial");
-  const PackagingBoxNumber = ref('')
+  const ContainerName = ref('')
   const getDataText = reactive({
     inspectType: "",
     inspect: "",
@@ -418,7 +364,7 @@
   };
   
   const inputGetData = () => {
-    InspectQueryWorkflowList(PackagingBoxNumber).then((res:any) => {
+    ScanPackagingBoxNumberInfo(ContainerName.value).then((res:any) => {
       if (res.success) {
         tableData.value = res.content;
       }
