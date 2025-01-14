@@ -41,7 +41,7 @@
             <el-tag type="info" effect="light" v-if="scope.row.Status==4">
               报废
             </el-tag>
-            <el-tag color="#ffffff" effect="light" v-if="scope.row.Status!==0&&scope.row.Status!==1&&scope.row.Status!==11">
+            <el-tag color="#ffffff" effect="light" v-if="scope.row.Status!==0&&scope.row.Status!==1&&scope.row.Status!==11&&scope.row.Status!==4">
               已使用
             </el-tag>
           </template>
@@ -54,10 +54,10 @@
               <el-button type="primary" icon="EditPen" size="small" @click.prevent="editSubmit(scope.row)"></el-button>
             </el-tooltip>
             <el-tooltip content="删除" placement="top">
-              <el-button type="danger" icon="Delete" size="small" @click.prevent="editSubmit(scope.row)"></el-button>
+              <el-button type="danger" icon="Delete" size="small" @click.prevent="deleteSubmit(scope.row)"></el-button>
             </el-tooltip>
             <el-tooltip content="报废" placement="top">
-              <el-button type="warning" icon="Failed" size="small" @click.prevent="editSubmit(scope.row)"></el-button>
+              <el-button type="warning" icon="Failed" size="small" @click.prevent="scrapSubmit(scope.row)"></el-button>
             </el-tooltip>
           </template>
         </el-table-column>

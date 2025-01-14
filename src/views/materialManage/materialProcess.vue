@@ -24,8 +24,8 @@
         <div class="setwidth w-[400px]">
           <!-- <el-table-v2 :columns="columns" :data="tableData" :height="tableHeight" border fit fixed highlight-current-row
             @cell-click="cellClick" /> -->
-          <el-table :data="tableData" ref="tableRef"  size="small" :height="tableHeight" :tooltip-effect="'dark'" border fit stripe
-            highlight-current-row @cell-click="cellClick">
+          <el-table :data="tableData" ref="tableRef"  size="small" :height="tableHeight" :tooltip-effect="'dark'" border fit 
+            highlight-current-row @cell-click="cellClick" :row-class-name="tableRowClassName">
             <el-table-column type="index" align="center" fixed label="序号" width="50" />
             <el-table-column prop="ProductName" label="组件编码" width="120" />
             <el-table-column prop="ProductDesc" label="组件描述" :show-overflow-tooltip="true" />
@@ -365,6 +365,12 @@ const getSpecWorkData = () => {
   });
 };
 
+const tableRowClassName = (val: any) => {
+  if (val.row.WorkflowName == null) {
+    return "active-table";
+  }
+  return "";
+};
 const cellClick = (val: any) => {
   specWorkData.value = []
   productData.value = []
@@ -521,7 +527,6 @@ const handleCurrentChange = (val: any) => {
 };
 </script>
 
-<style scoped></style>
 <style scoped>
 .el-pagination {
   justify-content: center;
@@ -529,5 +534,15 @@ const handleCurrentChange = (val: any) => {
 
 .setwidth {
   flex: 0 0 400px;
+}
+</style>
+
+<style>
+.el-table .warning-row {
+  --el-table-tr-bg-color: var(--el-color-warning-light-9);
+}
+
+.el-table .active-table {
+  --el-table-tr-bg-color: var(--el-color-error-light-7);
 }
 </style>

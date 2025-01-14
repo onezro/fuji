@@ -813,3 +813,11 @@ export function JudgeTempParaContent(data: any) {
         data
     })
 }
+//产线日历
+export function GetMESWorkLineNews(data: any) {
+    return request({
+        url: "/api/WorkLineCalendar/GetMESWorkLineNews",
+        method: "post",
+        data
+    })
+}
