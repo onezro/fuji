@@ -391,6 +391,7 @@ const inputGetData = () => {
     // if (res.success) {
     tableData.value = res.content;
     // }
+    ContainerName.value = '';
     msgTitle.value = res.msg;
     msgType.value = res.success;
   });

@@ -3,7 +3,7 @@
     <el-card
       shadow="always"
       :body-style="{ padding: '8px' }"
-      class="w-[950px] h-[calc(100vh-97px)]"
+      class="w-[700px] h-[calc(100vh-97px)]"
     >
       <div ref="headerRef">
         <el-form
@@ -203,9 +203,19 @@
               {{ form.IsAging ? "是" : "否" }}
             </div>
           </el-form-item>
+          <el-form-item label="老化结果:" class="mb-2" prop="AgingResult">
+            <div class="w-[200px]">
+              {{ form.AgingResult }}
+            </div>
+          </el-form-item>
           <el-form-item label="是否返修:" class="mb-2" prop="IsRepair">
             <div class="w-[200px]">
               {{ form.IsRepair ? "是" : "否" }}
+            </div>
+          </el-form-item>
+          <el-form-item label="返修结果:" class="mb-2" prop="AgingResult">
+            <div class="w-[200px]">
+              {{ form.RepairResult }}
             </div>
           </el-form-item>
           <el-form-item label="产品描述:" class="mb-2" prop="Description">
