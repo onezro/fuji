@@ -164,6 +164,23 @@
             </template>
           </el-table-column>
           <el-table-column
+            prop="InSpecResult"
+            label="送检单结果"
+            align="center"
+            width="100"
+            :min-width="flexColumnWidth('送检单结果', 'InSpecResult')"
+            :filters="[
+              { text: '合格', value: 'Y' },
+              { text: '不合格', value: 'N' },
+            ]"
+            :filter-method="filterHandler"
+          >
+            <template #default="scope">
+              <div v-if="scope.row.InSpecResult === 'Y'">合格</div>
+              <div v-if="scope.row.InSpecResult === 'N'">不合格</div>
+            </template>
+          </el-table-column>
+          <el-table-column
             prop="StorageOrder"
             label="入库单号"
             align="center"

@@ -121,8 +121,8 @@
         <el-table-column
           prop="ErrorNote"
           align="center"
-          label="故障记录"
-          :min-width="flexColumnWidth('故障记录', 'ErrorNote')"
+          label="备注"
+          :min-width="flexColumnWidth('备注', 'ErrorNote')"
         >
         </el-table-column>
         <el-table-column
@@ -287,7 +287,7 @@
         <el-form-item label="故障代码标识">
           <el-input v-model="form.ErrorCodeGuid" style="width: 250px" />
         </el-form-item>
-        <el-form-item label="故障记录">
+        <el-form-item label="备注">
           <el-input v-model="form.ErrorNote" style="width: 250px" />
         </el-form-item>
         <el-form-item label="故障描述">
@@ -722,7 +722,7 @@ const columnData = reactive([
   {
     text: true,
     prop: "ClassName",
-    label: "类型名称",
+    label: "故障类型",
     width: "",
     min: true,
     align: "center",

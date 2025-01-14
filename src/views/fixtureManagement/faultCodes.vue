@@ -116,7 +116,7 @@
           prop="ErrorNote"
           align="center"
           label="故障记录"
-          :min-width="flexColumnWidth('归还人', 'ErrorNote')"
+          :min-width="flexColumnWidth('故障记录', 'ErrorNote')"
         >
         </el-table-column>
         <el-table-column

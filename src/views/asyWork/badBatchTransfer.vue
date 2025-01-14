@@ -103,6 +103,13 @@
               >
               </el-table-column>
               <el-table-column
+                prop="ProductDescription"
+                label="产品描述"
+                align="center"
+                :min-width="flexColumnWidth('产品描述', 'ProductName')"
+              >
+              </el-table-column>
+              <el-table-column
                 prop="QATime"
                 label="检验时间"
                 align="center"
@@ -253,6 +260,7 @@ import {
   ScanContainerDetails,
   bbfQueryWorkflowList,
 } from "@/api/asyApi";
+import { useAppStore } from "@/stores/modules/app";
 import { ProductInspectDetailsHistory } from "@/api/report";
 import type { InspectionResult } from "@/typing";
 import {
@@ -265,7 +273,9 @@ import {
   onBeforeUnmount,
 } from "vue";
 const total = ref(0);
+const appStore = useAppStore();
 const userStore = useUserStoreWithOut();
+const opui = appStore.getOPUIReal();
 const loginName = userStore.getUserInfo;
 const tableData = ref<any>([]);
 const pageSize = ref(10);
@@ -391,6 +401,7 @@ const submit = () => {
     CreatedBy: loginName,
     WorkFlowStep: WorkFlowStep.value,
     scanPackagingBoxNumberitems: choiceList.value,
+    WorkstationName:opui.station
   }).then((res: any) => {
     dialogVisible.value = false;
     msgTitle.value = res.msg;
