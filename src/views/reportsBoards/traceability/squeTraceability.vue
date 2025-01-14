@@ -48,6 +48,7 @@
               v-model="getForm.Line"
               placeholder=""
               style="width: 130px"
+              clearable
             >
               <el-option
                 v-for="p in lineList"
@@ -62,6 +63,7 @@
               v-model="getForm.SpecName"
               placeholder=""
               style="width: 130px"
+              clearable
             >
               <el-option
                 v-for="p in specnList"

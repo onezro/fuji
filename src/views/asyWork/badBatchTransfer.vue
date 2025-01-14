@@ -78,7 +78,7 @@
                 prop="MfgOrderName"
                 label="工单号"
                 align="center"
-                :min-width="flexColumnWidth('工单号', 'MfgorderName')"
+                :min-width="flexColumnWidth('工单号', 'MfgOrderName')"
               >
               </el-table-column>
               <el-table-column
@@ -106,7 +106,7 @@
                 prop="ProductDescription"
                 label="产品描述"
                 align="center"
-                :min-width="flexColumnWidth('产品描述', 'ProductName')"
+                :min-width="flexColumnWidth('产品描述', 'ProductDescription')"
               >
               </el-table-column>
               <el-table-column
@@ -226,9 +226,9 @@
               >
                 <el-option
                   v-for="item in workList"
-                  :key="item.WorkflowName"
-                  :label="item.WorkflowStepName"
-                  :value="item.WorkflowName"
+                  :key="item.WorkflowStepName"
+                  :label="item.Description"
+                  :value="item.WorkflowStepName"
                 />
               </el-select>
             </el-form-item>
@@ -391,6 +391,7 @@ const inputGetData = () => {
     // if (res.success) {
     tableData.value = res.content;
     // }
+    ContainerName.value = '';
     msgTitle.value = res.msg;
     msgType.value = res.success;
   });
