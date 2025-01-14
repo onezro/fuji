@@ -110,6 +110,13 @@
               >
               </el-table-column>
               <el-table-column
+                prop="Specdesc"
+                label="工序描述"
+                align="center"
+                :min-width="flexColumnWidth('工序描述', 'Specdesc')"
+              >
+              </el-table-column>
+              <el-table-column
                 prop="QATime"
                 label="检验时间"
                 align="center"
@@ -191,7 +198,7 @@
               >
               </el-input>
             </el-form-item>
-            <el-form-item label="工序编码">
+            <!-- <el-form-item label="工序编码">
               <el-input
                 v-model="form.SpecName"
                 style="width: 152px"
@@ -199,8 +206,8 @@
                 disabled
               >
               </el-input>
-            </el-form-item>
-            <el-form-item label="工序描述">
+            </el-form-item> -->
+            <!-- <el-form-item label="工序描述">
               <el-input
                 v-model="form.SpecDesc"
                 style="width: 152px"
@@ -208,7 +215,7 @@
                 disabled
               >
               </el-input>
-            </el-form-item>
+            </el-form-item> -->
             <el-form-item label="产品描述">
               <el-input
                 style="width: 420px"
@@ -477,7 +484,7 @@ const getMaxLength = (arr: any) => {
 const getTextWidth = (str: string) => {
   let width = 0;
   const html = document.createElement("span");
-  html.style.cssText = `padding: 0; margin: 0; border: 0; line-height: 1; font-size: ${13}px; font-family: Arial, sans-serif;`;
+  html.style.cssText = `padding: 0; margin: 0; border: 0; line-height: 1; font-size: ${16}px; font-family: Arial, sans-serif;`;
   html.innerText = str; // 去除字符串前后的空白字符
   document.body?.appendChild(html);
 
