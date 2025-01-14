@@ -352,6 +352,10 @@ const getChange = () => {
         msgType.value = res.success;
         msgTitle.value = res.msg;
         barCode.value = "";
+        if(res.success){
+            getHisData()
+        }
+       
     });
 };
 

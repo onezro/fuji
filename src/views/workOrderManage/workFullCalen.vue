@@ -22,7 +22,7 @@
             </el-select>
 
             <el-button icon="Plus" type="primary" @click="openAdd">
-              添加日程
+              新增日程
             </el-button>
           </div>
 
@@ -33,9 +33,38 @@
 
       </div>
     </el-card>
-    <el-drawer v-model="drawer" title="添加日程" direction="rtl" >
-      1111
-      <!-- <span>添加日程</span> -->
+    <el-drawer v-model="drawer" title="新增日程计划" direction="rtl" size="400" @close="handleClose">
+      <el-form ref="formRef" :model="formData" label-width="auto"> 
+          <el-form-item label="产线" prop="WorkLineName">
+            <el-select v-model="formData.WorkLineName" placeholder="请选择产线"  :clearble="false" style="width: 220px;">
+              <el-option v-for="l in lineData" :label="l.Description" :value="l.MfgLineName" />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="开始日期" prop="StartDate">
+            <el-date-picker v-model="formData.StartDate"   value-format="YYYY-MM-DD" type="date" placeholder="请选择日期" :clearble="false"/>
+          </el-form-item>
+          <el-form-item label="结束日期" prop="LongDate">
+            <el-date-picker v-model="formData.LongDate"   value-format="YYYY-MM-DD" type="date" placeholder="请选择日期" :clearble="false"/>
+          </el-form-item>
+          <el-form-item label="计划类型" prop="ClassType">
+            <el-select v-model="formData.WorkLineName" placeholder="请选择产线"  :clearble="false" style="width: 220px;">
+              <el-option v-for="l in lineData" :label="l.Description" :value="l.MfgLineName" />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="开始时间" prop="ClassStartTime">
+            <el-time-picker v-model="formData.ClassStartTime"   value-format="HH:mm:ss" />
+          
+          </el-form-item>
+          <el-form-item label="结束时间" prop="ClassEndTime">
+            <el-time-picker v-model="formData.ClassEndTime"   value-format="HH:mm:ss"/>
+          </el-form-item>
+      </el-form>
+      <template #footer>
+        <el-button type="primary"  @click="onSubmit">保存</el-button>
+        <el-button  @click="handleClose">取消</el-button>
+       
+      </template>
+
     </el-drawer>
   </div>
 </template>
@@ -91,6 +120,17 @@ const dataSelet = ref([
   }
 ])
 const drawer=ref(false)
+const formData=ref({
+  WorkLineName:"",
+  StartDate:"",
+  LongDate:"",
+  ClassType:"",
+  ClassStartTime:"",
+  ClassEndTime:"",
+  UserNo:""
+})
+const formRef=ref()
+
 const eventClickData = (val: any) => {
   console.log(val.event);
 
@@ -146,6 +186,14 @@ const getLineData = () => {
 }
 const openAdd=()=>{
   drawer.value=true
+}
+const onSubmit=()=>{
+console.log(formData.value);
+
+}
+const handleClose=()=>{
+  drawer.value=false
+  formRef.value.resetFields()
 }
 
 const handleChangeType = (val: any) => {
