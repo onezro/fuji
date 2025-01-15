@@ -94,6 +94,7 @@ const dataSelet = ref([
     end: '2025-01-13 17:30:00',
     allDay: false,
     shift: 'day', // 自定义属性，表示白班
+    dataID:1234234,
     color: '#000000', // 可以设置事件颜色（可选）
     backgroundColor: '#006487', // 背景颜色（可选）
     borderColor: '#000000' // 边框颜色（可选）
@@ -132,7 +133,7 @@ const formData=ref({
 const formRef=ref()
 
 const eventClickData = (val: any) => {
-  console.log(val.event);
+  console.log(val.event._def);
 
 }
 const calendarOptions = reactive({
