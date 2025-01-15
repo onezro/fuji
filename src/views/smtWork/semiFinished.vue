@@ -227,7 +227,7 @@ onMounted(() => {
   getCarrierList();
   autoTimer.value=setInterval(()=>{
     getCarrierList();
-  },1000*10)
+  },1000*5)
 });
 onBeforeUnmount(() => {
   clearInterval(autoTimer.value)

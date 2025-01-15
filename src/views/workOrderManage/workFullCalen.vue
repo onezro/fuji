@@ -34,35 +34,41 @@
       </div>
     </el-card>
     <el-drawer v-model="drawer" title="新增日程计划" direction="rtl" size="400" @close="handleClose">
-      <el-form ref="formRef" :model="formData" label-width="auto"> 
-          <el-form-item label="产线" prop="WorkLineName">
-            <el-select v-model="formData.WorkLineName" placeholder="请选择产线"  :clearble="false" style="width: 220px;">
-              <el-option v-for="l in lineData" :label="l.Description" :value="l.MfgLineName" />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="开始日期" prop="StartDate">
-            <el-date-picker v-model="formData.StartDate"   value-format="YYYY-MM-DD" type="date" placeholder="请选择日期" :clearble="false"/>
-          </el-form-item>
-          <el-form-item label="结束日期" prop="LongDate">
-            <el-date-picker v-model="formData.LongDate"   value-format="YYYY-MM-DD" type="date" placeholder="请选择日期" :clearble="false"/>
-          </el-form-item>
-          <el-form-item label="计划类型" prop="ClassType">
-            <el-select v-model="formData.WorkLineName" placeholder="请选择产线"  :clearble="false" style="width: 220px;">
-              <el-option v-for="l in lineData" :label="l.Description" :value="l.MfgLineName" />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="开始时间" prop="ClassStartTime">
-            <el-time-picker v-model="formData.ClassStartTime"   value-format="HH:mm:ss" />
-          
-          </el-form-item>
-          <el-form-item label="结束时间" prop="ClassEndTime">
-            <el-time-picker v-model="formData.ClassEndTime"   value-format="HH:mm:ss"/>
-          </el-form-item>
+
+      <el-form ref="formRef" :model="formData" label-width="auto">
+        <el-form-item label="产线" prop="WorkLineName">
+          <el-select v-model="formData.WorkLineName" placeholder="请选择产线" :clearble="false" style="width: 220px;">
+            <el-option v-for="l in lineData" :label="l.Description" :value="l.MfgLineName" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="计划类型" prop="ClassType">
+          <el-radio-group v-model="formData.ClassType">
+            <el-radio value="1" >白班</el-radio>
+            <el-radio value="2" >夜班</el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="开始日期" prop="StartDate">
+          <el-date-picker v-model="formData.StartDate" value-format="YYYY-MM-DD" type="date" placeholder="请选择日期"
+            :clearble="false" />
+        </el-form-item>
+        <el-form-item label="持续天数" prop="LongDate">
+          <el-input type="number" v-model.number="formData.LongDate" style="width: 220px">
+            <template #append>天</template>
+          </el-input>
+        </el-form-item>
+
+        <el-form-item label="开始时间" prop="ClassStartTime">
+          <el-time-picker v-model="formData.ClassStartTime" value-format="HH:mm:ss" />
+
+        </el-form-item>
+        <el-form-item label="结束时间" prop="ClassEndTime">
+          <el-time-picker v-model="formData.ClassEndTime" value-format="HH:mm:ss" />
+        </el-form-item>
       </el-form>
       <template #footer>
-        <el-button type="primary"  @click="onSubmit">保存</el-button>
-        <el-button  @click="handleClose">取消</el-button>
-       
+        <el-button type="primary" @click="onSubmit">保存</el-button>
+        <el-button @click="handleClose">取消</el-button>
+
       </template>
 
     </el-drawer>
@@ -78,7 +84,9 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import listPlugin from "@fullcalendar/list";
 import interactionPlugin from "@fullcalendar/interaction";
+import { useUserStoreWithOut } from "@/stores/modules/user";
 import dayjs from 'dayjs'
+const userStore = useUserStoreWithOut();
 const fullcalendar = ref();
 const Tcalendar = ref();
 const viewType = ref("timeGridWeek");
@@ -94,7 +102,7 @@ const dataSelet = ref([
     end: '2025-01-13 17:30:00',
     allDay: false,
     shift: 'day', // 自定义属性，表示白班
-    dataID:1234234,
+    dataID: 1234234,
     color: '#000000', // 可以设置事件颜色（可选）
     backgroundColor: '#006487', // 背景颜色（可选）
     borderColor: '#000000' // 边框颜色（可选）
@@ -120,17 +128,17 @@ const dataSelet = ref([
     borderColor: '#000000' // 边框颜色（可选）
   }
 ])
-const drawer=ref(false)
-const formData=ref({
-  WorkLineName:"",
-  StartDate:"",
-  LongDate:"",
-  ClassType:"",
-  ClassStartTime:"",
-  ClassEndTime:"",
-  UserNo:""
+const drawer = ref(false)
+const formData = ref({
+  WorkLineName: "",
+  StartDate: "",
+  LongDate: "",
+  ClassType: "",
+  ClassStartTime: "",
+  ClassEndTime: "",
+  UserNo:  userStore.getUserInfo
 })
-const formRef=ref()
+const formRef = ref()
 
 const eventClickData = (val: any) => {
   console.log(val.event._def);
@@ -185,15 +193,15 @@ const getLineData = () => {
     lineData.value = res.content
   })
 }
-const openAdd=()=>{
-  drawer.value=true
+const openAdd = () => {
+  drawer.value = true
 }
-const onSubmit=()=>{
-console.log(formData.value);
+const onSubmit = () => {
+  console.log(formData.value);
 
 }
-const handleClose=()=>{
-  drawer.value=false
+const handleClose = () => {
+  drawer.value = false
   formRef.value.resetFields()
 }
 
