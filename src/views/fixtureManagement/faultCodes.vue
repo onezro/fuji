@@ -74,6 +74,16 @@
         stripe
       >
         <el-table-column
+          prop="ReturnDate"
+          align="center"
+          label="故障类型"
+          width="100"
+        >
+          <template #default="scope">
+            <div>{{ getTypeStr(scope.row.ErrorTypeName) }}</div>
+          </template>
+        </el-table-column>
+        <el-table-column
           prop="ErrorCode"
           align="center"
           label="故障代码"
@@ -88,35 +98,24 @@
         >
         </el-table-column>
         <el-table-column
-          prop="ReturnDate"
-          align="center"
-          label="故障类型名称"
-          width="100"
-        >
-          <template #default="scope">
-            <div>{{ getTypeStr(scope.row.ErrorTypeName) }}</div>
-          </template>
-        </el-table-column>
-        <el-table-column
-          prop="RepairMethod"
-          align="center"
-          label="修复方法"
-          :min-width="flexColumnWidth('修复方法', 'RepairMethod')"
-        >
-        </el-table-column>
-        <el-table-column
           prop="ErrorDesc"
           align="center"
           label="故障描述"
           :min-width="flexColumnWidth('故障描述', 'ErrorDesc')"
         >
         </el-table-column>
-        <!-- <el-table-column prop="LendID" align="center" label="借出编号"> </el-table-column> -->
+        <el-table-column
+          prop="RepairMethod"
+          align="center"
+          label="维修方法"
+          :min-width="flexColumnWidth('维修方法', 'RepairMethod')"
+        >
+        </el-table-column>
         <el-table-column
           prop="ErrorNote"
           align="center"
-          label="故障记录"
-          :min-width="flexColumnWidth('故障记录', 'ErrorNote')"
+          label="备注"
+          :min-width="flexColumnWidth('备注', 'ErrorNote')"
         >
         </el-table-column>
         <el-table-column
@@ -192,7 +191,7 @@
         label-width="auto"
         :inline="true"
       >
-        <el-form-item label="故障代码类型">
+        <el-form-item label="故障类型">
           <el-select
             v-model="EditForm.ErrorTypeCode"
             @change="geteditName"
@@ -227,14 +226,14 @@
         <el-form-item label="故障名称">
           <el-input v-model="EditForm.ErrorName" style="width: 250px" />
         </el-form-item>
-        <el-form-item label="故障记录">
-          <el-input v-model="EditForm.ErrorNote" style="width: 250px" />
-        </el-form-item>
-        <el-form-item label="修复方法">
+        <el-form-item label="维修方法">
           <el-input v-model="EditForm.RepairMethod" style="width: 250px" />
         </el-form-item>
         <el-form-item label="故障描述">
           <el-input v-model="EditForm.ErrorDesc" style="width: 250px" />
+        </el-form-item>
+        <el-form-item label="备注">
+          <el-input v-model="EditForm.ErrorNote" style="width: 250px" />
         </el-form-item>
       </el-form>
 
@@ -262,7 +261,7 @@
         label-width="auto"
         :inline="true"
       >
-        <el-form-item label="故障代码类型">
+        <el-form-item label="故障类型">
           <el-select
             v-model="form.ErrorTypeCode"
             placeholder=""
@@ -523,11 +522,11 @@ const clearForm = () => {
   };
 };
 
-const getaddName = (str) => {
+const getaddName = (str:any) => {
   form.value.ErrorTypeName = str
 }
 
-const geteditName = (str) => {
+const geteditName = (str:any) => {
   EditForm.value.ErrorTypeName = str;
 }
 
