@@ -201,3 +201,21 @@ export function MAQueryDefectCode(data:any) {
         data
     })
 }
+
+//
+
+export function MaterialVisualCheck(data:any) {
+    return request({
+        url: "/api/materialcheck/MaterialVisualCheck",
+        method: "post",
+        data
+    })
+}
+
+export function MaterialFunctionCheck(data:any) {
+    return request({
+        url: "/api/materialcheck/MaterialFunctionCheck",
+        method: "post",
+        data
+    })
+}

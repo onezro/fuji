@@ -355,6 +355,9 @@ const getChange = () => {
         //     stopsForm.value.ReplaceMesCode = false
         // }
         barCode.value = "";
+        if(res.success){
+            getHisData()
+        }
     });
 };
 

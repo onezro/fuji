@@ -867,9 +867,6 @@ const getKeyMaterial = () => {
   });
 };
 const tableRowClassName = (val: any) => {
-  // console.log(val.row);
-  
-  
   const isExitCode = barData.value.findIndex(
     (k: any) => k.QtyRequired == k.barCount
   );
