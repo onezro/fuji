@@ -19,16 +19,16 @@
           <el-form-item label="物料编码" class="mb-2">
             <el-input
               style="width: 150px"
-              v-model="getForm.MaterialSole"
+              v-model="getForm.MaterialName"
               placeholder=""
               clearable
               @change="changeForm"
             ></el-input>
           </el-form-item>
-          <el-form-item label="物料批次码" class="mb-2">
+          <el-form-item label="物料唯一码" class="mb-2">
             <el-input
               style="width: 150px"
-              v-model="getForm.MaterialName"
+              v-model="getForm.MaterialSole"
               placeholder=""
               clearable
               @change="changeForm"
@@ -105,7 +105,7 @@ const columnData = reactive([
   {
     text: true,
     prop: "MaterialSole",
-    label: "物料编码",
+    label: "物料唯一码",
     width: "",
     min: true,
     align: "1",
@@ -113,7 +113,7 @@ const columnData = reactive([
   {
     text: true,
     prop: "MaterialName",
-    label: "物料名称",
+    label: "物料编码",
     width: "",
     min: true,
     align: "1",
@@ -121,7 +121,7 @@ const columnData = reactive([
   {
     text: true,
     prop: "ContainerName",
-    label: "物料批次码",
+    label: "物料条码",
     width: "",
     min: true,
     align: "1",

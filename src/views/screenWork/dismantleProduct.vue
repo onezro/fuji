@@ -92,7 +92,18 @@
                 </el-form-item>
               </el-form>
               <div class="text-xl font-bold text-[#00B400]">
-                请扫描MES屏条码
+                <div
+                  class="text-xl font-bold text-[#00B400]"
+                  v-show="msgType === true || msgTitle === ''"
+                >
+                  {{ msgTitle === "" ? "请扫描MES屏条码" : msgTitle }}
+                </div>
+                <div
+                  class="text-xl font-bold text-[red]"
+                  v-show="msgType === false && msgTitle !== ''"
+                >
+                  {{ msgTitle }}
+                </div>
               </div>
             </div>
             <div class="flex flex-col flex-1">
@@ -171,7 +182,7 @@
                     :min-width="flexColumnWidth('状态状态', 'DismantleStatus')"
                   >
                     <template #default="scope">
-                      <div v-if="!scope.row.DismantlestartTime">
+                      <div v-if="!scope.row.DismantlestartTime" class="underline font-bold text-[#006487]">
                         <div>未开始</div>
                       </div>
                       <div
@@ -181,10 +192,10 @@
                         "
                         @click="openVisible(scope.row.ContainerName)"
                       >
-                        <div>拆解中</div>
+                        <div class="underline font-bold text-[#006487]">拆解中</div>
                       </div>
                       <div v-if="scope.row.DismantleEndTime">
-                        <div>拆解完成</div>
+                        <div class="underline font-bold text-[#006487]">拆解完成</div>
                       </div>
                     </template>
                   </el-table-column>
@@ -326,7 +337,9 @@
                     prop="BindContainerName"
                     align="center"
                     label="供应商条码"
-                    :min-width="flexColumnWidth('供应商条码', 'BindContainerName')"
+                    :min-width="
+                      flexColumnWidth('供应商条码', 'BindContainerName')
+                    "
                   >
                   </el-table-column>
                   <el-table-column
@@ -352,7 +365,13 @@
                         content="报废"
                         placement="top-start"
                       >
-                        <el-button type="danger" icon="Delete" size="small" :disabled="scope.row.State === 1"></el-button>
+                        <el-button
+                          type="danger"
+                          icon="Delete"
+                          size="small"
+                          :disabled="scope.row.State === 1"
+                          @click="scrap(scope.row)"
+                        ></el-button>
                       </el-tooltip>
                     </template>
                   </el-table-column>
@@ -405,6 +424,7 @@ const tabsValue = ref("history");
 const qtyVisible = ref(false);
 const badVisible = ref(false);
 const inputRef = ref();
+const msgType = ref(true);
 const msgTitle = ref("");
 const unbindType = ref("R");
 const projectStore: any = useProjectStoreWithOut();
@@ -542,7 +562,12 @@ const getToData = () => {
     arr.push(item.ContainerName);
   });
   DefectiveDisposalList({ ContainerName: arr }).then((res: any) => {
-    tableData.value = res.content;
+    if (res.success) {
+      tableData.value = res.content;
+    } else {
+      msgTitle.value = res.msg;
+      msgType.value = res.success;
+    }
   });
 };
 
@@ -561,12 +586,21 @@ const openVisible = (code: any) => {
 
 //报废
 const scrap = (row: any) => {
-  ElMessageBox.confirm("确认快修", "确认操作", {
+  console.log(row);
+  
+  ElMessageBox.confirm("确认报废", "确认操作", {
     confirmButtonText: "确定",
     cancelButtonText: "取消",
     type: "warning",
   })
     .then(() => {
+      console.log({
+        containerName: row.ContainerName,
+        BindContainerName: row.BindContainerName,
+        MaterialName: row.MaterialName,
+        MfgOrderName: row.MfgOrderName,
+      });
+      
       DefectiveScrap({
         containerName: row.ContainerName,
         BindContainerName: row.BindContainerName,
@@ -577,11 +611,8 @@ const scrap = (row: any) => {
           return;
         }
         if (data.success) {
-          ElNotification({
-            type: "success",
-            title: "提示信息",
-            message: data.msg,
-          });
+          msgTitle.value = data.msg;
+          msgType.value = data.success;
           qtyVisible.value = false;
         }
         onSubmit();
@@ -605,9 +636,12 @@ const onSubmit = () => {
     ...form.value,
     ContainerName: arr,
   }).then((res: any) => {
-    if (res.content) {
+    if (res.success && res.content) {
       tableData.value = res.content;
       projectStore.setFectivekList([]);
+    } else {
+      msgTitle.value = res.msg;
+      msgType.value = res.success;
     }
   });
 };
@@ -618,20 +652,33 @@ const unbind = () => {
     containerName: qtyForm.value.ContainerName,
     containerType: unbindType.value,
     productName: qtyForm.value.ProductName,
-  }).then((res: any) => {
-    if (res.success) {
-      ElNotification({
-        type: "success",
-        title: "提示信息",
-        message: res.msg,
+  }).then((res1: any) => {
+    msgTitle.value = res1.msg;
+    msgType.value = res1.success;
+    if (projectStore.getFectivekList.length === 0) {
+      DefectiveDisposalList({
+        ContainerName: [form.value.ContainerName],
+      }).then((res: any) => {
+        if (res.success && res.content) {
+          tableData.value = res.content;
+          projectStore.setFectivekList([]);
+        } else {
+          msgTitle.value = res.msg;
+          msgType.value = res.success;
+        }
       });
+    } else {
+      getToData();
     }
     DefectiveDisposalList({
-      ContainerName: qtyForm.value.ContainerName,
+      ContainerName: [qtyForm.value.ContainerName],
     }).then((res: any) => {
-      if (res.content) {
+      if (res.success && res.content) {
         tableData.value = res.content;
         projectStore.setFectivekList([]);
+      } else {
+        msgTitle.value = res.msg;
+        msgType.value = res.success;
       }
     });
     qtyVisible.value = false;
@@ -645,21 +692,28 @@ const unbind = () => {
 
 //拆解
 const getChange = () => {
-  DefectiveDismantle({ ContainerName: barCode.value }).then((res: any) => {
-    // if (projectStore.getFectivekList.length === 0) {
-    //   onSubmit();
-    // } else {
-    //   getToData();
-    // }
-    DefectiveDisposalList({
-      ContainerName: qtyForm.value.ContainerName,
-    }).then((res: any) => {
-      if (res.content) {
-        tableData.value = res.content;
-        projectStore.setFectivekList([]);
+  DefectiveDismantle({ ContainerName: barCode.value }).then((res1: any) => {
+    msgTitle.value = res1.msg;
+    msgType.value = res1.success;
+    if (res1.success) {
+      if (projectStore.getFectivekList.length === 0) {
+        // onSubmit();
+        DefectiveDisposalList({
+          ContainerName: [barCode.value],
+        }).then((res: any) => {
+          if (res.success && res.content) {
+            tableData.value = res.content;
+            projectStore.setFectivekList([]);
+          } else {
+            msgTitle.value = res.msg;
+            msgType.value = res.success;
+          }
+        });
+      } else {
+        getToData();
       }
-    });
-    openVisible(barCode.value);
+      barCode.value = "";
+    }
   });
 };
 
