@@ -166,7 +166,7 @@
               <el-pagination :size="'default'" background @size-change="handleSizeChange"
                 @current-change="handleCurrentChange" :pager-count="5" :current-page="pageObj.currentPage"
                 :page-size="pageObj.pageSize" :page-sizes="[30, 50, 100, 200, 300]"
-                layout="total,sizes, prev, pager, next" :total="tableData1.length">
+                layout="total,sizes, prev, pager, next" :total="changeData.length">
               </el-pagination>
             </div>
             <!-- <table-tem :showIndex="true" :tableData="changeData" :tableHeight="tableHeight" :columnData="columnData1"

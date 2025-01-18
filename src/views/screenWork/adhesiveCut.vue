@@ -1,9 +1,9 @@
 <template>
   <div class="flex flex-col w-full h-full">
     <!-- <div class="h-[40px] min-h-[40px] pl-2 pr-2 flex justify-between items-center">
-      <span class="text-[1.2rem]"> {{ opui.stationDec }} </span>
-      <div></div>
-    </div> -->
+        <span class="text-[1.2rem]"> {{ opui.stationDec }} </span>
+        <div></div>
+      </div> -->
     <div class="w-full flex-1 flex">
       <div class="setwidth w-[320px]">
         <div class="w-full h-full box">
@@ -52,19 +52,19 @@
                     stopsForm.result == 'OK' ? 'switchok' : 'switchng',
                   ]" class="mb-2">
                     <el-switch v-model="stopsForm.result" size="large" style="
-                        zoom: 1.2;
-                        --el-switch-on-color: #ff4949;
-                        --el-switch-off-color: #13ce66;
-                      " :active-value="'NG'" :inactive-value="'OK'" active-text="NG" inactive-text="OK" />
+                          zoom: 1.2;
+                          --el-switch-on-color: #ff4949;
+                          --el-switch-off-color: #13ce66;
+                        " :active-value="'NG'" :inactive-value="'OK'" active-text="NG" inactive-text="OK" />
                   </el-form-item>
                   <div></div>
                 </el-form>
                 <!-- <div class="text-xl font-bold "  :style="{ 'color': isGo ? '#00B400' : '#e6a23c' }" v-show="msgType === true || msgTitle === ''">
-                  {{ msgTitle === "" ? "请扫描屏材料批次条码" : msgTitle }}
-                </div>
-                <div class="text-xl font-bold text-[red]" v-show="msgType === false && msgTitle !== ''">
-                  {{ msgTitle }}
-                </div> -->
+                    {{ msgTitle === "" ? "请扫描屏材料批次条码" : msgTitle }}
+                  </div>
+                  <div class="text-xl font-bold text-[red]" v-show="msgType === false && msgTitle !== ''">
+                    {{ msgTitle }}
+                  </div> -->
                 <div class="text-xl font-bold text-[#f48000]">
                   {{ barMsg }}
                 </div>
@@ -87,29 +87,21 @@
                   </el-table-column>
                   <el-table-column prop="LoadQueueQty" label="上料总数" width="80" align="center">
                     <template #default="scope">
-                      {{
-                        scope.row.IssueControl == 1
-                          ? scope.row.AllQty == null
-                            ? 0
-                            : scope.row.AllQty
-                          : scope.row.LoadQueueQty == null
-                            ? 0
-                            : scope.row.LoadQueueQty
-                      }}
-                    </template>
+                        {{
+                          scope.row.LoadQueueQty == null
+                              ? 0
+                              : scope.row.LoadQueueQty
+                        }}
+                      </template>
                   </el-table-column>
-                  <el-table-column prop="QtyRequired" label="剩余数量" width="80" align="center">
+                  <el-table-column prop="Qty" label="剩余数量" width="80" align="center">
                     <template #default="scope">
-                      <span>{{
-                        scope.row.IssueControl == 1
-                          ? scope.row.remainQty == null
-                            ? 0
-                            : scope.row.remainQty
-                          : scope.row.Qty == null
-                            ? 0
-                            : scope.row.Qty
-                      }}</span>
-                    </template>
+                        <span>{{
+                        scope.row.Qty == null
+                              ? 0
+                              : scope.row.Qty
+                        }}</span>
+                      </template>
                   </el-table-column>
                   <el-table-column prop="MaterialBarCode" label="批次条码" width="150">
                   </el-table-column>
@@ -144,8 +136,8 @@
                   }}</span>
                 </template>
               </el-table-column>
-              <el-table-column prop="ContainerName" label="成品条码" width="180" />
-              <el-table-column label="PCB组件条码">
+              <el-table-column prop="ContainerName" label="屏条码" width="180" />
+              <el-table-column label="供应商条码">
                 <template #default="scope">
                   <div v-if="scope.row.BindContainerName !== null">
                     SN1：{{ scope.row.BindContainerName }}
@@ -171,12 +163,12 @@
               <el-pagination :size="'default'" background @size-change="handleSizeChange"
                 @current-change="handleCurrentChange" :pager-count="5" :current-page="pageObj.currentPage"
                 :page-size="pageObj.pageSize" :page-sizes="[30, 50, 100, 200, 300]"
-                layout="total,sizes, prev, pager, next" :total="changeData.length">
+                layout="total,sizes, prev, pager, next" :total="tableData1.length">
               </el-pagination>
             </div>
             <!-- <table-tem :showIndex="true" :tableData="changeData" :tableHeight="tableHeight" :columnData="columnData1"
-              :pageObj="pageObj" @handleSizeChange="handleSizeChange"
-              @handleCurrentChange="handleCurrentChange"></table-tem> -->
+                :pageObj="pageObj" @handleSizeChange="handleSizeChange"
+                @handleCurrentChange="handleCurrentChange"></table-tem> -->
           </div>
         </div>
       </div>
@@ -243,10 +235,10 @@ import {
   QueryMoveHistory,
   QueryKeyMaterial,
   JudgeKeyMaterial,
-  CoverSMTCompBindMoveStd,
-  QueryDefectCode,
-  DefectProductRecord,
-} from "@/api/asyApi";
+  SCNFitTogetherMoveStd,
+  QueryDefectCode1,
+  isDefects,
+} from "@/api/scrApi";
 
 import {
   ref,
@@ -560,45 +552,33 @@ const getChange = () => {
       }
     } else {
       if (stopsForm.value.result == "OK") {
-        if (isKeyZero.value == -1) {
-          // if (checkStringType(barCodeData) == "BDY") {
-          //   if (isKeyEmpty.value == -1) {
-          //     stopsForm.value.BarCode = barCodeData;
-          //     // goStop();
-          //   } else {
-          //     stopsForm.value.BarCode = barCodeData;
-          //     msgTitle.value = `屏条码：${ stopsForm.value.BarCode}已扫描`;
-          //     msgType.value = true;
-          //   }
-          // } else {
-          //   if (isKeyEmpty.value != -1) {
-          // verifyBarCode(barCodeData)
-          //   }else{
-          //     msgTitle.value = `关键料已扫描`;
-          //     msgType.value = false;
-          //   }
-          // }
+        if (isKeyZero.value == -1 && isNoKeyZero.value == -1) {
           if (isKeyEmpty.value == -1) {
-            if (isNoKeyZero.value == -1) {
               stopsForm.value.BarCode = barCodeData;
               goStop();
-            } else {
-              msgTitle.value = `${barData.value[isNoKeyZero.value].MaterialName
-                }批次物料剩余为0，请进行上料`;
-              msgType.value = false;
-            }
           } else {
             verifyBarCode(barCodeData);
           }
         } else {
-          msgTitle.value = `${barData.value[isKeyEmpty.value].MaterialName
-            }关键料剩余为0，操作失败`;
           msgType.value = false;
+          if (isKeyZero.value != -1) {
+            msgTitle.value = `${barData.value[isKeyEmpty.value].MaterialName
+              }关键料剩余为0，请进行上料`;
+          }
+         else if (isNoKeyZero.value != -1) {
+            msgTitle.value = `${barData.value[isNoKeyZero.value].MaterialName
+              }批次物料剩余为0，请进行上料`;
+          }else{
+            msgTitle.value = `${barData.value[isKeyEmpty.value].MaterialName
+            }关键料剩余为0和${barData.value[isNoKeyZero.value].MaterialName
+              }批次物料剩余为0，请进行上料`;
+          }
+          
         }
       } else {
         badForm.value.containerName = barCodeData;
         getBadForm.value.containerName = barCodeData;
-        QueryDefectCode(getBadForm.value).then((res: any) => {
+        QueryDefectCode1(getBadForm.value).then((res: any) => {
           if (!res.success) {
             msgTitle.value = res.msg;
             msgType.value = res.success;
@@ -619,7 +599,7 @@ const getChange = () => {
 //过站
 const goStop = () => {
 
-  CoverSMTCompBindMoveStd(stopsForm.value).then((res: any) => {
+  SCNFitTogetherMoveStd(stopsForm.value).then((res: any) => {
     msgTitle.value = res.msg;
     msgType.value = res.success;
     isGo.value = true;
@@ -637,7 +617,7 @@ const goStop = () => {
 };
 const isKeyZero = computed(() => {
   return barData.value.findIndex(
-    (b: any) => b.IssueControl == 1 && (b.remainQty == 0 || b.remainQty == null)
+    (b: any) => b.IssueControl == 1 && (b.Qty == 0 || b.Qty == null)
   );
 });
 //批次料为空
@@ -673,9 +653,10 @@ const verifyBarCode = (barCodeData: any) => {
         return;
       }
       if (barData.value[keyIndex].MaterialBarCode == "") {
+        
         barData.value[keyIndex].MaterialBarCode = barCodeData;
         stopsForm.value.keyMaterialList.push({
-          MaterialBarCode: barCodeData,
+          MaterialBarCode:res.content.MaterialCode==""||res.content.MaterialCode==null? barCodeData:res.content.MaterialCode,
           MaterialName: barData.value[keyIndex].MaterialName,
         });
         barData.value[keyIndex].barCount++;
@@ -702,28 +683,20 @@ const verifyBarCode = (barCodeData: any) => {
         barData.value[keyIndex].barCount !== barData.value[keyIndex].QtyRequired
       ) {
         msgType.value = true;
-        // msgTitle.value = `请继续扫描${barData.value[keyIndex].IssueControl == 1 ? "关键料" : "批次料"
-        //   }${barData.value[keyIndex].MaterialName}`;
         barMsg.value = `请继续扫描${barData.value[keyIndex].IssueControl == 1 ? "关键料" : "批次料"
           }${barData.value[keyIndex].MaterialName}`;
       } else {
         if (isKeyEmpty.value !== -1) {
           msgType.value = true;
-          // msgTitle.value = `请继续扫描${barData.value[isKeyEmpty.value].IssueControl == 1 ? "关键料" : "批次料"
-          //   }${barData.value[isKeyEmpty.value].MaterialName}`;
           barMsg.value = `请继续扫描${barData.value[isKeyEmpty.value].IssueControl == 1
             ? "关键料"
             : "批次料"
             }${barData.value[isKeyEmpty.value].MaterialName}`;
         } else {
           msgType.value = true;
-          // msgTitle.value=`请扫描MES条码`
           barMsg.value = `请扫描MES条码`;
         }
       }
-      // if (isKeyEmpty.value == -1 && stopsForm.value.BarCode != '') {
-      //   goStop()
-      // }
     }
   });
 };
@@ -745,7 +718,7 @@ const badSubmit = () => {
       isDefectType: 1,
     });
   });
-  DefectProductRecord(badForm.value).then((res: any) => {
+  isDefects(badForm.value).then((res: any) => {
     msgTitle.value = "";
     msgType.value = true;
     if (res.success) {
@@ -818,15 +791,13 @@ const getKeyMaterial = () => {
     barData.value = res.content;
     barData.value.sort((a, b) => a.IssueControl - b.IssueControl);
     barData.value = barData.value.map((b: any) => {
-      if (b.IssueControl == 1) {
-        return {
-          ...b,
-          MaterialBarCode: "",
-          barCount: 0,
-        };
-      } else {
-        return b;
-      }
+
+      return {
+        ...b,
+        MaterialBarCode: "",
+        barCount: 0,
+      };
+
     });
     if (barData.value.length !== 0) {
       if (barData.value[0].IssueControl == 1) {

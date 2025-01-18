@@ -821,3 +821,10 @@ export function GetMESWorkLineNews(data: any) {
         data
     })
 }
+export function GetWorkLineCalendarAndPlan(data: any) {
+    return request({
+        url: "/api/WorkLineCalendar/GetWorkLineCalendarAndPlan",
+        method: "post",
+        data
+    })
+}
