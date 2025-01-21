@@ -300,3 +300,13 @@ export function SCNFitTogetherMoveStd(data: any) {
       data,
     });
   }
+
+  //获取批次打印信息
+
+  export function QueryBatchCodeInfo(data: any) {
+    return request({
+      url: "/api/SCNFitTogether/QueryBatchCodeInfo",
+      method: "post",
+      data,
+    });
+  }

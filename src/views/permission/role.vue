@@ -1,10 +1,15 @@
 <template>
   <div class="p-2">
     <el-card shadow="always" :body-style="{ padding: '8px' }">
-      <div class="mb-2">
+      <div class="mb-2 flex justify-between">
         <el-button type="primary" @click="openAdd" size="small">添加</el-button>
+        <div>
+          <el-input v-model="searchName" clearable placeholder="请输入">
+            <template #append>
+              <el-button type="primary" icon="Search"></el-button> </template></el-input>
+        </div>
       </div>
-      <el-table size="small" :data="tableData.slice((currentPage - 1) * pageSize, currentPage * pageSize)
+      <el-table size="small" :data="tableData1.slice((currentPage - 1) * pageSize, currentPage * pageSize)
         " border :height="tableHeight" stripe>
         <el-table-column label="序号" type="index" width="60" align="center"></el-table-column>
         <el-table-column label="角色名称" prop="RoleName" > </el-table-column>
@@ -169,6 +174,27 @@ const rules = reactive({
     { required: true, message: '请输入角色名称', trigger: 'blur' },
   ],
 })
+const searchName = ref("");
+const tableData1 = ref<any[]>([]);
+watch(
+  () => searchName.value,
+  (newdata) => {
+    // console.log(newdata);
+    if (newdata == "") {
+      tableData1.value = tableData.value;
+    } else {
+      tableData1.value = table1(newdata);
+    }
+  }
+);
+const table1 = (newdata: any) => {
+  let searchName = newdata.toLowerCase();
+  return tableData.value.filter((v: any) => {
+    return Object.keys(v).some((key) => {
+      return String(v[key]).toLowerCase().indexOf(searchName) > -1;
+    });
+  });
+};
 
 onBeforeMount(() => {
   getScreenHeight();
@@ -185,6 +211,7 @@ onBeforeUnmount(() => {
 const getData = () => {
   getAllRole().then((data: any) => {
     tableData.value = data.content
+    tableData1.value = tableData.value;
   });
 };
 
@@ -384,7 +411,7 @@ const handleCurrentChange = (val: any) => {
 };
 const getScreenHeight = () => {
   nextTick(() => {
-    tableHeight.value = window.innerHeight - 188;
+    tableHeight.value = window.innerHeight - 194;
   });
 };
 

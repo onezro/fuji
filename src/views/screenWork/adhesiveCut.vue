@@ -37,10 +37,20 @@
         <!-- <div class="w-full"> -->
         <div class="w-full h-full flex flex-col">
           <div>
-            <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
+            <div class="h-[35px] flex items-center justify-between text-lg text-[#fff] bg-[#006487]">
               <span class="ml-5"> 扫描条码</span>
+              <div class="flex items-center mr-3">
+                <!-- <div class="flex items-center ">
+                  <span>打印数量：</span>
+                    <el-input-number v-model="stopsForm.BatchQty" :min="maxQty"   />
+                </div> -->
+                <div>
+                  打印数量：<span class="text-lg font-bold pl-1 pr-1 bg-slate-300 text-[red]">{{ stopsForm.BatchQty }}</span>
+                </div>
+                <el-button type="warning" class="ml-2" @click="openSetNum">数量设定</el-button>
+              </div>
             </div>
-            <div class="h-[200px] pt-3 pr-5 pl-5 flex justify-between">
+            <div class="h-[220px] pt-3 pr-5 pl-5 flex justify-between">
               <div>
                 <el-form class="inbound" ref="formRef" :inline="true" :model="form" label-width="auto"
                   @submit.native.prevent>
@@ -57,7 +67,14 @@
                           --el-switch-off-color: #13ce66;
                         " :active-value="'NG'" :inactive-value="'OK'" active-text="NG" inactive-text="OK" />
                   </el-form-item>
-                  <div></div>
+                  <!-- <div> -->
+                    <el-form-item label=""  >
+                    <el-table :data="batchData" size="small" border :style="{ width: '100%' }" >
+                        <el-table-column prop="containerName" label="批次条码" width="180" />
+                        <el-table-column prop="qty" label="数量" width="80" />
+                    </el-table>
+                    </el-form-item>
+                  <!-- </div> -->
                 </el-form>
                 <!-- <div class="text-xl font-bold "  :style="{ 'color': isGo ? '#00B400' : '#e6a23c' }" v-show="msgType === true || msgTitle === ''">
                     {{ msgTitle === "" ? "请扫描屏材料批次条码" : msgTitle }}
@@ -217,6 +234,21 @@
         </span>
       </template>
     </el-dialog>
+    <el-dialog v-model="showSetNum" draggable title="数量设定" width="300px" :append-to-body="true"
+      :close-on-click-modal="false" :close-on-press-escape="false" @close="setCancel">
+      <el-form ref="formRef" :model="stopsForm" label-width="auto">
+        <el-form-item label="数量" prop="BatchQty">
+          <el-input-number v-model="stopsForm.BatchQty" :min="maxQty"   />
+          <!-- <el-input v-model="stopsForm.BatchQty"  type="number"/> -->
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="setCancel">关闭</el-button>
+          <el-button type="primary" @click="setASYNum"> 确定 </el-button>
+        </span>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -238,6 +270,7 @@ import {
   SCNFitTogetherMoveStd,
   QueryDefectCode1,
   isDefects,
+  QueryBatchCodeInfo
 } from "@/api/scrApi";
 
 import {
@@ -251,12 +284,12 @@ import {
 } from "vue";
 import { cloneDeep } from "lodash-es";
 interface StopsForm {
-  //   containerName: string;
+    BatchQty: number;
   workstationName: string;
   result: string;
   userAccount: string;
   txnDate: string;
-  // Container: string;
+  TPBatchNo: string;
   OrderName: string;
   tools: string;
   BarCode: string;
@@ -286,6 +319,8 @@ const stopsForm = ref<StopsForm>({
   userAccount: userStore.getUserInfo,
   BarCode: "",
   OrderName: "",
+  BatchQty:0,
+  TPBatchNo:"",
   keyMaterialList: [],
   tools: "",
   txnDate: "",
@@ -470,6 +505,18 @@ const changeList = ref([]);
 const BadtableData = ref([]);
 const isGo = ref(true);
 const barMsg = ref("");
+const getBatchForm=ref({
+  OrderName: "",
+  workstationName: opui.station
+})
+const batchData=ref<any[]>([
+  {
+    containerName:"打印批次条码",
+    qty:0
+  }
+])
+const maxQty=ref(0)
+const showSetNum=ref(false)
 
 onBeforeMount(() => {
   getScreenHeight();
@@ -496,6 +543,46 @@ const formText = (data: string) => {
   return form.value[key];
 };
 
+//获取批次打印信息
+const getBatchCode=()=>{
+  QueryBatchCodeInfo(getBatchForm.value).then((res:any)=>{
+    batchData.value=res.content
+    if(res.content.length==0){
+      maxQty.value=0
+      // stopsForm.value.BatchQty=0
+    }else{
+      stopsForm.value.TPBatchNo=res.content[0].containerName
+      maxQty.value=res.content[0].qty+1
+      // if( maxQty.value>stopsForm.value.BatchQty){
+      //   stopsForm.value.BatchQty= maxQty.value
+      // }
+    }
+  })
+}
+const openSetNum=()=>{
+  showSetNum.value = true;
+}
+const setASYNum = () => {
+  if(batchData.value.length>0){
+      if(batchData.value[0].qty>stopsForm.value.BatchQty){
+        ElNotification({
+      title: "提示信息",
+      message: `打印数量应该大于${batchData.value[0].containerName}的数量`,
+      type:  "error",
+    });
+      }else{
+        inputRef.value.focus()
+        showSetNum.value = false;
+      }
+  }else{
+    inputRef.value.focus()
+    showSetNum.value = false;
+  }
+ 
+};
+const setCancel = () => {
+  showSetNum.value = false;
+};
 //获取过站历史记录
 const getHisData = () => {
   QueryMoveHistory(hisForm.value).then((res: any) => {
@@ -611,6 +698,7 @@ const goStop = () => {
       stopsForm.value.keyMaterialList = [];
       getKeyMaterial();
       getHisData();
+      getBatchCode()
     }
     getFocus();
   });
@@ -768,11 +856,13 @@ const radioChange = (args: any) => {
       hisForm.value.MfgOrderName = args[0].MfgOrderName;
       isKeyForm.value.OrderName = args[0].MfgOrderName;
       keyForm.value.OrderName = args[0].MfgOrderName;
+      getBadForm.value.orderName=args[0].MfgOrderName
       keyForm.value.ProductName = args[0].ProductName;
-      getBadForm.value.orderName = args[0].MfgOrderName;
+      getBatchForm.value.OrderName = args[0].MfgOrderName;
       msgType.value = true;
       msgTitle.value = "";
       stopsForm.value.keyMaterialList = [];
+      inputRef.value.focus()
       // getKeyMaterial()
       // getHisData();
     } else {
@@ -780,6 +870,8 @@ const radioChange = (args: any) => {
     }
     getKeyMaterial();
     getHisData();
+    getBatchCode()
+
 
     // getHisData();
   }
@@ -787,25 +879,25 @@ const radioChange = (args: any) => {
 const getKeyMaterial = () => {
   barData.value = [];
   stopsForm.value.keyMaterialList = [];
+  barMsg.value=""
   QueryKeyMaterial(keyForm.value).then((res: any) => {
     barData.value = res.content;
     barData.value.sort((a, b) => a.IssueControl - b.IssueControl);
     barData.value = barData.value.map((b: any) => {
-
       return {
         ...b,
         MaterialBarCode: "",
         barCount: 0,
       };
-
     });
     if (barData.value.length !== 0) {
       if (barData.value[0].IssueControl == 1) {
         msgType.value = true;
-        // msgTitle.value = "";
-        // msgTitle.value = `请先扫描关键物料${barData.value[0].MaterialName}`;
         barMsg.value = `请先扫描关键物料${barData.value[0].MaterialName}`;
       }
+    }else{
+      msgType.value = false
+      msgTitle.value="请进行物料上料"
     }
   });
 };
@@ -839,8 +931,10 @@ const getOrderData = () => {
       orderTable.value.data = data;
       if (data.length >= 1) {
         defaultSelectVal.value[0] = data[0].MfgOrderName;
+       
       }
     }
+    inputRef.value.focus()
   });
 };
 //分页
@@ -854,7 +948,7 @@ const handleCurrentChange = (val: any) => {
 
 const getScreenHeight = () => {
   nextTick(() => {
-    tableHeight.value = window.innerHeight - 400;
+    tableHeight.value = window.innerHeight - 420;
   });
 };
 </script>
