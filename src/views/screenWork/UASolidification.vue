@@ -268,7 +268,7 @@ const columnData1 = reactive([
   },
   {
       text: true,
-      prop: "TPBatchNo",
+      prop: "THBatchNo",
       label: "批次条码",
       width: "",
       align: "1",
@@ -417,6 +417,7 @@ const getOrderData = () => {
           defaultSelectVal.value[0] = data[0].MfgOrderName;
         }
       }
+      inputRef.value.focus()
     }
   );
 };
@@ -529,6 +530,7 @@ const radioChange = (args: any) => {
       form.value.ERPOrder = args[0].ERPOrder;
       stopsForm.value.orderName = args[0].MfgOrderName;
       hisForm.value.MfgOrderName = args[0].MfgOrderName;
+      inputRef.value.focus()
     } else {
 
     }

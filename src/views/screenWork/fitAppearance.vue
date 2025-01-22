@@ -77,7 +77,7 @@
                     {{ barMsg }}
                   </div> -->
                   <div class="text-xl font-bold text-[#00B400]" v-show="msgType === true || msgTitle === ''">
-                    {{ msgTitle === "" ? "请扫描批次条码" : msgTitle }}
+                    {{ msgTitle === "" ? "请扫描屏条码" : msgTitle }}
                   </div>
                   <div class="text-xl font-bold text-[red]" v-show="msgType === false && msgTitle !== ''">
                     {{ msgTitle }}
@@ -149,7 +149,7 @@
                   </template>
                 </el-table-column>
                 <el-table-column prop="ContainerName" label="屏条码" width="180" />
-                <el-table-column label="批次条码" prop="TPBatchNo">
+                <el-table-column label="批次条码" prop="THBatchNo">
                 </el-table-column>
                 <el-table-column prop="fullname" label="扫描人" width="180" />
                 <el-table-column prop="TxnDate" label="扫描时间" width="180" />

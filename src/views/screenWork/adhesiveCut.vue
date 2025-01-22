@@ -153,8 +153,8 @@
                 </template>
               </el-table-column>
               <el-table-column prop="ContainerName" label="屏条码" width="180" />
-              <el-table-column label="供应商条码">
-                <template #default="scope">
+              <el-table-column label="供应商条码" prop="BindContainerName">
+                <!-- <template #default="scope">
                   <div v-if="scope.row.BindContainerName !== null">
                     SN1：{{ scope.row.BindContainerName }}
                   </div>
@@ -170,7 +170,7 @@
                   <div v-if="scope.row.BindContainerName5 != null">
                     SN5：{{ scope.row.BindContainerName5 }}
                   </div>
-                </template>
+                </template> -->
               </el-table-column>
               <el-table-column prop="fullname" label="扫描人" width="180" />
               <el-table-column prop="TxnDate" label="扫描时间" width="180" />
@@ -884,12 +884,10 @@ const radioChange = (args: any) => {
       inputRef.value.focus()
       // getKeyMaterial()
       // getHisData();
-    } else {
-      // getHisData();
-    }
+    } 
     getKeyMaterial();
-    getHisData();
     getBatchCode()
+    getHisData();
 
 
     // getHisData();

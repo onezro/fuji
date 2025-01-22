@@ -268,7 +268,7 @@
     },
     {
       text: true,
-      prop: "TPBatchNo",
+      prop: "THBatchNo",
       label: "批次条码",
       width: "",
       align: "1",
