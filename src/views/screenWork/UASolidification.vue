@@ -266,7 +266,13 @@ const columnData1 = reactive([
     width: "",
     align: "1",
   },
-
+  {
+      text: true,
+      prop: "TPBatchNo",
+      label: "批次条码",
+      width: "",
+      align: "1",
+    },
   {
     text: true,
       prop: "fullname",

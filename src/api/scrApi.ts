@@ -122,13 +122,13 @@ export function TPOqcIpTefectProductRecord(data: any) {
 }
 
 //贴合外观过站
-export function FitsTheLookMoveOut(data: any) {
-  return request({
-    url: "/api/FitsTheLook/FitsTheLookMoveOut",
-    method: "post",
-    data,
-  });
-}
+// export function FitsTheLookMoveOut(data: any) {
+//   return request({
+//     url: "/api/FitsTheLook/FitsTheLookMoveOut",
+//     method: "post",
+//     data,
+//   });
+// }
 //不良品记录
 export function FTLDefectProductRecord(data: any) {
   return request({
@@ -257,56 +257,103 @@ export function QueryVendorInfo(data: any) {
   return request({
     url: "/api/materialcheck/QueryVendorInfo",
     method: "post",
-    params:data,
+    params: data,
   });
 }
 
-
-  export function QueryKeyMaterial(data: any) {
-    return request({
-      url: "/api/SCNFitTogether/QueryKeyMaterial",
-      method: "post",
-      data,
-    });
-  }
-  export function JudgeKeyMaterial(data: any) {
-    return request({
-      url: "/api/SCNFitTogether/JudgeKeyMaterial",
-      method: "post",
-      data,
-    });
-  }
-  //贴合下料过站
+export function QueryKeyMaterial(data: any) {
+  return request({
+    url: "/api/SCNFitTogether/QueryKeyMaterial",
+    method: "post",
+    data,
+  });
+}
+export function JudgeKeyMaterial(data: any) {
+  return request({
+    url: "/api/SCNFitTogether/JudgeKeyMaterial",
+    method: "post",
+    data,
+  });
+}
+//贴合下料过站
 export function SCNFitTogetherMoveStd(data: any) {
-    return request({
-      url: "/api/SCNFitTogether/SCNFitTogetherMoveStd",
-      method: "post",
-      data,
-    });
-  }
+  return request({
+    url: "/api/SCNFitTogether/SCNFitTogetherMoveStd",
+    method: "post",
+    data,
+  });
+}
 
-  export function QueryMoveHistory(data: any) {
-    return request({
-      url: "/api/workstation/QueryMoveHistory",
-      method: "post",
-      data,
-    });
-  }
+export function QueryMoveHistory(data: any) {
+  return request({
+    url: "/api/workstation/QueryMoveHistory",
+    method: "post",
+    data,
+  });
+}
 
-  export function MoveStdNew(data: any) {
-    return request({
-      url: "/api/workstation/MoveStdNew",
-      method: "post",
-      data,
-    });
-  }
+export function MoveStdNew(data: any) {
+  return request({
+    url: "/api/workstation/MoveStdNew",
+    method: "post",
+    data,
+  });
+}
 
-  //获取批次打印信息
+//获取批次打印信息
+export function QueryBatchCodeInfo(data: any) {
+  return request({
+    url: "/api/SCNFitTogether/QueryBatchCodeInfo",
+    method: "post",
+    data,
+  });
+}
 
-  export function QueryBatchCodeInfo(data: any) {
-    return request({
-      url: "/api/SCNFitTogether/QueryBatchCodeInfo",
-      method: "post",
-      data,
-    });
-  }
+//不满箱打印
+export function DealNoBatchCode(data: any) {
+  return request({
+    url: "/api/SCNFitTogether/DealNoBatchCode",
+    method: "post",
+    data,
+  });
+}
+//脱泡过站
+export function AdhesiveDefoamingMoveStd(data: any) {
+  return request({
+    url: "/api/SCNFitTogether/AdhesiveDefoamingMoveStd",
+    method: "post",
+    data,
+  });
+}
+//高温老化
+export function AgeingMoveOut(data: any) {
+  return request({
+    url: "/api/Ageing/AgeingMoveOut",
+    method: "post",
+    data,
+  });
+}
+//贴合外观过站
+export function FitsTheLookMoveOut(data: any) {
+  return request({
+    url: "/api/FitsTheLook/FitsTheLookMoveOut",
+    method: "post",
+    data,
+  });
+}
+//贴合外观查询未打印批次信息
+export function QueryBatchCodeInfoFit(data: any) {
+  return request({
+    url: "/api/FitsTheLook/QueryBatchCodeInfo",
+    method: "post",
+    data,
+  });
+}
+//
+export function DealNoBatchCodeFit(data: any) {
+  return request({
+    url: "/api/FitsTheLook/DealNoBatchCode",
+    method: "post",
+    data,
+  });
+}
