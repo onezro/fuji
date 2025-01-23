@@ -124,3 +124,53 @@ export const disabledDate = (time: Date) => {
 
 
 }
+
+export const getLastDayOfMonth=(year: any, month: any)=> {
+  // JavaScript的Date对象月份是从0开始的，所以我们需要减1
+  const date = new Date(year, month, 0);
+  // date对象现在表示的是下一个月的第一天，但我们想要的是当前月的最后一天
+  return date.getDate();
+}
+
+export const parseDateString=(dateStr:any)=> {
+  dateStr = dateStr.trim();
+
+   // 定义日期格式化函数
+   const formatDate = (year: any, month: string, day: string) => {
+    return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+};
+
+// 正则表达式匹配不同的日期格式
+const singleDateRegex = /(\d{4})年(\d{1,2})月(\d{1,2})日$/;
+const monthRangeRegex = /(\d{4})年(\d{1,2})月$/;
+const dateRangeRegex = /(\d{4})年(\d{1,2})月(\d{1,2})日\s*–\s*(\d{4})年(\d{1,2})月(\d{1,2})日$/;
+const shortDateRangeRegex = /(\d{4})年(\d{1,2})月(\d{1,2})日\s*–\s*(\d{1,2})日$/;
+
+let startDate, endDate;
+
+if (singleDateRegex.test(dateStr)) {
+    // 格式: 2024年12月29日
+    const [, year, month, day] = dateStr.match(singleDateRegex);
+    startDate = endDate = formatDate(year, month, day);
+} else if (monthRangeRegex.test(dateStr)) {
+    // 格式: 2024年12月
+    const [, year, month] = dateStr.match(monthRangeRegex);
+    startDate = formatDate(year, month, '01');
+    endDate = formatDate(year, month, new Date(year, month, 0).getDate().toString());
+} else if (dateRangeRegex.test(dateStr)) {
+    // 格式: 2024年12月29日 – 2025年1月4日
+    const [, startYear, startMonth, startDay, endYear, endMonth, endDay] = dateStr.match(dateRangeRegex);
+    startDate = formatDate(startYear, startMonth, startDay);
+    endDate = formatDate(endYear, endMonth, endDay);
+} else if (shortDateRangeRegex.test(dateStr)) {
+    // 格式: 2025年1月12日 – 18日
+    const [, startYear, startMonth, startDay, endDay] = dateStr.match(shortDateRangeRegex);
+    startDate = formatDate(startYear, startMonth, startDay);
+    endDate = formatDate(startYear, startMonth, endDay);
+} else {
+    throw new Error('日期格式不支持');
+}
+
+return [startDate, endDate];
+}
+

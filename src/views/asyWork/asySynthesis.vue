@@ -82,6 +82,7 @@
                   {{ msgTitle }}
                 </div>
               </div>
+
               <div>
                 <el-table :data="barData" size="small" border :row-class-name="tableRowClassName" :height="180">
                   <el-table-column type="index" align="center" fixed label="序号" :width="'50'"></el-table-column>
@@ -111,7 +112,6 @@
                   </el-table-column>
                   <el-table-column prop="MaterialBarCode" label="批次条码" width="150">
                   </el-table-column>
-                  <!-- <el-table-column prop="address" label="Address" /> -->
                 </el-table>
               </div>
             </div>
@@ -159,7 +159,7 @@
               <el-pagination :size="'default'" background @size-change="handleSizeChange"
                 @current-change="handleCurrentChange" :pager-count="5" :current-page="pageObj.currentPage"
                 :page-size="pageObj.pageSize" :page-sizes="[30, 50, 100, 200, 300]"
-                layout="total,sizes, prev, pager, next" :total="tableData1.length">
+                layout="total,sizes, prev, pager, next" :total="changeData.length">
               </el-pagination>
             </div>
             <!-- <table-tem :showIndex="true" :tableData="changeData" :tableHeight="tableHeight" :columnData="columnData1"
@@ -239,8 +239,6 @@ import { useUserStoreWithOut } from "@/stores/modules/user";
 import { checkStringType } from "@/utils/barcodeFormat";
 import type { Formspan, FormHeader, OrderData } from "@/typing";
 import { ElMessage, ElNotification, ElMessageBox } from "element-plus";
-
-
 import {
   OrderQuery,
   QueryMoveHistory,

@@ -846,3 +846,11 @@ export function findMfgLine() {
         method: "post"
     })
 }
+
+export function GetWorkLineCalendarAndPlan(data: any) {
+    return request({
+        url: "/api/WorkLineCalendar/GetWorkLineCalendarAndPlan",
+        method: "post",
+        data
+    })
+}

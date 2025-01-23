@@ -1,9 +1,8 @@
 const regexPcb = /^P\d+$/; // PCB
-
 const regexResult = /^(OK|NG)$/i; // OK NG
 const regexBDY = /^BD.*$/; // BDY
 const regexSCR = /^S[A-Za-z\d]+$/;
-// 工装治具
+const regeMATER=/^A\d+$/
 
 export const checkStringType = (str: string) => {
   if (regexPcb.test(str)) {
@@ -14,7 +13,10 @@ export const checkStringType = (str: string) => {
     return "BDY";
   } else if (regexSCR.test(str)) {
     return "SCR";
-  } else {
+  }  else if (regeMATER.test(str)) {
+    return "MATER";
+  } 
+  else {
     return "none";
   }
 };
