@@ -561,11 +561,6 @@ const serachData = () => {
   GetPartsStockList(searchForm.value).then((res: any) => {
     if (res && res.success) {
       tableData.value = res.content;
-      ElNotification({
-        title: "提示信息",
-        message: res.msg,
-        type: "success",
-      });
       if (searchForm.value.PartName) {
         tableData1.value = table1(searchForm.value.PartName);
       } else {

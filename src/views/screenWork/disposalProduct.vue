@@ -155,6 +155,7 @@ import {
 import { useRouter } from "vue-router";
 import { useProjectStoreWithOut } from "@/stores/modules/projectData";
 import { DefectiveDisposalList, DefectiveQuickTest } from "@/api/scrApi";
+import { log } from "vxe-table";
 const appStore = useAppStoreWithOut();
 const userStore = useUserStoreWithOut();
 const opui = appStore.getOPUIReal();

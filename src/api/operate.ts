@@ -821,6 +821,32 @@ export function GetMESWorkLineNews(data: any) {
         data
     })
 }
+
+//添加设备基础数据信息
+export function CreateEquipment(data: any) {
+    return request({
+        url: "/api/resource/CreateEquipment",
+        method: "post",
+        data
+    })
+}
+
+//根据条件查询设备类型
+export function GetLedgerEquipmentTypeList() {
+    return request({
+        url: "/api/resource/GetEquipmentTypeList",
+        method: "post"
+    })
+}
+
+//根据条件查询设备
+export function findMfgLine() {
+    return request({
+        url: "/api/resource/findMfgLine",
+        method: "post"
+    })
+}
+
 export function GetWorkLineCalendarAndPlan(data: any) {
     return request({
         url: "/api/WorkLineCalendar/GetWorkLineCalendarAndPlan",
