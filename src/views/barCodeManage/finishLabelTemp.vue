@@ -46,9 +46,9 @@
                 <el-tabs v-model="activeName" type="border-card" class="demo-tabs" @tab-change="tabChange">
                     <el-tab-pane label="外箱模板" name="TemplateBox">
                         <el-form-item label="模板" prop="TemplateBox" label-width="68px">
-                            <!-- <el-input v-model="addForm.TemplateBox" style="width: 160px" /> -->
+                            <!-- <el-input v-model="addForm.TemplateBox" style="width: 180px" /> -->
                             <el-select-v2 v-model="addForm.TemplateBox" :options="tempList" filterable
-                                :props="tempProps" style="width: 160px"
+                                :props="tempProps" style="width: 180px"
                                 @change="getRuleNameData(addForm.TemplateBox)" />
                             <span>特殊规则:[yyM]/[yyMM]/[yyyyMM]年月;[yyWW]年周;[yyMMdd]年月日;[SN:长度:起始流水]流水号:长度:起始流水;[YMC]年月代码;[YMC]年月代码</span>
                         </el-form-item>
@@ -56,7 +56,7 @@
                             <el-form ref="formRef" size="small" :model="form" :inline="true" label-width="auto">
                                 <el-form-item label="规则名称" prop="TempRlueName">
                                     <el-select-v2 v-model="form.TempRlueName" :options="ruleData" filterable
-                                        :props="ruleProps" style="width: 160px" @change="changeRlueName">
+                                        :props="ruleProps" style="width: 180px" @change="changeRlueName">
                                         <!-- <template #default="{ item }">
                                             <span style="margin-right: 8px; font-size: 12px">{{ item.Temppara_Name }}</span>
                                             <span style="color: var(--el-text-color-secondary); font-size: 12px">
@@ -64,37 +64,37 @@
                                             </span>
                                         </template> -->
                                     </el-select-v2>
-                                    <!-- <el-input v-model="form.TempRlueName" style="width: 160px" /> -->
+                                    <!-- <el-input v-model="form.TempRlueName" style="width: 180px" /> -->
                                 </el-form-item>
                                 <el-form-item label="条码格式" prop="barFormat">
-                                    <el-input v-model="barFormat" disabled style="width: 160px" />
+                                    <el-input v-model="barFormat" disabled style="width: 180px" />
                                 </el-form-item>
                                 <el-form-item label="条码预览" prop="TempRlueFormat">
-                                    <el-input v-model="form.TempRlueFormat" disabled style="width: 160px" />
+                                    <el-input v-model="form.TempRlueFormat" disabled style="width: 180px" />
                                 </el-form-item>
                                 <el-form-item label="条码前缀1" prop="TempRluePrefixSuffix01">
-                                    <el-input v-model="form.TempRluePrefixSuffix01" style="width: 160px"
+                                    <el-input v-model="form.TempRluePrefixSuffix01" style="width: 180px"
                                         :disabled="isDisable1" />
                                 </el-form-item>
                                 <el-form-item label="条码前缀2" prop="TempRluePrefixSuffix02">
-                                    <el-input v-model="form.TempRluePrefixSuffix02" style="width: 160px"
+                                    <el-input v-model="form.TempRluePrefixSuffix02" style="width: 180px"
                                         :disabled="isDisable2" />
                                 </el-form-item>
                                 <el-form-item label="条码前缀3" prop="TempRluePrefixSuffix03">
-                                    <el-input v-model="form.TempRluePrefixSuffix03" style="width: 160px"
+                                    <el-input v-model="form.TempRluePrefixSuffix03" style="width: 180px"
                                         :disabled="isDisable2" />
                                     <el-checkbox v-model="form.TempRlueEnable1" label="外箱码" class="ml-3" />
                                 </el-form-item>
                                 <el-form-item label="条码前缀4" prop="TempRluePrefixSuffix04">
-                                    <el-input v-model="form.TempRluePrefixSuffix04" style="width: 160px"
+                                    <el-input v-model="form.TempRluePrefixSuffix04" style="width: 180px"
                                         :disabled="isDisable2" />
                                 </el-form-item>
                                 <el-form-item label="条码后缀1" prop="TempRluePrefixSuffix05">
-                                    <el-input v-model="form.TempRluePrefixSuffix05" style="width: 160px"
+                                    <el-input v-model="form.TempRluePrefixSuffix05" style="width: 180px"
                                         :disabled="isDisable2" />
                                 </el-form-item>
                                 <el-form-item label="条码后缀2" prop="TempRluePrefixSuffix07">
-                                    <el-input v-model="form.TempRluePrefixSuffix06" style="width: 160px"
+                                    <el-input v-model="form.TempRluePrefixSuffix06" style="width: 180px"
                                         :disabled="isDisable2" />
                                     <el-checkbox v-model="form.TempRlueEnable2" label="启用" class="ml-3" />
                                 </el-form-item>
@@ -127,48 +127,48 @@
                     <el-tab-pane label="机身模板" name="TemplateFuselage">
                         <el-form-item label="模板" prop="TemplateFuselage" label-width="68px">
                             <el-select-v2 v-model="addForm.TemplateFuselage" :options="tempList" filterable
-                                :props="tempProps" style="width: 160px"
+                                :props="tempProps" style="width: 180px"
                                 @change="getRuleNameData(addForm.TemplateFuselage)" />
                             <span>特殊规则:[yyM]/[yyMM]/[yyyyMM]年月;[yyWW]年周;[yyMMdd]年月日;[SN:长度:起始流水]流水号:长度:起始流水;[YMC]年月代码</span>
-                            <!-- <el-input v-model="addForm.TemplateFuselage" style="width: 160px" /> -->
+                            <!-- <el-input v-model="addForm.TemplateFuselage" style="width: 180px" /> -->
                         </el-form-item>
                         <div class="flex">
                             <el-form ref="formRef" size="small" :model="form" :inline="true" label-width="auto">
                                 <el-form-item label="规则名称" prop="TempRlueName">
                                     <el-select-v2 v-model="form.TempRlueName" :options="ruleData" filterable
-                                        :props="ruleProps" style="width: 160px" @change="changeRlueName" />
-                                    <!-- <el-input v-model="form.TempRlueName" style="width: 160px" /> -->
+                                        :props="ruleProps" style="width: 180px" @change="changeRlueName" />
+                                    <!-- <el-input v-model="form.TempRlueName" style="width: 180px" /> -->
                                 </el-form-item>
                                 <el-form-item label="条码格式" prop="barFormat">
-                                    <el-input v-model="barFormat" disabled style="width: 160px" />
+                                    <el-input v-model="barFormat" disabled style="width: 180px" />
                                 </el-form-item>
                                 <el-form-item label="条码预览" prop="TempRlueFormat">
-                                    <el-input v-model="form.TempRlueFormat" disabled style="width: 160px" />
+                                    <el-input v-model="form.TempRlueFormat" disabled style="width: 180px" />
                                     <el-checkbox v-model="form.TempRlueEnable1" label="客户成品码" class="ml-3" />
                                 </el-form-item>
                                 <el-form-item label="条码前缀1" prop="TempRluePrefixSuffix01">
-                                    <el-input v-model="form.TempRluePrefixSuffix01" style="width: 160px"
+                                    <el-input v-model="form.TempRluePrefixSuffix01" style="width: 180px"
                                         :disabled="isDisable1" />
                                 </el-form-item>
                                 <el-form-item label="条码前缀2" prop="TempRluePrefixSuffix02">
-                                    <el-input v-model="form.TempRluePrefixSuffix02" style="width: 160px"
+                                    <el-input v-model="form.TempRluePrefixSuffix02" style="width: 180px"
                                         :disabled="isDisable2" />
                                 </el-form-item>
                                 <el-form-item label="条码前缀3" prop="TempRluePrefixSuffix03">
-                                    <el-input v-model="form.TempRluePrefixSuffix03" style="width: 160px"
+                                    <el-input v-model="form.TempRluePrefixSuffix03" style="width: 180px"
                                         :disabled="isDisable2" />
                                     <el-checkbox v-model="form.TempRlueEnable2" label="公用流水" class="ml-3" />
                                 </el-form-item>
                                 <el-form-item label="条码前缀4" prop="TempRluePrefixSuffix04">
-                                    <el-input v-model="form.TempRluePrefixSuffix04" style="width: 160px"
+                                    <el-input v-model="form.TempRluePrefixSuffix04" style="width: 180px"
                                         :disabled="isDisable2" />
                                 </el-form-item>
                                 <el-form-item label="条码后缀1" prop="TempRluePrefixSuffix05">
-                                    <el-input v-model="form.TempRluePrefixSuffix05" style="width: 160px"
+                                    <el-input v-model="form.TempRluePrefixSuffix05" style="width: 180px"
                                         :disabled="isDisable2" />
                                 </el-form-item>
                                 <el-form-item label="条码后缀2" prop="TempRluePrefixSuffix07">
-                                    <el-input v-model="form.TempRluePrefixSuffix06" style="width: 160px"
+                                    <el-input v-model="form.TempRluePrefixSuffix06" style="width: 180px"
                                         :disabled="isDisable2" />
                                     <el-checkbox v-model="form.TempRlueEnable3" label="启用" class="ml-3" />
                                 </el-form-item>
@@ -202,47 +202,47 @@
                     <el-tab-pane label="标签一模板" name="Template01">
                         <el-form-item label="模板" prop="Template01" label-width="68px">
                             <el-select-v2 v-model="addForm.Template01" :options="tempList" filterable :props="tempProps"
-                                style="width: 160px" @change="getRuleNameData(addForm.Template01)" />
+                                style="width: 180px" @change="getRuleNameData(addForm.Template01)" />
                             <span>特殊规则:[yyM]/[yyMM]/[yyyyMM]年月;[yyWW]年周;[yyMMdd]年月日;[SN:长度:起始流水]流水号:长度:起始流水;[YMC]年月代码</span>
-                            <!-- <el-input v-model="addForm.Template01" style="width: 160px" /> -->
+                            <!-- <el-input v-model="addForm.Template01" style="width: 180px" /> -->
                         </el-form-item>
                         <div class="flex">
                             <el-form ref="formRef" size="small" :model="form" :inline="true" label-width="auto">
                                 <el-form-item label="规则名称" prop="TempRlueName">
                                     <el-select-v2 v-model="form.TempRlueName" :options="ruleData" filterable
-                                        :props="ruleProps" style="width: 160px" @change="changeRlueName" />
-                                    <!-- <el-input v-model="form.TempRlueName" style="width: 160px" /> -->
+                                        :props="ruleProps" style="width: 180px" @change="changeRlueName" />
+                                    <!-- <el-input v-model="form.TempRlueName" style="width: 180px" /> -->
                                 </el-form-item>
                                 <el-form-item label="条码格式" prop="barFormat">
-                                    <el-input v-model="barFormat" disabled style="width: 160px" />
+                                    <el-input v-model="barFormat" disabled style="width: 180px" />
                                 </el-form-item>
                                 <el-form-item label="条码预览" prop="TempRlueFormat">
-                                    <el-input v-model="form.TempRlueFormat" disabled style="width: 160px" />
+                                    <el-input v-model="form.TempRlueFormat" disabled style="width: 180px" />
                                     <el-checkbox v-model="form.TempRlueEnable1" label="客户成品码" class="ml-3" />
                                 </el-form-item>
                                 <el-form-item label="条码前缀1" prop="TempRluePrefixSuffix01">
-                                    <el-input v-model="form.TempRluePrefixSuffix01" style="width: 160px"
+                                    <el-input v-model="form.TempRluePrefixSuffix01" style="width: 180px"
                                         :disabled="isDisable1" />
                                 </el-form-item>
                                 <el-form-item label="条码前缀2" prop="TempRluePrefixSuffix02">
-                                    <el-input v-model="form.TempRluePrefixSuffix02" style="width: 160px"
+                                    <el-input v-model="form.TempRluePrefixSuffix02" style="width: 180px"
                                         :disabled="isDisable2" />
                                 </el-form-item>
                                 <el-form-item label="条码前缀3" prop="TempRluePrefixSuffix03">
-                                    <el-input v-model="form.TempRluePrefixSuffix03" style="width: 160px"
+                                    <el-input v-model="form.TempRluePrefixSuffix03" style="width: 180px"
                                         :disabled="isDisable2" />
                                     <el-checkbox v-model="form.TempRlueEnable2" label="公用流水" class="ml-3" />
                                 </el-form-item>
                                 <el-form-item label="条码前缀4" prop="TempRluePrefixSuffix04">
-                                    <el-input v-model="form.TempRluePrefixSuffix04" style="width: 160px"
+                                    <el-input v-model="form.TempRluePrefixSuffix04" style="width: 180px"
                                         :disabled="isDisable2" />
                                 </el-form-item>
                                 <el-form-item label="条码后缀1" prop="TempRluePrefixSuffix05">
-                                    <el-input v-model="form.TempRluePrefixSuffix05" style="width: 160px"
+                                    <el-input v-model="form.TempRluePrefixSuffix05" style="width: 180px"
                                         :disabled="isDisable2" />
                                 </el-form-item>
                                 <el-form-item label="条码后缀2" prop="TempRluePrefixSuffix07">
-                                    <el-input v-model="form.TempRluePrefixSuffix06" style="width: 160px"
+                                    <el-input v-model="form.TempRluePrefixSuffix06" style="width: 180px"
                                         :disabled="isDisable2" />
                                     <el-checkbox v-model="form.TempRlueEnable3" label="启用" class="ml-3" />
                                 </el-form-item>
@@ -276,47 +276,47 @@
                     <el-tab-pane label="标签二模板" name="Template02">
                         <el-form-item label="模板" prop="Template02" label-width="68px">
                             <el-select-v2 v-model="addForm.Template02" :options="tempList" filterable :props="tempProps"
-                                style="width: 160px" @change="getRuleNameData(addForm.Template02)" />
+                                style="width: 180px" @change="getRuleNameData(addForm.Template02)" />
                             <span>特殊规则:[yyM]/[yyMM]/[yyyyMM]年月;[yyWW]年周;[yyMMdd]年月日;[SN:长度:起始流水]流水号:长度:起始流水;[YMC]年月代码</span>
-                            <!-- <el-input v-model="addForm.Template02" style="width: 160px" /> -->
+                            <!-- <el-input v-model="addForm.Template02" style="width: 180px" /> -->
                         </el-form-item>
                         <div class="flex">
                             <el-form ref="formRef" size="small" :model="form" :inline="true" label-width="auto">
                                 <el-form-item label="规则名称" prop="TempRlueName">
                                     <el-select-v2 v-model="form.TempRlueName" :options="ruleData" filterable
-                                        :props="ruleProps" style="width: 160px" @change="changeRlueName" />
-                                    <!-- <el-input v-model="form.TempRlueName" style="width: 160px" /> -->
+                                        :props="ruleProps" style="width: 180px" @change="changeRlueName" />
+                                    <!-- <el-input v-model="form.TempRlueName" style="width: 180px" /> -->
                                 </el-form-item>
                                 <el-form-item label="条码格式" prop="barFormat">
-                                    <el-input v-model="barFormat" disabled style="width: 160px" />
+                                    <el-input v-model="barFormat" disabled style="width: 180px" />
                                 </el-form-item>
                                 <el-form-item label="条码预览" prop="TempRlueFormat">
-                                    <el-input v-model="form.TempRlueFormat" disabled style="width: 160px" />
+                                    <el-input v-model="form.TempRlueFormat" disabled style="width: 180px" />
                                     <el-checkbox v-model="form.TempRlueEnable1" label="客户成品码" class="ml-3" />
                                 </el-form-item>
                                 <el-form-item label="条码前缀1" prop="TempRluePrefixSuffix01">
-                                    <el-input v-model="form.TempRluePrefixSuffix01" style="width: 160px"
+                                    <el-input v-model="form.TempRluePrefixSuffix01" style="width: 180px"
                                         :disabled="isDisable1" />
                                 </el-form-item>
                                 <el-form-item label="条码前缀2" prop="TempRluePrefixSuffix02">
-                                    <el-input v-model="form.TempRluePrefixSuffix02" style="width: 160px"
+                                    <el-input v-model="form.TempRluePrefixSuffix02" style="width: 180px"
                                         :disabled="isDisable2" />
                                 </el-form-item>
                                 <el-form-item label="条码前缀3" prop="TempRluePrefixSuffix03">
-                                    <el-input v-model="form.TempRluePrefixSuffix03" style="width: 160px"
+                                    <el-input v-model="form.TempRluePrefixSuffix03" style="width: 180px"
                                         :disabled="isDisable2" />
                                     <el-checkbox v-model="form.TempRlueEnable2" label="公用流水" class="ml-3" />
                                 </el-form-item>
                                 <el-form-item label="条码前缀4" prop="TempRluePrefixSuffix04">
-                                    <el-input v-model="form.TempRluePrefixSuffix04" style="width: 160px"
+                                    <el-input v-model="form.TempRluePrefixSuffix04" style="width: 180px"
                                         :disabled="isDisable2" />
                                 </el-form-item>
                                 <el-form-item label="条码后缀1" prop="TempRluePrefixSuffix05">
-                                    <el-input v-model="form.TempRluePrefixSuffix05" style="width: 160px"
+                                    <el-input v-model="form.TempRluePrefixSuffix05" style="width: 180px"
                                         :disabled="isDisable2" />
                                 </el-form-item>
                                 <el-form-item label="条码后缀2" prop="TempRluePrefixSuffix07">
-                                    <el-input v-model="form.TempRluePrefixSuffix06" style="width: 160px"
+                                    <el-input v-model="form.TempRluePrefixSuffix06" style="width: 180px"
                                         :disabled="isDisable2" />
                                     <el-checkbox v-model="form.TempRlueEnable3" label="启用" class="ml-3" />
                                 </el-form-item>
@@ -350,47 +350,47 @@
                     <el-tab-pane label="标签三模板" name="Template03">
                         <el-form-item label="模板" prop="Template03" label-width="68px">
                             <el-select-v2 v-model="addForm.Template03" :options="tempList" filterable :props="tempProps"
-                                style="width: 160px" @change="getRuleNameData(addForm.Template03)" />
+                                style="width: 180px" @change="getRuleNameData(addForm.Template03)" />
                             <span>特殊规则:[yyM]/[yyMM]/[yyyyMM]年月;[yyWW]年周;[yyMMdd]年月日;[SN:长度:起始流水]流水号:长度:起始流水;[YMC]年月代码</span>
-                            <!-- <el-input v-model="addForm.Template03" style="width: 160px" /> -->
+                            <!-- <el-input v-model="addForm.Template03" style="width: 180px" /> -->
                         </el-form-item>
                         <div class="flex">
                             <el-form ref="formRef" size="small" :model="form" :inline="true" label-width="auto">
                                 <el-form-item label="规则名称" prop="TempRlueName">
                                     <el-select-v2 v-model="form.TempRlueName" :options="ruleData" filterable
-                                        :props="ruleProps" style="width: 160px" @change="changeRlueName" />
-                                    <!-- <el-input v-model="form.TempRlueName" style="width: 160px" /> -->
+                                        :props="ruleProps" style="width: 180px" @change="changeRlueName" />
+                                    <!-- <el-input v-model="form.TempRlueName" style="width: 180px" /> -->
                                 </el-form-item>
                                 <el-form-item label="条码格式" prop="barFormat">
-                                    <el-input v-model="barFormat" disabled style="width: 160px" />
+                                    <el-input v-model="barFormat" disabled style="width: 180px" />
                                 </el-form-item>
                                 <el-form-item label="条码预览" prop="TempRlueFormat">
-                                    <el-input v-model="form.TempRlueFormat" disabled style="width: 160px" />
+                                    <el-input v-model="form.TempRlueFormat" disabled style="width: 180px" />
                                     <el-checkbox v-model="form.TempRlueEnable1" label="客户成品码" class="ml-3" />
                                 </el-form-item>
                                 <el-form-item label="条码前缀1" prop="TempRluePrefixSuffix01">
-                                    <el-input v-model="form.TempRluePrefixSuffix01" style="width: 160px"
+                                    <el-input v-model="form.TempRluePrefixSuffix01" style="width: 180px"
                                         :disabled="isDisable1" />
                                 </el-form-item>
                                 <el-form-item label="条码前缀2" prop="TempRluePrefixSuffix02">
-                                    <el-input v-model="form.TempRluePrefixSuffix02" style="width: 160px"
+                                    <el-input v-model="form.TempRluePrefixSuffix02" style="width: 180px"
                                         :disabled="isDisable2" />
                                 </el-form-item>
                                 <el-form-item label="条码前缀3" prop="TempRluePrefixSuffix03">
-                                    <el-input v-model="form.TempRluePrefixSuffix03" style="width: 160px"
+                                    <el-input v-model="form.TempRluePrefixSuffix03" style="width: 180px"
                                         :disabled="isDisable2" />
                                     <el-checkbox v-model="form.TempRlueEnable2" label="公用流水" class="ml-3" />
                                 </el-form-item>
                                 <el-form-item label="条码前缀4" prop="TempRluePrefixSuffix04">
-                                    <el-input v-model="form.TempRluePrefixSuffix04" style="width: 160px"
+                                    <el-input v-model="form.TempRluePrefixSuffix04" style="width: 180px"
                                         :disabled="isDisable2" />
                                 </el-form-item>
                                 <el-form-item label="条码后缀1" prop="TempRluePrefixSuffix05">
-                                    <el-input v-model="form.TempRluePrefixSuffix05" style="width: 160px"
+                                    <el-input v-model="form.TempRluePrefixSuffix05" style="width: 180px"
                                         :disabled="isDisable2" />
                                 </el-form-item>
                                 <el-form-item label="条码后缀2" prop="TempRluePrefixSuffix07">
-                                    <el-input v-model="form.TempRluePrefixSuffix06" style="width: 160px"
+                                    <el-input v-model="form.TempRluePrefixSuffix06" style="width: 180px"
                                         :disabled="isDisable2" />
                                     <el-checkbox v-model="form.TempRlueEnable3" label="启用" class="ml-3" />
                                 </el-form-item>
@@ -425,43 +425,43 @@
                         <div class="mb-3 mt-3 text-xs">
                             特殊规则:[yyM]/[yyMM]/[yyyyMM]年月;[yyWW]年周;[yyMMdd]年月日;[SN:长度:起始流水]流水号:长度:起始流水;[YMC]年月代码
                         </div>
-                        <!-- <el-input v-model="addForm.Template03" style="width: 160px" /> -->
+                        <!-- <el-input v-model="addForm.Template03" style="width: 180px" /> -->
 
                         <div class="flex">
                             <el-form ref="formRef" size="small" :model="form" :inline="true" label-width="auto">
                                 <el-form-item label="规则名称" prop="TempRlueName">
                                     <el-select-v2 v-model="form.TempRlueName" :options="ruleData" filterable
-                                        :props="ruleProps" style="width: 160px" @change="changeRlueName" />
-                                    <!-- <el-input v-model="form.TempRlueName" style="width: 160px" /> -->
+                                        :props="ruleProps" style="width: 180px" @change="changeRlueName" />
+                                    <!-- <el-input v-model="form.TempRlueName" style="width: 180px" /> -->
                                 </el-form-item>
                                 <el-form-item label="条码格式" prop="barFormat">
-                                    <el-input v-model="barFormat" disabled style="width: 160px" />
+                                    <el-input v-model="barFormat" disabled style="width: 180px" />
                                 </el-form-item>
                                 <el-form-item label="条码预览" prop="TempRlueFormat">
-                                    <el-input v-model="form.TempRlueFormat" disabled style="width: 160px" />
+                                    <el-input v-model="form.TempRlueFormat" disabled style="width: 180px" />
                                 </el-form-item>
                                 <el-form-item label="条码前缀1" prop="TempRluePrefixSuffix01">
-                                    <el-input v-model="form.TempRluePrefixSuffix01" style="width: 160px"
+                                    <el-input v-model="form.TempRluePrefixSuffix01" style="width: 180px"
                                         :disabled="isDisable1" />
                                 </el-form-item>
                                 <el-form-item label="条码前缀2" prop="TempRluePrefixSuffix02">
-                                    <el-input v-model="form.TempRluePrefixSuffix02" style="width: 160px"
+                                    <el-input v-model="form.TempRluePrefixSuffix02" style="width: 180px"
                                         :disabled="isDisable2" />
                                 </el-form-item>
                                 <el-form-item label="条码前缀3" prop="TempRluePrefixSuffix03">
-                                    <el-input v-model="form.TempRluePrefixSuffix03" style="width: 160px"
+                                    <el-input v-model="form.TempRluePrefixSuffix03" style="width: 180px"
                                         :disabled="isDisable2" />
                                 </el-form-item>
                                 <el-form-item label="条码前缀4" prop="TempRluePrefixSuffix04">
-                                    <el-input v-model="form.TempRluePrefixSuffix04" style="width: 160px"
+                                    <el-input v-model="form.TempRluePrefixSuffix04" style="width: 180px"
                                         :disabled="isDisable2" />
                                 </el-form-item>
                                 <el-form-item label="条码后缀1" prop="TempRluePrefixSuffix05">
-                                    <el-input v-model="form.TempRluePrefixSuffix05" style="width: 160px"
+                                    <el-input v-model="form.TempRluePrefixSuffix05" style="width: 180px"
                                         :disabled="isDisable2" />
                                 </el-form-item>
                                 <el-form-item label="条码后缀2" prop="TempRluePrefixSuffix07">
-                                    <el-input v-model="form.TempRluePrefixSuffix06" style="width: 160px"
+                                    <el-input v-model="form.TempRluePrefixSuffix06" style="width: 180px"
                                         :disabled="isDisable2" />
                                     <el-checkbox v-model="form.TempRlueEnable1" label="启用" class="ml-3" />
                                 </el-form-item>
@@ -519,9 +519,9 @@
                 <el-tabs v-model="activeName" type="border-card" class="demo-tabs" @tab-change="tabChange1">
                     <el-tab-pane label="外箱模板" name="TemplateBox">
                         <el-form-item label="模板" prop="TemplateBox" label-width="68px">
-                            <!-- <el-input v-model="addForm.TemplateBox" style="width: 160px" /> -->
+                            <!-- <el-input v-model="addForm.TemplateBox" style="width: 180px" /> -->
                             <el-select-v2 v-model="editForm.TemplateBox" :options="tempList" filterable
-                                :props="tempProps" style="width: 160px"
+                                :props="tempProps" style="width: 180px"
                                 @change="getRuleNameData(editForm.TemplateBox)" />
                             <span>特殊规则:[yyM]/[yyMM]/[yyyyMM]年月;[yyWW]年周;[yyMMdd]年月日;[SN:长度:起始流水]流水号:长度:起始流水;[YMC]年月代码</span>
                         </el-form-item>
@@ -529,38 +529,38 @@
                             <el-form ref="formRef" size="small" :model="form" :inline="true" label-width="auto">
                                 <el-form-item label="规则名称" prop="TempRlueName">
                                     <el-select-v2 v-model="form.TempRlueName" :options="ruleData" filterable
-                                        :props="ruleProps" style="width: 160px" @change="changeRlueName" />
-                                    <!-- <el-input v-model="form.TempRlueName" style="width: 160px" /> -->
+                                        :props="ruleProps" style="width: 180px" @change="changeRlueName" />
+                                    <!-- <el-input v-model="form.TempRlueName" style="width: 180px" /> -->
                                 </el-form-item>
                                 <el-form-item label="条码格式" prop="barFormat">
-                                    <el-input v-model="barFormat" disabled style="width: 160px" />
+                                    <el-input v-model="barFormat" disabled style="width: 180px" />
                                 </el-form-item>
                                 <el-form-item label="条码预览" prop="TempRlueFormat">
-                                    <el-input v-model="form.TempRlueFormat" disabled style="width: 160px" />
+                                    <el-input v-model="form.TempRlueFormat" disabled style="width: 180px" />
                                 </el-form-item>
                                 <el-form-item label="条码前缀1" prop="TempRluePrefixSuffix01">
-                                    <el-input v-model="form.TempRluePrefixSuffix01" style="width: 160px"
+                                    <el-input v-model="form.TempRluePrefixSuffix01" style="width: 180px"
                                         :disabled="isDisable1" />
                                 </el-form-item>
                                 <el-form-item label="条码前缀2" prop="TempRluePrefixSuffix02">
-                                    <el-input v-model="form.TempRluePrefixSuffix02" style="width: 160px"
+                                    <el-input v-model="form.TempRluePrefixSuffix02" style="width: 180px"
                                         :disabled="isDisable2" />
                                 </el-form-item>
                                 <el-form-item label="条码前缀3" prop="TempRluePrefixSuffix03">
-                                    <el-input v-model="form.TempRluePrefixSuffix03" style="width: 160px"
+                                    <el-input v-model="form.TempRluePrefixSuffix03" style="width: 180px"
                                         :disabled="isDisable2" />
                                     <el-checkbox v-model="form.TempRlueEnable1" label="外箱码" class="ml-3" />
                                 </el-form-item>
                                 <el-form-item label="条码前缀4" prop="TempRluePrefixSuffix04">
-                                    <el-input v-model="form.TempRluePrefixSuffix04" style="width: 160px"
+                                    <el-input v-model="form.TempRluePrefixSuffix04" style="width: 180px"
                                         :disabled="isDisable2" />
                                 </el-form-item>
                                 <el-form-item label="条码后缀1" prop="TempRluePrefixSuffix05">
-                                    <el-input v-model="form.TempRluePrefixSuffix05" style="width: 160px"
+                                    <el-input v-model="form.TempRluePrefixSuffix05" style="width: 180px"
                                         :disabled="isDisable2" />
                                 </el-form-item>
                                 <el-form-item label="条码后缀2" prop="TempRluePrefixSuffix07">
-                                    <el-input v-model="form.TempRluePrefixSuffix06" style="width: 160px"
+                                    <el-input v-model="form.TempRluePrefixSuffix06" style="width: 180px"
                                         :disabled="isDisable2" />
                                     <el-checkbox v-model="form.TempRlueEnable2" label="启用" class="ml-3" />
                                 </el-form-item>
@@ -594,48 +594,48 @@
                     <el-tab-pane label="机身模板" name="TemplateFuselage">
                         <el-form-item label="模板" prop="TemplateFuselage" label-width="68px">
                             <el-select-v2 v-model="editForm.TemplateFuselage" :options="tempList" filterable
-                                :props="tempProps" style="width: 160px"
+                                :props="tempProps" style="width: 180px"
                                 @change="getRuleNameData(editForm.TemplateFuselage)" />
                             <span>特殊规则:[yyM]/[yyMM]/[yyyyMM]年月;[yyWW]年周;[yyMMdd]年月日;[SN:长度:起始流水]流水号:长度:起始流水;[YMC]年月代码</span>
-                            <!-- <el-input v-model="addForm.TemplateFuselage" style="width: 160px" /> -->
+                            <!-- <el-input v-model="addForm.TemplateFuselage" style="width: 180px" /> -->
                         </el-form-item>
                         <div class="flex">
                             <el-form ref="formRef" size="small" :model="form" :inline="true" label-width="auto">
                                 <el-form-item label="规则名称" prop="TempRlueName">
                                     <el-select-v2 v-model="form.TempRlueName" :options="ruleData" filterable
-                                        :props="ruleProps" style="width: 160px" @change="changeRlueName" />
-                                    <!-- <el-input v-model="form.TempRlueName" style="width: 160px" /> -->
+                                        :props="ruleProps" style="width: 180px" @change="changeRlueName" />
+                                    <!-- <el-input v-model="form.TempRlueName" style="width: 180px" /> -->
                                 </el-form-item>
                                 <el-form-item label="条码格式" prop="barFormat">
-                                    <el-input v-model="barFormat" disabled style="width: 160px" />
+                                    <el-input v-model="barFormat" disabled style="width: 180px" />
                                 </el-form-item>
                                 <el-form-item label="条码预览" prop="TempRlueFormat">
-                                    <el-input v-model="form.TempRlueFormat" disabled style="width: 160px" />
+                                    <el-input v-model="form.TempRlueFormat" disabled style="width: 180px" />
                                     <el-checkbox v-model="form.TempRlueEnable1" label="客户成品码" class="ml-3" />
                                 </el-form-item>
                                 <el-form-item label="条码前缀1" prop="TempRluePrefixSuffix01">
-                                    <el-input v-model="form.TempRluePrefixSuffix01" style="width: 160px"
+                                    <el-input v-model="form.TempRluePrefixSuffix01" style="width: 180px"
                                         :disabled="isDisable1" />
                                 </el-form-item>
                                 <el-form-item label="条码前缀2" prop="TempRluePrefixSuffix02">
-                                    <el-input v-model="form.TempRluePrefixSuffix02" style="width: 160px"
+                                    <el-input v-model="form.TempRluePrefixSuffix02" style="width: 180px"
                                         :disabled="isDisable2" />
                                 </el-form-item>
                                 <el-form-item label="条码前缀3" prop="TempRluePrefixSuffix03">
-                                    <el-input v-model="form.TempRluePrefixSuffix03" style="width: 160px"
+                                    <el-input v-model="form.TempRluePrefixSuffix03" style="width: 180px"
                                         :disabled="isDisable2" />
                                     <el-checkbox v-model="form.TempRlueEnable2" label="公用流水" class="ml-3" />
                                 </el-form-item>
                                 <el-form-item label="条码前缀4" prop="TempRluePrefixSuffix04">
-                                    <el-input v-model="form.TempRluePrefixSuffix04" style="width: 160px"
+                                    <el-input v-model="form.TempRluePrefixSuffix04" style="width: 180px"
                                         :disabled="isDisable2" />
                                 </el-form-item>
                                 <el-form-item label="条码后缀1" prop="TempRluePrefixSuffix05">
-                                    <el-input v-model="form.TempRluePrefixSuffix05" style="width: 160px"
+                                    <el-input v-model="form.TempRluePrefixSuffix05" style="width: 180px"
                                         :disabled="isDisable2" />
                                 </el-form-item>
                                 <el-form-item label="条码后缀2" prop="TempRluePrefixSuffix07">
-                                    <el-input v-model="form.TempRluePrefixSuffix06" style="width: 160px"
+                                    <el-input v-model="form.TempRluePrefixSuffix06" style="width: 180px"
                                         :disabled="isDisable2" />
                                     <el-checkbox v-model="form.TempRlueEnable3" label="启用" class="ml-3" />
                                 </el-form-item>
@@ -670,48 +670,48 @@
                     <el-tab-pane label="标签一模板" name="Template01">
                         <el-form-item label="模板" prop="Template01" label-width="68px">
                             <el-select-v2 v-model="editForm.Template01" :options="tempList" filterable
-                                :props="tempProps" style="width: 160px"
+                                :props="tempProps" style="width: 180px"
                                 @change="getRuleNameData(editForm.Template01)" />
                             <span>特殊规则:[yyM]/[yyMM]/[yyyyMM]年月;[yyWW]年周;[yyMMdd]年月日;[SN:长度:起始流水]流水号:长度:起始流水;[YMC]年月代码</span>
-                            <!-- <el-input v-model="addForm.Template01" style="width: 160px" /> -->
+                            <!-- <el-input v-model="addForm.Template01" style="width: 180px" /> -->
                         </el-form-item>
                         <div class="flex">
                             <el-form ref="formRef" size="small" :model="form" :inline="true" label-width="auto">
                                 <el-form-item label="规则名称" prop="TempRlueName">
                                     <el-select-v2 v-model="form.TempRlueName" :options="ruleData" filterable
-                                        :props="ruleProps" style="width: 160px" @change="changeRlueName" />
-                                    <!-- <el-input v-model="form.TempRlueName" style="width: 160px" /> -->
+                                        :props="ruleProps" style="width: 180px" @change="changeRlueName" />
+                                    <!-- <el-input v-model="form.TempRlueName" style="width: 180px" /> -->
                                 </el-form-item>
                                 <el-form-item label="条码格式" prop="barFormat">
-                                    <el-input v-model="barFormat" disabled style="width: 160px" />
+                                    <el-input v-model="barFormat" disabled style="width: 180px" />
                                 </el-form-item>
                                 <el-form-item label="条码预览" prop="TempRlueFormat">
-                                    <el-input v-model="form.TempRlueFormat" disabled style="width: 160px" />
+                                    <el-input v-model="form.TempRlueFormat" disabled style="width: 180px" />
                                     <el-checkbox v-model="form.TempRlueEnable1" label="客户成品码" class="ml-3" />
                                 </el-form-item>
                                 <el-form-item label="条码前缀1" prop="TempRluePrefixSuffix01">
-                                    <el-input v-model="form.TempRluePrefixSuffix01" style="width: 160px"
+                                    <el-input v-model="form.TempRluePrefixSuffix01" style="width: 180px"
                                         :disabled="isDisable1" />
                                 </el-form-item>
                                 <el-form-item label="条码前缀2" prop="TempRluePrefixSuffix02">
-                                    <el-input v-model="form.TempRluePrefixSuffix02" style="width: 160px"
+                                    <el-input v-model="form.TempRluePrefixSuffix02" style="width: 180px"
                                         :disabled="isDisable2" />
                                 </el-form-item>
                                 <el-form-item label="条码前缀3" prop="TempRluePrefixSuffix03">
-                                    <el-input v-model="form.TempRluePrefixSuffix03" style="width: 160px"
+                                    <el-input v-model="form.TempRluePrefixSuffix03" style="width: 180px"
                                         :disabled="isDisable2" />
                                     <el-checkbox v-model="form.TempRlueEnable2" label="公用流水" class="ml-3" />
                                 </el-form-item>
                                 <el-form-item label="条码前缀4" prop="TempRluePrefixSuffix04">
-                                    <el-input v-model="form.TempRluePrefixSuffix04" style="width: 160px"
+                                    <el-input v-model="form.TempRluePrefixSuffix04" style="width: 180px"
                                         :disabled="isDisable2" />
                                 </el-form-item>
                                 <el-form-item label="条码后缀1" prop="TempRluePrefixSuffix05">
-                                    <el-input v-model="form.TempRluePrefixSuffix05" style="width: 160px"
+                                    <el-input v-model="form.TempRluePrefixSuffix05" style="width: 180px"
                                         :disabled="isDisable2" />
                                 </el-form-item>
                                 <el-form-item label="条码后缀2" prop="TempRluePrefixSuffix07">
-                                    <el-input v-model="form.TempRluePrefixSuffix06" style="width: 160px"
+                                    <el-input v-model="form.TempRluePrefixSuffix06" style="width: 180px"
                                         :disabled="isDisable2" />
                                     <el-checkbox v-model="form.TempRlueEnable3" label="启用" class="ml-3" />
                                 </el-form-item>
@@ -746,48 +746,48 @@
                     <el-tab-pane label="标签二模板" name="Template02">
                         <el-form-item label="模板" prop="Template02" label-width="68px">
                             <el-select-v2 v-model="editForm.Template02" :options="tempList" filterable
-                                :props="tempProps" style="width: 160px"
+                                :props="tempProps" style="width: 180px"
                                 @change="getRuleNameData(editForm.Template02)" />
                             <span>特殊规则:[yyM]/[yyMM]/[yyyyMM]年月;[yyWW]年周;[yyMMdd]年月日;[SN:长度:起始流水]流水号:长度:起始流水;[YMC]年月代码</span>
-                            <!-- <el-input v-model="addForm.Template02" style="width: 160px" /> -->
+                            <!-- <el-input v-model="addForm.Template02" style="width: 180px" /> -->
                         </el-form-item>
                         <div class="flex">
                             <el-form ref="formRef" size="small" :model="form" :inline="true" label-width="auto">
                                 <el-form-item label="规则名称" prop="TempRlueName">
                                     <el-select-v2 v-model="form.TempRlueName" :options="ruleData" filterable
-                                        :props="ruleProps" style="width: 160px" @change="changeRlueName" />
-                                    <!-- <el-input v-model="form.TempRlueName" style="width: 160px" /> -->
+                                        :props="ruleProps" style="width: 180px" @change="changeRlueName" />
+                                    <!-- <el-input v-model="form.TempRlueName" style="width: 180px" /> -->
                                 </el-form-item>
                                 <el-form-item label="条码格式" prop="barFormat">
-                                    <el-input v-model="barFormat" disabled style="width: 160px" />
+                                    <el-input v-model="barFormat" disabled style="width: 180px" />
                                 </el-form-item>
                                 <el-form-item label="条码预览" prop="TempRlueFormat">
-                                    <el-input v-model="form.TempRlueFormat" disabled style="width: 160px" />
+                                    <el-input v-model="form.TempRlueFormat" disabled style="width: 180px" />
                                     <el-checkbox v-model="form.TempRlueEnable1" label="客户成品码" class="ml-3" />
                                 </el-form-item>
                                 <el-form-item label="条码前缀1" prop="TempRluePrefixSuffix01">
-                                    <el-input v-model="form.TempRluePrefixSuffix01" style="width: 160px"
+                                    <el-input v-model="form.TempRluePrefixSuffix01" style="width: 180px"
                                         :disabled="isDisable1" />
                                 </el-form-item>
                                 <el-form-item label="条码前缀2" prop="TempRluePrefixSuffix02">
-                                    <el-input v-model="form.TempRluePrefixSuffix02" style="width: 160px"
+                                    <el-input v-model="form.TempRluePrefixSuffix02" style="width: 180px"
                                         :disabled="isDisable2" />
                                 </el-form-item>
                                 <el-form-item label="条码前缀3" prop="TempRluePrefixSuffix03">
-                                    <el-input v-model="form.TempRluePrefixSuffix03" style="width: 160px"
+                                    <el-input v-model="form.TempRluePrefixSuffix03" style="width: 180px"
                                         :disabled="isDisable2" />
                                     <el-checkbox v-model="form.TempRlueEnable2" label="公用流水" class="ml-3" />
                                 </el-form-item>
                                 <el-form-item label="条码前缀4" prop="TempRluePrefixSuffix04">
-                                    <el-input v-model="form.TempRluePrefixSuffix04" style="width: 160px"
+                                    <el-input v-model="form.TempRluePrefixSuffix04" style="width: 180px"
                                         :disabled="isDisable2" />
                                 </el-form-item>
                                 <el-form-item label="条码后缀1" prop="TempRluePrefixSuffix05">
-                                    <el-input v-model="form.TempRluePrefixSuffix05" style="width: 160px"
+                                    <el-input v-model="form.TempRluePrefixSuffix05" style="width: 180px"
                                         :disabled="isDisable2" />
                                 </el-form-item>
                                 <el-form-item label="条码后缀2" prop="TempRluePrefixSuffix07">
-                                    <el-input v-model="form.TempRluePrefixSuffix06" style="width: 160px"
+                                    <el-input v-model="form.TempRluePrefixSuffix06" style="width: 180px"
                                         :disabled="isDisable2" />
                                     <el-checkbox v-model="form.TempRlueEnable3" label="启用" class="ml-3" />
                                 </el-form-item>
@@ -822,48 +822,48 @@
                     <el-tab-pane label="标签三模板" name="Template03">
                         <el-form-item label="模板" prop="Template03" label-width="68px">
                             <el-select-v2 v-model="editForm.Template03" :options="tempList" filterable
-                                :props="tempProps" style="width: 160px"
+                                :props="tempProps" style="width: 180px"
                                 @change="getRuleNameData(editForm.Template03)" />
                             <span>特殊规则:[yyM]/[yyMM]/[yyyyMM]年月;[yyWW]年周;[yyMMdd]年月日;[SN:长度:起始流水]流水号:长度:起始流水;[YMC]年月代码</span>
-                            <!-- <el-input v-model="addForm.Template03" style="width: 160px" /> -->
+                            <!-- <el-input v-model="addForm.Template03" style="width: 180px" /> -->
                         </el-form-item>
                         <div class="flex">
                             <el-form ref="formRef" size="small" :model="form" :inline="true" label-width="auto">
                                 <el-form-item label="规则名称" prop="TempRlueName">
                                     <el-select-v2 v-model="form.TempRlueName" :options="ruleData" filterable
-                                        :props="ruleProps" style="width: 160px" @change="changeRlueName" />
-                                    <!-- <el-input v-model="form.TempRlueName" style="width: 160px" /> -->
+                                        :props="ruleProps" style="width: 180px" @change="changeRlueName" />
+                                    <!-- <el-input v-model="form.TempRlueName" style="width: 180px" /> -->
                                 </el-form-item>
                                 <el-form-item label="条码格式" prop="barFormat">
-                                    <el-input v-model="barFormat" disabled style="width: 160px" />
+                                    <el-input v-model="barFormat" disabled style="width: 180px" />
                                 </el-form-item>
                                 <el-form-item label="条码预览" prop="TempRlueFormat">
-                                    <el-input v-model="form.TempRlueFormat" disabled style="width: 160px" />
+                                    <el-input v-model="form.TempRlueFormat" disabled style="width: 180px" />
                                     <el-checkbox v-model="form.TempRlueEnable1" label="客户成品码" class="ml-3" />
                                 </el-form-item>
                                 <el-form-item label="条码前缀1" prop="TempRluePrefixSuffix01">
-                                    <el-input v-model="form.TempRluePrefixSuffix01" style="width: 160px"
+                                    <el-input v-model="form.TempRluePrefixSuffix01" style="width: 180px"
                                         :disabled="isDisable1" />
                                 </el-form-item>
                                 <el-form-item label="条码前缀2" prop="TempRluePrefixSuffix02">
-                                    <el-input v-model="form.TempRluePrefixSuffix02" style="width: 160px"
+                                    <el-input v-model="form.TempRluePrefixSuffix02" style="width: 180px"
                                         :disabled="isDisable2" />
                                 </el-form-item>
                                 <el-form-item label="条码前缀3" prop="TempRluePrefixSuffix03">
-                                    <el-input v-model="form.TempRluePrefixSuffix03" style="width: 160px"
+                                    <el-input v-model="form.TempRluePrefixSuffix03" style="width: 180px"
                                         :disabled="isDisable2" />
                                     <el-checkbox v-model="form.TempRlueEnable2" label="公用流水" class="ml-3" />
                                 </el-form-item>
                                 <el-form-item label="条码前缀4" prop="TempRluePrefixSuffix04">
-                                    <el-input v-model="form.TempRluePrefixSuffix04" style="width: 160px"
+                                    <el-input v-model="form.TempRluePrefixSuffix04" style="width: 180px"
                                         :disabled="isDisable2" />
                                 </el-form-item>
                                 <el-form-item label="条码后缀1" prop="TempRluePrefixSuffix05">
-                                    <el-input v-model="form.TempRluePrefixSuffix05" style="width: 160px"
+                                    <el-input v-model="form.TempRluePrefixSuffix05" style="width: 180px"
                                         :disabled="isDisable2" />
                                 </el-form-item>
                                 <el-form-item label="条码后缀2" prop="TempRluePrefixSuffix07">
-                                    <el-input v-model="form.TempRluePrefixSuffix06" style="width: 160px"
+                                    <el-input v-model="form.TempRluePrefixSuffix06" style="width: 180px"
                                         :disabled="isDisable2" />
                                     <el-checkbox v-model="form.TempRlueEnable3" label="启用" class="ml-3" />
                                 </el-form-item>
@@ -899,43 +899,43 @@
                         <div class="mb-3 mt-3 text-xs">
                             特殊规则:[yyM]/[yyMM]/[yyyyMM]年月;[yyWW]年周;[yyMMdd]年月日;[SN:长度:起始流水]流水号:长度:起始流水;[YMC]年月代码
                         </div>
-                        <!-- <el-input v-model="addForm.Template03" style="width: 160px" /> -->
+                        <!-- <el-input v-model="addForm.Template03" style="width: 180px" /> -->
 
                         <div class="flex">
                             <el-form ref="formRef" size="small" :model="form" :inline="true" label-width="auto">
                                 <el-form-item label="规则名称" prop="TempRlueName">
                                     <el-select-v2 v-model="form.TempRlueName" :options="ruleData" filterable
-                                        :props="ruleProps" style="width: 160px" @change="changeRlueName" />
-                                    <!-- <el-input v-model="form.TempRlueName" style="width: 160px" /> -->
+                                        :props="ruleProps" style="width: 180px" @change="changeRlueName" />
+                                    <!-- <el-input v-model="form.TempRlueName" style="width: 180px" /> -->
                                 </el-form-item>
                                 <el-form-item label="条码格式" prop="barFormat">
-                                    <el-input v-model="barFormat" disabled style="width: 160px" />
+                                    <el-input v-model="barFormat" disabled style="width: 180px" />
                                 </el-form-item>
                                 <el-form-item label="条码预览" prop="TempRlueFormat">
-                                    <el-input v-model="form.TempRlueFormat" disabled style="width: 160px" />
+                                    <el-input v-model="form.TempRlueFormat" disabled style="width: 180px" />
                                 </el-form-item>
                                 <el-form-item label="条码前缀1" prop="TempRluePrefixSuffix01">
-                                    <el-input v-model="form.TempRluePrefixSuffix01" style="width: 160px"
+                                    <el-input v-model="form.TempRluePrefixSuffix01" style="width: 180px"
                                         :disabled="isDisable1" />
                                 </el-form-item>
                                 <el-form-item label="条码前缀2" prop="TempRluePrefixSuffix02">
-                                    <el-input v-model="form.TempRluePrefixSuffix02" style="width: 160px"
+                                    <el-input v-model="form.TempRluePrefixSuffix02" style="width: 180px"
                                         :disabled="isDisable2" />
                                 </el-form-item>
                                 <el-form-item label="条码前缀3" prop="TempRluePrefixSuffix03">
-                                    <el-input v-model="form.TempRluePrefixSuffix03" style="width: 160px"
+                                    <el-input v-model="form.TempRluePrefixSuffix03" style="width: 180px"
                                         :disabled="isDisable2" />
                                 </el-form-item>
                                 <el-form-item label="条码前缀4" prop="TempRluePrefixSuffix04">
-                                    <el-input v-model="form.TempRluePrefixSuffix04" style="width: 160px"
+                                    <el-input v-model="form.TempRluePrefixSuffix04" style="width: 180px"
                                         :disabled="isDisable2" />
                                 </el-form-item>
                                 <el-form-item label="条码后缀1" prop="TempRluePrefixSuffix05">
-                                    <el-input v-model="form.TempRluePrefixSuffix05" style="width: 160px"
+                                    <el-input v-model="form.TempRluePrefixSuffix05" style="width: 180px"
                                         :disabled="isDisable2" />
                                 </el-form-item>
                                 <el-form-item label="条码后缀2" prop="TempRluePrefixSuffix07">
-                                    <el-input v-model="form.TempRluePrefixSuffix06" style="width: 160px"
+                                    <el-input v-model="form.TempRluePrefixSuffix06" style="width: 180px"
                                         :disabled="isDisable2" />
                                     <el-checkbox v-model="form.TempRlueEnable1" label="启用" class="ml-3" />
                                 </el-form-item>
@@ -1363,7 +1363,6 @@ const changeRlueName = (val: any) => {
     let isDisable = cloneDeep(
         ruleData.value.find((f: any) => f.Temppara_No == val)
     );
-    // console.log(isDisable);
 
     if (isDisable.Expression_Name == "Customized") {
         isDisable1.value = false;
@@ -1374,6 +1373,7 @@ const changeRlueName = (val: any) => {
     } else {
         isDisable1.value = true;
         isDisable2.value = true;
+
         form.value.TempRluePrefixSuffix01 = isDisable.Expression_Name;
     }
 };
@@ -1585,16 +1585,18 @@ const editItem = () => {
                 } else {
                     ElNotification({
                         title: "提示信息",
-                        message: `${form.value.TempRlueName}规则已存在`,
-                        type: "error",
+                        message: `${form.value.TempRlueName}规则已修改`,
+                        type: "success",
                     });
-                    // editForm.value.tempcontent01= editForm.value.tempcontent01.map((item:any)=>{
-                    //     if(item.TempRlueName==form.value.TempRlueName){
-                    //         return {...form.value}
-                    //     }else{
-                    //         return item
-                    //     }
-                    // })
+                    editForm.value.tempcontent01 = editForm.value.tempcontent01.map(
+                        (item: any) => {
+                            if (item.TempRlueName == form.value.TempRlueName) {
+                                return { ...form.value };
+                            } else {
+                                return item;
+                            }
+                        }
+                    );
                 }
             }
             if (activeName.value == "TemplateFuselage") {
@@ -1605,11 +1607,25 @@ const editItem = () => {
                 ) {
                     editForm.value.tempcontent02.push({ ...form.value });
                 } else {
+                    //   ElNotification({
+                    //     title: "提示信息",
+                    //     message: `${form.value.TempRlueName}规则已存在`,
+                    //     type: "error",
+                    //   });
                     ElNotification({
                         title: "提示信息",
-                        message: `${form.value.TempRlueName}规则已存在`,
-                        type: "error",
+                        message: `${form.value.TempRlueName}规则已修改`,
+                        type: "success",
                     });
+                    editForm.value.tempcontent02 = editForm.value.tempcontent02.map(
+                        (item: any) => {
+                            if (item.TempRlueName == form.value.TempRlueName) {
+                                return { ...form.value };
+                            } else {
+                                return item;
+                            }
+                        }
+                    );
                 }
             }
             if (activeName.value == "Template01") {
@@ -1620,11 +1636,25 @@ const editItem = () => {
                 ) {
                     editForm.value.tempcontent03.push({ ...form.value });
                 } else {
+                    //   ElNotification({
+                    //     title: "提示信息",
+                    //     message: `${form.value.TempRlueName}规则已存在`,
+                    //     type: "error",
+                    //   });
                     ElNotification({
                         title: "提示信息",
-                        message: `${form.value.TempRlueName}规则已存在`,
-                        type: "error",
+                        message: `${form.value.TempRlueName}规则已修改`,
+                        type: "success",
                     });
+                    editForm.value.tempcontent03 = editForm.value.tempcontent03.map(
+                        (item: any) => {
+                            if (item.TempRlueName == form.value.TempRlueName) {
+                                return { ...form.value };
+                            } else {
+                                return item;
+                            }
+                        }
+                    );
                 }
             }
             if (activeName.value == "Template02") {
@@ -1635,11 +1665,25 @@ const editItem = () => {
                 ) {
                     editForm.value.tempcontent04.push({ ...form.value });
                 } else {
+                    //   ElNotification({
+                    //     title: "提示信息",
+                    //     message: `${form.value.TempRlueName}规则已存在`,
+                    //     type: "error",
+                    //   });
                     ElNotification({
                         title: "提示信息",
-                        message: `${form.value.TempRlueName}规则已存在`,
-                        type: "error",
+                        message: `${form.value.TempRlueName}规则已修改`,
+                        type: "success",
                     });
+                    editForm.value.tempcontent04 = editForm.value.tempcontent04.map(
+                        (item: any) => {
+                            if (item.TempRlueName == form.value.TempRlueName) {
+                                return { ...form.value };
+                            } else {
+                                return item;
+                            }
+                        }
+                    );
                 }
             }
             if (activeName.value == "Template03") {
@@ -1650,11 +1694,25 @@ const editItem = () => {
                 ) {
                     editForm.value.tempcontent05.push({ ...form.value });
                 } else {
+                    //   ElNotification({
+                    //     title: "提示信息",
+                    //     message: `${form.value.TempRlueName}规则已存在`,
+                    //     type: "error",
+                    //   });
                     ElNotification({
                         title: "提示信息",
-                        message: `${form.value.TempRlueName}规则已存在`,
-                        type: "error",
+                        message: `${form.value.TempRlueName}规则已修改`,
+                        type: "success",
                     });
+                    editForm.value.tempcontent05 = editForm.value.tempcontent05.map(
+                        (item: any) => {
+                            if (item.TempRlueName == form.value.TempRlueName) {
+                                return { ...form.value };
+                            } else {
+                                return item;
+                            }
+                        }
+                    );
                 }
             }
             if (activeName.value == "Template04") {
@@ -1665,11 +1723,25 @@ const editItem = () => {
                 ) {
                     editForm.value.tempcontent06.push({ ...form.value });
                 } else {
+                    //   ElNotification({
+                    //     title: "提示信息",
+                    //     message: `${form.value.TempRlueName}规则已存在`,
+                    //     type: "error",
+                    //   });
                     ElNotification({
                         title: "提示信息",
-                        message: `${form.value.TempRlueName}规则已存在`,
-                        type: "error",
+                        message: `${form.value.TempRlueName}规则已修改`,
+                        type: "success",
                     });
+                    editForm.value.tempcontent06 = editForm.value.tempcontent06.map(
+                        (item: any) => {
+                            if (item.TempRlueName == form.value.TempRlueName) {
+                                return { ...form.value };
+                            } else {
+                                return item;
+                            }
+                        }
+                    );
                 }
             }
             if (activeName.value == "TemplateBox") {
@@ -1922,31 +1994,53 @@ const tabChange1 = () => {
         form.value.TempRlueEnable1 = false;
         form.value.TempRlueEnable2 = true;
         form.value.TempRlueEnable3 = false;
-        if (editForm.value.Template01 == "") return;
+        if (editForm.value.Template01 == ""){
+            editFormRef.value.resetFields();
+            return
+        }
         getRuleNameData(editForm.value.TemplateBox);
     } else if (activeName.value == "Template04") {
         form.value.TempRlueEnable1 = true;
         form.value.TempRlueEnable2 = false;
         form.value.TempRlueEnable3 = false;
+        // if (editForm.value.Template04 == ""){
+        //             formRef.value.resetFields();
+        //             return;
+        //         }
         getRuleData();
     } else {
         form.value.TempRlueEnable1 = false;
         form.value.TempRlueEnable2 = false;
         form.value.TempRlueEnable3 = true;
         if (activeName.value == "TemplateFuselage") {
-            if (editForm.value.TemplateFuselage == "") return;
+            if (editForm.value.TemplateFuselage == ""){
+                formRef.value.resetFields();
+                return;
+            } 
             getRuleNameData(editForm.value.TemplateFuselage);
         } else {
+            // console.log(activeName.value);
+            
             if (activeName.value == "Template01") {
-                if (editForm.value.Template01 == "") return;
+                if (editForm.value.Template01 == ""){
+                    formRef.value.resetFields();
+                    return;
+                }
                 getRuleNameData(editForm.value.Template01);
             }
             if (activeName.value == "Template02") {
-                if (editForm.value.Template02 == "") return;
+                if (editForm.value.Template02 == ""){
+                    formRef.value.resetFields();
+
+                    return;
+                }
                 getRuleNameData(editForm.value.Template02);
             }
             if (activeName.value == "Template03") {
-                if (editForm.value.Template03 == "") return;
+                if (editForm.value.Template03 == ""){
+                    formRef.value.resetFields();
+                    return;
+                } 
                 getRuleNameData(editForm.value.Template03);
             }
         }
@@ -1956,10 +2050,24 @@ const tabChange1 = () => {
 };
 
 const rowDblclick = (row: any) => {
-    // form.value = { ...row };
-    // console.log(form.value);
-    // console.log(row);
-    // changeRlueName(row.TempRlueName)
+    form.value = { ...row }
+    let isDisable = cloneDeep(
+        ruleData.value.find((f: any) => f.Temppara_No == row.TempRlueName)
+    );
+
+    if (isDisable.Expression_Name == "Customized") {
+        isDisable1.value = false;
+        isDisable2.value = false;
+    } else if (isDisable.Expression_Name == "Fixed") {
+        isDisable1.value = false;
+        isDisable2.value = true;
+    } else {
+        isDisable1.value = true;
+        isDisable2.value = true;
+
+        form.value.TempRluePrefixSuffix01 = isDisable.Expression_Name;
+    }
+    //   changeRlueName(row.TempRlueName);
 };
 const handleSizeChange = (val: any) => {
     pageObj.value.currentPage = 1;
@@ -2008,4 +2116,3 @@ const getScreenHeight = () => {
     background-color: rgba($color: #fff, $alpha: 0.8);
 }
 </style>
- 
