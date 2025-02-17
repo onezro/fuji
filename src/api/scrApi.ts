@@ -137,7 +137,7 @@ export function FTLDefectProductRecord(data: any) {
     data,
   });
 }
-//不良处理列表
+//不良处置查询列表
 export function DefectiveDisposalList(data: any) {
   return request({
     url: "/api/DefectiveProductsDisposal/DefectiveDisposalList",
@@ -145,7 +145,21 @@ export function DefectiveDisposalList(data: any) {
     data,
   });
 }
-
+//查询屏不良记录
+export function QueryDefectRecordDetail(data: any) {
+  return request({
+    url: "/api/DefectiveProductsDisposal/QueryDefectRecordDetail",
+    method: "post",
+    params:data
+  });
+}
+export function QueryWorkflowList(data: any) {
+  return request({
+    url: "/api/DefectiveProductsDisposal/QueryWorkflowList",
+    method: "post",
+    params:data
+  });
+}
 //快检
 export function DefectiveQuickTest(data: any) {
   return request({
@@ -154,6 +168,17 @@ export function DefectiveQuickTest(data: any) {
     data,
   });
 }
+//获取返修操作
+export function QueryRepairAction(data: any) {
+  return request({
+    url: "/api/DefectiveProductsDisposal/QueryRepairAction",
+    method: "post",
+    params:{
+      operationName:data
+    }
+  });
+}
+
 
 //拆解
 export function DefectiveDismantle(data: any) {
@@ -167,7 +192,7 @@ export function DefectiveDismantle(data: any) {
 //解绑
 export function DefectiveUnbinding(data: any) {
   return request({
-    url: "/api/DefectiveProductsDisposal/DefectiveUnbinding",
+    url: "/api/SCNDetach/DefectiveUnbinding",
     method: "post",
     data,
   });
@@ -176,7 +201,7 @@ export function DefectiveUnbinding(data: any) {
 //报废
 export function DefectiveScrap(data: any) {
   return request({
-    url: "/api/DefectiveProductsDisposal/DefectiveScrap",
+    url: "/api/SCNDetach/DefectiveScrap",
     method: "post",
     data,
   });
@@ -185,13 +210,23 @@ export function DefectiveScrap(data: any) {
 //查询条码绑定的供应商条码
 export function DefectiveComponentBindHistory(data: any) {
   return request({
-    url: "/api/DefectiveProductsDisposal/DefectiveComponentBindHistory",
+    url: "/api/SCNDetach/DefectiveComponentBindHistory",
     method: "post",
     params: {
-      containerName: data,
+      ContainerName: data,
     },
   });
 }
+export function UpdateDisassemblyInfoy(data: any) {
+  return request({
+    url: "/api/SCNDetach/UpdateDisassemblyInfoy",
+    method: "post",
+    params: {
+      ContainerName: data,
+    },
+  });
+}
+
 
 //查询不良代码及工单信息
 export function MAQueryDefectCode(data: any) {
@@ -320,7 +355,7 @@ export function DealNoBatchCode(data: any) {
 //脱泡过站
 export function AdhesiveDefoamingMoveStd(data: any) {
   return request({
-    url: "/api/SCNFitTogether/AdhesiveDefoamingMoveStd",
+    url: "/api/AdhesiveDefoaming/AdhesiveDefoamingMoveStd",
     method: "post",
     data,
   });
@@ -353,6 +388,35 @@ export function QueryBatchCodeInfoFit(data: any) {
 export function DealNoBatchCodeFit(data: any) {
   return request({
     url: "/api/FitsTheLook/DealNoBatchCode",
+    method: "post",
+    data,
+  });
+}
+//不良拆解列表
+
+
+export function DefectiveDisassemblyList(data: any) {
+  return request({
+    url: "/api/SCNDetach/DefectiveDisassemblyList",
+    method: "post",
+    data,
+  });
+}
+
+export function UpdateDisassemblyInfo(data: any) {
+  return request({
+    url: "/api/SCNDetach/UpdateDisassemblyInfo",
+    method: "post",
+    params:{
+      ContainerName:data
+    }
+  });
+}
+
+
+export function UnbindingConfirm(data: any) {
+  return request({
+    url: "/api/SCNDetach/UnbindingConfirm",
     method: "post",
     data,
   });

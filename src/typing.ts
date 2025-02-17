@@ -107,3 +107,8 @@ interface FeedForm{
   Qty: string;
   eqInfo: string;
 }
+interface CalendarDataType{
+  title: string;
+    start: string;
+    end: string;
+}

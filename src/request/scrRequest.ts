@@ -32,7 +32,7 @@ const hideLoading = () => {
 const service = axios.create({
   baseURL: '/scrApi',
   // 5秒超时
-  timeout: 1000 * 60,
+  timeout: 1000 * 60*5,
 });
 // let source = axios.CancelToken.source();
 // console.log(source);

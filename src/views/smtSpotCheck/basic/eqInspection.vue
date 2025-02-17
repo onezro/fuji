@@ -299,17 +299,23 @@ watch(() => form.Step, (newVal, oldVal) => {
   if (newVal !== oldVal) {
     if (addFrom.WorkSection !== '') {
       const autoData = tableData.value.filter((t: any) => addFrom.WorkSection === t.WorkSection)
-      const data = cloneDeep(autoData[0])
-      const inputData = data.stepItemList.find((d: any) => newVal == d.Step)
-      // console.log(inputData);
-      if (inputData !== undefined) {
-        // console.log(inputData);
-        form.Name = inputData.StepName
-        form.StepItemList[0].SubItem = inputData.stepItemList.length + 1
-      } else {
-        form.Name = ''
-        form.StepItemList[0].SubItem = 1
-      }
+      if (autoData.length == 0) {
+          form.StepItemList[0].SubItem = 1;
+        } else {
+          const data = cloneDeep(autoData[0]);
+          const inputData = data.stepItemList.find(
+            (d: any) => newVal == d.Step
+          );
+          // console.log(inputData);
+          if (inputData !== undefined) {
+            // console.log(inputData);
+            form.Name = inputData.StepName;
+            form.StepItemList[0].SubItem = inputData.stepItemList.length + 1;
+          } else {
+            form.Name = "";
+            form.StepItemList[0].SubItem = 1;
+          }
+        }
     }
 
 

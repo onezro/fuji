@@ -182,7 +182,7 @@
           <el-form ref="baseFormRef" :model="baseForm" label-width="auto" class="pt-[5px]">
             <el-row>
               <el-col :span="8">
-                <el-form-item label="PCB条码" class="mb-[5px] flex" prop="ContainerName">
+                <el-form-item label="MES条码" class="mb-[5px] flex" prop="ContainerName">
                   <el-input v-model="baseForm.ContainerName" style="width: 200px" disabled />
                 </el-form-item>
               </el-col>

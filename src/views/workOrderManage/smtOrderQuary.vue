@@ -260,7 +260,7 @@ import {
   QueryOrderToolsData,
   UpdateOrderStatus,
   findShelf,
-  OrderOnline,
+  SMTOrderOnline,
   QueryOrderLine,
   OrderOffline,
   ReleaseToolTask,
@@ -747,7 +747,7 @@ const orderOnline = () => {
   orderOnlineForm.value.shelf_ids =
     orderOnlineForm.value.shelf_ids_list.toString();
   // console.log(orderOnlineForm.value);
-  OrderOnline(orderOnlineForm.value).then((res: any) => {
+  SMTOrderOnline(orderOnlineForm.value).then((res: any) => {
     orderOnlineVisible.value = false;
     ElNotification({
       title: "提示信息",

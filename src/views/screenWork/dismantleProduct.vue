@@ -1,421 +1,223 @@
 <template>
   <div class="flex flex-col w-full h-full">
-    <div
-      class="h-[40px] min-h-[40px] pl-2 pr-2 flex justify-between items-center"
-    >
-      <span class="text-[1.2rem]"> {{ opui.stationDec }} </span>
-      <!-- <el-button type="primary" @click="openDialog">不良品登记</el-button> -->
-    </div>
     <div class="w-full flex-1 flex">
-      <div class="setwidth w-[320px]">
+      <div class="setwidth w-[350px]">
         <div class="w-full h-full box">
-          <div
-            class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]"
-          >
+          <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
             <span class="ml-5">基本信息</span>
           </div>
           <div class="p-[10px]">
-            <el-form ref="formRef" :model="form" label-width="auto">
+            <el-form ref="formRef" :model="form" label-width="auto"  @submit.native.prevent>
               <el-form-item label="MES屏条码" prop="scrBarCode">
-                <el-input v-model="form.ContainerName" placeholder="" />
+                <el-input v-model="form.ContainerName" placeholder=""  @keyup.enter.native="getData"/>
               </el-form-item>
               <el-form-item label="生产计划号" prop="order">
                 <el-input v-model="form.MfgOrderName" placeholder="" />
               </el-form-item>
-              <el-form-item label="机型" prop="productCode">
+
+              <el-form-item label="产品机型" prop="productCode">
                 <el-input v-model="form.productmodel" placeholder="" />
               </el-form-item>
-              <el-form-item label="起始时间" prop="startTime">
-                <el-date-picker
-                  v-model="form.StartTime"
-                  type="date"
-                  placeholder=""
-                  format="YYYY-MM-DD"
-                  value-format="YYYY-MM-DD"
-                />
+              <el-form-item label="产品编码" prop="order">
+                <el-input v-model="form.productName" placeholder="" />
               </el-form-item>
-              <el-form-item label="结束时间" prop="endTime">
-                <el-date-picker
-                  v-model="form.EndTime"
-                  type="date"
-                  placeholder=""
-                  format="YYYY-MM-DD"
-                  value-format="YYYY-MM-DD"
-                />
-              </el-form-item>
-              <el-form-item label="不良工位" prop="station">
-                <el-select
-                  v-model="form.WorkStation"
-                  placeholder="选择工位"
-                  clearable
-                >
-                  <el-option
-                    v-for="item in options"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value"
-                  />
-                </el-select>
+
+              <el-form-item label="时间">
+                <el-date-picker :shortcuts="shortcuts" v-model="searchDate" value-format="YYYY-MM-DD" type="daterange"
+                  range-separator="-" :disabled-date="disabledDate" :clearable="false" />
               </el-form-item>
             </el-form>
             <div class="flex justify-end">
-              <el-button type="primary" @click="onSubmit">查询</el-button>
+              <el-button type="primary" @click="getData">查询</el-button>
             </div>
           </div>
         </div>
       </div>
-      <div class="w-[calc(100%-320px)]">
+      <div class="w-[calc(100%-350px)]">
         <div class="w-full h-full flex flex-col">
           <div class="flex flex-col flex-1">
-            <div
-              class="h-[35px] flex items-center text-xl justify-between text-[#fff] bg-[#006487]"
-            >
+            <div class="h-[35px] flex items-center text-lg justify-between text-[#fff] bg-[#006487]">
               <span class="ml-5"> 扫描条码</span>
             </div>
             <div class="h-[120px] p-5">
-              <el-form
-                class="inbound"
-                ref="formRef"
-                :inline="true"
-                :model="form"
-                label-width="auto"
-                @submit.native.prevent
-              >
+              <el-form class="inbound" ref="formRef" :inline="true" :model="form" label-width="auto"
+                @submit.native.prevent>
                 <el-form-item label="扫描条码">
-                  <el-input
-                    v-model="barCode"
-                    ref="inputRef"
-                    style="width: 500px"
-                    placeholder="请扫描条码"
-                    @keyup.enter.native="getChange"
-                  />
+                  <el-input v-model="barCode" ref="inputRef" style="width: 500px" placeholder="请扫描条码"
+                    @keyup.enter.native="getChange" />
                 </el-form-item>
               </el-form>
               <div class="text-xl font-bold text-[#00B400]">
-                <div
-                  class="text-xl font-bold text-[#00B400]"
-                  v-show="msgType === true || msgTitle === ''"
-                >
+                <div class="text-xl font-bold text-[#00B400]" v-show="msgType === true || msgTitle === ''">
                   {{ msgTitle === "" ? "请扫描MES屏条码" : msgTitle }}
                 </div>
-                <div
-                  class="text-xl font-bold text-[red]"
-                  v-show="msgType === false && msgTitle !== ''"
-                >
+                <div class="text-xl font-bold text-[red]" v-show="msgType === false && msgTitle !== ''">
                   {{ msgTitle }}
                 </div>
               </div>
             </div>
             <div class="flex flex-col flex-1">
-              <div
-                class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]"
-              >
+              <div class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]">
                 <span class="ml-5">不良品拆解</span>
               </div>
               <div class="flex-1" ref="tablebox">
-                <!-- <table-tem
-                  :showIndex="true"
-                  :tableData="tableData"
-                  :tableHeight="tableHeight"
-                  :columnData="columnData"
-                  :pageObj="pageObj"
-                  @handleSizeChange="handleSizeChange"
-                  @handleCurrentChange="handleCurrentChange"
-                ></table-tem> -->
-                <el-table
-                  ref="taskTableRef"
-                  class="test"
-                  stripe
-                  border
-                  :data="
-                    tableData.slice(
-                      (pageObj.currentPage - 1) * pageObj.pageSize,
-                      pageObj.currentPage * pageObj.pageSize
-                    )
-                  "
-                  style="width: 100%"
-                  :height="tableHeight"
-                >
-                  <el-table-column
-                    prop="ContainerName"
-                    align="center"
-                    label="MES屏条码"
-                    :min-width="flexColumnWidth('MES屏条码', 'ContainerName')"
-                  >
-                  </el-table-column>
-                  <el-table-column
-                    prop="mfgorderName"
-                    align="center"
-                    label="生产计划号"
-                    :min-width="flexColumnWidth('生产计划号', 'mfgorderName')"
-                  >
-                  </el-table-column>
-                  <el-table-column
-                    prop="TxnDate"
-                    align="center"
-                    label="不良录入时间"
-                    :min-width="flexColumnWidth('不良录入时间', 'TxnDate')"
-                  >
-                  </el-table-column>
-                  <el-table-column
-                    prop="DismantlestartTime"
-                    align="center"
-                    label="拆解开始时间"
-                    :min-width="
-                      flexColumnWidth('拆解开始时间', 'DismantlestartTime')
-                    "
-                  >
-                  </el-table-column>
-                  <el-table-column
-                    prop="DismantleEndTime"
-                    align="center"
-                    label="拆解完成时间"
-                    :min-width="
-                      flexColumnWidth('拆解完成时间', 'DismantleEndTime')
-                    "
-                  >
-                  </el-table-column>
-                  <el-table-column
-                    prop="DismantleStatus"
-                    align="center"
-                    label="状态"
-                    :min-width="flexColumnWidth('状态状态', 'DismantleStatus')"
-                  >
+                <el-table :data="tableData.slice(
+                  (pageObj.currentPage - 1) * pageObj.pageSize,
+                  pageObj.currentPage * pageObj.pageSize
+                )
+                  " :style="{ width: '100%' }" :height="tableHeight" stripe border fit>
+                  <el-table-column label="序号" type="index" width="60" align="center" />
+                  <el-table-column prop="ContainerName" label="MES屏条码" />
+                  <el-table-column prop="MfgOrderName" label="生产计划号" />
+                  <el-table-column prop="DefectTime" label="不良录入时间" />
+                  <el-table-column prop="DismantlestartTime" label="拆解开始时间" />
+                  <el-table-column prop="DismantleEndTime" label="拆解完成时间" />
+                  <el-table-column prop="DismantleStatus" align="center" label="状态">
                     <template #default="scope">
-                      <div v-if="!scope.row.DismantlestartTime" class="underline font-bold text-[#006487]">
-                        <div>未开始</div>
-                      </div>
-                      <div
-                        v-if="
-                          scope.row.DismantlestartTime &&
-                          !scope.row.DismantleEndTime
-                        "
-                        @click="openVisible(scope.row.ContainerName)"
-                      >
-                        <div class="underline font-bold text-[#006487]">拆解中</div>
-                      </div>
-                      <div v-if="scope.row.DismantleEndTime">
-                        <div class="underline font-bold text-[#006487]">拆解完成</div>
-                      </div>
+
+                      <!-- <el-tag :style="{ marginRight: '6px' }" type="success">Tag 2</el-tag> -->
+                      <el-tag effect="dark" v-if="scope.row.DismantleStatus == null || scope.row.DismantleStatus == ''"
+                        type="info">待拆解</el-tag>
+                      <el-tag effect="dark" v-if="scope.row.DismantleStatus == 'Doing'" type="warning">拆解中</el-tag>
+
                     </template>
                   </el-table-column>
                 </el-table>
+
                 <div class="w-full mt-3 flex justify-around">
-                  <el-pagination
-                    size="large"
-                    background
-                    @size-change="handleSizeChange"
-                    @current-change="handleCurrentChange"
-                    :current-page="pageObj.currentPage"
-                    :page-size="pageObj.pageSize"
-                    :page-sizes="[100, 300, 500, 1000]"
-                    layout="total,sizes, prev, pager, next, jumper"
-                    :total="tableData.length"
-                  >
+                  <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange"
+                    :current-page="pageObj.currentPage" :page-size="pageObj.pageSize"
+                    :page-sizes="[100, 300, 500, 1000]" layout="total,sizes, prev, pager, next"
+                    :total="tableData.length">
                   </el-pagination>
                 </div>
               </div>
             </div>
-            <el-dialog
-              v-model="qtyVisible"
-              width="80%"
-              title="不良品拆解"
-              :append-to-body="true"
-              :close-on-click-modal="false"
-              :close-on-press-escape="false"
-              align-center
-            >
-              <div>
-                <div
-                  class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]"
-                >
-                  <span class="ml-5">基本信息</span>
-                </div>
-                <el-form
-                  class="pt-2"
-                  ref="formRef"
-                  :inline="true"
-                  :model="qtyForm"
-                  label-width="auto"
-                >
-                  <el-form-item label="MES屏条码" prop="scrBarCode">
-                    <el-input
-                      v-model="qtyForm.ContainerName"
-                      placeholder="请输入"
-                      disabled
-                    />
-                  </el-form-item>
-                  <el-form-item label="生产计划号" prop="order">
-                    <el-input
-                      v-model="qtyForm.MfgOrderName"
-                      placeholder="请输入"
-                      disabled
-                    />
-                  </el-form-item>
-                  <el-form-item label="产品编码" prop="productCode">
-                    <el-input
-                      v-model="qtyForm.ProductName"
-                      placeholder="请输入"
-                      disabled
-                    />
-                  </el-form-item>
-                  <el-form-item label="产品描述" prop="productDec">
-                    <el-input
-                      v-model="qtyForm.Description"
-                      type="textarea"
-                      style="width: 500px"
-                      placeholder="请输入"
-                      disabled
-                    />
-                  </el-form-item>
-                  <el-form-item label="返修类型" prop="productCode">
-                    <el-select v-model="unbindType" style="width: 100px">
-                      <el-option
-                        v-for="item in [
-                          { value: 'R' },
-                          { value: 'L' },
-                          { value: 'S' },
-                          { value: 'Z' },
-                        ]"
-                        :key="item.value"
-                        :label="item.value"
-                        :value="item.value"
-                      />
-                    </el-select>
-                  </el-form-item>
-                  <el-form-item label="" prop="order">
-                    <el-button @click="unbind" type="primary">解绑</el-button>
-                  </el-form-item>
-                </el-form>
-              </div>
-              <div>
-                <div
-                  class="h-[35px] flex items-center text-lg text-[#fff] bg-[#006487]"
-                >
-                  <span class="ml-5">不良品拆解</span>
-                </div>
-                <!-- <table-tem
-                  :showIndex="true"
-                  :tableData="qtytableData"
-                  :tableHeight="'300'"
-                  :columnData="qtycolumnData"
-                  :pageObj="qtypageObj"
-                  @handleSizeChange="handleSizeChange1"
-                  @handleCurrentChange="handleCurrentChange1"
-                ></table-tem> -->
-                <el-table
-                  ref="taskTableRef"
-                  class="test"
-                  stripe
-                  border
-                  :data="
-                    qtytableData.slice(
-                      (qtypageObj.currentPage - 1) * qtypageObj.pageSize,
-                      qtypageObj.currentPage * qtypageObj.pageSize
-                    )
-                  "
-                  style="width: 100%"
-                  :tableHeight="'300'"
-                  @handleSizeChange="handleSizeChange1"
-                  @handleCurrentChange="handleCurrentChange1"
-                >
-                  <el-table-column
-                    prop="ContainerName"
-                    align="center"
-                    label="MES屏条码"
-                    :min-width="flexColumnWidth('MES屏条码', 'ContainerName')"
-                  >
-                  </el-table-column>
-                  <el-table-column
-                    prop="MfgOrderName"
-                    align="center"
-                    label="生产计划号"
-                    :min-width="flexColumnWidth('生产计划号', 'MfgOrderName')"
-                  >
-                  </el-table-column>
-                  <el-table-column
-                    prop="BindContainerName"
-                    align="center"
-                    label="供应商条码"
-                    :min-width="
-                      flexColumnWidth('供应商条码', 'BindContainerName')
-                    "
-                  >
-                  </el-table-column>
-                  <el-table-column
-                    prop="State"
-                    align="center"
-                    label="状态"
-                    :min-width="flexColumnWidth('状态', 'State')"
-                  >
-                    <template #default="scope">
-                      <div>{{ scope.row.State === 1 ? "报废" : "" }}</div>
-                    </template>
-                  </el-table-column>
-                  <el-table-column
-                    prop="State"
-                    align="center"
-                    label="状态"
-                    width="80"
-                  >
-                    <template #default="scope">
-                      <el-tooltip
-                        class="box-item"
-                        effect="dark"
-                        content="报废"
-                        placement="top-start"
-                      >
-                        <el-button
-                          type="danger"
-                          icon="Delete"
-                          size="small"
-                          :disabled="scope.row.State === 1"
-                          @click="scrap(scope.row)"
-                        ></el-button>
-                      </el-tooltip>
-                    </template>
-                  </el-table-column>
-                </el-table>
-              </div>
-              <template #footer>
-                <span class="dialog-footer">
-                  <el-button @click="qtyCancel">关闭</el-button>
-                </span>
-              </template>
-            </el-dialog>
           </div>
         </div>
       </div>
     </div>
+    <el-dialog v-model="badVisible" width="80%" :fullscreen="false" :append-to-body="true" class="saveAsDialog"
+      :close-on-click-modal="false" :close-on-press-escape="false" align-center title="不良拆解" @close="repairCancel">
+      <div class="flex flex-col border-solid border-1 border-[#bdbdbd]">
+        <div>
+          <div class="h-[30px] pl-3 flex items-center text-base text-[#fff] bg-[#006487]">
+            基本信息
+          </div>
+          <el-form ref="baseFormRef" :model="baseForm" label-width="auto" class="pt-[5px]">
+            <el-row>
+              <el-col :span="8">
+                <el-form-item label="LCM条码" class="mb-[5px] flex" prop="ContainerName">
+                  <el-input v-model="baseForm.ContainerName" style="width: 200px" disabled />
+                </el-form-item>
+              </el-col>
+              <el-col :span="10">
+                <el-form-item label="生产计划号" class="mb-[5px] flex" prop="MfgOrderName">
+                  <el-input v-model="baseForm.MfgOrderName" style="width: 200px" disabled />
+                </el-form-item>
+              </el-col>
+              <el-col :span="6">
+                <el-form-item label="产品机型" class="mb-[5px] flex" prop="MfgOrderName">
+                  <el-input v-model="baseForm.ProductModel" style="width: 200px" disabled />
+                </el-form-item>
+              </el-col>
+            </el-row>
+            <el-row>
+              <el-col :span="8">
+                <el-form-item class="mb-[5px]" label="产品编码" prop="ProductName">
+                  <el-input v-model="baseForm.ProductName" style="width: 200px" disabled /> </el-form-item></el-col>
+              <el-col :span="10">
+                <el-form-item class="mb-[5px]" label="产品描述">
+                  <el-input v-model="baseForm.ProductDesc" style="width: 350px" disabled />
+                </el-form-item>
+              </el-col>
+              <el-col :span="6">
+                <el-form-item class="mb-[5px]" label="维修类型">
+                  <el-select v-model="RepairType" placeholder="请选择" style="width: 200px">
+                    <el-option label="R" value="R" />
+                    <el-option label="L" value="L" />
+                    <el-option label="S" value="S" />
+                    <el-option label="Z" value="Z" />
+
+                  </el-select>
+                  <!-- <el-input v-model="baseForm.ProductDesc" style="width: 300px" disabled /> -->
+                </el-form-item>
+              </el-col>
+            </el-row>
+            <!-- <el-row>
+              <el-col :span="8">
+                <el-form-item class="mb-[5px]" label="工序编码" prop="SpecName">
+                  <el-input v-model="baseForm.SpecName" style="width: 200px" disabled /> </el-form-item></el-col>
+              <el-col :span="11">
+                <el-form-item class="mb-[5px]" label="工序描述" prop="SpecDesc">
+                  <el-input v-model="baseForm.SpecDesc" style="width: 200px" disabled />
+                </el-form-item>
+              </el-col>
+            </el-row> -->
+          </el-form>
+        </div>
+        <div>
+          <div class="h-[30px] pl-3 flex items-center text-base text-[#fff] bg-[#006487]">
+            组件列表
+          </div>
+          <el-table :data="badData" :style="{ width: '100%' }" :height="300" stripe border fit>
+            <el-table-column label="序号" type="index" width="60" align="center" />
+            <el-table-column prop="ContainerName" label="MES屏条码" />
+            <el-table-column prop="MfgOrderName" label="生产计划号" />
+            <el-table-column prop="BindContainerName" label="供应商条码" />
+            <!-- <el-table-column prop="State" label="检查结果" width="100">
+              <template #default="scope">
+                {{ scope.row.State == 0 ? "NG" : "OK" }}
+              </template>
+            </el-table-column> -->
+            <el-table-column label="操作" width="150">
+              <template #default="scope">
+                <el-button type="warning" size="small" @click.prevent="unbinding(scope.row)">解绑</el-button>
+                <el-button type="danger" size="small" @click.prevent="scrap(scope.row)">报废</el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+        </div>
+      </div>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="repairCancel">关闭</el-button>
+          <!-- <el-button @click="repairCancel">取消</el-button>-->
+          <el-button type="primary" @click="repairSubmit"> 确定 </el-button>
+        </span>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
 <script lang="ts" setup>
-import tableTem from "@/components/tableTem/index.vue";
-import badInfoTem from "@/components/badInfoTem/index.vue";
-import selectTa from "@/components/selectTable/index.vue";
-import { checkStringType } from "@/utils/barcodeFormat";
 import { useAppStoreWithOut } from "@/stores/modules/app";
 import { useUserStoreWithOut } from "@/stores/modules/user";
-import type { Formspan, FormHeader } from "@/typing";
-import { cloneDeep } from "lodash-es";
 import { ElMessage, ElMessageBox, ElNotification } from "element-plus";
 import {
   ref,
   reactive,
   onMounted,
   nextTick,
+  watch,
   onBeforeMount,
   onBeforeUnmount,
 } from "vue";
 import { useProjectStoreWithOut } from "@/stores/modules/projectData";
 import {
-  DefectiveDisposalList,
+  DefectiveDisassemblyList,
+  UpdateDisassemblyInfo,
   DefectiveComponentBindHistory,
   DefectiveScrap,
   DefectiveUnbinding,
-  DefectiveDismantle,
+  UnbindingConfirm
 } from "@/api/scrApi";
+import {
+  shortcuts,
+  setTodayDate,
+  setLastDate,
+  disabledDate,
+} from "@/utils/dataMenu";
 const appStore = useAppStoreWithOut();
 const userStore = useUserStoreWithOut();
 const opui = appStore.getOPUIReal();
@@ -439,21 +241,11 @@ const form = ref({
   ContainerName: "",
   StartTime: "",
   EndTime: "",
-  WorkStation: "",
+  WorkStation: opui.station,
   MfgOrderName: "",
   productmodel: "",
+  productName: "",
 });
-
-const options = ref([
-  {
-    value: "12341234",
-    label: "贴合外观",
-  },
-  {
-    value: "123461283",
-    label: "贴合下料",
-  },
-]);
 const tableData = ref([]);
 
 const columnData = reactive([
@@ -511,6 +303,15 @@ const pageObj = ref({
   pageSize: 100,
   currentPage: 1,
 });
+const baseForm = ref({
+  ContainerName: "",
+  MfgOrderName: "",
+  ProductName: "",
+  ProductDesc: "",
+  ProductModel: "",
+  SpecName: "",
+  SpecDesc: "",
+});
 
 const qtyForm = ref({
   ContainerName: "",
@@ -518,33 +319,46 @@ const qtyForm = ref({
   ProductName: "",
   Description: "",
 });
-const qtytableData = ref([
-  {
-    order: "1232",
-    scrBarCode: "23432",
-    productCode: "234234",
-    time: "241243",
-    station: "234234",
-  },
-  {
-    order: "1232",
-    scrBarCode: "23432",
-    productCode: "234234",
-    time: "241243",
-    station: "234234",
-  },
-]);
 
 const qtypageObj = ref({
   pageSize: 100,
   currentPage: 1,
 });
+const searchDate = ref<any[]>([]);
+const badData = ref([]);
+const baseFormRef = ref();
+const RepairType = ref("R")
+watch(
+  () => searchDate.value,
+  (newVal: any, oldVal: any) => {
+    if (newVal === null) {
+      form.value.StartTime = "";
+      form.value.EndTime = "";
+      // getForm.value.currentPage = 1;
+      //   getDetailForm.value.currentPage = 1;
+      getData();
+      return;
+    }
+    if (newVal !== oldVal) {
+      form.value.StartTime = newVal[0];
+      form.value.EndTime = newVal[1];
+      form.value.EndTime = newVal[1] + " " + "23:59:59"
+      // getForm.value.currentPage = 1;
+      // detailData.value = [];
+      //   getDetailForm.value.currentPage = 1;
+      getData();
+    }
+  }
+);
 
 onBeforeMount(() => {
   getScreenHeight();
+  let end: string = setTodayDate();
+  let start: string = setLastDate();
+  end = end + " " + "23:59:59"
+  searchDate.value = [start, end];
 });
 onMounted(() => {
-  getToData();
   window.addEventListener("resize", getScreenHeight);
   // console.log(appStore.getOpuiData.stationDec);
 });
@@ -552,70 +366,39 @@ onBeforeUnmount(() => {
   window.addEventListener("resize", getScreenHeight);
 });
 
-//获得选择数据
-const getToData = () => {
-  if (projectStore.getFectivekList.length === 0) {
-    return;
-  }
-  let arr: any = [];
-  projectStore.getFectivekList.forEach((item: any) => {
-    arr.push(item.ContainerName);
-  });
-  DefectiveDisposalList({ ContainerName: arr }).then((res: any) => {
+const getData = () => {
+  DefectiveDisassemblyList(form.value).then((res: any) => {
     if (res.success) {
       tableData.value = res.content;
-    } else {
-      msgTitle.value = res.msg;
-      msgType.value = res.success;
     }
+    inputRef.value.focus();
   });
 };
 
-//打开不良品拆解页面
-const openVisible = (code: any) => {
-  DefectiveComponentBindHistory(code).then((res: any) => {
-    qtyForm.value.ContainerName = code;
-    qtyForm.value.Description = res.content2[0].Description;
-    qtyForm.value.MfgOrderName = res.content2[0].MfgOrderName;
-    qtyForm.value.ProductName = res.content2[0].ProductName;
-    qtytableData.value = res.content;
-    qtyVisible.value = true;
-  });
-  barCode.value = "";
-};
 
 //报废
 const scrap = (row: any) => {
-  console.log(row);
-  
   ElMessageBox.confirm("确认报废", "确认操作", {
     confirmButtonText: "确定",
     cancelButtonText: "取消",
     type: "warning",
   })
     .then(() => {
-      console.log({
-        containerName: row.ContainerName,
-        BindContainerName: row.BindContainerName,
-        MaterialName: row.MaterialName,
-        MfgOrderName: row.MfgOrderName,
-      });
-      
       DefectiveScrap({
         containerName: row.ContainerName,
-        BindContainerName: row.BindContainerName,
-        MaterialName: row.MaterialName,
-        MfgOrderName: row.MfgOrderName,
-      }).then((data: any) => {
-        if (!data) {
-          return;
+        SupplierContainer: row.BindContainerName,
+        workstationName: opui.station,
+        userAccount: userStore.getUserInfo,
+      }).then((res: any) => {
+        ElNotification({
+          title: "提示信息",
+          message: res.msg,
+          type: res.success ? "success" : "error",
+        });
+        if (res.success) {
+          getBdingData()
+          getData()
         }
-        if (data.success) {
-          msgTitle.value = data.msg;
-          msgType.value = data.success;
-          qtyVisible.value = false;
-        }
-        onSubmit();
       });
     })
     .catch(() => {
@@ -625,162 +408,121 @@ const scrap = (row: any) => {
       });
     });
 };
+const unbinding = (row: any) => {
+  ElMessageBox.confirm("确认解绑", "确认操作", {
+    confirmButtonText: "确定",
+    cancelButtonText: "取消",
+    type: "warning",
+  })
+    .then(() => {
+      DefectiveUnbinding({
+        containerName: row.ContainerName,
+        SupplierContainer: row.BindContainerName,
+        workstationName: opui.station,
+        userAccount: userStore.getUserInfo,
+      }).then((res: any) => {
+        ElNotification({
+          title: "提示信息",
+          message: res.msg,
+          type: res.success ? "success" : "error",
+        });
+        if (res.success) {
+          getBdingData()
+          getData()
+        }
+      });
+    })
+    .catch(() => {
+      ElNotification({
+        type: "info",
+        message: "取消操作",
+      });
+    });
+}
 
-//查询
-const onSubmit = () => {
-  let arr = [];
-  if (form.value.ContainerName !== "") {
-    arr.push(form.value.ContainerName);
-  }
-  DefectiveDisposalList({
-    ...form.value,
-    ContainerName: arr,
-  }).then((res: any) => {
-    if (res.success && res.content) {
-      tableData.value = res.content;
-      projectStore.setFectivekList([]);
+const getBdingData = () => {
+  DefectiveComponentBindHistory(baseForm.value.ContainerName).then((res: any) => {
+    if (res.success) {
+      badData.value = res.content;
+    }
+
+    barCode.value = "";
+  });
+}
+//拆解
+const getChange = () => {
+  DefectiveComponentBindHistory(barCode.value).then((res: any) => {
+
+    if (res.success) {
+      badData.value = res.content;
+      baseForm.value.ContainerName = res.content2[0].containername;
+      baseForm.value.ProductDesc = res.content2[0].Description;
+      baseForm.value.MfgOrderName = res.content2[0].MfgOrderName;
+      baseForm.value.ProductName = res.content2[0].ProductName;
+      baseForm.value.ProductModel = res.content2[0].ProductModel;
+      baseForm.value.SpecDesc = res.content2[0].SpecDesc;
+      baseForm.value.SpecName = res.content2[0].SpecName;
+      badVisible.value = true;
+      UpdateDisassemblyInfo(barCode.value).then((res: any) => {
+        if (res.success) {
+          getData()
+        }
+      })
     } else {
       msgTitle.value = res.msg;
       msgType.value = res.success;
     }
+
+    barCode.value = "";
   });
 };
+const repairCancel = () => {
+  baseFormRef.value.resetFields();
+  inputRef.value.focus();
+  RepairType.value = "R"
+  badVisible.value = false;
+};
+const repairSubmit = () => {
+  ElMessageBox.confirm("确认完成", "确认操作", {
+    confirmButtonText: "确定",
+    cancelButtonText: "取消",
+    type: "warning",
+  })
+  
+    .then(() => {
 
-//解绑
-const unbind = () => {
-  DefectiveUnbinding({
-    containerName: qtyForm.value.ContainerName,
-    containerType: unbindType.value,
-    productName: qtyForm.value.ProductName,
-  }).then((res1: any) => {
-    msgTitle.value = res1.msg;
-    msgType.value = res1.success;
-    if (projectStore.getFectivekList.length === 0) {
-      DefectiveDisposalList({
-        ContainerName: [form.value.ContainerName],
-      }).then((res: any) => {
-        if (res.success && res.content) {
-          tableData.value = res.content;
-          projectStore.setFectivekList([]);
-        } else {
-          msgTitle.value = res.msg;
-          msgType.value = res.success;
+      UnbindingConfirm(
+        {
+          containerName: baseForm.value.ContainerName,
+          RepairType: RepairType.value,
+          // SupplierContainer: row.BindContainerName,
+          workstationName: opui.station,
+          userAccount: userStore.getUserInfo,
         }
-      });
-    } else {
-      getToData();
-    }
-    DefectiveDisposalList({
-      ContainerName: [qtyForm.value.ContainerName],
-    }).then((res: any) => {
-      if (res.success && res.content) {
-        tableData.value = res.content;
-        projectStore.setFectivekList([]);
-      } else {
-        msgTitle.value = res.msg;
-        msgType.value = res.success;
-      }
-    });
-    qtyVisible.value = false;
-    // if (projectStore.getFectivekList.length === 0) {
-    //   onSubmit();
-    // } else {
-    //   getToData();
-    // }
-  });
-};
-
-//拆解
-const getChange = () => {
-  DefectiveDismantle({ ContainerName: barCode.value }).then((res1: any) => {
-    msgTitle.value = res1.msg;
-    msgType.value = res1.success;
-    if (res1.success) {
-      if (projectStore.getFectivekList.length === 0) {
-        // onSubmit();
-        DefectiveDisposalList({
-          ContainerName: [barCode.value],
-        }).then((res: any) => {
-          if (res.success && res.content) {
-            tableData.value = res.content;
-            projectStore.setFectivekList([]);
-          } else {
-            msgTitle.value = res.msg;
-            msgType.value = res.success;
-          }
+      ).then((res: any) => {
+        ElNotification({
+          title: "提示信息",
+          message: res.msg,
+          type: res.success ? "success" : "error",
         });
-      } else {
-        getToData();
-      }
-      barCode.value = "";
-    }
-  });
+        if (res.success) {
+          RepairType.value = "R"
+          getData()
+          badVisible.value = false;
+
+        }
+      })
+
+    })
+    .catch(() => {
+      ElNotification({
+        type: "info",
+        message: "取消操作",
+      });
+    });
+
 };
 
-const qtyCancel = () => {
-  qtyVisible.value = false;
-};
-
-const qtycolumnData = reactive([
-  {
-    text: true,
-    prop: "ContainerName",
-    label: "MES屏条码",
-    width: "",
-    min: true,
-    align: "1",
-  },
-  {
-    text: true,
-    prop: "MfgOrderName",
-    label: "生产计划号",
-    width: "",
-    min: true,
-    align: "1",
-  },
-  {
-    text: true,
-    prop: "BindContainerName",
-    label: "供应商条码",
-    width: "",
-    min: true,
-    align: "1",
-  },
-  {
-    text: false,
-    tag: true,
-    tagType: "number",
-    tagItem: [
-      { text: "", type: "primary", number: 0 },
-      { text: "报废", type: "primary", number: 1 },
-    ],
-    prop: "Status",
-    label: "状态",
-    width: "80",
-    min: true,
-    align: "1",
-  },
-  {
-    isOperation: true,
-    label: "操作",
-    width: "120",
-    align: "center",
-    fixed: "right",
-    operation: [
-      // {
-      //   type: "primary",
-      //   label: "解绑",
-      //   icon: "DocumentRemove",
-      // },
-      {
-        type: "danger",
-        label: "报废",
-        icon: "Delete",
-        buttonClick: scrap,
-      },
-    ],
-  },
-]);
 
 //分页
 const handleSizeChange = (val: any) => {
@@ -793,7 +535,7 @@ const handleCurrentChange = (val: any) => {
 
 const getScreenHeight = () => {
   nextTick(() => {
-    tableHeight.value = window.innerHeight - 365;
+    tableHeight.value = window.innerHeight - 320;
   });
 };
 const handleSizeChange1 = (val: any) => {
@@ -872,7 +614,7 @@ const flexColumnWidth = (label: any, prop: any) => {
   font-size: 1.1rem;
 }
 
-.tabs-css .el-tabs--border-card > .el-tabs__header .el-tabs__item {
+.tabs-css .el-tabs--border-card>.el-tabs__header .el-tabs__item {
   color: #fff;
   // padding: 0 !important;
 }
@@ -883,10 +625,7 @@ const flexColumnWidth = (label: any, prop: any) => {
   // font-weight: bold;
 }
 
-.tabs-css
-  .el-tabs--border-card
-  > .el-tabs__header
-  .el-tabs__item:not(.is-disabled):hover {
+.tabs-css .el-tabs--border-card>.el-tabs__header .el-tabs__item:not(.is-disabled):hover {
   // color: #fff;
   background-color: #fff;
 }

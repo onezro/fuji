@@ -1994,10 +1994,13 @@ const tabChange1 = () => {
         form.value.TempRlueEnable1 = false;
         form.value.TempRlueEnable2 = true;
         form.value.TempRlueEnable3 = false;
-        if (editForm.value.Template01 == ""){
+        // console.log(editForm.value);
+        
+        if (editForm.value.TemplateBox == ""){
             editFormRef.value.resetFields();
             return
         }
+
         getRuleNameData(editForm.value.TemplateBox);
     } else if (activeName.value == "Template04") {
         form.value.TempRlueEnable1 = true;
@@ -2012,6 +2015,7 @@ const tabChange1 = () => {
         form.value.TempRlueEnable1 = false;
         form.value.TempRlueEnable2 = false;
         form.value.TempRlueEnable3 = true;
+        
         if (activeName.value == "TemplateFuselage") {
             if (editForm.value.TemplateFuselage == ""){
                 formRef.value.resetFields();

@@ -333,6 +333,13 @@ export function OrderOnline(data: any) {
         data
     });
 }
+export function SMTOrderOnline(data: any) {
+    return request({
+        url: "/api/order/SMTOrderOnline",
+        method: "post",
+        data
+    });
+}
 export function OrderOffline(data: any) {
     return request({
         url: "/api/order/OrderOffline",
@@ -846,10 +853,48 @@ export function findMfgLine() {
         method: "post"
     })
 }
-
+//日历查询日程
 export function GetWorkLineCalendarAndPlan(data: any) {
     return request({
         url: "/api/WorkLineCalendar/GetWorkLineCalendarAndPlan",
+        method: "post",
+        data
+    })
+}
+//添加主日程
+export function AddUpdateHostCalendar(data: any) {
+    return request({
+        url: "/api/WorkLineCalendar/AddUpdateHostCalendar",
+        method: "post",
+        data
+    })
+}
+
+
+export function AddCalendarPlan(data: any) {
+    return request({
+        url: "/api/WorkLineCalendar/AddCalendarPlan",
+        method: "post",
+        data
+    })
+}
+export function GetCalendarLevelOne(data: any) {
+    return request({
+        url: "/api/WorkLineCalendar/GetWorkLineCalendarSelectTypeLevelOne",
+        method: "post",
+        data
+    })
+}
+export function GetCalendarLevelTwo(data: any) {
+    return request({
+        url: "/api/WorkLineCalendar/GetWorkLineCalendarSelectTypeLevelTwo",
+        method: "post",
+        data
+    })
+}
+export function DeleteCalendarPlan(data: any) {
+    return request({
+        url: "/api/WorkLineCalendar/DeleteCalendarPlan",
         method: "post",
         data
     })

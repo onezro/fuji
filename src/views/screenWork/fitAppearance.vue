@@ -298,7 +298,7 @@
     userAccount: userStore.getUserInfo,
     BarCode: "",
     OrderName: "",
-    BatchQty:1,
+    BatchQty:parseInt(localStorage.getItem("SETPRINT2") ?? "1") || 1,
     TPBatchNo:"",
     keyMaterialList: [],
     tools: "",
@@ -526,19 +526,20 @@
   const getBatchCode=()=>{
     QueryBatchCodeInfoFit(getBatchForm.value).then((res:any)=>{
       batchData.value=res.content
-      if(res.content.length==0){
-        maxQty.value=0
-        if(stopsForm.value.BatchQty==0){
-          stopsForm.value.BatchQty=1
-        }
-       
-      }else{
-        stopsForm.value.TPBatchNo=res.content[0].containername
-        maxQty.value=res.content[0].qty+1
-        // if( maxQty.value>stopsForm.value.BatchQty){
-          stopsForm.value.BatchQty= maxQty.value
-        // }
-      }
+      if (res.content.length == 0) {
+      maxQty.value = 0
+      stopsForm.value.TPBatchNo=""
+      // if (stopsForm.value.BatchQty == 0) {
+      //   stopsForm.value.BatchQty = 1
+      // }
+
+    } else {
+      stopsForm.value.TPBatchNo = res.content[0].containername
+      maxQty.value = res.content[0].qty + 1
+      // if( maxQty.value>stopsForm.value.BatchQty){
+      // stopsForm.value.BatchQty= maxQty.value
+      // }
+    }
     })
   }
   const openSetNum=()=>{
@@ -546,20 +547,22 @@
   }
   const setASYNum = () => {
     if(batchData.value.length>0){
-        if(batchData.value[0].qty>stopsForm.value.BatchQty){
-          ElNotification({
+      if (batchData.value[0].qty > stopsForm.value.BatchQty) {
+      ElNotification({
         title: "提示信息",
         message: `打印数量应该大于${batchData.value[0].containername}的数量`,
-        type:  "error",
+        type: "error",
       });
-        }else{
-          inputRef.value.focus()
-          showSetNum.value = false;
-        }
-    }else{
+    } else {
+      localStorage.setItem("SETPRINT2", JSON.stringify(stopsForm.value.BatchQty));
       inputRef.value.focus()
       showSetNum.value = false;
     }
+  } else {
+    localStorage.setItem("SETPRINT2", JSON.stringify(stopsForm.value.BatchQty));
+    inputRef.value.focus()
+    showSetNum.value = false;
+  }
    
   };
   const setCancel = () => {

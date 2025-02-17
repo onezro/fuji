@@ -45,10 +45,12 @@
                     <el-input-number v-model="stopsForm.BatchQty" :min="maxQty"   />
                 </div> -->
                 <div>
-                  条码批次数量：<span class="text-lg font-bold pl-1 pr-1 bg-slate-300 text-[red]">{{ stopsForm.BatchQty }}</span>
+                  条码批次数量：<span class="text-lg font-bold pl-1 pr-1 bg-slate-300 text-[red]">{{ stopsForm.BatchQty
+                    }}</span>
                 </div>
                 <el-button type="info" class="ml-2" @click="openSetNum">设定</el-button>
-                <el-button type="warning" class="ml-2" @click="unFullBox" :disabled="batchData.length==0">不满箱打印</el-button>
+                <el-button type="warning" class="ml-2" @click="unFullBox"
+                  :disabled="batchData.length == 0">不满箱打印</el-button>
               </div>
             </div>
             <div class="h-[230px] pt-3 pr-5 pl-5 flex justify-between">
@@ -68,12 +70,12 @@
                           --el-switch-off-color: #13ce66;
                         " :active-value="'NG'" :inactive-value="'OK'" active-text="NG" inactive-text="OK" />
                   </el-form-item>
-                    <el-form-item label=""   class="mb-1">
-                    <el-table :data="batchData" size="small" border :style="{ width: '100%' }" >
-                        <el-table-column prop="containername" label="批次条码" width="180" />
-                        <el-table-column prop="qty" label="数量" width="80" />
+                  <el-form-item label="" class="mb-1">
+                    <el-table :data="batchData" size="small" border :style="{ width: '100%' }">
+                      <el-table-column prop="containername" label="批次条码" width="180" />
+                      <el-table-column prop="qty" label="数量" width="80" />
                     </el-table>
-                    </el-form-item>
+                  </el-form-item>
                 </el-form>
                 <!-- <div class="text-xl font-bold "  :style="{ 'color': isGo ? '#00B400' : '#e6a23c' }" v-show="msgType === true || msgTitle === ''">
                     {{ msgTitle === "" ? "请扫描屏材料批次条码" : msgTitle }}
@@ -103,21 +105,21 @@
                   </el-table-column>
                   <el-table-column prop="LoadQueueQty" label="上料总数" width="80" align="center">
                     <template #default="scope">
-                        {{
-                          scope.row.LoadQueueQty == null
-                              ? 0
-                              : scope.row.LoadQueueQty
-                        }}
-                      </template>
+                      {{
+                        scope.row.LoadQueueQty == null
+                          ? 0
+                          : scope.row.LoadQueueQty
+                      }}
+                    </template>
                   </el-table-column>
                   <el-table-column prop="Qty" label="剩余数量" width="80" align="center">
                     <template #default="scope">
-                        <span>{{
+                      <span>{{
                         scope.row.Qty == null
-                              ? 0
-                              : scope.row.Qty
-                        }}</span>
-                      </template>
+                          ? 0
+                          : scope.row.Qty
+                      }}</span>
+                    </template>
                   </el-table-column>
                   <el-table-column prop="MaterialBarCode" label="批次条码" width="150">
                   </el-table-column>
@@ -237,7 +239,7 @@
       :close-on-click-modal="false" :close-on-press-escape="false" @close="setCancel">
       <el-form ref="formRef" :model="stopsForm" label-width="auto">
         <el-form-item label="数量" prop="BatchQty">
-          <el-input-number v-model="stopsForm.BatchQty" :min="maxQty"   />
+          <el-input-number v-model="stopsForm.BatchQty" :min="maxQty" />
           <!-- <el-input v-model="stopsForm.BatchQty"  type="number"/> -->
         </el-form-item>
       </el-form>
@@ -284,7 +286,7 @@ import {
 } from "vue";
 import { cloneDeep } from "lodash-es";
 interface StopsForm {
-    BatchQty: number;
+  BatchQty: number|string;
   workstationName: string;
   result: string;
   userAccount: string;
@@ -319,8 +321,8 @@ const stopsForm = ref<StopsForm>({
   userAccount: userStore.getUserInfo,
   BarCode: "",
   OrderName: "",
-  BatchQty:1,
-  TPBatchNo:"",
+  BatchQty: parseInt(localStorage.getItem("SETPRINT") ?? "1") || 1 ,
+  TPBatchNo: "",
   keyMaterialList: [],
   tools: "",
   txnDate: "",
@@ -505,24 +507,25 @@ const changeList = ref([]);
 const BadtableData = ref([]);
 const isGo = ref(true);
 const barMsg = ref("");
-const getBatchForm=ref({
+const getBatchForm = ref({
   OrderName: "",
   workstationName: opui.station
 })
-const batchData=ref<any[]>([
+const batchData = ref<any[]>([
   {
-    containerName:"打印批次条码",
-    qty:0
+    containerName: "打印批次条码",
+    qty: 0
   }
 ])
-const maxQty=ref(0)
-const showSetNum=ref(false)
+const maxQty = ref(0)
+const showSetNum = ref(false)
 
 onBeforeMount(() => {
   getScreenHeight();
 });
 onMounted(() => {
   window.addEventListener("resize", getScreenHeight);
+  // stopsForm.value.BatchQty=localStorage.getItem("SETPRINT")?parseInt(localStorage.getItem("SETPRINT")):1
   getOrderData();
   // getFocus();
 });
@@ -544,54 +547,57 @@ const formText = (data: string) => {
 };
 
 //获取批次打印信息
-const getBatchCode=()=>{
-  QueryBatchCodeInfo(getBatchForm.value).then((res:any)=>{
-    batchData.value=res.content
-    if(res.content.length==0){
-      maxQty.value=0
-      if(stopsForm.value.BatchQty==0){
-        stopsForm.value.BatchQty=1
-      }
-     
-    }else{
-      stopsForm.value.TPBatchNo=res.content[0].containername
-      maxQty.value=res.content[0].qty+1
+const getBatchCode = () => {
+  QueryBatchCodeInfo(getBatchForm.value).then((res: any) => {
+    batchData.value = res.content
+    if (res.content.length == 0) {
+      maxQty.value = 0
+      stopsForm.value.TPBatchNo=""
+      // if (stopsForm.value.BatchQty == 0) {
+      //   stopsForm.value.BatchQty = 1
+      // }
+
+    } else {
+      stopsForm.value.TPBatchNo = res.content[0].containername
+      maxQty.value = res.content[0].qty + 1
       // if( maxQty.value>stopsForm.value.BatchQty){
-        stopsForm.value.BatchQty= maxQty.value
+      // stopsForm.value.BatchQty= maxQty.value
       // }
     }
   })
 }
-const openSetNum=()=>{
+const openSetNum = () => {
   showSetNum.value = true;
 }
 const setASYNum = () => {
-  if(batchData.value.length>0){
-      if(batchData.value[0].qty>stopsForm.value.BatchQty){
-        ElNotification({
-      title: "提示信息",
-      message: `打印数量应该大于${batchData.value[0].containername}的数量`,
-      type:  "error",
-    });
-      }else{
-        inputRef.value.focus()
-        showSetNum.value = false;
-      }
-  }else{
+  if (batchData.value.length > 0) {
+    if (batchData.value[0].qty > stopsForm.value.BatchQty) {
+      ElNotification({
+        title: "提示信息",
+        message: `打印数量应该大于${batchData.value[0].containername}的数量`,
+        type: "error",
+      });
+    } else {
+      localStorage.setItem("SETPRINT", JSON.stringify(stopsForm.value.BatchQty));
+      inputRef.value.focus()
+      showSetNum.value = false;
+    }
+  } else {
+    localStorage.setItem("SETPRINT", JSON.stringify(stopsForm.value.BatchQty));
     inputRef.value.focus()
     showSetNum.value = false;
   }
- 
+
 };
 const setCancel = () => {
   showSetNum.value = false;
 };
-const unFullBox=()=>{
+const unFullBox = () => {
   DealNoBatchCode({
-    BatchQty:stopsForm.value.BatchQty,
-    workstationName:opui.station,
-    TPBatchNo:stopsForm.value.TPBatchNo
-  }).then((res:any)=>{
+    BatchQty: stopsForm.value.BatchQty,
+    workstationName: opui.station,
+    TPBatchNo: stopsForm.value.TPBatchNo
+  }).then((res: any) => {
     msgTitle.value = res.msg;
     msgType.value = res.success;
   })
@@ -652,16 +658,16 @@ const getChange = () => {
       }
     } else {
       if (stopsForm.value.result == "OK") {
-        if(barData.value.length==0){
+        if (barData.value.length == 0) {
           msgTitle.value = "请进行物料上料";
-          barCode.value=""
+          barCode.value = ""
           msgType.value = false;
           return
         }
         if (isKeyZero.value == -1 && isNoKeyZero.value == -1) {
           if (isKeyEmpty.value == -1) {
-              stopsForm.value.BarCode = barCodeData;
-              goStop();
+            stopsForm.value.BarCode = barCodeData;
+            goStop();
           } else {
             verifyBarCode(barCodeData);
           }
@@ -671,15 +677,15 @@ const getChange = () => {
             msgTitle.value = `${barData.value[isKeyEmpty.value].MaterialName
               }关键料剩余为0，请进行上料`;
           }
-         else if (isNoKeyZero.value != -1) {
+          else if (isNoKeyZero.value != -1) {
             msgTitle.value = `${barData.value[isNoKeyZero.value].MaterialName
               }批次物料剩余为0，请进行上料`;
-          }else{
+          } else {
             msgTitle.value = `${barData.value[isKeyEmpty.value].MaterialName
-            }关键料剩余为0和${barData.value[isNoKeyZero.value].MaterialName
+              }关键料剩余为0和${barData.value[isNoKeyZero.value].MaterialName
               }批次物料剩余为0，请进行上料`;
           }
-          
+
         }
       } else {
         badForm.value.containerName = barCodeData;
@@ -711,6 +717,7 @@ const goStop = () => {
     isGo.value = true;
     stopsForm.value.BarCode = "";
     stopsForm.value.result = "OK";
+   
     barCode.value = "";
 
     if (res.success) {
@@ -741,10 +748,15 @@ const isKeyEmpty = computed(() => {
 });
 //验证绑定
 const verifyBarCode = (barCodeData: any) => {
+  const keyProductName = barData.value.find(
+    (b: any) => b.IssueControl == 1
+  );
+  let keyData = cloneDeep(keyProductName)
   let data1 = {
     BarCode: barCodeData,
     OrderName: form.value.MfgOrderName,
     workstationName: opui.station,
+    ProductName: keyData.MaterialName
   };
   JudgeKeyMaterial(data1).then((res: any) => {
     msgTitle.value = res.msg;
@@ -760,10 +772,10 @@ const verifyBarCode = (barCodeData: any) => {
         return;
       }
       if (barData.value[keyIndex].MaterialBarCode == "") {
-        
+
         barData.value[keyIndex].MaterialBarCode = barCodeData;
         stopsForm.value.keyMaterialList.push({
-          MaterialBarCode:res.content.MaterialCode==""||res.content.MaterialCode==null? barCodeData:res.content.MaterialCode,
+          MaterialBarCode: res.content.MaterialCode == "" || res.content.MaterialCode == null ? barCodeData : res.content.MaterialCode,
           MaterialName: barData.value[keyIndex].MaterialName,
         });
         barData.value[keyIndex].barCount++;
@@ -875,7 +887,7 @@ const radioChange = (args: any) => {
       hisForm.value.MfgOrderName = args[0].MfgOrderName;
       isKeyForm.value.OrderName = args[0].MfgOrderName;
       keyForm.value.OrderName = args[0].MfgOrderName;
-      getBadForm.value.orderName=args[0].MfgOrderName
+      getBadForm.value.orderName = args[0].MfgOrderName
       keyForm.value.ProductName = args[0].ProductName;
       getBatchForm.value.OrderName = args[0].MfgOrderName;
       msgType.value = true;
@@ -884,7 +896,7 @@ const radioChange = (args: any) => {
       inputRef.value.focus()
       // getKeyMaterial()
       // getHisData();
-    } 
+    }
     getKeyMaterial();
     getBatchCode()
     getHisData();
@@ -896,7 +908,7 @@ const radioChange = (args: any) => {
 const getKeyMaterial = () => {
   barData.value = [];
   stopsForm.value.keyMaterialList = [];
-  barMsg.value=""
+  barMsg.value = ""
   QueryKeyMaterial(keyForm.value).then((res: any) => {
     barData.value = res.content;
     barData.value.sort((a, b) => a.IssueControl - b.IssueControl);
@@ -912,9 +924,9 @@ const getKeyMaterial = () => {
         msgType.value = true;
         barMsg.value = `请先扫描关键物料${barData.value[0].MaterialName}`;
       }
-    }else{
+    } else {
       msgType.value = false
-      msgTitle.value="请进行物料上料"
+      msgTitle.value = "请进行物料上料"
     }
   });
 };
@@ -948,7 +960,7 @@ const getOrderData = () => {
       orderTable.value.data = data;
       if (data.length >= 1) {
         defaultSelectVal.value[0] = data[0].MfgOrderName;
-       
+
       }
     }
     inputRef.value.focus()

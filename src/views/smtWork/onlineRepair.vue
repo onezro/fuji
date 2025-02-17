@@ -391,12 +391,9 @@ const badColumn = ref([
 ]);
 const barCode = ref("");
 const repairForm = ref({
-  // SpecName: "",
-  // remark: "",
   IsDefectHistoryId: "",
   ContainerName: "",
   WorkStation: opui.station,
-  // Status: "",
   RepairAction: "",
   RepairRemark: "",
   CreatedBy: userStore.getUserInfo,

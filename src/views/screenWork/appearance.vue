@@ -472,16 +472,14 @@ const getChange = (val: any) => {
           }
         });
       }
-      if (checkStringType(barCodeData) == "MATER") {
+      if (checkStringType(barCodeData) == "MATER" || checkStringType(barCodeData) == "BDY") {
         stopsForm.value.ContainerName = barCodeData;
         materBarCode.value = barCodeData;
         getMaterData();
       } else {
-        console.log(stopsForm.value);
-
         if (
           stopsForm.value.ContainerName != "" &&
-          checkStringType(stopsForm.value.ContainerName) == "MATER"
+         ( checkStringType(stopsForm.value.ContainerName) == "MATER"|| checkStringType(stopsForm.value.ContainerName) == "BDY")
         ) {
           console.log(barCodeData);
           if (checkStringType(barCodeData) == "SCR") {
@@ -512,7 +510,26 @@ const getChange = (val: any) => {
 
         }
       }
+      if(stopsForm.value.ContainerName == "" &&checkStringType(barCodeData) != "SCR"&&checkStringType(barCodeData) != "MATER" && checkStringType(barCodeData) != "BDY"){
+        stopsForm.value.ContainerName = barCodeData;
+        MaterialVisualCheck(stopsForm.value).then((res: any) => {
+          msgTitle.value = res.msg;
+          msgType.value = res.success;
+          if (res.success) {
+            stopsForm.value.CheckResult = "OK";
+            stopsForm.value.ContainerName = "";
+            form.value = { ...res.content[0] };
+            hisForm.value.MfgOrderName = res.content[0].MfgOrderName
+            getHisData();
+          } else {
+            stopsForm.value.ContainerName = "";
+            barCode.value = "";
+          }
+        });
+      }
     } else {
+      // console.log(barCodeData);
+
       badForm.value.containerName = barCodeData;
       // badVisible.value = true;
       let data1 = {
@@ -550,19 +567,28 @@ const getMaterData = () => {
     msgTitle.value = res.msg;
     msgType.value = res.success;
     barData.value = [res.content];
+   
     if (res.success) {
       barMsg.value = "请扫描供应商批次条码"
+     
     } else {
       msgTitle.value = res.msg;
       msgType.value = res.success;
     }
     if (res.content.UseQty == res.content.Qty) {
+      msgTitle.value = `${materBarCode.value}条码数量已使用完`;
+      msgType.value = false;
       barMsg.value = "请扫描屏条码/物料批次条码"
       barData.value = [];
       materBarCode.value = ""
+     
       stopsForm.value.ContainerName = "";
       stopsForm.value.VendorContainer = "";
+    }else{
+      msgTitle.value = ``;
+      msgType.value = true;
     }
+    
   });
 };
 const getHisData = () => {
