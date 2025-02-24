@@ -121,12 +121,12 @@
           </el-select>
         </el-form-item>
         <el-form-item label="计划类型" prop="SelectType">
-          <el-select v-model="planForm.SelectType" placeholder="计划类型" :clearble="false" style="width: 100px"
+          <el-select v-model="planForm.SelectType" placeholder="计划类型" :clearble="false" style="width: 100px" :disabled="planForm.WorkStatus!='其他'"
             @change="changeLevel">
             <el-option v-for="l in levelOneList" :label="l.CalendarSelectType_Name"
               :value="l.CalendarSelectType_Name" />
           </el-select>
-          <el-select v-model="planForm.SelectType2" placeholder="" :clearble="false" style="width: 100px"
+          <el-select v-model="planForm.SelectType2" placeholder="" :clearble="false" style="width: 100px" :disabled="planForm.WorkStatus!='其他'"
             class="ml-[20px]">
             <el-option v-for="l in levelTwoList" :label="l.CalendarSelectType_Name"
               :value="l.CalendarSelectType_Name" />
@@ -143,63 +143,63 @@
         <el-button @click="secondClose">取消</el-button>
       </template>
     </el-drawer>
-    <el-dialog v-model="planVisible" title="日程计划" draggable width="300px" :append-to-body="true"
-    :close-on-click-modal="false" :close-on-press-escape="false" >
+    <el-dialog v-model="planVisible" title="日程计划" draggable width="500px" :append-to-body="true"
+      :close-on-click-modal="false" :close-on-press-escape="false">
       <el-form ref="planFormRef" :model="editForm" label-width="auto">
 
         <el-form-item label="计划名称" prop="PlanName">
-          <el-input v-model="editForm.PlanName" style="width: 220px" disabled>
+          <el-input v-model="editForm.PlanName" style="width: 220px">
           </el-input>
         </el-form-item>
-       <el-form-item label="开始日期" prop="PlanDate">
-          <el-date-picker v-model="editForm.PlanDate" value-format="YYYY-MM-DD" type="date" placeholder="请选择日期" disabled
+        <el-form-item label="开始日期" prop="PlanDate">
+          <el-date-picker v-model="editForm.PlanDate" value-format="YYYY-MM-DD" type="date" placeholder="请选择日期"
             :clearble="false" @change="changeDate" />
         </el-form-item>
-        <!-- <el-form-item label="开始时间" prop="StartTime">
-          <el-time-select v-model="planForm.StartTime" style="width: 220px" start="00:00" step="00:15" end="23:00"
+        <el-form-item label="开始时间" prop="StartTime">
+          <el-time-select v-model="editForm.StartTime" style="width: 220px" start="00:00" step="00:15" end="23:00"
             format="HH:mm:ss" />
-       
-        </el-form-item> -->
+
+        </el-form-item>
 
         <el-form-item label="持续小时" prop="TimeLong">
-          <el-input type="number" v-model.number="editForm.TimeLong" style="width: 220px" disabled>
+          <el-input type="number" v-model.number="editForm.TimeLong" style="width: 220px">
             <template #append>小时</template>
           </el-input>
         </el-form-item>
-          <!--<el-form-item label="工作状态" prop="WorkStatus">
-          <el-radio-group v-model="planForm.WorkStatus">
+        <el-form-item label="工作状态" prop="WorkStatus">
+          <el-radio-group v-model="editForm.WorkStatus">
             <el-radio value="工作">工作</el-radio>
             <el-radio value="计划停机">计划停机</el-radio>
             <el-radio value="其他">其他</el-radio>
           </el-radio-group>
-        </el-form-item> -->
+        </el-form-item>
         <el-form-item label="产线" prop="WorkLine">
           <el-select v-model="editForm.WorkLine" placeholder="请选择产线" :clearble="false" style="width: 220px" disabled>
             <el-option v-for="l in lineData" :label="l.Description" :value="l.MfgLineName" />
           </el-select>
         </el-form-item>
-        <!-- <el-form-item label="计划类型" prop="SelectType">
-          <el-select v-model="planForm.SelectType" placeholder="计划类型" :clearble="false" style="width: 100px"
+        <el-form-item label="计划类型" prop="SelectType">
+          <el-select v-model="editForm.SelectType" placeholder="计划类型" :clearble="false" style="width: 100px" :disabled="editForm.WorkStatus!='其他'"
             @change="changeLevel">
             <el-option v-for="l in levelOneList" :label="l.CalendarSelectType_Name"
               :value="l.CalendarSelectType_Name" />
           </el-select>
-          <el-select v-model="planForm.SelectType2" placeholder="" :clearble="false" style="width: 100px"
+          <el-select v-model="editForm.SelectType2" placeholder="" :clearble="false" style="width: 100px" :disabled="editForm.WorkStatus!='其他'"
             class="ml-[20px]">
             <el-option v-for="l in levelTwoList" :label="l.CalendarSelectType_Name"
               :value="l.CalendarSelectType_Name" />
           </el-select>
-        </el-form-item> -->
+        </el-form-item>
 
-        <!-- <el-form-item label="描述" prop="PlanDescription">
-          <el-input v-model="planForm.PlanDescription" style="width: 220px">
+        <el-form-item label="描述" prop="PlanDescription">
+          <el-input v-model="editForm.PlanDescription" style="width: 220px">
           </el-input>
-        </el-form-item> -->
+        </el-form-item>
       </el-form>
       <template #footer>
         <span class="dialog-footer">
           <el-button type="danger" @click="deletePlan">删除</el-button>
-          <el-button type="primary" @click=""> 编辑 </el-button>
+          <el-button type="primary" @click="editPlan"> 修改 </el-button>
         </span>
       </template>
     </el-dialog>
@@ -214,7 +214,9 @@ import {
   AddCalendarPlan,
   GetCalendarLevelOne,
   GetCalendarLevelTwo,
-  DeleteCalendarPlan
+  DeleteCalendarPlan,
+  SelectCalendarPlan,
+  UpdateCalendarPlan
 } from "@/api/operate";
 import { ElNotification, ElMessageBox } from "element-plus";
 import { ref, nextTick, onMounted, reactive, computed } from "vue";
@@ -354,23 +356,34 @@ const eventClickData = (val: any) => {
 
   let data = val.event._def.extendedProps
   if (data.Calendar_Type == "日程计划") {
-    editForm.value = {
-      PlanId: data.Calendar_PlanId,
-      WorkLine: data.Calendar_ProductLine,
-      PlanName: data.Calendar_Name,
-      PlanDate: data.Calendar_Date,
-      StartTime: "",
-      TimeLong: "",
-      WorkStatus: "其他",
+
+    // editForm.value.TimeLong = dayjs(data.Calendary_End).diff(
+    //   data.Calendar_Start,
+    //   "hours"
+    // );
+    SelectCalendarPlan({ PlanId: data.Calendar_PlanId }).then((res: any) => {
+      console.log(res);
+      editForm.value = {
+        PlanId: data.Calendar_PlanId,
+        WorkLine: res.content[0].CalendarHead_ProductLine,
+        PlanName: data.Calendar_Name,
+        PlanDate: res.content[0].CalendarPlan_SelectDate,
+        StartTime: res.content[0].CalendarPlan_SelectTime,
+        TimeLong: res.content[0].CalendarPlan_TimeLong,
+        WorkStatus: res.content[0].CalendarPlan_StatusType,
+        SelectType: res.content[0].CalendarPlan_SelectType,
+        SelectType2: res.content[0].CalendarPlan_SelectType2,
+        PlanDescription: res.content[0].CalendarPlan_Description,
+        UserNo: userStore.getUserInfo,
+      }
+
+    })
+    GetCalendarLevelOne({
       SelectType: "",
-      SelectType2: "",
-      PlanDescription: "",
       UserNo: "",
-    }
-    editForm.value.TimeLong = dayjs(data.Calendary_End).diff(
-      data.Calendar_Start,
-      "hours"
-    );
+    }).then((res: any) => {
+      levelOneList.value = res.content;
+    });
     planVisible.value = true
   }
 
@@ -419,6 +432,32 @@ const deletePlan = () => {
       });
     });
 }
+const editPlan = () => {
+  UpdateCalendarPlan(editForm.value).then((res: any) => {
+    if (res.success) {
+      ElNotification({
+        title: "提示信息",
+        message: res.msg,
+        type: "success",
+      });
+      editForm.value = {
+        PlanId: "",
+        WorkLine: "",
+        PlanName: "",
+        PlanDate: "",
+        StartTime: "",
+        TimeLong: "",
+        WorkStatus: "",
+        SelectType: "",
+        SelectType2: "",
+        PlanDescription: "",
+        UserNo: "",
+      }
+      planVisible.value = false
+      getData()
+    }
+  })
+}
 const calendarOptions = reactive({
   height: "100%",
   plugins: [dayGridPlugin, interactionPlugin, timeGridPlugin, listPlugin],
@@ -436,7 +475,7 @@ const calendarOptions = reactive({
   nowIndicator: true, //是否显示时间线
   // slotEventOverlap:false,
   // slotMinutes:0,
-  slotDuration:'01:00',
+  slotDuration: '01:00',
   displayEventTime: false,
   // headerToolbar: {
   //   left: 'prev next',
@@ -469,20 +508,20 @@ onMounted(() => {
 
 const getData = () => {
   GetWorkLineCalendarAndPlan(getForm.value).then((res: any) => {
-    console.log(res);
+    // console.log(res);
 
-    const dataArr = [
-      {
-        title: "吃饭休息",
-        start: "2025-02-07 08:30:00",
-        end: "2025-02-07 17:30:00",
-        allDay: false,
-        shift: "day", // 自定义属性，表示白班
-        color: "#FFFFFF", // 可以设置事件颜色（可选）
-        backgroundColor: "#333", // 背景颜色（可选）
-        borderColor: "#000000", // 边框颜色（可选）
-      },
-    ];
+    // const dataArr = [
+    //   {
+    //     title: "吃饭休息",
+    //     start: "2025-02-07 08:30:00",
+    //     end: "2025-02-07 17:30:00",
+    //     allDay: false,
+    //     shift: "day", // 自定义属性，表示白班
+    //     color: "#FFFFFF", // 可以设置事件颜色（可选）
+    //     backgroundColor: "#333", // 背景颜色（可选）
+    //     borderColor: "#000000", // 边框颜色（可选）
+    //   },
+    // ];
     dataSelet.value = [];
     dataSelet.value = res.content.map((item: any) => {
       if (item.Calendar_Name == "白班") {

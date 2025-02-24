@@ -170,10 +170,11 @@
                 {{ scope.row.State == 0 ? "NG" : "OK" }}
               </template>
             </el-table-column> -->
-            <el-table-column label="操作" width="150">
+            <el-table-column label="操作" width="300">
               <template #default="scope">
-                <el-button type="warning" size="small" @click.prevent="unbinding(scope.row)">解绑</el-button>
-                <el-button type="danger" size="small" @click.prevent="scrap(scope.row)">报废</el-button>
+                <el-button type="warning" size="small" @click.prevent="unbinding(scope.row)" :disabled="isDisabled&&scope.$index!=0">解绑(良品)</el-button>
+                <el-button type="danger" size="small" @click.prevent="scrap(scope.row,'原材不良')" :disabled="isDisabled&&scope.$index!=0">原材不良</el-button>
+                <el-button type="danger" size="small" @click.prevent="scrap(scope.row,'制程报废')" :disabled="isDisabled&&scope.$index!=0">制程报废</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -199,6 +200,7 @@ import {
   reactive,
   onMounted,
   nextTick,
+  computed,
   watch,
   onBeforeMount,
   onBeforeUnmount,
@@ -351,6 +353,15 @@ watch(
   }
 );
 
+const isDisabled=computed(()=>{
+    let isEixt=badData.value.findIndex((item:any)=>item.BindContainerName!=null||item.BindContainerName!=="")
+    if(isEixt!=-1){
+      return true
+    }else{
+      return false
+    }
+})
+
 onBeforeMount(() => {
   getScreenHeight();
   let end: string = setTodayDate();
@@ -377,8 +388,8 @@ const getData = () => {
 
 
 //报废
-const scrap = (row: any) => {
-  ElMessageBox.confirm("确认报废", "确认操作", {
+const scrap = (row: any,type:any) => {
+  ElMessageBox.confirm(`确认${type}`, "确认操作", {
     confirmButtonText: "确定",
     cancelButtonText: "取消",
     type: "warning",
@@ -386,9 +397,10 @@ const scrap = (row: any) => {
     .then(() => {
       DefectiveScrap({
         containerName: row.ContainerName,
-        SupplierContainer: row.BindContainerName,
+        SupplierContainer: row.BindContainerName==null||row.BindContainerName==""?row.ContainerName:row.BindContainerName,
         workstationName: opui.station,
         userAccount: userStore.getUserInfo,
+        ScrapType:type
       }).then((res: any) => {
         ElNotification({
           title: "提示信息",

@@ -210,7 +210,7 @@ const addVisible = ref(false);
 const editVisible = ref(false);
 const formRef = ref();
 const form = ref({
-  employeeId: "",
+  employeeName: "",
   id: 0,
   roleId: "",
   roleIdArr:[],
@@ -386,7 +386,7 @@ const editSubmit = () => {
 };
 
 const getHasRole = () => {
-  findEmployeeRoles(form.value.employeeId).then((data: any) => {
+  findEmployeeRoles(form.value.employeeName).then((data: any) => {
     if (data.code == 100200) {
       //  console.log(data);
       if(data.content==null){
@@ -449,12 +449,12 @@ const dataPrecc = (data: any) => {
 };
 
 const handleEdit = (row: any) => {
-  // console.log(row);
+  console.log(row);
 
   roleName.value = row.fullName;
   // form.value.roleId = row.RoleId;
-  form.value.employeeId = row.employeeId;
-  findEmployeeRoles(row.employeeId).then((data: any) => {
+  form.value.employeeName = row.employeeName;
+  findEmployeeRoles(row.employeeName).then((data: any) => {
     if (data.content == null || data.content == undefined) {
       hasRole.value = [];
     } else {
@@ -507,7 +507,7 @@ const handleClose = (tag: any) => {
   })
     .then(() => {
       deletefirstRole({
-        EmpId: form.value.employeeId,
+        EmpId: form.value.employeeName,
         RoleId: tag.RoleID,
       }).then((data: any) => {
         // console.log(data);

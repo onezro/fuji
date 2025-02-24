@@ -204,12 +204,13 @@ import {
 } from "@/api/scrApi";
 import tableTem from "@/components/tableTem/index.vue";
 import selectTa from "@/components/selectTable/index.vue";
+
 import { useAppStoreWithOut } from "@/stores/modules/app";
 import { useUserStoreWithOut } from "@/stores/modules/user";
 import { checkStringType } from "@/utils/barcodeFormat";
 // import formTemple from '@/components/formTem/form.vue'
 import type { Formspan, FormHeader, OrderData } from "@/typing";
-import { ElMessage, ElNotification, ElMessageBox } from "element-plus";
+import { ElNotification } from "element-plus";
 import {
   ref,
   reactive,
@@ -467,6 +468,7 @@ const getChange = (val: any) => {
             hisForm.value.MfgOrderName = res.content[0].MfgOrderName
             getHisData();
           } else {
+          //  /
             stopsForm.value.ContainerName = "";
             barCode.value = "";
           }

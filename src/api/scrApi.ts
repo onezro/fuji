@@ -1,4 +1,5 @@
 import request from "@/request/scrRequest";
+import norequest from "@/request/noLoScrRequest";
 //查询屏车间打印数据
 export function QueryScreEPrintData(data: any) {
   return request({
@@ -337,7 +338,7 @@ export function MoveStdNew(data: any) {
 
 //获取批次打印信息
 export function QueryBatchCodeInfo(data: any) {
-  return request({
+  return norequest({
     url: "/api/SCNFitTogether/QueryBatchCodeInfo",
     method: "post",
     data,

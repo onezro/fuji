@@ -28,7 +28,7 @@
             <el-tooltip content="编辑" placement="top" v-if="scope.row.SubItem">
               <el-button type="primary" icon="EditPen" size="small" @click.prevent="handleEdit(scope.row)"></el-button>
             </el-tooltip>
-            <el-tooltip content="删除" placement="top" v-if="scope.row.SubItem">
+            <el-tooltip content="删除" placement="top"  v-if="scope.row.SubItem">
               <el-button type="danger" icon="Delete" size="small" @click.prevent="handleDelete(scope.row)"></el-button>
             </el-tooltip>
           </template>
@@ -42,7 +42,7 @@
       </div>
     </el-card>
     <el-dialog :append-to-body="true" :close-on-click-modal="false" v-model="addVisible" @close="addCancel()" title="添加"
-      width="50%" align-center>
+      width="50%">
       <el-form ref="formRef" :model="form" label-position="left" label-width="auto">
         <el-row :gutter="50">
           <el-col :span="12">
@@ -137,24 +137,7 @@
               </el-form-item>
             </el-col>
           </el-row>
-          <el-row :gutter="50">
-            <el-col :span="12">
-              <el-form-item label="检查周期" :prop="'stepItemList.' + index + '.Unit'">
-                <el-select v-model="item.Unit" placeholder="请选择">
-                    <el-option label="周" value="W" />
-                    <el-option label="天" value="D" />
-                    <el-option label="小时" value="H" />
-                </el-select>
-                <!-- <el-input type="textarea" v-model="item.Unit" placeholder="子项检查解决办法"></el-input> -->
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item label="检查频次" :prop="'stepItemList.' + index + '.Frequency'">
-                <el-input type="number" v-model="item.Frequency" placeholder="检查频次"></el-input>
-              </el-form-item>
-            </el-col>
-           
-          </el-row>
+          <el-button v-if="index != 0" type="danger" @click="deleteSon(index)">删除子项</el-button>
         </div>
       </el-form>
       <!-- </el-form> -->
@@ -168,7 +151,7 @@
       </template>
     </el-dialog>
     <el-dialog :append-to-body="true" :close-on-click-modal="false" v-model="editVisible" @close="eidtCancel()"
-      title="修改" width="50%" align-center>
+      title="修改" width="50%">
       <el-form ref="eidtRef" :model="editForm" label-width="auto">
         <el-row :gutter="50">
           <el-col :span="12">
@@ -229,6 +212,7 @@
               </el-select>
             </el-form-item>
           </el-col>
+
         </el-row>
 
         <el-row :gutter="50">
@@ -242,6 +226,7 @@
               <el-input v-model="editForm.StepItemList[0].SubItemName" placeholder="子项名称"></el-input>
             </el-form-item>
           </el-col>
+
         </el-row>
         <el-row :gutter="50">
           <el-col :span="12">
@@ -254,6 +239,7 @@
                 placeholder="子项检验方法"></el-input>
             </el-form-item>
           </el-col>
+
         </el-row>
         <el-row :gutter="50">
           <el-col :span="12">
@@ -265,22 +251,6 @@
             <el-form-item label="解决办法">
               <el-input type="textarea" v-model="editForm.StepItemList[0].SubItemSolution"
                 placeholder="子项检查解决办法"></el-input>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row :gutter="50">
-          <el-col :span="12">
-            <el-form-item label="检查周期">
-              <el-select v-model="editForm.StepItemList[0].Unit" placeholder="请选择">
-                    <el-option label="周" value="W" />
-                    <el-option label="天" value="D" />
-                    <el-option label="小时" value="H" />
-                </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="检查频次">
-              <el-input type="number" v-model="editForm.StepItemList[0].Frequency" placeholder="检查频次"></el-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -326,7 +296,7 @@ const formRef = ref();
 const getForm = reactive({
   Product: "*",
   WorkSection: "",
-  inspectType: "RI",
+  inspectType: "FI",
   StepList: [
     {
       Step: 0,
@@ -357,15 +327,13 @@ const form = reactive({
     {
       SubItemName: "",
       SubItem: 1,
-      ConfirmType: "text",
-      IsUpload: "N",
+      ConfirmType:"text",
+      IsUpload:"N",
       SubItemMethod: "",
       SubItemBasic: "",
       SubItemSolution: "",
       SubItemAim: "",
       SubItemType: "",
-      Frequency: 1,
-      Unit: "W",
     },
   ],
 });
@@ -379,45 +347,39 @@ const editForm = reactive({
     {
       SubItemName: "",
       SubItem: "",
-      ConfirmType: "text",
-      IsUpload: "N",
+      ConfirmType:"text",
+      IsUpload:"N",
       SubItemMethod: "",
       SubItemBasic: "",
       SubItemSolution: "",
       SubItemAim: "",
       SubItemType: "",
-      Frequency: 1,
-      Unit: "W",
     },
   ],
 });
 const editHear = reactive<InstanceType<typeof AllInspection>>({
   Product: "",
   WorkSection: "",
-  inspectType: "RI",
+  inspectType: "FI",
   StepList: [],
 });
 const addFrom = reactive<InstanceType<typeof AllInspection>>({
   Product: "",
   WorkSection: "",
-  inspectType: "RI",
+  inspectType: "FI",
   StepList: [],
 });
 const deleteForm = reactive<InstanceType<typeof AllInspection>>({
   product: "",
-  inspectType: "RI",
+  inspectType: "FI",
   stepList: [],
 });
 
-watch(
-  () => form.Step,
-  (newVal, oldVal) => {
-    if (newVal !== oldVal) {
-      if (addFrom.WorkSection !== "") {
-        const autoData = tableData.value.filter(
-          (t: any) => addFrom.WorkSection === t.WorkSection
-        );
-        if (autoData.length == 0) {
+watch(() => form.Step, (newVal, oldVal) => {
+  if (newVal !== oldVal) {
+    if (addFrom.WorkSection !== '') {
+      const autoData = tableData.value.filter((t: any) => addFrom.WorkSection === t.WorkSection)
+      if (autoData.length == 0) {
           form.StepItemList[0].SubItem = 1;
         } else {
           const data = cloneDeep(autoData[0]);
@@ -434,11 +396,11 @@ watch(
             form.StepItemList[0].SubItem = 1;
           }
         }
-      }
     }
-  },
-  { deep: true }
-);
+
+
+  }
+}, { deep: true })
 
 onBeforeMount(() => {
   getScreenHeight();
@@ -464,22 +426,22 @@ const getData = () => {
 const openAdd = () => {
   addVisible.value = true;
 };
-// const addSon = () => {
-//   form.StepItemList.push({
-//     SubItemName: "",
-//     SubItem: 0,
-//     SubItemMethod: "",
-//     ConfirmType: "text",
-//     IsUpload: "N",
-//     SubItemBasic: "",
-//     SubItemSolution: "",
-//     SubItemAim: "",
-//     SubItemType: "",
-//   });
-// };
-// const deleteSon = (index: any) => {
-//   form.StepItemList = form.StepItemList.filter((v: any, i) => i !== index);
-// };
+const addSon = () => {
+  form.StepItemList.push({
+    SubItemName: "",
+    SubItem: 0,
+    SubItemMethod: "",
+    ConfirmType:"text",
+    IsUpload:"N",
+    SubItemBasic: "",
+    SubItemSolution: "",
+    SubItemAim: "",
+    SubItemType: "",
+  });
+};
+const deleteSon = (index: any) => {
+  form.StepItemList = form.StepItemList.filter((v: any, i) => i !== index);
+};
 
 const addCancel = () => {
   addVisible.value = false;
@@ -488,23 +450,21 @@ const addCancel = () => {
     SubItemName: "",
     SubItem: 1,
     SubItemMethod: "",
-    ConfirmType: "text",
-    IsUpload: "N",
+    ConfirmType:"text",
+    IsUpload:"N",
     SubItemBasic: "",
     SubItemSolution: "",
     SubItemAim: "",
     SubItemType: "",
-    Frequency: 1,
-      Unit: "W",
-  };
+  }
   addFrom.stepList = [];
-  addFrom.WorkSection = "";
+  addFrom.WorkSection = ""
   resetForm();
   // formRef.value.resetFields()
 };
 //添加确定
 const addSubmit = () => {
-  addFrom.StepList[0] = form;
+  addFrom.StepList[0]=form
   InsertInspect(addFrom).then((res: any) => {
     // console.log(res);
     if (res.code == 100200) {
@@ -522,20 +482,18 @@ const addSubmit = () => {
     form.StepItemList[0] = {
       SubItemName: "",
       SubItem: 1,
-      ConfirmType: "text",
-      IsUpload: "N",
+      ConfirmType:"text",
+      IsUpload:"N",
       SubItemMethod: "",
       SubItemBasic: "",
       SubItemSolution: "",
       SubItemAim: "",
       SubItemType: "",
-      Frequency: 1,
-      Unit: "W",
-    };
+    }
     addFrom.stepList = [];
-    addFrom.WorkSection = "";
+    addFrom.WorkSection = ""
   });
-
+  
   // console.log( addFrom.StepList);
 };
 const handleAdd = (row: any) => {
@@ -611,14 +569,12 @@ const eidtData = (row: any) => {
   editForm.StepItemList[0].SubItemType = row.SubItemType;
   editForm.StepItemList[0].ConfirmType= row.ConfirmType
   editForm.StepItemList[0].IsUpload= row.IsUpload
-  editForm.StepItemList[0].Frequency=row.Frequency
-  editForm.StepItemList[0].Unit=row.Unit
+
 };
 //删除
 const handleDelete = (row: any) => {
   eidtData(row);
   editHear.StepList.push(editForm);
-  
   // deleteForm.stepList.push(editForm);
   ElMessageBox.confirm("确定删除", "确认操作", {
     confirmButtonText: "确定",
@@ -627,8 +583,8 @@ const handleDelete = (row: any) => {
   })
     .then(() => {
       DeleteInspectData(editHear).then((data: any) => {
-        // console.log(res);
         editHear.StepList=[]
+        // console.log(res);
         if ((data.code = 100200)) {
           getData();
           ElNotification({

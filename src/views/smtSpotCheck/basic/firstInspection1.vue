@@ -4,8 +4,18 @@
       <div class="pb-2">
         <el-button type="primary" @click="openAdd" size="small">添加</el-button>
       </div>
-      <el-table size="small" :data="tableData.slice((currentPage - 1) * pageSize, currentPage * pageSize)
-        " stripe border fit :height="tableHeight" row-key="step1" :tree-props="{ children: 'stepItemList' }">
+      <el-table
+        size="small"
+        :data="
+          tableData.slice((currentPage - 1) * pageSize, currentPage * pageSize)
+        "
+        stripe
+        border
+        fit
+        :height="tableHeight"
+        row-key="step1"
+        :tree-props="{ children: 'stepItemList' }"
+      >
         <!-- <el-table-column label="序号" width="60px" type="index" align="center" /> -->
         <el-table-column prop="WorkSection" label="工段"> </el-table-column>
         <el-table-column prop="ProductName" label="产品编码"> </el-table-column>
@@ -23,52 +33,68 @@
         <el-table-column fixed="right" label="操作" width="160" align="center">
           <template #default="scope">
             <el-tooltip content="添加" placement="top">
-              <el-button type="warning" icon="Plus" size="small" @click.prevent="handleAdd(scope.row)"></el-button>
+              <el-button
+                type="warning"
+                icon="Plus"
+                size="small"
+                @click.prevent="handleAdd(scope.row)"
+              ></el-button>
             </el-tooltip>
             <el-tooltip content="编辑" placement="top" v-if="scope.row.SubItem">
-              <el-button type="primary" icon="EditPen" size="small" @click.prevent="handleEdit(scope.row)"></el-button>
+              <el-button
+                type="primary"
+                icon="EditPen"
+                size="small"
+                @click.prevent="handleEdit(scope.row)"
+              ></el-button>
             </el-tooltip>
             <el-tooltip content="删除" placement="top" v-if="scope.row.SubItem">
-              <el-button type="danger" icon="Delete" size="small" @click.prevent="handleDelete(scope.row)"></el-button>
+              <el-button
+                type="danger"
+                icon="Delete"
+                size="small"
+                @click.prevent="handleDelete(scope.row)"
+              ></el-button>
             </el-tooltip>
           </template>
         </el-table-column>
       </el-table>
       <div class="mt-2">
-        <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange"
-          :current-page="currentPage" :page-size="pageSize" :page-sizes="[5, 10, 20, 50, 100]"
-          layout="total,sizes, prev, pager, next, jumper" :total="tableData.length">
+        <el-pagination
+          background
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page="currentPage"
+          :page-size="pageSize"
+          :page-sizes="[5, 10, 20, 50, 100]"
+          layout="total,sizes, prev, pager, next, jumper"
+          :total="tableData.length"
+        >
         </el-pagination>
       </div>
     </el-card>
-    <el-dialog :append-to-body="true" :close-on-click-modal="false" v-model="addVisible" @close="addCancel()" title="添加"
-      width="50%">
-      <el-form ref="formRef" :model="form" label-position="left" label-width="auto">
-        <!-- <el-form-item label="工段" prop="WorkSection">
+    <el-dialog
+      :append-to-body="true"
+      :close-on-click-modal="false"
+      v-model="addVisible"
+      @close="addCancel()"
+      title="添加"
+      width="50%"
+    >
+      <el-form
+        ref="formRef"
+        :model="form"
+        label-position="left"
+        label-width="auto"
+      >
+        <el-form-item label="工段" prop="WorkSection">
           <el-input v-model="addFrom.WorkSection" placeholder="工段"></el-input>
         </el-form-item>
         <el-form-item label="产品编码" prop="Product">
           <el-input v-model="addFrom.Product" placeholder="产品编码"></el-input>
-        </el-form-item> -->
-        <el-row :gutter="50">
-          <el-col :span="12">
-            <el-form-item label="工段" prop="WorkSection">
-              <el-select v-model="addFrom.WorkSection" placeholder="请选择">
-                <el-option label="SMT" value="M08-SMT01" />
-                <el-option label="屏车间" value="M08-SCN01" />
-                <el-option label="总装" value="M08-ASY01" />
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="产品编码" prop="Product">
-              <el-input v-model="addFrom.Product" placeholder="产品编码"></el-input>
-            </el-form-item>
-          </el-col>
-        </el-row>
+        </el-form-item>
 
         <el-row :gutter="50">
-         
           <el-col :span="12">
             <el-form-item label="编号" prop="step">
               <el-input v-model="form.Step" placeholder="工序" clearable />
@@ -76,27 +102,21 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="检验工序" prop="name">
-              <el-input v-model="form.Name" placeholder="检验工序" clearable></el-input>
+              <el-input
+                v-model="form.Name"
+                placeholder="检验工序"
+                clearable
+              ></el-input>
             </el-form-item>
           </el-col>
-         
         </el-row>
-        <el-row :gutter="50">
-       
-          <el-col :span="12">
         <el-form-item label="内容" prop="inspectContent">
-          <el-input type="textarea" v-model="form.InspectContent" placeholder="内容"></el-input>
+          <el-input
+            type="textarea"
+            v-model="form.InspectContent"
+            placeholder="内容"
+          ></el-input>
         </el-form-item>
-      </el-col>
-      <el-col :span="12">
-            <el-form-item label="会签" prop="WorkSection">
-              <el-select v-model="form.IsSign" placeholder="请选择">
-                <el-option label="否" value="N" />
-                <el-option label="是" value="Y" />
-              </el-select>
-            </el-form-item>
-          </el-col>
-    </el-row>
 
         <!-- <el-form ref="formRef2" :model="formItem" label-position="left" label-width="auto"> -->
 
@@ -104,55 +124,80 @@
           <el-divider>检验子项{{ index + 1 }}</el-divider>
           <el-row :gutter="50">
             <el-col :span="12">
-              <el-form-item label="确认类型" prop="WorkSection">
-                <el-select v-model="item.ConfirmType" placeholder="请选择">
-                  <el-option label="文本" value="confirm" />
-                  <el-option label="标准值" value="text" />
-                </el-select>
+              <el-form-item
+                label="编号"
+                :prop="'stepItemList.' + index + '.subItem'"
+              >
+                <el-input
+                  v-model.number="item.SubItem"
+                  placeholder="子项编号"
+                ></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="12">
-              <el-form-item label="是否拍照" prop="WorkSection">
-                <el-select v-model="item.IsUpload" placeholder="请选择">
-                  <el-option label="否" value="N" />
-                  <el-option label="是" value="Y" />
-                </el-select>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row :gutter="50">
-            <el-col :span="12">
-              <el-form-item label="编号" :prop="'stepItemList.' + index + '.subItem'">
-                <el-input v-model.number="item.SubItem" placeholder="子项编号"></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item label="名称" :prop="'stepItemList.' + index + '.subItemName'">
-                <el-input v-model="item.SubItemName" placeholder="子项名称"></el-input>
+              <el-form-item
+                label="名称"
+                :prop="'stepItemList.' + index + '.subItemName'"
+              >
+                <el-input
+                  v-model="item.SubItemName"
+                  placeholder="子项名称"
+                ></el-input>
               </el-form-item>
             </el-col>
           </el-row>
 
           <el-row :gutter="50">
             <el-col :span="12">
-              <el-form-item label="检查目标" :prop="'stepItemList.' + index + '.subItemAim'">
-                <el-input type="textarea" v-model="item.SubItemAim" placeholder="子项检查目标"></el-input>
-              </el-form-item></el-col>
-            <el-col :span="12"><el-form-item label="检验方法" :prop="'stepItemList.' + index + '.subItemMethod'">
-                <el-input type="textarea" v-model="item.SubItemMethod" placeholder="子项检验方法"></el-input>
-              </el-form-item></el-col>
+              <el-form-item
+                label="检查目标"
+                :prop="'stepItemList.' + index + '.subItemAim'"
+              >
+                <el-input
+                  type="textarea"
+                  v-model="item.SubItemAim"
+                  placeholder="子项检查目标"
+                ></el-input> </el-form-item
+            ></el-col>
+            <el-col :span="12"
+              ><el-form-item
+                label="检验方法"
+                :prop="'stepItemList.' + index + '.subItemMethod'"
+              >
+                <el-input
+                  type="textarea"
+                  v-model="item.SubItemMethod"
+                  placeholder="子项检验方法"
+                ></el-input> </el-form-item
+            ></el-col>
           </el-row>
           <el-row :gutter="50">
             <el-col :span="12">
-              <el-form-item label="检查标准" :prop="'stepItemList.' + index + '.subItemBasic'">
-                <el-input type="textarea" v-model="item.SubItemBasic" placeholder="检查标准"></el-input>
-              </el-form-item></el-col>
+              <el-form-item
+                label="检查标准"
+                :prop="'stepItemList.' + index + '.subItemBasic'"
+              >
+                <el-input
+                  type="textarea"
+                  v-model="item.SubItemBasic"
+                  placeholder="检查标准"
+                ></el-input> </el-form-item
+            ></el-col>
             <el-col :span="12">
-              <el-form-item label="解决办法" :prop="'stepItemList.' + index + '.subItemSolution'">
-                <el-input type="textarea" v-model="item.SubItemSolution" placeholder="子项检查解决办法"></el-input>
-              </el-form-item></el-col>
+              <el-form-item
+                label="解决办法"
+                :prop="'stepItemList.' + index + '.subItemSolution'"
+              >
+                <el-input
+                  type="textarea"
+                  v-model="item.SubItemSolution"
+                  placeholder="子项检查解决办法"
+                ></el-input> </el-form-item
+            ></el-col>
           </el-row>
-          <el-button v-if="index != 0" type="danger" @click="deleteSon(index)">删除子项</el-button>
+          <el-button v-if="index != 0" type="danger" @click="deleteSon(index)"
+            >删除子项</el-button
+          >
         </div>
       </el-form>
       <!-- </el-form> -->
@@ -165,71 +210,73 @@
         </span>
       </template>
     </el-dialog>
-    <el-dialog :append-to-body="true" :close-on-click-modal="false" v-model="editVisible" @close="eidtCancel()"
-      title="修改" width="50%">
+    <el-dialog
+      :append-to-body="true"
+      :close-on-click-modal="false"
+      v-model="editVisible"
+      @close="eidtCancel()"
+      title="修改"
+      width="50%"
+    >
       <el-form ref="eidtRef" :model="editForm" label-width="100px">
         <el-form-item label="工段" prop="WorkSection">
-          <el-input v-model="editHear.WorkSection" placeholder="工段" disabled></el-input>
+          <el-input
+            v-model="editHear.WorkSection"
+            placeholder="工段"
+            disabled
+          ></el-input>
         </el-form-item>
         <el-form-item label="产品编码" prop="Product">
-          <el-input v-model="editHear.Product" placeholder="产品编码" disabled></el-input>
+          <el-input
+            v-model="editHear.Product"
+            placeholder="产品编码"
+            disabled
+          ></el-input>
         </el-form-item>
         <el-row>
           <el-col :span="12">
             <el-form-item label="编号" prop="step">
-              <el-input v-model.number="editForm.Step" placeholder="编号" disabled></el-input>
+              <el-input
+                v-model.number="editForm.Step"
+                placeholder="编号"
+                disabled
+              ></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="检验工序" prop="name">
-              <el-input v-model="editForm.Name" placeholder="检验工序"></el-input>
+              <el-input
+                v-model="editForm.Name"
+                placeholder="检验工序"
+              ></el-input>
             </el-form-item>
           </el-col>
         </el-row>
-        <el-row>
-        <el-col :span="12">
+
         <el-form-item label="内容" prop="inspectContent">
-          <el-input type="textarea" v-model="editForm.InspectContent" placeholder="内容"></el-input>
+          <el-input
+            type="textarea"
+            v-model="editForm.InspectContent"
+            placeholder="内容"
+          ></el-input>
         </el-form-item>
-        </el-col>
-        <el-col :span="12">
-            <el-form-item label="会签" prop="WorkSection">
-              <el-select v-model="editForm.IsSign" placeholder="请选择">
-                <el-option label="否" value="N" />
-                <el-option label="是" value="Y" />
-              </el-select>
-            </el-form-item>
-          </el-col>
-        </el-row>
         <el-divider></el-divider>
         <el-row>
-          <el-row :gutter="50">
-          <el-col :span="12">
-            <el-form-item label="确认类型" prop="WorkSection">
-              <el-select v-model="editForm.StepItemList[0].ConfirmType" placeholder="请选择">
-                <el-option label="文本" value="confirm" />
-                <el-option label="标准值" value="text" />
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="是否拍照" prop="WorkSection">
-              <el-select v-model="editForm.StepItemList[0].IsUpload" placeholder="请选择">
-                <el-option label="否" value="N" />
-                <el-option label="是" value="Y" />
-              </el-select>
-            </el-form-item>
-          </el-col>
-
-        </el-row>
           <el-col :span="12">
             <el-form-item label="编号">
-              <el-input v-model.number="editForm.StepItemList[0].SubItem" placeholder="子项编号" disabled></el-input>
+              <el-input
+                v-model.number="editForm.StepItemList[0].SubItem"
+                placeholder="子项编号"
+                disabled
+              ></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="名称">
-              <el-input v-model="editForm.StepItemList[0].SubItemName" placeholder="子项名称"></el-input>
+              <el-input
+                v-model="editForm.StepItemList[0].SubItemName"
+                placeholder="子项名称"
+              ></el-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -237,22 +284,38 @@
         <el-row>
           <el-col :span="12">
             <el-form-item label="检查目标">
-              <el-input type="textarea" v-model="editForm.StepItemList[0].SubItemAim" placeholder="子项检查目标"></el-input>
-            </el-form-item></el-col>
-          <el-col :span="12"><el-form-item label="检验方法">
-              <el-input type="textarea" v-model="editForm.StepItemList[0].SubItemMethod"
-                placeholder="子项检验方法"></el-input>
-            </el-form-item></el-col>
+              <el-input
+                type="textarea"
+                v-model="editForm.StepItemList[0].SubItemAim"
+                placeholder="子项检查目标"
+              ></el-input> </el-form-item
+          ></el-col>
+          <el-col :span="12"
+            ><el-form-item label="检验方法">
+              <el-input
+                type="textarea"
+                v-model="editForm.StepItemList[0].SubItemMethod"
+                placeholder="子项检验方法"
+              ></el-input> </el-form-item
+          ></el-col>
         </el-row>
         <el-row>
           <el-col :span="12">
             <el-form-item label="检查标准">
-              <el-input type="textarea" v-model="editForm.StepItemList[0].SubItemBasic" placeholder="检查标准"></el-input>
-            </el-form-item></el-col>
+              <el-input
+                type="textarea"
+                v-model="editForm.StepItemList[0].SubItemBasic"
+                placeholder="检查标准"
+              ></el-input> </el-form-item
+          ></el-col>
           <el-col :span="12">
             <el-form-item label="解决办法">
-              <el-input type="textarea" v-model="editForm.StepItemList[0].SubItemSolution"
-                placeholder="子项检查解决办法"></el-input> </el-form-item></el-col>
+              <el-input
+                type="textarea"
+                v-model="editForm.StepItemList[0].SubItemSolution"
+                placeholder="子项检查解决办法"
+              ></el-input> </el-form-item
+          ></el-col>
         </el-row>
       </el-form>
 
@@ -324,17 +387,14 @@ const getForm = reactive({
   ],
 });
 const form = reactive({
-  Step: 1,
+  Step: 0,
   Status: "I",
   Name: "",
   InspectContent: "",
-  IsSign: "N",
   StepItemList: [
     {
       SubItemName: "",
-      SubItem: 1,
-      ConfirmType: "text",
-      IsUpload: "N",
+      SubItem: 0,
       SubItemMethod: "",
       SubItemBasic: "",
       SubItemSolution: "",
@@ -348,7 +408,6 @@ const editForm = reactive({
   Status: "U",
   Name: "",
   InspectContent: "",
-  IsSign: "N",
   StepItemList: [
     {
       SubItemName: "",
@@ -358,8 +417,6 @@ const editForm = reactive({
       SubItemSolution: "",
       SubItemAim: "",
       SubItemType: "",
-      ConfirmType: "text",
-      IsUpload: "N",
     },
   ],
 });
@@ -388,8 +445,8 @@ watch(
       if (addFrom.WorkSection !== "" && addFrom.Product !== "") {
         const autoData: any = tableData.value.filter((t: any, index: any) => addFrom.WorkSection === t.WorkSection);
         if (autoData.length === 0) {
-          form.Step = 1;
-          form.StepItemList[0].SubItem = 1;
+            form.Step = 1;
+            form.StepItemList[0].SubItem = 1;
           return;
         }
         const productData = autoData[0].stepItemList.filter(
@@ -404,18 +461,18 @@ watch(
           }
         );
         if (productData.length === 0) {
-          form.Step = 1;
-          form.StepItemList[0].SubItem = 1;
+            form.Step = 1;
+            form.StepItemList[0].SubItem = 1;
           return
         }
         const stepData: any = productData[0].stepItemList.filter((t: any, index: any) => form.Name === t.StepName);
         if (stepData.length > 0) {
-
+          
           form.Step = stepData[0].stepItemList[0].Step;
-          form.StepItemList[0].SubItem = stepData[0].stepItemList.length + 1;
-        } else {
-          form.Step = 1;
-          form.StepItemList[0].SubItem = 1;
+            form.StepItemList[0].SubItem = stepData[0].stepItemList.length + 1;
+        }else {
+            form.Step = 1;
+            form.StepItemList[0].SubItem = 1;
         }
       }
     }
@@ -450,14 +507,12 @@ const openAdd = () => {
 const addSon = () => {
   form.StepItemList.push({
     SubItemName: "",
-    SubItem: 1,
+    SubItem: 0,
     SubItemMethod: "",
     SubItemBasic: "",
     SubItemSolution: "",
     SubItemAim: "",
     SubItemType: "",
-    ConfirmType: "text",
-    IsUpload: "N",
   });
 };
 const deleteSon = (index: any) => {
@@ -469,14 +524,12 @@ const addCancel = () => {
   form.StepItemList = [];
   form.StepItemList[0] = {
     SubItemName: "",
-    SubItem: 1,
+    SubItem: 0,
     SubItemMethod: "",
     SubItemBasic: "",
     SubItemSolution: "",
     SubItemAim: "",
     SubItemType: "",
-    ConfirmType: "text",
-    IsUpload: "N",
   };
   addFrom.stepList = [];
   addFrom.WorkSection = "";
@@ -504,14 +557,12 @@ const addSubmit = () => {
     form.StepItemList = [];
     form.StepItemList[0] = {
       SubItemName: "",
-      SubItem: 1,
+      SubItem: 0,
       SubItemMethod: "",
       SubItemBasic: "",
       SubItemSolution: "",
       SubItemAim: "",
       SubItemType: "",
-      ConfirmType: "text",
-      IsUpload: "N",
     };
     addFrom.stepList = [];
     addFrom.WorkSection = "";
@@ -582,7 +633,6 @@ const eidtData = (row: any) => {
   editForm.Status = row.Status;
   editForm.Step = row.Step;
   editForm.Name = row.StepName;
-  editForm.IsSign=row.IsSign
   editForm.InspectContent = row.InspectContent;
   editForm.StepItemList[0].SubItem = row.SubItem;
   editForm.StepItemList[0].SubItemAim = row.SubItemAim;
@@ -591,12 +641,9 @@ const eidtData = (row: any) => {
   editForm.StepItemList[0].SubItemName = row.SubItemName;
   editForm.StepItemList[0].SubItemSolution = row.SubItemSolution;
   editForm.StepItemList[0].SubItemType = row.SubItemType;
-  editForm.StepItemList[0].ConfirmType= row.ConfirmType
-  editForm.StepItemList[0].IsUpload= row.IsUpload
 };
 //删除
 const handleDelete = (row: any) => {
-  editHear.StepList = []
   eidtData(row);
   editHear.StepList.push(editForm);
   // deleteForm.stepList.push(editForm);
@@ -608,7 +655,6 @@ const handleDelete = (row: any) => {
     .then(() => {
       DeleteInspectData(editHear).then((data: any) => {
         // console.log(res);
-
         if ((data.code = 100200)) {
           getData();
           ElNotification({

@@ -73,7 +73,11 @@
                   <el-form-item label="" class="mb-1">
                     <el-table :data="batchData" size="small" border :style="{ width: '100%' }">
                       <el-table-column prop="containername" label="批次条码" width="180" />
-                      <el-table-column prop="qty" label="数量" width="80" />
+                      <el-table-column prop="qty" label="数量" width="80" >
+                        <template #default="scope">
+                      <span class="text-[#f48000] font-bold text-xl">{{ scope.row.qty }}</span>
+                    </template>
+                      </el-table-column>
                     </el-table>
                   </el-form-item>
                 </el-form>
@@ -255,6 +259,7 @@
 
 <script lang="ts" setup>
 import tableTem from "@/components/tableTem/index.vue";
+
 import tableTemp from "@/components/tableTemp/index.vue";
 import selectTa from "@/components/selectTable/index.vue";
 import { useAppStore } from "@/stores/modules/app";
@@ -519,6 +524,7 @@ const batchData = ref<any[]>([
 ])
 const maxQty = ref(0)
 const showSetNum = ref(false)
+const setTimer=ref()
 
 onBeforeMount(() => {
   getScreenHeight();
@@ -530,6 +536,7 @@ onMounted(() => {
   // getFocus();
 });
 onBeforeUnmount(() => {
+  clearInterval(setTimer.value)
   window.addEventListener("resize", getScreenHeight);
 });
 
@@ -719,7 +726,7 @@ const goStop = () => {
     stopsForm.value.result = "OK";
    
     barCode.value = "";
-
+   
     if (res.success) {
       stopsForm.value.keyMaterialList = [];
       getKeyMaterial();
@@ -897,6 +904,10 @@ const radioChange = (args: any) => {
       // getKeyMaterial()
       // getHisData();
     }
+    // clearInterval(setTimer.value)
+    // setTimer.value= setInterval(()=>{
+    //   getBatchCode()
+    // },1000)
     getKeyMaterial();
     getBatchCode()
     getHisData();

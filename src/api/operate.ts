@@ -899,3 +899,18 @@ export function DeleteCalendarPlan(data: any) {
         data
     })
 }
+export function SelectCalendarPlan(data: any) {
+    return request({
+        url: "/api/WorkLineCalendar/SelectCalendarPlan",
+        method: "post",
+        data
+    })
+}
+
+export function UpdateCalendarPlan(data: any) {
+    return request({
+        url: "/api/WorkLineCalendar/UpdateCalendarPlan",
+        method: "post",
+        data
+    })
+}

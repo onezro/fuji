@@ -1,5 +1,6 @@
 import axios from "axios";
 import { ElMessageBox, ElMessage, ElLoading } from "element-plus";
+import { playErrorSound  } from '@/utils/sound';
 import { getToken } from "@/utils/auth";
 
 // import store from '@/store'
@@ -92,7 +93,13 @@ service.interceptors.response.use(
 
     //成功的返回
     if (response.status === 200) {
+      console.log(response.data);
+      if(!response.data.success){
+        playErrorSound()
+      }
       return response.data;
+    
+      
       // if (response.data.code == 100200 || !response.data.code||response.data.code == 10200) {
       //   return response.data;
       // } 
