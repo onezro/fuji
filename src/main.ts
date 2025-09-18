@@ -24,12 +24,15 @@ import 'xe-utils'
 import VXETable from 'vxe-table'
 import 'vxe-table/lib/style.css'
 
+import i18n from "./locale/index";
+
 const app = createApp(App)
 // app.directive(ClickOutside)
 // app.use(AFTableColumn)
 app.use(VXETable)
 app.use(ElementPlus, {locale:zhCN,size: ''})
 // app.use(TuiPlus)
+app.use(i18n)
 app.use(createPinia())
 app.use(router)
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) { 

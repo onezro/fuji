@@ -113,21 +113,7 @@
         <el-form-item label="工治具型号编码" prop="WorkSection">
           <el-input v-model.trim="form.CompName" style="width: 240px" :rows="2" type="textarea" />
         </el-form-item>
-        <!-- <el-form-item label="材料型号">
-          <el-select
-            v-model="EditForm.MaterialType"
-            placeholder="Select"
-            size="large"
-            style="width: 240px"
-          >
-            <el-option
-              v-for="item in [{ label: '钢网刮刀', value: 1 }]"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            />
-          </el-select>
-        </el-form-item> -->
+       
         <el-form-item label="自定义总次数">
           <el-input v-model.number="form.TotalUses" style="width: 240px" class="no_number" placeholder="请输入"
             type="number"></el-input>

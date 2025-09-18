@@ -2,7 +2,7 @@ export const setMenu = (data: any) => {
   let menu = data.map((m: any) => {
     // let parts = m.Component.split('/');
     // console.log(parts)
-    // let englishOnly = m.Name.replace(/[^a-zA-Z]/g, '');  
+    // let englishOnly = m.Name.replace(/[^a-zA-Z]/g, '');
     // console.log(englishOnly);
     return {
       ID: m.ID,
@@ -15,11 +15,11 @@ export const setMenu = (data: any) => {
       EquipmentDesc: m.EquipmentDesc,
       EquipmentName: m.EquipmentName,
       sortId: m.sortId,
-    }
-  })
-  let arr = OrganData(menu)
-  return arr
-}
+    };
+  });
+  let arr = OrganData(menu);
+  return arr;
+};
 
 export const OrganData = (organizations: any) => {
   const organizationMap = new Map();
@@ -34,12 +34,12 @@ export const OrganData = (organizations: any) => {
       }
     }
   });
-  return Array.from(organizationMap.values()).filter(org => org.FID === null);
-}
+  return Array.from(organizationMap.values()).filter((org) => org.FID === null);
+};
 
 export const shortcuts = [
   {
-    text: '近三个月',
+    text: "近三个月",
     value: () => {
       const end = new Date();
       let start = new Date(end);
@@ -57,56 +57,66 @@ export const shortcuts = [
     },
   },
   {
-    text: '本月',
+    text: "本月",
     value: () => {
-      const end = new Date()
-      const start = new Date()
-      const date = (new Date()).getDate() - 1
-      start.setTime(start.getTime() - 3600 * 1000 * 24 * date)
-      return [start, end]
+      const end = new Date();
+      const start = new Date();
+      const date = new Date().getDate() - 1;
+      start.setTime(start.getTime() - 3600 * 1000 * 24 * date);
+      return [start, end];
     },
   },
   {
-    text: '近七天',
+    text: "近七天",
     value: () => {
-      const end = new Date()
-      const start = new Date()
-      start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
-      return [start, end]
+      const end = new Date();
+      const start = new Date();
+      start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+      return [start, end];
     },
   },
   {
-    text: '当天',
+    text: "当天",
     value: () => {
-      const end = new Date()
-      const start = new Date()
-      return [start, end]
+      const end = new Date();
+      const start = new Date();
+      return [start, end];
     },
+  },
+];
+
+export const setTodayDate = (isSecond?: boolean) => {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const day = String(now.getDate()).padStart(2, "0");
+  
+  if (isSecond) {
+    const hours = String(now.getHours()).padStart(2, "0");
+    const minutes = String(now.getMinutes()).padStart(2, "0");
+    const seconds = String(now.getSeconds()).padStart(2, "0");
+    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
   }
-]
-
-export const setTodayDate = () => {
-  // 获取当前日期
-  const now = new Date();
-  // 格式化日期为YYYY-MM-DD
-  const formattedDate = `${now.getFullYear()}-${String(
-    now.getMonth() + 1
-  ).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
-  return formattedDate;
+  
+  return `${year}-${month}-${day}`;
 };
-export const setLastDate = () => {
-  // 获取当前日期  
+
+export const setLastDate = (isSecond?: boolean) => {
   const now = new Date();
-  // 设置日期为七天前  
   now.setDate(now.getDate() - 7);
-  // 格式化日期为YYYY-MM-DD  
-  const formattedDate = `${now.getFullYear()}-${String(
-    now.getMonth() + 1
-  ).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
-  return formattedDate;
-
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const day = String(now.getDate()).padStart(2, "0");
+  
+  if (isSecond) {
+    const hours = String(now.getHours()).padStart(2, "0");
+    const minutes = String(now.getMinutes()).padStart(2, "0");
+    const seconds = String(now.getSeconds()).padStart(2, "0");
+    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+  }
+  
+  return `${year}-${month}-${day}`;
 };
-
 //限制三个月的选择
 export const disabledDate = (time: Date) => {
   const todayStart = new Date();
@@ -120,32 +130,36 @@ export const disabledDate = (time: Date) => {
   threeMonthsAgo.setMonth(todayStart.getMonth() - 3);
 
   // 禁用三个月之前的日期和今天之后的日期
-  return time.getTime() < threeMonthsAgo.getTime() || time.getTime() >= todayEnd.getTime();
+  return (
+    time.getTime() < threeMonthsAgo.getTime() ||
+    time.getTime() >= todayEnd.getTime()
+  );
+};
 
-
-}
-
-export const getLastDayOfMonth=(year: any, month: any)=> {
+export const getLastDayOfMonth = (year: any, month: any) => {
   // JavaScript的Date对象月份是从0开始的，所以我们需要减1
   const date = new Date(year, month, 0);
   // date对象现在表示的是下一个月的第一天，但我们想要的是当前月的最后一天
   return date.getDate();
-}
+};
 
 export const parseDateString = (dateStr: any) => {
   dateStr = dateStr.trim();
 
   // 定义日期格式化函数
   const formatDate = (year: any, month: string, day: string) => {
-    return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+    return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
   };
 
   // 正则表达式匹配不同的日期格式
   const singleDateRegex = /(\d{4})年(\d{1,2})月(\d{1,2})日$/;
   const monthRangeRegex = /(\d{4})年(\d{1,2})月$/;
-  const dateRangeRegex = /(\d{4})年(\d{1,2})月(\d{1,2})日\s*–\s*(\d{4})年(\d{1,2})月(\d{1,2})日$/;
-  const shortDateRangeRegex = /(\d{4})年(\d{1,2})月(\d{1,2})日\s*–\s*(\d{1,2})日$/;
-  const monthDayRangeRegex = /(\d{4})年(\d{1,2})月(\d{1,2})日\s*–\s*(\d{1,2})月(\d{1,2})日$/;
+  const dateRangeRegex =
+    /(\d{4})年(\d{1,2})月(\d{1,2})日\s*–\s*(\d{4})年(\d{1,2})月(\d{1,2})日$/;
+  const shortDateRangeRegex =
+    /(\d{4})年(\d{1,2})月(\d{1,2})日\s*–\s*(\d{1,2})日$/;
+  const monthDayRangeRegex =
+    /(\d{4})年(\d{1,2})月(\d{1,2})日\s*–\s*(\d{1,2})月(\d{1,2})日$/;
 
   let startDate, endDate;
 
@@ -156,25 +170,32 @@ export const parseDateString = (dateStr: any) => {
   } else if (monthRangeRegex.test(dateStr)) {
     // 格式: 2024年12月
     const [, year, month] = dateStr.match(monthRangeRegex);
-    startDate = formatDate(year, month, '01');
-    endDate = formatDate(year, month, new Date(year, month, 0).getDate().toString());
+    startDate = formatDate(year, month, "01");
+    endDate = formatDate(
+      year,
+      month,
+      new Date(year, month, 0).getDate().toString()
+    );
   } else if (dateRangeRegex.test(dateStr)) {
     // 格式: 2024年12月29日 – 2025年1月4日
-    const [, startYear, startMonth, startDay, endYear, endMonth, endDay] = dateStr.match(dateRangeRegex);
+    const [, startYear, startMonth, startDay, endYear, endMonth, endDay] =
+      dateStr.match(dateRangeRegex);
     startDate = formatDate(startYear, startMonth, startDay);
     endDate = formatDate(endYear, endMonth, endDay);
   } else if (shortDateRangeRegex.test(dateStr)) {
     // 格式: 2025年1月12日 – 18日
-    const [, startYear, startMonth, startDay, endDay] = dateStr.match(shortDateRangeRegex);
+    const [, startYear, startMonth, startDay, endDay] =
+      dateStr.match(shortDateRangeRegex);
     startDate = formatDate(startYear, startMonth, startDay);
     endDate = formatDate(startYear, startMonth, endDay);
   } else if (monthDayRangeRegex.test(dateStr)) {
     // 格式: 2025年1月27日 – 2月2日
-    const [, startYear, startMonth, startDay, endMonth, endDay] = dateStr.match(monthDayRangeRegex);
+    const [, startYear, startMonth, startDay, endMonth, endDay] =
+      dateStr.match(monthDayRangeRegex);
     startDate = formatDate(startYear, startMonth, startDay);
     endDate = formatDate(startYear, endMonth, endDay);
   } else {
-    throw new Error('日期格式不支持');
+    throw new Error("日期格式不支持");
   }
 
   return [startDate, endDate];
