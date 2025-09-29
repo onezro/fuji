@@ -69,7 +69,6 @@
                 <el-table-column prop="MfgOrderName" :label="$t('batchCreation.OrderCode')">
                     <template #default="scope">
                         <span class="underline">{{ scope.row.MfgOrderName }}</span>
-                        <!-- <el-text tag="ins">{{ scope.row.MfgOrderName}}</el-text> -->
                     </template>
                 </el-table-column>
                 <el-table-column prop="PriorityCodeName" :label="$t('batchCreation.Priority')" width="80" />
@@ -428,11 +427,14 @@ const handleSelectionChange1 = (val: any) => {
     resetList.value = val
 }
 const handleSizeChange = (val: any) => {
+    pageObj.value.pageSize=val
+   
     // getForm.value.PageNumber = 1;
     // getForm.value.PageSize = val;
     // getData();
 };
 const handleCurrentChange = (val: any) => {
+     pageObj.value.currentPage=val
     // getForm.value.PageNumber = val;
     // getData();
 };

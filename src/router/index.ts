@@ -49,40 +49,32 @@ export const constantRouterMap = [
     ]
   },
   // {
-  //   path: '/dipWork',
+  //   path: '/permission',
   //   component: Layout,
-  //   name: 'DipWork',
+  //   name: 'permission',
   //   meta: {
-  //     title: 'DIP',
+  //     title: '系统管理',
   //   },
   //   children: [
   //     {
-  //       path: 'pcbSplit',
-  //       component: () => import('@/views/dipWork/PCBSplit.vue'),
-  //       name: 'PCBSplit',
+  //       path: 'menu',
+  //       component: () => import('@/views/permission/menu.vue'),
+  //       name: 'Menu',
   //       meta: {
-  //         title: '分板',
+  //         title: '菜单管理',
+  //         icon: 'Tickets'
+  //       }
+
+  //     },
+  //     {
+  //       path: 'empolyee',
+  //       component: () => import('@/views/permission/empolyee.vue'),
+  //       name: 'Empolyee',
+  //       meta: {
+  //         title: '员工管理',
+  //         icon: 'User'
   //       }
   //     },
-  //     // {
-  //     //   path: 'menu',
-  //     //   component: () => import('@/views/permission/menu.vue'),
-  //     //   name: 'Menu',
-  //     //   meta: {
-  //     //     title: '菜单管理',
-  //     //     icon: 'Tickets'
-  //     //   }
-
-  //     // },
-  //     // {
-  //     //   path: 'empolyee',
-  //     //   component: () => import('@/views/permission/empolyee.vue'),
-  //     //   name: 'Empolyee',
-  //     //   meta: {
-  //     //     title: '员工管理',
-  //     //     icon: 'User'
-  //     //   }
-  //     // },
   //   ]
   // },
   {

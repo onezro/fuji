@@ -5,7 +5,7 @@
         <el-button type="primary" @click="openAdd" size="small">添加</el-button>
       </div>
       <div class="w-full">
-        <el-table size="small" :data="tableData" stripe border fit :height="tableHeight" row-key="id"
+        <el-table size="small" :data="tableData" stripe border fit :height="tableHeight" row-key="ID"
           :tree-props="{ children: 'childMenu' }">
 
           <el-table-column prop="title" label="菜单名称"> </el-table-column>
@@ -329,7 +329,7 @@ const addCancel = () => {
 }
 const handleNodeClick = (data: any) => {
   chooseName.value = data.title;
-  form.value.MenuFID = data.id;
+  form.value.MenuFID = data.ID;
   form.value.MenuLevel = data.MenuLevel + 1;
   selectUpResId.value.blur();
 };
@@ -366,7 +366,7 @@ const copySubmit = () => {
 
 const handleCNodeClick = (data:any) => {
   editPName.value = data.title;
-  copyform.value.MenuFID = data.id;
+  copyform.value.MenuFID = data.ID;
   copyform.value.MenuLevel = data.MenuLevel;
   selectUpResId.value.blur();
 }
@@ -379,7 +379,7 @@ const handleEdit = async (row: any) => {
   editForm.path = row.path;
   editForm.title = row.title;
   editForm.redirect = row.redirect;
-  editForm.id = row.id;
+  editForm.id = row.ID;
   editForm.sortId = row.sortId;
   editForm.MenuType = row.MenuType
   editVisible.value = true;
@@ -390,7 +390,7 @@ const handleEdit = async (row: any) => {
 const handleENodeClick = (data: any) => {
   // console.log(data)
   editPName.value = data.title;
-  editForm.MenuFID = data.id;
+  editForm.MenuFID = data.ID;
   editForm.MenuLevel = data.MenuLevel;
   selectUpResId.value.blur();
 };
@@ -402,13 +402,13 @@ const handleDelete = (row: any) => {
   })
     .then(() => {
       // console.log(row.id)
-      arrID.value.unshift(row.id);
+      arrID.value.unshift(row.ID);
       // row.sonNum!=null? dataDispose(row):false
       // console.log(arrID.value);
       arrID.value.forEach((item) => {
         deleteMeun(item).then(({ data }) => {
           // console.log(data);
-          arrID.value = arrID.value.filter((id) => id != item);
+          arrID.value = arrID.value.filter((ID) => ID != item);
           // console.log(this.arrID);
           if (arrID.value.length == 0) {
             getData();
@@ -458,7 +458,7 @@ const changeSortd=(row:any)=>{
 }
 const findNameById = (id: any, data: any) => {
   data.forEach((x: any, i: any) => {
-    if (data[i].id == id) {
+    if (data[i].ID == id) {
       editPName.value = data[i].title
       return //名称
     } else if (data[i].childMenu) {

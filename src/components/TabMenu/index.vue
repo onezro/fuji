@@ -65,7 +65,7 @@
       </el-dropdown>
     </div>
     <Menu class="absolute top-0 z-[99] h-[100%] left-[4.8rem] bg-[#003750]"
-      :class="{ 'w-[200px]': showMenu, 'w-0': !showMenu }" style="transition: width 0.2s, left 0.2s" :base-path="'/'"
+      :class="{ 'w-[200px]': showMenu, 'w-0': !showMenu }" style="transition: width 0.5s, left 0.5s" :base-path="'/'"
       @refresh="clickOut"></Menu>
 
     <el-dialog :append-to-body="true" :close-on-click-modal="false" title="修改密码" v-model="upPwVisible" width="400px"
@@ -345,7 +345,8 @@ export default defineComponent({
 
 .isActive {
   // color: #006487;
-  background: #005a79;
+  //background: #005a79;
+  background: #005571;
 }
 
 

@@ -50,7 +50,7 @@
           <el-input v-model="form.RoleDesc"></el-input>
         </el-form-item>
         <el-form-item label="菜单分配" prop="MenuId">
-          <el-tree :data="treeData" show-checkbox node-key="id" :props="defaultProps" ref="tree">
+          <el-tree :data="treeData" show-checkbox node-key="ID" :props="defaultProps" ref="tree">
           </el-tree>
         </el-form-item>
       </el-form>
@@ -72,7 +72,7 @@
           <el-input v-model="editForm.RoleDesc"></el-input>
         </el-form-item>
         <el-form-item label="菜单">
-          <el-tree :data="treeData" show-checkbox node-key="id" :props="{ label: 'title', children: 'childMenu' }"
+          <el-tree :data="treeData" show-checkbox node-key="ID" :props="{ label: 'title', children: 'childMenu' }"
             ref="tree1">
           </el-tree>
         </el-form-item>
@@ -266,12 +266,12 @@ const editCancel = () => {
   roleData.value = [];
 };
 const handleAssigned = (row: any) => {
-  editForm.id = row.id;
+  editForm.id = row.ID;
   editForm.RoleName = row.RoleName;
   editForm.RoleDesc=row.RoleDesc
   editVisible.value = true;
   // console.log(editVisible.value);
-  getMeunRole(row.id).then((data: any) => {
+  getMeunRole(row.ID).then((data: any) => {
     if (data.content == null || data.content == undefined) {
       roleData.value = []
       // return
@@ -283,21 +283,21 @@ const handleAssigned = (row: any) => {
           item.childMenu.forEach((i: any) => {
             // console.log(i)
             if (i.childMenu == null) {
-              roleData.value.push(i.id);
+              roleData.value.push(i.ID);
             } else {
               i.childMenu.forEach((v: any) => {
                 if (v.childMenu !== null) {
                   v.childMenu.forEach((c: any) => {
-                    roleData.value.push(c.id);
+                    roleData.value.push(c.ID);
                   })
                 } else {
-                  roleData.value.push(v.id)
+                  roleData.value.push(v.ID)
                 }
               })
             }
           });
         } else {
-          roleData.value.push(item.id);
+          roleData.value.push(item.ID);
         }
       });
     }
@@ -371,7 +371,7 @@ const handleDelete = (row: any) => {
     type: "warning",
   })
     .then(() => {
-      deleteRole(row.id).then((data: any) => {
+      deleteRole(row.ID).then((data: any) => {
        
         if ((data.code = 100200)) {
           getData();
