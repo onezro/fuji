@@ -228,6 +228,7 @@ const getRawForm = ref({
     MaterialSource: "",
     ProductFmaily: "",
     ContainerName: "",
+    IsItAnAutomotiveProduct:true,
     StartDate: "",
     EndDate: "",
 });
@@ -313,7 +314,7 @@ const getRawData = () => {
 };
 const tableRowClassName = (val: any) => {
     let row = val.row
-    if (row.TotalOutboundQty > row.CurrentInventory) {
+    if (row.TotalOutboundQty > row.TotalInventoryByProductBase) {
         return 'danger-row-invent'
     } else {
         return 'success-row-invent'
@@ -327,6 +328,7 @@ const handleRawReset = () => {
         MaterialSource: "",
         ProductFmaily: "",
         ContainerName: "",
+        IsItAnAutomotiveProduct:true,
         StartDate: "",
         EndDate: "",
     }

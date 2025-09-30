@@ -4,35 +4,44 @@
             <el-tabs v-model="activeName" type="border-card" class="demo-tabs">
                 <el-tab-pane :label="$t('packageManage.boxDisassembly')" name="box">
                     <div class="flex justify-between">
-                    <el-form ref="formRef" class="inbound" :inline="true" size="" @submit.native.prevent
-                        label-width="auto">
+                        <el-form ref="formRef" class="inbound" :inline="false" size="" @submit.native.prevent
+                            label-width="auto">
 
-                        <el-form-item :label="$t('packageManage.boxOrder')" class="mb-2">
-                            <el-input v-model.trim="getPackForm.ContainerName" ref="inputRef" style="width: 300px"
-                                placeholder="" @keyup.enter.native="getDataPack('Packing')" />
-                        </el-form-item>
-                 
-                        <el-form-item class="mb-2">
-                            <el-button type="primary" @click="getDataPack('Packing')">{{ $t('publicText.query')
-                            }}</el-button>
-                            <el-button type="warning" :disabled="packSelectList.length == 0" @click="disassemPackClick">{{
-                                $t('publicText.disassembly')
-                                }}</el-button>
-                        </el-form-item>
-                          
-                    </el-form>
-                   <el-form ref="formRef" class="inbound" :inline="false" size="" @submit.native.prevent
-                        label-width="auto">
+                            <el-form-item :label="$t('packageManage.boxOrder')" class="mb-2">
+                                <el-input v-model.trim="getPackForm.ContainerName" ref="inputRef" style="width: 300px"
+                                    placeholder="" @keyup.enter.native="getDataPack('Packing')" /> <el-button
+                                    class="ml-2" type="primary" @click="getDataPack('Packing')">{{
+                                        $t('publicText.query')
+                                    }}</el-button>
+                            </el-form-item>
 
-                     <el-form-item :label=" $t('publicText.bind')+$t('packageManage.outerCode')" class="mb-2">
-                            <el-input v-model.trim="packForm.ContainerName" ref="inputPackRef" style="width: 600px"
-                                placeholder="" @keyup.enter.native="bindPackClick('OuterBox')" />
-                        </el-form-item>
-                        <el-form-item class="mb-2" :label="$t('publicText.tip')">
-                            <el-input v-model="msgPackText" :rows="2" type="textarea" placeholder=""
-                                style="width: 600px" size="" :class="msgPackClass" disabled></el-input>
-                        </el-form-item>
-                   </el-form>
+                            <el-form-item class="mb-2">
+
+                                <el-button type="danger" :disabled="packSelectList.length == 0"
+                                    @click="disassemPackClick">{{
+                                        $t('publicText.disassembly')
+                                    }}</el-button>
+                                <el-button type="warning" @click="handlebindPack">{{
+                                    $t('publicText.bind')
+                                    }}</el-button>
+                                <el-button @click="handlebindReset">{{
+                                    $t('publicText.reset')
+                                    }}</el-button>
+                            </el-form-item>
+
+                        </el-form>
+                        <el-form ref="formRef" class="inbound" :inline="false" size="" @submit.native.prevent
+                            label-width="auto">
+
+                            <el-form-item :label="$t('publicText.bind') + $t('packageManage.outerCode')" class="mb-2">
+                                <el-input v-model.trim="packForm.ContainerName" ref="inputPackRef" style="width: 600px"
+                                    placeholder="" @keyup.enter.native="bindPackClick('OuterBox')" />
+                            </el-form-item>
+                            <el-form-item class="mb-2" :label="$t('publicText.tip')">
+                                <el-input v-model="msgPackText" :rows="2" type="textarea" placeholder=""
+                                    style="width: 600px" size="" :class="msgPackClass" disabled></el-input>
+                            </el-form-item>
+                        </el-form>
                     </div>
                     <el-table :data="boxTableData" size="small" :style="{ width: '100%' }" :height="tableHeight"
                         :tooltip-effect="'light'" border fit ref="tablePackRef" @selection-change="handleSelectionPack">
@@ -56,29 +65,46 @@
                     </el-table>
                 </el-tab-pane>
                 <el-tab-pane :label="$t('packageManage.outerBoxDisassembly')" name="outer">
-                    <el-form ref="formRef" class="inbound" :inline="true" size="" @submit.native.prevent
-                        label-width="auto">
+                    <div class="flex justify-between">
+                        <el-form ref="formRef" class="inbound" :inline="false" size="" @submit.native.prevent
+                            label-width="auto">
 
-                        <el-form-item :label="$t('packageManage.outerCode')" class="mb-2">
-                            <el-input v-model.trim="getBoxForm.ContainerName" ref="inputRef" style="width: 300px"
-                                placeholder="" @keyup.enter.native="getDataBox('OuterBox')" />
-                        </el-form-item>
-                        <el-form-item :label="$t('packageManage.smallCode')" class="mb-2">
-                            <el-input v-model.trim="form.ContainerName" ref="inputBoxRef" style="width: 300px"
-                                placeholder="" @keyup.enter.native="getDataBox('OuterBox')" />
-                        </el-form-item>
-                        <el-form-item class="mb-2">
-                            <el-button type="primary" @click="getDataBox('OuterBox')">{{ $t('publicText.query')
-                            }}</el-button>
-                            <el-button type="warning" :disabled="boxSelectList.length == 0" @click="disassemBoxClick">{{
-                                $t('publicText.disassembly')
-                                }}</el-button>
-                        </el-form-item>
-                        <el-form-item class="mb-2" :label="$t('publicText.tip')">
-                            <el-input v-model="msgBoxText" :rows="2" type="textarea" placeholder="" style="width: 648px"
-                                size="" :class="msgBoxClass" disabled></el-input>
-                        </el-form-item>
-                    </el-form>
+                            <el-form-item :label="$t('packageManage.outerCode')" class="mb-2">
+                                <el-input v-model.trim="getBoxForm.ContainerName" ref="inputRef" style="width: 300px"
+                                    placeholder="" @keyup.enter.native="getDataBox('OuterBox')" /> <el-button
+                                    class="ml-2" type="primary" @click="getDataBox('OuterBox')">{{
+                                        $t('publicText.query')
+                                    }}</el-button>
+                            </el-form-item>
+
+                            <el-form-item class="mb-2">
+
+                                <el-button type="danger" :disabled="boxSelectList.length == 0"
+                                    @click="disassemBoxClick">{{
+                                        $t('publicText.disassembly')
+                                    }}</el-button>
+                                <el-button type="warning" @click="handleboxPack">{{
+                                    $t('publicText.bind')
+                                    }}</el-button>
+                                <el-button @click="handleboxReset">{{
+                                    $t('publicText.reset')
+                                    }}</el-button>
+                            </el-form-item>
+
+                        </el-form>
+                        <el-form ref="formRef" class="inbound" :inline="false" size="" @submit.native.prevent
+                            label-width="auto">
+
+                            <el-form-item :label="$t('publicText.bind') + $t('packageManage.smallCode')" class="mb-2">
+                                <el-input v-model.trim="boxForm.ContainerName" ref="inputBoxRef" style="width: 600px"
+                                    placeholder="" @keyup.enter.native="bindBoxClick('SmallBox')" />
+                            </el-form-item>
+                            <el-form-item class="mb-2" :label="$t('publicText.tip')">
+                                <el-input v-model="msgBoxText" :rows="2" type="textarea" placeholder=""
+                                    style="width: 600px" size="" :class="msgBoxClass" disabled></el-input>
+                            </el-form-item>
+                        </el-form>
+                    </div>
                     <el-table :data="outerTableData" size="small" :style="{ width: '100%' }" :height="tableHeight"
                         :tooltip-effect="'light'" border fit ref="tableBoxRef" @selection-change="handleSelectionBox">
                         <el-table-column type="selection" width="55" align="center" />
@@ -89,8 +115,6 @@
                         </el-table-column>
                         <el-table-column prop="ChildQty" :label="$t('packageManage.smallNum')" />
                         <el-table-column prop="ParentContainerName" :label="$t('packageManage.outerCode')" />
-
-
                         <el-table-column prop="ParentQty" :label="$t('packageManage.boxNum')" />
                         <el-table-column prop="BindingTime" :label="$t('packageManage.bandTime')" />
                         <template #empty>
@@ -101,37 +125,44 @@
                     </el-table>
                 </el-tab-pane>
                 <el-tab-pane :label="$t('packageManage.smallBoxDisassembly')" name="small">
-                    <el-form ref="formRef" class="inbound" :inline="true" size="" @submit.native.prevent
+                    <el-form ref="formRef" class="inbound" :inline="false" size="" @submit.native.prevent
                         label-width="auto">
 
                         <el-form-item :label="$t('packageManage.smallCode')" class="mb-2">
                             <el-input v-model.trim="getSmallForm.ContainerName" ref="inputRef" style="width: 300px"
-                                placeholder="" @keyup.enter.native="getDataSmall" />
+                                placeholder="" @keyup.enter.native="getDataSmall" /> <el-button class="ml-2"
+                                type="primary" @click="getDataSmall">{{
+                                $t('publicText.query') }}</el-button>
+                                <el-button class="ml-2"  @click="handleSmallboxReset">{{
+                                    $t('publicText.reset')
+                                }}</el-button>
                         </el-form-item>
-                        <el-form-item class="mb-2">
-                            <el-button type="primary" @click="getDataSmall">{{ $t('publicText.query') }}</el-button>
-                            <!-- <el-button type="warning" @click="disassem Click">{{ $t('publicText.disassembly') 
-                            }}</el-button>-->
-                        </el-form-item>
+                        <!-- <el-form-item class="mb-2">
+                         
+                        </el-form-item> -->
                         <el-form-item class="mb-2" :label="$t('publicText.tip')">
                             <el-input v-model="msgSmallText" :rows="2" type="textarea" placeholder=""
                                 style="width: 648px" size="" :class="msgSmallClass" disabled></el-input>
                         </el-form-item>
+
+
                     </el-form>
+
                     <el-table :data="smallTableData" size="small" :style="{ width: '100%' }" :height="tableHeight"
                         :tooltip-effect="'light'" border fit>
                         <el-table-column type="index" align="center" width="60" fixed :label="$t('publicText.index')">
 
                         </el-table-column>
-                        <el-table-column prop="MfgOrderName" :label="$t('packageManage.bacthCode')">
+                        <el-table-column prop="ChildContainerName" :label="$t('packageManage.bacthCode')">
                         </el-table-column>
-                        <el-table-column prop="MfgOrderName" :label="$t('packageManage.smallCode')">
+                        <el-table-column prop="ParentContianerName" :label="$t('packageManage.smallCode')">
                         </el-table-column>
-                        <el-table-column prop="PriorityCodeName" :label="$t('packageManage.outerCode')" />
+                        <el-table-column prop="BoxParentContainerName" :label="$t('packageManage.outerCode')" />
                         <el-table-column prop="ProductName" :label="$t('packageManage.boxOrder')" />
                         <el-table-column :label="$t('publicText.operation')">
                             <template #default="scope">
-                                <el-button @click="disassemSmallClick(scope.row)">{{ $t('publicText.delete')
+                                <el-button type="danger" size="small" @click="disassemSmallClick(scope.row)">{{
+                                    $t('publicText.disassembly')
                                     }}</el-button>
                             </template>
 
@@ -198,14 +229,18 @@ const packForm = ref({
     ContainerName: "",
     ContainerLevelName: ""
 })
+const boxForm = ref({
+    ContainerName: "",
+    ContainerLevelName: ""
+})
 const form = ref({
     ContainerName: "",
     ContainerLevelName: ""
 })
 const tableHeight = ref(0);
-const boxTableData = ref([])
+const boxTableData = ref<any[]>([])
 const smallTableData = ref([])
-const outerTableData = ref([])
+const outerTableData = ref<any[]>([])
 const msgPackText = ref('')
 const msgBoxText = ref('')
 const msgSmallText = ref('')
@@ -264,17 +299,68 @@ interface BindForm {
     packingContianerLists: Array<any>
 }
 const disassemPackClick = () => {
-     ElMessageBox.confirm(t('publicText.confirm')+t('publicText.disassembly'), t('publicText.confirm')+t('publicText.operation'), {
+    ElMessageBox.confirm(t('publicText.confirm') + t('publicText.disassembly'), t('publicText.confirm') + t('publicText.operation'), {
         confirmButtonText: t('publicText.confirm'),
         cancelButtonText: t('publicText.cancel'),
         type: "warning",
     }).then(() => {
+        let data: BindForm = {
+            ParentContainerName: packSelectList.value[0].ParentContainerName,
+            Status: 0,
+            packingContianerLists: []
+        }
+        data.packingContianerLists = packSelectList.value.map((item: any) => {
+            return {
+                ContainerName: item.ChildContainerName
+            }
+        })
+        AssociateAndDisassociateServices(data).then((res: any) => {
+            isPackSuccess.value = res.success
+            msgPackText.value = res.msg
+            if (res.success) {
+                getDataPack("Packing")
+            }
+        })
+    }).catch(() => {
+        // on cancel
+        ElNotification({
+            title: t('publicText.tipTitle'),
+            message: t('publicText.cancel'),
+            type: "info",
+        });
+    });
+}
+//装箱单绑定
+const bindPackClick = (val: any) => {
+    if (getPackForm.value.ContainerName == '') {
+        // msgText.value = t('packageManage.pleaseSamContainer')
+        // isSuccess.value = false
+        getPackFocus()
+        return
+    }
+    packForm.value.ContainerLevelName = val
+    GetSearchBoxNumberSmallBoxNumberQuery(packForm.value).then((res: any) => {
+        isPackSuccess.value = res.success
+        msgPackText.value = res.msg
+        if (res.success) {
+            boxTableData.value.unshift(
+                {
+                    ChildContainerName: packForm.value.ContainerName,
+                    ParentContainerName: getPackForm.value.ContainerName
+                }
+            )
+        }
+        packForm.value.ContainerName = ''
+
+    })
+}
+const handlebindPack = () => {
     let data: BindForm = {
-        ParentContainerName: packSelectList.value[0].ParentContainerName,
-        Status: 0,
+        ParentContainerName: boxTableData.value[0].ParentContainerName,
+        Status: 1,
         packingContianerLists: []
     }
-    data.packingContianerLists = packSelectList.value.map((item: any) => {
+    data.packingContianerLists = boxTableData.value.map((item: any) => {
         return {
             ContainerName: item.ChildContainerName
         }
@@ -286,28 +372,30 @@ const disassemPackClick = () => {
             getDataPack("Packing")
         }
     })
-    }).catch(() => {
-        // on cancel
-        ElNotification({
-            title: t('publicText.tipTitle'),
-            message: t('publicText.cancel'),
-            type: "info",
-        });
-    });
-}
-//装箱单绑定
-const bindPackClick = (val:any) => {
-    if (getPackForm.value.ContainerName == '') {
-        // msgText.value = t('packageManage.pleaseSamContainer')
-        // isSuccess.value = false
-        getPackFocus()
-        return
-    }
-    GetSearchBoxNumberSmallBoxNumberQuery(packForm.value).then((res: any) => {
-        if (res.success) {
 
-        }
-    })
+}
+const handlebindReset = () => {
+    packForm.value.ContainerName = ''
+    getPackForm.value.ContainerName = ''
+    boxTableData.value = []
+    msgPackText.value = ''
+    isPackSuccess.value = true
+
+}
+const handleboxReset = () => {
+    boxForm.value.ContainerName = ''
+    getBoxForm.value.ContainerName = ''
+    outerTableData.value = []
+    msgBoxText.value = ''
+    isBoxSuccess.value = true
+
+}
+const handleSmallboxReset = () => {
+    getSmallForm.value.ContainerName = ''
+    smallTableData.value = []
+    msgSmallText.value = ''
+    isSmallSuccess.value = true
+
 }
 //外箱
 const getDataBox = (val: any) => {
@@ -319,17 +407,68 @@ const getDataBox = (val: any) => {
 }
 //外箱
 const disassemBoxClick = () => {
- ElMessageBox.confirm(t('publicText.confirm')+t('publicText.disassembly'), t('publicText.confirm')+t('publicText.operation'), {
+    ElMessageBox.confirm(t('publicText.confirm') + t('publicText.disassembly'), t('publicText.confirm') + t('publicText.operation'), {
         confirmButtonText: t('publicText.confirm'),
         cancelButtonText: t('publicText.cancel'),
         type: "warning",
     }).then(() => {
+        let data: BindForm = {
+            ParentContainerName: boxSelectList.value[0].ParentContainerName,
+            Status: 0,
+            packingContianerLists: []
+        }
+        data.packingContianerLists = boxSelectList.value.map((item: any) => {
+            return {
+                ContainerName: item.ChildContainerName
+            }
+        })
+        AssociateAndDisassociateServices(data).then((res: any) => {
+            isBoxSuccess.value = res.success
+            msgBoxText.value = res.msg
+            if (res.success) {
+                getDataBox("OuterBox")
+            }
+        })
+    }).catch(() => {
+        // on cancel
+        ElNotification({
+            title: t('publicText.tip'),
+            message: t('publicText.cancel') + t('publicText.operation'),
+            type: "info",
+        });
+    });
+
+}
+//外箱
+const bindBoxClick = (val: any) => {
+    if (getBoxForm.value.ContainerName == '') {
+        // msgText.value = t('packageManage.pleaseSamContainer')
+        // isSuccess.value = false
+        getPackFocus()
+        return
+    }
+    boxForm.value.ContainerLevelName = val
+    GetSearchBoxNumberSmallBoxNumberQuery(boxForm.value).then((res: any) => {
+        isBoxSuccess.value = res.success
+        msgBoxText.value = res.msg
+        if (res.success) {
+            outerTableData.value.unshift(
+                {
+                    ChildContainerName: boxForm.value.ContainerName,
+                    ParentContainerName: getBoxForm.value.ContainerName
+                }
+            )
+        }
+        boxForm.value.ContainerName = ''
+    })
+}
+const handleboxPack = () => {
     let data: BindForm = {
-        ParentContainerName: packSelectList.value[0].ParentContainerName,
-        Status: 0,
+        ParentContainerName: outerTableData.value[0].ParentContainerName,
+        Status: 1,
         packingContianerLists: []
     }
-    data.packingContianerLists = boxSelectList.value.map((item: any) => {
+    data.packingContianerLists = outerTableData.value.map((item: any) => {
         return {
             ContainerName: item.ChildContainerName
         }
@@ -341,18 +480,6 @@ const disassemBoxClick = () => {
             getDataBox("OuterBox")
         }
     })
-    }).catch(() => {
-        // on cancel
-        ElNotification({
-            title: t('publicText.tip'),
-            message: t('publicText.cancel')+t('publicText.operation'),
-            type: "info",
-        });
-    });
-
-}
-//外箱
-const bindBoxClick = () => {
 
 }
 //小盒
@@ -365,7 +492,7 @@ const getDataSmall = (val: any) => {
 }
 //小盒
 const disassemSmallClick = (val: any) => {
-    ElMessageBox.confirm(t('publicText.confirm')+t('publicText.disassembly'), t('publicText.confirm')+t('publicText.operation'), {
+    ElMessageBox.confirm(t('publicText.confirm') + t('publicText.disassembly'), t('publicText.confirm') + t('publicText.operation'), {
         confirmButtonText: t('publicText.confirm'),
         cancelButtonText: t('publicText.cancel'),
         type: "warning",
