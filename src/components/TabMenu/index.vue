@@ -1,12 +1,12 @@
 <template>
   <div class="w-[4.8rem]  bg-[#006487]" v-click-outside="clickOut">
     <!-- <div class="h-[50px]"></div> -->
-    <el-scrollbar class="h-[calc(100%-120px)]">
+    <el-scrollbar ref='scrollMenuRes' class="h-[calc(100%-120px)]" @scroll="scrollValue">
       <!-- {{  routes}} -->
 
       <div class="w-[4.8rem]" v-for="item in tabRouters">
         <div class="text-center text-xs cursor-pointer pt-3 pb-3 hover:bg-[#005A79]"
-          :class="{ isActive: isActive(item.path) }" @click="tabClick(isOnlyChildren(item))">
+          :class="{ isActive: isActive(item.path) }" @click="tabClick(isOnlyChildren(item))" >
           <el-icon :size="24" color="#ffffff">
             <component :is="isOnlyChildren(item).meta?.icon" />
           </el-icon>
@@ -27,8 +27,18 @@
           </p> 
         </div> -->
       </div>
+
+
     </el-scrollbar>
-    <div class="h-[120px] flex flex-col-reverse items-center">
+
+    <div class="h-[120px] flex flex-col justify-between items-center">
+      <div><el-icon v-if="isScroll" :size="30" color="#ffffff" @click="downBottom">
+          <ArrowDown />
+        </el-icon>
+        <el-icon v-if="!isScroll" :size="30" color="#ffffff" @click="upTop">
+          <ArrowUp />
+        </el-icon>
+      </div>
       <el-dropdown trigger="click" placement="top">
         <div class="flex flex-col items-center">
           <div class="block">
@@ -46,15 +56,15 @@
               <el-icon v-if="isFull">
                 <Minus />
               </el-icon>
-              {{isFull?"正常":"全屏"}}</el-dropdown-item>
-            <el-dropdown-item @click.native="getSolw"><el-icon >
+              {{ isFull ? "正常" : "全屏" }}</el-dropdown-item>
+            <el-dropdown-item @click.native="getSolw"><el-icon>
                 <Warning />
               </el-icon>系统版本</el-dropdown-item>
-            
+
             <el-dropdown-item @click.native="openUpdatePwd"><el-icon>
                 <Key />
               </el-icon>修改密码</el-dropdown-item>
-              <el-dropdown-item @click.native="switchSystem"><el-icon>
+            <el-dropdown-item @click.native="switchSystem"><el-icon>
                 <Connection />
               </el-icon>切换系统</el-dropdown-item>
             <el-dropdown-item @click.native="logoutsys"><el-icon>
@@ -115,7 +125,21 @@ import { usePermissionStoreWithOut } from "@/stores/modules/permission";
 import { useUserStoreWithOut } from '@/stores/modules/user'
 import { cloneDeep } from "lodash-es";
 import { useAppStore } from "@/stores/modules/app";
-import axios from "axios";
+const scrollMenuRes = ref()
+const isScroll = computed(() => {
+  if (scrollMenuRes.value) {
+    let wrap = scrollMenuRes.value.wrapRef
+    if (scrollHeight.value > (wrap.scrollHeight - wrap.clientHeight)) {
+      return false
+    } else {
+      return true
+    }
+  } else {
+    return true
+  }
+
+})
+const scrollHeight = ref(0)
 const { currentRoute, push } = useRouter();
 const permissionStore = usePermissionStoreWithOut();
 const userStore = useUserStoreWithOut()
@@ -241,7 +265,7 @@ const getSolw = () => {
 
   GetVersion().then((res: any) => {
     solow.value = true
-    versionForm.value ={...res.content}
+    versionForm.value = { ...res.content }
   })
 }
 const solwCanel = () => {
@@ -252,7 +276,7 @@ const logoutsys = () => {
   userStore.logout()
 }
 
-const switchSystem=()=>{
+const switchSystem = () => {
   localStorage.setItem("SYSTEM_TYPE", JSON.stringify(!appStore.getSystemType));
   appStore.setSystemType(!appStore.getSystemType);
   if (appStore.getSystemType && localStorage.getItem("OPUIData")) {
@@ -263,7 +287,7 @@ const switchSystem=()=>{
   }
 
   location.reload()
- 
+
 }
 const tabClick = (item: any) => {
   const newPath = item.children ? item.path : item.path.split("/")[0];
@@ -312,21 +336,62 @@ const isOnlyChildren = (item: any) => {
   }
 };
 // 全屏方法
-const isFull=ref(false)
+const isFull = ref(false)
 const fullScreen = () => {
-    // 是否全屏，否为null
-    let full = document.fullscreenElement
-    // console.log(full)
-    if (!full) {
-        // document自带的全屏方法
-        document.documentElement.requestFullscreen()
-        isFull.value=true
-    } else {
-        // document自带的推出全屏方法
-        document.exitFullscreen()
-        isFull.value=false
-    }
+  // 是否全屏，否为null
+  let full = document.fullscreenElement
+  // console.log(full)
+  if (!full) {
+    // document自带的全屏方法
+    document.documentElement.requestFullscreen()
+    isFull.value = true
+  } else {
+    // document自带的推出全屏方法
+    document.exitFullscreen()
+    isFull.value = false
+  }
 }
+const scrollValue = (val: any) => {
+  scrollHeight.value = val.scrollTop + 1
+  // let wrap = scrollMenuRes.value.wrapRef
+  // if (val.scrollTop + 1 > (wrap.scrollHeight - wrap.clientHeight)) {
+  //   isScroll.value = false
+  // } else {
+  //   isScroll.value = true
+  // }
+}
+const downBottom = () => {
+  let wrap = scrollMenuRes.value.wrapRef
+  // scrollMenuRes.value.wrapRef.scrollTop = wrap.scrollHeight - wrap.clientHeight
+  smoothScrollTo(wrap, wrap.scrollHeight - wrap.clientHeight, 500);
+}
+const upTop = () => {
+  // scrollMenuRes.value.wrapRef.scrollTop = 0
+  let wrap = scrollMenuRes.value.wrapRef
+  smoothScrollTo(wrap, 0, 500);
+}
+const smoothScrollTo = (element: any, target: any, duration: any) => {
+  const start = element.scrollTop;
+  const change = target - start;
+  const startTime = performance.now();
+
+  const animateScroll = (currentTime: any) => {
+    const elapsed = currentTime - startTime;
+    const progress = Math.min(elapsed / duration, 1);
+
+    // 使用缓动函数使滚动更自然
+    const easeInOutQuad = (t: any) => t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+    const easing = easeInOutQuad(progress);
+
+    element.scrollTop = start + change * easing;
+
+    if (progress < 1) {
+      requestAnimationFrame(animateScroll);
+    }
+  };
+
+  requestAnimationFrame(animateScroll);
+};
 </script>
 <script lang="ts">
 import { ClickOutside } from "element-plus";
@@ -348,6 +413,4 @@ export default defineComponent({
   //background: #005a79;
   background: #005571;
 }
-
-
 </style>

@@ -25,36 +25,37 @@ import { ElNotification, ElMessage, ElMessageBox } from "element-plus";
 const visitedViews = computed(() => tagsViewStore.getVisitedViews)
 const routers = computed(() => permissionStore.getRouters)
 const setSelectTag = tagsViewStore.setSelectedTag
+const selectTag = computed(() => tagsViewStore.getSelectedTag)
 const affixTagArr = ref<any>([])
-const solow=ref(false)
+const solow = ref(false)
 const versionForm = ref({
-  CurrentVer: '',
-  UpdateLog: ''
+    CurrentVer: '',
+    UpdateLog: ''
 })
 const upPwVisible = ref(false)
 const upPwForm = reactive({
-  employeeName: '',
-  pwd: '',
-  confirmPwd: ''
+    employeeName: '',
+    pwd: '',
+    confirmPwd: ''
 })
 
 const upPwFormRef = ref()
 
 const equalToPassword = (rule: any, value: any, callback: any) => {
-  if (upPwForm.pwd !== value) {
-    callback(new Error("两次输入的密码不一致"));
-  } else {
-    callback();
-  }
+    if (upPwForm.pwd !== value) {
+        callback(new Error("两次输入的密码不一致"));
+    } else {
+        callback();
+    }
 }
 const rules1 = reactive<any>({
-  pwd: [
-    { required: true, message: '请输入新密码', trigger: 'blur' },
-  ],
-  confirmPwd: [
-    { required: true, trigger: "blur", message: "请再次输入您的密码" },
-    { required: true, validator: equalToPassword, trigger: "blur" }
-  ],
+    pwd: [
+        { required: true, message: '请输入新密码', trigger: 'blur' },
+    ],
+    confirmPwd: [
+        { required: true, trigger: "blur", message: "请再次输入您的密码" },
+        { required: true, validator: equalToPassword, trigger: "blur" }
+    ],
 
 })
 
@@ -135,64 +136,64 @@ const logoutsys = () => {
 }
 
 const openUpdatePwd = () => {
-  upPwVisible.value = true
+    upPwVisible.value = true
 }
 
 const upDateCancel = () => {
-  upPwVisible.value = false
-  upPwFormRef.value.resetFields();
+    upPwVisible.value = false
+    upPwFormRef.value.resetFields();
 }
 const upDateSubmit = () => {
-  upPwFormRef.value.validate((valid: any) => {
-    if (valid) {
-      let data = {
-        employeeName: userStore.getUserInfo,
-        pwd: upPwForm.pwd
-      }
-      updatePassword(data).then((res: any) => {
-        if (res.code == 100200) {
-          ElNotification({
-            title: "修改成功",
-            type: "success",
-          });
-          ElMessageBox.confirm("密码修改成功即将退出登录", "提示", {
-            confirmButtonText: "确定",
-            type: "warning",
-          })
-            .then(() => {
-              logoutsys()
+    upPwFormRef.value.validate((valid: any) => {
+        if (valid) {
+            let data = {
+                employeeName: userStore.getUserInfo,
+                pwd: upPwForm.pwd
+            }
+            updatePassword(data).then((res: any) => {
+                if (res.code == 100200) {
+                    ElNotification({
+                        title: "修改成功",
+                        type: "success",
+                    });
+                    ElMessageBox.confirm("密码修改成功即将退出登录", "提示", {
+                        confirmButtonText: "确定",
+                        type: "warning",
+                    })
+                        .then(() => {
+                            logoutsys()
+                        })
+                        .catch(() => {
+                            logoutsys()
+                        });
+                } else {
+                    ElNotification({
+                        title: "修改失败",
+                        message: res.msg,
+                        type: "error",
+                    });
+                }
+                upPwVisible.value = false
             })
-            .catch(() => {
-              logoutsys()
-            });
-        } else {
-          ElNotification({
-            title: "修改失败",
-            message: res.msg,
-            type: "error",
-          });
-        }
-        upPwVisible.value = false
-      })
 
-    } else {
-      console.log("error submit!!");
-      return false;
-    }
-  })
+        } else {
+            console.log("error submit!!");
+            return false;
+        }
+    })
 }
 
 
 const getSolw = () => {
- 
-  GetVersion().then((res: any) => {
-    solow.value = true
-    versionForm.value ={...res.content}
 
-  })
+    GetVersion().then((res: any) => {
+        solow.value = true
+        versionForm.value = { ...res.content }
+
+    })
 }
 const solwCanel = () => {
-  solow.value = false
+    solow.value = false
 }
 
 const switchSystem = () => {
@@ -367,7 +368,7 @@ const fullScreen = () => {
     <div class="bood  h-[35px] flex w-full relative bg-[#fff]">
         <div class="overflow-hidden flex-1">
             <el-scrollbar class="h-full">
-                <div class="flex h-full items-center" v-if="!appStore.getSystemType">
+                <div class="flex h-full  items-center" v-if="!appStore.getSystemType">
                     <div v-for="item in visitedViews" :key="item.fullPath" class="tag_item " :class="[item.meta.affix ? `affix` : '', {
                         'is-active': isActive(item)
                     }]">
@@ -392,6 +393,10 @@ const fullScreen = () => {
                             </div>
                         </router-link>
                     </div>
+                    <div class="absolute bottom-1 right-2 flex items-center" @click="refreshSelectedTag(selectTag)">
+                        <el-icon :size="23" color="#6e7079">
+                            <RefreshRight />
+                        </el-icon></div>
                 </div>
                 <div v-else>
                     <div class="h-[34px] pr-[10px] pl-[10px] flex justify-between items-center">
@@ -403,8 +408,8 @@ const fullScreen = () => {
                             </el-tooltip>
                             <div v-for="(v, i) in treeToList(unref(levelList))" :key="v.name">{{
                                 textArr[i]
-                            }}<span class="text-[1.1rem] text-[#006487] underline">&nbsp;{{ v.meta.title
-                                    }}&nbsp;</span>
+                                }}<span class="text-[1.1rem] text-[#006487] underline">&nbsp;{{ v.meta.title
+                                }}&nbsp;</span>
                             </div>
                         </div>
                         <div class="flex items-center gap-3">
@@ -429,11 +434,11 @@ const fullScreen = () => {
                                 <template #dropdown>
                                     <el-dropdown-menu>
                                         <el-dropdown-item @click.native="getSolw"><el-icon>
-                <Warning />
-              </el-icon>系统版本</el-dropdown-item>
-              <el-dropdown-item @click.native="openUpdatePwd"><el-icon>
-                <Key />
-              </el-icon>修改密码</el-dropdown-item>
+                                                <Warning />
+                                            </el-icon>系统版本</el-dropdown-item>
+                                        <el-dropdown-item @click.native="openUpdatePwd"><el-icon>
+                                                <Key />
+                                            </el-icon>修改密码</el-dropdown-item>
                                         <!-- <el-dropdown-item @click.native="openUpdatePwd">修改密码</el-dropdown-item> -->
                                         <el-dropdown-item @click.native="switchSystem"><el-icon>
                                                 <Connection />
@@ -441,7 +446,7 @@ const fullScreen = () => {
                                         <el-dropdown-item @click.native="logoutsys"><el-icon>
                                                 <Promotion />
                                             </el-icon>退出登录</el-dropdown-item>
-                                      
+
                                     </el-dropdown-menu>
                                 </template>
                             </el-dropdown>
@@ -488,32 +493,34 @@ const fullScreen = () => {
             </template>
         </el-dialog>
         <el-dialog v-model="solow" title="版本信息" width="700px" align-center @close="solwCanel()">
-      <el-form ref="formRef" :model="versionForm" label-width="auto">
-        <el-form-item label="版本" prop="name"><span class="ml-2">{{ versionForm.CurrentVer }}</span></el-form-item>
-        <el-form-item label="更新日志" prop="zone">
-          <!-- <pre class="text-base">{{ versionForm.UpdateLog }}</pre> -->
-          <div class="w-[600px] h-[60vh] overflow-y-auto whitespace-pre-wrap">{{ versionForm.UpdateLog }}</div>
-        </el-form-item>
-      </el-form>
-    </el-dialog>
-    <el-dialog :append-to-body="true" :close-on-click-modal="false" title="修改密码" v-model="upPwVisible" width="400px"
-      @close="upDateCancel()">
-      <el-form :model="upPwForm" ref="upPwFormRef" :rules="rules1" label-width="auto">
-        <el-form-item label="新密码" prop="pwd">
-          <el-input v-model="upPwForm.pwd" placeholder="请输入新密码" show-password clearable></el-input>
-        </el-form-item>
-        <el-form-item label="确认密码" prop="confirmPwd">
-          <el-input v-model="upPwForm.confirmPwd" placeholder="再次输入新密码" show-password clearable></el-input>
-        </el-form-item>
-      </el-form>
+            <el-form ref="formRef" :model="versionForm" label-width="auto">
+                <el-form-item label="版本" prop="name"><span class="ml-2">{{ versionForm.CurrentVer
+                        }}</span></el-form-item>
+                <el-form-item label="更新日志" prop="zone">
+                    <!-- <pre class="text-base">{{ versionForm.UpdateLog }}</pre> -->
+                    <div class="w-[600px] h-[60vh] overflow-y-auto whitespace-pre-wrap">{{ versionForm.UpdateLog }}
+                    </div>
+                </el-form-item>
+            </el-form>
+        </el-dialog>
+        <el-dialog :append-to-body="true" :close-on-click-modal="false" title="修改密码" v-model="upPwVisible" width="400px"
+            @close="upDateCancel()">
+            <el-form :model="upPwForm" ref="upPwFormRef" :rules="rules1" label-width="auto">
+                <el-form-item label="新密码" prop="pwd">
+                    <el-input v-model="upPwForm.pwd" placeholder="请输入新密码" show-password clearable></el-input>
+                </el-form-item>
+                <el-form-item label="确认密码" prop="confirmPwd">
+                    <el-input v-model="upPwForm.confirmPwd" placeholder="再次输入新密码" show-password clearable></el-input>
+                </el-form-item>
+            </el-form>
 
-      <template #footer>
-        <span class="dialog-footer">
-          <el-button @click="upDateCancel()">取消</el-button>
-          <el-button type="primary" @click="upDateSubmit()">确定</el-button>
-        </span>
-      </template>
-    </el-dialog>
+            <template #footer>
+                <span class="dialog-footer">
+                    <el-button @click="upDateCancel()">取消</el-button>
+                    <el-button type="primary" @click="upDateSubmit()">确定</el-button>
+                </span>
+            </template>
+        </el-dialog>
     </div>
 </template>
 <style lang="scss" scoped>

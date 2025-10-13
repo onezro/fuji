@@ -22,8 +22,8 @@
                         </el-form-item>
                         <el-form-item :label="$t('inventInquiry.materialType')" class="mb-2" prop="ProductFmaily">
                             <el-select v-model="getRawForm.ProductFmaily" filterable style="width: 200px">
-                                <el-option v-for="item in typeRawList" :key="item.ProductFamilyId" :label="item.ProductFamilyName"
-                                    :value="item.ProductFamilyName">
+                                <el-option v-for="item in typeRawList" :key="item.ProductFamilyId"
+                                    :label="item.ProductFamilyName" :value="item.ProductFamilyName">
                                 </el-option>
                             </el-select>
                         </el-form-item>
@@ -31,18 +31,32 @@
                             <el-input v-model.trim="getRawForm.ContainerName" style="width: 200px" placeholder=""
                                 @keyup.enter.native="getRawData" />
                         </el-form-item>
+                        <el-form-item :label="$t('inventInquiry.isCar')" class="mb-2" prop="entryTime">
+                            <el-select v-model="getRawForm.IsItAnAutomotiveProduct"  placeholder="" style="width: 200px">
+                                <el-option
+                                    :label="$t('publicText.is')"
+                                    :value="true">
+                                </el-option>
+                                <el-option
+                                    :label="$t('publicText.no')"
+                                    :value="false">
+                                </el-option>
+                            </el-select>
+                            
+                        </el-form-item>
                         <el-form-item :label="$t('inventInquiry.entryTime')" class="mb-2" prop="entryTime">
                             <el-date-picker :shortcuts="shortcuts" v-model="searchRawDate" value-format="YYYY-MM-DD"
                                 type="daterange" range-separator="-" size="small" style="width: 200px"
                                 :clearable="false" />
                         </el-form-item>
+
                         <el-form-item class="mb-2">
                             <el-button type="primary" @click="getRawData">{{
                                 $t("publicText.query")
-                            }}</el-button>
+                                }}</el-button>
                             <el-button type="" @click="handleRawReset">{{
                                 $t("publicText.reset")
-                            }}</el-button>
+                                }}</el-button>
                             <el-button type="success" size="small" :disabled="tableData.length == 0"
                                 @click="exportList">{{ $t("publicText.export") }}</el-button>
                         </el-form-item>
@@ -55,8 +69,8 @@
                         (pageObj.currentPage - 1) * pageObj.pageSize,
                         pageObj.currentPage * pageObj.pageSize
                     )
-                        " size="small" :style="{ width: '100%' }" ref="rawRef" :height="tableHeight"
-                        :tooltip-effect="'light'" border fit :row-class-name="tableRowClassName">
+                        " size="small" :style="{ width: '100%' }" ref="rawRef" :height="tableHeight" :tooltip-effect="'light'"
+                        border fit :row-class-name="tableRowClassName">
                         <!-- <el-table-column type="selection" width="55" align="center" /> -->
                         <el-table-column type="index" align="center" fixed :label="$t('publicText.index')" width="50">
                             <template #default="scope">
@@ -64,7 +78,7 @@
                                     scope.$index +
                                     pageObj.pageSize * (pageObj.currentPage - 1) +
                                     1
-                                }}</span>
+                                    }}</span>
                             </template>
                         </el-table-column>
                         <el-table-column prop="ProductName" :label="$t('inventInquiry.materialName')" />
@@ -72,7 +86,7 @@
                         <el-table-column prop="MaterialSource" :label="$t('inventInquiry.materialSource')" />
                         <el-table-column prop="ProductFamilyName" :label="$t('inventInquiry.materialType')" />
                         <el-table-column prop="ContainerName" :label="$t('inventInquiry.materialID')" />
-                        <el-table-column prop="CurrentInventory" :label="$t('inventInquiry.CurrentInventory')" />
+                        <el-table-column prop="TotalInventoryByProductBase" :label="$t('inventInquiry.CurrentInventory')" />
                         <el-table-column prop="TotalOutboundQty" :label="$t('inventInquiry.TotalOutboundQty')" />
                         <el-table-column prop="OriginalStartDate" :label="$t('inventInquiry.entryTime')" />
                         <template #empty>
@@ -108,6 +122,7 @@
                             <el-input v-model.trim="getFinishForm.PackingContainerName" style="width: 200px"
                                 placeholder="" @keyup.enter.native="getFinishData" />
                         </el-form-item>
+
                         <el-form-item :label="$t('inventInquiry.entryTime')" class="mb-2" prop="entryTime">
                             <el-date-picker :shortcuts="shortcuts" v-model="searchFinishDate" value-format="YYYY-MM-DD"
                                 type="daterange" range-separator="-" size="small" style="width: 200px"
@@ -116,13 +131,13 @@
                         <el-form-item class="mb-2">
                             <el-button type="primary" @click="getFinishData">{{
                                 $t("publicText.query")
-                            }}</el-button>
+                                }}</el-button>
                             <el-button type="" @click="handleFinishReset">{{
                                 $t("publicText.reset")
-                            }}</el-button>
+                                }}</el-button>
                             <el-button type="success" size="small" :disabled="tableData.length == 0"
                                 @click="exportFinishList">{{
-                                    $t("publicText.export") }}</el-button>
+                                $t("publicText.export") }}</el-button>
                         </el-form-item>
                     </el-form>
                     <div class="text-xl mb-1 font-bold flex gap-11">
@@ -139,8 +154,8 @@
                         (pageObj2.currentPage - 1) * pageObj2.pageSize,
                         pageObj2.currentPage * pageObj2.pageSize
                     )
-                        " size="small" :style="{ width: '100%' }" ref="finishRef" :height="tableHeight"
-                        :tooltip-effect="'light'" border fit>
+                        " size="small" :style="{ width: '100%' }" ref="finishRef" :height="tableHeight" :tooltip-effect="'light'"
+                        border fit>
                         <!-- <el-table-column type="selection" width="55" align="center" /> -->
                         <el-table-column type="index" align="center" fixed :label="$t('publicText.index')" width="50">
                             <template #default="scope">
@@ -148,7 +163,7 @@
                                     scope.$index +
                                     pageObj2.pageSize * (pageObj2.currentPage - 1) +
                                     1
-                                }}</span>
+                                    }}</span>
                             </template>
                         </el-table-column>
                         <el-table-column prop="ProductName" :label="$t('inventInquiry.productName')" />
@@ -228,7 +243,7 @@ const getRawForm = ref({
     MaterialSource: "",
     ProductFmaily: "",
     ContainerName: "",
-    IsItAnAutomotiveProduct:true,
+    IsItAnAutomotiveProduct: '',
     StartDate: "",
     EndDate: "",
 });
@@ -280,47 +295,48 @@ onBeforeMount(() => {
 onMounted(() => {
     window.addEventListener("resize", getScreenHeight);
     getRawData();
-    getMaterialSource()
-    getMaterialType()
+    getMaterialSource();
+    getMaterialType();
 });
 onBeforeUnmount(() => {
     window.addEventListener("resize", getScreenHeight);
 });
 const tabChange = (val: any) => {
     // console.log(val);
-    if (val == 'raw') {
+    if (val == "raw") {
         getRawData();
     } else {
-        getFinishData()
+        getFinishData();
     }
 };
 const getMaterialSource = () => {
     getVendorQuery({}).then((res: any) => {
-        sourceList.value = res.content
+        sourceList.value = res.content;
     });
 };
 const getMaterialType = () => {
     getProductFamilyQuery({}).then((res: any) => {
-        typeRawList.value = res.content
+        typeRawList.value = res.content;
     });
 };
 const getRawData = () => {
     GetRawMaterialInventoryQuery(getRawForm.value).then((res: any) => {
         tableData.value = res.content.map((item: any) => {
-            item.OriginalStartDate = dayjs(item.OriginalStartDate).format("YYYY-MM-DD HH:mm:ss");
+            item.OriginalStartDate = dayjs(item.OriginalStartDate).format(
+                "YYYY-MM-DD HH:mm:ss"
+            );
             return item;
         });
     });
 };
 const tableRowClassName = (val: any) => {
-    let row = val.row
+    let row = val.row;
     if (row.TotalOutboundQty > row.TotalInventoryByProductBase) {
-        return 'danger-row-invent'
+        return "danger-row-invent";
     } else {
-        return 'success-row-invent'
+        return "success-row-invent";
     }
-
-}
+};
 const handleRawReset = () => {
     getRawForm.value = {
         ProductName: "",
@@ -328,17 +344,17 @@ const handleRawReset = () => {
         MaterialSource: "",
         ProductFmaily: "",
         ContainerName: "",
-        IsItAnAutomotiveProduct:true,
+        IsItAnAutomotiveProduct: '',
         StartDate: "",
         EndDate: "",
-    }
-    searchRawDate.value = []
+    };
+    searchRawDate.value = [];
 };
 const exportList = () => {
     exportTableToExcel({
         tableRef: rawRef.value,
         fetchAllData: fetchRowAllData,
-        fileName: `${t('inventInquiry.rawMaterialInvent')}_${dayjs().format(
+        fileName: `${t("inventInquiry.rawMaterialInvent")}_${dayjs().format(
             "YYYYMMDDHHmmss"
         )}`,
         styles: {
@@ -354,14 +370,18 @@ const exportList = () => {
     });
 };
 const fetchRowAllData = async () => {
-    let data = await GetRawMaterialInventoryQuery(getRawForm.value).then((res: any) => {
-        return res.content.map((item: any) => {
-            item.OriginalStartDate = dayjs(item.OriginalStartDate).format("YYYY-MM-DD HH:mm:ss");
-            return item;
-        });
-    });
-    return data
-}
+    let data = await GetRawMaterialInventoryQuery(getRawForm.value).then(
+        (res: any) => {
+            return res.content.map((item: any) => {
+                item.OriginalStartDate = dayjs(item.OriginalStartDate).format(
+                    "YYYY-MM-DD HH:mm:ss"
+                );
+                return item;
+            });
+        }
+    );
+    return data;
+};
 const getFinishData = () => {
     GetFinishedProductInventoryQuery(getFinishForm.value).then((res: any) => {
         tableData2.value = res.content.map((item: any) => {
@@ -378,14 +398,14 @@ const handleFinishReset = () => {
         PackingContainerName: "",
         StartDate: "",
         EndDate: "",
-    }
-    searchFinishDate.value = []
+    };
+    searchFinishDate.value = [];
 };
 const exportFinishList = () => {
     exportTableToExcel({
         tableRef: finishRef.value,
         fetchAllData: fetchFinishAllData,
-        fileName: `${t('inventInquiry.finishGoodsInvent')}_${dayjs().format(
+        fileName: `${t("inventInquiry.finishGoodsInvent")}_${dayjs().format(
             "YYYYMMDDHHmmss"
         )}`,
         styles: {
@@ -401,14 +421,18 @@ const exportFinishList = () => {
     });
 };
 const fetchFinishAllData = async () => {
-    let data = await GetFinishedProductInventoryQuery(getFinishForm.value).then((res: any) => {
-        return res.content.map((item: any) => {
-            item.MoveStdDate = dayjs(item.MoveStdDate).format("YYYY-MM-DD HH:mm:ss");
-            return item;
-        });
-    });
-    return data
-}
+    let data = await GetFinishedProductInventoryQuery(getFinishForm.value).then(
+        (res: any) => {
+            return res.content.map((item: any) => {
+                item.MoveStdDate = dayjs(item.MoveStdDate).format(
+                    "YYYY-MM-DD HH:mm:ss"
+                );
+                return item;
+            });
+        }
+    );
+    return data;
+};
 const handleSizeChange = (val: any) => {
     pageObj.pageSize = val;
 };

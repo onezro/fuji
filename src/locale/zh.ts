@@ -1,3 +1,5 @@
+import Aqlrules from "@/views/incomingManage/aqlrules.vue";
+
 const zh = {
   message: {
     tipTitle: "提示信息",
@@ -141,6 +143,7 @@ const zh = {
   inventInquiry: {
     rawMaterialInvent: "原材料库存",
     finishGoodsInvent: "成品库存",
+    isCar: "汽车源材料",
     materialName: "物料名称",
     incomingBatch: "来料批次",
     materialSource: "物料来源",
@@ -162,6 +165,27 @@ const zh = {
     productTotal: "产品总数",
     totalBoxNum: "总箱数",
     boxNum: "箱数",
+  },
+  aqlrules: {
+    partNumber: "料号",
+    supplier: "供应商",
+    sampleInStand: "抽检标准",
+  },
+  iqcBadCode: {
+    testItem: "测试项",
+    testType: "测试类型",
+    badCode: "不良代码",
+    badDsc: "不良描述",
+  },
+  surveyItem: {
+    partNumber: "料号",
+    testItem: "检验项",
+    testType: "检验类型",
+    uploadFile: "上传文件",
+    standVal:'标准值',
+    upperTolerance:'上公差',
+    lowerTolerance:'下公差',
+    unit:'单位'
   },
 };
 export default zh;

@@ -33,6 +33,7 @@ export const constantRouterMap = [
     meta: {
       title: '首页',
       icon: 'House',
+         hidden: true,
     },
     children: [
       {
@@ -85,7 +86,18 @@ export const constantRouterMap = [
       hidden: true,
       title: '404',
     }
-  }
+  },
+   {
+    path: "/redirect",
+    component: Layout,
+    meta: { hidden: true },
+    children: [
+      {
+        path: "/redirect/:path(.*)",
+        component: () => import("@/views/redirect/index.vue"),
+      },
+    ],
+  },
 ]
 
 export const asyncRouterMap = [
