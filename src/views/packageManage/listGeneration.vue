@@ -38,12 +38,12 @@
                             }}</span>
                     </template>
                 </el-table-column>
-                <el-table-column prop="ContainerName" :label="$t('listGeneration.boxCode')" width="150"/>
+                <el-table-column prop="ContainerName" :label="$t('listGeneration.boxCode')" width="150" />
                 <el-table-column prop="ES_HsCodeName" :label="$t('listGeneration.type')" />
-                <el-table-column prop="OriginalStartDate" :label="$t('listGeneration.packCompleTime')" width="150"/>
+                <el-table-column prop="OriginalStartDate" :label="$t('listGeneration.packCompleTime')" width="150" />
                 <el-table-column prop="CustomerName" :label="$t('listGeneration.customer')" />
-                <el-table-column prop="ES_CustomerProduct" :label="$t('listGeneration.productName')" width="150"/>
-                <el-table-column prop="ES_CustomerPO" :label="$t('listGeneration.productPO')" width="150"/>
+                <el-table-column prop="ES_CustomerProduct" :label="$t('listGeneration.productName')" width="150" />
+                <el-table-column prop="ES_CustomerPO" :label="$t('listGeneration.productPO')" width="150" />
                 <el-table-column prop="ProductName" :label="$t('listGeneration.productPN')" />
                 <el-table-column prop="ES_LotNumber" :label="$t('listGeneration.lotNo')" />
                 <el-table-column prop="Qty" :label="$t('listGeneration.productionQty')" />
@@ -168,12 +168,12 @@ const getData = () => {
                     ...item,
                     OriginalStartDate: item.OriginalStartDate
                         ? dayjs(item.OriginalStartDate).format(
-                              "YYYY-MM-DD HH:mm:ss"
-                          )
+                            "YYYY-MM-DD HH:mm:ss"
+                        )
                         : "",
                 };
             });
-        }else{
+        } else {
             tableData.value = [];
         }
     });
@@ -198,8 +198,8 @@ const getIsBox = () => {
         if (res.success) {
             if (tableData.value.length >= 6) {
                 ElMessageBox.confirm(
-                    t("listGeneration.PackFull") ,
-                   t("publicText.confirm") + t("publicText.operation"),
+                    t("listGeneration.PackFull"),
+                    t("publicText.confirm") + t("publicText.operation"),
                     {
                         confirmButtonText: t("publicText.confirm"),
                         cancelButtonText: t("publicText.cancel"),
@@ -213,13 +213,13 @@ const getIsBox = () => {
                             message: getForm.value.OuterBoxContainerName + t("publicText.add") + t("publicText.success"),
                             type: "success",
                         });
-                         getForm.value.OuterBoxContainerName = "";
+                        getForm.value.OuterBoxContainerName = "";
                     })
                     .catch(() => {
                         // on cancel
                         ElNotification({
                             title: t("publicText.tip"),
-                            message: t("publicText.cancel")+ t('publicText.operation'),
+                            message: t("publicText.cancel") + t('publicText.operation'),
                             type: "info",
                         });
                     });
@@ -230,16 +230,16 @@ const getIsBox = () => {
                     message: getForm.value.OuterBoxContainerName + t("publicText.add") + t("publicText.success"),
                     type: "success",
                 });
-                 getForm.value.OuterBoxContainerName = "";
+                getForm.value.OuterBoxContainerName = "";
             }
-        }else{
+        } else {
             ElNotification({
                 title: t("publicText.tip"),
                 message: res.msg,
                 type: "error",
             });
         }
-       
+
     });
 };
 const cellClick = (val: any) => { };
@@ -298,27 +298,55 @@ const handleGenerate = () => {
             OuterBoxContainerName: item.ContainerName,
         }
     });
-    console.log(data);
-    PackingAdd(data).then((res: any) => {
-        console.log(res);
-        
-        if (res.success) {
-            ElNotification({
-                title: t("publicText.tip"),
-                message:  res.msg,
-                type: "success",
-            });
-            // handleReset();
-            listGenerRef.value.clearSelection();
-            getData();
-        } else {
-            ElNotification({
-                title: t("publicText.tip"),
-                message: res.msg,
-                type: "error",
-            });
+    let msgText = ''
+    if (data.packingOuterBoxContainers.length > 48) {
+        msgText = t('listGeneration.msgExceed')
+    } else if (data.packingOuterBoxContainers.length == 48) {
+        msgText = t('listGeneration.msgEquals')
+    } else {
+        msgText = t('listGeneration.msgLessThan')
+    }
+    ElMessageBox.confirm(
+        msgText,
+        t("publicText.confirm") + t("publicText.operation"),
+        {
+            confirmButtonText: t("publicText.confirm"),
+            cancelButtonText: t("publicText.cancel"),
+            type: "warning",
         }
-    });
+    )
+        .then(() => {
+            PackingAdd(data).then((res: any) => {
+                // console.log(res);
+
+                if (res.success) {
+                    ElNotification({
+                        title: t("publicText.tip"),
+                        message: res.msg,
+                        type: "success",
+                    });
+                    // handleReset();
+                    listGenerRef.value.clearSelection();
+                    getData();
+                } else {
+                    ElNotification({
+                        title: t("publicText.tip"),
+                        message: res.msg,
+                        type: "error",
+                    });
+                }
+            });
+        })
+        .catch(() => {
+            // on cancel
+            ElNotification({
+                title: t("publicText.tipTitle"),
+                message: t("publicText.cancel"),
+                type: "info",
+            });
+        });
+    // console.log(data);
+
 };
 interface BindForm {
     CardAreaName: string;
@@ -336,8 +364,8 @@ const handlePreview = () => {
             OuterBoxContainerName: item.ContainerName,
         }
     });
-    
-    
+
+
     GetPackingCardAreaSerachDetail(data).then((res: any) => {
         console.log(res.content);
 

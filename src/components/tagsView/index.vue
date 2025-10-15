@@ -369,6 +369,7 @@ const fullScreen = () => {
         <div class="overflow-hidden flex-1">
             <el-scrollbar class="h-full">
                 <div class="flex h-full  items-center" v-if="!appStore.getSystemType">
+                    
                     <div v-for="item in visitedViews" :key="item.fullPath" class="tag_item " :class="[item.meta.affix ? `affix` : '', {
                         'is-active': isActive(item)
                     }]">

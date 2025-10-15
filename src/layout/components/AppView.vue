@@ -4,7 +4,7 @@
       <template #default="{ Component, route }">
         <transition
         
-         name="fade" 
+         name="ios-fade" 
           mode="out-in"
         >
           <keep-alive :include="getCaches">
@@ -60,6 +60,23 @@ body,
   transform: translateX(100%);
   opacity: 0;
 }
+.ios-fade-enter-active,
+.ios-fade-leave-active {
+  transition: all 0.4s cubic-bezier(0.28, 0.11, 0.32, 1);
+}
+.ios-fade-enter-from,
+.ios-fade-leave-to {
+  opacity: 0;
+  transform: scale(0.95);
+}
+
+.ios-modal {
+  background: white;
+  border-radius: 14px;
+  padding: 20px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+
 
 
 </style>

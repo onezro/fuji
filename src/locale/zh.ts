@@ -58,6 +58,24 @@ const zh = {
     password: "密码",
     // system:'系统',
   },
+  empolyee:{
+    employeeID:'工号',
+    employeeName:'员工姓名',
+    professionalTitle:'职称',
+    organization:'职称'
+  },
+  menu:{
+    menuName:'菜单名称',
+    icon:'图标',
+    path:'path',
+    componentName:'组件名称',
+    sort:'排序',
+
+  },
+  role:{
+    roleName:'角色名称',
+    roleDsc:'描述'
+  },
   //批次创建打印
   batchCreation: {
     scheduling: "排产时间",
@@ -132,6 +150,9 @@ const zh = {
     packOrder: "装箱单编号",
     packTime: "装箱时间",
     productType: "产品类型",
+    msgLessThan:'当前箱数小于48！！请再次确认。',
+    msgExceed:'当前箱数大于48！！！请再次确认。',
+     msgEquals:'当前箱数是48！请再次确认。'
   },
   finishProduct: {
     boxCode: "箱号",

@@ -32,12 +32,23 @@
     </el-scrollbar>
 
     <div class="h-[120px] flex flex-col justify-between items-center">
-      <div><el-icon v-if="isScroll" :size="30" color="#ffffff" @click="downBottom">
+      <div>
+         <el-icon 
+      :size="30" 
+      color="#ffffff" 
+      @click="toggleScroll"
+      :class="{ 'rotate-icon': !isScroll }"
+    >
+      <ArrowDown /> 
+    </el-icon>
+        <!-- <transition name="rotate">
+        <el-icon v-if="isScroll" :size="30" key="down" color="#ffffff" @click="downBottom">
           <ArrowDown />
         </el-icon>
-        <el-icon v-if="!isScroll" :size="30" color="#ffffff" @click="upTop">
+        <el-icon  v-else   :size="30" key="up" color="#ffffff" @click="upTop">
           <ArrowUp />
         </el-icon>
+        </transition> -->
       </div>
       <el-dropdown trigger="click" placement="top">
         <div class="flex flex-col items-center">
@@ -75,7 +86,8 @@
       </el-dropdown>
     </div>
     <Menu class="absolute top-0 z-[99] h-[100%] left-[4.8rem] bg-[#003750]"
-      :class="{ 'w-[200px]': showMenu, 'w-0': !showMenu }" style="transition: width 0.5s, left 0.5s" :base-path="'/'"
+      :class="{ 'w-[200px]': showMenu, 'w-0': !showMenu }" style="transition:  width 0.5s cubic-bezier(0.22, 0.61, 0.36, 1),
+    transform 0.6s cubic-bezier(0.2, 0, 0.2, 1)" :base-path="'/'"
       @refresh="clickOut"></Menu>
 
     <el-dialog :append-to-body="true" :close-on-click-modal="false" title="修改密码" v-model="upPwVisible" width="400px"
@@ -364,11 +376,20 @@ const downBottom = () => {
   let wrap = scrollMenuRes.value.wrapRef
   // scrollMenuRes.value.wrapRef.scrollTop = wrap.scrollHeight - wrap.clientHeight
   smoothScrollTo(wrap, wrap.scrollHeight - wrap.clientHeight, 500);
+  
 }
 const upTop = () => {
   // scrollMenuRes.value.wrapRef.scrollTop = 0
   let wrap = scrollMenuRes.value.wrapRef
   smoothScrollTo(wrap, 0, 500);
+}
+const toggleScroll=()=>{
+  let wrap = scrollMenuRes.value.wrapRef
+  if(isScroll.value){
+     smoothScrollTo(wrap, wrap.scrollHeight - wrap.clientHeight, 500);
+  }else{
+    smoothScrollTo(wrap, 0, 500);
+  }
 }
 const smoothScrollTo = (element: any, target: any, duration: any) => {
   const start = element.scrollTop;
@@ -412,5 +433,15 @@ export default defineComponent({
   // color: #006487;
   //background: #005a79;
   background: #005571;
+}
+</style>
+<style scoped>
+.el-icon {
+  transform: rotate(0deg);
+  transition: transform 0.5s ease;
+}
+
+.rotate-icon {
+  transform: rotate(180deg);
 }
 </style>

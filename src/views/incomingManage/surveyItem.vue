@@ -20,7 +20,6 @@
                             }}</span>
                     </template>
                 </el-table-column>
-
                 <el-table-column prop="PriorityCodeName" :label="$t('surveyItem.partNumber')" />
                 <el-table-column prop="ProductName" :label="$t('surveyItem.testItem')" />
                 <el-table-column prop="Description" :label="$t('surveyItem.testType')" />
