@@ -67,7 +67,7 @@ const zh = {
   menu:{
     menuName:'菜单名称',
     icon:'图标',
-    path:'path',
+    path:'path路径',
     componentName:'组件名称',
     sort:'排序',
 
