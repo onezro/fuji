@@ -47,5 +47,12 @@ export function GetPackingHSCodeSummaryQuery(data: any) {
         data,
     });
 }
-
+//
+export function PackingRemoveOuterBoxSubmit(data: any) {
+    return request({
+        url: "/api/PackingController/PackingRemoveOuterBoxSubmit",
+        method: "post",
+        data,
+    });
+}
 

@@ -109,6 +109,7 @@ import {
     GetCardAreaQuery,
     GetPackingCardAreaSerachDetail,
     PackingAdd,
+    PackingRemoveOuterBoxSubmit
 } from "@/api/packageManage/listGeneration";
 import {
     ref,
@@ -262,18 +263,48 @@ const handleDelete = () => {
         cancelButtonText: t('publicText.cancel'),
         type: "warning",
     }).then(() => {
-        selectList.value.forEach((item: any) => {
-            let index = tableData.value.findIndex(
-                (i: any) => i.ContainerName == item.ContainerName
-            );
-            tableData.value.splice(index, 1);
-        });
-        selectList.value = [];
-        ElNotification({
-            title: t("publicText.tip"),
-            message: t("publicText.operationSuccess"),
-            type: "success",
-        });
+         let data: PackForm = {
+        CardAreaName: getForm.value.CardAreaName,
+
+        packingOuterBoxContainers: [],
+    };
+    data.packingOuterBoxContainers = selectList.value.map((item: any) => {
+        return {
+            OuterBoxContainerName: item.ContainerName,
+        }
+    });
+        PackingRemoveOuterBoxSubmit(data).then((res: any) => {
+                // console.log(res);
+
+                if (res.success) {
+                    ElNotification({
+                        title: t("publicText.tip"),
+                        message: res.msg,
+                        type: "success",
+                    });
+                    // handleReset();
+                    listGenerRef.value.clearSelection();
+                    getData();
+                } else {
+                    ElNotification({
+                        title: t("publicText.tip"),
+                        message: res.msg,
+                        type: "error",
+                    });
+                }
+            });
+        // selectList.value.forEach((item: any) => {
+        //     let index = tableData.value.findIndex(
+        //         (i: any) => i.ContainerName == item.ContainerName
+        //     );
+        //     tableData.value.splice(index, 1);
+        // });
+        // selectList.value = [];
+        // ElNotification({
+        //     title: t("publicText.tip"),
+        //     message: t("publicText.operationSuccess"),
+        //     type: "success",
+        // });
     }).catch(() => {
         // on cancel
         ElNotification({
