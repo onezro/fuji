@@ -1787,6 +1787,26 @@
                             "CreateDate": "2024-12-30T10:06:22.78",
                             "UpdateBy": "lvchuan",
                             "UpdateDate": "2024-12-30T10:08:12.46"
+                        },
+                        {
+                            "childMenu": null,
+                            "ID": "1d2dd196-cfc7-43dd-9b0b-963b5484f118",
+                            "MenuType": "Portal",
+                            "MenuLevel": 1,
+                            "MenuName": "testBoard",
+                            "MenuFID": "0f0a91ff-4002-444b-b2b2-90a98e9028c4",
+                            "icon": "",
+                            "title": "测试看板",
+                            "component": "reportsBoards/kanban/index",
+                            "path": "testBoard",
+                            "sonNum": null,
+                            "redirect": null,
+                            "sortId": 4,
+                            "IsDelete": false,
+                            "CreateBy": null,
+                            "CreateDate": "2025-02-12T09:58:16.01",
+                            "UpdateBy": "lvchuan",
+                            "UpdateDate": "2025-10-16T15:46:23.733"
                         }
                     ],
                     "ID": "0f0a91ff-4002-444b-b2b2-90a98e9028c4",

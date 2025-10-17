@@ -15,7 +15,7 @@
                 <el-form-item class="mb-2">
                     <el-button type="" @click="handleReset">{{
                         $t("publicText.reset")
-                        }}</el-button>
+                    }}</el-button>
                     <el-button type="danger" :disabled="selectList.length == 0" @click="handleDelete">{{
                         $t("publicText.delete") }}</el-button>
                     <el-button type="warning" :disabled="selectList.length == 0" @click="handleGenerate">{{
@@ -35,7 +35,7 @@
                     <template #default="scope">
                         <span>{{
                             scope.$index + pageObj.pageSize * (pageObj.currentPage - 1) + 1
-                            }}</span>
+                        }}</span>
                     </template>
                 </el-table-column>
                 <el-table-column prop="ContainerName" :label="$t('listGeneration.boxCode')" width="150" />
@@ -263,36 +263,36 @@ const handleDelete = () => {
         cancelButtonText: t('publicText.cancel'),
         type: "warning",
     }).then(() => {
-         let data: PackForm = {
-        CardAreaName: getForm.value.CardAreaName,
+        let data: PackForm = {
+            CardAreaName: getForm.value.CardAreaName,
 
-        packingOuterBoxContainers: [],
-    };
-    data.packingOuterBoxContainers = selectList.value.map((item: any) => {
-        return {
-            OuterBoxContainerName: item.ContainerName,
-        }
-    });
+            packingOuterBoxContainers: [],
+        };
+        data.packingOuterBoxContainers = selectList.value.map((item: any) => {
+            return {
+                OuterBoxContainerName: item.ContainerName,
+            }
+        });
         PackingRemoveOuterBoxSubmit(data).then((res: any) => {
-                // console.log(res);
+            // console.log(res);
 
-                if (res.success) {
-                    ElNotification({
-                        title: t("publicText.tip"),
-                        message: res.msg,
-                        type: "success",
-                    });
-                    // handleReset();
-                    listGenerRef.value.clearSelection();
-                    getData();
-                } else {
-                    ElNotification({
-                        title: t("publicText.tip"),
-                        message: res.msg,
-                        type: "error",
-                    });
-                }
-            });
+            if (res.success) {
+                ElNotification({
+                    title: t("publicText.tip"),
+                    message: res.msg,
+                    type: "success",
+                });
+                // handleReset();
+                listGenerRef.value.clearSelection();
+                getData();
+            } else {
+                ElNotification({
+                    title: t("publicText.tip"),
+                    message: res.msg,
+                    type: "error",
+                });
+            }
+        });
         // selectList.value.forEach((item: any) => {
         //     let index = tableData.value.findIndex(
         //         (i: any) => i.ContainerName == item.ContainerName

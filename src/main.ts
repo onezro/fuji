@@ -25,11 +25,13 @@ import VXETable from 'vxe-table'
 import 'vxe-table/lib/style.css'
 
 import i18n from "./locale/index";
+import DataVVue3 from '@kjgl77/datav-vue3'
 
 const app = createApp(App)
 // app.directive(ClickOutside)
 // app.use(AFTableColumn)
 app.use(VXETable)
+app.use(DataVVue3)
 app.use(ElementPlus, {locale:zhCN,size: ''})
 // app.use(TuiPlus)
 app.use(i18n)
