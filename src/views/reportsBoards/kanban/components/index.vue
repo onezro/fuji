@@ -5,7 +5,7 @@
                 <dv-decoration-10 class="dv-dec-10 decoration" :color="['#40a0ffb8']" />
                 <dv-decoration-8 class="dv-dec-8 decoration decoration-center" :color="['#40a0ffb8', '#40a0ffb8']" />
                 <div class="text decoration-center">
-                    <div  class="text-white flex items-center ">
+                    <div class="text-white flex items-center ">
                         <span style="padding-top: 18px;">环宇昌电子数字化运营平台</span>
                     </div>
                 </div>
@@ -29,24 +29,31 @@
                                     <div class="card">
                                         <div class="personnel-card">
                                             <div class="personnel-item">
-                                                <h3>钢板车间</h3>
+                                                <h3>🏭 钢板车间</h3>
                                                 <div class="personnel-count">
-                                                 <span class="text-[#5dade2] text-[36px]"> {{ personnel.steelPlate.actual }}</span>  /{{
-                                                    personnel.steelPlate.standard }}</div>
+                                                    <span class="text-[#f1c40f] text-[36px]"> {{
+                                                        personnel.steelPlate.actual }}</span> / <span class="text-[#2ecc71]">{{
+                                                            personnel.steelPlate.standard }}</span>
+                                                </div>
                                             </div>
                                             <div class="personnel-item">
-                                                <h3>缓冲垫车间</h3>
-                                                <div class="personnel-count">  <span class="text-[#5dade2] text-[36px]">{{ personnel.cushion.actual }}</span>/{{
-                                                    personnel.cushion.standard }}</div>
+                                                <h3>🛡️ 缓冲垫车间</h3>
+                                                <div class="personnel-count"> <span
+                                                        class="text-[#f1c40f] text-[36px]">{{ personnel.cushion.actual
+                                                        }}</span> / <span class="text-[#2ecc71]">{{
+                                                            personnel.cushion.standard }}</span></div>
                                             </div>
                                             <div class="personnel-item">
-                                                <h3>膜材垫车间</h3>
-                                                <div class="personnel-count"><span class="text-[#5dade2] text-[36px]">{{ personnel.membrane.actual }}</span>/{{
-                                                    personnel.membrane.standard }}</div>
+                                                <h3>📦 膜材垫车间</h3>
+                                                <div class="personnel-count"><span class="text-[#f1c40f] text-[36px]">{{
+                                                        personnel.membrane.actual }}</span> / <span class="text-[#2ecc71]">{{
+                                                            personnel.membrane.standard }}</span></div>
                                             </div>
                                             <div class="personnel-item">
                                                 <h3>总到岗率</h3>
-                                                <div class="personnel-count "><span class="text-[#5dade2] text-[36px]">{{ overallAttendanceRate }}%</span></div>
+                                                <div class="personnel-count "><span
+                                                        class="text-[#2ecc71] text-[36px]">{{ overallAttendanceRate
+                                                        }}%</span></div>
                                             </div>
                                         </div>
                                     </div>
@@ -68,7 +75,8 @@
                     <el-col :span="6" :offset="0">
                         <dv-border-box-12 class="centerh">
                             <div class="header_title">
-                                <i class="fa fa-check-circle"></i> <span class="text-color ">异常物料</span><span style="color: #ff0000;"> Top5</span>
+                                <i class="fa fa-check-circle"></i> <span class="text-color ">异常物料</span><span
+                                    style="color: #ff0000;"> Top5</span>
                             </div>
                             <div>
                                 <div class="material-card">
@@ -77,9 +85,10 @@
                                             <span class="col1">{{ '物料编码' }}</span>
                                             <span class="col2">{{ '数量' }}</span>
                                         </li>
-                                        <li v-for="(item, index) in abnormalMaterial" class="text-white" :key="index" :style="{ 
-          backgroundColor: `rgba(255, 0, 0, ${0.2 + (abnormalMaterial.length - 1 - index) * 0.1})` 
-        }">
+                                        <li v-for="(item, index) in abnormalMaterial" class="text-white" :key="index"
+                                            :style="{
+                                                backgroundColor: `rgba(255, 0, 0, ${0.2 + (abnormalMaterial.length - 1 - index) * 0.1})`
+                                            }">
                                             <span class="col1">{{ item.materialNo }}</span>
                                             <span class="col2">{{ item.quantity }}</span>
                                         </li>
@@ -108,12 +117,12 @@
                                         <div class="equipment-status">
                                             <div class="status-item">
                                                 <div class="status-count status-normal">{{ equipment.steelPlate.normal
-                                                }}</div>
+                                                    }}</div>
                                                 <div class="status-label">正常</div>
                                             </div>
                                             <div class="status-item">
                                                 <div class="status-count status-pending">{{ equipment.steelPlate.pending
-                                                }}</div>
+                                                    }}</div>
                                                 <div class="status-label">未开机</div>
                                             </div>
                                             <div class="status-item">
@@ -139,7 +148,7 @@
                                             </div>
                                             <div class="status-item">
                                                 <div class="status-count status-abnormal">{{ equipment.cushion.abnormal
-                                                }}</div>
+                                                    }}</div>
                                                 <div class="status-label">异常</div>
                                             </div>
                                         </div>
@@ -155,12 +164,12 @@
                                             </div>
                                             <div class="status-item">
                                                 <div class="status-count status-pending">{{ equipment.membrane.pending
-                                                }}</div>
+                                                    }}</div>
                                                 <div class="status-label">未开机</div>
                                             </div>
                                             <div class="status-item">
                                                 <div class="status-count status-abnormal">{{ equipment.membrane.abnormal
-                                                }}</div>
+                                                    }}</div>
                                                 <div class="status-label">异常</div>
                                             </div>
                                         </div>
@@ -194,11 +203,14 @@
                                             <span class="col">安全库存</span>
                                             <span class="col">库存</span>
                                         </li>
-                                        <li class="text-white" v-for="(item, index) in materialStock" :key="index" :class="item.quantity >= item.SafetyQty ? 'safe-row' : 'danger-row'">
+                                        <li class="text-white" v-for="(item, index) in materialStock" :key="index"
+                                            :class="item.quantity >= item.SafetyQty ? 'safe-row' : 'danger-row'">
                                             <span class="col1 material-code" :title="item.materialNo">{{ item.materialNo
-                                                }}</span>
+                                            }}</span>
                                             <span class="col">{{ item.SafetyQty }}</span>
-                                            <span class="col font-bold" :class="{ 'text-green': item.quantity >= item.SafetyQty, 'text-red': item.quantity < item.SafetyQty }">{{ item.quantity }}</span>
+                                            <span class="col font-bold"
+                                                :class="{ 'text-green': item.quantity >= item.SafetyQty, 'text-red': item.quantity < item.SafetyQty }">{{
+                                                item.quantity }}</span>
                                         </li>
                                     </ul>
                                 </div>
@@ -670,18 +682,20 @@ const updateTime = () => {
 
 .material-list li .col1 {
     flex: 1;
-    
+
     // text-align: center;
     padding: 0 5px;
     overflow: hidden;
 }
+
 .material-list li .col2 {
     // flex: 1;
-      min-width: 120px;
+    min-width: 120px;
     text-align: center;
     padding: 0 5px;
     overflow: hidden;
 }
+
 .material-list li .col {
     flex: 1;
     text-align: center;
@@ -696,8 +710,20 @@ const updateTime = () => {
     text-overflow: ellipsis;
     white-space: nowrap;
 }
-.safe-row { background-color: rgba(40, 167, 69, 0.26); }
-.danger-row { background-color: rgba(220, 53, 70, 0.26); }
-.text-green { color: #00ff3c; }
-.text-red { color: #ff0019; }
+
+.safe-row {
+    background-color: rgba(40, 167, 69, 0.26);
+}
+
+.danger-row {
+    background-color: rgba(220, 53, 70, 0.26);
+}
+
+.text-green {
+    color: #00ff3c;
+}
+
+.text-red {
+    color: #ff0019;
+}
 </style>

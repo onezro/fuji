@@ -17,6 +17,14 @@ export function getProductFamilyQuery(data: any) {
         data,
     });
 }
+//存放位置
+export function getWarehouseStorageLocationQuery(data: any) {
+    return request({
+        url: "/api/warehouse/getWarehouseStorageLocationQuery",
+        method: "post",
+        data,
+    });
+}
 
 //原材料
 export function GetRawMaterialInventoryQuery(data: any) {

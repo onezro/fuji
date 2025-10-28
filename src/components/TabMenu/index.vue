@@ -137,6 +137,9 @@ import { usePermissionStoreWithOut } from "@/stores/modules/permission";
 import { useUserStoreWithOut } from '@/stores/modules/user'
 import { cloneDeep } from "lodash-es";
 import { useAppStore } from "@/stores/modules/app";
+import screenfull from 'screenfull'
+import { useRoute } from 'vue-router';
+const route = useRoute();
 const scrollMenuRes = ref()
 const isScroll = computed(() => {
   if (scrollMenuRes.value) {
@@ -353,15 +356,37 @@ const fullScreen = () => {
   // 是否全屏，否为null
   let full = document.fullscreenElement
   // console.log(full)
+  let fullDiv:any = "";
+
   if (!full) {
     // document自带的全屏方法
-    document.documentElement.requestFullscreen()
+    // document.documentElement.requestFullscreen()
     isFull.value = true
   } else {
     // document自带的推出全屏方法
-    document.exitFullscreen()
+    // document.exitFullscreen()
     isFull.value = false
   }
+  // console.log(route.path);
+  fullDiv=document.getElementById("fullDiv5");
+    if (fullDiv) { 
+        //找到后调用自带的toggle事件进行放大操作
+        screenfull.toggle(fullDiv);
+        isFull.value = false
+      } else {
+
+        //判断浏览器是否支持该组件
+        if (!screenfull.enabled) {
+          // this.$message({
+          //   message: "you browser can not work",
+          //   type: "warning",
+          // });
+          // return false;
+          // this.isFullscreen = false;
+        }
+        //放大页面 左侧菜单栏不会隐藏
+        screenfull.toggle();
+      }
 }
 const scrollValue = (val: any) => {
   scrollHeight.value = val.scrollTop + 1

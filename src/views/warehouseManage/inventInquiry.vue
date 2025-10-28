@@ -6,57 +6,62 @@
                     <el-form ref="formRawRef" :model="getRawForm" :inline="true" size="small" @submit.native.prevent
                         label-width="auto">
                         <el-form-item :label="$t('inventInquiry.materialName')" class="mb-2" prop="ProductName">
-                            <el-input v-model.trim="getRawForm.ProductName" style="width: 200px" placeholder=""
+                            <el-input v-model.trim="getRawForm.ProductName" style="width: 180px" placeholder=""
                                 @keyup.enter.native="getRawData" />
                         </el-form-item>
                         <el-form-item :label="$t('inventInquiry.incomingBatch')" class="mb-2" prop="CustomerLotNumber">
-                            <el-input v-model.trim="getRawForm.CustomerLotNumber" style="width: 200px" placeholder=""
+                            <el-input v-model.trim="getRawForm.CustomerLotNumber" style="width: 180px" placeholder=""
                                 @keyup.enter.native="getRawData" />
                         </el-form-item>
                         <el-form-item :label="$t('inventInquiry.materialSource')" class="mb-2" prop="MaterialSource">
-                            <el-select v-model="getRawForm.MaterialSource" filterable style="width: 200px">
+                            <el-select v-model="getRawForm.MaterialSource" filterable style="width: 180px">
                                 <el-option v-for="item in sourceList" :key="item.VendorId" :label="item.VendorName"
                                     :value="item.VendorName">
                                 </el-option>
                             </el-select>
                         </el-form-item>
                         <el-form-item :label="$t('inventInquiry.materialType')" class="mb-2" prop="ProductFmaily">
-                            <el-select v-model="getRawForm.ProductFmaily" filterable style="width: 200px">
+                            <el-select v-model="getRawForm.ProductFmaily" filterable style="width: 180px">
                                 <el-option v-for="item in typeRawList" :key="item.ProductFamilyId"
                                     :label="item.ProductFamilyName" :value="item.ProductFamilyName">
                                 </el-option>
                             </el-select>
                         </el-form-item>
                         <el-form-item :label="$t('inventInquiry.materialID')" class="mb-2" prop="ContainerName">
-                            <el-input v-model.trim="getRawForm.ContainerName" style="width: 200px" placeholder=""
+                            <el-input v-model.trim="getRawForm.ContainerName" style="width: 180px" placeholder=""
                                 @keyup.enter.native="getRawData" />
-                        </el-form-item>
-                        <el-form-item :label="$t('inventInquiry.isCar')" class="mb-2" prop="entryTime">
-                            <el-select v-model="getRawForm.IsItAnAutomotiveProduct"  placeholder="" style="width: 200px">
-                                <el-option
-                                    :label="$t('publicText.is')"
-                                    :value="true">
-                                </el-option>
-                                <el-option
-                                    :label="$t('publicText.no')"
-                                    :value="false">
-                                </el-option>
-                            </el-select>
-                            
                         </el-form-item>
                         <el-form-item :label="$t('inventInquiry.entryTime')" class="mb-2" prop="entryTime">
                             <el-date-picker :shortcuts="shortcuts" v-model="searchRawDate" value-format="YYYY-MM-DD"
-                                type="daterange" range-separator="-" size="small" style="width: 200px"
+                                type="daterange" range-separator="-" size="small" style="width: 180px"
                                 :clearable="false" />
                         </el-form-item>
 
+                        <el-form-item :label="$t('inventInquiry.isCar')" class="mb-2" prop="entryTime">
+                            <el-select v-model="getRawForm.IsItAnAutomotiveProduct" placeholder="" style="width: 180px">
+                                <el-option :label="$t('publicText.is')" :value="true">
+                                </el-option>
+                                <el-option :label="$t('publicText.no')" :value="false">
+                                </el-option>
+                            </el-select>
+
+                        </el-form-item>
+
+                        <el-form-item :label="$t('inventInquiry.materialPos')" class="mb-2" prop="Location">
+                            <el-select v-model="getRawForm.Location" filterable style="width: 180px">
+                                <el-option v-for="item in posRawList" :key="item.ES_WarehouseStorageLocationId"
+                                    :label="item.ES_WarehouseStorageLocatioName"
+                                    :value="item.ES_WarehouseStorageLocatioName">
+                                </el-option>
+                            </el-select>
+                        </el-form-item>
                         <el-form-item class="mb-2">
                             <el-button type="primary" @click="getRawData">{{
                                 $t("publicText.query")
-                                }}</el-button>
+                            }}</el-button>
                             <el-button type="" @click="handleRawReset">{{
                                 $t("publicText.reset")
-                                }}</el-button>
+                            }}</el-button>
                             <el-button type="success" size="small" :disabled="tableData.length == 0"
                                 @click="exportList">{{ $t("publicText.export") }}</el-button>
                         </el-form-item>
@@ -69,8 +74,8 @@
                         (pageObj.currentPage - 1) * pageObj.pageSize,
                         pageObj.currentPage * pageObj.pageSize
                     )
-                        " size="small" :style="{ width: '100%' }" ref="rawRef" :height="tableHeight" :tooltip-effect="'light'"
-                        border fit :row-class-name="tableRowClassName">
+                        " size="small" :style="{ width: '100%' }" ref="rawRef" :height="tableHeight"
+                        :tooltip-effect="'light'" border fit :row-class-name="tableRowClassName">
                         <!-- <el-table-column type="selection" width="55" align="center" /> -->
                         <el-table-column type="index" align="center" fixed :label="$t('publicText.index')" width="50">
                             <template #default="scope">
@@ -78,7 +83,7 @@
                                     scope.$index +
                                     pageObj.pageSize * (pageObj.currentPage - 1) +
                                     1
-                                    }}</span>
+                                }}</span>
                             </template>
                         </el-table-column>
                         <el-table-column prop="ProductName" :label="$t('inventInquiry.materialName')" />
@@ -86,7 +91,8 @@
                         <el-table-column prop="MaterialSource" :label="$t('inventInquiry.materialSource')" />
                         <el-table-column prop="ProductFamilyName" :label="$t('inventInquiry.materialType')" />
                         <el-table-column prop="ContainerName" :label="$t('inventInquiry.materialID')" />
-                        <el-table-column prop="TotalInventoryByProductBase" :label="$t('inventInquiry.CurrentInventory')" />
+                        <el-table-column prop="TotalInventoryByProductBase"
+                            :label="$t('inventInquiry.CurrentInventory')" />
                         <el-table-column prop="TotalOutboundQty" :label="$t('inventInquiry.TotalOutboundQty')" />
                         <el-table-column prop="OriginalStartDate" :label="$t('inventInquiry.entryTime')" />
                         <template #empty>
@@ -128,16 +134,38 @@
                                 type="daterange" range-separator="-" size="small" style="width: 200px"
                                 :clearable="false" />
                         </el-form-item>
+                        <el-form-item :label="$t('inventInquiry.ProductCode')" class="mb-2" prop="ProductCode">
+                            <el-input v-model.trim="getFinishForm.ProductCode" style="width: 200px" placeholder=""
+                                @keyup.enter.native="getFinishData" />
+                        </el-form-item>
+                        <el-form-item :label="$t('inventInquiry.customerName')" class="mb-2" prop="customerName">
+                            <el-input v-model.trim="getFinishForm.customerName" style="width: 200px" placeholder=""
+                                @keyup.enter.native="getFinishData" />
+                        </el-form-item>
+                        <el-form-item :label="$t('inventInquiry.specificationID')" class="mb-2" prop="specificationID">
+                            <el-input v-model.trim="getFinishForm.specificationID" style="width: 200px"
+                                placeholder="" @keyup.enter.native="getFinishData" />
+                        </el-form-item>
+                        <el-form-item :label="$t('inventInquiry.isCar')" class="mb-2" prop="entryTime">
+                            <el-select v-model="getFinishForm.IsItAnAutomotiveProduct" placeholder=""
+                                style="width: 200px">
+                                <el-option :label="$t('publicText.is')" :value="true">
+                                </el-option>
+                                <el-option :label="$t('publicText.no')" :value="false">
+                                </el-option>
+                            </el-select>
+
+                        </el-form-item>
                         <el-form-item class="mb-2">
                             <el-button type="primary" @click="getFinishData">{{
                                 $t("publicText.query")
-                                }}</el-button>
+                            }}</el-button>
                             <el-button type="" @click="handleFinishReset">{{
                                 $t("publicText.reset")
-                                }}</el-button>
+                            }}</el-button>
                             <el-button type="success" size="small" :disabled="tableData.length == 0"
                                 @click="exportFinishList">{{
-                                $t("publicText.export") }}</el-button>
+                                    $t("publicText.export") }}</el-button>
                         </el-form-item>
                     </el-form>
                     <div class="text-xl mb-1 font-bold flex gap-11">
@@ -154,8 +182,8 @@
                         (pageObj2.currentPage - 1) * pageObj2.pageSize,
                         pageObj2.currentPage * pageObj2.pageSize
                     )
-                        " size="small" :style="{ width: '100%' }" ref="finishRef" :height="tableHeight" :tooltip-effect="'light'"
-                        border fit>
+                        " size="small" :style="{ width: '100%' }" ref="finishRef" :height="tableHeight2"
+                        :tooltip-effect="'light'" border fit>
                         <!-- <el-table-column type="selection" width="55" align="center" /> -->
                         <el-table-column type="index" align="center" fixed :label="$t('publicText.index')" width="50">
                             <template #default="scope">
@@ -163,7 +191,7 @@
                                     scope.$index +
                                     pageObj2.pageSize * (pageObj2.currentPage - 1) +
                                     1
-                                    }}</span>
+                                }}</span>
                             </template>
                         </el-table-column>
                         <el-table-column prop="ProductName" :label="$t('inventInquiry.productName')" />
@@ -176,6 +204,12 @@
                         <el-table-column prop="BoxOuterContainerName" :label="$t('inventInquiry.boxNumber')" />
                         <el-table-column prop="PackingContainerName" :label="$t('inventInquiry.boxOrderNum')" />
                         <el-table-column prop="BoxOuterQty" :label="$t('inventInquiry.boxNum')" width="100" />
+                         <el-table-column prop="materialPos" :label="$t('inventInquiry.materialPos')" />
+                         <el-table-column prop="ProductCode" :label="$t('inventInquiry.ProductCode')" width="100" />
+                        <el-table-column prop="customerName" :label="$t('inventInquiry.customerName')" width="100" />
+                       
+                        <el-table-column prop="specificationID" :label="$t('inventInquiry.specificationID')" />
+                        <el-table-column prop="isCar" :label="$t('inventInquiry.isCar')" width="100" />
                         <el-table-column prop="MoveStdDate" :label="$t('inventInquiry.entryTime')" width="150" />
                         <template #empty>
                             <div class="flex items-center justify-center h-100%">
@@ -201,6 +235,7 @@ import {
     getVendorQuery,
     getProductFamilyQuery,
     GetRawMaterialInventoryQuery,
+    getWarehouseStorageLocationQuery,
     GetFinishedProductInventoryQuery,
 } from "@/api/warehouseManage/inventInquiry";
 import {
@@ -244,17 +279,23 @@ const getRawForm = ref({
     ProductFmaily: "",
     ContainerName: "",
     IsItAnAutomotiveProduct: '',
+    Location: '',
     StartDate: "",
     EndDate: "",
 });
 const sourceList = ref<any[]>([]);
 const typeRawList = ref<any[]>([]);
+const posRawList = ref<any[]>([]);
 const searchRawDate = ref<any[]>([]);
 const getFinishForm = ref({
     MfgOrderName: "",
     ProductName: "",
     BoxOuterContainerName: "",
     PackingContainerName: "",
+    ProductCode: "",
+    customerName: "",
+    specificationID: "",
+    IsItAnAutomotiveProduct: '',
     StartDate: "",
     EndDate: "",
 });
@@ -297,6 +338,7 @@ onMounted(() => {
     getRawData();
     getMaterialSource();
     getMaterialType();
+    getMaterialPos()
 });
 onBeforeUnmount(() => {
     window.addEventListener("resize", getScreenHeight);
@@ -309,14 +351,23 @@ const tabChange = (val: any) => {
         getFinishData();
     }
 };
+//获取来源
 const getMaterialSource = () => {
     getVendorQuery({}).then((res: any) => {
         sourceList.value = res.content;
     });
 };
+//获取类型
 const getMaterialType = () => {
     getProductFamilyQuery({}).then((res: any) => {
         typeRawList.value = res.content;
+    });
+};
+//获取存放位置
+const getMaterialPos = () => {
+
+    getWarehouseStorageLocationQuery({}).then((res: any) => {
+        posRawList.value = res.content;
     });
 };
 const getRawData = () => {
@@ -345,6 +396,7 @@ const handleRawReset = () => {
         ProductFmaily: "",
         ContainerName: "",
         IsItAnAutomotiveProduct: '',
+        Location: "",
         StartDate: "",
         EndDate: "",
     };
@@ -396,6 +448,10 @@ const handleFinishReset = () => {
         ProductName: "",
         BoxOuterContainerName: "",
         PackingContainerName: "",
+        ProductCode: "",
+        customerName: "",
+        specificationID: "",
+        IsItAnAutomotiveProduct: '',
         StartDate: "",
         EndDate: "",
     };
@@ -442,7 +498,7 @@ const handleCurrentChange = (val: any) => {
 const getScreenHeight = () => {
     nextTick(() => {
         tableHeight.value = window.innerHeight - 300;
-        tableHeight2.value = window.innerHeight - 300;
+        tableHeight2.value = window.innerHeight - 340;
     });
 };
 </script>

@@ -160,6 +160,7 @@ const zh = {
     order: "工单号",
     productMsg: "产品信息",
     number: "数量",
+    materialPos:'存放位置',
   },
   inventInquiry: {
     rawMaterialInvent: "原材料库存",
@@ -169,6 +170,7 @@ const zh = {
     incomingBatch: "来料批次",
     materialSource: "物料来源",
     materialType: "物料类型",
+    materialPos:'存放位置',
     CurrentInventory: "库存量",
     TotalOutboundQty: "出库量",
     materialID: "批次ID",
@@ -186,6 +188,10 @@ const zh = {
     productTotal: "产品总数",
     totalBoxNum: "总箱数",
     boxNum: "箱数",
+    ProductCode:'产品编码',
+    customerName:'客户名称',
+    specificationID:'规格书ID',
+
   },
   aqlrules: {
     partNumber: "料号",

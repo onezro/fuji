@@ -37,3 +37,4 @@ declare module './useVirtualized'
 declare module '@/api/asyApi'
 declare module 'file-saver'
 declare module "@/utils/useDraw"
+declare module "screenfull"

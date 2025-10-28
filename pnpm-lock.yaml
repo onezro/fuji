@@ -74,6 +74,9 @@ importers:
       pinia-plugin-persistedstate:
         specifier: ^3.2.3
         version: 3.2.3(pinia@2.2.4(typescript@5.4.5)(vue@3.5.12(typescript@5.4.5)))
+      screenfull:
+        specifier: ^6.0.2
+        version: 6.0.2
       v-click-outside:
         specifier: ^3.2.0
         version: 3.2.0
@@ -1676,6 +1679,10 @@ packages:
   saxes@5.0.1:
     resolution: {integrity: sha512-5LBh1Tls8c9xgGjw3QrMwETmTMVk0oFgvrFSvWx62llR2hcEInrKNZ2GZCCuuy2lvWrdl5jhbpeqc5hRYKFOcw==}
     engines: {node: '>=10'}
+
+  screenfull@6.0.2:
+    resolution: {integrity: sha512-AQdy8s4WhNvUZ6P8F6PB21tSPIYKniic+Ogx0AacBMjKP1GUHN2E9URxQHtCusiwxudnCKkdy4GrHXPPJSkCCw==}
+    engines: {node: ^14.13.1 || >=16.0.0}
 
   semver@6.3.1:
     resolution: {integrity: sha512-BR7VvDCVHO+q2xBEWskxS6DJE1qRnb7DxzUrogb71CWoSficBxYsiAGd+Kl0mmq/MprG9yArRkyrQxTO6XjMzA==}
@@ -3464,6 +3471,8 @@ snapshots:
   saxes@5.0.1:
     dependencies:
       xmlchars: 2.2.0
+
+  screenfull@6.0.2: {}
 
   semver@6.3.1: {}
 

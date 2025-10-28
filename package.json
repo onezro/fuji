@@ -33,6 +33,7 @@
     "nprogress": "^0.2.0",
     "pinia": "^2.2.4",
     "pinia-plugin-persistedstate": "^3.2.3",
+    "screenfull": "^6.0.2",
     "v-click-outside": "^3.2.0",
     "vue": "^3.5.12",
     "vue-i18n": "^11.1.12",

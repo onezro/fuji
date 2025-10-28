@@ -36,15 +36,29 @@
                 </template>
             </el-table>
             <div class="mt-2 mb-1 flex justify-end">
-                <el-button type="" :disabled="tableData.length==0" @click="handleClean">{{
+                <el-button type="" :disabled="tableData.length == 0" @click="handleClean">{{
                     $t("publicText.reset")
                 }}</el-button>
-                <el-button type="primary" :disabled="tableData.length==0" @click="handleSubmit">{{
+                <el-button type="primary" :disabled="tableData.length == 0" @click="dialogVisible= true">{{
                     $t("publicText.submit") + $t("publicText.inStorage")
                 }}</el-button>
             </div>
         </el-card>
-
+        <el-dialog v-model="dialogVisible" :title="$t('finishProduct.materialPos')" width="300" @close="handleClose">
+            <el-form-item :label="$t('finishProduct.materialPos')" class="mb-2" prop="Location">
+                <el-select v-model="locationDsc" filterable style="width: 180px">
+                    <el-option v-for="item in posRawList" :key="item.ES_WarehouseStorageLocationId"
+                        :label="item.ES_WarehouseStorageLocatioName" :value="item.ES_WarehouseStorageLocatioName">
+                    </el-option>
+                </el-select>
+            </el-form-item>
+            <template #footer>
+                <div class="dialog-footer">
+                    <el-button @click="handleClose">{{ $t('publicText.cancel') }}</el-button>
+                    <el-button type="primary" @click="handleSubmit"> {{ $t('publicText.confirm') }} </el-button>
+                </div>
+            </template>
+        </el-dialog>
     </div>
 </template>
 
@@ -53,6 +67,9 @@ import {
     GetCompletedInventoryQuery,
     SubmitForCompletionAndWarehousing
 } from "@/api/warehouseManage/finishProduct";
+import {
+    getWarehouseStorageLocationQuery
+} from "@/api/warehouseManage/inventInquiry";
 import {
     ref,
     reactive,
@@ -73,13 +90,16 @@ const getForm = ref({
 })
 const tableHeight = ref(0)
 const tableData = ref([])
+const locationDsc = ref('')
+const posRawList = ref<any[]>([]);
+const dialogVisible = ref(false);
 
 onBeforeMount(() => {
     getScreenHeight();
 });
 onMounted(() => {
     window.addEventListener("resize", getScreenHeight);
-
+    getMaterialPos()
 });
 onBeforeUnmount(() => {
     window.addEventListener("resize", getScreenHeight);
@@ -97,17 +117,29 @@ const getData = () => {
         }
     })
 }
+//获取存放位置
+const getMaterialPos = () => {
+
+    getWarehouseStorageLocationQuery({}).then((res: any) => {
+        posRawList.value = res.content;
+    });
+};
 const handleReset = () => {
     formRef.value.resetFields()
 }
 const handleClean = () => {
     tableData.value = []
 }
+const handleClose = () => {
+    dialogVisible.value = false
+}
+
 const handleSubmit = () => {
     let data = tableData.value.map((item: any) => {
         return {
             OuterBoxContainerName: item.OuterBoxContainerName,
-            PackingBoxContainerName: item.PackingBoxContainerName
+            PackingBoxContainerName: item.PackingBoxContainerName,
+            Location: locationDsc.value
         }
     })
     SubmitForCompletionAndWarehousing(data).then((res: any) => {

@@ -10,7 +10,7 @@
             <el-input v-model="getForm.TemplateName" style="width: 160px" clearable @clear="getData"
               @change="getData" />
           </el-form-item>
-          <el-form-item label="物料编码" prop="ProductDescription" class="mb-2">
+          <el-form-item label="客户" prop="ProductDescription" class="mb-2">
             <el-input v-model="getForm.TemplatePartNum" style="width: 160px" clearable @clear="getData"
               @change="getData" />
           </el-form-item>
@@ -89,8 +89,8 @@
           <el-table :data="materialData" size="small" :style="{ width: '100%' }" :height="tableHeight1"
             :tooltip-effect="'dark'" border fit>
 
-            <el-table-column prop="ProductName" label="组件编码" width="120" />
-            <el-table-column prop="Description" label="组件描述" :show-overflow-tooltip="true" />
+            <el-table-column prop="ProductName" label="客户" width="120" />
+            <el-table-column prop="Description" label="客户描述" :show-overflow-tooltip="true" />
             <el-table-column label="操作" width="80" fixed="right" align="center">
               <template #default="scope">
                 <!-- <el-tooltip content="编辑" placement="top">
@@ -118,7 +118,7 @@
           <el-checkbox v-model="addTempForm.TemplateEnable" label="启用" class="ml-3" />
         </el-form-item>
         <el-form-item label="模板文件" prop="TemplateName">
-          <el-upload ref="upload" class="upload-demo" accept=".frx" action="" :file-list="fileList" style="width: 240px" :limit="1" 
+          <el-upload ref="upload" class="upload-demo" accept=".frx,.btw" action="" :file-list="fileList" style="width: 240px" :limit="1" 
           :on-exceed="handleExceed"   :http-request="handleFileUpload"  :on-remove="handleRemove" :auto-upload="true">
             <el-button size="small" type="primary">点击上传</el-button>
             <div slot="tip" class="el-upload__tip">只能上传一个文件</div>
@@ -146,7 +146,7 @@
         </el-form-item>
         <el-form-item label="模板文件" prop="Template_File">
           <!-- <el-input v-model="editTempForm.Template_File" style="width: 240px" /> -->
-          <el-upload ref="upload" class="upload-demo" accept=".frx" action="" :file-list="fileList" style="width: 240px" :limit="1"
+          <el-upload ref="upload" class="upload-demo" accept=".frx,.btw" action="" :file-list="fileList" style="width: 240px" :limit="1"
           :on-exceed="handleExceed" :http-request="handleFileUpload"  :on-remove="handleRemove" :auto-upload="true">
           <el-button size="small" type="primary">点击上传</el-button>
           <div slot="tip" class="el-upload__tip">只能上传一个文件</div>

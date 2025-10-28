@@ -8,7 +8,7 @@
         <el-table size="small" :data="tableData" stripe border fit :height="tableHeight" row-key="ID"
           :tree-props="{ children: 'childMenu' }">
 
-          <el-table-column prop="title" label="菜单名称"> </el-table-column>
+          <el-table-column prop="title" label="标题"> </el-table-column>
           <el-table-column prop="icon" label="图标" align="center" width="60">
             <template #default="scope">
               <el-icon :size="20" v-if="scope.row.icon">
@@ -16,9 +16,9 @@
               </el-icon>
             </template>
           </el-table-column>
-          <el-table-column prop="path" label="PATH路径"> </el-table-column>
-          <el-table-column prop="MenuName" label="组件名称"> </el-table-column>
-          <el-table-column prop="component" label="组件"> </el-table-column>
+          <el-table-column prop="path" label="路径"> </el-table-column>
+          <el-table-column prop="MenuName" label="name"> </el-table-column>
+          <el-table-column prop="component" label="vue文件路径"> </el-table-column>
           
           <el-table-column prop="sortId" label="排序" width="60" align="center">
             <!-- <template #default="scope">
@@ -83,13 +83,13 @@
         </el-form-item>
         <el-form-item label="菜单名称" prop="title"><el-input v-model="form.title" placeholder="请输入" /></el-form-item>
         <el-form-item label="图标" prop="icon"><el-input v-model="form.icon" placeholder="请输入图标" /></el-form-item>
-        <el-form-item label="PATH路径" prop="path"><el-input v-model="form.path" placeholder="请输入PATH路径" /></el-form-item>
-        <el-form-item label="路由名称" prop="MenuName"><el-input v-model="form.MenuName"
+        <el-form-item label="路径" prop="path"><el-input v-model="form.path" placeholder="请输入PATH路径" /></el-form-item>
+        <el-form-item label="name" prop="MenuName"><el-input v-model="form.MenuName"
             placeholder="请输入路由名称name" /></el-form-item>
         <el-form-item label="重定向" prop="redirect"><el-input v-model="form.redirect"
             placeholder="请输入重定向" /></el-form-item>
-        <el-form-item label="组件" prop="component"><el-input :disabled="fmeun" v-model="form.component"
-            placeholder="请输入物理路径" /></el-form-item>
+        <el-form-item label="vue文件路径" prop="component"><el-input :disabled="fmeun" v-model="form.component"
+            placeholder="请输入vue文件路径" /></el-form-item>
         <el-form-item label="排序" prop="sortId"><el-input-number :min="0" controls-position="right" v-model="form.sortId"
             placeholder="请输入" /></el-form-item>
       </el-form>
@@ -121,14 +121,14 @@
         <el-form-item label="PATH路径" prop="path">
           <el-input v-model="editForm.path" placeholder="路径"></el-input>
         </el-form-item>
-        <el-form-item label="菜单名称" prop="title">
+        <el-form-item label="菜单标题" prop="title">
           <el-input v-model="editForm.title" placeholder="菜单名称"></el-input>
         </el-form-item>
-        <el-form-item label="组件" prop="component">
+        <el-form-item label="vue文件路径" prop="component">
           <el-input :disabled="fmeun" v-model="editForm.component" placeholder="组件"></el-input>
         </el-form-item>
-        <el-form-item label="组件名称" prop="MenuName">
-          <el-input v-model="editForm.MenuName" placeholder="组件名称"></el-input>
+        <el-form-item label="name" prop="MenuName">
+          <el-input v-model="editForm.MenuName" placeholder="name"></el-input>
         </el-form-item>
         <el-form-item label="图标" prop="icon">
           <el-input v-model="editForm.icon" placeholder="图标"></el-input>
