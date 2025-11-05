@@ -1,4 +1,5 @@
 import request from "@/request/barRequest";
+import request1 from "@/request/packageRequest";
 //工单类型
 export function getOrderTypeQuery(data: any) {
     return request({
@@ -58,7 +59,7 @@ export function getPrintTemplateQuery(data: any) {
 }
 //生成批次并打印
 export function AddMfgOrderContainer(data: any) {
-    return request({
+    return request1({
         url: "/api/MfgOrderContainerPrint/AddMfgOrderContainer",
         method: "post",
         data,
@@ -66,7 +67,7 @@ export function AddMfgOrderContainer(data: any) {
 }
 //生成批次并打印
 export function ReprintMfgOrderContainer(data: any) {
-    return request({
+    return request1({
         url: "/api/MfgOrderContainerPrint/ReprintMfgOrderContainer",
         method: "post",
         data,

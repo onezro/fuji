@@ -58,23 +58,22 @@ const zh = {
     password: "密码",
     // system:'系统',
   },
-  empolyee:{
-    employeeID:'工号',
-    employeeName:'员工姓名',
-    professionalTitle:'职称',
-    organization:'职称'
+  empolyee: {
+    employeeID: "工号",
+    employeeName: "员工姓名",
+    professionalTitle: "职称",
+    organization: "职称",
   },
-  menu:{
-    menuName:'菜单名称',
-    icon:'图标',
-    path:'path路径',
-    componentName:'组件名称',
-    sort:'排序',
-
+  menu: {
+    menuName: "菜单名称",
+    icon: "图标",
+    path: "path路径",
+    componentName: "组件名称",
+    sort: "排序",
   },
-  role:{
-    roleName:'角色名称',
-    roleDsc:'描述'
+  role: {
+    roleName: "角色名称",
+    roleDsc: "描述",
   },
   //批次创建打印
   batchCreation: {
@@ -150,9 +149,9 @@ const zh = {
     packOrder: "装箱单编号",
     packTime: "装箱时间",
     productType: "产品类型",
-    msgLessThan:'当前箱数小于48！！请再次确认。',
-    msgExceed:'当前箱数大于48！！！请再次确认。',
-     msgEquals:'当前箱数是48！请再次确认。'
+    msgLessThan: "当前箱数小于48！！请再次确认。",
+    msgExceed: "当前箱数大于48！！！请再次确认。",
+    msgEquals: "当前箱数是48！请再次确认。",
   },
   finishProduct: {
     boxCode: "箱号",
@@ -160,7 +159,7 @@ const zh = {
     order: "工单号",
     productMsg: "产品信息",
     number: "数量",
-    materialPos:'存放位置',
+    materialPos: "存放位置",
   },
   inventInquiry: {
     rawMaterialInvent: "原材料库存",
@@ -170,7 +169,7 @@ const zh = {
     incomingBatch: "来料批次",
     materialSource: "物料来源",
     materialType: "物料类型",
-    materialPos:'存放位置',
+    materialPos: "存放位置",
     CurrentInventory: "库存量",
     TotalOutboundQty: "出库量",
     materialID: "批次ID",
@@ -188,10 +187,9 @@ const zh = {
     productTotal: "产品总数",
     totalBoxNum: "总箱数",
     boxNum: "箱数",
-    ProductCode:'产品编码',
-    customerName:'客户名称',
-    specificationID:'规格书ID',
-
+    ProductCode: "产品编码",
+    customerName: "客户名称",
+    specificationID: "规格书ID",
   },
   aqlrules: {
     partNumber: "料号",
@@ -209,10 +207,58 @@ const zh = {
     testItem: "检验项",
     testType: "检验类型",
     uploadFile: "上传文件",
-    standVal:'标准值',
-    upperTolerance:'上公差',
-    lowerTolerance:'下公差',
-    unit:'单位'
+    standVal: "标准值",
+    upperTolerance: "上公差",
+    lowerTolerance: "下公差",
+    unit: "单位",
   },
+  incomeCreat: {
+    creatInspect: "检验单号",
+    NotifyDate: "通知日期",
+    NotifyPerson: "通知人",
+    NotifyDepartment: "检验通知部门",
+    MaterialArrivalDate: "来料日期",
+    isCarProduct: "是否汽车产品",
+    InspectStandard: "检验标准",
+    Status: "状态",
+    creatDate: "创建时间",
+    creatInspectCode: "创建来料检验单",
+    incomeUnit: "来料单位",
+    incomeDate: "来料日期",
+    materialName: "材料名称",
+    modelRules: "型号规制",
+    supplier: "供应商",
+    orderNumber: "订单号",
+    qtyIncomeMaterial: "来料数量/箱",
+    supplierReport: "供应商报告",
+    incomeDetail:'来料明细'
+  },
+  incomeSheet:{
+     creatInspect: "检验单号",
+    NotifyDate: "通知日期",
+    NotifyPerson: "通知人",
+    NotifyDepartment: "检验通知部门",
+    MaterialArrivalDate: "来料日期",
+    isCarProduct: "是否汽车产品",
+    InspectStandard: "检验标准",
+    Status: "状态",
+    creatDate: "创建时间",
+    creatInspectCode: "创建来料检验单",
+    incomeUnit: "来料单位",
+    incomeDate: "来料日期",
+    materialName: "材料名称",
+    modelRules: "型号规制",
+    supplier: "供应商",
+    orderNumber: "订单号",
+    qtyIncomeMaterial: "来料数量/箱",
+    supplierReport: "供应商报告",
+    incomeDetail:'来料明细',
+    status1:'检验中',
+    status2:'检验完成',
+    status3:'未检验',
+    result:'检验结果',
+    incomeReport:'进料检验报告'
+    
+  }
 };
 export default zh;

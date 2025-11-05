@@ -99,7 +99,8 @@ export const generateRoutesByServer1 = (routes: any) => {
 
   for (const route of routes) {
     const data: AppRouteRecordRaw = {
-      path: route.path,
+      // path:route.MenuLevel==1?`/${route.path}`:route.path ,
+      path:route.path ,
       name: route.MenuName,
       redirect: route.redirect,
       meta: {

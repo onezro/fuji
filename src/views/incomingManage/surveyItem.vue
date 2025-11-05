@@ -1,225 +1,176 @@
 <template>
-    <div class="p-2">
-        <el-card shadow="always" :body-style="{ padding: '8px' }">
-            <div class="flex justify-between">
-                <div>
-                    <el-button type="primary" size="small" @click="openAdd">添加</el-button>
-                </div>
-            </div>
-            <el-table :data="tableData.slice(
-                (pageObj.currentPage - 1) * pageObj.pageSize,
-                pageObj.currentPage * pageObj.pageSize
-            )
-                " size="small" :style="{ width: '100%' }" :height="tableHeight" :tooltip-effect="'light'" border fit
-                highlight-current-row>
-                <el-table-column type="selection" width="55" align="center" />
-                <el-table-column type="index" align="center" fixed :label="$t('publicText.index')" width="50">
-                    <template #default="scope">
-                        <span>{{
-                            scope.$index + pageObj.pageSize * (pageObj.currentPage - 1) + 1
-                            }}</span>
-                    </template>
-                </el-table-column>
-                <el-table-column prop="PriorityCodeName" :label="$t('surveyItem.partNumber')" />
-                <el-table-column prop="ProductName" :label="$t('surveyItem.testItem')" />
-                <el-table-column prop="Description" :label="$t('surveyItem.testType')" />
-                <el-table-column prop="Description" :label="$t('surveyItem.standVal')" />
-                <el-table-column prop="Description" :label="$t('surveyItem.upperTolerance')" />
-                <el-table-column prop="Description" :label="$t('surveyItem.lowerTolerance')" />
-                <el-table-column prop="Description" :label="$t('surveyItem.unit')" />
-                <el-table-column :label="$t('publicText.operation')">
-                    <template #default="{ row }">
-                        <el-button size="small" type="primary" @click="handleEdit(row)">
-                            {{ $t("publicText.edit") }}
-                        </el-button>
-                        <el-button size="small" type="danger" @click="handleDelete(row)">
-                            {{ $t("publicText.delete") }}
-                        </el-button>
-                    </template>
-                </el-table-column>
-                <template #empty>
-                    <div class="flex items-center justify-center h-100%">
-                        <el-empty />
-                    </div>
-                </template>
-            </el-table>
-            <div class="mt-2">
-                <el-pagination :size="'small'" background @size-change="handleSizeChange"
-                    @current-change="handleCurrentChange" :pager-count="5" :current-page="pageObj.currentPage"
-                    :page-size="pageObj.pageSize" :page-sizes="[30, 50, 100, 200, 300]"
-                    layout="total,sizes, prev, pager, next" :total="tableData.length">
-                </el-pagination>
-            </div>
-        </el-card>
-        <el-dialog :title="$t('publicText.add')" v-model="addVisible" width="500px" @close="addCancel">
-            <el-form :model="addForm" ref="addFormRef" label-width="auto" :inline="false" size="normal">
-                <el-form-item :label="$t('surveyItem.partNumber')" prop="partNumber">
-                    <el-input v-model="addForm.partNumber"></el-input>
-                </el-form-item>
-                <el-form-item :label="$t('surveyItem.testItem')" prop="testItem">
-                    <el-input v-model="addForm.testItem"></el-input>
-                </el-form-item>
-                <el-form-item :label="$t('surveyItem.testType')" prop="testType">
-                    <el-input v-model="addForm.testType"></el-input>
-                </el-form-item>
-                <el-form-item :label="$t('surveyItem.standVal')" prop="standVal">
-                    <el-input v-model="addForm.standVal"></el-input>
-                </el-form-item>
-                <el-form-item :label="$t('surveyItem.upperTolerance')" prop="upperTolerance">
-                    <el-input v-model="addForm.upperTolerance"></el-input>
-                </el-form-item>
-                <el-form-item :label="$t('surveyItem.lowerTolerance')" prop="lowerTolerance">
-                    <el-input v-model="addForm.lowerTolerance"></el-input>
-                </el-form-item>
-                <el-form-item :label="$t('surveyItem.unit')" prop="unit">
-                    <el-input v-model="addForm.unit"></el-input>
-                </el-form-item>
-            </el-form>
-            <template #footer>
-                <el-button @click="addCancel">{{ $t("publicText.cancel") }}</el-button>
-                <el-button type="primary" @click="addSubmit">{{
-                    $t("publicText.confirm")
-                    }}</el-button>
-            </template>
-        </el-dialog>
-        <el-dialog :title="$t('publicText.edit')" v-model="editVisible" width="500px" @close="editCancel">
-            <el-form :model="editForm" ref="editFormRef" label-width="auto" :inline="false" size="normal">
-                         <el-form-item :label="$t('surveyItem.partNumber')" prop="partNumber">
-                    <el-input v-model="editForm.partNumber"></el-input>
-                </el-form-item>
-                <el-form-item :label="$t('surveyItem.testItem')" prop="testItem">
-                    <el-input v-model="editForm.testItem"></el-input>
-                </el-form-item>
-                <el-form-item :label="$t('surveyItem.testType')" prop="testType">
-                    <el-input v-model="editForm.testType"></el-input>
-                </el-form-item>
-                <el-form-item :label="$t('surveyItem.standVal')" prop="standVal">
-                    <el-input v-model="editForm.standVal"></el-input>
-                </el-form-item>
-                <el-form-item :label="$t('surveyItem.upperTolerance')" prop="upperTolerance">
-                    <el-input v-model="editForm.upperTolerance"></el-input>
-                </el-form-item>
-                <el-form-item :label="$t('surveyItem.lowerTolerance')" prop="lowerTolerance">
-                    <el-input v-model="editForm.lowerTolerance"></el-input>
-                </el-form-item>
-                <el-form-item :label="$t('surveyItem.unit')" prop="unit">
-                    <el-input v-model="editForm.unit"></el-input>
-                </el-form-item>
-            </el-form>
-            <template #footer>
-                <el-button @click="editCancel">{{ $t("publicText.cancel") }}</el-button>
-                <el-button type="primary" @click="editSubmit">{{
-                    $t("publicText.confirm")
-                    }}</el-button>
-            </template>
-        </el-dialog>
-    </div>
+  <div class="report-container">
+    <el-table
+      :data="tableData"
+      border
+      style="width: 100%"
+      :span-method="arraySpanMethod"
+      :cell-style="cellStyle"
+    >
+      <!-- 动态生成列 -->
+      <el-table-column
+        v-for="(col, index) in columns"
+        :key="index"
+        :prop="col.prop"
+        :label="col.label"
+        :width="col.width"
+        :align="col.align || 'center'"
+      >
+        <template #header="scope">
+          <div v-html="scope.column.label"></div>
+        </template>
+        <template #default="scope">
+          <div :class="{'red-text': scope.row[scope.column.property + 'Red']}">
+            {{ scope.row[scope.column.property] }}
+          </div>
+        </template>
+      </el-table-column>
+    </el-table>
+  </div>
 </template>
 
-<script setup lang="ts">
-import {
-    ref,
-    reactive,
-    watch,
-    computed,
-    nextTick,
-    onMounted,
-    onBeforeMount,
-    onBeforeUnmount,
-} from "vue";
-import { ElNotification, ElMessageBox } from "element-plus";
-import { useI18n } from "vue-i18n";
-const { t } = useI18n();
-const tableHeight = ref(0);
-const tableData = ref([]);
-const pageObj = reactive({
-    currentPage: 1,
-    pageSize: 50,
-});
-const addVisible = ref(false);
-const addForm = ref({
-     partNumber: "",
-    testItem: "",
-    testType: "",
-   
-    standVal:'',
-    upperTolerance:'',
-    lowerTolerance:'',
-    unit:''
-});
-const addFormRef = ref();
-const editVisible = ref(false);
-const editForm = ref({
-     partNumber: "",
-    testItem: "",
-    testType: "",
-   
-    standVal:'',
-    upperTolerance:'',
-    lowerTolerance:'',
- unit:''
-});
-const editFormRef = ref();
-onBeforeMount(() => {
-    getScreenHeight();
-});
-onMounted(() => {
-    window.addEventListener("resize", getScreenHeight);
-});
-onBeforeUnmount(() => {
-    window.addEventListener("resize", getScreenHeight);
-});
+<script setup>
+import { ref } from 'vue';
 
-const openAdd = () => {
-    addVisible.value = true;
+// 表格列配置
+const columns = ref([
+  { label: '进料检验通知部门', prop: 'noticeDept', width: 120 },
+  { label: '事务部', prop: 'dept', width: 80 },
+  { label: '受理部门', prop: 'acceptDept', width: 100 },
+  { label: '', prop: 'empty1', width: 80 },
+  { label: '外观检查', prop: 'appearanceCheck', width: 100 },
+  { label: 'AQL Level II 1.0', prop: 'aqlLevel', width: 130 },
+  { label: '页次', prop: 'page', width: 80 },
+  { label: '1/1', prop: 'pageNum', width: 80 },
+  { label: '通知日期：25.06.19', prop: 'noticeDate', width: 150 },
+  { label: '', prop: 'empty2', width: 80 },
+  { label: '', prop: 'empty3', width: 80 },
+  { label: '', prop: 'empty4', width: 80 },
+  { label: '', prop: 'empty5', width: 80 },
+  { label: '', prop: 'empty6', width: 80 },
+  { label: '', prop: 'empty7', width: 80 },
+  { label: '', prop: 'empty8', width: 80 },
+  { label: '', prop: 'empty9', width: 80 },
+  { label: '备注', prop: 'remark', width: 100 },
+]);
+
+// 表格数据
+const tableData = ref([
+  // 标题行
+  {
+    noticeDept: '进料检验报告',
+    dept: '',
+    acceptDept: '',
+    empty1: '',
+    appearanceCheck: '',
+    aqlLevel: '',
+    page: '',
+    pageNum: '',
+    noticeDate: '',
+    empty2: '',
+    empty3: '',
+    empty4: '',
+    empty5: '',
+    empty6: '',
+    empty7: '',
+    empty8: '',
+    empty9: '',
+    remark: '',
+    isTitle: true
+  },
+  // 第一行信息
+  {
+    noticeDept: '通知人签名',
+    dept: '周丽琛',
+    acceptDept: '受理人签名',
+    empty1: '',
+    appearanceCheck: 'ISO 2859',
+    aqlLevel: '',
+    page: '来料种类数',
+    pageNum: '人工填写',
+    noticeDate: '',
+    empty2: '',
+    empty3: '',
+    empty4: '',
+    empty5: '',
+    empty6: '',
+    empty7: '',
+    empty8: '',
+    empty9: '',
+    remark: ''
+  },
+  // 第二行信息
+  {
+    noticeDept: '来料日期',
+    dept: '25.06.19',
+    acceptDept: '受理日期',
+    empty1: '',
+    appearanceCheck: '*(汽车产品 C=0)',
+    aqlLevel: '',
+    page: '',
+    pageNum: '',
+    noticeDate: '',
+    empty2: '',
+    empty3: '',
+    empty4: '',
+    empty5: '',
+    empty6: '',
+    empty7: '',
+    empty8: '',
+    empty9: '',
+    remark: ''
+  }
+]);
+
+// 单元格合并方法
+const arraySpanMethod = ({ row, column, rowIndex, columnIndex }) => {
+  // 标题行合并所有列
+  if (rowIndex === 0) {
+    if (columnIndex === 0) {
+      return { rowspan: 1, colspan: 18 };
+    } else {
+      return { rowspan: 0, colspan: 0 };
+    }
+  }
+  
+  // 其他合并规则...
 };
-const addCancel = () => {
-    addFormRef.value.resetFields();
-    addVisible.value = false;
-};
-const addSubmit = () => { };
-const handleEdit = (val: any) => { };
-const handleDelete = (val: any) => {
-    ElMessageBox.confirm(
-        t("publicText.confirm") + t("publicText.disassembly"),
-        t("publicText.confirm") + t("publicText.operation"),
-        {
-            confirmButtonText: t("publicText.confirm"),
-            cancelButtonText: t("publicText.cancel"),
-            type: "warning",
-        }
-    )
-        .then(() => { })
-        .catch(() => {
-            // on cancel
-            ElNotification({
-                title: t("publicText.tipTitle"),
-                message: t("publicText.cancel"),
-                type: "info",
-            });
-        });
-};
-const editCancel = () => {
-    editFormRef.value.resetFields();
-    editVisible.value = false;
-};
-const editSubmit = () => { };
-const handleSizeChange = (val: any) => {
-    pageObj.pageSize = val;
-};
-const handleCurrentChange = (val: any) => {
-    pageObj.currentPage = val;
-};
-const getScreenHeight = () => {
-    nextTick(() => {
-        tableHeight.value = window.innerHeight - 180;
-    });
+
+// 单元格样式设置
+const cellStyle = ({ row, column, rowIndex, columnIndex }) => {
+  // 标题行样式
+  if (rowIndex === 0) {
+    return {
+      'font-weight': 'bold',
+      'font-size': '16px',
+      'text-align': 'center',
+      'background-color': '#ffff99'
+    };
+  }
+  
+  // 信息行样式
+  if (rowIndex < 3) {
+    return {
+      'font-weight': 'bold',
+      'background-color': '#f2f2f2',
+      'text-align': 'center'
+    };
+  }
+  
+  return { 'text-align': 'center' };
 };
 </script>
+
 <style scoped>
-.el-pagination {
-    justify-content: center;
+.report-container {
+  padding: 20px;
+}
+
+::v-deep .el-table th {
+  background-color: #f2f2f2;
+}
+
+.red-text {
+  color: #ff0000;
 }
 </style>
-
-<style lang="scss" scoped></style>

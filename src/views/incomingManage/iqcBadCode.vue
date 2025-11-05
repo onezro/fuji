@@ -161,7 +161,7 @@ const handleDelete = (val: any) => {
     }).catch(() => {
         // on cancel
         ElNotification({
-            title: t('publicText.tipTitle'),
+            title: t('message.tipTitle'),
             message: t('publicText.cancel'),
             type: "info",
         });

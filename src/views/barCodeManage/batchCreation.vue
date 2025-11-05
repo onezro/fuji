@@ -42,6 +42,13 @@
                         <el-radio :value="2">{{ $t('batchCreation.AccordingOrder') }}</el-radio>
                     </el-radio-group>
                 </el-form-item>
+                 <el-form-item :label="$t('batchCreation.Printer')"  prop="Printer">
+                    <el-select v-model="batchPrintForm.PrinterName" placeholder="" filterable style="width: 200px"
+                        clearable>
+                        <el-option v-for="p in printList" :label="p.PrintQueueName" :value="p.PrintQueueName"
+                            :key="p.PrintQueueId" />
+                    </el-select>
+                </el-form-item>
                 <el-form-item class="mb-2">
                     <el-button type="warning" :disabled="selectList.length == 0" size="small" @click="submitPrint">{{
                         $t('batchCreation.ProduceBatchPrint')
@@ -110,13 +117,13 @@
                             :key="p.PrintQueueId" />
                     </el-select>
                 </el-form-item>
-                <el-form-item :label="$t('batchCreation.PrintingTemplate')"  prop="PrintTemplate">
+                <!-- <el-form-item :label="$t('batchCreation.PrintingTemplate')"  prop="PrintTemplate">
                     <el-select v-model="resetPrintForm.PrintTemplate" placeholder="" filterable style="width: 200px"
                         clearable>
                         <el-option v-for="p in printTemplate" :label="p.PrinterLabelDefinitionName"
                             :value="p.PrinterLabelDefinitionName" :key="p.PrinterLabelDefinitionId" />
                     </el-select>
-                </el-form-item>
+                </el-form-item> -->
 
 
             </el-form>
@@ -208,10 +215,12 @@ const pageObj = ref({
 });
 interface BatchPrintForm {
     PackagingType: number,
+    PrinterName: string,
     mfgOrderStartLists: any[]
 }
 const batchPrintForm = ref<BatchPrintForm>({
     PackagingType: 0,
+    PrinterName: "",
     mfgOrderStartLists: []
 })
 const selectList = ref<any[]>([])
