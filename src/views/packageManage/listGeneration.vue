@@ -133,7 +133,7 @@ const getForm = ref({
     OuterBoxContainerName: "",
     outerBoxLists: [],
 });
-const palletList = ref<any[]>();
+const palletList = ref<any[]>([]);
 const tableData = ref<any[]>([]);
 const tableHeight2 = ref(0);
 const tableData2 = ref<any[]>([]);
@@ -186,6 +186,7 @@ const getPallet = async () => {
                 return {
                     value: item.ES_CardAreaName,
                     label: item.ES_CardAreaName,
+                    ...item
                 };
             });
         }
@@ -256,19 +257,22 @@ const handleReset = () => {
     pageObj.currentPage = 1;
 
 };
-
+interface PackFormDelete {
+    CardAreaName: string;
+    removeOuterBoxLists: Array<any>;
+}
 const handleDelete = () => {
     ElMessageBox.confirm(t('publicText.confirm') + t('publicText.delete'), t('publicText.confirm') + t('publicText.operation'), {
         confirmButtonText: t('publicText.confirm'),
         cancelButtonText: t('publicText.cancel'),
         type: "warning",
     }).then(() => {
-        let data: PackForm = {
+        let data: PackFormDelete = {
             CardAreaName: getForm.value.CardAreaName,
 
-            packingOuterBoxContainers: [],
+            removeOuterBoxLists: [],
         };
-        data.packingOuterBoxContainers = selectList.value.map((item: any) => {
+        data.removeOuterBoxLists = selectList.value.map((item: any) => {
             return {
                 OuterBoxContainerName: item.ContainerName,
             }
@@ -330,12 +334,13 @@ const handleGenerate = () => {
         }
     });
     let msgText = ''
-    if (data.packingOuterBoxContainers.length > 48) {
-        msgText = t('listGeneration.msgExceed')
-    } else if (data.packingOuterBoxContainers.length == 48) {
-        msgText = t('listGeneration.msgEquals')
+    const pallet = palletList.value.find(i => i.ES_CardAreaName == getForm.value.CardAreaName)
+    if (data.packingOuterBoxContainers.length > pallet.ES_StandardQty) {
+        msgText = t('listGeneration.msgExceed')+pallet.ES_StandardQty+'！！'+t('publicText.pleaseConfirmAgain')
+    } else if (data.packingOuterBoxContainers.length == pallet.ES_StandardQty) {
+        msgText = t('listGeneration.msgEquals')+pallet.ES_StandardQty+'！！'+t('publicText.pleaseConfirmAgain')
     } else {
-        msgText = t('listGeneration.msgLessThan')
+        msgText = t('listGeneration.msgLessThan')+pallet.ES_StandardQty+'！！'+t('publicText.pleaseConfirmAgain')
     }
     ElMessageBox.confirm(
         msgText,

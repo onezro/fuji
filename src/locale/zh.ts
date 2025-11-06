@@ -1,4 +1,5 @@
 import Aqlrules from "@/views/incomingManage/aqlrules.vue";
+import { number } from "vue-types";
 
 const zh = {
   message: {
@@ -46,6 +47,7 @@ const zh = {
     failure: "失败",
     pleaseSelect: "请选择",
     pleaseCompleSelect: "请完成选择",
+    pleaseConfirmAgain: "请再次确认",
     operationSuccess: "操作成功",
   },
   login: {
@@ -149,9 +151,9 @@ const zh = {
     packOrder: "装箱单编号",
     packTime: "装箱时间",
     productType: "产品类型",
-    msgLessThan: "当前箱数小于48！！请再次确认。",
-    msgExceed: "当前箱数大于48！！！请再次确认。",
-    msgEquals: "当前箱数是48！请再次确认。",
+    msgLessThan: "当前箱数小于",
+    msgExceed: "当前箱数大于",
+    msgEquals: "当前箱数是",
   },
   finishProduct: {
     boxCode: "箱号",
@@ -231,10 +233,10 @@ const zh = {
     orderNumber: "订单号",
     qtyIncomeMaterial: "来料数量/箱",
     supplierReport: "供应商报告",
-    incomeDetail:'来料明细'
+    incomeDetail: "来料明细",
   },
-  incomeSheet:{
-     creatInspect: "检验单号",
+  incomeSheet: {
+    creatInspect: "检验单号",
     NotifyDate: "通知日期",
     NotifyPerson: "通知人",
     NotifyDepartment: "检验通知部门",
@@ -252,13 +254,30 @@ const zh = {
     orderNumber: "订单号",
     qtyIncomeMaterial: "来料数量/箱",
     supplierReport: "供应商报告",
-    incomeDetail:'来料明细',
-    status1:'检验中',
-    status2:'检验完成',
-    status3:'未检验',
-    result:'检验结果',
-    incomeReport:'进料检验报告'
-    
-  }
+    incomeDetail: "来料明细",
+    status1: "检验中",
+    status2: "检验完成",
+    status3: "未检验",
+    result: "检验结果",
+    incomeReport: "进料检验报告",
+  },
+  reprintPack: {
+    scanOrderNumber: "扫描工单号",
+    smallBoxNumber: "盒号",
+    boxNumber: "箱号",
+    print: "打印机",
+    reprintSmallBoxNum: "补印盒号",
+    reprintBoxNum: "补印箱号",
+    smallBox: "小盒包装",
+    boxPack: "箱包装",
+    smallBatch: "小盒批次",
+    boxBatch:'外箱批次',
+    number: "数量",
+    product: "产品",
+    productDsc: "产品描述",
+    isBindBox: "是否绑定箱",
+    batchStatus: "批次状态",
+    currentProcess: "当前工序",
+  },
 };
 export default zh;

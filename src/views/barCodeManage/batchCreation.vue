@@ -42,7 +42,7 @@
                         <el-radio :value="2">{{ $t('batchCreation.AccordingOrder') }}</el-radio>
                     </el-radio-group>
                 </el-form-item>
-                 <el-form-item :label="$t('batchCreation.Printer')"  prop="Printer">
+                 <el-form-item :label="$t('batchCreation.Printer')"  prop="Printer" class="mb-2">
                     <el-select v-model="batchPrintForm.PrinterName" placeholder="" filterable style="width: 200px"
                         clearable>
                         <el-option v-for="p in printList" :label="p.PrintQueueName" :value="p.PrintQueueName"

@@ -23,11 +23,11 @@
             <el-table :data="tableData" size="small" :style="{ width: '100%' }" :height="tableHeight" border stripe>
                 <el-table-column type="index" align="center" fixed :label="$t('publicText.index')" width="50">
                 </el-table-column>
-                <el-table-column prop="CustomerName" :label="$t('finishProduct.boxCode')" />
-                <el-table-column prop="ES_CustomerProduct" :label="$t('finishProduct.boxOrderNum')" />
-                <el-table-column prop="ES_CustomerPO" :label="$t('finishProduct.order')" />
-                <el-table-column prop="ProductName" :label="$t('finishProduct.productMsg')" />
-                <el-table-column prop="ES_LotNumber" :label="$t('finishProduct.number')" />
+                <el-table-column prop="OutBoxContainerName" :label="$t('finishProduct.boxCode')" />
+                <el-table-column prop="PackingContainerName" :label="$t('finishProduct.boxOrderNum')" />
+                <el-table-column prop="MfgOrderName" :label="$t('finishProduct.order')" />
+                <el-table-column prop="OutBoxProductDescription" :label="$t('finishProduct.productMsg')" />
+                <el-table-column prop="OutBoxQty" :label="$t('finishProduct.number')" />
 
                 <template #empty>
                     <div class="flex items-center justify-center h-100%">
