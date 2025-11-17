@@ -47,13 +47,18 @@
                     <el-button type="info" size="small">
                         {{ $t("publicText.reset") }}
                     </el-button>
+                     <el-button type="warning" size="small" :disabled="selectionList.length===0">
+                        {{ $t("publicText.approval") }}
+                    </el-button>
                 </el-form-item>
             </el-form>
             <el-table :data="tableData.slice(
                 (pageObj.currentPage - 1) * pageObj.pageSize,
                 pageObj.currentPage * pageObj.pageSize
             )
-                " size="small" :style="{ width: '100%' }" ref="rawRef" :height="tableHeight" border fit>
+                " size="small" :style="{ width: '100%' }" ref="rawRef" :height="tableHeight" border fit
+                @selection-change="handleSelectionChange">
+                <el-table-column type="selection" width="55" align="center" />
 
                 <el-table-column type="index" align="center" fixed :label="$t('publicText.index')" width="50">
                     <template #default="scope">
@@ -79,10 +84,6 @@
                 <el-table-column prop="result" :label="$t('incomeSheet.result')" />
                 <el-table-column :label="$t('publicText.operation')" width="120" fixed="right" align="center">
                     <template #default="scope">
-                        <el-tooltip :content="$t('publicText.check')" placement="top">
-                            <el-button type="primary" icon="EditPen" size="small"
-                                @click.stop="handleEdit(scope.row)"></el-button>
-                        </el-tooltip>
                         <el-tooltip :content="$t('publicText.look')" placement="top">
                             <el-button type="warning" icon="Reading" size="small"
                                 @click.stop="handleLook(scope.row)"></el-button>
@@ -103,95 +104,9 @@
                 </el-pagination>
             </div>
         </el-card>
-        <el-dialog v-model="testVisible" :title="$t('incomeSheet.incomeReport')" width="850px" :append-to-body="true"
-            :close-on-click-modal="false" :close-on-press-escape="false" align-center @close="handletestClose">
-            <el-button type="primary" @click="exportToExcel">导出Excel</el-button>
-            <div class="container">
-                <div class="info-row">
-                    <div class="info-box">
-                        <div class="info-box-title">进料检验通知部门</div>
-                        <div>事务部</div>
-                    </div>
-                    <div class="info-box">
-                        <div class="info-box-title">受理部门</div>
-                        <div>{{ reportFrom.recipientDep }}</div>
-                    </div>
-                    <div class="info-box">
-                        <div class="info-box-title">通知日期</div>
-                        <div>25.06.19</div>
-                    </div>
-                </div>
 
-                <div class="info-row">
-                    <div class="info-box">
-                        <div class="info-box-title">通知人签名</div>
-                        <div>周丽琛</div>
-                    </div>
-                    <div class="info-box">
-                        <div class="info-box-title">受理人签名</div>
-                        <div>{{ reportFrom.recipientPerson }}</div>
-                    </div>
-                    <div class="info-box">
-                        <div class="info-box-title">页次</div>
-                        <div>1</div>
-                    </div>
-                </div>
-
-                <div class="info-row">
-                    <div class="info-box">
-                        <div class="info-box-title">来料日期</div>
-                        <div>251014</div>
-                    </div>
-                    <div class="info-box">
-                        <div class="info-box-title">受理日期</div>
-                        <div>{{ reportFrom.checkDate }}</div>
-                    </div>
-                    <div class="info-box">
-                        <div class="info-box-title">来料种类数</div>
-                        <div><el-input v-model="reportFrom.incomeType" placeholder=""
-                                    /></div>
-                    </div>
-                </div>
-                <div class="info-row">
-                    <div class="info-box">
-                        <div class="info-box-title">检验</div>
-                        <div>外观检査 AQL Level II 1.0 IS0 2859 *(汽车产品 C=0)</div>
-                    </div>
-
-                </div>
-
-                <div class="table-container">
-                    <el-table :data="tableData1" border style="width: 100%" size="small"
-                        :header-row-class-name="() => 'header-row'" :show-header="false">
-                        <!-- 第一列：表头 -->
-                        <el-table-column width="200" align="right">
-                            <template #default="scope">
-                                <div class="header-cell">{{ scope.row.header }}</div>
-                            </template>
-                        </el-table-column>
-
-                        <!-- 第二列：内容 -->
-                        <el-table-column>
-                            <template #default="scope">
-                                <el-input v-model="scope.row.content" placeholder="" :disabled="scope.row.isdisable"
-                                    style="width: 250px;" />
-                                <!-- <div class="content-cell">{{ scope.row.isdisable }}</div> -->
-                            </template>
-                        </el-table-column>
-                    </el-table>
-                </div>
-
-            </div>
-
-            <template #footer>
-                <div class="dialog-footer">
-                    <el-button @click="handletestClose">{{ $t('publicText.cancel') }}</el-button>
-                    <el-button type="primary" @click="handletestConfirm"> {{ $t('publicText.confirm') }} </el-button>
-                </div>
-            </template>
-        </el-dialog>
         <el-dialog v-model="lookVisible" :title="$t('incomeSheet.incomeReport')" width="850px" :append-to-body="true"
-            :close-on-click-modal="false" :close-on-press-escape="false" align-center @close="lookVisible=false">
+            :close-on-click-modal="false" :close-on-press-escape="false" align-center @close="lookVisible = false">
             <el-button type="primary" @click="exportToExcel">导出Excel</el-button>
             <div class="container">
                 <div class="info-row">
@@ -235,8 +150,7 @@
                     </div>
                     <div class="info-box">
                         <div class="info-box-title">来料种类数</div>
-                        <div><el-input v-model="reportFrom.incomeType" placeholder=""
-                                    /></div>
+                        <div><el-input v-model="reportFrom.incomeType" placeholder="" /></div>
                     </div>
                 </div>
                 <div class="info-row">
@@ -272,8 +186,8 @@
 
             <template #footer>
                 <div class="dialog-footer">
-                    <el-button @click="lookVisible=false">{{ $t('publicText.close') }}</el-button>
-                   
+                    <el-button @click="lookVisible = false">{{ $t('publicText.close') }}</el-button>
+
                 </div>
             </template>
         </el-dialog>
@@ -388,6 +302,7 @@ const reportFrom = ref({
 })
 const lookFormRef = ref();
 const lookVisible = ref(false);
+const selectionList=ref([])
 watch(
     () => searchDate.value,
     (newVal: any, oldVal: any) => {
@@ -416,61 +331,16 @@ onMounted(() => {
 onBeforeUnmount(() => {
     window.addEventListener("resize", getScreenHeight);
 });
-const objectSpanMethod = (obj: any) => {
-    const { row, column, rowIndex, columnIndex } = obj;
-    if (columnIndex === 4) {
-        // return [2,1];
-        if (rowIndex % 3 === 0) {
-            return {
-                rowspan: 3,
-                colspan: 1,
-            }
-        }
-        else {
-            return {
-                rowspan: 0,
-                colspan: 0,
-            }
-        }
-    }
-    if (columnIndex === 5 || columnIndex === 6 || columnIndex === 7) {
-        if (rowIndex === 1) {
-            return {
-                rowspan: 2,  // 合并第2行和第3行
-                colspan: 1,
-            };
-        } else if (rowIndex === 2) {
-            return {
-                rowspan: 0,  // 隐藏第3行的单元格
-                colspan: 0,
-            };
-        }
-        // 其他行（如第1行）不合并
-        return {
-            rowspan: 1,
-            colspan: 1,
-        };
 
-    }
-};
-
-const handleEdit = (row: any) => {
-
-    testVisible.value = true;
-};
 
 const handleLook = (row: any) => {
-   
+
     lookVisible.value = true;
 };
-const handletestClose = () => {
-    testVisible.value = false;
-};
-const handletestConfirm = () => {
-    testVisible.value = false;
-    console.log(tableData1.value);
 
-};
+const handleSelectionChange=(val:any)=>{
+    selectionList.value=val
+}
 const handleSizeChange = (val: any) => {
     pageObj.pageSize = val;
 };
@@ -483,10 +353,7 @@ const getScreenHeight = () => {
 
     });
 };
-const headerRowStyle = (row: any) => {
-    console.log(row);
 
-};
 const exportToExcel = async () => {
     try {
         // 创建工作簿
