@@ -133,7 +133,7 @@
             :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" align-center
             @close="handletestClose">
 
-            <el-form-item :label="$t('processInspect.firstInspectStatus')" class="mb-2">
+            <el-form-item :label="$t('processInspect.orderInterrupt')" class="mb-2">
                 <el-select v-model="getForm.firstInspectStatus" placeholder="" style="width: 200px">
                     <el-option :label="t('incomeSheet.status1')" :value="t('incomeSheet.status1')">
                     </el-option>

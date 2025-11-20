@@ -28,6 +28,7 @@ const zh = {
     delete: "删除",
     query: "查询",
     reset: "重置",
+    detail:'详情',
     index: "序号",
     close: "关闭",
     confirm: "确定",
@@ -52,6 +53,7 @@ const zh = {
     look: "查看",
     check: "检验",
     approval: "审批",
+    isEmpty:'不能为空'
   },
   login: {
     loginTitle: "登录",
@@ -199,7 +201,17 @@ const zh = {
   aqlrules: {
     partNumber: "料号",
     supplier: "供应商",
+    DBType:'检验类型',
     sampleInStand: "抽检标准",
+    ProjectCategoryName:'项目类别',
+    ProjectName:'项目名称',
+    CharaCteristicGrade:'特性分级',
+    TargetValue:'目标值',
+    MaxValue:'最大值',
+    MinValue:'最小值',
+    ToolName:'检验工具',
+    InspectionBasis:'检验依据',
+    InspectionDetails:'详细信息'
   },
   iqcBadCode: {
     testItem: "测试项",
