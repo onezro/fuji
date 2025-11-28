@@ -17,7 +17,7 @@
                     <template #default="scope">
                         <span>{{
                             scope.$index + pageObj.pageSize * (pageObj.currentPage - 1) + 1
-                            }}</span>
+                        }}</span>
                     </template>
                 </el-table-column>
 
@@ -58,22 +58,26 @@
                     stripe>
                     <el-table-column prop="InspectionType" :label="$t('aqlrules.ProjectCategoryName')">
                         <template #default="scope">
-                            <!-- <el-input v-model="scope.row.InspectionType" size="small"></el-input> -->
+
                             <el-select v-model="scope.row.ProjectCategoryName" placeholder="请选择" filterable
                                 size="small">
-                                <el-option :label="p.es_project_categoryname" :value="p.es_project_categoryname"
+                                <el-option :label="p.ProjectCategoryName" :value="p.ProjectCategoryName"
                                     v-for="p in categoryList" />
                             </el-select>
                         </template>
                     </el-table-column>
                     <el-table-column prop="ProjectName" :label="$t('aqlrules.ProjectName')">
                         <template #default="scope">
-                            <el-input v-model="scope.row.ProjectName" size="small"></el-input>
+                          <el-select v-model="scope.row.ProjectName" placeholder="请选择" filterable
+                                size="small">
+                                <el-option :label="p.ProjectName" :value="p.ProjectName"
+                                    v-for="p in projectList" />
+                            </el-select>
                         </template>
                     </el-table-column>
                     <el-table-column prop="InspectionType" :label="$t('aqlrules.DBType')">
                         <template #default="scope">
-                            <el-select v-model="scope.row.InspectionType" placeholder="请选择" filterable size="small">
+                            <el-select v-model="scope.row.InspectionType" placeholder="请选择" filterable size="small" @change="handletypeChange">
                                 <el-option :label="p.InspectionType" :value="p.InspectionType" v-for="p in typetList" />
                             </el-select>
                         </template>
@@ -112,10 +116,10 @@
                             <el-input v-model="scope.row.InspectionBasis" size="small"></el-input>
                         </template>
                     </el-table-column>
-                    <el-table-column :label="$t('publicText.operation')">
+                    <el-table-column :label="$t('publicText.operation')" width="150">
                         <template #default="scope">
                             <el-button size="small" type="primary" @click="addInspectionDetails">{{ $t("publicText.add")
-                                }}</el-button>
+                            }}</el-button>
                             <el-button size="small" type="danger"
                                 @click="addForm.iQC_InspectionDetails.splice(scope.$index, 1)"
                                 :disabled="addForm.iQC_InspectionDetails.length == 1">{{ $t("publicText.delete")
@@ -128,7 +132,7 @@
                 <el-button @click="addCancel">{{ $t("publicText.cancel") }}</el-button>
                 <el-button type="primary" @click="addSubmit">{{
                     $t("publicText.confirm")
-                    }}</el-button>
+                }}</el-button>
             </template>
         </el-dialog>
         <el-dialog :title="$t('publicText.edit')" v-model="editVisible" width="80%" @close="editCancel">
@@ -145,19 +149,23 @@
                     <template #default="scope">
                         <!-- <el-input v-model="scope.row.InspectionType" size="small"></el-input> -->
                         <el-select v-model="scope.row.ProjectCategoryName" placeholder="请选择" filterable size="small">
-                            <el-option :label="p.es_project_categoryname" :value="p.es_project_categoryname"
+                            <el-option :label="p.ProjectCategoryName" :value="p.ProjectCategoryName"
                                 v-for="p in categoryList" />
                         </el-select>
                     </template>
                 </el-table-column>
                 <el-table-column prop="ProjectName" :label="$t('aqlrules.ProjectName')">
                     <template #default="scope">
-                        <el-input v-model="scope.row.ProjectName" size="small"></el-input>
+                         <el-select v-model="scope.row.ProjectName" placeholder="请选择" filterable
+                                size="small">
+                                <el-option :label="p.ProjectName" :value="p.ProjectName"
+                                    v-for="p in projectList" />
+                            </el-select>
                     </template>
                 </el-table-column>
                 <el-table-column prop="InspectionType" :label="$t('aqlrules.DBType')">
                     <template #default="scope">
-                        <el-select v-model="scope.row.InspectionType" placeholder="请选择" filterable size="small">
+                        <el-select v-model="scope.row.InspectionType" placeholder="请选择" filterable size="small" @change="handletypeChange1">
                             <el-option :label="p.InspectionType" :value="p.InspectionType" v-for="p in typetList" />
                         </el-select>
                     </template>
@@ -199,10 +207,10 @@
                 <el-table-column :label="$t('publicText.operation')" width="150">
                     <template #default="scope">
                         <el-button size="small" type="primary" @click="editInspectionDetails">{{ $t("publicText.add")
-                            }}</el-button>
+                        }}</el-button>
                         <el-button size="small" type="danger" @click="deleteDetail(scope.row)">{{
                             $t("publicText.delete")
-                            }}</el-button>
+                        }}</el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -211,7 +219,7 @@
                 <el-button @click="editCancel">{{ $t("publicText.cancel") }}</el-button>
                 <el-button type="primary" @click="editSubmit">{{
                     $t("publicText.confirm")
-                    }}</el-button>
+                }}</el-button>
             </template>
         </el-dialog>
     </div>
@@ -220,6 +228,7 @@
 <script setup lang="ts">
 import {
     GetProjectCategoryQuery,
+    GetProjectQuery,
     GetResourceQuery,
     GetInspectionTypeQuery,
     GetProductQuery,
@@ -257,6 +266,7 @@ const productList = ref<any[]>([]);
 const typetList = ref<any[]>([]);
 const categoryList = ref<any[]>([]);
 const resourceList = ref<any[]>([]);
+const projectList = ref<any[]>([]);
 const addVisible = ref(false);
 const addForm = ref({
     InspectionMasterName: "",
@@ -273,6 +283,7 @@ const addForm = ref({
             ToolName: "",
             InspectionBasis: "",
             InspectionType: "",
+            MeasurementType: "",
             CreateUser: userStore.getUserInfo,
             UpdateUser: "",
         },
@@ -295,6 +306,7 @@ const editForm = ref({
             ToolName: "",
             InspectionBasis: "",
             InspectionType: "",
+            MeasurementType: "",
             CreateUser: "",
             UpdateUser: userStore.getUserInfo,
         },
@@ -303,14 +315,16 @@ const editForm = ref({
 const editFormRef = ref();
 onBeforeMount(() => {
     getScreenHeight();
-});
-onMounted(() => {
-    window.addEventListener("resize", getScreenHeight);
-    getData();
     getProduct();
     getType();
     getCategory();
     GetResource();
+    getProject();
+});
+onMounted(() => {
+    window.addEventListener("resize", getScreenHeight);
+    getData();
+
 });
 onBeforeUnmount(() => {
     window.addEventListener("resize", getScreenHeight);
@@ -341,6 +355,11 @@ const GetResource = () => {
         resourceList.value = res.content;
     });
 };
+const getProject = () => {
+    GetProjectQuery({}).then((res: any) => {
+        projectList.value = res.content;
+    });
+};
 const openAdd = () => {
     addVisible.value = true;
 };
@@ -361,6 +380,7 @@ const addCancel = () => {
             ToolName: "",
             InspectionBasis: "",
             InspectionType: "",
+            MeasurementType: "",
             CreateUser: "",
             UpdateUser: "",
         },
@@ -378,12 +398,46 @@ const addInspectionDetails = () => {
         ToolName: "",
         InspectionBasis: "",
         InspectionType: "",
+        MeasurementType: "",
         CreateUser: userStore.getUserInfo,
         UpdateUser: "",
     });
 };
+const handletypeChange = (val:any)=>{
+    console.log(val);
+   if(val=='计量'||val=='计数'){
+    addForm.value.iQC_InspectionDetails.forEach((item)=>{
+        if(item.InspectionType==val){
+            item.MeasurementType='ES_Measurement_Type'
+        }
+    })
+   }else{
+    addForm.value.iQC_InspectionDetails.forEach((item)=>{
+        if(item.InspectionType==val){
+            item.MeasurementType='ES_Inspection_Type'
+        }
+    })
+   }
+}
+const handletypeChange1 = (val:any)=>{
+    console.log(val);
+   if(val=='计量'||val=='计数'){
+    editForm.value.iQC_InspectionDetails.forEach((item)=>{
+        if(item.InspectionType==val){
+            item.MeasurementType='ES_Measurement_Type'
+        }
+    })
+   }else{
+    editForm.value.iQC_InspectionDetails.forEach((item)=>{
+        if(item.InspectionType==val){
+            item.MeasurementType='ES_Inspection_Type'
+        }
+    })
+   }
+}
 const addSubmit = () => {
     // console.log(addForm.value);
+
     AyscInspectionMaster(addForm.value).then((res: any) => {
         ElNotification({
             title: t("publicText.tipTitle"),
@@ -417,6 +471,7 @@ const handleEdit = (val: any) => {
                     ToolName: "",
                     InspectionBasis: "",
                     InspectionType: "",
+                    MeasurementType: "",
                     CreateUser: "",
                     UpdateUser: userStore.getUserInfo,
                 },
@@ -437,6 +492,7 @@ const editInspectionDetails = () => {
         ToolName: "",
         InspectionBasis: "",
         InspectionType: "",
+        MeasurementType: "",
         CreateUser: "",
         UpdateUser: userStore.getUserInfo,
     });
@@ -488,6 +544,7 @@ const deleteDetail = (val: any) => {
                                 ToolName: "",
                                 InspectionBasis: "",
                                 InspectionType: "",
+                                MeasurementType: "",
                                 CreateUser: "",
                                 UpdateUser: userStore.getUserInfo,
                             },
@@ -543,6 +600,7 @@ const editCancel = () => {
             ToolName: "",
             InspectionBasis: "",
             InspectionType: "",
+            MeasurementType: "",
             CreateUser: "",
             UpdateUser: "",
         },
@@ -555,7 +613,7 @@ const editSubmit = () => {
     if (hasEmptyCategory) {
         ElNotification({
             title: t("message.tipTitle"),
-            message:   t("aqlrules.InspectionDetails")+t("publicText.isEmpty"),
+            message: t("aqlrules.InspectionDetails") + t("publicText.isEmpty"),
             type: "error",
         });
         return;

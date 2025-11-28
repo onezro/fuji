@@ -2,10 +2,10 @@
     <div class="p-2">
         <el-card :body-style="{ padding: '8px' }">
             <div class="flex justify-between">
-
                 <el-form ref="formRef" :model="getForm" :inline="true" label-width="auto" size="small">
                     <el-form-item :label="$t('incomeCreat.creatInspect')" class="mb-2">
-                        <el-input style="width: 140px" v-model="getForm.inspect" placeholder="" clearable></el-input>
+                        <el-input style="width: 140px" v-model="getForm.InspectionNo" placeholder=""
+                            clearable></el-input>
                     </el-form-item>
                     <el-form-item :label="$t('incomeCreat.creatInspect')" class="mb-2"><el-date-picker
                             :shortcuts="shortcuts" v-model="searchDate" value-format="YYYY-MM-DD" type="daterange"
@@ -20,7 +20,6 @@
                     </el-form-item>
                 </el-form>
                 <div>
-
                     <el-button type="warning" size="small" @click="handleCreat">
                         {{ $t("incomeCreat.creatInspectCode") }}
                     </el-button>
@@ -32,25 +31,28 @@
             )
                 " size="small" :style="{ width: '100%' }" ref="rawRef" :height="tableHeight" border fit
                 highlight-current-row @cell-click="cellClick">
-
                 <el-table-column type="index" align="center" fixed :label="$t('publicText.index')" width="50">
                     <template #default="scope">
                         <span>{{
-                            scope.$index +
-                            pageObj.pageSize * (pageObj.currentPage - 1) +
-                            1
+                            scope.$index + pageObj.pageSize * (pageObj.currentPage - 1) + 1
                         }}</span>
                     </template>
                 </el-table-column>
-                <el-table-column prop="creatInspect" :label="$t('incomeCreat.creatInspect')" />
+                <el-table-column prop="IQCNumber" :label="$t('incomeCreat.creatInspect')" >
+                    <template #default="scope">
+                       <span class="underline">{{
+                            scope.row.IQCNumber
+                        }}</span>
+                    </template>
+                </el-table-column>
                 <el-table-column prop="NotifyDate" :label="$t('incomeCreat.NotifyDate')" />
-                <el-table-column prop="NotifyPerson" :label="$t('incomeCreat.NotifyPerson')" />
-                <el-table-column prop="NotifyDepartment" :label="$t('incomeCreat.NotifyDepartment')" />
-                <el-table-column prop="incomeDate" :label="$t('incomeCreat.incomeDate')" />
-                <el-table-column prop="isCarProduct" :label="$t('incomeCreat.isCarProduct')" />
+                <el-table-column prop="Notifier" :label="$t('incomeCreat.NotifyPerson')" />
+                <el-table-column prop="NotifyDept" :label="$t('incomeCreat.NotifyDepartment')" />
+                <el-table-column prop="ArrivalDate" :label="$t('incomeCreat.incomeDate')" />
+                <el-table-column prop="IsAutomotive" :label="$t('incomeCreat.isCarProduct')" />
                 <el-table-column prop="InspectStandard" :label="$t('incomeCreat.InspectStandard')" />
-                <el-table-column prop="Status" :label="$t('incomeCreat.Status')" />
-                <el-table-column prop="creatDate" :label="$t('incomeCreat.creatDate')" />
+                <el-table-column prop="StatusText" :label="$t('incomeCreat.Status')" />
+                <el-table-column prop="CreateTime" :label="$t('incomeCreat.creatDate')" width="150"/>
                 <el-table-column :label="$t('publicText.operation')" width="120" fixed="right" align="center">
                     <template #default="scope">
                         <el-tooltip :content="$t('publicText.edit')" placement="top">
@@ -81,139 +83,129 @@
             :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" align-center
             @close="handleClose">
             <el-form ref="creatFormRef" :model="creatForm" label-width="auto" :inline="true">
-                <el-form-item :label="$t('incomeCreat.NotifyDepartment')" prop="NotifyDepartment">
-                    <!-- <el-input v-model="creatForm.NotifyDepartment" style="width: 200px" placeholder="" /> -->
-                    <el-select v-model="creatForm.NotifyDepartment" placeholder="" style="width: 200px">
-                        <el-option label="Options1" value="1" />
-                        <el-option label="Options2" value="2" />
+                <el-form-item :label="$t('incomeCreat.NotifyDepartment')" prop="NotifyDept">
+                    <el-select v-model="creatForm.NotifyDept" placeholder="" style="width: 200px">
+                        <el-option v-for="n in notifyDeptList" :label="n.WorkCenterName" :value="n.WorkCenterName" />
                     </el-select>
                 </el-form-item>
-                <el-form-item :label="$t('incomeCreat.NotifyPerson')" prop="NotifyPerson">
-                    <el-select v-model="creatForm.NotifyPerson" placeholder="" style="width: 200px">
-                        <el-option label="Options1" value="1" />
-                        <el-option label="Options2" value="2" />
+                <el-form-item :label="$t('incomeCreat.NotifyPerson')" prop="Notifier">
+                    <el-select v-model="creatForm.Notifier" placeholder="" style="width: 200px">
+                        <el-option v-for="n in notifierList" :label="n.FullName" :value="n.FullName" />
                     </el-select>
                 </el-form-item>
-                <el-form-item :label="$t('incomeCreat.incomeDate')" prop="incomeDate">
-                    <el-select v-model="creatForm.incomeDate" placeholder="" style="width: 200px">
-                        <el-option label="Options1" value="1" />
-                        <el-option label="Options2" value="2" />
-                    </el-select>
+                <el-form-item :label="$t('incomeCreat.incomeDate')" prop="ArrivalDate">
+                    <el-date-picker v-model="creatForm.ArrivalDate" type="date" value-format="YYYY-MM-DD  HH:mm:ss"
+                        placeholder="" style="width: 200px" />
                 </el-form-item>
                 <el-form-item :label="$t('incomeCreat.NotifyDate')" prop="NotifyDate">
-                    <el-select v-model="creatForm.NotifyDate" placeholder="" style="width: 200px">
-                        <el-option label="Options1" value="1" />
-                        <el-option label="Options2" value="2" />
+                    <el-date-picker v-model="creatForm.NotifyDate" type="date" value-format="YYYY-MM-DD  HH:mm:ss"
+                        placeholder="" style="width: 200px" />
+                </el-form-item>
+                <el-form-item :label="$t('incomeCreat.isCarProduct')" prop="IsAutomotive">
+                    <el-select v-model="creatForm.IsAutomotive" placeholder="" style="width: 200px">
+                        <el-option label="是" :value="1" />
+                        <el-option label="否" :value="0" />
                     </el-select>
                 </el-form-item>
-                <el-form-item :label="$t('incomeCreat.isCarProduct')" prop="isCarProduct">
-                    <el-select v-model="creatForm.isCarProduct" placeholder="" style="width: 200px">
-                        <el-option label="Options1" value="1" />
-                        <el-option label="Options2" value="2" />
-                    </el-select>
-                </el-form-item>
-                <el-form-item :label="$t('incomeCreat.incomeUnit')" prop="incomeUnit">
-                    <el-select v-model="creatForm.incomeUnit" placeholder="" style="width: 200px">
-                        <el-option label="Options1" value="1" />
-                        <el-option label="Options2" value="2" />
+                <el-form-item :label="$t('incomeCreat.incomeUnit')" prop="IncomingUnit">
+                    <el-select v-model="creatForm.IncomingUnit" placeholder="" style="width: 200px">
+                        <el-option v-for="n in incomeUnitList" :label="n.IncomingUnit" :value="n.IncomingUnit" />
                     </el-select>
                 </el-form-item>
             </el-form>
             <template #footer>
                 <div class="dialog-footer">
-                    <el-button @click="handleClose">{{ $t('publicText.cancel') }}</el-button>
-                    <el-button type="primary" @click="handleConfirm"> {{ $t('publicText.confirm') }} </el-button>
+                    <el-button @click="handleClose">{{
+                        $t("publicText.cancel")
+                    }}</el-button>
+                    <el-button type="primary" @click="handleConfirm">
+                        {{ $t("publicText.confirm") }}
+                    </el-button>
                 </div>
             </template>
         </el-dialog>
-        <el-dialog v-model="creatVisible" :title="$t('incomeCreat.creatInspectCode')" width="750px"
+        <el-dialog v-model="creatEditVisible" :title="$t('incomeCreat.creatInspectCode')" width="750px"
             :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" align-center
-            @close="handleClose">
+            @close="handleEditClose">
             <el-form ref="editCreatFormRef" :model="editCreateForm" label-width="auto" :inline="true">
-
-
-                <el-form-item :label="$t('incomeCreat.NotifyDepartment')" prop="NotifyDepartment">
-                    <!-- <el-input v-model="editCreateForm.NotifyDepartment" style="width: 200px" placeholder="" /> -->
-                    <el-select v-model="editCreateForm.NotifyDepartment" placeholder="" style="width: 200px">
-                        <el-option label="Options1" value="1" />
-                        <el-option label="Options2" value="2" />
+                <el-form-item :label="$t('incomeCreat.NotifyDepartment')" prop="NotifyDept">
+                    <el-select v-model="editCreateForm.NotifyDept" placeholder="" style="width: 200px">
+                        <el-option v-for="n in notifyDeptList" :label="n.WorkCenterName" :value="n.WorkCenterName" />
                     </el-select>
                 </el-form-item>
-                <el-form-item :label="$t('incomeCreat.NotifyPerson')" prop="NotifyPerson">
-                    <el-select v-model="editCreateForm.NotifyPerson" placeholder="" style="width: 200px">
-                        <el-option label="Options1" value="1" />
-                        <el-option label="Options2" value="2" />
+                <el-form-item :label="$t('incomeCreat.NotifyPerson')" prop="Notifier">
+                    <el-select v-model="editCreateForm.Notifier" placeholder="" style="width: 200px">
+                        <el-option v-for="n in notifierList" :label="n.FullName" :value="n.FullName" />
                     </el-select>
                 </el-form-item>
-                <el-form-item :label="$t('incomeCreat.incomeDate')" prop="incomeDate">
-                    <el-select v-model="editCreateForm.incomeDate" placeholder="" style="width: 200px">
-                        <el-option label="Options1" value="1" />
-                        <el-option label="Options2" value="2" />
-                    </el-select>
+                <el-form-item :label="$t('incomeCreat.incomeDate')" prop="ArrivalDate">
+                    <el-date-picker v-model="editCreateForm.ArrivalDate" type="date" value-format="YYYY-MM-DD"
+                        placeholder="" style="width: 200px" />
                 </el-form-item>
                 <el-form-item :label="$t('incomeCreat.NotifyDate')" prop="NotifyDate">
-                    <el-select v-model="editCreateForm.NotifyDate" placeholder="" style="width: 200px">
-                        <el-option label="Options1" value="1" />
-                        <el-option label="Options2" value="2" />
+                    <el-date-picker v-model="editCreateForm.NotifyDate" type="date" value-format="YYYY-MM-DD"
+                        placeholder="" style="width: 200px" />
+                </el-form-item>
+                <el-form-item :label="$t('incomeCreat.isCarProduct')" prop="IsAutomotive">
+                    <el-select v-model="editCreateForm.IsAutomotive" placeholder="" style="width: 200px">
+                        <el-option label="是" :value="1" />
+                        <el-option label="否" :value="0" />
                     </el-select>
                 </el-form-item>
-                <el-form-item :label="$t('incomeCreat.isCarProduct')" prop="isCarProduct">
-                    <el-select v-model="editCreateForm.isCarProduct" placeholder="" style="width: 200px">
-                        <el-option label="Options1" value="1" />
-                        <el-option label="Options2" value="2" />
-                    </el-select>
-                </el-form-item>
-                <el-form-item :label="$t('incomeCreat.incomeUnit')" prop="incomeUnit">
-                    <el-select v-model="editCreateForm.incomeUnit" placeholder="" style="width: 200px">
-                        <el-option label="Options1" value="1" />
-                        <el-option label="Options2" value="2" />
+                <el-form-item :label="$t('incomeCreat.incomeUnit')" prop="IncomingUnit">
+                    <el-select v-model="editCreateForm.IncomingUnit" placeholder="" style="width: 200px">
+                        <el-option v-for="n in incomeUnitList" :label="n.IncomingUnit" :value="n.IncomingUnit" />
                     </el-select>
                 </el-form-item>
             </el-form>
             <template #footer>
                 <div class="dialog-footer">
-                    <el-button @click="handleEditClose">{{ $t('publicText.cancel') }}</el-button>
-                    <el-button type="primary" @click="handleEditConfirm"> {{ $t('publicText.confirm') }} </el-button>
+                    <el-button @click="handleEditClose">{{
+                        $t("publicText.cancel")
+                    }}</el-button>
+                    <el-button type="primary" @click="handleEditConfirm">
+                        {{ $t("publicText.confirm") }}
+                    </el-button>
                 </div>
             </template>
         </el-dialog>
-        <el-dialog v-model="detailVisible" title="来料检验单明细" width="75%" @close="detailVisible = false">
+
+        <el-dialog v-model="detailVisible" align-center title="来料检验单明细" width="85%" @close="detailVisible = false">
             <div class="mb-2 flex justify-end">
                 <el-button type="warning" size="small" @click="addDetailVisible = true">
-                    {{ $t("publicText.add")+$t("incomeCreat.incomeDetail") }}
+                    {{ $t("publicText.add") + $t("incomeCreat.incomeDetail") }}
                 </el-button>
             </div>
             <el-table :data="detailTableData" size="small" :style="{ width: '100%' }" ref="rawRef" :height="450" border
-                fit highlight-current-row @cell-click="cellClick">
+                fit >
                 <el-table-column type="index" align="center" fixed :label="$t('publicText.index')" width="50">
                     <template #default="scope">
                         <span>{{
-                            scope.$index +
-                            pageObj.pageSize * (pageObj.currentPage - 1) +
-                            1
+                            scope.$index + pageObj.pageSize * (pageObj.currentPage - 1) + 1
                         }}</span>
                     </template>
                 </el-table-column>
-                <el-table-column prop="materialName" :label="$t('incomeCreat.materialName')" />
-                <el-table-column prop="modelRules" :label="$t('incomeCreat.modelRules')" />
-                <el-table-column prop="supplier" :label="$t('incomeCreat.supplier')" />
-                <el-table-column prop="orderNumber" :label="$t('incomeCreat.orderNumber')" />
-                <el-table-column prop="lotno" label="Lot No" />
-                <el-table-column prop="T-Code" label="T-Code" />
-                <el-table-column prop="qtyIncomeMaterial" :label="$t('incomeCreat.qtyIncomeMaterial')" />
-                <el-table-column prop="InspectStandard" :label="$t('incomeCreat.InspectStandard')" />
-                <el-table-column prop="supplierReport" :label="$t('incomeCreat.supplierReport')" />
-                <el-table-column prop="creatDate" :label="$t('incomeCreat.creatDate')" />
+                <el-table-column prop="MaterialName" :label="$t('incomeCreat.materialName')" />
+                <el-table-column prop="ModelSpec" :label="$t('incomeCreat.modelRules')" />
+                <el-table-column prop="Supplier" :label="$t('incomeCreat.supplier')" />
+                <el-table-column prop="OrderNo" :label="$t('incomeCreat.orderNumber')" />
+                <el-table-column prop="LotNo" label="Lot No" />
+                <el-table-column prop="TCode" label="T-Code" />
+                <el-table-column prop="QuantityPerBox" :label="$t('incomeCreat.qtyIncomeMaterial')" />
+                <el-table-column prop="SamplingStandards" :label="$t('incomeCreat.InspectStandard')" />
+                <el-table-column prop="SupplierReportName" :label="$t('incomeCreat.supplierReport')" />
+                <el-table-column prop="StatusText" :label="$t('incomeCreat.Status')" />
+                <el-table-column prop="CreateTime" :label="$t('incomeCreat.creatDate')" />
                 <el-table-column :label="$t('publicText.operation')" width="120" fixed="right" align="center">
                     <template #default="scope">
                         <el-tooltip :content="$t('publicText.edit')" placement="top">
                             <el-button type="primary" icon="EditPen" size="small"
                                 @click.stop="handleEditDetail(scope.row)"></el-button>
                         </el-tooltip>
-                        <el-tooltip :content="$t('publicText.delete')" placement="top">
+                        <!-- <el-tooltip :content="$t('publicText.delete')" placement="top">
                             <el-button type="danger" icon="Delete" size="small"
                                 @click.stop="handleDeleteDetail(scope.row)"></el-button>
-                        </el-tooltip>
+                        </el-tooltip> -->
                     </template>
                 </el-table-column>
                 <template #empty>
@@ -224,84 +216,107 @@
             </el-table>
             <template #footer>
                 <div class="dialog-footer">
-                    <el-button @click="detailVisible = false">{{ $t('publicText.close') }}</el-button>
-
+                    <el-button @click="detailVisible = false">{{
+                        $t("publicText.close")
+                    }}</el-button>
                 </div>
             </template>
         </el-dialog>
-         <el-dialog v-model="addDetailVisible" :title="$t('incomeCreat.incomeDetail')" width="750px"
+        <el-dialog v-model="addDetailVisible" :title="$t('incomeCreat.incomeDetail')" width="750px"
             :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" align-center
             @close="handleAddDetailClose">
             <el-form ref="detailFormRef" :model="detailForm" label-width="auto" :inline="true">
                 <el-form-item :label="$t('incomeCreat.materialName')" prop="materialName">
-                    <el-input v-model="detailForm.materialName" style="width: 200px" placeholder="" />
+                    <el-select v-model="detailForm.MaterialName" placeholder="" style="width: 200px"
+                        @change="changeData">
+                        <el-option v-for="n in materialNameList" :label="n.ProductFamilyName"
+                            :value="n.ProductFamilyName" />
+                    </el-select>
                 </el-form-item>
                 <el-form-item :label="$t('incomeCreat.modelRules')" prop="modelRules">
-                    <el-input v-model="detailForm.modelRules" style="width: 200px" placeholder="" />
+                    <el-select v-model="detailForm.ModelSpec" placeholder="" style="width: 200px">
+                        <el-option v-for="n in productList" :label="n.productname" :value="n.productname" />
+                    </el-select>
                 </el-form-item>
                 <el-form-item :label="$t('incomeCreat.supplier')" prop="supplier">
-                    <el-input v-model="detailForm.supplier" style="width: 200px" placeholder="" />
+                    <el-select v-model="detailForm.Supplier" placeholder="" style="width: 200px">
+                        <el-option v-for="n in vendorList" :label="n.Vendorname" :value="n.Vendorname" />
+                    </el-select>
                 </el-form-item>
                 <el-form-item :label="$t('incomeCreat.orderNumber')" prop="orderNumber">
-                    <el-input v-model="detailForm.orderNumber" style="width: 200px" placeholder="" />
+                    <el-input v-model="detailForm.OrderNo" style="width: 200px" placeholder="" />
                 </el-form-item>
                 <el-form-item label="Lot No" prop="lotno">
-                    <el-input v-model="detailForm.lotno" style="width: 200px" placeholder="" />
+                    <el-input v-model="detailForm.LotNo" style="width: 200px" placeholder="" />
                 </el-form-item>
                 <el-form-item label="T-Code" prop="T-Code">
-                    <el-input v-model="detailForm['T-Code']" style="width: 200px" placeholder="" />
+                    <el-input v-model="detailForm.TCode" style="width: 200px" placeholder="" />
                 </el-form-item>
                 <el-form-item :label="$t('incomeCreat.qtyIncomeMaterial')" prop="qtyIncomeMaterial">
-                    <el-input v-model="detailForm.qtyIncomeMaterial" style="width: 200px" placeholder="" />
+                    <el-input v-model="detailForm.QuantityPerBox" style="width: 200px" placeholder="" />
                 </el-form-item>
-              
+
                 <el-form-item :label="$t('incomeCreat.supplierReport')" prop="supplierReport">
-                    <el-input v-model="detailForm.supplierReport" style="width: 200px" placeholder="" />
+                    <el-input v-model="detailForm.SupplierReportName" style="width: 200px" placeholder="" />
                 </el-form-item>
             </el-form>
             <template #footer>
                 <div class="dialog-footer">
-                    <el-button @click="handleAddDetailClose">{{ $t('publicText.cancel') }}</el-button>
-                    <el-button type="primary" @click="handleAddDetailConfirm"> {{ $t('publicText.confirm') }} </el-button>
+                    <el-button @click="handleAddDetailClose">{{
+                        $t("publicText.cancel")
+                    }}</el-button>
+                    <el-button type="primary" @click="handleAddDetailConfirm">
+                        {{ $t("publicText.confirm") }}
+                    </el-button>
                 </div>
             </template>
         </el-dialog>
-        <el-dialog v-model="editDetailVisible" :title="$t('publicText.edit')+$t('incomeCreat.incomeDetail')" width="750px"
-            :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" align-center
-            @close="handleEditDetailClose">
+        <el-dialog v-model="editDetailVisible" :title="$t('publicText.edit') + $t('incomeCreat.incomeDetail')"
+            width="750px" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false"
+            align-center @close="handleEditDetailClose">
             <el-form ref="editdetailFormRef" :model="editdetailForm" label-width="auto" :inline="true">
-                
-                <el-form-item :label="$t('incomeCreat.materialName')" prop="materialName">
-                    <el-input v-model="editdetailForm.materialName" style="width: 200px" placeholder="" />
+                    <el-form-item :label="$t('incomeCreat.materialName')" prop="materialName">
+                    <el-select v-model="editdetailForm.MaterialName" placeholder="" style="width: 200px"
+                        @change="changeData">
+                        <el-option v-for="n in materialNameList" :label="n.ProductFamilyName"
+                            :value="n.ProductFamilyName" />
+                    </el-select>
                 </el-form-item>
                 <el-form-item :label="$t('incomeCreat.modelRules')" prop="modelRules">
-                    <el-input v-model="editdetailForm.modelRules" style="width: 200px" placeholder="" />
+                    <el-select v-model="editdetailForm.ModelSpec" placeholder="" style="width: 200px">
+                        <el-option v-for="n in productList" :label="n.productname" :value="n.productname" />
+                    </el-select>
                 </el-form-item>
                 <el-form-item :label="$t('incomeCreat.supplier')" prop="supplier">
-                    <el-input v-model="editdetailForm.supplier" style="width: 200px" placeholder="" />
+                    <el-select v-model="editdetailForm.Supplier" placeholder="" style="width: 200px">
+                        <el-option v-for="n in vendorList" :label="n.Vendorname" :value="n.Vendorname" />
+                    </el-select>
                 </el-form-item>
                 <el-form-item :label="$t('incomeCreat.orderNumber')" prop="orderNumber">
-                    <el-input v-model="editdetailForm.orderNumber" style="width: 200px" placeholder="" />
+                    <el-input v-model="editdetailForm.OrderNo" style="width: 200px" placeholder="" />
                 </el-form-item>
                 <el-form-item label="Lot No" prop="lotno">
-                    <el-input v-model="editdetailForm.lotno" style="width: 200px" placeholder="" />
+                    <el-input v-model="editdetailForm.LotNo" style="width: 200px" placeholder="" />
                 </el-form-item>
                 <el-form-item label="T-Code" prop="T-Code">
-                    <el-input v-model="editdetailForm['T-Code']" style="width: 200px" placeholder="" />
+                    <el-input v-model="editdetailForm.TCode" style="width: 200px" placeholder="" />
                 </el-form-item>
                 <el-form-item :label="$t('incomeCreat.qtyIncomeMaterial')" prop="qtyIncomeMaterial">
-                    <el-input v-model="editdetailForm.qtyIncomeMaterial" style="width: 200px" placeholder="" />
-                </el-form-item>
-              
-                <el-form-item :label="$t('incomeCreat.supplierReport')" prop="supplierReport">
-                    <el-input v-model="editdetailForm.supplierReport" style="width: 200px" placeholder="" />
+                    <el-input v-model="editdetailForm.QuantityPerBox" style="width: 200px" placeholder="" />
                 </el-form-item>
 
+                <el-form-item :label="$t('incomeCreat.supplierReport')" prop="supplierReport">
+                    <el-input v-model="editdetailForm.SupplierReportName" style="width: 200px" placeholder="" />
+                </el-form-item>
             </el-form>
             <template #footer>
                 <div class="dialog-footer">
-                    <el-button @click="handleEditDetailClose">{{ $t('publicText.cancel') }}</el-button>
-                    <el-button type="primary" @click="handleEditDetailConfirm"> {{ $t('publicText.confirm') }} </el-button>
+                    <el-button @click="handleEditDetailClose">{{
+                        $t("publicText.cancel")
+                    }}</el-button>
+                    <el-button type="primary" @click="handleEditDetailConfirm">
+                        {{ $t("publicText.confirm") }}
+                    </el-button>
                 </div>
             </template>
         </el-dialog>
@@ -309,6 +324,22 @@
 </template>
 
 <script setup lang="ts">
+import {
+    GetWorkCenterQuery,
+    GetEmployeeQuery,
+    GetIncomingUnitQuery,
+    GetProductFamilyQuery,
+    GetIQCHeaderQuery,
+    AyscIQCAdd,
+    AyscIQCUpdate,
+    GetProductQuery,
+    GetVendorQuery,
+    GetAQLLevelQuery,
+    GetIQCDetailQuery,
+    AyscIQCDetailAdd,
+    AyscIQCDetailUpdate,
+} from "@/api/incomingManage/iqcApi";
+import dayjs from "dayjs";
 import {
     ref,
     watch,
@@ -325,217 +356,343 @@ import {
     disabledDate,
 } from "@/utils/dataMenu";
 import { ElNotification, ElMessageBox } from "element-plus";
-import { useI18n } from 'vue-i18n';
+import { useI18n } from "vue-i18n";
 const { t } = useI18n();
+import { useUserStoreWithOut } from "@/stores/modules/user";
+const userStore = useUserStoreWithOut();
 const getForm = ref({
-    inspect: "",
-    SchedulingStartDate: "",
-    SchedulingEndDate: "",
+    InspectionNo: "",
+    StartTime: "",
+    EndTime: "",
+    InspectionResult: "",
 });
 const searchDate = ref<any[]>([]);
 const tableHeight = ref(0);
-const tableData = ref([
-    {
-        creatInspect: "INSP20230901001",
-        NotifyDate: "2023-09-01",
-        NotifyPerson: "张三",
-        NotifyDepartment: "采购部",
-        incomeDate: "2023-09-05",
-        isCarProduct: "是",
-        InspectStandard: "标准A",
-        Status: "待检验",
-        creatDate: "2023-09-01 10:00:00"
-    },
-    {
-        creatInspect: "INSP20230901002",
-        NotifyDate: "2023-09-02",
-        NotifyPerson: "李四",
-        NotifyDepartment: "质检部",
-        incomeDate: "2023-09-06",
-        isCarProduct: "否",
-        InspectStandard: "标准B",
-        Status: "已检验",
-        creatDate: "2023-09-02 11:30:00"
-    }
-]);
+const tableData = ref([]);
 const pageObj = reactive({
     currentPage: 1,
     pageSize: 50,
 });
+const notifyDeptList = ref<any[]>([]);
+const notifierList = ref<any[]>([]);
+const incomeUnitList = ref<any[]>([]);
 const creatVisible = ref(false);
 const creatForm = ref({
-    NotifyDepartment: "",
-    NotifyPerson: "",
+    NotifyDept: "",
+    Notifier: "",
+    ArrivalDate: "",
     NotifyDate: "",
-    isCarProduct: "",
-    incomeUnit: "",
-    incomeDate: ""
+    IsAutomotive: 0,
+    SamplingStandards: "",
+    IncomingUnit: "",
+    Approver: "",
 });
-const creatFormRef = ref("")
+const creatFormRef = ref("");
+const creatEditVisible = ref(false);
 const editCreateForm = ref({
-    NotifyDepartment: "",
-    NotifyPerson: "",
+    InspectionNo: "",
+    NotifyDept: "",
+    Notifier: "",
+    ArrivalDate: "",
     NotifyDate: "",
-    isCarProduct: "",
-    incomeUnit: "",
-    incomeDate: ""
+    ReceivingDept: "",
+    ReceiverName: "",
+    ReceiveDate: "",
+    IsAutomotive: 0,
+    SamplingStandards: "",
+    IncomingUnit: "",
+    Status: 0,
+    DataStatus: 0,
+    InspectionResult: "",
+    ApprovalResult: "",
+    MaterialTypes: 0,
+    ApprovalRemarks: "",
+    Approver: "",
 });
-const editCreatFormRef = ref("")
+const editCreatFormRef = ref("");
+const materialNameList = ref<any[]>([]);
+const vendorList = ref<any[]>([]);
+const productList = ref<any[]>([]);
+const aqlLevelList = ref<any[]>([]);
 const detailVisible = ref(false);
-const detailTableData = ref([
-    {
-        materialName: "物料A",
-        modelRules: "型号X",
-        supplier: "供应商1",
-        orderNumber: "ORD20230901001",
-        lotno: "LOT12345",
-        "T-Code": "T001",
-        qtyIncomeMaterial: 100,
-        InspectStandard: "标准A",
-        supplierReport: "报告A",
-        creatDate: "2023-09-01 10:00:00"
-    },
-    {
-        materialName: "物料B",
-        modelRules: "型号Y",
-        supplier: "供应商2",
-        orderNumber: "ORD20230901002",
-        lotno: "LOT67890",
-        "T-Code": "T002",
-        qtyIncomeMaterial: 200,
-        InspectStandard: "标准B",
-        supplierReport: "报告B",
-        creatDate: "2023-09-02 11:30:00"
-    }
-]);
-const addDetailVisible=ref(false);
-const detailFormRef = ref("")
-const detailForm=ref({
-    materialName: "",
-    modelRules: "",
-    supplier: "",
-    orderNumber: "",
-    lotno: "",
-    "T-Code": "",
-    qtyIncomeMaterial: "",
-    InspectStandard: "",
-    supplierReport: "",
-    creatDate: ""
+const detailTableData = ref([]);
+const addDetailVisible = ref(false);
+const detailFormRef = ref("");
+const detailForm = ref({
+    InspectionNo: "",
+    MaterialName: "",
+    ModelSpec: "",
+    Supplier: "",
+    OrderNo: "",
+    LotNo: "",
+    TCode: "",
+    QuantityPerBox: "",
+    SupplierReportGuid: "",
+    SupplierReportName: "",
+    Template_File: "",
 });
-const editDetailVisible=ref(false);
-const editdetailFormRef=ref('')
-const editdetailForm=ref({
-    materialName: "",
-    modelRules: "",
-    supplier: "",
-    orderNumber: "",
-    lotno: "",
-    "T-Code": "",
-    qtyIncomeMaterial: "",
-    InspectStandard: "",
-    supplierReport: "",
-    creatDate: ""
+const editDetailVisible = ref(false);
+const editdetailFormRef = ref("");
+const editdetailForm = ref({
+    InspectionNo: "",
+    IQC_DetailName: "",
+    MaterialName: "",
+    ModelSpec: "",
+    Supplier: "",
+    OrderNo: "",
+    LotNo: "",
+    TCode: "",
+    InspectionResult: "",
+    ApprovalResult: "",
+    QuantityPerBox: "",
+    SupplierReportGuid: "",
+    SupplierReportName: "",
+    Template_File: "",
+    Inspector: "",
+    Approver: "",
+    SampledBoxes: 0,
+    Package: "",
+    Appearance: "",
+    Specification: "",
+    Property: "",
+    Status: 0,
+    DataStatus: 0,
 });
 
 watch(
     () => searchDate.value,
     (newVal: any, oldVal: any) => {
         if (newVal === null) {
-            getForm.value.SchedulingStartDate = "";
-            getForm.value.SchedulingEndDate = "";
+            getForm.value.StartTime = "";
+            getForm.value.EndTime = "";
             // getForm.value.PageNumber = 1
 
             return;
         }
         if (newVal !== oldVal) {
-            getForm.value.SchedulingStartDate = newVal[0];
-            getForm.value.SchedulingEndDate = newVal[1];
+            getForm.value.StartTime = newVal[0];
+            getForm.value.EndTime = newVal[1];
             // getForm.value.PageNumber = 1
         }
     }
 );
 onBeforeMount(() => {
     getScreenHeight();
+    getNotifyDept();
+    getNotifierList();
+    getIncomeUnitList();
+    getProductFamilyData();
+    GetVendorQueryData();
+    getAQLLevelData();
 });
 onMounted(() => {
     window.addEventListener("resize", getScreenHeight);
 
+    getData();
 });
 onBeforeUnmount(() => {
     window.addEventListener("resize", getScreenHeight);
 });
 
-const handleEdit = (row: any) => {
-    editCreateForm.value = { ...row };
-    creatVisible.value = true;
-};
-const handleDelete = (row: any) => {
-      ElMessageBox.confirm(t('publicText.confirm') + t('publicText.delete'), t('publicText.confirm') + t('publicText.operation'), {
-        confirmButtonText: t('publicText.confirm'),
-        cancelButtonText: t('publicText.cancel'),
-        type: "warning",
-    }).then(() => {
-       
-    }).catch(() => {
-        // on cancel
-        ElNotification({
-            title: t('message.tipTitle'),
-            message: t('publicText.cancel'),
-            type: "info",
-        });
+const getData = () => {
+    GetIQCHeaderQuery(getForm.value).then((res: any) => {
+        tableData.value = res.content;
     });
 };
-const cellClick = () => {
-    detailVisible.value = true;
-}
+
+const getNotifyDept = () => {
+    GetWorkCenterQuery({}).then((res: any) => {
+        notifyDeptList.value = res.content;
+    });
+};
+const getNotifierList = () => {
+    GetEmployeeQuery({}).then((res: any) => {
+        notifierList.value = res.content;
+    });
+};
+const getIncomeUnitList = () => {
+    GetIncomingUnitQuery({}).then((res: any) => {
+        incomeUnitList.value = res.content;
+    });
+};
+const getProductFamilyData = () => {
+    GetProductFamilyQuery({}).then((res: any) => {
+        materialNameList.value = res.content;
+    });
+};
+const GetVendorQueryData = () => {
+    GetVendorQuery({}).then((res: any) => {
+        vendorList.value = res.content;
+    });
+};
+const getAQLLevelData = () => {
+    GetAQLLevelQuery({}).then((res: any) => {
+        aqlLevelList.value = res.content;
+    });
+};
+
+const changeData = (val: any) => {
+    console.log(val);
+    GetProductQuery(val).then((res: any) => {
+        productList.value = res.content;
+        console.log(productList.value);
+    });
+};
+const handleEdit = (row: any) => {
+    editCreateForm.value = {
+        ...row,
+        InspectionNo: row.IQCNumber,
+        ArrivalDate: dayjs(row.ArrivalDate).format("YYYY-MM-DD"),
+        NotifyDate: dayjs(row.NotifyDate).format("YYYY-MM-DD"),
+    };
+    // console.log(editCreateForm.value);
+
+    creatEditVisible.value = true;
+};
+const handleDelete = (row: any) => {
+    ElMessageBox.confirm(
+        t("publicText.confirm") + t("publicText.delete"),
+        t("publicText.confirm") + t("publicText.operation"),
+        {
+            confirmButtonText: t("publicText.confirm"),
+            cancelButtonText: t("publicText.cancel"),
+            type: "warning",
+        }
+    )
+        .then(() => {
+            let data = {
+                InspectionNo: row.IQCNumber,
+                DataStatus: 1,
+            };
+            console.log(data);
+
+            AyscIQCUpdate(data).then((res: any) => {
+                ElNotification({
+                    title: t("message.tipTitle"),
+                    message: t("message.deleteSuccess"),
+                    type: "success",
+                });
+                getData();
+            });
+        })
+        .catch(() => {
+            // on cancel
+            ElNotification({
+                title: t("message.tipTitle"),
+                message: t("publicText.cancel"),
+                type: "info",
+            });
+        });
+};
+const cellClick = (row: any) => {
+    // detailVisible.value = true;
+    detailForm.value.InspectionNo = row.IQCNumber;
+    editdetailForm.value.InspectionNo = row.IQCNumber;
+    GetIQCDetailQuery({ InspectionNo: row.IQCNumber }).then((res: any) => {
+        detailTableData.value = res.content;
+        detailVisible.value = true;
+    });
+};
 const handleCreat = () => {
     creatVisible.value = true;
-}
+};
 const handleClose = () => {
     creatVisible.value = false;
-}
+};
 const handleConfirm = () => {
-
-}
+    // console.log(creatForm.value);
+    AyscIQCAdd(creatForm.value).then((res: any) => {
+        ElNotification({
+            title: t("message.tipTitle"),
+            message: res.msg,
+            type: res.success ? "success" : "error",
+        });
+        creatVisible.value = false;
+        getData();
+    });
+};
 const handleEditClose = () => {
-    creatVisible.value = false;
-}
+    creatEditVisible.value = false;
+};
 const handleEditConfirm = () => {
-
-}
+    AyscIQCUpdate(editCreateForm.value).then((res: any) => {
+        ElNotification({
+            title: t("message.tipTitle"),
+            message: t("message.editSuccess"),
+            type: "success",
+        });
+        creatEditVisible.value = false;
+        getData();
+    });
+};
 
 const handleEditDetail = (row: any) => {
-    editdetailForm.value = { ...row };
+    editdetailForm.value = {
+        ...row,
+    };
+     GetProductQuery(row.MaterialName).then((res: any) => {
+        productList.value = res.content;
+        console.log(productList.value);
+    });
     editDetailVisible.value = true;
 };
 const handleDeleteDetail = (row: any) => {
-      ElMessageBox.confirm(t('publicText.confirm') + t('publicText.delete'), t('publicText.confirm') + t('publicText.operation'), {
-        confirmButtonText: t('publicText.confirm'),
-        cancelButtonText: t('publicText.cancel'),
-        type: "warning",
-    }).then(() => {
-       
-    }).catch(() => {
-        // on cancel
-        ElNotification({
-            title: t('message.tipTitle'),
-            message: t('publicText.cancel'),
-            type: "info",
+    ElMessageBox.confirm(
+        t("publicText.confirm") + t("publicText.delete"),
+        t("publicText.confirm") + t("publicText.operation"),
+        {
+            confirmButtonText: t("publicText.confirm"),
+            cancelButtonText: t("publicText.cancel"),
+            type: "warning",
+        }
+    )
+        .then(() => { })
+        .catch(() => {
+            // on cancel
+            ElNotification({
+                title: t("message.tipTitle"),
+                message: t("publicText.cancel"),
+                type: "info",
+            });
         });
-    });
 };
 const handleAddDetailClose = () => {
     addDetailVisible.value = false;
-}
+};
 const handleAddDetailConfirm = () => {
+    AyscIQCDetailAdd(detailForm.value).then((res: any) => {
+        ElNotification({
+            title: t("message.tipTitle"),
+            message: res.msg,
+            type: res.success ? "success" : "error",
+        });
+        if (res.success) {
+            addDetailVisible.value = false;
+        } else {
+            return;
+        }
 
-}
+        // getData();
+    });
+};
 const handleEditDetailClose = () => {
     editDetailVisible.value = false;
-}
+};
 const handleEditDetailConfirm = () => {
-
-}
+    AyscIQCDetailUpdate(editdetailForm.value).then((res: any) => {
+        ElNotification({
+            title: t("message.tipTitle"),
+            message: res.msg,
+            type: res.success ? "success" : "error",
+        });
+        if (res.success) {
+            addDetailVisible.value = false;
+        } else {
+            return;
+        }
+        // getData();
+    });
+};
 const handleSizeChange = (val: any) => {
     pageObj.pageSize = val;
 };
@@ -545,7 +702,6 @@ const handleCurrentChange = (val: any) => {
 const getScreenHeight = () => {
     nextTick(() => {
         tableHeight.value = window.innerHeight - 180;
-
     });
 };
 </script>

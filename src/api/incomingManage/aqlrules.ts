@@ -70,3 +70,11 @@ export function AyscDelInspectionDetail(data: any) {
         data,
     });
 }
+//项目
+export function GetProjectQuery(data: any) {
+    return request({
+        url: "/api/IQCController/GetProjectQuery",
+        method: "post",
+        data,
+    });
+}

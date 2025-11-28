@@ -1,0 +1,55 @@
+import request from "@/request/packageRequest";
+//获取检验单
+export function GetInspectionQuery(data: any) {
+    return request({
+        url: "/api/Inspection/GetInspectionQuery",
+        method: "post",
+        data,
+    });
+}
+//获取明细
+export function GetInspectionDelQuery(data: any) {
+    return request({
+        url: "/api/Inspection/GetInspectionDelQuery",
+        method: "post",
+        data,
+    });
+}
+
+//创建检验单
+export function CreateInspectionNO(data: any) {
+    return request({
+        url: "/api/Inspection/CreateInspectionNO",
+        method: "post",
+        data,
+    });
+}
+
+//定时首检
+export function CreateInspectionFJob(data: any) {
+    return request({
+        url: "/api/Inspection/CreateInspectionFJob",
+        method: "post",
+        data,
+    });
+}
+
+
+//定时巡检
+export function CreateInspectionRJob(data: any) {
+    return request({
+        url: "/api/Inspection/CreateInspectionRJob",
+        method: "post",
+        data,
+    });
+}
+
+
+//定时尾检
+export function CreateInspectionLJob(data: any) {
+    return request({
+        url: "/api/Inspection/CreateInspectionLJob",
+        method: "post",
+        data,
+    });
+}

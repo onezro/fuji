@@ -1,4 +1,5 @@
 import Aqlrules from "@/views/incomingManage/aqlrules.vue";
+import IqctestItem from "@/views/incomingManage/iqctestItem.vue";
 import { number } from "vue-types";
 
 const zh = {
@@ -18,6 +19,8 @@ const zh = {
     pleaseSelect: "请选择",
     pleaseCompleSelect: "请完成选择",
     operationSuccess: "操作成功",
+    editSuccess: '修改成功',
+    deleteSuccess: '删除成功'
   },
   publicText: {
     startTime: "开始时间",
@@ -28,7 +31,7 @@ const zh = {
     delete: "删除",
     query: "查询",
     reset: "重置",
-    detail:'详情',
+    detail: '详情',
     index: "序号",
     close: "关闭",
     confirm: "确定",
@@ -53,7 +56,7 @@ const zh = {
     look: "查看",
     check: "检验",
     approval: "审批",
-    isEmpty:'不能为空'
+    isEmpty: '不能为空'
   },
   login: {
     loginTitle: "登录",
@@ -201,17 +204,17 @@ const zh = {
   aqlrules: {
     partNumber: "料号",
     supplier: "供应商",
-    DBType:'检验类型',
+    DBType: '检验类型',
     sampleInStand: "抽检标准",
-    ProjectCategoryName:'项目类别',
-    ProjectName:'项目名称',
-    CharaCteristicGrade:'特性分级',
-    TargetValue:'目标值',
-    MaxValue:'最大值',
-    MinValue:'最小值',
-    ToolName:'检验工具',
-    InspectionBasis:'检验依据',
-    InspectionDetails:'详细信息'
+    ProjectCategoryName: '检验类别',
+    ProjectName: '检验名称',
+    CharaCteristicGrade: '特性分级',
+    TargetValue: '目标值',
+    MaxValue: '最大值',
+    MinValue: '最小值',
+    ToolName: '检验工具',
+    InspectionBasis: '检验依据',
+    InspectionDetails: '详细信息'
   },
   iqcBadCode: {
     testItem: "测试项",
@@ -275,6 +278,17 @@ const zh = {
     status3: "未检验",
     result: "检验结果",
     incomeReport: "进料检验报告",
+    ProjectCategoryName: '检验类别',
+    ProjectName: '检验名称',
+    CharaCteristicGrade: '特性分级',
+    TargetValue: '目标值',
+    MaxValue: '最大值',
+    MinValue: '最小值',
+    ToolName: '检验工具',
+    InspectionBasis: '检验依据',
+    numberOfSample: '样品数',
+    numberOfDefect: '缺陷数',
+    MeasurementNumber: '测量值'
   },
   reprintPack: {
     scanOrderNumber: "扫描工单号",
@@ -295,7 +309,7 @@ const zh = {
     currentProcess: "当前工序",
   },
   processInspect: {
-    orderInterrupt:'工单中断首检单',
+    orderInterrupt: '工单中断首检单',
     inspectOrder: "IPQC过程单号",
     workeOrder: "单号",
     creatTime: "创建时间",
@@ -307,9 +321,23 @@ const zh = {
     customerName: "客户名称",
     customerPO: "客户PO",
     customerPN: "客户PN",
-    LOtNO:'Lot No',
-    cpk:'cpk',
-    FA:'FA'
+    LOtNO: 'Lot No',
+    cpk: 'cpk',
+    FA: 'FA'
   },
+  iqctestItem: {
+    ProjectName: '检验名称',
+    Description: '检验描述',
+    UOMName: '单位',
+    StatusText: '状态',
+    CreateUser: '创建人',
+    CreateTime: '创建时间',
+    UpdateUser: '更新人',
+    UpdateTime: '更新时间'
+  },
+  iqcProjectCate: {
+    ProjectCategoryName: '项目名称',
+    Description: '项目描述'
+  }
 };
 export default zh;

@@ -126,10 +126,10 @@ const switchSystems = () => {
             <el-button @click="loginClick" size="large" class="w-[440px]" type="primary"><span
                 class="font-bold">登录</span></el-button>
           </el-form-item>
-          <el-form-item>
+          <!-- <el-form-item>
             <el-button @click="switchSystems" size="large" class="w-[440px]"><span
                 class="text-[#e6b33c] font-bold">切换系统</span></el-button>
-          </el-form-item>
+          </el-form-item> -->
           <!-- <div class="text-center">
               当前为<span class="text-lg text-[#e6b33c] font-bold">{{
                 appStore.getSystemType ? "操作端" : "系统端"
