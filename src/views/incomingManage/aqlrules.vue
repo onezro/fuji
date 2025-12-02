@@ -17,7 +17,7 @@
                     <template #default="scope">
                         <span>{{
                             scope.$index + pageObj.pageSize * (pageObj.currentPage - 1) + 1
-                        }}</span>
+                            }}</span>
                     </template>
                 </el-table-column>
 
@@ -53,6 +53,11 @@
                         <el-option :label="p.productname" :value="p.productname" v-for="p in productList" />
                     </el-select>
                 </el-form-item>
+                 <el-form-item :label="$t('aqlrules.DBType')" prop="DBType">
+                    <el-select v-model="addForm.InspectionType" placeholder="请选择" filterable >
+                        <el-option :label="p.InspectionType" :value="p.InspectionType" v-for="p in typetList" />
+                    </el-select>
+                </el-form-item>
 
                 <el-table :data="addForm.iQC_InspectionDetails" style="width: 100%" :height="300" size="small" border
                     stripe>
@@ -68,31 +73,37 @@
                     </el-table-column>
                     <el-table-column prop="ProjectName" :label="$t('aqlrules.ProjectName')">
                         <template #default="scope">
-                          <el-select v-model="scope.row.ProjectName" placeholder="请选择" filterable
-                                size="small">
-                                <el-option :label="p.ProjectName" :value="p.ProjectName"
-                                    v-for="p in projectList" />
+                            <el-select v-model="scope.row.ProjectName" placeholder="请选择" filterable size="small">
+                                <el-option :label="p.ProjectName" :value="p.ProjectName" v-for="p in projectList" />
                             </el-select>
                         </template>
                     </el-table-column>
-                    <el-table-column prop="InspectionType" :label="$t('aqlrules.DBType')">
+                    <!-- <el-table-column prop="InspectionType" :label="$t('aqlrules.DBType')">
                         <template #default="scope">
-                            <el-select v-model="scope.row.InspectionType" placeholder="请选择" filterable size="small" @change="handletypeChange">
+                            <el-select v-model="scope.row.InspectionType" placeholder="请选择" filterable size="small">
                                 <el-option :label="p.InspectionType" :value="p.InspectionType" v-for="p in typetList" />
                             </el-select>
                         </template>
+                    </el-table-column> -->
+                    <el-table-column prop="InspectionType" :label="'操作类型'">
+                        <template #default="scope">
+                            <el-select v-model="scope.row.MeasurementType" placeholder="请选择" filterable size="small">
+                                <el-option :label="'计数'" :value="'计数'" />
+                                <el-option :label="'计量'" :value="'计量'" />
+                            </el-select>
+                        </template>
                     </el-table-column>
-
+                      <el-table-column prop="CharaCteristicGrade" :label="$t('aqlrules.CharaCteristicGrade')">
+                        <template #default="scope">
+                            <el-input v-model="scope.row.CharaCteristicGrade" size="small"></el-input>
+                        </template>
+                    </el-table-column>
                     <el-table-column prop="TargetValue" :label="$t('aqlrules.TargetValue')">
                         <template #default="scope">
                             <el-input v-model="scope.row.TargetValue" size="small"></el-input>
                         </template>
                     </el-table-column>
-                    <el-table-column prop="CharaCteristicGrade" :label="$t('aqlrules.CharaCteristicGrade')">
-                        <template #default="scope">
-                            <el-input v-model="scope.row.CharaCteristicGrade" size="small"></el-input>
-                        </template>
-                    </el-table-column>
+                  
                     <el-table-column prop="MinValue" :label="$t('aqlrules.MinValue')">
                         <template #default="scope">
                             <el-input v-model="scope.row.MinValue" size="small"></el-input>
@@ -116,10 +127,10 @@
                             <el-input v-model="scope.row.InspectionBasis" size="small"></el-input>
                         </template>
                     </el-table-column>
-                    <el-table-column :label="$t('publicText.operation')" width="150">
+                    <el-table-column :label="$t('publicText.operation')" width="150px">
                         <template #default="scope">
                             <el-button size="small" type="primary" @click="addInspectionDetails">{{ $t("publicText.add")
-                            }}</el-button>
+                                }}</el-button>
                             <el-button size="small" type="danger"
                                 @click="addForm.iQC_InspectionDetails.splice(scope.$index, 1)"
                                 :disabled="addForm.iQC_InspectionDetails.length == 1">{{ $t("publicText.delete")
@@ -132,14 +143,19 @@
                 <el-button @click="addCancel">{{ $t("publicText.cancel") }}</el-button>
                 <el-button type="primary" @click="addSubmit">{{
                     $t("publicText.confirm")
-                }}</el-button>
+                    }}</el-button>
             </template>
         </el-dialog>
-        <el-dialog :title="$t('publicText.edit')" v-model="editVisible" width="80%" @close="editCancel">
+        <el-dialog :title="$t('publicText.edit')" v-model="editVisible" width="85%" @close="editCancel">
             <el-form :model="editForm" ref="editFormRef" label-width="auto" :inline="false" size="normal">
                 <el-form-item :label="$t('aqlrules.partNumber')" prop="partNumber">
                     <el-select v-model="editForm.InspectionMasterName" placeholder="请选择" filterable :disabled="true">
                         <el-option :label="p.productname" :value="p.productname" v-for="p in productList" />
+                    </el-select>
+                </el-form-item>
+                <el-form-item :label="$t('aqlrules.DBType')" prop="DBType">
+                    <el-select v-model="getDetailForm.InspectionType" placeholder="请选择" filterable @change="getDetailData">
+                        <el-option :label="p.InspectionType" :value="p.InspectionType" v-for="p in typetList" />
                     </el-select>
                 </el-form-item>
             </el-form>
@@ -156,24 +172,24 @@
                 </el-table-column>
                 <el-table-column prop="ProjectName" :label="$t('aqlrules.ProjectName')">
                     <template #default="scope">
-                         <el-select v-model="scope.row.ProjectName" placeholder="请选择" filterable
-                                size="small">
-                                <el-option :label="p.ProjectName" :value="p.ProjectName"
-                                    v-for="p in projectList" />
-                            </el-select>
-                    </template>
-                </el-table-column>
-                <el-table-column prop="InspectionType" :label="$t('aqlrules.DBType')">
-                    <template #default="scope">
-                        <el-select v-model="scope.row.InspectionType" placeholder="请选择" filterable size="small" @change="handletypeChange1">
-                            <el-option :label="p.InspectionType" :value="p.InspectionType" v-for="p in typetList" />
+                        <el-select v-model="scope.row.ProjectName" placeholder="请选择" filterable size="small">
+                            <el-option :label="p.ProjectName" :value="p.ProjectName" v-for="p in projectList" />
                         </el-select>
                     </template>
                 </el-table-column>
-
-                <el-table-column prop="TargetValue" :label="$t('aqlrules.TargetValue')">
+                <!-- <el-table-column prop="InspectionType" :label="$t('aqlrules.DBType')">
                     <template #default="scope">
-                        <el-input v-model="scope.row.TargetValue" size="small"></el-input>
+                        <el-select v-model="scope.row.InspectionType" placeholder="请选择" filterable size="small">
+                            <el-option :label="p.InspectionType" :value="p.InspectionType" v-for="p in typetList" />
+                        </el-select>
+                    </template>
+                </el-table-column> -->
+                <el-table-column prop="InspectionType" :label="'操作类型'">
+                    <template #default="scope">
+                        <el-select v-model="scope.row.MeasurementType" placeholder="请选择" filterable size="small">
+                            <el-option :label="'计数'" :value="'计数'" />
+                            <el-option :label="'计量'" :value="'计量'" />
+                        </el-select>
                     </template>
                 </el-table-column>
                 <el-table-column prop="CharaCteristicGrade" :label="$t('aqlrules.CharaCteristicGrade')">
@@ -181,6 +197,12 @@
                         <el-input v-model="scope.row.CharaCteristicGrade" size="small"></el-input>
                     </template>
                 </el-table-column>
+                <el-table-column prop="TargetValue" :label="$t('aqlrules.TargetValue')">
+                    <template #default="scope">
+                        <el-input v-model="scope.row.TargetValue" size="small"></el-input>
+                    </template>
+                </el-table-column>
+                
                 <el-table-column prop="MinValue" :label="$t('aqlrules.MinValue')">
                     <template #default="scope">
                         <el-input v-model="scope.row.MinValue" size="small"></el-input>
@@ -207,10 +229,10 @@
                 <el-table-column :label="$t('publicText.operation')" width="150">
                     <template #default="scope">
                         <el-button size="small" type="primary" @click="editInspectionDetails">{{ $t("publicText.add")
-                        }}</el-button>
+                            }}</el-button>
                         <el-button size="small" type="danger" @click="deleteDetail(scope.row)">{{
                             $t("publicText.delete")
-                        }}</el-button>
+                            }}</el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -219,7 +241,7 @@
                 <el-button @click="editCancel">{{ $t("publicText.cancel") }}</el-button>
                 <el-button type="primary" @click="editSubmit">{{
                     $t("publicText.confirm")
-                }}</el-button>
+                    }}</el-button>
             </template>
         </el-dialog>
     </div>
@@ -271,6 +293,7 @@ const addVisible = ref(false);
 const addForm = ref({
     InspectionMasterName: "",
     DBType: "Add",
+    InspectionType:'',
     iQC_InspectionDetails: [
         {
             InspectionDetailName: "",
@@ -313,6 +336,10 @@ const editForm = ref({
     ],
 });
 const editFormRef = ref();
+const getDetailForm = ref({
+    InspectionMasterName: "",
+    InspectionType: "",
+});
 onBeforeMount(() => {
     getScreenHeight();
     getProduct();
@@ -368,6 +395,7 @@ const addCancel = () => {
     addVisible.value = false;
     addForm.value.InspectionMasterName = "";
     addForm.value.DBType = "";
+    addForm.value.InspectionType=''
     addForm.value.iQC_InspectionDetails = [
         {
             InspectionDetailName: "",
@@ -403,41 +431,48 @@ const addInspectionDetails = () => {
         UpdateUser: "",
     });
 };
-const handletypeChange = (val:any)=>{
-    console.log(val);
-   if(val=='计量'||val=='计数'){
-    addForm.value.iQC_InspectionDetails.forEach((item)=>{
-        if(item.InspectionType==val){
-            item.MeasurementType='ES_Measurement_Type'
-        }
-    })
-   }else{
-    addForm.value.iQC_InspectionDetails.forEach((item)=>{
-        if(item.InspectionType==val){
-            item.MeasurementType='ES_Inspection_Type'
-        }
-    })
-   }
-}
-const handletypeChange1 = (val:any)=>{
-    console.log(val);
-   if(val=='计量'||val=='计数'){
-    editForm.value.iQC_InspectionDetails.forEach((item)=>{
-        if(item.InspectionType==val){
-            item.MeasurementType='ES_Measurement_Type'
-        }
-    })
-   }else{
-    editForm.value.iQC_InspectionDetails.forEach((item)=>{
-        if(item.InspectionType==val){
-            item.MeasurementType='ES_Inspection_Type'
-        }
-    })
-   }
-}
+// const handletypeChange = (val:any)=>{
+//     console.log(val);
+//    if(val=='计量'||val=='计数'){
+//     addForm.value.iQC_InspectionDetails.forEach((item)=>{
+//         if(item.InspectionType==val){
+//             item.MeasurementType='ES_Measurement_Type'
+//         }
+//     })
+//    }else{
+//     addForm.value.iQC_InspectionDetails.forEach((item)=>{
+//         if(item.InspectionType==val){
+//             item.MeasurementType='ES_Inspection_Type'
+//         }
+//     })
+//    }
+// }
+// const handletypeChange1 = (val:any)=>{
+//     console.log(val);
+//    if(val=='计量'||val=='计数'){
+//     editForm.value.iQC_InspectionDetails.forEach((item)=>{
+//         if(item.InspectionType==val){
+//             item.MeasurementType='ES_Measurement_Type'
+//         }
+//     })
+//    }else{
+//     editForm.value.iQC_InspectionDetails.forEach((item)=>{
+//         if(item.InspectionType==val){
+//             item.MeasurementType='ES_Inspection_Type'
+//         }
+//     })
+//    }
+// }
 const addSubmit = () => {
     // console.log(addForm.value);
-
+    addForm.value.DBType = "Add";
+    addForm.value.iQC_InspectionDetails=addForm.value.iQC_InspectionDetails.map((item:any)=>{
+        return {
+            ...item,
+            InspectionType:addForm.value.InspectionType,
+            CreateUser:userStore.getUserInfo,
+        }
+    })
     AyscInspectionMaster(addForm.value).then((res: any) => {
         ElNotification({
             title: t("publicText.tipTitle"),
@@ -448,14 +483,9 @@ const addSubmit = () => {
         getData();
     });
 };
-const handleEdit = (val: any) => {
-    editVisible.value = true;
-    editForm.value.InspectionMasterName = val.ES_INSPECTION_MASTERName;
-    editForm.value.DBType = "Update";
-    GetInspectionDetailQuery({
-        InspectionMasterName: val.ES_INSPECTION_MASTERName,
-        InspectionType: "",
-    }).then((res: any) => {
+
+const getDetailData=() => {
+    GetInspectionDetailQuery(getDetailForm.value).then((res: any) => {
         editForm.value.iQC_InspectionDetails = res.content;
         if (editForm.value.iQC_InspectionDetails.length == 0) {
             // editVisible.value = false;
@@ -478,6 +508,13 @@ const handleEdit = (val: any) => {
             ];
         }
     });
+};
+const handleEdit = (val: any) => {
+    editVisible.value = true;
+    editForm.value.InspectionMasterName = val.ES_INSPECTION_MASTERName;
+    editForm.value.DBType = "Update";
+    getDetailForm.value.InspectionMasterName = val.ES_INSPECTION_MASTERName;
+   getDetailData()
 };
 
 const editInspectionDetails = () => {
@@ -587,7 +624,8 @@ const editCancel = () => {
     editFormRef.value.resetFields();
     editVisible.value = false;
     editForm.value.InspectionMasterName = "";
-    editForm.value.DBType = "";
+    editForm.value.DBType = "Update";
+   getDetailForm.value.InspectionType = "";
     editForm.value.iQC_InspectionDetails = [
         {
             InspectionDetailName: "",
@@ -618,6 +656,13 @@ const editSubmit = () => {
         });
         return;
     }
+    editForm.value.iQC_InspectionDetails=editForm.value.iQC_InspectionDetails.map((item:any)=>{
+        return {
+            ...item,
+            InspectionType:getDetailForm.value.InspectionType,
+            UpdateUser:userStore.getUserInfo
+        }
+    })
     AyscInspectionMaster(editForm.value).then((res: any) => {
         ElNotification({
             title: t("message.tipTitle"),

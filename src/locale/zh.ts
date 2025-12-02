@@ -202,7 +202,7 @@ const zh = {
     specificationID: "规格书ID",
   },
   aqlrules: {
-    partNumber: "料号",
+    partNumber: "产品",
     supplier: "供应商",
     DBType: '检验类型',
     sampleInStand: "抽检标准",
@@ -323,7 +323,10 @@ const zh = {
     customerPN: "客户PN",
     LOtNO: 'Lot No',
     cpk: 'cpk',
-    FA: 'FA'
+    FA: 'FA',
+      status1: "检验中",
+    status2: "检验完成",
+    status3: "待检验",
   },
   iqctestItem: {
     ProjectName: '检验名称',

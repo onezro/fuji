@@ -117,7 +117,7 @@
                     </el-radio-group>
                 </el-form-item>
             </el-form>
-            < <template #footer>
+            <template #footer>
                 <el-button @click="handleEditClose">{{ $t("publicText.cancel") }}</el-button>
                 <el-button type="primary" @click="handleEditConfirm">{{ $t("publicText.confirm") }}</el-button>
 </template>

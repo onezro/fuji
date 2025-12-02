@@ -1,4 +1,14 @@
 import request from "@/request/packageRequest";
+
+
+//创建检验单
+export function CreateInspectionNO(data: any) {
+    return request({
+        url: "/api/Inspection/CreateInspectionNO",
+        method: "post",
+        data,
+    });
+}
 //获取检验单
 export function GetInspectionQuery(data: any) {
     return request({
@@ -17,9 +27,9 @@ export function GetInspectionDelQuery(data: any) {
 }
 
 //创建检验单
-export function CreateInspectionNO(data: any) {
+export function InspectionNOInfoSync(data: any) {
     return request({
-        url: "/api/Inspection/CreateInspectionNO",
+        url: "/api/Inspection/InspectionNOInfoSync",
         method: "post",
         data,
     });

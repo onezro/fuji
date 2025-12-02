@@ -50,12 +50,13 @@
                 (pageObj.currentPage - 1) * pageObj.pageSize,
                 pageObj.currentPage * pageObj.pageSize
             )
-                " size="small" :style="{ width: '100%' }" ref="rawRef" :height="tableHeight" border fit   highlight-current-row @cell-click="cellClick">
+                " size="small" :style="{ width: '100%' }" ref="rawRef" :height="tableHeight" border fit
+                highlight-current-row @cell-click="cellClick">
                 <el-table-column type="index" align="center" fixed :label="$t('publicText.index')" width="50">
                     <template #default="scope">
                         <span>{{
                             scope.$index + pageObj.pageSize * (pageObj.currentPage - 1) + 1
-                        }}</span>
+                            }}</span>
                     </template>
                 </el-table-column>
                 <el-table-column prop="IQCNumber" :label="$t('incomeCreat.creatInspect')">
@@ -94,7 +95,7 @@
                     <template #default="scope">
                         <span>{{
                             scope.$index + pageObj.pageSize * (pageObj.currentPage - 1) + 1
-                        }}</span>
+                            }}</span>
                     </template>
                 </el-table-column>
                 <el-table-column prop="MaterialName" :label="$t('incomeCreat.materialName')" />
@@ -130,7 +131,7 @@
                 <div class="dialog-footer">
                     <el-button @click="detailVisible = false">{{
                         $t("publicText.close")
-                    }}</el-button>
+                        }}</el-button>
                 </div>
             </template>
         </el-dialog>
@@ -162,13 +163,14 @@
                         </el-table-column>
                         <el-table-column prop="SampleSize" :label="$t('incomeSheet.numberOfSample')">
                             <template #default="scope">
-                                <el-input v-model="scope.row.SampleSize" size="small" type="number" min="1" max="10" :disabled="scope.row.StatusText!==''"
+                                <el-input v-model="scope.row.SampleSize" size="small" type="number" min="1" max="10"
+                                    :disabled="scope.row.StatusText !== ''"
                                     @change="handleSampleSizeChange(scope.row)"></el-input>
                             </template>
                         </el-table-column>
                         <el-table-column prop="DefectCount" :label="$t('incomeSheet.numberOfDefect')">
                             <template #default="scope">
-                                {{scope.row.DefectCount|| calculateDefectCount(scope.row) }}
+                                {{ scope.row.DefectCount || calculateDefectCount(scope.row) }}
                                 <!-- <el-input v-model="scope.row.DefectCount" size="small" :disabled="scope.row.StatusText!==''"></el-input> -->
                             </template>
                         </el-table-column>
@@ -176,7 +178,8 @@
                             :label="$t('incomeSheet.MeasurementNumber')">
                             <template #default="scope">
                                 <span>{{ formatMeasuredValues(scope.row) }}</span>
-                                <el-button type="primary" icon="Plus" :size="'small'" :disabled="scope.row.StatusText!==''"
+                                <el-button type="primary" icon="Plus" :size="'small'"
+                                    :disabled="scope.row.StatusText !== ''"
                                     @click="openMeasurementDialog(scope.row, scope.$index)" />
                             </template>
                         </el-table-column>
@@ -203,7 +206,7 @@
                 <div class="dialog-footer">
                     <el-button @click="handletestClose">{{
                         $t("publicText.cancel")
-                    }}</el-button>
+                        }}</el-button>
                     <el-button type="primary" @click="handletestConfirm" :disabled="isDisable">
                         {{ $t("publicText.confirm") }}
                     </el-button>
@@ -222,93 +225,6 @@
                     <el-button @click="dialogVisible = false">取消</el-button>
                     <el-button type="primary" @click="saveMeasurements">保存</el-button>
                 </span>
-            </template>
-        </el-dialog>
-        <el-dialog v-model="lookVisible" :title="$t('incomeSheet.incomeReport')" width="850px" :append-to-body="true"
-            :close-on-click-modal="false" :close-on-press-escape="false" align-center @close="lookVisible = false">
-            <el-button type="primary" @click="exportToExcel">导出Excel</el-button>
-            <div class="container">
-                <div class="info-row">
-                    <div class="info-box">
-                        <div class="info-box-title">进料检验通知部门</div>
-                        <div>事务部</div>
-                    </div>
-                    <div class="info-box">
-                        <div class="info-box-title">受理部门</div>
-                        <div>{{ reportFrom.recipientDep }}</div>
-                    </div>
-                    <div class="info-box">
-                        <div class="info-box-title">通知日期</div>
-                        <div>25.06.19</div>
-                    </div>
-                </div>
-
-                <div class="info-row">
-                    <div class="info-box">
-                        <div class="info-box-title">通知人签名</div>
-                        <div>周丽琛</div>
-                    </div>
-                    <div class="info-box">
-                        <div class="info-box-title">受理人签名</div>
-                        <div>{{ reportFrom.recipientPerson }}</div>
-                    </div>
-                    <div class="info-box">
-                        <div class="info-box-title">页次</div>
-                        <div>1</div>
-                    </div>
-                </div>
-
-                <div class="info-row">
-                    <div class="info-box">
-                        <div class="info-box-title">来料日期</div>
-                        <div>251014</div>
-                    </div>
-                    <div class="info-box">
-                        <div class="info-box-title">受理日期</div>
-                        <div>{{ reportFrom.checkDate }}</div>
-                    </div>
-                    <div class="info-box">
-                        <div class="info-box-title">来料种类数</div>
-                        <div>
-                            <el-input v-model="reportFrom.incomeType" placeholder="" />
-                        </div>
-                    </div>
-                </div>
-                <div class="info-row">
-                    <div class="info-box">
-                        <div class="info-box-title">检验</div>
-                        <div>外观检査 AQL Level II 1.0 IS0 2859 *(汽车产品 C=0)</div>
-                    </div>
-                </div>
-
-                <div class="table-container">
-                    <el-table :data="tableData1" border style="width: 100%" size="small"
-                        :header-row-class-name="() => 'header-row'" :show-header="false">
-                        <!-- 第一列：表头 -->
-                        <el-table-column width="200" align="right">
-                            <template #default="scope">
-                                <div class="header-cell">{{ scope.row.header }}</div>
-                            </template>
-                        </el-table-column>
-
-                        <!-- 第二列：内容 -->
-                        <el-table-column>
-                            <template #default="scope">
-                                <el-input v-model="scope.row.content" placeholder="" :disabled="true"
-                                    style="width: 250px" />
-                                <!-- <div class="content-cell">{{ scope.row.isdisable }}</div> -->
-                            </template>
-                        </el-table-column>
-                    </el-table>
-                </div>
-            </div>
-
-            <template #footer>
-                <div class="dialog-footer">
-                    <el-button @click="lookVisible = false">{{
-                        $t("publicText.close")
-                    }}</el-button>
-                </div>
             </template>
         </el-dialog>
     </div>
@@ -465,41 +381,41 @@ const saveMeasurements = () => {
     dialogVisible.value = false;
 };
 
-const  calculateDefectCount=(row:any)=> {
-        // 获取MinValue和MaxValue的数值
-        const minValue = parseFloat(row.MinValue);
-        const maxValue = parseFloat(row.MaxValue);
-        
-        // 检查MinValue和MaxValue是否有效
-        if (isNaN(minValue) || isNaN(maxValue)) {
-            return 0; // 范围无效时返回0
-        }
-        
-        let defectCount = 0;
-        
-        // 检查所有测量值
-        for (let i = 1; i <= 10; i++) {
-            const value = row[`MeasuredValue${i}`];
-            
-            // 跳过空值
-            if (value === null || value === undefined || value === '') {
-                continue;
-            }
-            
-            // 转换为数字
-            const numValue = parseFloat(value);
-            if (isNaN(numValue)) {
-                continue; // 非数字值不计入缺陷
-            }
-            
-            // 检查是否不在范围内
-            if (numValue < minValue || numValue > maxValue) {
-                defectCount++;
-            }
-        }
-        
-        return defectCount;
+const calculateDefectCount = (row: any) => {
+    // 获取MinValue和MaxValue的数值
+    const minValue = parseFloat(row.MinValue);
+    const maxValue = parseFloat(row.MaxValue);
+
+    // 检查MinValue和MaxValue是否有效
+    if (isNaN(minValue) || isNaN(maxValue)) {
+        return 0; // 范围无效时返回0
     }
+
+    let defectCount = 0;
+
+    // 检查所有测量值
+    for (let i = 1; i <= 10; i++) {
+        const value = row[`MeasuredValue${i}`];
+
+        // 跳过空值
+        if (value === null || value === undefined || value === '') {
+            continue;
+        }
+
+        // 转换为数字
+        const numValue = parseFloat(value);
+        if (isNaN(numValue)) {
+            continue; // 非数字值不计入缺陷
+        }
+
+        // 检查是否不在范围内
+        if (numValue < minValue || numValue > maxValue) {
+            defectCount++;
+        }
+    }
+
+    return defectCount;
+}
 const getResultText = (row: any) => {
     // 获取MinValue和MaxValue的数值
     const minValue = parseFloat(row.MinValue);
@@ -584,18 +500,18 @@ const formatMeasuredValues = (row: any) => {
 
 
 const handleEdit = (row: any) => {
-    if(row.StatusText=='创建'){
+    if (row.StatusText == '创建') {
         isDisable.value = false;
-    }else{
+    } else {
         isDisable.value = true;
     }
     GetIQCInspectionDetailQuery({ IQC_DetailName: row.IQC_DetailName }).then(
         (res: any) => {
             tableData1.value = res.content;
-           if(tableData1.value.length===0){
-             isDisable.value = true;
-           }
-            
+            if (tableData1.value.length === 0) {
+                isDisable.value = true;
+            }
+
             testVisible.value = true;
         }
     );

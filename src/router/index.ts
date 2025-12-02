@@ -76,6 +76,15 @@ export const constantRouterMap = [
   //         icon: 'User'
   //       }
   //     },
+  //      {
+  //       path: 'role',
+  //       component: () => import('@/views/permission/role.vue'),
+  //       name: 'role',
+  //       meta: {
+  //         title: '员工管理',
+  //         icon: 'User'
+  //       }
+  //     },
   //   ]
   // },
   {
@@ -102,70 +111,7 @@ export const constantRouterMap = [
 
 export const asyncRouterMap = [
 
-  // {
-  //   path: '/guide',
-  //   component: Layout,
-  //   name: 'Guide',
-  //   meta: {},
-  //   children: [
-  //     {
-  //       path: 'guide',
-  //       component: () => import('@/views/Guide/Guide.vue'),
-  //       name: 'GuideDemo',
-  //       meta: {
-  //         title: '引导',
-  //         icon: 'Location'
-  //       }
-  //     }
-  //   ]
-  // },
-  // {
-  //   path: '/level',
-  //   component: Layout,
-  //   redirect: '/level/menu1/menu1-1-1',
-  //   name: 'Level',
-  //   meta: {
-  //     title: '多级菜单',
-  //     icon: 'FolderOpened'
-  //   },
-  //   children: [
-  //     {
-  //       path: 'menu1',
-  //       name: 'Menu1',
-  //       redirect: '/level/menu1/menu1-1-1',
-  //       component: () => import('@/views/Level/index1.vue'),
-  //       meta: {
-  //         title: '菜单1'
-  //       },
-  //       children: [
-  //         {
-  //           path: 'menu1-1-1',
-  //           name: 'Menu111',
-  //           component: () => import('@/views/Level/Menu111.vue'),
-  //           meta: {
-  //             title: '菜单111'
-  //           }
-  //         },
-  //         {
-  //           path: 'menu1-2',
-  //           name: 'Menu12',
-  //           component: () => import('@/views/Level/Menu12.vue'),
-  //           meta: {
-  //             title: '菜单12'
-  //           }
-  //         }
-  //       ]
-  //     },
-  //     {
-  //       path: 'menu2',
-  //       name: 'Menu2',
-  //       component: () => import('@/views/Level/Menu2.vue'),
-  //       meta: {
-  //         title: '菜单2'
-  //       }
-  //     }
-  //   ]
-  // }
+
 ]
 
 const router = createRouter({
