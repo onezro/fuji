@@ -146,7 +146,7 @@
             </template>
         </el-dialog>
         <el-dialog v-model="editVisible" title="检验" width="80%" draggable :append-to-body="true"
-            :close-on-click-modal="false" :close-on-press-escape="false" align-center @close="handleAddClose">
+            :close-on-click-modal="false" :close-on-press-escape="false" align-center @close="handleEditClose">
             <el-form ref="editFormRef" :model="editForm" label-width="auto" :inline="true" :size="'small'">
                 <el-form-item :label="$t('processInspect.inspectOrder')" prop="InspectionNO">
                     <el-input v-model="editForm.InspectionNO" placeholder="请输入" disabled />
@@ -168,19 +168,53 @@
                 </el-form-item>
             </el-form>
             <el-tabs v-model="activeName" type="border-card">
-                <el-tab-pane :label="'计数检验'" name="first"></el-tab-pane>
+                <el-tab-pane :label="'计数检验'" name="first">
+                    <el-table :data="editForm.countItem" style="width: 100%" :height="300" size="small" border stripe>
+                        <el-table-column prop="ProjectCategoryName" :label="$t('aqlrules.ProjectCategoryName')">
+                        </el-table-column>
+                        <el-table-column prop="ProjectName" :label="$t('aqlrules.ProjectName')">
+                        </el-table-column>
+                        <!-- <el-table-column prop="InspectionType" :label="$t('aqlrules.DBType')">
+                        </el-table-column> -->
+                        <el-table-column prop="TargetValue" :label="$t('aqlrules.TargetValue')">
+                        </el-table-column>
+                        <el-table-column prop="CharaCteristicGrade" :label="$t('aqlrules.CharaCteristicGrade')">
+                        </el-table-column>
+                        <el-table-column prop="ToolName" :label="$t('aqlrules.ToolName')">
+                        </el-table-column>
+                        <el-table-column prop="InspectionBasis" :label="$t('aqlrules.InspectionBasis')">
+                        </el-table-column>
+                        <el-table-column prop="SampleNum" :label="$t('incomeSheet.numberOfSample')">
+                            <template #default="scope">
+                                <el-input v-model="scope.row.SampleNum" size="small" type="number"></el-input>
+                            </template>
+                        </el-table-column>
+                        <el-table-column prop="DefectNum" :label="$t('incomeSheet.numberOfDefect')">
+                            <template #default="scope">
+                                <el-input v-model="scope.row.DefectNum" size="small" type="number"></el-input>
+                            </template>
+                        </el-table-column>
+                        <el-table-column prop="DefectDec" :label="$t('incomeSheet.DefectDec')">
+                            <template #default="scope">
+                                <el-input v-model="scope.row.DefectDec" size="small"></el-input>
+                            </template>
+                        </el-table-column>
+
+                    </el-table>
+                </el-tab-pane>
                 <el-tab-pane :label="'计量检验'" name="second">
                     <el-table :data="editForm.listItem" style="width: 100%" :height="300" size="small" border stripe>
                         <el-table-column prop="ProjectCategoryName" :label="$t('aqlrules.ProjectCategoryName')">
                         </el-table-column>
                         <el-table-column prop="ProjectName" :label="$t('aqlrules.ProjectName')">
                         </el-table-column>
-                        <el-table-column prop="InspectionType" :label="$t('aqlrules.DBType')">
+                        <!-- <el-table-column prop="InspectionType" :label="$t('aqlrules.DBType')">
+                        </el-table-column> -->
+                        <el-table-column prop="CharaCteristicGrade" :label="$t('aqlrules.CharaCteristicGrade')">
                         </el-table-column>
                         <el-table-column prop="TargetValue" :label="$t('aqlrules.TargetValue')">
                         </el-table-column>
-                        <el-table-column prop="CharaCteristicGrade" :label="$t('aqlrules.CharaCteristicGrade')">
-                        </el-table-column>
+
                         <el-table-column prop="MinValue" :label="$t('aqlrules.MinValue')">
                         </el-table-column>
                         <el-table-column prop="MaxValue" :label="$t('aqlrules.MaxValue')">
@@ -198,13 +232,12 @@
                         <el-table-column prop="DefectNum" :label="$t('incomeSheet.numberOfDefect')">
                             <template #default="scope">
                                 {{ scope.row.DefectCount || calculateDefectCount(scope.row) }}
-                                <!-- <el-input v-model="scope.row.DefectCount" size="small" :disabled="scope.row.StatusText!==''"></el-input> -->
                             </template>
                         </el-table-column>
                         <el-table-column prop="ObservedValue" :align="'center'"
                             :label="$t('incomeSheet.MeasurementNumber')">
                             <template #default="scope">
-                                <span>{{ formatMeasuredValues(scope.row) }}</span>
+                                <span>{{ scope.row.ObservedValue }}</span>
                                 <el-button type="primary" icon="Plus" :size="'small'"
                                     @click="openMeasurementDialog(scope.row, scope.$index)" />
                             </template>
@@ -233,8 +266,11 @@
                     <el-button @click="handleEditClose">{{
                         $t("publicText.cancel")
                         }}</el-button>
+                    <el-button type="warning" @click="handleEditZQConfirm">
+                        {{ "暂存" }}
+                    </el-button>
                     <el-button type="primary" @click="handleEditConfirm">
-                        {{ $t("publicText.confirm") }}
+                        {{ $t('publicText.confirm') }}
                     </el-button>
                 </div>
             </template>
@@ -292,7 +328,7 @@ import { useUserStoreWithOut } from "@/stores/modules/user";
 const userStore = useUserStoreWithOut();
 const getForm = ref({
     InspectionNO: "",
-    InspectionType: "首检单",
+    InspectionType: "首检",
     MfgorderName: "",
     ProductName: "",
     PartNo: "",
@@ -311,7 +347,7 @@ const pageObj = reactive({
     pageSize: 50,
 });
 const testVisible = ref(false);
-const activeName = ref("second");
+const activeName = ref("first");
 const productList = ref<any[]>([]);
 const typetList = ref<any[]>([]);
 const categoryList = ref<any[]>([]);
@@ -320,7 +356,7 @@ const projectList = ref<any[]>([]);
 const addVisible = ref(false);
 const addFormRef = ref();
 const addForm = ref({
-    InspectionType: "首检单",
+    InspectionType: "首检",
     MfgorderName: "",
 });
 const editVisible = ref(false);
@@ -352,6 +388,7 @@ const editForm = ref({
             InspectionBasis: "",
             SampleNum: "",
             DefectNum: "",
+            MeasurementType: "",
             ObservedValue: "",
             ObservedValueSum: "",
             AverageNum: "",
@@ -363,10 +400,11 @@ const editForm = ref({
             InspectionDate: "",
         },
     ],
+    countItem: []
 });
 const dialogVisible = ref(false);
 const currentRow = ref<any>(null);
-const currentRowIndex = ref(-1);
+const currentRowIndex = ref<any>(-1);
 const currentSampleSize = ref(0);
 const measurementValues = ref<any[]>([]);
 watch(
@@ -437,7 +475,7 @@ const getProject = () => {
 const handleAddClose = () => {
     addVisible.value = false;
     addForm.value = {
-        InspectionType: "首检单",
+        InspectionType: "首检",
         MfgorderName: "",
     };
 };
@@ -450,7 +488,7 @@ const handleAddConfirm = () => {
         });
         addVisible.value = false;
         addForm.value = {
-            InspectionType: "首检单",
+            InspectionType: "首检",
             MfgorderName: "",
         };
         getData();
@@ -458,13 +496,23 @@ const handleAddConfirm = () => {
 };
 
 const saveMeasurements = () => {
-    if (currentRow.value) {
-        for (let i = 0; i < currentSampleSize.value; i++) {
-            currentRow.value[`MeasuredValue${i + 1}`] =
-                measurementValues.value[i] || null;
-        }
-    }
-    dialogVisible.value = false;
+    if (currentRowIndex.value === null) return
+
+    const row = editForm.value.listItem[currentRowIndex.value]
+
+    // 过滤空值并连接为字符串
+    const validValues = measurementValues.value
+        .filter(v => v !== '' && v !== null && v !== undefined)
+        .map(v => v.toString().trim())
+
+    row.ObservedValue = validValues.join(',')
+
+    // 重新计算相关数值
+    //   calculateRowValues(row)
+
+    dialogVisible.value = false
+    measurementValues.value = []
+    currentRowIndex.value = null
 };
 const handleEditClose = () => {
     editVisible.value = false;
@@ -495,6 +543,7 @@ const handleEditClose = () => {
                 InspectionBasis: "",
                 SampleNum: "",
                 DefectNum: "",
+                MeasurementType: "",
                 ObservedValue: "",
                 ObservedValueSum: "",
                 AverageNum: "",
@@ -506,10 +555,11 @@ const handleEditClose = () => {
                 InspectionDate: "",
             },
         ],
+        countItem: []
     };
 };
-const handleEditConfirm = () => {
-    console.log(editForm.value);
+const handleEditZQConfirm = () => {
+    // console.log(editForm.value);
     let data = {
         InspectionNO: editForm.value.InspectionNO,
         InspectionResult: "",
@@ -518,7 +568,7 @@ const handleEditConfirm = () => {
     };
     data.listItem = editForm.value.listItem.map((item: any) => {
         return {
-            MfgorderName:  editForm.value.MfgorderName,
+            MfgorderName: editForm.value.MfgorderName,
             ProjectName: item.ProjectName,
             ProjectCategoryName: item.ProjectCategoryName,
             TargetValue: item.TargetValue,
@@ -528,6 +578,7 @@ const handleEditConfirm = () => {
             ToolName: item.ToolName,
             InspectionBasis: item.InspectionBasis,
             SampleNum: item.SampleNum,
+            MeasurementType: item.MeasurementType,
             DefectNum: item.DefectNum,
             ObservedValue: item.ObservedValue,
             ObservedValueSum: item.ObservedValueSum,
@@ -540,7 +591,33 @@ const handleEditConfirm = () => {
             InspectionUpdateBy: userStore.getUserInfo,
         };
     });
-console.log(data);
+    editForm.value.countItem.forEach((item: any) => {
+        data.listItem.push({
+            MfgorderName: editForm.value.MfgorderName,
+            ProjectName: item.ProjectName,
+            ProjectCategoryName: item.ProjectCategoryName,
+            TargetValue: item.TargetValue,
+            MaxValue: item.MaxValue,
+            MinValue: item.MinValue,
+            CharaCteristicGrade: item.CharaCteristicGrade,
+            ToolName: item.ToolName,
+            InspectionBasis: item.InspectionBasis,
+            SampleNum: item.SampleNum,
+            MeasurementType: item.MeasurementType,
+            DefectNum: item.DefectNum,
+            ObservedValue: item.ObservedValue,
+            ObservedValueSum: item.ObservedValueSum,
+            AverageNum: item.AverageNum,
+            DefectDec: item.DefectDec,
+            SpecialCause: item.SpecialCause,
+            InspectionResult: item.Status,
+            InspectionDate: "",
+            InspectionBy: userStore.getUserInfo,
+            InspectionUpdateBy: userStore.getUserInfo,
+        })
+    });
+
+    // console.log(data);
 
     InspectionNOInfoSync(data).then((res: any) => {
         ElNotification({
@@ -548,49 +625,95 @@ console.log(data);
             message: res.msg,
             type: res.success ? "success" : "error",
         });
-        editVisible.value = false;
-        editForm.value = {
-            InspectionNO: "",
-            InspectionType: "",
-            MfgorderName: "",
-            ProductName: "",
-            ProductDec: "",
-            PartNo: "",
-            CustomerName: "",
-            LotNo: "",
-            MaterialReQty: "",
-            DocumentStatus: "",
-            ProductType: "",
-            InspectionResult: "",
-            CreateDate: "",
-            listItem: [
-                {
-                    MfgorderName: "",
-                    ProjectName: "",
-                    ProjectCategoryName: "",
-                    TargetValue: "",
-                    MaxValue: "",
-                    MinValue: "",
-                    CharaCteristicGrade: "",
-                    ToolName: "",
-                    InspectionBasis: "",
-                    SampleNum: "",
-                    DefectNum: "",
-                    ObservedValue: "",
-                    ObservedValueSum: "",
-                    AverageNum: "",
-                    DefectDec: "",
-                    SpecialCause: "",
-                    InspectionResult: "",
-                    InspectionBy: userStore.getUserInfo,
-                    InspectionUpdateBy: "",
-                    InspectionDate: "",
-                },
-            ],
-        };
+        handleEditClose()
         getData();
     });
 };
+const handleEditConfirm = () => {
+
+    let data = {
+        InspectionNO: editForm.value.InspectionNO,
+        "InspectionResult": "合格",
+        "DocumentStatus": "检验完成",
+        listItem: [...editForm.value.listItem],
+    };
+
+    data.listItem = editForm.value.listItem.map((item: any) => {
+        return {
+            MfgorderName: editForm.value.MfgorderName,
+            ProjectName: item.ProjectName,
+            ProjectCategoryName: item.ProjectCategoryName,
+            TargetValue: item.TargetValue,
+            MaxValue: item.MaxValue,
+            MinValue: item.MinValue,
+            CharaCteristicGrade: item.CharaCteristicGrade,
+            ToolName: item.ToolName,
+            InspectionBasis: item.InspectionBasis,
+            SampleNum: item.SampleNum,
+            MeasurementType: item.MeasurementType,
+            DefectNum: item.DefectNum,
+            ObservedValue: item.ObservedValue,
+            ObservedValueSum: item.ObservedValueSum,
+            AverageNum: item.AverageNum,
+            DefectDec: item.DefectDec,
+            SpecialCause: item.SpecialCause,
+            InspectionResult: item.Status,
+            InspectionDate: "",
+            InspectionBy: userStore.getUserInfo,
+            InspectionUpdateBy: userStore.getUserInfo,
+        };
+    });
+    let isEixt = data.listItem.findIndex((item: any) => {
+        return item.Status !== 'OK'
+    })
+
+    if (isEixt !== -1) {
+        ElNotification({
+            title: t("message.tipTitle"),
+            message: '计量结果，不通过！请检查',
+            type: "error",
+        });
+
+        return
+    }
+
+    editForm.value.countItem.forEach((item: any) => {
+        data.listItem.push({
+            MfgorderName: editForm.value.MfgorderName,
+            ProjectName: item.ProjectName,
+            ProjectCategoryName: item.ProjectCategoryName,
+            TargetValue: item.TargetValue,
+            MaxValue: item.MaxValue,
+            MinValue: item.MinValue,
+            CharaCteristicGrade: item.CharaCteristicGrade,
+            ToolName: item.ToolName,
+            InspectionBasis: item.InspectionBasis,
+            SampleNum: item.SampleNum,
+            MeasurementType: item.MeasurementType,
+            DefectNum: item.DefectNum,
+            ObservedValue: item.ObservedValue,
+            ObservedValueSum: item.ObservedValueSum,
+            AverageNum: item.AverageNum,
+            DefectDec: item.DefectDec,
+            SpecialCause: item.SpecialCause,
+            InspectionResult: item.Status,
+            InspectionDate: "",
+            InspectionBy: userStore.getUserInfo,
+            InspectionUpdateBy: userStore.getUserInfo,
+        })
+    });
+    // console.log(data);
+
+    InspectionNOInfoSync(data).then((res: any) => {
+        ElNotification({
+            title: t("publicText.success"),
+            message: res.msg,
+            type: res.success ? "success" : "error",
+        });
+        handleEditClose()
+        getData();
+    });
+}
 const handleEdit = (row: any) => {
     // testVisible.value = true;
     editForm.value.InspectionNO = row.ES_InspectionNo;
@@ -600,30 +723,64 @@ const handleEdit = (row: any) => {
     editForm.value.PartNo = row.ES_PartNo;
     editForm.value.LotNo = row.ES_LotNo;
 
-    GetInspectionDelQuery({ InspectionNO: row.ES_InspectionNo }).then(
+    GetInspectionDelQuery({ InspectionNO: row.ES_InspectionNo, MfgorderName: row.ES_MfgorderName, InspectionType: '首检' }).then(
         (res: any) => {
-            editForm.value.listItem = res.content.map((item: any) => ({
-                MfgorderName: "",
-                ProjectName: item.PROJECTNAME,
-                ProjectCategoryName: item.PROJECTCATEGORYNAME,
-                TargetValue: item.TARGETVALUE,
-                MaxValue: item.MAXVALUE,
-                MinValue: item.MINVALUE,
-                CharaCteristicGrade: item.CHARACTERISTICGRADE,
-                ToolName: item.TOOLNAME,
-                InspectionBasis: item.INSPECTIONBASIS,
-                SampleNum: "",
-                DefectNum: "",
-                ObservedValue: "",
-                ObservedValueSum: "",
-                AverageNum: "",
-                DefectDec: "",
-                SpecialCause: "",
-                InspectionResult: "",
-                InspectionBy: userStore.getUserInfo,
-                InspectionUpdateBy: userStore.getUserInfo,
-                InspectionDate: "",
-            }));
+            editForm.value.listItem = res.content
+                .filter((item: any) => item && item.MEASUREMENTTYPE === '计量')
+                .map((item: any) => {
+                    return {
+                        MfgorderName: "",
+                        ProjectName: item.PROJECTNAME,
+                        ProjectCategoryName: item.PROJECTCATEGORYNAME,
+                        TargetValue: item.TARGETVALUE,
+                        MaxValue: item.MAXVALUE,
+                        MinValue: item.MINVALUE,
+                        CharaCteristicGrade: item.CHARACTERISTICGRADE,
+                        ToolName: item.TOOLNAME,
+                        InspectionBasis: item.INSPECTIONBASIS,
+                        SampleNum: item.SAMPLENUM,
+                        MeasurementType: item.MEASUREMENTTYPE,
+                        DefectNum: item.DEFECTNUM,
+                        ObservedValue: item.OBSERVEDVALUE,
+                        ObservedValueSum: item.OBSERVEDVALUESUM,
+                        AverageNum: item.AVERAGENUM,
+                        DefectDec: item.DEFECTDEC,
+                        SpecialCause: item.SPECIALCAUSE,
+                        InspectionResult: item.INSPECTIONRESULT,
+                        InspectionBy: userStore.getUserInfo,
+                        InspectionUpdateBy: userStore.getUserInfo,
+                        InspectionDate: "",
+                    };
+                });
+            editForm.value.countItem = res.content
+                .filter((item: any) => item && item.MEASUREMENTTYPE === '计数')
+                .map((item: any) => {
+                    return {
+                        MfgorderName: "",
+                        ProjectName: item.PROJECTNAME,
+                        ProjectCategoryName: item.PROJECTCATEGORYNAME,
+                        TargetValue: item.TARGETVALUE,
+                        MaxValue: item.MAXVALUE,
+                        MinValue: item.MINVALUE,
+                        CharaCteristicGrade: item.CHARACTERISTICGRADE,
+                        ToolName: item.TOOLNAME,
+                        InspectionBasis: item.INSPECTIONBASIS,
+                        SampleNum: item.SAMPLENUM,
+                        MeasurementType: item.MEASUREMENTTYPE,
+                        DefectNum: item.DEFECTNUM,
+                        ObservedValue: item.OBSERVEDVALUE,
+                        ObservedValueSum: item.OBSERVEDVALUESUM,
+                        AverageNum: item.AVERAGENUM,
+                        DefectDec: item.DEFECTDEC,
+                        SpecialCause: item.SPECIALCAUSE,
+                        InspectionResult: item.INSPECTIONRESULT,
+                        InspectionBy: userStore.getUserInfo,
+                        InspectionUpdateBy: userStore.getUserInfo,
+                        InspectionDate: "",
+                    };
+                });
+
+
             editVisible.value = true;
             // console.log(res);
         }
@@ -632,133 +789,124 @@ const handleEdit = (row: any) => {
 const openMeasurementDialog = (row: any, index: any) => {
     currentRow.value = row;
     currentRowIndex.value = index;
-    currentSampleSize.value = parseInt(row.SampleNum) || 0;
+    currentSampleSize.value = parseInt(row.SampleNum) || 1;
     measurementValues.value = [];
-    for (let i = 0; i < currentSampleSize.value; i++) {
-        measurementValues.value.push(row[`MeasuredValue${i + 1}`] || "");
+    // for (let i = 0; i < currentSampleSize.value; i++) {
+    //     measurementValues.value.push(row[`MeasuredValue${i + 1}`] || "");
+    // }
+    // 如果已有测量值，解析到数组中
+    if (row.ObservedValue) {
+        measurementValues.value = row.ObservedValue.split(',').map((v: any) => v.trim())
+    } else {
+        // 根据样件数初始化数组
+        measurementValues.value = Array(currentSampleSize.value).fill('')
     }
 
     dialogVisible.value = true;
 };
 const getResultText = (row: any) => {
-    // 获取MinValue和MaxValue的数值
-    const minValue = parseFloat(row.MinValue);
-    const maxValue = parseFloat(row.MaxValue);
+    const defectCount = calculateDefectCount(row)
+    const sampleNum = row.SampleNum || 1
 
-    // 检查MinValue和MaxValue是否有效
-    if (isNaN(minValue) || isNaN(maxValue)) {
-        return "范围无效";
+    if (defectCount === 0 && row.ObservedValue !== "") {
+        return 'OK'
+    } else {
+        return 'NG'
     }
-
-    // 检查所有测量值
-    for (let i = 1; i <= 10; i++) {
-        const value = row[`MeasuredValue${i}`];
-
-        // 跳过空值
-        if (value === null || value === undefined || value === "") {
-            continue;
-        }
-
-        // 转换为数字
-        const numValue = parseFloat(value);
-        if (isNaN(numValue)) {
-            return "数据异常"; // 如果有非数字值，返回异常
-        }
-
-        // 检查是否在范围内
-        if (numValue < minValue || numValue > maxValue) {
-            row.Status = "不合格";
-            return "不合格";
-        }
-    }
-
-    // 检查是否有至少一个测量值
-    const hasValues = Array.from({ length: 10 }, (_, i) => i + 1).some(
-        (i) =>
-            row[`MeasuredValue${i}`] !== null &&
-            row[`MeasuredValue${i}`] !== undefined &&
-            row[`MeasuredValue${i}`] !== ""
-    );
-    row.Status = hasValues ? "合格" : "无数据";
-    return hasValues ? "合格" : "无数据";
 };
 const handleSampleSizeChange = (row: any) => {
-    const newSize = parseInt(row.SampleNum) || 0;
-    // 清空多余的测量值
-    for (let i = newSize; i < 10; i++) {
-        row[`MeasuredValue${i + 1}`] = null;
+    // 确保样件数在1-10之间
+    let sampleNum = parseInt(row.SampleNum) || 1
+    sampleNum = Math.max(1, Math.min(10, sampleNum))
+    row.SampleNum = sampleNum
+
+    // 如果已有测量值，需要调整
+    if (row.ObservedValue) {
+        const values = row.ObservedValue.split(',').map((v: any) => v.trim())
+        if (values.length > sampleNum) {
+            // 如果新样件数小于原有测量值数量，截断
+            row.ObservedValue = values.slice(0, sampleNum).join(',')
+        } else if (values.length < sampleNum) {
+            // 如果新样件数大于原有测量值数量，补充空值
+            while (values.length < sampleNum) {
+                values.push('')
+            }
+            row.ObservedValue = values.join(',')
+        }
     }
+
 };
 const calculateDefectCount = (row: any) => {
-    // 获取MinValue和MaxValue的数值
-    const minValue = parseFloat(row.MinValue);
-    const maxValue = parseFloat(row.MaxValue);
-
-    // 检查MinValue和MaxValue是否有效
-    if (isNaN(minValue) || isNaN(maxValue)) {
-        return 0; // 范围无效时返回0
+    if (!row.ObservedValue || !row.MinValue || !row.MaxValue) {
+        row.DefectNum = 0
+        return 0
     }
 
-    let defectCount = 0;
+    const min = parseFloat(row.MinValue)
+    const max = parseFloat(row.MaxValue)
 
-    // 检查所有测量值
-    for (let i = 1; i <= 10; i++) {
-        const value = row[`MeasuredValue${i}`];
-
-        // 跳过空值
-        if (value === null || value === undefined || value === "") {
-            continue;
-        }
-
-        // 转换为数字
-        const numValue = parseFloat(value);
-        if (isNaN(numValue)) {
-            continue; // 非数字值不计入缺陷
-        }
-
-        // 检查是否不在范围内
-        if (numValue < minValue || numValue > maxValue) {
-            defectCount++;
-        }
+    if (isNaN(min) || isNaN(max)) {
+        row.DefectNum = 0
+        return 0
     }
 
-    return defectCount;
+    const values = row.ObservedValue
+        .split(',')
+        .map((v: any) => parseFloat(v.trim()))
+        .filter((v: any) => !isNaN(v))
+
+    const defectCount = values.filter((v: any) => v < min || v > max).length
+    row.DefectNum = defectCount
+    return defectCount
 };
 
 const calculateSum = (row: any) => {
-    let sum = 0;
-    for (let i = 1; i <= 10; i++) {
-        const value = row[`MeasuredValue${i}`];
-        if (value !== null && value !== undefined && value !== "") {
-            sum += Number(value);
-        }
+    if (!row.ObservedValue) {
+        row.ObservedValueSum = '0'
+        return '0'
     }
-    row.ObservedValueSum = sum;
-    return sum;
+
+    const values = row.ObservedValue
+        .split(',')
+        .map((v: any) => parseFloat(v.trim()))
+        .filter((v: any) => !isNaN(v))
+
+    const sum = values.reduce((total: any, current: any) => total + current, 0)
+    row.ObservedValueSum = sum.toFixed(2)
+    return sum.toFixed(2)
 };
 const calculateAverage = (row: any) => {
-    let sum = 0;
-    let count = 0;
-    for (let i = 1; i <= 10; i++) {
-        const value = row[`MeasuredValue${i}`];
-        if (value !== null && value !== undefined && value !== "") {
-            sum += Number(value);
-            count++;
-        }
+    if (!row.ObservedValue) {
+        row.AverageNum = '0'
+        return '0'
     }
-    row.AverageNum = count > 0 ? (sum / count).toFixed(2) : 0;
-    return count > 0 ? (sum / count).toFixed(2) : 0;
+
+    const values = row.ObservedValue
+        .split(',')
+        .map((v: any) => parseFloat(v.trim()))
+        .filter((v: any) => !isNaN(v))
+
+    if (values.length === 0) {
+        row.AverageNum = '0'
+        return '0'
+    }
+
+    const sum = values.reduce((total: any, current: any) => total + current, 0)
+    const avg = sum / values.length
+    row.AverageNum = avg.toFixed(2)
+    return avg.toFixed(2)
 };
 const formatMeasuredValues = (row: any) => {
-    const values = [];
-    for (let i = 1; i <= 10; i++) {
-        const value = row[`MeasuredValue${i}`];
-        if (value !== null && value !== undefined && value !== "") {
-            values.push(value);
-        }
-    }
-    row.ObservedValue = values.join(", ");
-    return values.join(", ");
+    // const values = [];
+    // for (let i = 1; i <= 10; i++) {
+    //     const value = row[`MeasuredValue${i}`];
+    //     if (value !== null && value !== undefined && value !== "") {
+    //         values.push(value);
+    //     }
+    // }
+    // row.ObservedValue = values.join(",");
+    const values = row.ObservedValue.split(',')
+    return values.join(",");
 };
 
 const handletestClose = () => {

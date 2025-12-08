@@ -192,6 +192,7 @@
                 <el-table-column prop="LotNo" label="Lot No" />
                 <el-table-column prop="TCode" label="T-Code" />
                 <el-table-column prop="QuantityPerBox" :label="$t('incomeCreat.qtyIncomeMaterial')" />
+                 <el-table-column prop="SampledBoxes" :label="$t('incomeSheet.SampledBoxes')" />
                 <el-table-column prop="SamplingStandards" :label="$t('incomeCreat.InspectStandard')" />
                 <el-table-column prop="SupplierReportName" :label="$t('incomeCreat.supplierReport')" />
                 <el-table-column prop="StatusText" :label="$t('incomeCreat.Status')" />
@@ -629,10 +630,11 @@ const handleEditConfirm = () => {
 const handleEditDetail = (row: any) => {
     editdetailForm.value = {
         ...row,
+        InspectionNo: row.IQCNumber
     };
      GetProductQuery(row.MaterialName).then((res: any) => {
         productList.value = res.content;
-        console.log(productList.value);
+        // console.log(productList.value);
     });
     editDetailVisible.value = true;
 };
@@ -679,6 +681,8 @@ const handleEditDetailClose = () => {
     editDetailVisible.value = false;
 };
 const handleEditDetailConfirm = () => {
+    // console.log(editdetailForm.value);
+    
     AyscIQCDetailUpdate(editdetailForm.value).then((res: any) => {
         ElNotification({
             title: t("message.tipTitle"),
@@ -690,7 +694,7 @@ const handleEditDetailConfirm = () => {
         } else {
             return;
         }
-        // getData();
+        getData();
     });
 };
 const handleSizeChange = (val: any) => {

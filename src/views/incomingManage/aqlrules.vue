@@ -557,7 +557,7 @@ const deleteDetail = (val: any) => {
         .then(() => {
             AyscDelInspectionDetail(data).then((res: any) => {
                 ElNotification({
-                    title: t("publicText.tipTitle"),
+                    title: t("message.tipTitle"),
                     message: res.msg,
                     type: res.success ? "success" : "error",
                 });

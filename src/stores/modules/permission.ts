@@ -4,7 +4,8 @@ import {
   generateRoutesByFrontEnd,
   generateRoutesByServer,
   generateRoutesByServer1,
-  flatMultiLevelRoutes
+  flatMultiLevelRoutes,
+  enhanceDynamicRoutes 
 } from '@/utils/routerHelper'
 import { store } from '../index'
 import { cloneDeep } from 'lodash-es'
@@ -68,6 +69,7 @@ export const usePermissionStore = defineStore('permission', {
             }
           }
         ])
+        routerMap=enhanceDynamicRoutes(routerMap)
         // 渲染菜单的所有路由
         this.routers = cloneDeep(constantRouterMap).concat(routerMap)
         resolve()

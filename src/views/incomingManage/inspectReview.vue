@@ -445,6 +445,10 @@ const handleAppConfirm = () => {
             type: res.success ? "success" : "error",
         });
         appVisible.value = false;
+        appForm.value={
+             ApprovalResult: "",
+    ApprovalRemarks: "",
+        }
         getData();
     });
 };
