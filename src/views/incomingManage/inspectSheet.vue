@@ -2,50 +2,24 @@
     <div class="p-2">
         <el-card :body-style="{ padding: '8px' }">
             <el-form ref="formRef" :model="getForm" :inline="true" label-width="auto" size="small">
-                <el-form-item :label="$t('incomeSheet.creatInspect')" class="mb-2">
-                    <el-input style="width: 200px" v-model="getForm.creatInspect" placeholder="" clearable></el-input>
+                <el-form-item :label="$t('incomeCreat.creatInspect')" class="mb-2">
+                    <el-input style="width: 140px" v-model="getForm.InspectionNo" placeholder="" clearable></el-input>
                 </el-form-item>
-
-                <el-form-item :label="$t('incomeSheet.NotifyDate')" class="mb-2"><el-date-picker :shortcuts="shortcuts"
-                        v-model="searchDate" value-format="YYYY-MM-DD" type="daterange" range-separator="-" size="small"
-                        style="width: 200px" :clearable="false" />
-                </el-form-item>
-                <el-form-item :label="$t('incomeSheet.Status')" class="mb-2">
-                    <el-select v-model="getForm.Status" placeholder="" style="width: 200px">
-                        <el-option :label="t('incomeSheet.status1')" :value="t('incomeSheet.status1')">
-                        </el-option>
-                        <el-option :label="t('incomeSheet.status2')" :value="t('incomeSheet.status2')">
-                        </el-option>
-                        <el-option :label="t('incomeSheet.status3')" :value="t('incomeSheet.status3')">
-                        </el-option>
+                <el-form-item :label="$t('incomeCreat.creatInspect')" class="mb-2"><el-date-picker
+                        :shortcuts="shortcuts" v-model="searchDate" value-format="YYYY-MM-DD" type="daterange"
+                        range-separator="-" size="small" style="width: 200px" :clearable="false" /></el-form-item>
+                <el-form-item :label="'检验结果'" class="mb-2">
+                    <el-select v-model="getForm.InspectionResult" placeholder="" style="width: 200px">
+                        <el-option label="合格" value="合格" />
+                        <el-option label="不合格" value="不合格" />
                     </el-select>
                 </el-form-item>
-
-                <el-form-item :label="$t('incomeSheet.modelRules')" class="mb-2">
-                    <el-input style="width: 200px" v-model="getForm.modelRules" placeholder="" clearable></el-input>
-                </el-form-item>
-                <el-form-item :label="'Lot No'" class="mb-2">
-                    <el-input style="width: 200px" v-model="getForm.lotNo" placeholder="" clearable></el-input>
-                </el-form-item>
-                <el-form-item :label="'T-Code'" class="mb-2">
-                    <el-input style="width: 200px" v-model="getForm.tCode" placeholder="" clearable></el-input>
-                </el-form-item>
-                <el-form-item :label="$t('incomeSheet.isCarProduct')" class="mb-2">
-                    <el-select v-model="getForm.isCarProduct" placeholder="" style="width: 200px">
-                        <el-option :label="$t('publicText.is')" :value="true"> </el-option>
-                        <el-option :label="$t('publicText.no')" :value="false"> </el-option>
-                    </el-select>
-                </el-form-item>
-
                 <el-form-item class="mb-2">
-                    <el-button type="primary" size="small">
+                    <el-button type="primary" size="small" @click="getData">
                         {{ $t("publicText.query") }}
                     </el-button>
-                    <el-button type="info" size="small">
+                    <el-button type="info" size="small" @click="resetGetForm">
                         {{ $t("publicText.reset") }}
-                    </el-button>
-                       <el-button type="info" size="small" @click="testClick">
-                        测试
                     </el-button>
                 </el-form-item>
             </el-form>
@@ -72,11 +46,19 @@
                 <el-table-column prop="NotifyDept" :label="$t('incomeCreat.NotifyDepartment')" />
                 <el-table-column prop="ArrivalDate" :label="$t('incomeCreat.incomeDate')" />
                 <el-table-column prop="IsAutomotive" :label="$t('incomeCreat.isCarProduct')" />
-                <el-table-column prop="InspectStandard" :label="$t('incomeCreat.InspectStandard')" />
+                <el-table-column prop="SamplingStandards" :label="$t('incomeCreat.InspectStandard')" />
                 <el-table-column prop="StatusText" :label="$t('incomeCreat.Status')" />
+                <el-table-column prop="Status" :label="$t('incomeCreat.Status')" />
                 <el-table-column prop="CreateTime" :label="$t('incomeCreat.creatDate')" width="150" />
                 <el-table-column prop="InspectionResult" :label="$t('incomeSheet.result')" />
-
+                <el-table-column :label="$t('publicText.operation')" width="120" fixed="right" align="center">
+                    <template #default="scope">
+                        <el-tooltip :content="$t('publicText.check')" placement="top">
+                            <el-button type="primary" icon="EditPen" size="small"
+                                @click.stop="cellClick(scope.row)"></el-button>
+                        </el-tooltip>
+                    </template>
+                </el-table-column>
                 <template #empty>
                     <div class="flex items-center justify-center h-100%">
                         <el-empty />
@@ -108,21 +90,35 @@
                 <el-table-column prop="LotNo" label="Lot No" />
                 <el-table-column prop="TCode" label="T-Code" />
                 <el-table-column prop="QuantityPerBox" :label="$t('incomeCreat.qtyIncomeMaterial')" />
-                <el-table-column prop="SampledBoxes" :label="$t('incomeSheet.SampledBoxes')" />
+                <el-table-column prop="SampledBoxes" :label="$t('incomeSheet.SampledBoxes')" width="120">
+                    <template #default="scope">
+                        <el-input-number v-model="scope.row.SampledBoxes" :size="'small'" :min="1" style="width: 100px"
+                            :disabled="scope.row.AC !== null" />
+                    </template>
+                </el-table-column>
                 <el-table-column prop="SamplingStandards" :label="$t('incomeCreat.InspectStandard')" />
-                <el-table-column prop="SupplierReportName" :label="$t('incomeCreat.supplierReport')" />
+                <el-table-column prop="SupplierReportName" :label="$t('incomeCreat.supplierReport')">
+                    <template #default="scope">
+                        <span v-if="scope.row.SupplierReportName" class="underline cursor-pointer text-cyan-800"
+                            @click="openFile(scope.row.SupplierReportGuid)">
+                            {{ scope.row.SupplierReportName }}
+                        </span>
+                    </template>
+                </el-table-column>
                 <el-table-column prop="StatusText" :label="$t('incomeCreat.Status')" />
-                <el-table-column prop="CreateTime" :label="$t('incomeCreat.creatDate')" />
+                <el-table-column prop="Status" :label="$t('incomeCreat.Status')" />
+                <el-table-column prop="CreateTime" :label="$t('incomeCreat.creatDate')" width="150" />
                 <el-table-column :label="$t('publicText.operation')" width="120" fixed="right" align="center">
                     <template #default="scope">
+                        <el-tooltip :content="'抽检箱数提交'" placement="top">
+                            <el-button type="warning" icon="Reading" size="small" @click.stop="handAcRe(scope.row)"
+                                :disabled="scope.row.AC !== null"></el-button>
+                        </el-tooltip>
                         <el-tooltip :content="$t('publicText.check')" placement="top">
-                            <el-button type="primary" icon="EditPen" size="small"
-                                @click.stop="handleEdit(scope.row)"></el-button>
+                            <el-button type="primary" icon="EditPen" size="small" @click.stop="handleEdit(scope.row)"
+                                :disabled="scope.row.AC == null"></el-button>
                         </el-tooltip>
-                        <el-tooltip :content="$t('publicText.look')" placement="top">
-                            <el-button type="warning" icon="Reading" size="small"
-                                @click.stop="handleLook(scope.row)"></el-button>
-                        </el-tooltip>
+
                     </template>
                 </el-table-column>
                 <template #empty>
@@ -143,6 +139,26 @@
         <el-dialog v-model="testVisible" :title="'进料检验'" width="85%" :append-to-body="true"
             :close-on-click-modal="false" :close-on-press-escape="false" align-center @close="handletestClose">
             <!-- <el-button type="primary" @click="exportToExcel">导出Excel</el-button> -->
+            <el-form ref="formRef" :model="editdetailForm" label-width="auto" :inline="true" :size="'small'">
+                <el-form-item :label="$t('incomeCreat.creatInspect')" prop="IQCNumber">
+                    <el-input v-model="editdetailForm.IQCNumber" placeholder="" disabled style="width: 200px;" />
+                </el-form-item>
+                <el-form-item :label="$t('incomeCreat.modelRules')" prop="ModelSpec">
+                    <el-input v-model="editdetailForm.ModelSpec" placeholder="" disabled style="width: 200px;" />
+                </el-form-item>
+                <el-form-item :label="$t('incomeCreat.supplier')" prop="Supplier">
+                    <el-input v-model="editdetailForm.Supplier" placeholder="" disabled style="width: 200px;" />
+                </el-form-item>
+                <el-form-item :label="$t('incomeCreat.orderNumber')" prop="OrderNo">
+                    <el-input v-model="editdetailForm.OrderNo" placeholder="" disabled style="width: 200px;" />
+                </el-form-item>
+                <el-form-item :label="'AC'" prop="AC">
+                    <el-input v-model="editdetailForm.AC" placeholder="" disabled style="width: 200px;" />
+                </el-form-item>
+                <el-form-item :label="'RE'" prop="RE">
+                    <el-input v-model="editdetailForm.RE" placeholder="" disabled style="width: 200px;" />
+                </el-form-item>
+            </el-form>
             <el-tabs v-model="activeName" type="border-card">
                 <el-tab-pane :label="'计数检验'" name="first">
                     <el-table :data="tableData2" border stripe style="width: 100%" size="small" :height="400">
@@ -160,8 +176,7 @@
                         </el-table-column>
                         <el-table-column prop="SampleSize" :label="$t('incomeSheet.numberOfSample')">
                             <template #default="scope">
-                                <el-input v-model="scope.row.SampleSize" size="small"
-                                    ></el-input>
+                                <el-input v-model="scope.row.SampleSize" size="small"></el-input>
                             </template>
                         </el-table-column>
                         <el-table-column prop="DefectCount" :label="$t('incomeSheet.numberOfDefect')">
@@ -170,10 +185,16 @@
                                 <el-input v-model="scope.row.DefectCount" size="small"></el-input>
                             </template>
                         </el-table-column>
-                         <el-table-column prop="DefectDescription" :label="'缺陷描述'">
+                        <el-table-column prop="DefectDescription" :label="'缺陷描述'">
                             <template #default="scope">
                                 <!-- {{ scope.row.DefectCount || calculateDefectCount(scope.row) }} -->
                                 <el-input v-model="scope.row.DefectDescription" size="small"></el-input>
+                            </template>
+                        </el-table-column>
+                        <el-table-column prop="UnqualifiedHandlingResults" :label="'不合格处理结果'">
+                            <template #default="scope">
+                                <!-- {{ scope.row.DefectCount || calculateDefectCount(scope.row) }} -->
+                                <el-input v-model="scope.row.UnqualifiedHandlingResults" size="small"></el-input>
                             </template>
                         </el-table-column>
                     </el-table>
@@ -197,21 +218,19 @@
                         </el-table-column>
                         <el-table-column prop="InspectionToolName" :label="$t('aqlrules.ToolName')">
                         </el-table-column>
-                          <el-table-column prop="uomname" :label="$t('aqlrules.uomname')">
+                        <el-table-column prop="uomname" :label="$t('aqlrules.uomname')">
                         </el-table-column>
                         <el-table-column prop="InspectionBasis" :label="$t('aqlrules.InspectionBasis')">
                         </el-table-column>
                         <el-table-column prop="SampleSize" :label="$t('incomeSheet.numberOfSample')">
                             <template #default="scope">
                                 <el-input v-model="scope.row.SampleSize" size="small" type="number" min="1" max="10"
-                                   
                                     @change="handleSampleSizeChange(scope.row)"></el-input>
                             </template>
                         </el-table-column>
                         <el-table-column prop="DefectCount" :label="$t('incomeSheet.numberOfDefect')">
                             <template #default="scope">
-                                {{calculateDefectCount(scope.row) }}
-                                <!-- <el-input v-model="scope.row.DefectCount" size="small" :disabled="scope.row.StatusText!==''"></el-input> -->
+                                {{ calculateDefectCount(scope.row) }}
                             </template>
                         </el-table-column>
                         <el-table-column prop="MeasuredValue" :align="'center'"
@@ -219,11 +238,10 @@
                             <template #default="scope">
                                 <span>{{ formatMeasuredValues(scope.row) }}</span>
                                 <el-button type="primary" icon="Plus" :size="'small'"
-                                    
                                     @click="openMeasurementDialog(scope.row, scope.$index)" />
                             </template>
                         </el-table-column>
-                      
+
                         <el-table-column prop="numberOfDefect" :label="'总和'">
                             <template #default="scope">
                                 <span>{{ calculateSum(scope.row) }}</span>
@@ -234,9 +252,21 @@
                                 <span>{{ calculateAverage(scope.row) }}</span>
                             </template>
                         </el-table-column>
-                          <el-table-column prop="numberOfDefect" :label="'结果'">
+                        <el-table-column prop="numberOfDefect" :label="'结果'" width="150">
                             <template #default="scope">
-                                {{getResultText(scope.row) }}
+                                <el-select v-model="scope.row.Status" placeholder=""  size="small">
+                                      <el-option label="待检验" :value="0"  disabled/>
+                                    <el-option label="合格" :value="1" />
+                                    <el-option label="不合格" :value="2" />
+                                    <el-option label="特采" :value="3" />
+                                </el-select>
+                                <!-- {{scope.row.Status }} -->
+                            </template>
+                        </el-table-column>
+                        <el-table-column prop="UnqualifiedHandlingResults" :label="'不合格处理结果'" width="180">
+                            <template #default="scope">
+                                <!-- {{ scope.row.DefectCount || calculateDefectCount(scope.row) }} -->
+                                <el-input v-model="scope.row.UnqualifiedHandlingResults" size="small"></el-input>
                             </template>
                         </el-table-column>
                     </el-table>
@@ -271,6 +301,20 @@
                 </span>
             </template>
         </el-dialog>
+        <el-dialog v-model="previewVisible" :title="previewTitle" width="800px" :append-to-body="true"
+            :close-on-click-modal="false" :close-on-press-escape="false" align-center>
+            <iframe :src="previewUrl" width="100%" height="550px" frameborder="0"></iframe>
+            <template #footer>
+                <div class="dialog-footer">
+                    <el-button @click="handlePreviewClose">{{
+                        $t("publicText.close")
+                    }}</el-button>
+                    <el-button type="primary" @click="handlePreviewDawnload">
+                        {{ $t("publicText.dawnload") }}
+                    </el-button>
+                </div>
+            </template>
+        </el-dialog>
     </div>
 </template>
 
@@ -291,6 +335,7 @@ import {
     AyscIQCDetailUpdate,
     GetIQCInspectionDetailQuery,
     AyscIQCInspectionInterface,
+    LabelPrintDownloadFtp
 } from "@/api/incomingManage/iqcApi";
 import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
@@ -302,7 +347,6 @@ import {
     onBeforeUnmount,
     nextTick,
     reactive,
-    h,
 } from "vue";
 import {
     shortcuts,
@@ -315,17 +359,13 @@ import { useI18n } from "vue-i18n";
 const { t } = useI18n();
 import { useUserStoreWithOut } from "@/stores/modules/user";
 import router from "@/router";
+
 const userStore = useUserStoreWithOut();
 const getForm = ref({
-    creatInspect: "",
-    NotifyDate: "",
-    modelRules: "",
-    lotNo: "",
-    tCode: "",
-    isCarProduct: true,
-    Status: "",
-    SchedulingStartDate: "",
-    SchedulingEndDate: "",
+    InspectionNo: "",
+    StartTime: "",
+    EndTime: "",
+    InspectionResult: "",
 });
 const searchDate = ref<any[]>([]);
 const tableHeight = ref(0);
@@ -346,36 +386,34 @@ const currentRow = ref<any>(null);
 const currentRowIndex = ref(-1);
 const currentSampleSize = ref(0);
 const measurementValues = ref<any[]>([]);
-const reportFrom = ref({
-    recipientDep: "",
-    recipientPerson: "",
-    incomeType: "",
-    samplingQty: "",
-    packagingCheck: "",
-    appearanceCheck: "",
-    dimensionCheck: "",
-    materialCheck: "",
-    isCarResult: "",
-    isQualified: "",
-    inspector: "",
-    checkDate: "",
-    checkNote: "",
+const IQCNumber = ref("");
+const IQC_DetailName = ref("");
+const editdetailForm = ref<any>({
+    IQCNumber: '',
+    ModelSpec: '',
+    Supplier: '',
+    OrderNo: '',
+    AC: '',
+    RE: '',
 });
 const lookFormRef = ref();
 const lookVisible = ref(false);
+const previewVisible = ref(false);
+const previewUrl = ref("");
+const previewTitle = ref("");
 watch(
     () => searchDate.value,
     (newVal: any, oldVal: any) => {
         if (newVal === null) {
-            getForm.value.SchedulingStartDate = "";
-            getForm.value.SchedulingEndDate = "";
+            getForm.value.StartTime = "";
+            getForm.value.EndTime = "";
             // getForm.value.PageNumber = 1
 
             return;
         }
         if (newVal !== oldVal) {
-            getForm.value.SchedulingStartDate = newVal[0];
-            getForm.value.SchedulingEndDate = newVal[1];
+            getForm.value.StartTime = newVal[0];
+            getForm.value.EndTime = newVal[1] +' 23:59:59';
             // getForm.value.PageNumber = 1
         }
     }
@@ -383,6 +421,9 @@ watch(
 
 onBeforeMount(() => {
     getScreenHeight();
+    let end: string = setTodayDate() + '23:59:59';
+    let start: string = setLastDate();
+    searchDate.value = [start, end];
 });
 onMounted(() => {
     window.addEventListener("resize", getScreenHeight);
@@ -391,26 +432,88 @@ onMounted(() => {
 onBeforeUnmount(() => {
     window.addEventListener("resize", getScreenHeight);
 });
-const testClick=()=>{
+const testClick = () => {
     router.push({
-  path: '/incomingManage/inspectSheet/1',
-    query: { title: 'IQC-来料检验单-审核1' }
-  })
+        path: '/incomingManage/inspectSheet/1',
+        query: { title: 'IQC-来料检验单-审核1' }
+    })
 }
 const getData = () => {
     GetIQCHeaderQuery(getForm.value).then((res: any) => {
         tableData.value = res.content;
     });
 };
+const resetGetForm = () => {
+    getForm.value = {
+        InspectionNo: "",
+        StartTime: setLastDate(),
+        EndTime: setTodayDate(),
+        InspectionResult: "",
+    };
+
+    getData();
+};
 
 const cellClick = (row: any) => {
+    IQCNumber.value = row.IQCNumber;
     // detailForm.value.InspectionNo = row.IQCNumber;
     // editdetailForm.value.InspectionNo = row.IQCNumber;
-    GetIQCDetailQuery({ InspectionNo: row.IQCNumber }).then((res: any) => {
+    // GetIQCDetailQuery({ InspectionNo: row.IQCNumber }).then((res: any) => {
+    //     detailTableData.value = res.content;
+    //     detailVisible.value = true;
+    // });
+    getQCDetailQuery(row.IQCNumber)
+    detailVisible.value = true;
+};
+const getQCDetailQuery = (val: any) => {
+    GetIQCDetailQuery({ InspectionNo: val }).then((res: any) => {
         detailTableData.value = res.content;
-        detailVisible.value = true;
     });
 };
+
+const openFile = (val: any) => {
+    LabelPrintDownloadFtp(val).then((res: any) => {
+        const base64Data = 'data:application/pdf;base64,' + res.content.FileData;
+        previewUrl.value = base64Data
+        previewTitle.value = res.content.FileName
+        previewVisible.value = true
+        // downloadPDF(base64Data, res.content.FileName)
+    })
+}
+const handlePreviewClose = () => {
+    previewVisible.value = false
+    previewUrl.value = ""
+}
+const handlePreviewDawnload = () => {
+    downloadPDF(previewUrl.value, previewTitle.value)
+}
+
+const downloadPDF = (base64Data: any, fileName = '供应商报告.pdf') => {
+    try {
+        // 创建下载链接
+        const link = document.createElement('a')
+
+        // 设置下载属性
+        link.href = base64Data
+        link.download = fileName.endsWith('.pdf') ? fileName : `${fileName}.pdf`
+
+        // 添加到页面（需要添加到页面才能触发下载）
+        document.body.appendChild(link)
+
+        // 触发点击下载
+        link.click()
+
+        // 清理 DOM
+        document.body.removeChild(link)
+
+        ElMessage.success('文件下载成功')
+
+    } catch (error) {
+        console.error('下载失败:', error)
+        ElMessage.error('文件下载失败')
+    }
+}
+
 
 const openMeasurementDialog = (row: any, index: any) => {
     currentRow.value = row;
@@ -420,7 +523,7 @@ const openMeasurementDialog = (row: any, index: any) => {
     for (let i = 0; i < currentSampleSize.value; i++) {
         measurementValues.value.push(row[`MeasuredValue${i + 1}`] || "");
     }
-
+   
     dialogVisible.value = true;
 };
 
@@ -428,7 +531,7 @@ const saveMeasurements = () => {
     for (let i = 0; i < currentSampleSize.value; i++) {
         currentRow.value[`MeasuredValue${i + 1}`] = measurementValues.value[i];
     }
-
+ getResultText( currentRow.value);   
     dialogVisible.value = false;
 };
 
@@ -494,7 +597,7 @@ const getResultText = (row: any) => {
 
         // 检查是否在范围内
         if (numValue < minValue || numValue > maxValue) {
-            row.Status = "不合格";
+            row.Status = 2;
             return "不合格";
         }
     }
@@ -506,8 +609,8 @@ const getResultText = (row: any) => {
             row[`MeasuredValue${i}`] !== undefined &&
             row[`MeasuredValue${i}`] !== ""
     );
-    row.Status = hasValues ? "合格" : "无数据";
-    return hasValues ? "合格" : "无数据";
+    row.Status = hasValues ? 1 : "无数据";
+    return hasValues ? '不合格' : "无数据";
 };
 const handleSampleSizeChange = (row: any) => {
     const newSize = parseInt(row.SampleSize) || 0;
@@ -524,6 +627,7 @@ const calculateSum = (row: any) => {
             sum += Number(value);
         }
     }
+    row.Sum=sum;
     return sum;
 };
 const calculateAverage = (row: any) => {
@@ -536,6 +640,7 @@ const calculateAverage = (row: any) => {
             count++;
         }
     }
+    row.Average=(count > 0 ? (sum / count).toFixed(2) : 0);
     return count > 0 ? (sum / count).toFixed(2) : 0;
 };
 const formatMeasuredValues = (row: any) => {
@@ -549,16 +654,49 @@ const formatMeasuredValues = (row: any) => {
     return values.join(", ");
 };
 
+const handAcRe = (row: any) => {
+    AyscIQCDetailUpdate({
+        "InspectionNo": row.IQCNumber,
+        "IQC_DetailName": row.IQC_DetailName,
+        "SampledBoxes": row.SampledBoxes,
+    }).then((res: any) => {
+        if (res.success) {
+            getQCDetailQuery(IQCNumber.value)
 
+        }
+    })
+};
 const handleEdit = (row: any) => {
-    console.log(row.StatusText);
-    
-    if (row.StatusText == '创建'||row.StatusText == '检验中') {
-        isDisable.value = false;
-    } else {
-        isDisable.value = true;
-    }
-    GetIQCInspectionDetailQuery({ IQC_DetailName: row.IQC_DetailName }).then(
+
+    // if (row.Status == '创建' || row.Status == '检验中') {
+    //     isDisable.value = false;
+    // } else {
+    //     isDisable.value = true;
+    // }
+
+    // if (row.AC == null) {
+    //     AyscIQCDetailUpdate({
+    //         "InspectionNo": row.IQCNumber,
+    //         "IQC_DetailName": row.IQC_DetailName,
+    //         "SampledBoxes": row.SampledBoxes,
+    //     }).then((res: any) => {
+    //         if (res.success) {
+    //              getQCDetailQuery(IQCNumber.value)
+    //              editdetailForm.value=   detailTableData.value .find((item:any)=>{
+    //                 return item.IQC_DetailName==row.IQC_DetailName
+    //             })
+    //         }
+    //     })
+    // }else{
+    editdetailForm.value = { ...row };
+    // }
+    IQC_DetailName.value = row.IQC_DetailName;
+    getDetailData(row.IQC_DetailName)
+      testVisible.value = true;
+
+};
+const getDetailData = (val: any) => {
+    GetIQCInspectionDetailQuery({ IQC_DetailName: val }).then(
         (res: any) => {
             tableData1.value = res.content.filter((item: any) => item && item.MeasurementType === '计量')
             tableData2.value = res.content.filter((item: any) => item && item.MeasurementType === '计数')
@@ -567,7 +705,8 @@ const handleEdit = (row: any) => {
                 isDisable.value = true;
             }
 
-            testVisible.value = true;
+          
+
         }
     );
 };
@@ -578,8 +717,8 @@ const handleLook = (row: any) => {
 const handletestClose = () => {
     testVisible.value = false;
 };
-const handleZCConfirm=()=>{
-    let data=tableData1.value.map((item: any) => {
+const handleZCConfirm = () => {
+    let data = tableData1.value.map((item: any) => {
         return {
             IQCDetailId: item.IQC_DetailName,
             IQC_InspectionDetailsName: item.IQC_InspectionDetailName,
@@ -596,13 +735,16 @@ const handleZCConfirm=()=>{
             MeasuredValue8: item.MeasuredValue8 || "",
             MeasuredValue9: item.MeasuredValue9 || "",
             MeasuredValue10: item.MeasuredValue10 || "",
+            Sum:parseFloat(item.Sum ) || 0,
+            Average:parseFloat(item.Average ) || 0,
             Inspector: userStore.getUserInfo,
-            Status:0,
+              UnqualifiedHandlingResults: item.UnqualifiedHandlingResults,
+            Status: 0,
             DataStatus: 0,
         };
     });
 
-    tableData2.value.forEach((item:any)=>{
+    tableData2.value.forEach((item: any) => {
         data.push({
             IQCDetailId: item.IQC_DetailName,
             IQC_InspectionDetailsName: item.IQC_InspectionDetailName,
@@ -618,21 +760,23 @@ const handleZCConfirm=()=>{
             MeasuredValue7: "",
             MeasuredValue8: "",
             MeasuredValue9: "",
-            MeasuredValue10:  "",
+            MeasuredValue10: "",
+            Sum:parseFloat(item.Sum ) || 0,
+            Average:parseFloat(item.Average ) || 0,
             Inspector: userStore.getUserInfo,
-            Status:0,
+            UnqualifiedHandlingResults: item.UnqualifiedHandlingResults,
+            Status: 0,
             DataStatus: 0
         })
     })
     // console.log( data);
-      AyscIQCInspectionInterface(data).then((res: any) => {
+    AyscIQCInspectionInterface(data).then((res: any) => {
         ElNotification({
             title: t("message.tipTitle"),
-            message: res.msg,
+            message: '暂存成功',
             type: res.success ? "success" : "error",
         });
-         testVisible.value = false;
-         getData()
+        getData()
     });
 }
 const handletestConfirm = () => {
@@ -654,25 +798,28 @@ const handletestConfirm = () => {
             MeasuredValue8: item.MeasuredValue8 || "",
             MeasuredValue9: item.MeasuredValue9 || "",
             MeasuredValue10: item.MeasuredValue10 || "",
+            Sum:parseFloat(item.Sum ) || 0,
+            Average:parseFloat(item.Average ) || 0,
             Inspector: userStore.getUserInfo,
-            Status: item.Status == "合格" ? 1 : 2,
+               UnqualifiedHandlingResults: item.UnqualifiedHandlingResults,
+            Status: item.Status,
             DataStatus: 0,
         };
     });
-    let isEixt = data.findIndex((item: any) => {
-        return item.Status !== 1
-    })
+    // let isEixt = data.findIndex((item: any) => {
+    //     return item.Status !== 1
+    // })
 
-    if (isEixt !== -1) {
-        ElNotification({
-            title: t("message.tipTitle"),
-            message: '计量结果，不通过！请检查',
-            type: "error",
-        });
+    // if (isEixt !== -1) {
+    //     ElNotification({
+    //         title: t("message.tipTitle"),
+    //         message: '计量结果，不通过！请检查',
+    //         type: "error",
+    //     });
 
-        return
-    }
-    tableData2.value.forEach((item:any)=>{
+    //     return
+    // }
+    tableData2.value.forEach((item: any) => {
         data.push({
             IQCDetailId: item.IQC_DetailName,
             IQC_InspectionDetailsName: item.IQC_InspectionDetailName,
@@ -688,22 +835,26 @@ const handletestConfirm = () => {
             MeasuredValue7: "",
             MeasuredValue8: "",
             MeasuredValue9: "",
-            MeasuredValue10:  "",
+            MeasuredValue10: "",
+            Sum:parseFloat(item.Sum ) || 0,
+            Average:parseFloat(item.Average ) || 0,
             Inspector: userStore.getUserInfo,
-            Status:item.DefectCount==0?1:2,
+               UnqualifiedHandlingResults: item.UnqualifiedHandlingResults,
+            Status: item.DefectCount == 0 ? 1 : 2,
             DataStatus: 0
         })
     })
-    console.log(data);
+    // console.log(data);
 
-        AyscIQCInspectionInterface(data).then((res: any) => {
+    AyscIQCInspectionInterface(data).then((res: any) => {
         ElNotification({
             title: t("message.tipTitle"),
             message: res.msg,
             type: res.success ? "success" : "error",
         });
-         testVisible.value = false;
-         getData()
+        testVisible.value = false;
+         getDetailData(IQC_DetailName.value)
+        getData()
     });
 };
 const handleSizeChange = (val: any) => {

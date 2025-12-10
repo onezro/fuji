@@ -663,8 +663,10 @@ const handleEditConfirm = () => {
             InspectionUpdateBy: userStore.getUserInfo,
         };
     });
+    console.log(data.listItem);
+    
     let isEixt = data.listItem.findIndex((item: any) => {
-        return item.Status !== 'OK'
+        return item.InspectionResult !== 'OK'
     })
 
     if (isEixt !== -1) {
@@ -809,8 +811,10 @@ const getResultText = (row: any) => {
     const sampleNum = row.SampleNum || 1
 
     if (defectCount === 0 && row.ObservedValue !== "") {
+        row.Status = 'OK'
         return 'OK'
     } else {
+        row.Status = 'NG'
         return 'NG'
     }
 };

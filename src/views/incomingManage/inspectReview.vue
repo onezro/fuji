@@ -2,51 +2,24 @@
     <div class="p-2">
         <el-card :body-style="{ padding: '8px' }">
             <el-form ref="formRef" :model="getForm" :inline="true" label-width="auto" size="small">
-                <el-form-item :label="$t('incomeSheet.creatInspect')" class="mb-2">
-                    <el-input style="width: 200px" v-model="getForm.creatInspect" placeholder="" clearable></el-input>
+               <el-form-item :label="$t('incomeCreat.creatInspect')" class="mb-2">
+                    <el-input style="width: 140px" v-model="getForm.InspectionNo" placeholder="" clearable></el-input>
                 </el-form-item>
-
-                <el-form-item :label="$t('incomeSheet.NotifyDate')" class="mb-2"><el-date-picker :shortcuts="shortcuts"
-                        v-model="searchDate" value-format="YYYY-MM-DD" type="daterange" range-separator="-" size="small"
-                        style="width: 200px" :clearable="false" />
-                </el-form-item>
-                <el-form-item :label="$t('incomeSheet.Status')" class="mb-2">
-                    <el-select v-model="getForm.Status" placeholder="" style="width: 200px">
-                        <el-option :label="t('incomeSheet.status1')" :value="t('incomeSheet.status1')">
-                        </el-option>
-                        <el-option :label="t('incomeSheet.status2')" :value="t('incomeSheet.status2')">
-                        </el-option>
-                        <el-option :label="t('incomeSheet.status3')" :value="t('incomeSheet.status3')">
-                        </el-option>
+                <el-form-item :label="$t('incomeCreat.creatInspect')" class="mb-2"><el-date-picker
+                        :shortcuts="shortcuts" v-model="searchDate" value-format="YYYY-MM-DD" type="daterange"
+                        range-separator="-" size="small" style="width: 200px" :clearable="false" /></el-form-item>
+                <el-form-item :label="'检验结果'" class="mb-2">
+                    <el-select v-model="getForm.InspectionResult" placeholder="" style="width: 200px">
+                        <el-option label="合格" value="合格" />
+                        <el-option label="不合格" value="不合格" />
                     </el-select>
                 </el-form-item>
-
-                <el-form-item :label="$t('incomeSheet.modelRules')" class="mb-2">
-                    <el-input style="width: 200px" v-model="getForm.modelRules" placeholder="" clearable></el-input>
-                </el-form-item>
-                <el-form-item :label="'Lot No'" class="mb-2">
-                    <el-input style="width: 200px" v-model="getForm.lotNo" placeholder="" clearable></el-input>
-                </el-form-item>
-                <el-form-item :label="'T-Code'" class="mb-2">
-                    <el-input style="width: 200px" v-model="getForm.tCode" placeholder="" clearable></el-input>
-                </el-form-item>
-                <el-form-item :label="$t('incomeSheet.isCarProduct')" class="mb-2">
-                    <el-select v-model="getForm.isCarProduct" placeholder="" style="width: 200px">
-                        <el-option :label="$t('publicText.is')" :value="true"> </el-option>
-                        <el-option :label="$t('publicText.no')" :value="false"> </el-option>
-                    </el-select>
-                </el-form-item>
-
                 <el-form-item class="mb-2">
-                    <el-button type="primary" size="small">
+                    <el-button type="primary" size="small" @click="getData">
                         {{ $t("publicText.query") }}
                     </el-button>
-                    <el-button type="info" size="small">
+                    <el-button type="info" size="small" @click="resetGetForm">
                         {{ $t("publicText.reset") }}
-                    </el-button>
-                    <el-button type="warning" size="small" :disabled="selectionList.length === 0"
-                        @click="handleSelectionData">
-                        {{ $t("publicText.approval") }}
                     </el-button>
                 </el-form-item>
             </el-form>
@@ -54,15 +27,15 @@
                 (pageObj.currentPage - 1) * pageObj.pageSize,
                 pageObj.currentPage * pageObj.pageSize
             )
-                " size="small" :style="{ width: '100%' }" ref="rawRef" :height="tableHeight" border fit highlight-current-row
-                @cell-click="cellClick" @selection-change="handleSelectionChange">
+                " size="small" :style="{ width: '100%' }" ref="rawRef" :height="tableHeight" border fit
+                highlight-current-row @cell-click="cellClick" @selection-change="handleSelectionChange">
                 <el-table-column type="selection" width="55" align="center" />
 
                 <el-table-column type="index" align="center" fixed :label="$t('publicText.index')" width="50">
                     <template #default="scope">
                         <span>{{
                             scope.$index + pageObj.pageSize * (pageObj.currentPage - 1) + 1
-                            }}</span>
+                        }}</span>
                     </template>
                 </el-table-column>
                 <el-table-column prop="IQCNumber" :label="$t('incomeCreat.creatInspect')">
@@ -79,7 +52,15 @@
                 <el-table-column prop="StatusText" :label="$t('incomeCreat.Status')" />
                 <el-table-column prop="CreateTime" :label="$t('incomeCreat.creatDate')" width="150" />
                 <el-table-column prop="InspectionResult" :label="$t('incomeSheet.result')" />
+                <el-table-column :label="$t('publicText.operation')" width="120" fixed="right" align="center">
+                    <template #default="scope">
+                        <el-tooltip :content="$t('publicText.dawnload') + $t('incomeSheet.incomeReport')" placement="top">
+                            <el-button type="success" icon="Download" size="small"
+                                @click.stop="handleDownload(scope.row)"></el-button>
+                        </el-tooltip>
 
+                    </template>
+                </el-table-column>
                 <template #empty>
                     <div class="flex items-center justify-center h-100%">
                         <el-empty />
@@ -101,7 +82,7 @@
                     <template #default="scope">
                         <span>{{
                             scope.$index + pageObj.pageSize * (pageObj.currentPage - 1) + 1
-                            }}</span>
+                        }}</span>
                     </template>
                 </el-table-column>
                 <el-table-column prop="MaterialName" :label="$t('incomeCreat.materialName')" />
@@ -137,7 +118,7 @@
                 <div class="dialog-footer">
                     <el-button @click="detailVisible = false">{{
                         $t("publicText.close")
-                        }}</el-button>
+                    }}</el-button>
                 </div>
             </template>
         </el-dialog>
@@ -212,7 +193,7 @@
                 <div class="dialog-footer">
                     <el-button @click="handletestClose">{{
                         $t("publicText.cancel")
-                        }}</el-button>
+                    }}</el-button>
                     <el-button type="primary" @click="handletestConfirm" :disabled="isDisable">
                         {{ $t("publicText.confirm") }}
                     </el-button>
@@ -241,14 +222,14 @@
                 <div class="dialog-footer">
                     <el-button @click="lookVisible = false">{{
                         $t("publicText.close")
-                        }}</el-button>
+                    }}</el-button>
                 </div>
             </template>
         </el-dialog>
 
-        <el-dialog v-model="appVisible" title="审批" width="500" :append-to-body="true"
-            :close-on-click-modal="false" :close-on-press-escape="false" align-center @close="appVisible = false">
-            <el-form ref="appFormRef" :model="appForm" label-width="auto"> 
+        <el-dialog v-model="appVisible" title="审批" width="500" :append-to-body="true" :close-on-click-modal="false"
+            :close-on-press-escape="false" align-center @close="appVisible = false">
+            <el-form ref="appFormRef" :model="appForm" label-width="auto">
                 <el-form-item label="结果" prop="ApprovalResult">
                     <el-select v-model="appForm.ApprovalResult" placeholder="" style="width: 200px">
                         <el-option label="通过" value="通过"> </el-option>
@@ -258,16 +239,16 @@
                 <el-form-item label="备注" prop="ApprovalRemarks">
                     <el-input type="textarea" v-model="appForm.ApprovalRemarks" :rows="4" style="width: 400px" />
                 </el-form-item>
-               
+
             </el-form>
-             <template #footer>
-              
-                    <el-button @click="handleAppClose">{{
-                        $t("publicText.cancel")
-                        }}</el-button>
-                    <el-button type="primary" @click="handleAppConfirm" >
-                        {{ $t("publicText.confirm") }}
-                    </el-button>
+            <template #footer>
+
+                <el-button @click="handleAppClose">{{
+                    $t("publicText.cancel")
+                }}</el-button>
+                <el-button type="primary" @click="handleAppConfirm">
+                    {{ $t("publicText.confirm") }}
+                </el-button>
             </template>
         </el-dialog>
     </div>
@@ -291,9 +272,11 @@ import {
     GetIQCInspectionDetailQuery,
     AyscIQCInspectionInterface,
     AyscIQCApproval,
+    DownloadIQCReportAsync
 } from "@/api/incomingManage/iqcApi";
 import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
+import JSZip from 'jszip';
 import {
     ref,
     watch,
@@ -314,18 +297,14 @@ import { ElNotification, ElMessageBox, ElMessage } from "element-plus";
 import { useI18n } from "vue-i18n";
 const { t } = useI18n();
 import { useUserStoreWithOut } from "@/stores/modules/user";
+import { log } from "node:console";
 
 const userStore = useUserStoreWithOut();
 const getForm = ref({
-    creatInspect: "",
-    NotifyDate: "",
-    modelRules: "",
-    lotNo: "",
-    tCode: "",
-    isCarProduct: true,
-    Status: "",
-    SchedulingStartDate: "",
-    SchedulingEndDate: "",
+    InspectionNo: "",
+    StartTime: "",
+    EndTime: "",
+    InspectionResult: "",
 });
 const searchDate = ref<any[]>([]);
 const tableHeight = ref(0);
@@ -373,15 +352,15 @@ watch(
     () => searchDate.value,
     (newVal: any, oldVal: any) => {
         if (newVal === null) {
-            getForm.value.SchedulingStartDate = "";
-            getForm.value.SchedulingEndDate = "";
+            getForm.value.StartTime = "";
+            getForm.value.EndTime = "";
             // getForm.value.PageNumber = 1
 
             return;
         }
         if (newVal !== oldVal) {
-            getForm.value.SchedulingStartDate = newVal[0];
-            getForm.value.SchedulingEndDate = newVal[1];
+            getForm.value.StartTime = newVal[0];
+            getForm.value.EndTime = newVal[1] +' 23:59:59';
             // getForm.value.PageNumber = 1
         }
     }
@@ -389,6 +368,9 @@ watch(
 
 onBeforeMount(() => {
     getScreenHeight();
+      let end: string = setTodayDate() + '23:59:59';
+    let start: string = setLastDate();
+    searchDate.value = [start, end];
 });
 onMounted(() => {
     window.addEventListener("resize", getScreenHeight);
@@ -403,11 +385,22 @@ const getData = () => {
         tableData.value = res.content;
     });
 };
+const resetGetForm = () => {
+    getForm.value = {
+        InspectionNo: "",
+        StartTime: setLastDate(),
+        EndTime: setTodayDate(),
+        InspectionResult: "",
+    };
+
+    getData();
+};
+
 const handleSelectionChange = (val: any) => {
     selectionList.value = val;
 };
 const handleSelectionData = () => {
-appVisible.value = true;
+    appVisible.value = true;
     // let data = [];
     // data = selectionList.value.map((item: any) => {
     //     return {
@@ -445,9 +438,9 @@ const handleAppConfirm = () => {
             type: res.success ? "success" : "error",
         });
         appVisible.value = false;
-        appForm.value={
-             ApprovalResult: "",
-    ApprovalRemarks: "",
+        appForm.value = {
+            ApprovalResult: "",
+            ApprovalRemarks: "",
         }
         getData();
     });
@@ -459,6 +452,211 @@ const cellClick = (row: any) => {
         detailTableData.value = res.content;
         detailVisible.value = true;
     });
+};
+
+// const handleDownload = async (row: any) => {
+//   try {
+//     const res:any = await DownloadIQCReportAsync(row.IQCNumber);
+    
+//     if (!res.content || res.content.length === 0) {
+//       ElMessage.warning('没有找到可下载的文件');
+//       return;
+//     }
+    
+//     // 处理每个文件下载
+//     for (const item of res.content) {
+//       await downloadFile(item);
+//     }
+    
+//   } catch (error) {
+//     console.error('下载失败:', error);
+//     ElMessage.error('文件下载失败');
+//   }
+// };
+
+// const downloadFile = (file: { FileData: string; FileName: string }) => {
+//   return new Promise<void>((resolve) => {
+//     try {
+//       // 处理 Base64 数据
+//       const base64Data = file.FileData.startsWith('data:')
+//         ? file.FileData
+//         : `data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,${file.FileData}`;
+      
+//       const link = document.createElement('a');
+//       link.href = base64Data;
+//       link.download = file.FileName.endsWith('.xlsx') 
+//         ? file.FileName 
+//         : `${file.FileName}.xlsx`;
+      
+//       // 添加事件监听确保下载完成后清理
+//       link.onload = () => {
+//         setTimeout(() => {
+//           document.body.removeChild(link);
+//           resolve();
+//         }, 100);
+//       };
+      
+//       link.onerror = () => {
+//         document.body.removeChild(link);
+//         resolve();
+//       };
+      
+//       document.body.appendChild(link);
+//       link.click();
+      
+//     } catch (error) {
+//       console.error('单个文件下载失败:', error);
+//       resolve(); // 继续下载其他文件
+//     }
+//   });
+// };
+interface IQCFile {
+  FileData: string; // Base64 数据
+  FileName: string;
+}
+
+interface DownloadResponse {
+  content: IQCFile[];
+  success: boolean;
+  message?: string;
+}
+const handleDownload = async (row: any) => {
+  try {
+    // DownloadIQCReportAsync 可能返回 AxiosResponse<DownloadResponse> 或直接返回 DownloadResponse，
+    // 下面兼容两种情况：优先取 res.data，否则直接使用 res。
+    const resAny: any = await DownloadIQCReportAsync(row.IQCNumber);
+    console.log(resAny);
+    
+    const payload: DownloadResponse = resAny && resAny.data ? resAny.data : resAny;
+
+    if (!payload.success || !payload.content || payload.content.length === 0) {
+      ElMessage.warning('没有找到可下载的文件');
+      return;
+    }
+
+    const files = payload.content;
+
+    // 如果有多个文件，让用户选择或全部下载
+    if (files.length > 1) {
+      // 方案1：让用户选择下载哪个文件（推荐）
+      // 这里可以弹出一个对话框让用户选择
+      // 或者使用下面的方案2：打包下载
+      
+      // 方案2：打包成 ZIP 下载
+      await downloadAsZip(files);
+      return;
+    }
+    
+    // 单个文件直接下载
+    const file = files[0];
+    await downloadSingleFile(file);
+    
+  } catch (error) {
+    console.error('下载失败:', error);
+    ElMessage.error('文件下载失败');
+  }
+};
+
+const downloadSingleFile = async (file: IQCFile) => {
+  try {
+    // 确保 Base64 数据格式正确
+    let base64Data = file.FileData;
+    
+    // 如果 Base64 数据不包含 data URL 前缀，添加它
+    if (!base64Data.startsWith('data:')) {
+      base64Data = `data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,${base64Data}`;
+    }
+    
+    // 使用更可靠的下载方式
+    const response = await fetch(base64Data);
+    const blob = await response.blob();
+    
+    // 创建下载链接
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    
+    // 设置文件名，确保有 .xlsx 扩展名
+    let fileName = file.FileName;
+    if (!fileName.toLowerCase().endsWith('.xlsx')) {
+      fileName = `${fileName}.xlsx`;
+    }
+    
+    link.href = url;
+    link.download = fileName;
+    link.style.display = 'none';
+    
+    document.body.appendChild(link);
+    link.click();
+    
+    // 清理
+    setTimeout(() => {
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    }, 100);
+    
+    ElMessage.success('文件下载成功');
+    
+  } catch (error) {
+    console.error('文件下载失败:', error);
+    ElMessage.error('文件下载失败');
+  }
+};
+
+// 可选：多个文件打包下载（需要安装 jszip 库）
+// const downloadAsZip = async (files: IQCFile[]) => {
+//   try {
+//     // 提示用户将下载多个文件
+//     const confirm = await ElMessageBox.confirm(
+//       `检测到 ${files.length} 个文件，是否打包下载？`,
+//       '批量下载',
+//       {
+//         confirmButtonText: '打包下载',
+//         cancelButtonText: '取消',
+//         type: 'warning'
+//       }
+//     ).catch(() => false);
+    
+//     if (!confirm) return;
+    
+//     // 如果不需要打包，可以逐个下载，添加延迟避免同时触发太多下载
+//     for (let i = 0; i < files.length; i++) {
+//       await downloadSingleFile(files[i]);
+      
+//       // 如果不是最后一个文件，添加短暂延迟
+//       if (i < files.length - 1) {
+//         await new Promise(resolve => setTimeout(resolve, 500));
+//       }
+//     }
+    
+//   } catch (error) {
+//     console.error('批量下载失败:', error);
+//     ElMessage.error('批量下载失败');
+//   }
+// };
+
+
+const downloadAsZip = async (files: IQCFile[]) => {
+  try {
+    const zip = new JSZip();
+    
+    files.forEach((file, index) => {
+      // 移除 Base64 前缀（如果有）
+      const base64Content = file.FileData.replace(/^data:.*;base64,/, '');
+      const fileName = file.FileName.endsWith('.xlsx') 
+        ? file.FileName 
+        : `${file.FileName}.xlsx`;
+      
+      zip.file(fileName, base64Content, { base64: true });
+    });
+    
+    const content = await zip.generateAsync({ type: 'blob' });
+    saveAs(content, `IQC报告_${new Date().getTime()}.zip`);
+    
+    ElMessage.success('文件打包下载成功');
+  } catch (error) {
+    console.error('打包下载失败:', error);
+    ElMessage.error('打包下载失败');
+  }
 };
 
 const openMeasurementDialog = (row: any, index: any) => {

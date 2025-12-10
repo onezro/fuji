@@ -59,6 +59,7 @@ const zh = {
     check: "检验",
     approval: "审批",
     isEmpty: "不能为空",
+    dawnload:'下载'
   },
   login: {
     loginTitle: "登录",
@@ -272,7 +273,7 @@ const zh = {
     materialName: "材料名称",
     modelRules: "型号规制",
     supplier: "供应商",
-    orderNumber: "订单号",
+    orderNumber: "工单号",
     qtyIncomeMaterial: "来料数量/箱",
     SampledBoxes:"抽检箱数",
     supplierReport: "供应商报告",

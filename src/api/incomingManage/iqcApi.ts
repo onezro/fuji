@@ -143,3 +143,24 @@ export function AyscIQCInspectionInterface(data: any) {
         data,
     });
 }
+
+//下载供应商报告
+export function LabelPrintDownloadFtp(data: any) {
+    return request({
+        url: "/api/IQCController/LabelPrintDownloadFtp",
+        method: "post",
+        params:{
+            fileName:data
+        }
+    });
+}
+//根据IQC名称下载IQC进料检验报告
+export function DownloadIQCReportAsync(data: any) {
+    return request({
+        url: "/api/IQCController/DownloadIQCReportAsync",
+        method: "post",
+        params:{
+            IQCName:data
+        }
+    });
+}

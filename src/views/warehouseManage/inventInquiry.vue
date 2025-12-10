@@ -66,10 +66,10 @@
                                 @click="exportList">{{ $t("publicText.export") }}</el-button>
                         </el-form-item>
                     </el-form>
-                    <div class="text-xl mb-1 font-bold">
+                    <!-- <div class="text-xl mb-1 font-bold">
                         {{ $t("inventInquiry.totalQtyInvent") + "：" }}
                         <span class="">6666</span>
-                    </div>
+                    </div> -->
                     <el-table :data="tableData.slice(
                         (pageObj.currentPage - 1) * pageObj.pageSize,
                         pageObj.currentPage * pageObj.pageSize
@@ -168,7 +168,7 @@
                                     $t("publicText.export") }}</el-button>
                         </el-form-item>
                     </el-form>
-                    <div class="text-xl mb-1 font-bold flex gap-11">
+                    <!-- <div class="text-xl mb-1 font-bold flex gap-11">
                         <div>
                             {{ $t("inventInquiry.productTotal") + "：" }}
                             <span class="">6666</span>
@@ -177,7 +177,7 @@
                             {{ $t("inventInquiry.totalBoxNum") + "：" }}
                             <span class="">123456</span>
                         </div>
-                    </div>
+                    </div> -->
                     <el-table :data="tableData2.slice(
                         (pageObj2.currentPage - 1) * pageObj2.pageSize,
                         pageObj2.currentPage * pageObj2.pageSize
