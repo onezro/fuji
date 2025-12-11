@@ -21,6 +21,10 @@
                     <el-button type="info" size="small" @click="resetGetForm">
                         {{ $t("publicText.reset") }}
                     </el-button>
+                      <el-button type="warning" size="small" :disabled="selectionList.length === 0"
+                        @click="handleSelectionData">
+                        {{ $t("publicText.approval") }}
+                    </el-button>
                 </el-form-item>
             </el-form>
             <el-table :data="tableData.slice(
@@ -28,7 +32,8 @@
                 pageObj.currentPage * pageObj.pageSize
             )
                 " size="small" :style="{ width: '100%' }" ref="rawRef" :height="tableHeight" border fit
-                highlight-current-row @cell-click="cellClick">
+                highlight-current-row   @selection-change="handleSelectionChange">
+                   <el-table-column type="selection" width="55" align="center" />
                 <el-table-column type="index" align="center" fixed :label="$t('publicText.index')" width="50">
                     <template #default="scope">
                         <span>{{
@@ -36,7 +41,7 @@
                         }}</span>
                     </template>
                 </el-table-column>
-                <el-table-column prop="IQCNumber" :label="$t('incomeCreat.creatInspect')">
+                <el-table-column prop="IQCNumber" :label="$t('incomeCreat.creatInspect')" width="120">
                     <template #default="scope">
                         <span class="underline">{{ scope.row.IQCNumber }}</span>
                     </template>
@@ -56,6 +61,10 @@
                         <el-tooltip :content="$t('publicText.check')" placement="top">
                             <el-button type="primary" icon="EditPen" size="small"
                                 @click.stop="cellClick(scope.row)"></el-button>
+                        </el-tooltip>
+                         <el-tooltip :content="$t('publicText.dawnload') + $t('incomeSheet.incomeReport')" placement="top">
+                            <el-button type="success" icon="Download" size="small"
+                                @click.stop="handleDownload(scope.row)" :disabled="scope.row.ApprovalResult !== '通过'"></el-button>
                         </el-tooltip>
                     </template>
                 </el-table-column>
@@ -236,9 +245,9 @@
                         <el-table-column prop="MeasuredValue" :align="'center'"
                             :label="$t('incomeSheet.MeasurementNumber')">
                             <template #default="scope">
-                                <span>{{ formatMeasuredValues(scope.row) }}</span>
-                                <el-button type="primary" icon="Plus" :size="'small'"
-                                    @click="openMeasurementDialog(scope.row, scope.$index)" />
+                                <span @click="openMeasurementDialog(scope.row, scope.$index)">{{ formatMeasuredValues(scope.row) }}</span>
+                                <!-- <el-button type="primary" icon="Plus" :size="'small'"
+                                    @click="openMeasurementDialog(scope.row, scope.$index)" /> -->
                             </template>
                         </el-table-column>
 
@@ -282,7 +291,7 @@
                         {{ '暂存' }}
                     </el-button>
                     <el-button type="primary" @click="handletestConfirm" :disabled="isDisable">
-                        {{ $t("publicText.confirm") }}
+                        {{ '提交' }}
                     </el-button>
                 </div>
             </template>
@@ -315,6 +324,30 @@
                 </div>
             </template>
         </el-dialog>
+          <el-dialog v-model="appVisible" title="审批" width="500" :append-to-body="true" :close-on-click-modal="false"
+            :close-on-press-escape="false" align-center @close="appVisible = false">
+            <el-form ref="appFormRef" :model="appForm" label-width="auto">
+                <el-form-item label="结果" prop="ApprovalResult">
+                    <el-select v-model="appForm.ApprovalResult" placeholder="" style="width: 200px">
+                        <el-option label="通过" value="通过"> </el-option>
+                        <el-option label="不通过" value="不通过"> </el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="备注" prop="ApprovalRemarks">
+                    <el-input type="textarea" v-model="appForm.ApprovalRemarks" :rows="4" style="width: 400px" />
+                </el-form-item>
+
+            </el-form>
+            <template #footer>
+
+                <el-button @click="handleAppClose">{{
+                    $t("publicText.cancel")
+                }}</el-button>
+                <el-button type="primary" @click="handleAppConfirm">
+                    {{ $t("publicText.confirm") }}
+                </el-button>
+            </template>
+        </el-dialog>
     </div>
 </template>
 
@@ -335,10 +368,14 @@ import {
     AyscIQCDetailUpdate,
     GetIQCInspectionDetailQuery,
     AyscIQCInspectionInterface,
-    LabelPrintDownloadFtp
+    LabelPrintDownloadFtp,
+    AyscIQCApproval,
+    DownloadIQCReportAsync,
+    AyscIQCTemporaryStorage
 } from "@/api/incomingManage/iqcApi";
 import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
+import JSZip from 'jszip';
 import {
     ref,
     watch,
@@ -401,6 +438,13 @@ const lookVisible = ref(false);
 const previewVisible = ref(false);
 const previewUrl = ref("");
 const previewTitle = ref("");
+const selectionList = ref([]);
+const appVisible = ref(false);
+const appFormRef = ref();
+const appForm = ref({
+    ApprovalResult: "",
+    ApprovalRemarks: "",
+});
 watch(
     () => searchDate.value,
     (newVal: any, oldVal: any) => {
@@ -421,7 +465,7 @@ watch(
 
 onBeforeMount(() => {
     getScreenHeight();
-    let end: string = setTodayDate() + '23:59:59';
+    let end: string = setTodayDate();
     let start: string = setLastDate();
     searchDate.value = [start, end];
 });
@@ -440,7 +484,7 @@ const testClick = () => {
 }
 const getData = () => {
     GetIQCHeaderQuery(getForm.value).then((res: any) => {
-        tableData.value = res.content;
+        tableData.value = res.content
     });
 };
 const resetGetForm = () => {
@@ -470,7 +514,39 @@ const getQCDetailQuery = (val: any) => {
         detailTableData.value = res.content;
     });
 };
-
+const handleSelectionChange = (val: any) => {
+    selectionList.value = val;
+};
+const handleSelectionData = () => {
+    appVisible.value = true;
+};
+const handleAppClose = () => {
+    appVisible.value = false;
+};
+const handleAppConfirm = () => {
+    let data = [];
+    data = selectionList.value.map((item: any) => {
+        return {
+            InspectionNo: item.IQCNumber,
+            ApprovalResult: appForm.value.ApprovalResult,
+            ApprovalRemarks: appForm.value.ApprovalRemarks,
+            Approver: userStore.getUserInfo,
+        };
+    });
+    AyscIQCApproval(data).then((res: any) => {
+        ElNotification({
+            title: t("message.tipTitle"),
+            message: res.msg,
+            type: res.success ? "success" : "error",
+        });
+        appVisible.value = false;
+        appForm.value = {
+            ApprovalResult: "",
+            ApprovalRemarks: "",
+        }
+        getData();
+    });
+};
 const openFile = (val: any) => {
     LabelPrintDownloadFtp(val).then((res: any) => {
         const base64Data = 'data:application/pdf;base64,' + res.content.FileData;
@@ -513,6 +589,112 @@ const downloadPDF = (base64Data: any, fileName = '供应商报告.pdf') => {
         ElMessage.error('文件下载失败')
     }
 }
+interface IQCFile {
+  FileData: string; // Base64 数据
+  FileName: string;
+}
+
+interface DownloadResponse {
+  content: IQCFile[];
+  success: boolean;
+  message?: string;
+}
+const handleDownload = async (row: any) => {
+  try {
+    const resAny: any = await DownloadIQCReportAsync(row.IQCNumber);
+    console.log(resAny);
+    
+    const payload: DownloadResponse = resAny && resAny.data ? resAny.data : resAny;
+
+    if (!payload.success || !payload.content || payload.content.length === 0) {
+      ElMessage.warning('没有找到可下载的文件');
+      return;
+    }
+
+    const files = payload.content;
+
+    if (files.length > 1) {
+      await downloadAsZip(files);
+      return;
+    }
+    
+    // 单个文件直接下载
+    const file = files[0];
+    await downloadSingleFile(file);
+    
+  } catch (error) {
+    console.error('下载失败:', error);
+    ElMessage.error('文件下载失败');
+  }
+};
+
+const downloadSingleFile = async (file: IQCFile) => {
+  try {
+    // 确保 Base64 数据格式正确
+    let base64Data = file.FileData;
+    
+    // 如果 Base64 数据不包含 data URL 前缀，添加它
+    if (!base64Data.startsWith('data:')) {
+      base64Data = `data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,${base64Data}`;
+    }
+    
+    // 使用更可靠的下载方式
+    const response = await fetch(base64Data);
+    const blob = await response.blob();
+    
+    // 创建下载链接
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    
+    // 设置文件名，确保有 .xlsx 扩展名
+    let fileName = file.FileName;
+    if (!fileName.toLowerCase().endsWith('.xlsx')) {
+      fileName = `${fileName}.xlsx`;
+    }
+    
+    link.href = url;
+    link.download = fileName;
+    link.style.display = 'none';
+    
+    document.body.appendChild(link);
+    link.click();
+    
+    // 清理
+    setTimeout(() => {
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    }, 100);
+    
+    ElMessage.success('文件下载成功');
+    
+  } catch (error) {
+    console.error('文件下载失败:', error);
+    ElMessage.error('文件下载失败');
+  }
+};
+const downloadAsZip = async (files: IQCFile[]) => {
+  try {
+    const zip = new JSZip();
+    
+    files.forEach((file, index) => {
+      // 移除 Base64 前缀（如果有）
+      const base64Content = file.FileData.replace(/^data:.*;base64,/, '');
+      const fileName = file.FileName.endsWith('.xlsx') 
+        ? file.FileName 
+        : `${file.FileName}.xlsx`;
+      
+      zip.file(fileName, base64Content, { base64: true });
+    });
+    
+    const content = await zip.generateAsync({ type: 'blob' });
+    saveAs(content, `IQC报告_${new Date().getTime()}.zip`);
+    
+    ElMessage.success('文件打包下载成功');
+  } catch (error) {
+    console.error('打包下载失败:', error);
+    ElMessage.error('打包下载失败');
+  }
+};
 
 
 const openMeasurementDialog = (row: any, index: any) => {
@@ -668,11 +850,11 @@ const handAcRe = (row: any) => {
 };
 const handleEdit = (row: any) => {
 
-    // if (row.Status == '创建' || row.Status == '检验中') {
-    //     isDisable.value = false;
-    // } else {
-    //     isDisable.value = true;
-    // }
+    if (row.Status == '创建' || row.Status == '检验中') {
+        isDisable.value = false;
+    } else {
+        isDisable.value = true;
+    }
 
     // if (row.AC == null) {
     //     AyscIQCDetailUpdate({
@@ -739,7 +921,7 @@ const handleZCConfirm = () => {
             Average:parseFloat(item.Average ) || 0,
             Inspector: userStore.getUserInfo,
               UnqualifiedHandlingResults: item.UnqualifiedHandlingResults,
-            Status: 0,
+            Status: item.Status,
             DataStatus: 0,
         };
     });
@@ -765,12 +947,12 @@ const handleZCConfirm = () => {
             Average:parseFloat(item.Average ) || 0,
             Inspector: userStore.getUserInfo,
             UnqualifiedHandlingResults: item.UnqualifiedHandlingResults,
-            Status: 0,
+            Status: item.DefectCount == 0 ? 1 : 2,
             DataStatus: 0
         })
     })
     // console.log( data);
-    AyscIQCInspectionInterface(data).then((res: any) => {
+    AyscIQCTemporaryStorage(data).then((res: any) => {
         ElNotification({
             title: t("message.tipTitle"),
             message: '暂存成功',

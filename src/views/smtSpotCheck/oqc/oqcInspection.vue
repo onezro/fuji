@@ -630,7 +630,7 @@ watch(
         }
         if (newVal !== oldVal) {
             getForm.value.StartTime = newVal[0];
-            getForm.value.EndTime = newVal[1];
+            getForm.value.EndTime = newVal[1]+' 23:59:59';
             // getForm.value.PageNumber = 1
         }
     }

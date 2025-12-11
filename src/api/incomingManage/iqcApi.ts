@@ -164,3 +164,11 @@ export function DownloadIQCReportAsync(data: any) {
         }
     });
 }
+
+export function AyscIQCTemporaryStorage(data: any) {
+    return request({
+        url: "/api/IQCController/AyscIQCTemporaryStorage",
+        method: "post",
+       data
+    });
+}

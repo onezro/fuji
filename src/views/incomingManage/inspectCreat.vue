@@ -531,7 +531,7 @@ watch(
     }
 );
 onBeforeMount(() => {
-     let end: string = setTodayDate() +' 23:59:59';
+     let end: string = setTodayDate();
     let start: string = setLastDate();
     searchDate.value = [start, end];
     getScreenHeight();
@@ -681,15 +681,11 @@ const handleConfirm = () => {
 
 //
 const file1UpChange = (file: any, fileList1: any) => {
-    // console.log(file, fileList1);
-    // detailForm.value.Template_File = file;
     if (file.raw) {
         convertToBase64(file.raw,1)
     }
 };
 const file1UpRemove = (file: any, fileList1: any) => {
-    // console.log(file, fileList1);
-    // detailForm.value.Template_File = "";
     detailForm.value.Template_File = ''
 };
 const beforeUpload = (file: any) => {

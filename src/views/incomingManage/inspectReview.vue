@@ -2,7 +2,7 @@
     <div class="p-2">
         <el-card :body-style="{ padding: '8px' }">
             <el-form ref="formRef" :model="getForm" :inline="true" label-width="auto" size="small">
-               <el-form-item :label="$t('incomeCreat.creatInspect')" class="mb-2">
+                <el-form-item :label="$t('incomeCreat.creatInspect')" class="mb-2">
                     <el-input style="width: 140px" v-model="getForm.InspectionNo" placeholder="" clearable></el-input>
                 </el-form-item>
                 <el-form-item :label="$t('incomeCreat.creatInspect')" class="mb-2"><el-date-picker
@@ -14,12 +14,17 @@
                         <el-option label="不合格" value="不合格" />
                     </el-select>
                 </el-form-item>
+
                 <el-form-item class="mb-2">
-                    <el-button type="primary" size="small" @click="getData">
+                   <el-button type="primary" size="small" @click="getData">
                         {{ $t("publicText.query") }}
                     </el-button>
                     <el-button type="info" size="small" @click="resetGetForm">
                         {{ $t("publicText.reset") }}
+                    </el-button>
+                    <el-button type="warning" size="small" :disabled="selectionList.length === 0"
+                        @click="handleSelectionData">
+                        {{ $t("publicText.approval") }}
                     </el-button>
                 </el-form-item>
             </el-form>
@@ -395,7 +400,6 @@ const resetGetForm = () => {
 
     getData();
 };
-
 const handleSelectionChange = (val: any) => {
     selectionList.value = val;
 };
@@ -522,8 +526,6 @@ interface DownloadResponse {
 }
 const handleDownload = async (row: any) => {
   try {
-    // DownloadIQCReportAsync 可能返回 AxiosResponse<DownloadResponse> 或直接返回 DownloadResponse，
-    // 下面兼容两种情况：优先取 res.data，否则直接使用 res。
     const resAny: any = await DownloadIQCReportAsync(row.IQCNumber);
     console.log(resAny);
     
@@ -536,13 +538,7 @@ const handleDownload = async (row: any) => {
 
     const files = payload.content;
 
-    // 如果有多个文件，让用户选择或全部下载
     if (files.length > 1) {
-      // 方案1：让用户选择下载哪个文件（推荐）
-      // 这里可以弹出一个对话框让用户选择
-      // 或者使用下面的方案2：打包下载
-      
-      // 方案2：打包成 ZIP 下载
       await downloadAsZip(files);
       return;
     }

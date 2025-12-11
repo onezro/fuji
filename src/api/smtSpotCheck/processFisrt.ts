@@ -63,3 +63,35 @@ export function CreateInspectionLJob(data: any) {
         data,
     });
 }
+//上传FA
+export function FAUploadFtpServer(data: any) {
+    return request({
+        url: "/api/Inspection/FAUploadFtpServer",
+        method: "post",
+        data,
+    });
+}
+//上传CPK
+export function CPKUploadFtpServer(data: any) {
+    return request({
+        url: "/api/Inspection/CPKUploadFtpServer",
+        method: "post",
+        data,
+    });
+}
+export function UploadFtpServer(data: any) {
+    return request({
+        url: "/api/Inspection/UploadFtpServer",
+        method: "post",
+        data,
+    });
+}
+
+//下载
+export function FACPKDownloadFtpServer(data: any) {
+    return request({
+        url: "/api/Inspection/FACPKDownloadFtpServer",
+        method: "post",
+        params:data
+    });
+}
