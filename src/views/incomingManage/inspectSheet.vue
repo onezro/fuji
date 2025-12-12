@@ -9,7 +9,7 @@
                         :shortcuts="shortcuts" v-model="searchDate" value-format="YYYY-MM-DD" type="daterange"
                         range-separator="-" size="small" style="width: 200px" :clearable="false" /></el-form-item>
                 <el-form-item :label="'检验结果'" class="mb-2">
-                    <el-select v-model="getForm.InspectionResult" placeholder="" style="width: 200px">
+                    <el-select v-model="getForm.InspectionResult" placeholder="" style="width: 200px" clearable>
                         <el-option label="合格" value="合格" />
                         <el-option label="不合格" value="不合格" />
                     </el-select>

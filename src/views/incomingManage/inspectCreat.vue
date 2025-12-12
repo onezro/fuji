@@ -11,7 +11,7 @@
                             :shortcuts="shortcuts" v-model="searchDate" value-format="YYYY-MM-DD" type="daterange"
                             range-separator="-" size="small" style="width: 200px" :clearable="false" /></el-form-item>
                      <el-form-item :label="'检验结果'" class="mb-2">
-                      <el-select v-model="getForm.InspectionResult" placeholder=""  style="width: 200px">
+                      <el-select v-model="getForm.InspectionResult" placeholder=""  style="width: 200px" clearable>
                           <el-option label="合格" value="合格" />
                           <el-option label="不合格" value="不合格" />
                       </el-select>
@@ -245,14 +245,14 @@
             @close="handleAddDetailClose">
             <el-form ref="detailFormRef" :model="detailForm" label-width="auto" :inline="true">
                 <el-form-item :label="$t('incomeCreat.materialName')" prop="materialName">
-                    <el-select v-model="detailForm.MaterialName" placeholder="" style="width: 200px"
+                    <el-select v-model="detailForm.MaterialName" placeholder="" style="width: 200px" filterable
                         @change="changeData">
                         <el-option v-for="n in materialNameList" :label="n.ProductFamilyName"
                             :value="n.ProductFamilyName" />
                     </el-select>
                 </el-form-item>
                 <el-form-item :label="$t('incomeCreat.modelRules')" prop="modelRules">
-                    <el-select v-model="detailForm.ModelSpec" placeholder="" style="width: 200px">
+                    <el-select v-model="detailForm.ModelSpec" placeholder="" style="width: 200px" filterable>
                         <el-option v-for="n in productList" :label="n.productname" :value="n.productname" />
                     </el-select>
                 </el-form-item>

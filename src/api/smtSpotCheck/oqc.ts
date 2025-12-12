@@ -87,3 +87,19 @@ export function QueryOQCCorrelationIQCModelSpec(data: any) {
         }
     });
 }
+
+export function GetAQLLevelQuery(data: any) {
+    return request({
+        url: "/api/IQCController/GetAQLLevelQuery",
+        method: "post",
+       data
+    });
+}
+
+export function GetResourceQuery(data: any) {
+    return request({
+        url: "/api/IQCController/GetResourceQuery",
+        method: "post",
+       data
+    });
+}
