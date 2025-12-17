@@ -20,6 +20,9 @@
                     <el-button type="warning" size="small" @click="addVisible = true">
                         {{ $t("publicText.add") }}
                     </el-button>
+                     <el-button type="success" :disabled="tableData.length==0" size="small" @click="exportTable">
+                        导出Excel
+                    </el-button>
                     <!-- <el-button type="Danger" size="small" @click="testVisible = true">
                         {{ $t("processInspect.orderInterrupt") }}
                     </el-button> -->
@@ -29,7 +32,7 @@
                 (pageObj.currentPage - 1) * pageObj.pageSize,
                 pageObj.currentPage * pageObj.pageSize
             )
-                " size="small" :style="{ width: '100%' }" ref="rawRef" :height="tableHeight" border fit>
+                " size="small" :style="{ width: '100%' }" ref="firstInspectRef" :height="tableHeight" border fit>
                 <el-table-column type="index" align="center" fixed :label="$t('publicText.index')" width="50">
                     <template #default="scope">
                         <span>{{
@@ -157,16 +160,18 @@
                         </el-table-column>
                         <el-table-column prop="InspectionBasis" :label="$t('aqlrules.InspectionBasis')">
                         </el-table-column>
-                        <el-table-column prop="SampleNum" :label="$t('incomeSheet.numberOfSample')">
+                        <el-table-column prop="SampleNum" :label="$t('incomeSheet.numberOfSample')" width="120">
                             <template #default="scope">
-                                <el-input v-model="scope.row.SampleNum" size="small" type="number"
-                                    :disabled="scope.row.InspectionResult == 'OK'"></el-input>
+                                <!-- <el-input v-model="scope.row.SampleNum" size="small" type="number"
+                                    :disabled="scope.row.InspectionResult == 'OK'"></el-input> -->
+                                    <el-input-number v-model="scope.row.SampleNum" size="small" style="width: 100%;" :min="0"  :disabled="scope.row.InspectionResult == 'OK'" />
                             </template>
                         </el-table-column>
-                        <el-table-column prop="DefectNum" :label="$t('incomeSheet.numberOfDefect')">
+                        <el-table-column prop="DefectNum" :label="$t('incomeSheet.numberOfDefect')" width="120">
                             <template #default="scope">
-                                <el-input v-model="scope.row.DefectNum" size="small" type="number"
-                                    :disabled="scope.row.InspectionResult == 'OK'"></el-input>
+                                <!-- <el-input v-model="scope.row.DefectNum" size="small" type="number"
+                                    :disabled="scope.row.InspectionResult == 'OK'"></el-input> -->
+                                    <el-input-number v-model="scope.row.DefectNum" size="small" style="width: 100%;" :min="0"  :disabled="scope.row.InspectionResult == 'OK'" />
                             </template>
                         </el-table-column>
                         <el-table-column prop="DefectDec" :label="$t('incomeSheet.DefectDec')">
@@ -241,7 +246,7 @@
                         </el-table-column>
                         <el-table-column prop="numberOfDefect" :label="'结果'">
                             <template #default="scope">
-                                {{ getResultText(scope.row) }}
+                                {{ getResultText2(scope.row) }}
                             </template>
                         </el-table-column>
                         <el-table-column prop="ResulthandLing" :label="'不良处理结果'" width="150">
@@ -311,6 +316,8 @@
 
 <script setup lang="ts">
 import JSZip from "jszip";
+import dayjs from "dayjs";
+import { exportTableToExcel } from "@/utils/exportExcel";
 import { saveAs } from "file-saver";
 import {
     GetInspectionQuery,
@@ -426,6 +433,7 @@ const uploadForm2 = ref({
     TemplateFile: "",
 });
 const fileList2 = ref<any[]>([]);
+const firstInspectRef=ref()
 watch(
     () => searchDate.value,
     (newVal: any, oldVal: any) => {
@@ -494,7 +502,38 @@ const getProject = () => {
         projectList.value = res.content;
     });
 };
-
+const exportTable=()=>{
+     exportTableToExcel({
+        tableRef: firstInspectRef.value,
+        fetchAllData: fetchFinishAllData,
+        fileName: `${'PQC过程检'}_${dayjs().format(
+            "YYYYMMDDHHmmss"
+        )}`,
+        styles: {
+            headerBgColor: "", // 灰色表头
+            headerFont: {
+                color: { argb: "" }, // 红色文字
+                bold: false,
+                size: 12,
+            }, // 白色文字
+            cell: { numFmt: "@" }, // 强制文本格式
+        },
+        t,
+    });
+}
+const fetchFinishAllData = async () => {
+    let data = await   GetInspectionQuery(getForm.value).then(
+        (res: any) => {
+            return res.content.map((item: any) => {
+                item.UpdateTime = dayjs(item.UpdateTime).format(
+                    "YYYY-MM-DD HH:mm:ss"
+                );
+                return item;
+            });
+        }
+    );
+    return data;
+};
 const handleUpload = (row: any) => {
     uploadForm.value.InspectionNO = row.FirstArticleInspectionNo;
     uploadForm2.value.InspectionNO = row.FirstArticleInspectionNo;
@@ -612,7 +651,7 @@ const handleUploadfirm = () => {
         data.push(uploadForm2.value);
     }
     UploadFtpServer(data).then((res: any) => {
-        ElNotification({
+        ElMessage({
             title: t("publicText.success"),
             message: res.msg,
             type: res.success ? "success" : "error",
@@ -645,7 +684,7 @@ const handleAddClose = () => {
 };
 const handleAddConfirm = () => {
     CreateInspectionNO(addForm.value).then((res: any) => {
-        ElNotification({
+        ElMessage({
             title: t("publicText.success"),
             message: res.msg,
             type: res.success ? "success" : "error",
@@ -751,8 +790,8 @@ const handleEditZQConfirm = () => {
             SpecialCause: item.SpecialCause,
             InspectionResult: "",
             InspectionDate: "",
-            InspectionBy: userStore.getUserInfo,
-            InspectionUpdateBy: userStore.getUserInfo,
+            InspectionBy: userStore.getUserInfo2!==''?userStore.getUserInfo2:userStore.getUserInfo,
+            InspectionUpdateBy: userStore.getUserInfo2!==''?userStore.getUserInfo2:userStore.getUserInfo,
             ResulthandLing: item.ResulthandLing,
         };
     });
@@ -778,8 +817,8 @@ const handleEditZQConfirm = () => {
             SpecialCause: item.SpecialCause,
             InspectionResult: "",
             InspectionDate: "",
-            InspectionBy: userStore.getUserInfo,
-            InspectionUpdateBy: userStore.getUserInfo,
+            InspectionBy: userStore.getUserInfo2!==''?userStore.getUserInfo2:userStore.getUserInfo,
+            InspectionUpdateBy: userStore.getUserInfo2!==''?userStore.getUserInfo2:userStore.getUserInfo,
             ResulthandLing: item.ResulthandLing,
         });
     });
@@ -787,9 +826,9 @@ const handleEditZQConfirm = () => {
     // console.log(data);
 
     InspectionNOInfoSync(data).then((res: any) => {
-        ElNotification({
+        ElMessage({
             title: t("publicText.success"),
-            message: res.msg,
+            message:res.success? '暂存成功':res.msg,
             type: res.success ? "success" : "error",
         });
 
@@ -828,8 +867,8 @@ const handleEditConfirm = () => {
             SpecialCause: item.SpecialCause,
             InspectionResult: item.Status,
             InspectionDate: "",
-            InspectionBy: userStore.getUserInfo,
-            InspectionUpdateBy: userStore.getUserInfo,
+            InspectionBy: userStore.getUserInfo2!==''?userStore.getUserInfo2:userStore.getUserInfo,
+            InspectionUpdateBy: userStore.getUserInfo2!==''?userStore.getUserInfo2:userStore.getUserInfo,
             ResulthandLing: item.ResulthandLing,
         };
     });
@@ -854,20 +893,20 @@ const handleEditConfirm = () => {
             AverageNum: item.AverageNum,
             DefectDec: item.DefectDec,
             SpecialCause: item.SpecialCause,
-            InspectionResult: item.DefectNum == 0 ? "OK" : "NG",
+            InspectionResult: item.SampleNum!==0&&(item.DefectNum == 0||item.DefectNum=='') ? "OK" : "NG",
             InspectionDate: "",
-            InspectionBy: userStore.getUserInfo,
-            InspectionUpdateBy: userStore.getUserInfo,
+            InspectionBy: userStore.getUserInfo2!==''?userStore.getUserInfo2:userStore.getUserInfo,
+            InspectionUpdateBy: userStore.getUserInfo2!==''?userStore.getUserInfo2:userStore.getUserInfo,
             ResulthandLing: item.ResulthandLing,
         });
     });
-    // console.log(data);
+    console.log(data);
     let isEixt = data.listItem.findIndex((item: any) => {
         return item.InspectionResult !== "OK";
     });
 
     if (isEixt !== -1) {
-        ElNotification({
+        ElMessage({
             title: t("message.tipTitle"),
             message: "检验结果，不通过！请检查",
             type: "error",
@@ -875,12 +914,12 @@ const handleEditConfirm = () => {
 
         return;
     }
-    console.log(data);
+    // console.log(data);
 
     InspectionNOInfoSync(data).then((res: any) => {
-        ElNotification({
+        ElMessage({
             title: t("publicText.success"),
-            message: res.msg,
+            message:res.success ?'提交成功':res.msg,
             type: res.success ? "success" : "error",
         });
 
@@ -939,8 +978,8 @@ const handleEdit = (row: any, type: any) => {
                     DefectDec: item.DEFECTDEC,
                     SpecialCause: item.SPECIALCAUSE,
                     InspectionResult: item.INSPECTIONRESULT,
-                    InspectionBy: userStore.getUserInfo,
-                    InspectionUpdateBy: userStore.getUserInfo,
+                    InspectionBy: userStore.getUserInfo2!==''?userStore.getUserInfo2:userStore.getUserInfo,
+                    InspectionUpdateBy: userStore.getUserInfo2!==''?userStore.getUserInfo2:userStore.getUserInfo,
                     InspectionDate: "",
                     ResulthandLing: item.RESULTHANDLING,
                 };
@@ -989,8 +1028,8 @@ const handleEdit = (row: any, type: any) => {
                     DefectDec: item.DEFECTDEC,
                     SpecialCause: item.SPECIALCAUSE,
                     InspectionResult: item.INSPECTIONRESULT,
-                    InspectionBy: userStore.getUserInfo,
-                    InspectionUpdateBy: userStore.getUserInfo,
+                    InspectionBy: userStore.getUserInfo2!==''?userStore.getUserInfo2:userStore.getUserInfo,
+                    InspectionUpdateBy: userStore.getUserInfo2!==''?userStore.getUserInfo2:userStore.getUserInfo,
                     InspectionDate: "",
                     ResulthandLing: item.RESULTHANDLING,
                 };
@@ -1045,6 +1084,18 @@ const getResultText = (row: any) => {
     const sampleNum = row.SampleNum || 1;
 
     if (defectCount === 0 && row.ObservedValue !== "") {
+        row.Status = "OK";
+        return "OK";
+    } else {
+        row.Status = "NG";
+        return "NG";
+    }
+};
+const getResultText2 = (row: any) => {
+    const defectCount = calculateDefectCount(row);
+    const sampleNum = row.SampleNum || 1;
+
+    if (defectCount === 0 && row.ObservedValue !== ""&&row.ObservedValue !==null) {
         row.Status = "OK";
         return "OK";
     } else {

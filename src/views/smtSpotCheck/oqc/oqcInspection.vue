@@ -15,9 +15,9 @@
                 </el-form-item>
                 <el-form-item :label="$t('oqcInspection.inspectionStatus')" class="mb-2">
                     <el-select v-model="getForm.InspectionStatus" placeholder="" style="width: 180px" clearable>
-                        <!-- <el-option :label="t('oqcInspection.status1')" :value="0">
-                        </el-option> -->
-                        <el-option :label="t('oqcInspection.status2')" :value="1">
+                        <el-option :label="'全部'" :value="''">
+                        </el-option>
+                       <el-option :label="'待检验'" :value="1">
                         </el-option>
                         <el-option :label="t('oqcInspection.status3')" :value="2">
                         </el-option>
@@ -50,17 +50,16 @@
                     <el-button type="info" size="small">
                         {{ $t("publicText.reset") }}
                     </el-button>
-                    <el-button type="success" size="small" @click="testClick">
+                    <el-button type="success" :disabled="tableData.length == 0" size="small" @click="exportTable">
                         导出Excel
                     </el-button>
                 </el-form-item>
             </el-form>
-            <el-table :data="tableData.slice(
+            <el-table ref="oqcInspectionRef" :data="tableData.slice(
                 (pageObj.currentPage - 1) * pageObj.pageSize,
                 pageObj.currentPage * pageObj.pageSize
             )
-                " size="small" :style="{ width: '100%' }" ref="rawRef" :height="tableHeight" border fit
-                highlight-current-row>
+                " size="small" :style="{ width: '100%' }" :height="tableHeight" border fit highlight-current-row>
                 <el-table-column type="index" align="center" fixed :label="$t('publicText.index')" width="50">
                     <template #default="scope">
                         <span>{{
@@ -132,6 +131,12 @@
 
         <el-dialog v-model="inspectVisible" :title="'检验'" width="95%" :append-to-body="true"
             :close-on-click-modal="false" :close-on-press-escape="false" align-center @close="handleInspectClose">
+            <div class="flex items-center justify-end">
+                <el-tooltip :content="'生产调控，原料出仓，生产过程，包装，过程检验，生产备注'" placement="top">
+                    <el-button :type="'primary'" :size="'small'" @click="getProductControl">其他信息</el-button>
+                </el-tooltip>
+
+            </div>
             <el-form ref="headerFormRef" :model="headerForm" label-width="auto" :inline="true" :size="'small'">
                 <el-form-item :label="'OQC单号'" prop="OQCNumber">
                     <el-input v-model="headerForm.OQCNumber" placeholder="" style="width: 200px" :disabled="true" />
@@ -177,6 +182,12 @@
                 </el-form-item>
                 <el-form-item :label="$t('oqcInspection.Date')" prop="Date">
                     <el-input v-model="headerForm.Date" placeholder="" style="width: 200px" :disabled="true" />
+                </el-form-item>
+                  <el-form-item :label="'AC'" prop="AC">
+                    <el-input v-model="DetailInfoForm.AC" placeholder="" style="width: 200px" disabled />
+                </el-form-item>
+                <el-form-item :label="'RE'" prop="RE">
+                    <el-input v-model="DetailInfoForm.RE" placeholder="" style="width: 200px" disabled />
                 </el-form-item>
                 <!-- <el-form-item>
                  
@@ -390,12 +401,12 @@
                 <el-form-item :label="'Accept'" prop="Accept">
                     <el-input v-model="acceptValue" placeholder="" style="width: 150px" disabled />
                 </el-form-item>
-                <el-form-item :label="'AC'" prop="AC">
+                <!-- <el-form-item :label="'AC'" prop="AC">
                     <el-input v-model="DetailInfoForm.AC" placeholder="" style="width: 150px" disabled />
                 </el-form-item>
                 <el-form-item :label="'RE'" prop="RE">
                     <el-input v-model="DetailInfoForm.RE" placeholder="" style="width: 150px" disabled />
-                </el-form-item>
+                </el-form-item> -->
             </el-form>
             <el-table :data="CharactTable" border stripe style="width: 100%" size="small" :height="200">
                 <el-table-column prop="OQCCharacteristicsName" :label="$t('oqcInspection.characteristicName')">
@@ -509,62 +520,204 @@
                 </div>
             </template>
         </el-dialog>
-        <el-dialog v-model="iqcCharactVisit" :title="iqcCharactTitle+'IQC明细'" width="80%" :append-to-body="true"
+        <el-dialog v-model="iqcCharactVisit" :title="iqcCharactTitle + 'IQC明细'" width="80%" :append-to-body="true"
             :close-on-click-modal="false" :close-on-press-escape="false" align-center>
             <el-form-item label="IQC明细序号" prop="ApprovalResult">
-                <el-select v-model="iqcDetailName" placeholder="" style="width: 250px" filterable @change="getIqcDetailData">
+                <el-select v-model="iqcDetailName" placeholder="" style="width: 250px" filterable
+                    @change="getIqcDetailData">
                     <el-option v-for="i in iqcCharactList" :label="i.iqcDetailID" :value="i.iqcDetailName"
                         :key="i.iqcDetailID" />
 
                 </el-select>
             </el-form-item>
-              <el-table :data="iqcCharactTable" border stripe style="width: 100%" size="small" :height="300">
-                        <el-table-column prop="ProjectCategoryName" :label="$t('aqlrules.ProjectCategoryName')">
-                        </el-table-column>
-                        <el-table-column prop="ProjectName" :label="$t('aqlrules.ProjectName')">
-                        </el-table-column>
-                        <!-- <el-table-column prop="InspectionType" :label="$t('aqlrules.DBType')">
+            <el-table :data="iqcCharactTable" border stripe style="width: 100%" size="small" :height="300">
+                <el-table-column prop="ProjectCategoryName" :label="$t('aqlrules.ProjectCategoryName')">
+                </el-table-column>
+                <el-table-column prop="ProjectName" :label="$t('aqlrules.ProjectName')">
+                </el-table-column>
+                <!-- <el-table-column prop="InspectionType" :label="$t('aqlrules.DBType')">
                         </el-table-column> -->
-                        <el-table-column prop="CharacteristicGrade" :label="$t('aqlrules.CharaCteristicGrade')">
-                        </el-table-column>
-                        <el-table-column prop="TargetValue" :label="$t('aqlrules.TargetValue')">
-                        </el-table-column>
+                <el-table-column prop="CharacteristicGrade" :label="$t('aqlrules.CharaCteristicGrade')">
+                </el-table-column>
+                <el-table-column prop="TargetValue" :label="$t('aqlrules.TargetValue')">
+                </el-table-column>
 
-                        <el-table-column prop="MinValue" :label="$t('aqlrules.MinValue')">
-                        </el-table-column>
-                        <el-table-column prop="MaxValue" :label="$t('aqlrules.MaxValue')">
-                        </el-table-column>
-                        <el-table-column prop="InspectionToolName" :label="$t('aqlrules.ToolName')">
-                        </el-table-column>
-                        <el-table-column prop="uomname" :label="$t('aqlrules.uomname')">
-                        </el-table-column>
-                        <el-table-column prop="InspectionBasis" :label="$t('aqlrules.InspectionBasis')">
-                        </el-table-column>
-                        <el-table-column prop="SampleSize" :label="$t('incomeSheet.numberOfSample')">
-                           
-                        </el-table-column>
-                        <el-table-column prop="DefectCount" :label="$t('incomeSheet.numberOfDefect')">
-                          
-                        </el-table-column>
-                        <el-table-column prop="MeasuredValue" :align="'center'"
-                            :label="$t('incomeSheet.MeasurementNumber')">
-                            <template #default="scope">
-                                <span>{{ formatMeasuredValues(scope.row) }}</span>
-                             
-                            </template>
-                        </el-table-column>
-                        <el-table-column prop="Sum" :label="'总和'">
-                        </el-table-column>
-                        <el-table-column prop="Average" :label="'平均数'">
-                        </el-table-column>
-                        <el-table-column prop="StatusText" :label="'结果'">
-                        </el-table-column>
-                        <el-table-column prop="UnqualifiedHandlingResults" :label="'不良处理结果'" width="180">
-                        </el-table-column>
-                    </el-table>
+                <el-table-column prop="MinValue" :label="$t('aqlrules.MinValue')">
+                </el-table-column>
+                <el-table-column prop="MaxValue" :label="$t('aqlrules.MaxValue')">
+                </el-table-column>
+                <el-table-column prop="InspectionToolName" :label="$t('aqlrules.ToolName')">
+                </el-table-column>
+                <el-table-column prop="uomname" :label="$t('aqlrules.uomname')">
+                </el-table-column>
+                <el-table-column prop="InspectionBasis" :label="$t('aqlrules.InspectionBasis')">
+                </el-table-column>
+                <el-table-column prop="SampleSize" :label="$t('incomeSheet.numberOfSample')">
+
+                </el-table-column>
+                <el-table-column prop="DefectCount" :label="$t('incomeSheet.numberOfDefect')">
+
+                </el-table-column>
+                <el-table-column prop="MeasuredValue" :align="'center'" :label="$t('incomeSheet.MeasurementNumber')">
+                    <template #default="scope">
+                        <span>{{ formatMeasuredValues(scope.row) }}</span>
+
+                    </template>
+                </el-table-column>
+                <el-table-column prop="Sum" :label="'总和'">
+                </el-table-column>
+                <el-table-column prop="Average" :label="'平均数'">
+                </el-table-column>
+                <el-table-column prop="StatusText" :label="'结果'">
+                </el-table-column>
+                <el-table-column prop="UnqualifiedHandlingResults" :label="'不良处理结果'" width="180">
+                </el-table-column>
+            </el-table>
             <template #footer>
                 <div class="dialog-footer">
                     <el-button @click="handleIQCCharactClose">{{
+                        $t("publicText.close")
+                    }}</el-button>
+
+                </div>
+            </template>
+        </el-dialog>
+        <el-dialog v-model="productConVisit" :title="'其他信息'" width="80%" :append-to-body="true"
+            :close-on-click-modal="false" :close-on-press-escape="false" align-center @close="handleOtherClose">
+            <el-tabs v-model="activeConName" @tab-change="handleClick" type="border-card">
+                <el-tab-pane label="生产调控" name="first">
+                    <el-table :data="ProControlTable" border stripe style="width: 100%" size="small" :height="350">
+                        <el-table-column prop="MfgOrder" :label="$t('oqcInspection.workerOrder')" />
+                        <el-table-column prop="MfgOrderPO" :label="'工单PO'" />
+                        <el-table-column prop="Quantity" :label="'生产数量'" />
+                        <el-table-column prop="OrderQty" :label="'工单数量'" />
+                        <el-table-column prop="ProductName" :label="$t('oqcInspection.productName')" width="130" />
+                        <el-table-column prop="ProductType" :label="$t('oqcInspection.productCategory')" />
+                        <el-table-column prop="ProductDescription" :label="'产品描述'" width="130" />
+                        <el-table-column prop="CustomerName" :label="$t('oqcInspection.customerName')" />
+                        <el-table-column prop="CustomerPO" :label="$t('oqcInspection.customerPO')" width="130" />
+                        <el-table-column prop="CustomerPN" :label="$t('oqcInspection.customerPN')" width="130" />
+                        <el-table-column prop="SpecName" :label="'工序'" width="130" />
+                        <el-table-column prop="SpecificationNo" :label="'规格书编号'" width="130" />
+                        <el-table-column prop="Tabulator" :label="$t('oqcInspection.CreateTime')" width="150" />
+                        <el-table-column prop="AcceptOrdersDate" :label="'下单日期'" width="150" />
+                        <el-table-column prop="PlaceAnOrderDate" :label="'排产日期'" width="150" />
+                        <el-table-column prop="ShipmentDate" :label="'出货日期'" width="150" />
+                        <el-table-column prop="SchedulingDate" :label="'接单日期'" width="150" />
+                    </el-table>
+                </el-tab-pane>
+                <el-tab-pane label="物料出仓" name="second">
+                    <el-table :data="MaterialDisTable" border stripe style="width: 100%" size="small" :height="350">
+                        <el-table-column prop="MfgOrderName" :label="$t('oqcInspection.workerOrder')" />
+                        <el-table-column prop="MfgOrderPO" :label="'产品分类'" />
+                        <el-table-column prop="ProductName" :label="'原料名称'" />
+                        <el-table-column prop="MaterialSpecifications" :label="'原料规格'" />
+                        <el-table-column prop="MaterialLot" :label="'原料批号'" width="130" />
+                        <el-table-column prop="QtyRequired" :label="'申领数量'" />
+                        <el-table-column prop="BatchLot" :label="'生产批号'" width="130" />
+                        <el-table-column prop="MOSignForConfirmUserName" :label="'MO签收确认'" />
+                        <el-table-column prop="MOSignForConfirmDate" :label="'MO签收确认时间'" width="130" />
+                        <el-table-column prop="WareHouseConfirmUserName" :label="'仓管确认'" width="130" />
+                        <el-table-column prop="WareHouseConfirmDate" :label="'仓管确认时间'" width="130" />
+                        <el-table-column prop="LabelProductionConfirmUserName" :label="'标签制作确认'" width="130" />
+                        <el-table-column prop="LabelSignForConfirmDate" :label="'标签制作确认时间'" width="150" />
+                        <el-table-column prop="LabelSignForConfirmUserName" :label="'标签签收确认'" width="150" />
+                        <el-table-column prop="LabelSignForConfirmDate" :label="'标签签收确认时间'" width="150" />
+                        <el-table-column prop="CuttingQty" :label="'开料数量'" width="150" />
+                        <el-table-column prop="MaterialReceiverName" :label="'领料人'" width="150" />
+                        <el-table-column prop="MaterialRequisitionDate" :label="'领料时间'" width="150" />
+                    </el-table>
+                </el-tab-pane>
+                <el-tab-pane label="生产过程" name="third">
+                    <el-table :data="ProLineRealTable" border stripe style="width: 100%" size="small" :height="350">
+                        <el-table-column prop="MfgOrderName" :label="$t('oqcInspection.workerOrder')" />
+                        <el-table-column prop="ResourceName" :label="'设备编号'" />
+                        <el-table-column prop="ProductName" :label="'模具编号'" />
+                        <!-- <el-table-column prop="MaterialSpecifications" :label="'一模数'" />
+                        <el-table-column prop="MaterialLot" :label="'片数/卷数'" width="130" /> -->
+                        <el-table-column prop="MoveInDate" :label="'开始时间'" />
+                        <el-table-column prop="TxnDate" :label="'终止时间'" width="130" />
+                        <el-table-column prop="TimeDiff" :label="'时长'" />
+                        <el-table-column prop="EmployeeName" :label="'工号'" width="130" />
+                        <el-table-column prop="FullName" :label="'姓名'" width="130" />
+                    </el-table></el-tab-pane>
+                <el-tab-pane label="包装数据" name="fourth">
+                    <el-table :data="FinishedProTable" border stripe style="width: 100%" size="small" :height="350">
+                        <el-table-column prop="MfgOrderName" :label="$t('oqcInspection.workerOrder')" />
+                        <el-table-column prop="count_records" :label="'整箱数量'" />
+                        <el-table-column prop="avg_NumberOfBoxes" :label="'整箱箱数'" />
+                        <el-table-column prop="MaterialSpecifications" :label="'尾箱数量'" />
+                        <el-table-column prop="MaterialLot" :label="'尾箱箱数'" width="130" />
+                        <el-table-column prop="QtyRequired" :label="'整包数量'" />
+                        <el-table-column prop="BatchLot" :label="'整包包数'" width="130" />
+                        <el-table-column prop="MOSignForConfirmUserName" :label="'尾箱：包/箱'" width="130" />
+                        <el-table-column prop="MOSignForConfirmDate" :label="'整箱净重kg'" width="130" />
+                        <el-table-column prop="WareHouseConfirmUserName" :label="'整箱毛重kg'" width="130" />
+                        <el-table-column prop="BoxModlName" :label="'整箱外箱型'" width="100" />
+                        <el-table-column prop="LabelProductionConfirmUserName" :label="'尾箱净重kg'" width="130" />
+                        <el-table-column prop="LabelSignForConfirmDate" :label="'尾箱毛重kg'" width="150" />
+                        <el-table-column prop="LabelSignForConfirmUserName" :label="'尾箱外箱型'" width="150" />
+                        <el-table-column prop="total_gross_weight" :label="'整包净重kg'" width="150" />
+                        <el-table-column prop="total_net_weight" :label="'整包毛重kg'" width="150" />
+                        <el-table-column prop="MaterialReceiverName" :label="'尾包数量'" width="150" />
+                        <el-table-column prop="MaterialRequisitionDate" :label="'尾包包数'" width="150" />
+                        <el-table-column prop="MaterialReceiverName" :label="'尾包净重kg'" width="150" />
+                        <el-table-column prop="MaterialRequisitionDate" :label="'尾包毛重kg'" width="150" />
+                        <el-table-column prop="MaterialReceiverName" :label="'工号'" width="150" />
+                        <el-table-column prop="MaterialRequisitionDate" :label="'姓名'" width="150" />
+                    </el-table>
+                </el-tab-pane>
+                <el-tab-pane label="过程检验" name="five">
+                    <el-table :data="ProStageTable" border stripe style="width: 100%" size="small" :height="350">
+                        <el-table-column prop="order_no" :label="$t('oqcInspection.workerOrder')" />
+                        <el-table-column prop="pass_rate_percent" label="合格率" />
+                        <el-table-column prop="total_qty" label="总数量" />
+                        <el-table-column prop="good_qty" label="良品数" />
+                        <el-table-column prop="defect_qty" label="不良品数" />
+                        <el-table-column prop="current_balance" label="本次结余" />
+                        <el-table-column prop="process_defect_rate_percent" label="工序不良率" />
+                        <el-table-column prop="process_defect_indentation" label="工序-压痕" />
+                        <el-table-column prop="process_defect_uneven" label="工序-凹凸" />
+                        <el-table-column prop="process_defect_burr" label="工序-毛边" />
+                        <el-table-column prop="process_defect_crack" label="工序-开裂" />
+                        <el-table-column prop="process_defect_foreign_matter" label="工序-异物" />
+                        <el-table-column prop="process_defect_red_dot" label="工序-红点" />
+                        <el-table-column prop="process_defect_over_cut" label="工序-多切" />
+                        <el-table-column prop="process_defect_deformation" label="工序-变形" />
+                        <el-table-column prop="process_defect_punch_break" label="工序-冲断" />
+                        <el-table-column prop="raw_defect_bubble" label="工序-气泡" />
+                        <el-table-column prop="process_defect_other" label="工序-其他" />
+                        <el-table-column prop="raw_material_defect_rate_percent" label="原料不良率" />
+                        <el-table-column prop="raw_defect_glue" label="原料-胶水" />
+                        <el-table-column prop="raw_defect_scratch" label="原料-刮伤" />
+                        <el-table-column prop="raw_defect_pinhole" label="原料-针孔" />
+                        <el-table-column prop="raw_defect_stain" label="原料-污点" />
+                        <el-table-column prop="raw_defect_bubble" label="原料-气泡" />
+                        <el-table-column prop="raw_defect_broken_corner" label="原料-缺角" />
+                        <el-table-column prop="raw_defect_uneven" label="原料-凹凸" />
+                        <el-table-column prop="raw_defect_tilt" label="原料-倾斜" />
+                        <el-table-column prop="process_defect_foreign_matter" label="原料-异物" />
+                        <el-table-column prop="process_defect_red_dot" label="原料-红点" />
+                        <el-table-column prop="raw_defect_other" label="原料-其他" />
+                    </el-table>
+                </el-tab-pane>
+                <el-tab-pane label="生产备注" name="six">
+                    <el-table :data="ManufactureTable" border stripe style="width: 100%" size="small" :height="350">
+                        <el-table-column prop="MfgOrder" :label="$t('oqcInspection.workerOrder')" />
+                        <el-table-column prop="ApprovalRemarks" :label="'备注'" />
+                        <el-table-column prop="LotNumber" :label="'出货批号'" />
+                        <el-table-column prop="ShippingQty" :label="'送检数量'" />
+                        <el-table-column prop="UnitOfMeasure" :label="'单位'" width="130" />
+                        <el-table-column prop="FormattedDate" :label="'送检时间'" />
+                        <el-table-column prop="" :label="'送检人工号'" width="130" />
+                        <el-table-column prop="Submitter" :label="'送检人'" />
+
+                    </el-table>
+                </el-tab-pane>
+            </el-tabs>
+            <template #footer>
+                <div class="dialog-footer">
+                    <el-button @click="handleOtherClose">{{
                         $t("publicText.close")
                     }}</el-button>
 
@@ -586,7 +739,14 @@ import {
     DownloadAndFillCOCFile,
     QueryOQCCorrelationIQCModelSpec,
     GetAQLLevelQuery,
-    GetResourceQuery
+    GetResourceQuery,
+    QueryProductionControlParameters,
+    QueryMaterialDispatchDetails,
+    QueryProductionLineRealTimeData,
+    QueryProductionStageQCReports,
+    QueryFinishedProductPackingData,
+    QueryManufacturingNotesHistory,
+    QueryResource
 } from "@/api/smtSpotCheck/oqc";
 import {
     GetIQCInspectionDetailQuery
@@ -613,6 +773,7 @@ const { t } = useI18n();
 import { useUserStoreWithOut } from "@/stores/modules/user";
 import dayjs from "dayjs";
 import router from "@/router";
+import { exportTableToExcel } from "@/utils/exportExcel";
 import { saveAs } from "file-saver";
 import JSZip from 'jszip';
 const userStore = useUserStoreWithOut();
@@ -770,7 +931,17 @@ const iqcCharactList = ref<any[]>([])
 const iqcCharactVisit = ref(false)
 const iqcDetailName = ref('')
 const iqcCharactTable = ref<any[]>([])
-const iqcCharactTitle=ref('')
+const iqcCharactTitle = ref('')
+const productConVisit = ref(false)
+const activeConName = ref('first')
+const ProControlTable = ref<any[]>([])
+const MaterialDisTable = ref<any[]>([])
+const ProLineRealTable = ref<any[]>([])
+const FinishedProTable = ref<any[]>([])
+const ProStageTable = ref<any[]>([])
+
+const ManufactureTable = ref<any[]>([])
+const oqcInspectionRef = ref()
 watch(
     () => searchDate.value,
     (newVal: any, oldVal: any) => {
@@ -853,22 +1024,99 @@ const testClick = () => {
         query: { title: "IQC-来料检验单-审核1" },
     });
 };
+//
 const getData = () => {
     QueryOQCDocumentNumbersByCriteria(getForm.value).then((res: any) => {
         tableData.value = res.content;
     });
 };
+//获取检验方案
 const GetAQLLevelQueryData = () => {
     GetAQLLevelQuery({}).then((res: any) => {
         aqlLevelList.value = res.content;
     });
 };
+//获取设备
 const GetResourceQueryData = () => {
-    GetResourceQuery({}).then((res: any) => {
+    QueryResource('检验仪器设备组').then((res: any) => {
         eqList.value = res.content;
     });
 };
+//获取生产调控
+const getProductControl = () => {
+    productConVisit.value = true
+    QueryProductionControlParameters(headerForm.value.MfgOrderName).then((res: any) => {
+        ProControlTable.value = res.content
+    })
+}
 
+const exportTable = () => {
+    exportTableToExcel({
+        tableRef: oqcInspectionRef.value,
+        fetchAllData: fetchFinishAllData,
+        fileName: `${'OQC-检验审批'}_${dayjs().format(
+            "YYYYMMDDHHmmss"
+        )}`,
+        styles: {
+            headerBgColor: "", // 灰色表头
+            headerFont: {
+                color: { argb: "" }, // 红色文字
+                bold: false,
+                size: 12,
+            }, // 白色文字
+            cell: { numFmt: "@" }, // 强制文本格式
+        },
+        t,
+    });
+}
+const fetchFinishAllData = async () => {
+    let data = await QueryOQCDocumentNumbersByCriteria(getForm.value).then(
+        (res: any) => {
+            return res.content.map((item: any) => {
+                item.UpdateTime = dayjs(item.UpdateTime).format(
+                    "YYYY-MM-DD HH:mm:ss"
+                );
+                return item;
+            });
+        }
+    );
+    return data;
+};
+const handleClick = (val: any) => {
+    console.log(val);
+    if (val == "first") {
+        QueryProductionControlParameters(headerForm.value.MfgOrderName).then((res: any) => {
+            ProControlTable.value = res.content
+        })
+    } else if (val == 'second') {
+        QueryMaterialDispatchDetails(headerForm.value.MfgOrderName).then((res: any) => {
+            MaterialDisTable.value = res.content
+        })
+    } else if (val == 'third') {
+        QueryProductionLineRealTimeData(headerForm.value.MfgOrderName).then((res: any) => {
+            ProLineRealTable.value = res.content
+        })
+    } else if (val == 'fourth') {
+        QueryFinishedProductPackingData(headerForm.value.MfgOrderName).then((res: any) => {
+            FinishedProTable.value = res.content
+        })
+
+    } else if (val == 'five') {
+        QueryProductionStageQCReports(headerForm.value.MfgOrderName).then((res: any) => {
+
+            ProStageTable.value = res.content
+        })
+    } else {
+        QueryManufacturingNotesHistory(headerForm.value.MfgOrderName).then((res: any) => {
+            ManufactureTable.value = res.content
+        })
+    }
+
+}
+const handleOtherClose = () => {
+    productConVisit.value = false
+    activeConName.value = 'first'
+}
 const openFile = (val: any) => {
     FTPSearchAndDownloadSpecificationDocumentFile(val).then((res: any) => {
         if (res.success) {
@@ -1085,7 +1333,7 @@ const downloadSingleFile = async (file: IQCFile) => {
 
 const handleLookIQC = (val: any) => {
     iqcCharactTitle.value = val.OQCNumber
-    
+
     QueryOQCCorrelationIQCModelSpec(val.OQCName).then((res: any) => {
         // 检查返回数据是否为空
         if (!res.content || res.content.length === 0) {
@@ -1096,18 +1344,18 @@ const handleLookIQC = (val: any) => {
             });
             return;
         }
-        
+
         // 过滤掉三个关键字段中任意一个为 null/undefined/空字符串 的数据
         const validItems = res.content.filter((item: any) => {
             // 检查三个关键字段是否都有有效值
-            return item.iqcNumber != null && 
-                   item.modelSpec != null && 
-                   item.iqcDetailName != null &&
-                   item.iqcNumber !== '' && 
-                   item.modelSpec !== '' && 
-                   item.iqcDetailName !== '';
+            return item.iqcNumber != null &&
+                item.modelSpec != null &&
+                item.iqcDetailName != null &&
+                item.iqcNumber !== '' &&
+                item.modelSpec !== '' &&
+                item.iqcDetailName !== '';
         });
-        
+
         // 如果过滤后没有有效数据
         if (validItems.length === 0) {
             ElMessage({
@@ -1117,7 +1365,7 @@ const handleLookIQC = (val: any) => {
             });
             return;
         }
-        
+
         // 将过滤后的数据映射到需要的格式
         iqcCharactList.value = validItems.map((item: any, index: number) => {
             return {
@@ -1125,7 +1373,7 @@ const handleLookIQC = (val: any) => {
                 iqcDetailID: `${item.iqcNumber}-${item.modelSpec}-${index + 1}`
             };
         });
-        
+
         iqcCharactVisit.value = true;
         console.log('有效IQC数据:', iqcCharactList.value);
 
@@ -1151,13 +1399,13 @@ const handleIQCCharactClose = () => {
     iqcCharactTable.value = []
     iqcDetailName.value = ''
 }
-const getIqcDetailData=()=>{
-    GetIQCInspectionDetailQuery({IQC_DetailName:iqcDetailName.value}).then((res:any)=>{
-        iqcCharactTable.value=res.content.filter(
-                (item: any) => item.MeasurementType == "计量"
-            )
+const getIqcDetailData = () => {
+    GetIQCInspectionDetailQuery({ IQC_DetailName: iqcDetailName.value }).then((res: any) => {
+        iqcCharactTable.value = res.content.filter(
+            (item: any) => item.MeasurementType == "计量"
+        )
         // console.log( iqcCharactTable.value);
-        
+
     })
 }
 
@@ -1176,7 +1424,7 @@ const getInspectDetilData = () => {
                 MfgOrderName: data.OQCHead[0].mfgOrderNo,
                 OrderQty: data.OQCHead[0].orderQty,
                 ShippingQty: data.OQCHead[0].shippingQty,
-                PartNo: data.OQCHead[0].customerPartNo,
+                PartNo: data.OQCHead[0].customerPo,
                 LotNo: data.OQCHead[0].lotNo,
                 TotalEvaluation: data.OQCHead[0].totalEvaluation,
                 ProductName: data.OQCHead[0].productName,
@@ -1403,7 +1651,7 @@ const dataProcessing = () => {
         CustomerPN: headerForm.value.CustomerPN,
         Date: headerForm.value.Date,
         DataStatus: 0,
-        OperatorUser: userStore.getUserInfo,
+        OperatorUser: userStore.getUserInfo2!==''?userStore.getUserInfo2:userStore.getUserInfo,
         ApprovalStatus: "",
         ApprovalRemarks: "",
         InspectionStatus: "",
@@ -1414,7 +1662,7 @@ const dataProcessing = () => {
         oQCInstrumentDetails: [
             ...eqTable.value
         ],
-        oQCCharacteristicsDetails: [...CharactTable.value],
+        oQCCharacteristicsDetails: [...CharactTable.value.filter((item: any) => item.OQCCharacteristicsName == null)],
         oQCInspectionDetails: [
             ...QCInspectDetail.value
         ],
@@ -1423,6 +1671,7 @@ const dataProcessing = () => {
             MeasurementMethod: MeasurValur.value.join(","),
         },
     };
+
     // console.log(data);
     return data
 };
@@ -1466,10 +1715,8 @@ const handleInspectConfirm = () => {
     let data = dataProcessing()
     data.InspectionStatus = "2"
     // console.log(data);
-    let isEixt = data.oQCInspectionDetails.findIndex((item: any) => item.Status == 0)
+    let isEixt = data.oQCInspectionDetails.findIndex((item: any) => item.Status == 0 || item.Status == "无数据")
     if (isEixt != -1) {
-        // console.log(isEixt);
-        //  console.log(data);
         ElMessage({
             title: t("message.tipTitle"),
             message: '检验项目存在不合格项，请处理后再提交',
@@ -1498,7 +1745,7 @@ const handleAppClose = () => {
 }
 const handleAppConfirm = () => {
     let data = dataProcessing()
-    data.OperatorUser = userStore.getUserInfo
+    data.OperatorUser = userStore.getUserInfo2!==''?userStore.getUserInfo2:userStore.getUserInfo
     data.OperationType = "Approve"
     data.ApprovalStatus = appForm.value.ApprovalStatus
     data.ApprovalRemarks = appForm.value.ApprovalRemarks
@@ -1523,7 +1770,7 @@ const handleAppConfirm = () => {
 const handleApproval = (row: any) => {
     appVisible.value = true
     // let data=dataProcessing()
-    // data.OperatorUser= userStore.getUserInfo
+    // data.OperatorUser= userStore.getUserInfo2!==''?userStore.getUserInfo2:userStore.getUserInfo
     // data.OperationType="Approve"
     // OQCDocumentExecution(data).then((res: any) => {
     //     ElMessage({
@@ -1643,28 +1890,76 @@ const handleSampleSizeChange = (row: any) => {
     }
 };
 const calculateSum = (row: any) => {
+    // let sum = 0;
+    // for (let i = 1; i <= 10; i++) {
+    //     const value = row[`MeasuredValue${i}`];
+    //     if (value !== null && value !== undefined && value !== "") {
+    //         console.log(value);
+
+    //         sum +=value
+    //     }
+    // }
+    // row.Sum = sum;
+    // return sum;
     let sum = 0;
     for (let i = 1; i <= 10; i++) {
         const value = row[`MeasuredValue${i}`];
         if (value !== null && value !== undefined && value !== "") {
-            sum += Number(value);
+            // 使用 parseFloat 而不是 Number
+            const numValue = parseFloat(value);
+            if (!isNaN(numValue)) {
+                sum += numValue;
+            }
         }
     }
-    row.Sum = sum;
-    return sum;
+    // 使用 toFixed 处理精度问题
+    row.Sum = parseFloat(sum.toFixed(2));
+    return row.Sum;
 };
 const calculateAverage = (row: any) => {
-    let sum = 0;
+    // let sum = 0;
+    // let count = 0;
+    // for (let i = 1; i <= 10; i++) {
+    //     const value = row[`MeasuredValue${i}`];
+    //     if (value !== null && value !== undefined && value !== "") {
+    //         sum += Number(value)
+    //         count++;
+    //     }
+    // }
+    // row.Average = count > 0 ? (sum / count).toFixed(2) : 0;
+    // return count > 0 ? (sum / count).toFixed(2) : 0;
+    let integerSum = 0; // 存储乘以100后的整数和
     let count = 0;
+
     for (let i = 1; i <= 10; i++) {
         const value = row[`MeasuredValue${i}`];
-        if (value !== null && value !== undefined && value !== "") {
-            sum += Number(value);
+
+        // 跳过空值
+        if (value == null || value === "") continue;
+
+        // 使用一元加运算符转换并乘以100转为整数
+        const num = +value;
+
+        // 检查是否为有效数字
+        if (!isNaN(num) && isFinite(num)) {
+            integerSum += Math.round(num * 100); // 乘以100并四舍五入
             count++;
         }
     }
-    row.Average = count > 0 ? sum / count : 0;
-    return count > 0 ? (sum / count).toFixed(2) : 0;
+
+    let average = 0;
+
+    if (count > 0) {
+        // 计算平均值（整数运算）
+        average = integerSum / count;
+        // 除以100转回小数，再四舍五入到2位小数
+        average = Math.round(average) / 100;
+    }
+
+    // 格式化为字符串，保留2位小数
+    const result = average.toFixed(2);
+    row.Average = result;
+    return result;
 };
 const formatMeasuredValues = (row: any) => {
     const values = [];

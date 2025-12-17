@@ -25,13 +25,16 @@
                         @click="handleSelectionData">
                         {{ $t("publicText.approval") }}
                     </el-button>
+                      <el-button type="success" :disabled="tableData.length==0" size="small" @click="exportTable">
+                        导出Excel
+                    </el-button>
                 </el-form-item>
             </el-form>
             <el-table :data="tableData.slice(
                 (pageObj.currentPage - 1) * pageObj.pageSize,
                 pageObj.currentPage * pageObj.pageSize
             )
-                " size="small" :style="{ width: '100%' }" ref="rawRef" :height="tableHeight" border fit
+                " size="small" :style="{ width: '100%' }" ref="inspectionSheetRef" :height="tableHeight" border fit
                 highlight-current-row   @selection-change="handleSelectionChange">
                    <el-table-column type="selection" width="55" align="center" />
                 <el-table-column type="index" align="center" fixed :label="$t('publicText.index')" width="50">
@@ -246,8 +249,8 @@
                             :label="$t('incomeSheet.MeasurementNumber')">
                             <template #default="scope">
                                 <span @click="openMeasurementDialog(scope.row, scope.$index)">{{ formatMeasuredValues(scope.row) }}</span>
-                                <!-- <el-button type="primary" icon="Plus" :size="'small'"
-                                    @click="openMeasurementDialog(scope.row, scope.$index)" /> -->
+                                <el-button type="primary" icon="Plus" :size="'small'"
+                                    @click="openMeasurementDialog(scope.row, scope.$index)" />
                             </template>
                         </el-table-column>
 
@@ -376,6 +379,8 @@ import {
 import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
 import JSZip from 'jszip';
+import { exportTableToExcel } from "@/utils/exportExcel";
+import dayjs from "dayjs";
 import {
     ref,
     watch,
@@ -445,6 +450,7 @@ const appForm = ref({
     ApprovalResult: "",
     ApprovalRemarks: "",
 });
+const inspectionSheetRef=ref()
 watch(
     () => searchDate.value,
     (newVal: any, oldVal: any) => {
@@ -486,6 +492,39 @@ const getData = () => {
     GetIQCHeaderQuery(getForm.value).then((res: any) => {
         tableData.value = res.content
     });
+};
+
+const exportTable=()=>{
+     exportTableToExcel({
+        tableRef: inspectionSheetRef.value,
+        fetchAllData: fetchFinishAllData,
+        fileName: `${'IQC-进料检验'}_${dayjs().format(
+            "YYYYMMDDHHmmss"
+        )}`,
+        styles: {
+            headerBgColor: "", // 灰色表头
+            headerFont: {
+                color: { argb: "" }, // 红色文字
+                bold: false,
+                size: 12,
+            }, // 白色文字
+            cell: { numFmt: "@" }, // 强制文本格式
+        },
+        t,
+    });
+}
+const fetchFinishAllData = async () => {
+    let data = await   GetIQCHeaderQuery(getForm.value).then(
+        (res: any) => {
+            return res.content.map((item: any) => {
+                item.UpdateTime = dayjs(item.UpdateTime).format(
+                    "YYYY-MM-DD HH:mm:ss"
+                );
+                return item;
+            });
+        }
+    );
+    return data;
 };
 const resetGetForm = () => {
     getForm.value = {
@@ -530,11 +569,11 @@ const handleAppConfirm = () => {
             InspectionNo: item.IQCNumber,
             ApprovalResult: appForm.value.ApprovalResult,
             ApprovalRemarks: appForm.value.ApprovalRemarks,
-            Approver: userStore.getUserInfo,
+            Approver:userStore.getUserInfo2!==''?userStore.getUserInfo2:userStore.getUserInfo,
         };
     });
     AyscIQCApproval(data).then((res: any) => {
-        ElNotification({
+        ElMessage({
             title: t("message.tipTitle"),
             message: res.msg,
             type: res.success ? "success" : "error",
@@ -549,6 +588,13 @@ const handleAppConfirm = () => {
 };
 const openFile = (val: any) => {
     LabelPrintDownloadFtp(val).then((res: any) => {
+         if(!res.success){
+            ElMessage({
+                message:res.msg,
+                type:'error'
+            })
+            return
+        }
         const base64Data = 'data:application/pdf;base64,' + res.content.FileData;
         previewUrl.value = base64Data
         previewTitle.value = res.content.FileName
@@ -802,28 +848,74 @@ const handleSampleSizeChange = (row: any) => {
     }
 };
 const calculateSum = (row: any) => {
-    let sum = 0;
+    // let sum = 0;
+    // for (let i = 1; i <= 10; i++) {
+    //     const value = row[`MeasuredValue${i}`];
+    //     if (value !== null && value !== undefined && value !== "") {
+    //         sum += Number(value);
+    //     }
+    // }
+    // row.Sum=sum;
+    // return sum;
+        let sum = 0;
     for (let i = 1; i <= 10; i++) {
         const value = row[`MeasuredValue${i}`];
         if (value !== null && value !== undefined && value !== "") {
-            sum += Number(value);
+            // 使用 parseFloat 而不是 Number
+            const numValue = parseFloat(value);
+            if (!isNaN(numValue)) {
+                sum += numValue;
+            }
         }
     }
-    row.Sum=sum;
-    return sum;
+    // 使用 toFixed 处理精度问题
+    row.Sum = parseFloat(sum.toFixed(2));
+    return row.Sum;
 };
 const calculateAverage = (row: any) => {
-    let sum = 0;
+    // let sum = 0;
+    // let count = 0;
+    // for (let i = 1; i <= 10; i++) {
+    //     const value = row[`MeasuredValue${i}`];
+    //     if (value !== null && value !== undefined && value !== "") {
+    //         sum += Number(value);
+    //         count++;
+    //     }
+    // }
+    // row.Average=(count > 0 ? (sum / count).toFixed(2) : 0);
+    // return count > 0 ? (sum / count).toFixed(2) : 0;
+        let integerSum = 0; // 存储乘以100后的整数和
     let count = 0;
+    
     for (let i = 1; i <= 10; i++) {
         const value = row[`MeasuredValue${i}`];
-        if (value !== null && value !== undefined && value !== "") {
-            sum += Number(value);
+        
+        // 跳过空值
+        if (value == null || value === "") continue;
+        
+        // 使用一元加运算符转换并乘以100转为整数
+        const num = +value;
+        
+        // 检查是否为有效数字
+        if (!isNaN(num) && isFinite(num)) {
+            integerSum += Math.round(num * 100); // 乘以100并四舍五入
             count++;
         }
     }
-    row.Average=(count > 0 ? (sum / count).toFixed(2) : 0);
-    return count > 0 ? (sum / count).toFixed(2) : 0;
+    
+    let average = 0;
+    
+    if (count > 0) {
+        // 计算平均值（整数运算）
+        average = integerSum / count;
+        // 除以100转回小数，再四舍五入到2位小数
+        average = Math.round(average) / 100;
+    }
+    
+    // 格式化为字符串，保留2位小数
+    const result = average.toFixed(2);
+    row.Average = result;
+    return result;
 };
 const formatMeasuredValues = (row: any) => {
     const values = [];
@@ -919,7 +1011,7 @@ const handleZCConfirm = () => {
             MeasuredValue10: item.MeasuredValue10 || "",
             Sum:parseFloat(item.Sum ) || 0,
             Average:parseFloat(item.Average ) || 0,
-            Inspector: userStore.getUserInfo,
+            Inspector: userStore.getUserInfo2!==''?userStore.getUserInfo2:userStore.getUserInfo,
               UnqualifiedHandlingResults: item.UnqualifiedHandlingResults,
             Status: item.Status,
             DataStatus: 0,
@@ -945,7 +1037,7 @@ const handleZCConfirm = () => {
             MeasuredValue10: "",
             Sum:parseFloat(item.Sum ) || 0,
             Average:parseFloat(item.Average ) || 0,
-            Inspector: userStore.getUserInfo,
+            Inspector: userStore.getUserInfo2!==''?userStore.getUserInfo2:userStore.getUserInfo,
             UnqualifiedHandlingResults: item.UnqualifiedHandlingResults,
             Status: item.DefectCount == 0 ? 1 : 2,
             DataStatus: 0
@@ -953,7 +1045,7 @@ const handleZCConfirm = () => {
     })
     // console.log( data);
     AyscIQCTemporaryStorage(data).then((res: any) => {
-        ElNotification({
+        ElMessage({
             title: t("message.tipTitle"),
             message: '暂存成功',
             type: res.success ? "success" : "error",
@@ -982,7 +1074,7 @@ const handletestConfirm = () => {
             MeasuredValue10: item.MeasuredValue10 || "",
             Sum:parseFloat(item.Sum ) || 0,
             Average:parseFloat(item.Average ) || 0,
-            Inspector: userStore.getUserInfo,
+            Inspector: userStore.getUserInfo2!==''?userStore.getUserInfo2:userStore.getUserInfo,
                UnqualifiedHandlingResults: item.UnqualifiedHandlingResults,
             Status: item.Status,
             DataStatus: 0,
@@ -993,7 +1085,7 @@ const handletestConfirm = () => {
     // })
 
     // if (isEixt !== -1) {
-    //     ElNotification({
+    //     ElMessage({
     //         title: t("message.tipTitle"),
     //         message: '计量结果，不通过！请检查',
     //         type: "error",
@@ -1020,7 +1112,7 @@ const handletestConfirm = () => {
             MeasuredValue10: "",
             Sum:parseFloat(item.Sum ) || 0,
             Average:parseFloat(item.Average ) || 0,
-            Inspector: userStore.getUserInfo,
+            Inspector: userStore.getUserInfo2!==''?userStore.getUserInfo2:userStore.getUserInfo,
                UnqualifiedHandlingResults: item.UnqualifiedHandlingResults,
             Status: item.DefectCount == 0 ? 1 : 2,
             DataStatus: 0
@@ -1029,7 +1121,7 @@ const handletestConfirm = () => {
     // console.log(data);
 
     AyscIQCInspectionInterface(data).then((res: any) => {
-        ElNotification({
+        ElMessage({
             title: t("message.tipTitle"),
             message: res.msg,
             type: res.success ? "success" : "error",

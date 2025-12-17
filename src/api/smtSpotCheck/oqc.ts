@@ -103,3 +103,79 @@ export function GetResourceQuery(data: any) {
        data
     });
 }
+
+
+
+export function QueryProductionControlParameters(data: any) {
+    return request({
+        url: "/api/OQCController/QueryProductionControlParameters",
+        method: "post",
+        params:{
+            MfgOrderName:data
+        }
+    });
+}
+
+
+export function QueryMaterialDispatchDetails(data: any) {
+    return request({
+        url: "/api/OQCController/QueryMaterialDispatchDetails",
+        method: "post",
+        params:{
+            MfgOrderName:data
+        }
+    });
+}
+
+
+export function QueryProductionLineRealTimeData(data: any) {
+    return request({
+        url: "/api/OQCController/QueryProductionLineRealTimeData",
+        method: "post",
+        params:{
+            MfgOrderName:data
+        }
+    });
+}
+
+export function QueryProductionStageQCReports(data: any) {
+    return request({
+        url: "/api/OQCController/QueryProductionStageQCReports",
+        method: "post",
+        params:{
+            MfgOrderName:data
+        }
+    });
+}
+export function QueryFinishedProductPackingData(data: any) {
+    return request({
+        url: "/api/OQCController/QueryFinishedProductPackingData",
+        method: "post",
+        params:{
+            MfgOrderName:data
+        }
+    });
+}
+
+
+export function QueryManufacturingNotesHistory(data: any) {
+    return request({
+        url: "/api/OQCController/QueryManufacturingNotesHistory",
+        method: "post",
+        params:{
+            MfgOrderName:data
+        }
+    });
+}
+
+export function QueryResource(data: any) {
+    return request({
+        url: "/api/OQCController/QueryResource",
+        method: "post",
+        params:{
+            ResourceGroupName:data
+        }
+    });
+}
+
+

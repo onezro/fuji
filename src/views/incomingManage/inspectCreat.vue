@@ -10,11 +10,11 @@
                     <el-form-item :label="$t('incomeCreat.creatInspect')" class="mb-2"><el-date-picker
                             :shortcuts="shortcuts" v-model="searchDate" value-format="YYYY-MM-DD" type="daterange"
                             range-separator="-" size="small" style="width: 200px" :clearable="false" /></el-form-item>
-                     <el-form-item :label="'检验结果'" class="mb-2">
-                      <el-select v-model="getForm.InspectionResult" placeholder=""  style="width: 200px" clearable>
-                          <el-option label="合格" value="合格" />
-                          <el-option label="不合格" value="不合格" />
-                      </el-select>
+                    <el-form-item :label="'检验结果'" class="mb-2">
+                        <el-select v-model="getForm.InspectionResult" placeholder="" style="width: 200px" clearable>
+                            <el-option label="合格" value="合格" />
+                            <el-option label="不合格" value="不合格" />
+                        </el-select>
                     </el-form-item>
                     <el-form-item class="mb-2">
                         <el-button type="primary" size="small" @click="getData">
@@ -41,14 +41,14 @@
                     <template #default="scope">
                         <span>{{
                             scope.$index + pageObj.pageSize * (pageObj.currentPage - 1) + 1
-                        }}</span>
+                            }}</span>
                     </template>
                 </el-table-column>
                 <el-table-column prop="IQCNumber" :label="$t('incomeCreat.creatInspect')">
                     <template #default="scope">
                         <span class="underline">{{
                             scope.row.IQCNumber
-                        }}</span>
+                            }}</span>
                     </template>
                 </el-table-column>
                 <el-table-column prop="NotifyDate" :label="$t('incomeCreat.NotifyDate')" />
@@ -58,8 +58,8 @@
                 <el-table-column prop="IsAutomotive" :label="$t('incomeCreat.isCarProduct')" />
                 <el-table-column prop="SamplingStandards" :label="$t('incomeCreat.InspectStandard')" />
                 <el-table-column prop="StatusText" :label="$t('incomeCreat.Status')" />
-                 <el-table-column prop="Status" :label="$t('incomeCreat.Status')" />
-                 
+                <el-table-column prop="Status" :label="$t('incomeCreat.Status')" />
+
                 <el-table-column prop="CreateTime" :label="$t('incomeCreat.creatDate')" width="150" />
                 <el-table-column :label="$t('publicText.operation')" width="120" fixed="right" align="center">
                     <template #default="scope">
@@ -125,7 +125,7 @@
                 <div class="dialog-footer">
                     <el-button @click="handleClose">{{
                         $t("publicText.cancel")
-                    }}</el-button>
+                        }}</el-button>
                     <el-button type="primary" @click="handleConfirm">
                         {{ $t("publicText.confirm") }}
                     </el-button>
@@ -170,7 +170,7 @@
                 <div class="dialog-footer">
                     <el-button @click="handleEditClose">{{
                         $t("publicText.cancel")
-                    }}</el-button>
+                        }}</el-button>
                     <el-button type="primary" @click="handleEditConfirm">
                         {{ $t("publicText.confirm") }}
                     </el-button>
@@ -190,7 +190,7 @@
                     <template #default="scope">
                         <span>{{
                             scope.$index + pageObj.pageSize * (pageObj.currentPage - 1) + 1
-                        }}</span>
+                            }}</span>
                     </template>
                 </el-table-column>
                 <el-table-column prop="MaterialName" :label="$t('incomeCreat.materialName')" />
@@ -202,17 +202,18 @@
                 <el-table-column prop="QuantityPerBox" :label="$t('incomeCreat.qtyIncomeMaterial')" />
                 <el-table-column prop="SampledBoxes" :label="$t('incomeSheet.SampledBoxes')" />
                 <el-table-column prop="SamplingStandards" :label="$t('incomeCreat.InspectStandard')" />
-                <el-table-column prop="SupplierReportName" :label="$t('incomeCreat.supplierReport')" >
+                <el-table-column prop="SupplierReportName" :label="$t('incomeCreat.supplierReport')">
 
                     <template #default="scope">
-                        <span v-if="scope.row.SupplierReportName" class="underline cursor-pointer text-cyan-800" @click="openFile(scope.row.SupplierReportGuid)">
-                        
-                                {{ scope.row.SupplierReportName }}
+                        <span v-if="scope.row.SupplierReportName" class="underline cursor-pointer text-cyan-800"
+                            @click="openFile(scope.row.SupplierReportGuid)">
+
+                            {{ scope.row.SupplierReportName }}
                         </span>
                     </template>
                 </el-table-column>
                 <el-table-column prop="StatusText" :label="$t('incomeCreat.Status')" />
-                   <el-table-column prop="Status" :label="$t('incomeCreat.Status')" />
+                <el-table-column prop="Status" :label="$t('incomeCreat.Status')" />
                 <el-table-column prop="CreateTime" :label="$t('incomeCreat.creatDate')" />
                 <el-table-column :label="$t('publicText.operation')" width="120" fixed="right" align="center">
                     <template #default="scope">
@@ -236,7 +237,7 @@
                 <div class="dialog-footer">
                     <el-button @click="detailVisible = false">{{
                         $t("publicText.close")
-                    }}</el-button>
+                        }}</el-button>
                 </div>
             </template>
         </el-dialog>
@@ -290,7 +291,7 @@
                 <div class="dialog-footer">
                     <el-button @click="handleAddDetailClose">{{
                         $t("publicText.cancel")
-                    }}</el-button>
+                        }}</el-button>
                     <el-button type="primary" @click="handleAddDetailConfirm">
                         {{ $t("publicText.confirm") }}
                     </el-button>
@@ -334,7 +335,7 @@
                 <!-- <el-form-item :label="$t('incomeCreat.supplierReport')" prop="supplierReport">
                     <el-input v-model="editdetailForm.SupplierReportName" style="width: 200px" placeholder="" />
                 </el-form-item> -->
-                  <el-form-item label="上传供应商报告">
+                <el-form-item label="上传供应商报告">
                     <el-upload action="#" multiple :limit="1" v-model:file-list="fileList" :auto-upload="false"
                         :on-change="file2UpChange" :on-remove="file2UpRemove" :before-upload="beforeUpload"
                         accept=".pdf" ref="upload1" class="upload-area">
@@ -346,22 +347,21 @@
                 <div class="dialog-footer">
                     <el-button @click="handleEditDetailClose">{{
                         $t("publicText.cancel")
-                    }}</el-button>
+                        }}</el-button>
                     <el-button type="primary" @click="handleEditDetailConfirm">
                         {{ $t("publicText.confirm") }}
                     </el-button>
                 </div>
             </template>
         </el-dialog>
-         <el-dialog v-model="previewVisible" :title="previewTitle"
-            width="800px" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false"
-            align-center >
+        <el-dialog v-model="previewVisible" :title="previewTitle" width="800px" :append-to-body="true"
+            :close-on-click-modal="false" :close-on-press-escape="false" align-center>
             <iframe :src="previewUrl" width="100%" height="550px" frameborder="0"></iframe>
-               <template #footer>
+            <template #footer>
                 <div class="dialog-footer">
                     <el-button @click="handlePreviewClose">{{
                         $t("publicText.close")
-                    }}</el-button>
+                        }}</el-button>
                     <el-button type="primary" @click="handlePreviewDawnload">
                         {{ $t("publicText.dawnload") }}
                     </el-button>
@@ -404,11 +404,12 @@ import {
     setLastDate,
     disabledDate,
 } from "@/utils/dataMenu";
-import { ElNotification, ElMessageBox,ElMessage } from "element-plus";
+import { ElNotification, ElMessageBox, ElMessage } from "element-plus";
 import { useI18n } from "vue-i18n";
 const { t } = useI18n();
 import { useUserStoreWithOut } from "@/stores/modules/user";
-import { de } from "element-plus/es/locale/index.mjs";
+import { messageProps } from "element-plus";
+
 const userStore = useUserStoreWithOut();
 const getForm = ref({
     InspectionNo: "",
@@ -525,13 +526,13 @@ watch(
         }
         if (newVal !== oldVal) {
             getForm.value.StartTime = newVal[0];
-            getForm.value.EndTime = newVal[1]+' 23:59:59';
+            getForm.value.EndTime = newVal[1] + ' 23:59:59';
             // getForm.value.PageNumber = 1
         }
     }
 );
 onBeforeMount(() => {
-     let end: string = setTodayDate();
+    let end: string = setTodayDate();
     let start: string = setLastDate();
     searchDate.value = [start, end];
     getScreenHeight();
@@ -563,7 +564,7 @@ const resetGetForm = () => {
         EndTime: setTodayDate(),
         InspectionResult: "",
     };
-   
+
     getData();
 };
 const getNotifyDept = () => {
@@ -633,7 +634,7 @@ const handleDelete = (row: any) => {
             console.log(data);
 
             AyscIQCUpdate(data).then((res: any) => {
-                ElNotification({
+                ElMessage({
                     title: t("message.tipTitle"),
                     message: t("message.deleteSuccess"),
                     type: "success",
@@ -643,7 +644,7 @@ const handleDelete = (row: any) => {
         })
         .catch(() => {
             // on cancel
-            ElNotification({
+            ElMessage({
                 title: t("message.tipTitle"),
                 message: t("publicText.cancel"),
                 type: "info",
@@ -669,7 +670,7 @@ const handleClose = () => {
 const handleConfirm = () => {
     // console.log(creatForm.value);
     AyscIQCAdd(creatForm.value).then((res: any) => {
-        ElNotification({
+        ElMessage({
             title: t("message.tipTitle"),
             message: res.msg,
             type: res.success ? "success" : "error",
@@ -682,7 +683,7 @@ const handleConfirm = () => {
 //
 const file1UpChange = (file: any, fileList1: any) => {
     if (file.raw) {
-        convertToBase64(file.raw,1)
+        convertToBase64(file.raw, 1)
     }
 };
 const file1UpRemove = (file: any, fileList1: any) => {
@@ -706,30 +707,29 @@ const beforeUpload = (file: any) => {
 };
 const file2UpChange = (file: any, fileList1: any) => {
     if (file.raw) {
-        convertToBase64(file.raw,2)
+        convertToBase64(file.raw, 2)
     }
 };
 const file2UpRemove = (file: any, fileList1: any) => {
-  
+
     editdetailForm.value.Template_File = ''
 };
-const convertToBase64 = (file: any,index:any) => {
+const convertToBase64 = (file: any, index: any) => {
     const reader = new FileReader()
 
     reader.onload = (event: any) => {
-         const fullBase64 = event.target.result
+        const fullBase64 = event.target.result
         // 将 base64 数据赋值给 detailForm.Template_File
-        if(index===2)
-        {
+        if (index === 2) {
             editdetailForm.value.SupplierReportName = file.name
-            editdetailForm.value.Template_File =fullBase64.replace(/^data:application\/pdf;base64,/, '')
+            editdetailForm.value.Template_File = fullBase64.replace(/^data:application\/pdf;base64,/, '')
 
-           
-        }else{
+
+        } else {
             detailForm.value.SupplierReportName = file.name
-             detailForm.value.Template_File = fullBase64.replace(/^data:application\/pdf;base64,/, '')
+            detailForm.value.Template_File = fullBase64.replace(/^data:application\/pdf;base64,/, '')
         }
-        console.log('PDF 已转换为 base64:',event.target.result)
+        console.log('PDF 已转换为 base64:', event.target.result)
 
         // // 可选：显示文件信息
         // console.log('文件名:', file.name)
@@ -743,56 +743,64 @@ const convertToBase64 = (file: any,index:any) => {
     reader.readAsDataURL(file)
 }
 
-const openFile=(val:any)=>{
-    LabelPrintDownloadFtp(val).then((res:any)=>{
+const openFile = (val: any) => {
+    LabelPrintDownloadFtp(val).then((res: any) => {
+
+        if(!res.success){
+            ElMessage({
+                message:res.msg,
+                type:'error'
+            })
+            return
+        }
         const base64Data = 'data:application/pdf;base64,' + res.content.FileData;
-        previewUrl.value=base64Data
-        previewTitle.value=res.content.FileName
-        previewVisible.value=true
+        previewUrl.value = base64Data
+        previewTitle.value = res.content.FileName
+        previewVisible.value = true
         // downloadPDF(base64Data, res.content.FileName)
     })
 }
-const handlePreviewClose=()=>{
-    previewVisible.value=false
-     previewUrl.value=""
+const handlePreviewClose = () => {
+    previewVisible.value = false
+    previewUrl.value = ""
 }
-const handlePreviewDawnload=()=>{
+const handlePreviewDawnload = () => {
     downloadPDF(previewUrl.value, previewTitle.value)
 }
 
-const downloadPDF = (base64Data:any, fileName = '供应商报告.pdf') => {
-  try {
-    // 创建下载链接
-    const link = document.createElement('a')
-    
-    // 设置下载属性
-    link.href = base64Data
-    link.download = fileName.endsWith('.pdf') ? fileName : `${fileName}.pdf`
-    
-    // 添加到页面（需要添加到页面才能触发下载）
-    document.body.appendChild(link)
-    
-    // 触发点击下载
-    link.click()
-    
-    // 清理 DOM
-    document.body.removeChild(link)
-    
-    ElMessage.success('文件下载成功')
-    
-  } catch (error) {
-    console.error('下载失败:', error)
-    ElMessage.error('文件下载失败')
-  }
+const downloadPDF = (base64Data: any, fileName = '供应商报告.pdf') => {
+    try {
+        // 创建下载链接
+        const link = document.createElement('a')
+
+        // 设置下载属性
+        link.href = base64Data
+        link.download = fileName.endsWith('.pdf') ? fileName : `${fileName}.pdf`
+
+        // 添加到页面（需要添加到页面才能触发下载）
+        document.body.appendChild(link)
+
+        // 触发点击下载
+        link.click()
+
+        // 清理 DOM
+        document.body.removeChild(link)
+
+        ElMessage.success('文件下载成功')
+
+    } catch (error) {
+        console.error('下载失败:', error)
+        ElMessage.error('文件下载失败')
+    }
 }
 const handleEditClose = () => {
     creatEditVisible.value = false;
 };
 const handleEditConfirm = () => {
     // console.log(editCreateForm.value);
-    
+
     AyscIQCUpdate(editCreateForm.value).then((res: any) => {
-        ElNotification({
+        ElMessage({
             title: t("message.tipTitle"),
             message: t("message.editSuccess"),
             type: "success",
@@ -826,7 +834,7 @@ const handleDeleteDetail = (row: any) => {
         .then(() => { })
         .catch(() => {
             // on cancel
-            ElNotification({
+            ElMessage({
                 title: t("message.tipTitle"),
                 message: t("publicText.cancel"),
                 type: "info",
@@ -835,20 +843,20 @@ const handleDeleteDetail = (row: any) => {
 };
 const handleAddDetailClose = () => {
     addDetailVisible.value = false;
-    fileList.value=[]
+    fileList.value = []
 };
 const handleAddDetailConfirm = () => {
     AyscIQCDetailAdd(detailForm.value).then((res: any) => {
-        ElNotification({
+        ElMessage({
             title: t("message.tipTitle"),
             message: res.msg,
             type: res.success ? "success" : "error",
         });
         if (res.success) {
             addDetailVisible.value = false;
-             GetIQCDetailQuery({ InspectionNo: IQCNumber.value }).then((res: any) => {
-        detailTableData.value = res.content;
-    });
+            GetIQCDetailQuery({ InspectionNo: IQCNumber.value }).then((res: any) => {
+                detailTableData.value = res.content;
+            });
         } else {
             return;
         }
@@ -858,22 +866,22 @@ const handleAddDetailConfirm = () => {
 };
 const handleEditDetailClose = () => {
     editDetailVisible.value = false;
-    fileList.value=[]
+    fileList.value = []
 };
 const handleEditDetailConfirm = () => {
-    // console.log(editdetailForm.value);
+    console.log(editdetailForm.value);
 
     AyscIQCDetailUpdate(editdetailForm.value).then((res: any) => {
-        ElNotification({
+        ElMessage({
             title: t("message.tipTitle"),
             message: res.msg,
             type: res.success ? "success" : "error",
         });
         if (res.success) {
             addDetailVisible.value = false;
-             GetIQCDetailQuery({ InspectionNo: IQCNumber.value }).then((res: any) => {
-        detailTableData.value = res.content;
-    });
+            GetIQCDetailQuery({ InspectionNo: IQCNumber.value }).then((res: any) => {
+                detailTableData.value = res.content;
+            });
         } else {
             return;
         }

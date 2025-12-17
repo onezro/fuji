@@ -1,4 +1,8 @@
 <script lang="ts" setup>
+import {
+    GetEmployeeQuery,
+
+} from "@/api/incomingManage/iqcApi";
 import { computed, onMounted, unref, ref, watch, onActivated, onBeforeMount, reactive } from 'vue'
 import { useTagsViewStore } from '@/stores/modules/tagsView'
 import { usePermissionStoreWithOut } from '@/stores/modules/permission'
@@ -122,6 +126,12 @@ watch(
 onMounted(() => {
     initTags()
     addTags()
+    //
+    getNotifierList()
+    userStore.setUserInfo2(localStorage.getItem('OPERATOR') || '');
+    // console.log(userStore.getUserInfo2);
+    
+    operator.value = userStore.getUserInfo2
 })
 onActivated(() => {
     // console.log(111)
@@ -363,42 +373,67 @@ const fullScreen = () => {
         document.exitFullscreen()
     }
 }
+//富
+const operator = ref('')
+const operatorList = ref<any[]>([])
+const getNotifierList = () => {
+    GetEmployeeQuery({}).then((res: any) => {
+        operatorList.value = res.content;
+    });
+};
+const changeOperator = (val: any) => {
+    // console.log(val);
+    userStore.setUserInfo2(val);
+    localStorage.setItem("OPERATOR", val);
+}
 </script>
 <template>
     <div class="bood  h-[35px] flex w-full relative bg-[#fff]">
         <div class="overflow-hidden flex-1">
             <el-scrollbar class="h-full">
                 <div class="flex h-full  items-center" v-if="!appStore.getSystemType">
-                    
-                    <div v-for="item in visitedViews" :key="item.fullPath" class="tag_item " :class="[item.meta.affix ? `affix` : '', {
-                        'is-active': isActive(item)
-                    }]">
-                        <router-link :to="{ ...item }" custom v-slot="{ navigate }">
-                            <div @click="navigate"
-                                class="flex  whitespace-nowrap  justify-center items-center  pl-[15px]">
+                    <div class="flex flex-1  items-center px-2 h-full">
+                        <div v-for="item in visitedViews" :key="item.fullPath" class="tag_item " :class="[item.meta.affix ? `affix` : '', {
+                            'is-active': isActive(item)
+                        }]">
+                            <router-link :to="{ ...item }" custom v-slot="{ navigate }">
+                                <div @click="navigate"
+                                    class="flex  whitespace-nowrap  justify-center items-center  pl-[15px]">
 
-                                <!-- <el-tag size="large" type="primary" :effect="isActive(item) ? 'dark' : 'plain'"
-                                :closable="item.fullPath === '/dashboard/analysis' ? false : true"
-                                @close="closeSelectedTag(item)">
-                                {{ item?.meta?.title as string }}
-                            </el-tag> -->
-                                {{ item?.meta?.title as string }}
-                                <div class="qx" v-if="item.fullPath !== '/dashboard/analysis'">
-                                    <el-icon :size="12" :color="isActive(item) ? '#fff' : '#333'"
-                                        @click.prevent.stop="closeSelectedTag(item)">
-                                        <Close />
-                                    </el-icon>
+
+                                    {{ item?.meta?.title as string }}
+                                    <div class="qx" v-if="item.fullPath !== '/dashboard/analysis'">
+                                        <el-icon :size="12" :color="isActive(item) ? '#fff' : '#333'"
+                                            @click.prevent.stop="closeSelectedTag(item)">
+                                            <Close />
+                                        </el-icon>
+
+                                    </div>
 
                                 </div>
-
-                            </div>
-                        </router-link>
+                            </router-link>
+                        </div>
                     </div>
-                    <div class="absolute bottom-1 right-2 flex items-center" @click="refreshSelectedTag(selectTag)">
-                        <el-icon :size="23" color="#6e7079">
-                            <RefreshRight />
-                        </el-icon></div>
+                    <div class="flex items-center gap-2 px-2 border-l border-gray-200 ml-2 h-full">
+                        <!-- <div class=" absolute top-1 right-2 flex items-center  gap-2" > -->
+                        <el-form ref="formRef" :model="form" label-width="auto" :size="'small'"
+                            class="h-full flex items-center">
+                            <el-form-item :label="'操作人'" prop="Notifier" class="mb-0">
+                                <el-select v-model="operator" placeholder="" style="width: 150px"
+                                    @change="changeOperator">
+                                    <el-option v-for="n in operatorList" :label="n.FullName" :value="n.EmployeeName" />
+                                </el-select>
+                            </el-form-item>
+                        </el-form>
+                        <div @click="refreshSelectedTag(selectTag)" class="h-full flex items-center">
+                            <el-icon :size="23" color="#6e7079">
+                                <RefreshRight />
+                            </el-icon>
+                        </div>
+
+                    </div>
                 </div>
+
                 <div v-else>
                     <div class="h-[34px] pr-[10px] pl-[10px] flex justify-between items-center">
                         <div class="flex items-center gap-3">
@@ -409,8 +444,8 @@ const fullScreen = () => {
                             </el-tooltip>
                             <div v-for="(v, i) in treeToList(unref(levelList))" :key="v.name">{{
                                 textArr[i]
-                                }}<span class="text-[1.1rem] text-[#006487] underline">&nbsp;{{ v.meta.title
-                                }}&nbsp;</span>
+                            }}<span class="text-[1.1rem] text-[#006487] underline">&nbsp;{{ v.meta.title
+                                    }}&nbsp;</span>
                             </div>
                         </div>
                         <div class="flex items-center gap-3">
@@ -496,7 +531,7 @@ const fullScreen = () => {
         <el-dialog v-model="solow" title="版本信息" width="700px" align-center @close="solwCanel()">
             <el-form ref="formRef" :model="versionForm" label-width="auto">
                 <el-form-item label="版本" prop="name"><span class="ml-2">{{ versionForm.CurrentVer
-                        }}</span></el-form-item>
+                }}</span></el-form-item>
                 <el-form-item label="更新日志" prop="zone">
                     <!-- <pre class="text-base">{{ versionForm.UpdateLog }}</pre> -->
                     <div class="w-[600px] h-[60vh] overflow-y-auto whitespace-pre-wrap">{{ versionForm.UpdateLog }}

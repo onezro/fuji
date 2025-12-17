@@ -1,67 +1,74 @@
-import { defineStore } from 'pinia'
-import { store } from '../index'
-import { getToken,removeToken} from "@/utils/auth";
+import { defineStore } from "pinia";
+import { store } from "../index";
+import { getToken, removeToken } from "@/utils/auth";
 // import { UserLoginType, UserType } from '@/api/login/types'
-import { ElMessageBox } from 'element-plus'
+import { ElMessageBox } from "element-plus";
 // import { useI18n } from '@/hooks/web/useI18n'
 // import { loginOutApi } from '@/api/login'
 // import { useTagsViewStore } from './tagsView'
-import router from '@/router'
+import router from "@/router";
 
 interface UserState {
-
-  userInfo?: any
-  tokenKey: string
-  token: string
-  roleRouters?: string[] | AppCustomRouteRecordRaw[]
-  rememberMe: boolean
-  loginInfo?: any
+  userInfo?: any;
+  userInfo2?: any;
+  tokenKey: string;
+  token: string;
+  roleRouters?: string[] | AppCustomRouteRecordRaw[];
+  rememberMe: boolean;
+  loginInfo?: any;
 }
 
-export const useUserStore = defineStore('user', {
+export const useUserStore = defineStore("user", {
   state: (): UserState => {
     return {
-      userInfo: '',
-      tokenKey: 'Authorization',
-      token: getToken()||'',
+      userInfo: "",
+      userInfo2: "",
+      tokenKey: "Authorization",
+      token: getToken() || "",
       roleRouters: undefined,
       // 记住我
       rememberMe: true,
-      loginInfo: undefined
-    }
+      loginInfo: undefined,
+    };
   },
   getters: {
     getTokenKey(): string {
-      return this.tokenKey
+      return this.tokenKey;
     },
     getToken(): string {
-      return this.token
+      return this.token;
     },
     getUserInfo(): any | undefined {
-      return this.userInfo
+      return this.userInfo;
+    },
+    getUserInfo2(): any | undefined {
+      return this.userInfo2;
     },
     getRoleRouters(): string[] | AppCustomRouteRecordRaw[] | undefined {
-      return this.roleRouters
+      return this.roleRouters;
     },
     getRememberMe(): boolean {
-      return this.rememberMe
+      return this.rememberMe;
     },
     getLoginInfo(): any | undefined {
-      return this.loginInfo
-    }
+      return this.loginInfo;
+    },
   },
   actions: {
     setTokenKey(tokenKey: string) {
-      this.tokenKey = tokenKey
+      this.tokenKey = tokenKey;
     },
     setToken(token: string) {
-      this.token = token
+      this.token = token;
     },
     setUserInfo(userInfo?: any) {
-      this.userInfo = userInfo
+      this.userInfo = userInfo;
+    },
+    setUserInfo2(userInfo?: any) {
+      this.userInfo2 = userInfo;
     },
     setRoleRouters(roleRouters: string[] | AppCustomRouteRecordRaw[]) {
-      this.roleRouters = roleRouters
+      this.roleRouters = roleRouters;
     },
     // logoutConfirm() {
     //   const { t } = useI18n()
@@ -80,32 +87,33 @@ export const useUserStore = defineStore('user', {
     // },
     reset() {
       // console.log(111);
-      
-    //   const tagsViewStore = useTagsViewStore()
-    //   tagsViewStore.delAllViews()
-      this.setToken('')
-      this.setUserInfo('')
-      removeToken()
+
+      //   const tagsViewStore = useTagsViewStore()
+      //   tagsViewStore.delAllViews()
+      this.setToken("");
+      this.setUserInfo("");
+      this.setUserInfo2("");
+      removeToken();
       localStorage.removeItem("OPCENTER_ROLE");
-      this.setRoleRouters([])
-      router.replace('/login')
+      localStorage.removeItem("OPERATOR");
+      this.setRoleRouters([]);
+      router.replace("/login");
       location.reload();
       // console.log(1111);
-      
     },
     logout() {
-      this.reset()
+      this.reset();
     },
     setRememberMe(rememberMe: boolean) {
-      this.rememberMe = rememberMe
+      this.rememberMe = rememberMe;
     },
     setLoginInfo(loginInfo: any | undefined) {
-      this.loginInfo = loginInfo
-    }
+      this.loginInfo = loginInfo;
+    },
   },
-  persist: true
-})
+  persist: true,
+});
 
 export const useUserStoreWithOut = () => {
-  return useUserStore(store)
-}
+  return useUserStore(store);
+};

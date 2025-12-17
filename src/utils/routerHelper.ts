@@ -113,9 +113,9 @@ export const generateRoutesByServer1 = (routes: any) => {
       meta: {
         title: route.title,
         icon: route.icon,
-        multiTab: true,
-        multiInstance: isMultiInstance(route),
-        dynamicTitle: isMultiInstance(route)
+        // multiTab: true,
+        // multiInstance: isMultiInstance(route),
+        // dynamicTitle: isMultiInstance(route)
       },
       component: route.component,
     };
@@ -126,16 +126,16 @@ export const generateRoutesByServer1 = (routes: any) => {
       // } else {
       // 动态加载路由文件，可根据实际情况进行自定义逻辑
       // console.log(component);
-      if (multiInstanceMenus.includes(route.MenuName)) {
-        data.path = addRouteParam(data.path)
-        data.props = (route: any) => ({
-          ...route.params,
-          ...route.query,
-          id: route.params.id || route.query.id
-        })
-        // console.log(data);
+      // if (multiInstanceMenus.includes(route.MenuName)) {
+      //   data.path = addRouteParam(data.path)
+      //   data.props = (route: any) => ({
+      //     ...route.params,
+      //     ...route.query,
+      //     id: route.params.id || route.query.id
+      //   })
+      //   // console.log(data);
 
-      }
+      // }
 
       data.component =
         component === "Layout"

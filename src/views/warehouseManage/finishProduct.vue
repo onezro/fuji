@@ -137,9 +137,10 @@ const handleClose = () => {
 const handleSubmit = () => {
     let data = tableData.value.map((item: any) => {
         return {
-            OuterBoxContainerName: item.OuterBoxContainerName,
-            PackingBoxContainerName: item.PackingBoxContainerName,
-            Location: locationDsc.value
+            OuterBoxContainerName: item. OutBoxContainerName,
+            PackingBoxContainerName: item. PackingContainerName,
+            Location: locationDsc.value,
+            MfgOrderName:item.MfgOrderName
         }
     })
     SubmitForCompletionAndWarehousing(data).then((res: any) => {

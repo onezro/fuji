@@ -54,13 +54,12 @@ export async function exportTableToExcel(options: ExportTableOptions) {
     // console.log(tableRef.columns);
     
     const columns = tableRef.columns
-      .filter((col) => col.label !==t('publicText.index') && t('publicText.operation'))
+      .filter((col) => col.label !==t('publicText.index') && col.label !== t('publicText.operation')&& col.label !==undefined)
       .map((col) => ({
         label: col.label,
         prop: col.property  || '',
         align: col.align,
       }));
-
     // 3. 创建 Workbook
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet('Sheet1');

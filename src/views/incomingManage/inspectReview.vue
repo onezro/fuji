@@ -26,13 +26,16 @@
                         @click="handleSelectionData">
                         {{ $t("publicText.approval") }}
                     </el-button>
+                      <el-button type="success" :disabled="tableData.length==0" size="small" @click="exportTable">
+                        导出Excel
+                    </el-button>
                 </el-form-item>
             </el-form>
             <el-table :data="tableData.slice(
                 (pageObj.currentPage - 1) * pageObj.pageSize,
                 pageObj.currentPage * pageObj.pageSize
             )
-                " size="small" :style="{ width: '100%' }" ref="rawRef" :height="tableHeight" border fit
+                " size="small" :style="{ width: '100%' }" ref="inspectReviewRef" :height="tableHeight" border fit
                 highlight-current-row @cell-click="cellClick" @selection-change="handleSelectionChange">
                 <el-table-column type="selection" width="55" align="center" />
 
@@ -282,6 +285,7 @@ import {
 import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
 import JSZip from 'jszip';
+import dayjs from "dayjs";
 import {
     ref,
     watch,
@@ -302,8 +306,7 @@ import { ElNotification, ElMessageBox, ElMessage } from "element-plus";
 import { useI18n } from "vue-i18n";
 const { t } = useI18n();
 import { useUserStoreWithOut } from "@/stores/modules/user";
-import { log } from "node:console";
-
+import { exportTableToExcel } from "@/utils/exportExcel";
 const userStore = useUserStoreWithOut();
 const getForm = ref({
     InspectionNo: "",
@@ -353,6 +356,7 @@ const appForm = ref({
 });
 const lookFormRef = ref();
 const lookVisible = ref(false);
+const inspectReviewRef=ref()
 watch(
     () => searchDate.value,
     (newVal: any, oldVal: any) => {
@@ -390,6 +394,38 @@ const getData = () => {
         tableData.value = res.content;
     });
 };
+const exportTable=()=>{
+     exportTableToExcel({
+        tableRef: inspectReviewRef.value,
+        fetchAllData: fetchFinishAllData,
+        fileName: `${'IQC-进料审核'}_${dayjs().format(
+            "YYYYMMDDHHmmss"
+        )}`,
+        styles: {
+            headerBgColor: "", // 灰色表头
+            headerFont: {
+                color: { argb: "" }, // 红色文字
+                bold: false,
+                size: 12,
+            }, // 白色文字
+            cell: { numFmt: "@" }, // 强制文本格式
+        },
+        t,
+    });
+}
+const fetchFinishAllData = async () => {
+    let data = await   GetIQCHeaderQuery(getForm.value).then(
+        (res: any) => {
+            return res.content.map((item: any) => {
+                item.UpdateTime = dayjs(item.UpdateTime).format(
+                    "YYYY-MM-DD HH:mm:ss"
+                );
+                return item;
+            });
+        }
+    );
+    return data;
+};
 const resetGetForm = () => {
     getForm.value = {
         InspectionNo: "",
@@ -415,7 +451,7 @@ const handleSelectionData = () => {
     //     };
     // });
     // AyscIQCApproval(data).then((res: any) => {
-    //     ElNotification({
+    //     ElMessage({
     //         title: t("message.tipTitle"),
     //         message: res.msg,
     //         type: res.success ? "success" : "error",
@@ -436,7 +472,7 @@ const handleAppConfirm = () => {
         };
     });
     AyscIQCApproval(data).then((res: any) => {
-        ElNotification({
+        ElMessage({
             title: t("message.tipTitle"),
             message: res.msg,
             type: res.success ? "success" : "error",
@@ -841,7 +877,7 @@ const handletestConfirm = () => {
     });
 
     AyscIQCInspectionInterface(inspectionDetails).then((res: any) => {
-        ElNotification({
+        ElMessage({
             title: t("message.tipTitle"),
             message: res.msg,
             type: res.success ? "success" : "error",

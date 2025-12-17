@@ -5,6 +5,17 @@
                 <div>
                     <el-button type="primary" size="small" @click="openAdd">添加</el-button>
                 </div>
+                <el-form ref="formRef" :model="getForm" label-width="auto" :inline="true" :size="'small'"
+                    @submit.native.prevent>
+                    <el-form-item label="产品" prop="InspectionMasterName" class="mb-2">
+                        <el-input v-model="getForm.InspectionMasterName" placeholder="" clearable @clear="getData"  @keyup.enter.native="getData"
+                            style="width: 200px;" />
+                    </el-form-item>
+                    <el-form-item class="mb-2">
+                        <el-button :type="'primary'" @click="getData">查询</el-button>
+                    </el-form-item>
+
+                </el-form>
             </div>
             <el-table :data="tableData.slice(
                 (pageObj.currentPage - 1) * pageObj.pageSize,
@@ -17,16 +28,17 @@
                     <template #default="scope">
                         <span>{{
                             scope.$index + pageObj.pageSize * (pageObj.currentPage - 1) + 1
-                            }}</span>
+                        }}</span>
                     </template>
                 </el-table-column>
 
                 <el-table-column prop="ES_INSPECTION_MASTERName" :label="$t('aqlrules.partNumber')" />
-                <el-table-column :label="$t('publicText.operation')" :fixed="'right'" width="160">
+                <el-table-column :label="$t('publicText.operation')" :fixed="'right'" width="100">
                     <template #default="{ row }">
-                        <el-button size="small" type="primary" @click="handleEdit(row)">
-                            {{ $t("publicText.detail") }}
-                        </el-button>
+                          <el-tooltip :content="'详情'" placement="top">
+                        <el-button size="small" type="primary" icon="Tickets" @click="handleEdit(row)">
+                           
+                        </el-button></el-tooltip>
                         <!-- <el-button size="small" type="danger" @click="handleDelete(row)">
                             {{ $t("publicText.delete") }}
                         </el-button> -->
@@ -53,8 +65,8 @@
                         <el-option :label="p.productname" :value="p.productname" v-for="p in productList" />
                     </el-select>
                 </el-form-item>
-                 <el-form-item :label="$t('aqlrules.DBType')" prop="DBType">
-                    <el-select v-model="addForm.InspectionType" placeholder="请选择" filterable >
+                <el-form-item :label="$t('aqlrules.DBType')" prop="DBType">
+                    <el-select v-model="addForm.InspectionType" placeholder="请选择" filterable>
                         <el-option :label="p.InspectionType" :value="p.InspectionType" v-for="p in typetList" />
                     </el-select>
                 </el-form-item>
@@ -93,7 +105,7 @@
                             </el-select>
                         </template>
                     </el-table-column>
-                      <el-table-column prop="CharaCteristicGrade" :label="$t('aqlrules.CharaCteristicGrade')">
+                    <el-table-column prop="CharaCteristicGrade" :label="$t('aqlrules.CharaCteristicGrade')">
                         <template #default="scope">
                             <el-input v-model="scope.row.CharaCteristicGrade" size="small"></el-input>
                         </template>
@@ -103,7 +115,7 @@
                             <el-input v-model="scope.row.TargetValue" size="small"></el-input>
                         </template>
                     </el-table-column>
-                  
+
                     <el-table-column prop="MinValue" :label="$t('aqlrules.MinValue')">
                         <template #default="scope">
                             <el-input v-model="scope.row.MinValue" size="small"></el-input>
@@ -128,13 +140,11 @@
                         </template>
                     </el-table-column>
                     <el-table-column :label="$t('publicText.operation')" width="150px">
-                        <template #default="scope">
-                            <el-button size="small" type="primary" @click="addInspectionDetails">{{ $t("publicText.add")
-                                }}</el-button>
-                            <el-button size="small" type="danger"
-                                @click="addForm.iQC_InspectionDetails.splice(scope.$index, 1)"
-                                :disabled="addForm.iQC_InspectionDetails.length == 1">{{ $t("publicText.delete")
-                                }}</el-button>
+                        <template #default="{ row, $index }">
+                            <el-button v-if="isLastDetail1($index)" icon="Plus" size="small" type="primary" @click="addInspectionDetails"></el-button>
+                            <el-button size="small" type="danger" icon="Delete"
+                                @click="addForm.iQC_InspectionDetails.splice($index, 1)"
+                                :disabled="addForm.iQC_InspectionDetails.length == 1"></el-button>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -143,18 +153,20 @@
                 <el-button @click="addCancel">{{ $t("publicText.cancel") }}</el-button>
                 <el-button type="primary" @click="addSubmit">{{
                     $t("publicText.confirm")
-                    }}</el-button>
+                }}</el-button>
             </template>
         </el-dialog>
         <el-dialog :title="$t('publicText.edit')" v-model="editVisible" width="85%" @close="editCancel">
             <el-form :model="editForm" ref="editFormRef" label-width="auto" :inline="false" size="normal">
                 <el-form-item :label="$t('aqlrules.partNumber')" prop="partNumber">
-                    <el-select v-model="editForm.InspectionMasterName" placeholder="请选择" filterable :disabled="true">
+                    <el-input v-model="editForm.InspectionMasterName" placeholder="请输入"  disabled/>
+                    <!-- <el-select v-model="editForm.InspectionMasterName" placeholder="请选择" filterable :disabled="true">
                         <el-option :label="p.productname" :value="p.productname" v-for="p in productList" />
-                    </el-select>
+                    </el-select> -->
                 </el-form-item>
                 <el-form-item :label="$t('aqlrules.DBType')" prop="DBType">
-                    <el-select v-model="getDetailForm.InspectionType" placeholder="请选择" filterable @change="getDetailData">
+                    <el-select v-model="getDetailForm.InspectionType" placeholder="请选择" filterable
+                        @change="getDetailData">
                         <el-option :label="p.InspectionType" :value="p.InspectionType" v-for="p in typetList" />
                     </el-select>
                 </el-form-item>
@@ -202,7 +214,7 @@
                         <el-input v-model="scope.row.TargetValue" size="small"></el-input>
                     </template>
                 </el-table-column>
-                
+
                 <el-table-column prop="MinValue" :label="$t('aqlrules.MinValue')">
                     <template #default="scope">
                         <el-input v-model="scope.row.MinValue" size="small"></el-input>
@@ -226,22 +238,19 @@
                         <el-input v-model="scope.row.InspectionBasis" size="small"></el-input>
                     </template>
                 </el-table-column>
-                <el-table-column :label="$t('publicText.operation')" width="150">
-                    <template #default="scope">
-                        <el-button size="small" type="primary" @click="editInspectionDetails">{{ $t("publicText.add")
-                            }}</el-button>
-                        <el-button size="small" type="danger" @click="deleteDetail(scope.row)">{{
-                            $t("publicText.delete")
-                            }}</el-button>
+                <el-table-column :label="$t('publicText.operation')" width="120">
+                    <template  #default="{ row, $index }">
+                        <el-button v-if="isLastDetail2($index)" icon="Plus" size="small" type="primary" @click="editInspectionDetails"></el-button>
+                        <el-button icon="Delete" size="small" type="danger" @click="deleteDetail(row,$index)"></el-button>
                     </template>
                 </el-table-column>
             </el-table>
 
             <template #footer>
                 <el-button @click="editCancel">{{ $t("publicText.cancel") }}</el-button>
-                <el-button type="primary" @click="editSubmit">{{
+                <el-button type="primary" @click="editSubmit" >{{
                     $t("publicText.confirm")
-                    }}</el-button>
+                }}</el-button>
             </template>
         </el-dialog>
     </div>
@@ -269,7 +278,7 @@ import {
     onBeforeMount,
     onBeforeUnmount,
 } from "vue";
-import { ElNotification, ElMessageBox } from "element-plus";
+import {ElNotification, ElMessage, ElMessageBox } from "element-plus";
 import { useUserStoreWithOut } from "@/stores/modules/user";
 const userStore = useUserStoreWithOut();
 import { useI18n } from "vue-i18n";
@@ -293,7 +302,7 @@ const addVisible = ref(false);
 const addForm = ref({
     InspectionMasterName: "",
     DBType: "Add",
-    InspectionType:'',
+    InspectionType: '',
     iQC_InspectionDetails: [
         {
             InspectionDetailName: "",
@@ -340,6 +349,17 @@ const getDetailForm = ref({
     InspectionMasterName: "",
     InspectionType: "",
 });
+
+const isLastDetail1 = computed(() => {
+    return (index: number) => {
+        return index === addForm.value.iQC_InspectionDetails.length - 1
+    }
+})
+const isLastDetail2 = computed(() => {
+    return (index: number) => {
+        return index === editForm.value.iQC_InspectionDetails.length - 1
+    }
+})
 onBeforeMount(() => {
     getScreenHeight();
     getProduct();
@@ -395,7 +415,7 @@ const addCancel = () => {
     addVisible.value = false;
     addForm.value.InspectionMasterName = "";
     addForm.value.DBType = "";
-    addForm.value.InspectionType=''
+    addForm.value.InspectionType = ''
     addForm.value.iQC_InspectionDetails = [
         {
             InspectionDetailName: "",
@@ -431,50 +451,18 @@ const addInspectionDetails = () => {
         UpdateUser: "",
     });
 };
-// const handletypeChange = (val:any)=>{
-//     console.log(val);
-//    if(val=='计量'||val=='计数'){
-//     addForm.value.iQC_InspectionDetails.forEach((item)=>{
-//         if(item.InspectionType==val){
-//             item.MeasurementType='ES_Measurement_Type'
-//         }
-//     })
-//    }else{
-//     addForm.value.iQC_InspectionDetails.forEach((item)=>{
-//         if(item.InspectionType==val){
-//             item.MeasurementType='ES_Inspection_Type'
-//         }
-//     })
-//    }
-// }
-// const handletypeChange1 = (val:any)=>{
-//     console.log(val);
-//    if(val=='计量'||val=='计数'){
-//     editForm.value.iQC_InspectionDetails.forEach((item)=>{
-//         if(item.InspectionType==val){
-//             item.MeasurementType='ES_Measurement_Type'
-//         }
-//     })
-//    }else{
-//     editForm.value.iQC_InspectionDetails.forEach((item)=>{
-//         if(item.InspectionType==val){
-//             item.MeasurementType='ES_Inspection_Type'
-//         }
-//     })
-//    }
-// }
 const addSubmit = () => {
     // console.log(addForm.value);
     addForm.value.DBType = "Add";
-    addForm.value.iQC_InspectionDetails=addForm.value.iQC_InspectionDetails.map((item:any)=>{
+    addForm.value.iQC_InspectionDetails = addForm.value.iQC_InspectionDetails.map((item: any) => {
         return {
             ...item,
-            InspectionType:addForm.value.InspectionType,
-            CreateUser:userStore.getUserInfo,
+            InspectionType: addForm.value.InspectionType,
+            CreateUser: userStore.getUserInfo,
         }
     })
     AyscInspectionMaster(addForm.value).then((res: any) => {
-        ElNotification({
+        ElMessage({
             title: t("publicText.tipTitle"),
             message: res.msg,
             type: res.success ? "success" : "error",
@@ -484,7 +472,7 @@ const addSubmit = () => {
     });
 };
 
-const getDetailData=() => {
+const getDetailData = () => {
     GetInspectionDetailQuery(getDetailForm.value).then((res: any) => {
         editForm.value.iQC_InspectionDetails = res.content;
         if (editForm.value.iQC_InspectionDetails.length == 0) {
@@ -514,7 +502,7 @@ const handleEdit = (val: any) => {
     editForm.value.InspectionMasterName = val.ES_INSPECTION_MASTERName;
     editForm.value.DBType = "Update";
     getDetailForm.value.InspectionMasterName = val.ES_INSPECTION_MASTERName;
-   getDetailData()
+    //    getDetailData()
 };
 
 const editInspectionDetails = () => {
@@ -534,7 +522,11 @@ const editInspectionDetails = () => {
         UpdateUser: userStore.getUserInfo,
     });
 };
-const deleteDetail = (val: any) => {
+const deleteDetail = (val: any,index:any) => {
+    if(val.ProjectCategoryName==''){
+          editForm.value.iQC_InspectionDetails.splice(index, 1)
+          return
+    }
     let data = {
         InspectionMasterName: editForm.value.InspectionMasterName,
         DBType: "Delete",
@@ -556,7 +548,7 @@ const deleteDetail = (val: any) => {
     )
         .then(() => {
             AyscDelInspectionDetail(data).then((res: any) => {
-                ElNotification({
+                ElMessage({
                     title: t("message.tipTitle"),
                     message: res.msg,
                     type: res.success ? "success" : "error",
@@ -564,7 +556,7 @@ const deleteDetail = (val: any) => {
                 // getData();
                 GetInspectionDetailQuery({
                     InspectionMasterName: editForm.value.InspectionMasterName,
-                    InspectionType: "",
+                    InspectionType: getDetailForm.value.InspectionType,
                 }).then((res: any) => {
                     editForm.value.iQC_InspectionDetails = res.content;
                     if (editForm.value.iQC_InspectionDetails.length == 0) {
@@ -592,7 +584,7 @@ const deleteDetail = (val: any) => {
         })
         .catch(() => {
             // on cancel
-            ElNotification({
+            ElMessage({
                 title: t("publicText.tipTitle"),
                 message: t("publicText.cancel"),
                 type: "info",
@@ -613,7 +605,7 @@ const handleDelete = (val: any) => {
         .then(() => { })
         .catch(() => {
             // on cancel
-            ElNotification({
+            ElMessage({
                 title: t("message.tipTitle"),
                 message: t("publicText.cancel"),
                 type: "info",
@@ -625,7 +617,7 @@ const editCancel = () => {
     editVisible.value = false;
     editForm.value.InspectionMasterName = "";
     editForm.value.DBType = "Update";
-   getDetailForm.value.InspectionType = "";
+    getDetailForm.value.InspectionType = "";
     editForm.value.iQC_InspectionDetails = [
         {
             InspectionDetailName: "",
@@ -649,22 +641,22 @@ const editSubmit = () => {
         (d: any) => !d.ProjectCategoryName || d.ProjectCategoryName === ""
     );
     if (hasEmptyCategory) {
-        ElNotification({
+        ElMessage({
             title: t("message.tipTitle"),
             message: t("aqlrules.InspectionDetails") + t("publicText.isEmpty"),
             type: "error",
         });
         return;
     }
-    editForm.value.iQC_InspectionDetails=editForm.value.iQC_InspectionDetails.map((item:any)=>{
+    editForm.value.iQC_InspectionDetails = editForm.value.iQC_InspectionDetails.map((item: any) => {
         return {
             ...item,
-            InspectionType:getDetailForm.value.InspectionType,
-            UpdateUser:userStore.getUserInfo
+            InspectionType: getDetailForm.value.InspectionType,
+            UpdateUser: userStore.getUserInfo
         }
     })
     AyscInspectionMaster(editForm.value).then((res: any) => {
-        ElNotification({
+        ElMessage({
             title: t("message.tipTitle"),
             message: res.msg,
             type: res.success ? "success" : "error",

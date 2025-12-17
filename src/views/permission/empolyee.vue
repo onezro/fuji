@@ -5,7 +5,7 @@
         <div class="card-header flex justify-between items-center">
           <div class="flex gap-[5px] items-center">
             <img style="width: 24px; height: 24px" src="../../assets/svgs/or.svg" alt="" />
-            <div class="h-[24px] box-border pt-[3px]">BICV-组织</div>
+            <div class="h-[24px] box-border pt-[3px]">组织</div>
           </div>
 
           <el-tooltip content="重置" placement="right">

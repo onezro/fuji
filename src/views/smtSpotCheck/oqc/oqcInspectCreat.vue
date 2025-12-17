@@ -14,10 +14,10 @@
                         style="width: 200px" :clearable="false" :disabled-date="disabledDate" />
                 </el-form-item>
                 <el-form-item :label="$t('oqcInspection.inspectionStatus')" class="mb-2">
-                    <el-select v-model="getForm.InspectionStatus" placeholder="" style="width: 180px">
-                        <!-- <el-option :label="t('oqcInspection.status1')" :value="0">
-                        </el-option> -->
-                        <el-option :label="t('oqcInspection.status2')" :value="1">
+                    <el-select v-model="getForm.InspectionStatus" placeholder="" style="width: 180px" clearable>
+                        <el-option :label="'全部'" :value="''">
+                        </el-option>
+                        <el-option :label="'待检验'" :value="1">
                         </el-option>
                         <el-option :label="t('oqcInspection.status3')" :value="2">
                         </el-option>
@@ -68,7 +68,7 @@
                     <template #default="scope">
                         <span>{{
                             scope.$index + pageObj.pageSize * (pageObj.currentPage - 1) + 1
-                            }}</span>
+                        }}</span>
                     </template>
                 </el-table-column>
                 <el-table-column prop="OQCNumber" :label="$t('oqcInspection.OQCNumber')" width="200">
@@ -123,36 +123,37 @@
             :close-on-click-modal="false" :close-on-press-escape="false" @close="handleAddClose">
             <el-form ref="addFormRef" :model="addForm" label-width="auto" :size="'small'" @submit.native.prevent>
                 <el-form-item :label="$t('oqcInspection.workerOrder')" prop="MfgOrderName">
-                    <el-input v-model="addForm.MfgOrderName" placeholder="" style="width: 200px"  @keyup.enter.native="getChange"/>
+                    <el-input v-model="addForm.MfgOrderName" placeholder="" style="width: 200px"
+                        @keyup.enter.native="getChange" />
                 </el-form-item>
                 <el-form-item :label="$t('oqcInspection.OrderQt')" prop="OrderQty">
-                    <el-input v-model="addForm.OrderQty" placeholder="" style="width: 200px" type="number" disabled/>
+                    <el-input v-model="addForm.OrderQty" placeholder="" style="width: 200px" type="number" disabled />
                 </el-form-item>
                 <el-form-item :label="$t('oqcInspection.ShippingQty')" prop="ShippingQty">
                     <el-input v-model="addForm.ShippingQty" placeholder="" style="width: 200px" type="number" />
                 </el-form-item>
                 <el-form-item :label="$t('oqcInspection.customerPO')" prop="PartNo">
-                    <el-input v-model="addForm.PartNo" placeholder="" style="width: 200px" disabled/>
+                    <el-input v-model="addForm.PartNo" placeholder="" style="width: 200px" disabled />
                 </el-form-item>
-                  <el-form-item :label="$t('oqcInspection.customerPN')" prop="CustomerPN">
-                    <el-input v-model="addForm.CustomerPN" placeholder="" style="width: 200px"disabled />
+                <el-form-item :label="$t('oqcInspection.customerPN')" prop="CustomerPN">
+                    <el-input v-model="addForm.CustomerPN" placeholder="" style="width: 200px" disabled />
                 </el-form-item>
                 <el-form-item :label="$t('oqcInspection.LOtNO')" prop="LotNo">
-                    <el-input v-model="addForm.LotNo" placeholder="" style="width: 200px" />
+                    <el-input v-model="addForm.LotNo" placeholder="" style="width: 200px" disabled />
                 </el-form-item>
                 <el-form-item :label="$t('oqcInspection.TotalEvaluation')" prop="TotalEvaluation">
                     <el-input v-model="addForm.TotalEvaluation" placeholder="" style="width: 200px" />
                 </el-form-item>
                 <el-form-item :label="$t('oqcInspection.productName')" prop="ProductName">
-                    <el-input v-model="addForm.ProductName" placeholder="" style="width: 200px" disabled/>
+                    <el-input v-model="addForm.ProductName" placeholder="" style="width: 200px" disabled />
                 </el-form-item>
                 <el-form-item :label="$t('oqcInspection.productCategory')" prop="ProductType">
-                    <el-input v-model="addForm.ProductType" placeholder="" style="width: 200px" disabled/>
+                    <el-input v-model="addForm.ProductType" placeholder="" style="width: 200px" disabled />
                 </el-form-item>
                 <el-form-item :label="$t('oqcInspection.customerName')" prop="ToCustomerName">
-                    <el-input v-model="addForm.ToCustomerName" placeholder="" style="width: 200px" disabled/>
+                    <el-input v-model="addForm.ToCustomerName" placeholder="" style="width: 200px" disabled />
                 </el-form-item>
-              
+
                 <!-- <el-form-item :label="$t('oqcInspection.Date')" prop="Date">
                      <el-input v-model="addForm.Date" placeholder="" style="width: 200px"  />
                 </el-form-item> -->
@@ -160,16 +161,16 @@
             <template #footer>
                 <el-button @click="handleAddClose">{{
                     $t("publicText.close")
-                    }}</el-button>
+                }}</el-button>
                 <el-button @click="handleAddConfirm" type="primary">{{
                     $t("publicText.confirm")
-                    }}</el-button>
+                }}</el-button>
             </template>
         </el-dialog>
 
         <el-dialog v-model="inspectVisible" :title="'检验'" width="95%" :append-to-body="true"
             :close-on-click-modal="false" :close-on-press-escape="false" align-center @close="handleInspectClose">
-            <el-form ref="headerFormRef" :model="headerForm" label-width="auto" :inline="true" :size="'small'">
+             <el-form ref="headerFormRef" :model="headerForm" label-width="auto" :inline="true" :size="'small'">
                 <el-form-item :label="'OQC单号'" prop="OQCNumber">
                     <el-input v-model="headerForm.OQCNumber" placeholder="" style="width: 200px" :disabled="true" />
                 </el-form-item>
@@ -215,25 +216,44 @@
                 <el-form-item :label="$t('oqcInspection.Date')" prop="Date">
                     <el-input v-model="headerForm.Date" placeholder="" style="width: 200px" :disabled="true" />
                 </el-form-item>
-                <el-form-item >
-                  <el-button @click="handleApproval" :type="'warning'">{{ $t('publicText.approval') }}</el-button>
+                  <el-form-item :label="'AC'" prop="AC">
+                    <el-input v-model="DetailInfoForm.AC" placeholder="" style="width: 200px" disabled />
                 </el-form-item>
+                <el-form-item :label="'RE'" prop="RE">
+                    <el-input v-model="DetailInfoForm.RE" placeholder="" style="width: 200px" disabled />
+                </el-form-item>
+                <!-- <el-form-item>
+                 
+                </el-form-item> -->
             </el-form>
-            <el-form ref="headerFormRef" :model="testEqForm" label-width="auto" :inline="true" :size="'small'">
-                <el-form-item :label="$t('oqcInspection.instrumentName')" prop="ResourceName">
-                    <el-select v-model="testEqForm.ResourceName" placeholder="" style="width: 200px">
-                        <el-option v-for="item in eqList" :key="item.instrumentName" :label="item.instrumentName"
-                            :value="item.instrumentName">
-                        </el-option>
-                    </el-select>
-                </el-form-item>
-                <el-form-item :label="$t('oqcInspection.instrumenStatus')" prop="Status">
-                    <el-select v-model="testEqForm.Status" placeholder="" style="width: 200px">
-                        <el-option label="Y" :value="0" />
-                        <el-option label="N" :value="1" />
-                    </el-select>
-                </el-form-item>
-            </el-form>
+            <el-table :data="eqTable" border stripe style="width: 100%" size="small" :height="150">
+                <el-table-column prop="ResourceName" :label="$t('oqcInspection.instrumentName')">
+                    <template #default="{ row }">
+                        <el-select v-model="row.ResourceName" placeholder="" style="width: 200px" :size="'small'">
+                            <el-option v-for="item in eqList" :key="item.ResourceId" :label="item.ResourceName"
+                                :value="item.ResourceName">
+                            </el-option>
+                        </el-select>
+                    </template>
+                </el-table-column>
+                <el-table-column prop="StatusText" :label="$t('oqcInspection.instrumenStatus')">
+                    <template #default="{ row }">
+                        <el-select v-model="row.Status" placeholder="" style="width: 200px" :size="'small'">
+                            <el-option label="Y" :value="0" />
+                            <el-option label="N" :value="1" />
+                        </el-select>
+                    </template>
+                </el-table-column>
+                <!-- <el-table-column :label="$t('publicText.operation')" width="120" align="center">
+                    <template #default="{ row, $index }">
+                        <el-button v-if="isLastRow($index)" :size="'small'" :type="'primary'" icon="Plus"
+                            @click="addEqRow"></el-button>
+                        <el-button type="danger" icon="Delete" size="small" @click="removeEqRow(row)"></el-button>
+
+                    </template>
+                </el-table-column> -->
+            </el-table>
+
             <el-tabs v-model="activeName" type="border-card">
                 <el-tab-pane :label="'计数检验'" name="first">
                     <el-table :data="CountTable" border stripe style="width: 100%" size="small" :height="300">
@@ -251,19 +271,27 @@
                         </el-table-column>
                         <el-table-column prop="SampleSize" :label="$t('incomeSheet.numberOfSample')">
                             <template #default="scope">
-                                <el-input v-model="scope.row.SampleSize" size="small"></el-input>
+                                <!-- <el-input v-model="scope.row.SampleSize" size="small" type="number"></el-input> -->
+                                <el-input-number v-model="scope.row.SampleSize" :min="0" size="small" />
                             </template>
                         </el-table-column>
                         <el-table-column prop="DefectCount" :label="$t('incomeSheet.numberOfDefect')">
                             <template #default="scope">
                                 <!-- {{ scope.row.DefectCount || calculateDefectCount(scope.row) }} -->
-                                <el-input v-model="scope.row.DefectCount" size="small"></el-input>
+                                <!-- <el-input v-model="scope.row.DefectCount" size="small"  type="number"></el-input> -->
+                                <el-input-number v-model="scope.row.DefectCount" :min="0" size="small" />
                             </template>
                         </el-table-column>
                         <el-table-column prop="DefectDescription" :label="'缺陷描述'">
                             <template #default="scope">
                                 <!-- {{ scope.row.DefectCount || calculateDefectCount(scope.row) }} -->
                                 <el-input v-model="scope.row.DefectDescription" size="small"></el-input>
+                            </template>
+                        </el-table-column>
+                        <el-table-column prop="UnqualifiedHandlingResults" :label="'不良处理结果'" width="180">
+                            <template #default="scope">
+                                <!-- {{ scope.row.DefectCount || calculateDefectCount(scope.row) }} -->
+                                <el-input v-model="scope.row.UnqualifiedHandlingResults" size="small"></el-input>
                             </template>
                         </el-table-column>
                     </el-table>
@@ -306,9 +334,9 @@
                         <el-table-column prop="MeasuredValue" :align="'center'"
                             :label="$t('incomeSheet.MeasurementNumber')">
                             <template #default="scope">
-                                <span>{{ formatMeasuredValues(scope.row) }}</span>
-                                <el-button type="primary" icon="Plus" :size="'small'"
-                                    @click="openMeasurementDialog(scope.row, scope.$index)" />
+                                <span  @click="openMeasurementDialog(scope.row, scope.$index)">{{ formatMeasuredValues(scope.row) }}</span>
+                                <!-- <el-button type="primary" icon="Plus" :size="'small'"
+                                    @click="openMeasurementDialog(scope.row, scope.$index)" /> -->
                             </template>
                         </el-table-column>
 
@@ -327,62 +355,91 @@
                                 {{ getResultText(scope.row) }}
                             </template>
                         </el-table-column>
+                        <el-table-column prop="UnqualifiedHandlingResults" :label="'不良处理结果'" width="180">
+                            <template #default="scope">
+                                <!-- {{ scope.row.DefectCount || calculateDefectCount(scope.row) }} -->
+                                <el-input v-model="scope.row.UnqualifiedHandlingResults" size="small"></el-input>
+                            </template>
+                        </el-table-column>
                     </el-table>
                 </el-tab-pane>
             </el-tabs>
             <el-form class="mt-2" ref="DetailInfoFormRef" :model="DetailInfoForm" label-width="auto" :inline="true"
                 :size="'small'">
                 <el-form-item :label="$t('oqcInspection.SamplingPlan')" prop="SamplingPlan">
-                    <el-input v-model="DetailInfoForm.SamplingPlan" placeholder="" style="width: 150px" />
+                    <el-select v-model="DetailInfoForm.SamplingPlan" placeholder="" style="width: 150px">
+                        <el-option v-for="item in aqlLevelList" :key="item.AQLLevelId" :label="item.AQLLevelName"
+                            :value="item.AQLLevelName">
+                        </el-option>
+                    </el-select>
+                    <!-- <el-input v-model="DetailInfoForm.SamplingPlan" placeholder="" style="width: 150px" /> -->
                 </el-form-item>
                 <el-form-item :label="$t('oqcInspection.TechnicalRequirements')" prop="TechnicalRequirements">
                     <el-input v-model="DetailInfoForm.TechnicalRequirements" placeholder="" style="width: 150px" />
                 </el-form-item>
                 <el-form-item :label="$t('oqcInspection.Severity')" prop="Severity">
-                    <el-input v-model="DetailInfoForm.Severity" placeholder="" style="width: 150px" />
+                    <el-select v-model="DetailInfoForm.Severity" placeholder="" style="width: 150px">
+                        <el-option v-for="item in seriousList" :key="item.value" :label="item.label"
+                            :value="item.value">
+                        </el-option></el-select>
+                    <!-- <el-input v-model="DetailInfoForm.Severity" placeholder="" style="width: 150px" /> -->
                 </el-form-item>
                 <el-form-item :label="$t('oqcInspection.InspectionLevel')" prop="InspectionLevel">
-                    <el-input v-model="DetailInfoForm.InspectionLevel" placeholder="" style="width: 150px" />
+                    <el-select v-model="DetailInfoForm.InspectionLevel" placeholder="" style="width: 150px">
+                        <el-option v-for="item in testLevelList" :key="item.value" :label="item.label"
+                            :value="item.value">
+                        </el-option></el-select>
+                    <!-- <el-input v-model="DetailInfoForm.InspectionLevel" placeholder="" style="width: 150px" /> -->
                 </el-form-item>
                 <el-form-item :label="$t('oqcInspection.SampleSize')" prop="SampleSize">
-                    <el-input v-model="DetailInfoForm.SampleSize" placeholder="" style="width: 150px" />
+                    <!-- <el-input v-model="DetailInfoForm.SampleSize" placeholder="" type="number" style="width: 150px" /> -->
+                    <el-input-number v-model="DetailInfoForm.SampleSize" :min="0" style="width: 150px" />
                 </el-form-item>
                 <el-form-item :label="$t('oqcInspection.PinHole')" prop="PinHole">
-                    <el-input v-model="DetailInfoForm.PinHole" placeholder="" style="width: 150px" />
+                    <el-select v-model="DetailInfoForm.PinHole" placeholder="" style="width: 150px" disabled>
+                        <el-option label="OK" :value="0" />
+                        <el-option label="NG" :value="1" />
+                    </el-select>
                 </el-form-item>
                 <el-form-item :label="$t('oqcInspection.Dirt')" prop="Dirt">
-                    <el-input v-model="DetailInfoForm.Dirt" placeholder="" style="width: 150px" />
+                    <el-select v-model="DetailInfoForm.Dirt" placeholder="" style="width: 150px" disabled>
+                        <el-option label="OK" :value="0" />
+                        <el-option label="NG" :value="1" /></el-select>
                 </el-form-item>
                 <el-form-item :label="$t('oqcInspection.Flaw')" prop="Flaw">
-                    <el-input v-model="DetailInfoForm.Flaw" placeholder="" style="width: 150px" />
+                    <el-select v-model="DetailInfoForm.Flaw" placeholder="" style="width: 150px" disabled>
+                        <el-option label="OK" :value="0" />
+                        <el-option label="NG" :value="1" /></el-select>
                 </el-form-item>
                 <el-form-item :label="$t('oqcInspection.Result')" prop="Result">
-                    <el-input v-model="DetailInfoForm.Result" placeholder="" style="width: 150px" />
+                    <el-select v-model="DetailInfoForm.Result" placeholder="" style="width: 150px" disabled>
+                        <el-option label="OK" :value="0" />
+                        <el-option label="NG" :value="1" /></el-select>
                 </el-form-item>
                 <el-form-item :label="$t('oqcInspection.Reject')" prop="Reject">
-                    <el-input v-model="DetailInfoForm.Reject" placeholder="" style="width: 150px" />
+                    <el-input v-model="rejectValue" placeholder="" type="number" style="width: 150px" disabled />
                 </el-form-item>
                 <el-form-item :label="$t('oqcInspection.PinHoleDefectCount')" prop="PinHoleDefectCount">
-                    <el-input v-model="DetailInfoForm.PinHoleDefectCount" placeholder="" style="width: 150px" />
+                    <el-input-number v-model="DetailInfoForm.PinHoleDefectCount" :min="0" style="width: 150px" />
                 </el-form-item>
                 <el-form-item :label="$t('oqcInspection.DirtDefectCount')" prop="DirtDefectCount">
-                    <el-input v-model="DetailInfoForm.DirtDefectCount" placeholder="" style="width: 150px" />
+                    <el-input-number v-model="DetailInfoForm.DirtDefectCount" :min="0" style="width: 150px" />
                 </el-form-item>
                 <el-form-item :label="$t('oqcInspection.FlawDefectCount')" prop="FlawDefectCount">
-                    <el-input v-model="DetailInfoForm.FlawDefectCount" placeholder="" style="width: 150px" />
+                    <el-input-number v-model="DetailInfoForm.FlawDefectCount" :min="0" style="width: 150px" />
                 </el-form-item>
                 <el-form-item :label="$t('oqcInspection.ResultDefectCount')" prop="ResultDefectCount">
-                    <el-input v-model="DetailInfoForm.ResultDefectCount" placeholder="" style="width: 150px" />
+                    <el-input-number v-model="DetailInfoForm.ResultDefectCount" :min="0" style="width: 150px" />
                 </el-form-item>
                 <el-form-item :label="'Accept'" prop="Accept">
-                    <el-input v-model="DetailInfoForm.Accept" placeholder="" style="width: 150px" />
+                    <el-input v-model="acceptValue" placeholder="" style="width: 150px" disabled />
                 </el-form-item>
-                <el-form-item :label="'AC'" prop="AC">
-                    <el-input v-model="DetailInfoForm.AC" placeholder="" style="width: 150px" />
+                <!-- <el-form-item :label="'AC'" prop="AC">
+                    <el-input v-model="DetailInfoForm.AC" placeholder="" style="width: 150px" disabled />
                 </el-form-item>
                 <el-form-item :label="'RE'" prop="RE">
-                    <el-input v-model="DetailInfoForm.RE" placeholder="" style="width: 150px" />
-                </el-form-item>
+                    <el-input v-model="DetailInfoForm.RE" placeholder="" style="width: 150px" disabled />
+                </el-form-item> -->
             </el-form>
             <el-table :data="CharactTable" border stripe style="width: 100%" size="small" :height="200">
                 <el-table-column prop="OQCCharacteristicsName" :label="$t('oqcInspection.characteristicName')">
@@ -394,28 +451,40 @@
                     <template #default="scope">
                         <el-input v-model="scope.row.OQCCharacteristicsDesc" size="small"></el-input>
                     </template></el-table-column>
-                <el-table-column prop="MeasurementLocation" :label="$t('oqcInspection.measurementLocation')">
-                    <template #default="scope">
-                        <el-input v-model="scope.row.MeasurementLocation" size="small"></el-input>
-                    </template></el-table-column>
-                <el-table-column prop="MeasurementMethod" :label="$t('oqcInspection.measurementMethod')">
-                    <template #default="scope">
-                        <el-input v-model="scope.row.MeasurementMethod" size="small"></el-input>
+
+                <!-- <el-table-column :label="$t('publicText.operation')" width="150" fixed="right" align="center">
+                    <template #default="{ row, $index }">
+                        <el-button v-if="isLastCharact($index)" :size="'small'" :type="'primary'" icon="Plus"
+                            @click="addCharactTable"></el-button>
+                        <el-button :size="'small'" :type="'danger'" icon="Delete"
+                            @click="deleteCharactTable(row)"></el-button>
                     </template>
-                </el-table-column>
-                <el-table-column :label="$t('publicText.operation')" width="150" fixed="right" align="center">
-                    <template #default="scope">
-                        <el-button :size="'small'" :type="'primary'" @click="addCharactTable">{{ $t('publicText.add') }}</el-button>
-                          <el-button :size="'small'" :type="'danger'" @click="deleteCharactTable(scope.row)">{{ $t('publicText.delete') }}</el-button>
-                    </template>
-                </el-table-column>
+                </el-table-column> -->
 
             </el-table>
+            <el-form class="mt-2" ref="DetailInfoFormRef" :model="DetailInfoForm" label-width="auto" :inline="true"
+                :size="'small'">
+                <el-form-item :label="$t('oqcInspection.measurementLocation')" prop="MeasurementLocation">
+
+                    <el-select v-model="DetailInfoForm.MeasurementLocation" placeholder="" style="width: 450px">
+                        <el-option v-for="item in LocationList" :key="item.value" :label="item.label"
+                            :value="item.value">
+                        </el-option></el-select>
+
+                </el-form-item>
+                <el-form-item :label="$t('oqcInspection.measurementMethod')" prop="MeasurementLocation">
+
+                    <el-select v-model="MeasurValur" multiple placeholder="" style="width: 450px">
+                        <el-option v-for="item in MethodList" :key="item.value" :label="item.label" :value="item.value">
+                        </el-option></el-select>
+
+                </el-form-item>
+            </el-form>
             <template #footer>
                 <div class="dialog-footer">
                     <el-button @click="handleInspectClose">{{
                         $t("publicText.close")
-                        }}</el-button>
+                    }}</el-button>
                     <!-- <el-button type="warning" @click="handleInspectZCConfirm" :disabled="isDisable">
                         {{ "暂存" }}
                     </el-button>
@@ -440,9 +509,9 @@
                 </span>
             </template>
         </el-dialog>
-         <el-dialog v-model="appVisible" title="审批" width="500" :append-to-body="true"
-            :close-on-click-modal="false" :close-on-press-escape="false" align-center @close="handleAppClose">
-            <el-form ref="appFormRef" :model="appForm" label-width="auto"> 
+        <el-dialog v-model="appVisible" title="审批" width="500" :append-to-body="true" :close-on-click-modal="false"
+            :close-on-press-escape="false" align-center @close="handleAppClose">
+            <el-form ref="appFormRef" :model="appForm" label-width="auto">
                 <el-form-item label="结果" prop="ApprovalResult">
                     <el-select v-model="appForm.ApprovalStatus" placeholder="" style="width: 200px">
                         <el-option label="通过" value="通过"> </el-option>
@@ -452,16 +521,16 @@
                 <el-form-item label="备注" prop="ApprovalRemarks">
                     <el-input type="textarea" v-model="appForm.ApprovalRemarks" :rows="4" style="width: 400px" />
                 </el-form-item>
-               
+
             </el-form>
-             <template #footer>
-              
-                    <el-button @click="handleAppClose">{{
-                        $t("publicText.cancel")
-                        }}</el-button>
-                    <el-button type="primary" @click="handleAppConfirm" >
-                        {{ $t("publicText.confirm") }}
-                    </el-button>
+            <template #footer>
+
+                <el-button @click="handleAppClose">{{
+                    $t("publicText.cancel")
+                }}</el-button>
+                <el-button type="primary" @click="handleAppConfirm">
+                    {{ $t("publicText.confirm") }}
+                </el-button>
             </template>
         </el-dialog>
     </div>
@@ -487,6 +556,7 @@ import {
     onBeforeUnmount,
     nextTick,
     reactive,
+    computed
 } from "vue";
 import {
     shortcuts,
@@ -499,9 +569,25 @@ import { useI18n } from "vue-i18n";
 const { t } = useI18n();
 import { useUserStoreWithOut } from "@/stores/modules/user";
 import dayjs from "dayjs";
-import router from "@/router";
-import { add } from "xe-utils";
 const userStore = useUserStoreWithOut();
+const addForm = ref({
+    MfgOrderName: "",
+    OrderQty: 0,
+    ShippingQty: 0,
+    PartNo: "",
+    LotNo: "",
+    TotalEvaluation: "",
+    ProductName: "",
+    ToCustomerName: "",
+    ProductType: "",
+    CustomerPN: "",
+    MaterialSource: "",
+    Date: "",
+    DataStatus: 0,
+    OperatorUser: userStore.getUserInfo2!==''?userStore.getUserInfo2:userStore.getUserInfo,
+    OperationType: "Add",
+});
+const addVisible = ref(false);
 const getForm = ref({
     OQCName: "",
     OQCNumber: "",
@@ -526,25 +612,16 @@ const pageObj = reactive({
     currentPage: 1,
     pageSize: 50,
 });
-const addForm = ref({
-    MfgOrderName: "",
-    OrderQty: 0,
-    ShippingQty: 0,
-    PartNo: "",
-    LotNo: "",
-    TotalEvaluation: "",
-    ProductName: "",
-    ToCustomerName: "",
-    ProductType: "",
-    CustomerPN: "",
-    MaterialSource: "",
-    Date: "",
-    DataStatus: 0,
-    OperatorUser: userStore.getUserInfo,
-    OperationType: "Add",
-});
-const addVisible = ref(false);
-const addFormRef = ref("");
+const aqlLevelList = ref<any[]>([]);
+const seriousList = ref<any[]>([
+    { label: "一般", value: "一般" },
+    { label: "正常", value: "正常" },
+    { label: "严重", value: "正常" },
+]);
+const testLevelList = ref<any[]>([
+    { label: "一般", value: "一般" },
+    { label: "正常", value: "正常" },
+]);
 const activeName = ref("first");
 const detailTableData = ref<any[]>([]);
 const detailVisible = ref(false);
@@ -576,16 +653,19 @@ const headerForm = ref({
     MaterialSource: "",
     RemainingQty: 0,
     QtyShiped: 0,
+    SpecificationNo: "",
+    ApprovalStatus: "",
+    InspectionStatus: "",
 });
 
-const testEqForm = ref({
+const eqTable = ref([{
     ResourceName: "",
     Status: 0,
-});
+}]);
 const QCInspectDetail = ref<any[]>([]);
 const DetailInfoForm = ref({
     SamplingPlan: "",
-    TechnicalRequirements: "",
+    TechnicalRequirements: "SIP-01E",
     Severity: "",
     InspectionLevel: "",
     SampleSize: 0,
@@ -601,13 +681,13 @@ const DetailInfoForm = ref({
     Accept: 0,
     AC: 0,
     RE: 0,
+    MeasurementLocation: "",
+    MeasurementMethod: ""
 });
 const CharactTable = ref<any[]>([
     {
         OQCCharacteristicsName: "",
         OQCCharacteristicsDesc: "",
-        MeasurementLocation: "",
-        MeasurementMethod: "",
     },
 ]);
 const MeasurTable = ref<any[]>([]);
@@ -616,10 +696,46 @@ const eqList = ref<any[]>([]);
 const inspectVisible = ref(false);
 
 const appVisible = ref(false);
-const appForm=ref({
-     "ApprovalStatus": "",
-  "ApprovalRemarks": "",
+const appForm = ref({
+    "ApprovalStatus": "",
+    "ApprovalRemarks": "",
 })
+const MeasurFormRef = ref("");
+const MeasurValur = ref([]);
+const LocationList = ref([
+    {
+        label: "Note 1 Meaurements are taken in Fujipoly Thailand",
+        value: "Note 1 Meaurements are taken in Fujipoly Thailand"
+    },
+    {
+        label: "Note 1 Meaurements are taken in Fujipoly Japan",
+        value: "Note 1 Meaurements are taken in Fujipoly Japan"
+    }
+])
+const MethodList = ref([
+    {
+        label: "Tool Microscope",
+        value: "Tool Microscope"
+    },
+    {
+        label: "Dialgauge",
+        value: "Dialgauge"
+    },
+    {
+        label: "Verniar caliper",
+        value: "Verniar caliper"
+    },
+    {
+        label: "Multimeter",
+        value: "Multimeter"
+    },
+    {
+        label: "Ruler",
+        value: "Ruler"
+    }
+])
+const OQCName = ref("");
+
 watch(
     () => searchDate.value,
     (newVal: any, oldVal: any) => {
@@ -632,11 +748,26 @@ watch(
         }
         if (newVal !== oldVal) {
             getForm.value.StartTime = newVal[0];
-            getForm.value.EndTime = newVal[1]+' 23:59:59';
+            getForm.value.EndTime = newVal[1] + ' 23:59:59';
             // getForm.value.PageNumber = 1
         }
     }
 );
+const rejectValue = computed(() => {
+    const { PinHoleDefectCount, DirtDefectCount, FlawDefectCount, ResultDefectCount } = DetailInfoForm.value;
+    const pinHole = Number(PinHoleDefectCount) || 0;
+    const dirt = Number(DirtDefectCount) || 0;
+    const flaw = Number(FlawDefectCount) || 0;
+    const result = Number(ResultDefectCount) || 0;
+    DetailInfoForm.value.Reject = pinHole + dirt + flaw + result;
+    return pinHole + dirt + flaw + result;
+})
+const acceptValue = computed(() => {
+    const SampleSize = Number(DetailInfoForm.value.SampleSize) || 0;
+    const reject = Number(DetailInfoForm.value.Reject) || 0;
+    DetailInfoForm.value.Accept = SampleSize - reject;
+    return SampleSize - reject;
+})
 
 onBeforeMount(() => {
     getScreenHeight();
@@ -658,21 +789,21 @@ const getData = () => {
     });
 };
 
-const getChange=()=>{
-    QueryOQCNewWorkOrderDetailsByWorkOrder(addForm.value.MfgOrderName).then((res:any)=>{
-        if(res.success){
-            let data=res.content[0];
-            addForm.value.OrderQty=data.OrderQty;
-            addForm.value.ShippingQty=data.ShippingQty;
-            addForm.value.PartNo=data.PartNo;
-            addForm.value.LotNo=data.LotNo;
-            addForm.value.TotalEvaluation=data.TotalEvaluation;
-            addForm.value.ProductName=data.ProductName;
-            addForm.value.ToCustomerName=data.CustomerName;
-            addForm.value.ProductType=data.ProductTypeName;
-            addForm.value.CustomerPN=data.CustomerPN;
+const getChange = () => {
+    QueryOQCNewWorkOrderDetailsByWorkOrder(addForm.value.MfgOrderName).then((res: any) => {
+        if (res.success) {
+            let data = res.content[0];
+            addForm.value.OrderQty = data.OrderQty;
+            addForm.value.ShippingQty = data.ShippingQty;
+            addForm.value.PartNo = data.PartNo;
+            addForm.value.LotNo = data.EarliestLotFormatted;
+            addForm.value.TotalEvaluation = data.TotalEvaluation;
+            addForm.value.ProductName = data.ProductName;
+            addForm.value.ToCustomerName = data.CustomerName;
+            addForm.value.ProductType = data.ProductTypeName;
+            addForm.value.CustomerPN = data.CustomerPN;
             // addForm.value.MaterialSource=data.MaterialSource;
-        }else{
+        } else {
             ElMessage({
                 title: t("message.tipTitle"),
                 message: res.msg,
@@ -700,12 +831,13 @@ const handleAddClose = () => {
         MaterialSource: "",
         Date: "",
         DataStatus: 0,
-        OperatorUser: userStore.getUserInfo,
+        OperatorUser: userStore.getUserInfo2!==''?userStore.getUserInfo2:userStore.getUserInfo,
         OperationType: "Add",
     };
 };
 const handleAddConfirm = () => {
-    addForm.value.Date = dayjs().format("YYYY-MM-DD");
+    addForm.value.Date = dayjs().format("DD-MMM-YYYY");
+
     OQCDocumentExecution(addForm.value).then((res: any) => {
         ElMessage({
             title: t("message.tipTitle"),
@@ -721,7 +853,12 @@ const handleAddConfirm = () => {
 };
 
 const handleEdit = (row: any) => {
-    GetOQCDetailInfo({ OQCName: row.OQCName }).then(
+    OQCName.value = row.OQCName;
+    getInspectDetilData()
+    inspectVisible.value = true;
+};
+const getInspectDetilData = () => {
+    GetOQCDetailInfo({ OQCName: OQCName.value }).then(
         (res: any) => {
             let data = res.content;
             headerForm.value = {
@@ -730,7 +867,7 @@ const handleEdit = (row: any) => {
                 MfgOrderName: data.OQCHead[0].mfgOrderNo,
                 OrderQty: data.OQCHead[0].orderQty,
                 ShippingQty: data.OQCHead[0].shippingQty,
-                PartNo: data.OQCHead[0].customerPartNo,
+                PartNo: data.OQCHead[0].customerPo,
                 LotNo: data.OQCHead[0].lotNo,
                 TotalEvaluation: data.OQCHead[0].totalEvaluation,
                 ProductName: data.OQCHead[0].productName,
@@ -741,17 +878,20 @@ const handleEdit = (row: any) => {
                 MaterialSource: data.OQCHead[0].materialSource,
                 RemainingQty: data.OQCHead[0].remainingQty,
                 QtyShiped: data.OQCHead[0].shippedQty,
+                SpecificationNo: data.OQCHead[0].SpecificationNo,
+                ApprovalStatus: data.OQCHead[0].ApprovalStatus,
+                InspectionStatus: data.OQCHead[0].InspectionStatus,
             };
             DetailInfoForm.value = {
                 SamplingPlan: data.OQCDetailInfo[0].samplingPlan,
-                TechnicalRequirements: data.OQCDetailInfo[0].technicalRequirements,
-                Severity: data.OQCDetailInfo[0].severity,
+                TechnicalRequirements: 'SIP-01E',
+                Severity: data.OQCDetailInfo[0].severityLevel,
                 InspectionLevel: data.OQCDetailInfo[0].inspectionLevel,
-                SampleSize: data.OQCDetailInfo[0].sampleSize,
-                PinHole: data.OQCDetailInfo[0].pinHole,
-                Dirt: data.OQCDetailInfo[0].dirt,
-                Flaw: data.OQCDetailInfo[0].flaw,
-                Result: data.OQCDetailInfo[0].result,
+                SampleSize: data.OQCDetailInfo[0].oqcSampleSize,
+                PinHole: data.OQCDetailInfo[0].pinHoleFlag,
+                Dirt: data.OQCDetailInfo[0].dirtFlag,
+                Flaw: data.OQCDetailInfo[0].flawFlag,
+                Result: data.OQCDetailInfo[0].finalResult,
                 PinHoleDefectCount: data.OQCDetailInfo[0].pinHoleDefectCount,
                 DirtDefectCount: data.OQCDetailInfo[0].dirtDefectCount,
                 FlawDefectCount: data.OQCDetailInfo[0].flawDefectCount,
@@ -760,31 +900,41 @@ const handleEdit = (row: any) => {
                 Accept: data.OQCDetailInfo[0].isAccepted,
                 AC: data.OQCDetailInfo[0].AC,
                 RE: data.OQCDetailInfo[0].RE,
+                MeasurementLocation: data.OQCDetailInfo[0].measurementLocation,
+                MeasurementMethod: data.OQCDetailInfo[0].measurementMethod
             };
-            eqList.value = data.OQCInstrumentDetails;
+            MeasurValur.value = data.OQCDetailInfo[0].measurementMethod ? data.OQCDetailInfo[0].measurementMethod.split(',') : []
+            if (data.OQCInstrumentDetails.length == 0) {
+                eqTable.value = [{
+                    ResourceName: "",
+                    Status: 0,
+                }];
+            } else {
+                eqTable.value = data.OQCInstrumentDetails.map((item: any) => ({
+                    ResourceName: item.instrumentName,
+                    Status: item.instrumentStatus,
+                }));
+            }
+
             // console.log(eqList.value);
             if (data.OQCCharacteristicDetails.length == 0) {
                 CharactTable.value = [
                     {
                         OQCCharacteristicsName: "",
                         OQCCharacteristicsDesc: "",
-                        MeasurementLocation: "",
-                        MeasurementMethod: "",
                     },
                 ];
             } else {
                 CharactTable.value = data.OQCCharacteristicDetails.map((item: any) => ({
                     OQCCharacteristicsName: item.characteristicName,
                     OQCCharacteristicsDesc: item.characteristicDesc,
-                    MeasurementLocation: item.measurementLocation,
-                    MeasurementMethod: item.measurementMethod,
                 }));
             }
 
             MeasurTable.value = data.OQCInspectionDetails.filter(
                 (item: any) => item.measurementType == "计量"
             ).map((item: any) => ({
-
+                Inspectiondetail: item.inspectionItemName,
                 ProjectCategoryName: item.projectCategoryName,
                 ProjectName: item.projectName,
                 CharacteristicGrade: item.characteristicGrade,
@@ -806,10 +956,12 @@ const handleEdit = (row: any) => {
                 MeasuredValue8: item.measuredValue8,
                 MeasuredValue9: item.measuredValue9,
                 MeasuredValue10: item.measuredValue10,
+                UnqualifiedHandlingResults: item.UnqualifiedHandlingResults,
             }));
             CountTable.value = data.OQCInspectionDetails.filter(
                 (item: any) => item.measurementType == "计数"
             ).map((item: any) => ({
+                Inspectiondetail: item.inspectionItemName,
                 ProjectCategoryName: item.projectCategoryName,
                 ProjectName: item.projectName,
                 CharacteristicGrade: item.characteristicGrade,
@@ -831,11 +983,12 @@ const handleEdit = (row: any) => {
                 MeasuredValue8: item.measuredValue8,
                 MeasuredValue9: item.measuredValue9,
                 MeasuredValue10: item.measuredValue10,
+                UnqualifiedHandlingResults: item.UnqualifiedHandlingResults,
             }));
-            inspectVisible.value = true;
+
         }
     );
-};
+}
 const handleInspectClose = () => {
     inspectVisible.value = false;
 };
@@ -848,7 +1001,7 @@ const addCharactTable = () => {
         MeasurementMethod: "",
     });
 };
-const deleteCharactTable = (val:any) => {
+const deleteCharactTable = (val: any) => {
     const index = CharactTable.value.indexOf(val);
     if (index > -1) {
         CharactTable.value.splice(index, 1);
@@ -924,7 +1077,7 @@ const dataProcessing = () => {
         CustomerPN: headerForm.value.CustomerPN,
         Date: headerForm.value.Date,
         DataStatus: 0,
-        OperatorUser: userStore.getUserInfo,
+        OperatorUser: userStore.getUserInfo2!==''?userStore.getUserInfo2:userStore.getUserInfo,
         ApprovalStatus: "",
         ApprovalRemarks: "",
         InspectionStatus: "",
@@ -985,15 +1138,15 @@ const handleInspectConfirm = () => {
     });
 };
 
-const handleAppClose=()=>{
-    appVisible.value=false
+const handleAppClose = () => {
+    appVisible.value = false
 }
-const handleAppConfirm=()=>{
-    let data=dataProcessing()
-    data.OperatorUser= userStore.getUserInfo
-    data.OperationType="Approve"
-    data.ApprovalStatus=appForm.value.ApprovalStatus
-    data.ApprovalRemarks=appForm.value.ApprovalRemarks
+const handleAppConfirm = () => {
+    let data = dataProcessing()
+    data.OperatorUser = userStore.getUserInfo2!==''?userStore.getUserInfo2:userStore.getUserInfo
+    data.OperationType = "Approve"
+    data.ApprovalStatus = appForm.value.ApprovalStatus
+    data.ApprovalRemarks = appForm.value.ApprovalRemarks
     OQCDocumentExecution(data).then((res: any) => {
         ElMessage({
             title: t("message.tipTitle"),
@@ -1003,16 +1156,16 @@ const handleAppConfirm=()=>{
         if (!res.success) {
             return;
         }
-        appForm.value.ApprovalStatus=""
-        appForm.value.ApprovalRemarks=""
-        appVisible.value=false
+        appForm.value.ApprovalStatus = ""
+        appForm.value.ApprovalRemarks = ""
+        appVisible.value = false
         getData();
     });
 }
-const handleApproval=(row:any)=>{
-    appVisible.value=true
+const handleApproval = (row: any) => {
+    appVisible.value = true
     // let data=dataProcessing()
-    // data.OperatorUser= userStore.getUserInfo
+    // data.OperatorUser= userStore.getUserInfo2!==''?userStore.getUserInfo2:userStore.getUserInfo
     // data.OperationType="Approve"
     // OQCDocumentExecution(data).then((res: any) => {
     //     ElMessage({
@@ -1189,7 +1342,7 @@ const handleZCConfirm = () => {
             MeasuredValue8: item.MeasuredValue8 || "",
             MeasuredValue9: item.MeasuredValue9 || "",
             MeasuredValue10: item.MeasuredValue10 || "",
-            Inspector: userStore.getUserInfo,
+            Inspector: userStore.getUserInfo2!==''?userStore.getUserInfo2:userStore.getUserInfo,
             Status: 0,
             DataStatus: 0,
         };
@@ -1212,7 +1365,7 @@ const handleZCConfirm = () => {
             MeasuredValue8: "",
             MeasuredValue9: "",
             MeasuredValue10: "",
-            Inspector: userStore.getUserInfo,
+            Inspector: userStore.getUserInfo2!==''?userStore.getUserInfo2:userStore.getUserInfo,
             Status: 0,
             DataStatus: 0,
         });
@@ -1246,7 +1399,7 @@ const handletestConfirm = () => {
             MeasuredValue8: item.MeasuredValue8 || "",
             MeasuredValue9: item.MeasuredValue9 || "",
             MeasuredValue10: item.MeasuredValue10 || "",
-            Inspector: userStore.getUserInfo,
+            Inspector: userStore.getUserInfo2!==''?userStore.getUserInfo2:userStore.getUserInfo,
             Status: item.Status == "合格" ? 1 : 2,
             DataStatus: 0,
         };
@@ -1281,7 +1434,7 @@ const handletestConfirm = () => {
             MeasuredValue8: "",
             MeasuredValue9: "",
             MeasuredValue10: "",
-            Inspector: userStore.getUserInfo,
+            Inspector: userStore.getUserInfo2!==''?userStore.getUserInfo2:userStore.getUserInfo,
             Status: item.DefectCount == 0 ? 1 : 2,
             DataStatus: 0,
         });
