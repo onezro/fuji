@@ -85,17 +85,17 @@
                 <el-table-column prop="Date" :label="$t('oqcInspection.Date')" width="100" />
                 <el-table-column prop="ShippingQty" :label="$t('oqcInspection.ShippingQty')" width="100" />
                 <el-table-column prop="QtyShiped" :label="$t('oqcInspection.QtyShiped')" width="100" />
-                <el-table-column prop="TotalEvaluation" :label="$t('oqcInspection.TotalEvaluation')" />
+                <el-table-column prop="TotalEvaluation" :label="$t('oqcInspection.TotalEvaluation')"width="150" />
                 <el-table-column prop="SpecificationNo" :label="$t('oqcInspection.SpecificationNo')" />
                 <el-table-column prop="OrderTypeName" :label="$t('oqcInspection.OrderTypeName')" width="100" />
-                <el-table-column prop="CreateUser" :label="$t('oqcInspection.CreateUser')" />
+                <el-table-column prop="CreateUser" :label="$t('oqcInspection.CreateUser')" width="110"/>
                 <el-table-column prop="CreateTime" :label="$t('oqcInspection.CreateTime')" width="150" />
-                <el-table-column prop="UpdateUser" :label="$t('oqcInspection.UpdateUser')" />
+                <el-table-column prop="UpdateUser" :label="$t('oqcInspection.UpdateUser')" width="110"/>
                 <el-table-column prop="UpdateTime" :label="$t('oqcInspection.UpdateTime')" width="150" />
-                <el-table-column :label="$t('publicText.operation')" width="120" fixed="right" align="center">
+                <el-table-column :label="$t('publicText.operation')" width="70" fixed="right" align="center">
                     <template #default="scope">
-                        <el-tooltip :content="$t('publicText.check')" placement="top">
-                            <el-button type="primary" icon="EditPen" size="small"
+                        <el-tooltip :content="$t('publicText.look')" placement="top">
+                            <el-button type="primary" icon="Document" size="small"
                                 @click.stop="handleEdit(scope.row)"></el-button>
                         </el-tooltip>
                         <!-- <el-tooltip :content="$t('publicText.look')" placement="top">
@@ -130,8 +130,14 @@
                     <el-input v-model="addForm.OrderQty" placeholder="" style="width: 200px" type="number" disabled />
                 </el-form-item>
                 <el-form-item :label="$t('oqcInspection.ShippingQty')" prop="ShippingQty">
-                    <el-input v-model="addForm.ShippingQty" placeholder="" style="width: 200px" type="number" />
+                    <el-input-number v-model="addForm.ShippingQty" :min="0"  style="width: 200px"/>
+                    <!-- <el-input v-model="addForm.ShippingQty" placeholder="" style="width: 200px" type="number" /> -->
                 </el-form-item>
+                <el-form-item :label="$t('oqcInspection.RemainingQty')" prop="RemainingQty">
+                     <el-input-number v-model="addForm.RemainingQty" :min="0"  style="width: 200px"/>
+                    <!-- <el-input v-model="addForm.RemainingQty" placeholder="" style="width: 200px" type="number" /> -->
+                </el-form-item>
+                
                 <el-form-item :label="$t('oqcInspection.customerPO')" prop="PartNo">
                     <el-input v-model="addForm.PartNo" placeholder="" style="width: 200px" disabled />
                 </el-form-item>
@@ -574,6 +580,7 @@ const addForm = ref({
     MfgOrderName: "",
     OrderQty: 0,
     ShippingQty: 0,
+    RemainingQty:0,
     PartNo: "",
     LotNo: "",
     TotalEvaluation: "",
@@ -582,6 +589,7 @@ const addForm = ref({
     ProductType: "",
     CustomerPN: "",
     MaterialSource: "",
+    
     Date: "",
     DataStatus: 0,
     OperatorUser: userStore.getUserInfo2!==''?userStore.getUserInfo2:userStore.getUserInfo,
@@ -821,6 +829,7 @@ const handleAddClose = () => {
         MfgOrderName: "",
         OrderQty: 0,
         ShippingQty: 0,
+         RemainingQty:0,
         PartNo: "",
         LotNo: "",
         TotalEvaluation: "",

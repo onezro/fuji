@@ -339,6 +339,8 @@ const bindPackClick = (val: any) => {
         return
     }
     packForm.value.ContainerLevelName = val
+
+    
     GetSearchBoxNumberSmallBoxNumberQuery(packForm.value).then((res: any) => {
         isPackSuccess.value = res.success
         msgPackText.value = res.msg
@@ -402,7 +404,7 @@ const getDataBox = (val: any) => {
     getBoxForm.value.ContainerLevelName = val
     getPackingListOuterBoxListSmallBoxQuery(getBoxForm.value).then((res: any) => {
 
-        outerTableData.value = res.content
+        outerTableData.value = res.content==null?[]:res.content
     })
 }
 //外箱
@@ -448,9 +450,14 @@ const bindBoxClick = (val: any) => {
         return
     }
     boxForm.value.ContainerLevelName = val
+       
     GetSearchBoxNumberSmallBoxNumberQuery(boxForm.value).then((res: any) => {
         isBoxSuccess.value = res.success
         msgBoxText.value = res.msg
+         console.log( boxForm.value.ContainerName,getBoxForm.value.ContainerName);
+          if (!Array.isArray(outerTableData.value)) {
+            outerTableData.value = []
+        }
         if (res.success) {
             outerTableData.value.unshift(
                 {

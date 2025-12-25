@@ -1,7 +1,7 @@
 <template>
     <div class="p-2">
         <el-card shadow="always" :body-style="{ padding: '8px' }">
-            <el-form ref="formRef" :model="getForm" :inline="true" size="" @submit.native.prevent>
+            <el-form ref="formRef" :model="getForm" :inline="true" @submit.native.prevent :size="'small'">
                 <el-form-item :label="$t('finishProduct.boxCode')" class="mb-2" prop="OuterBoxContainerName">
                     <el-input v-model.trim="getForm.OuterBoxContainerName" style="width: 300px" placeholder=""
                         @keyup.enter.native="getData" />
@@ -80,7 +80,7 @@ import {
     onBeforeMount,
     onBeforeUnmount,
 } from "vue";
-import { ElNotification, ElMessageBox } from "element-plus";
+import { ElNotification, ElMessageBox,ElMessage } from "element-plus";
 import { useI18n } from 'vue-i18n';
 const { t } = useI18n();
 const formRef = ref()
@@ -105,6 +105,14 @@ onBeforeUnmount(() => {
     window.addEventListener("resize", getScreenHeight);
 });
 const getData = () => {
+    if(getForm.value.OuterBoxContainerName==''||getForm.value.OuterBoxContainerName==''){
+         ElMessage({
+                title: t('message.tipTitle'),
+                message: '请至少输入一个条件',
+                type: 'error',
+            });
+        return 
+    }
     GetCompletedInventoryQuery(getForm.value).then((res: any) => {
         if (res.success) {
             tableData.value = res.content

@@ -43,7 +43,7 @@
                 <el-table-column :label="$t('publicText.operation')" width="120" fixed="right" align="center">
                     <template #default="scope">
                         <el-tooltip :content="$t('publicText.edit')" placement="top">
-                            <el-button type="primary" icon="EditPen" size="small"
+                            <el-button type="warning" icon="EditPen" size="small"
                                 @click.stop="handleEdit(scope.row)"></el-button>
                         </el-tooltip>
                     </template>
@@ -98,7 +98,7 @@
 
             <el-form ref="editFormRef" :model="editForm" label-width="auto">
                 <el-form-item :label="$t('iqctestItem.ProjectName')" prop="ProjectName">
-                    <el-input v-model="editForm.ProjectName" />
+                    <el-input v-model="editForm.ProjectName" disabled/>
                 </el-form-item>
                 <el-form-item :label="$t('iqctestItem.Description')" prop="Description">
                     <el-input v-model="editForm.Description" />

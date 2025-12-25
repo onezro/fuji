@@ -8,19 +8,19 @@
                         <el-input v-model.trim="getForm.PackingContainerName" ref="inputPackRef" style="width: 200px"
                             placeholder="" @keyup.enter.native="getData" />
                     </el-form-item>
-                    <!-- <el-form-item :label="$t('listGeneration.packTime')" class="mb-2">
-                    <el-date-picker :shortcuts="shortcuts" v-model="searchDate" value-format="YYYY-MM-DD"
-                        type="daterange" range-separator="-" size="small" style="width: 200px" :clearable="false"
-                        :disabledDate="disabledDate" />
-                </el-form-item> -->
+                    <el-form-item :label="$t('listGeneration.packTime')" class="mb-2">
+                        <el-date-picker :shortcuts="shortcuts" v-model="searchDate" value-format="YYYY-MM-DD"
+                            type="daterange" range-separator="-" size="small" style="width: 200px" :clearable="false"
+                            :disabledDate="disabledDate" />
+                    </el-form-item>
 
                     <el-form-item class="mb-2">
                         <el-button type="primary" @click="getData">{{
                             $t("publicText.query")
-                            }}</el-button>
-                        <el-button type="" @click="">{{
+                        }}</el-button>
+                        <el-button type="" @click="resetGetForm">{{
                             $t("publicText.reset")
-                            }}</el-button>
+                        }}</el-button>
                     </el-form-item>
                 </el-form>
                 <el-form-item class="mb-2">
@@ -39,7 +39,7 @@
                     <template #default="scope">
                         <span>{{
                             scope.$index + pageObj.pageSize * (pageObj.currentPage - 1) + 1
-                            }}</span>
+                        }}</span>
                     </template>
                 </el-table-column>
 
@@ -67,7 +67,7 @@
                 <el-form ref="formRef" class="inbound" :inline="true" size="small" @submit.native.prevent
                     label-width="auto">
                     <el-form-item :label="$t('listGeneration.productType')" class="mb-2">
-                        <el-select v-model="productType" filterable @change="cellClick" style="width: 200px">
+                        <el-select v-model="getDetailForm.HSCodeName" filterable @change="getDetailData" style="width: 200px">
                             <el-option v-for="item in palletList" :key="item.ES_HsCodeId" :label="item.ES_HsCodeName"
                                 :value="item.ES_HsCodeName">
                             </el-option>
@@ -75,13 +75,13 @@
                     </el-form-item>
 
                     <el-form-item class="mb-2">
-                        <el-button type="primary" @click="">{{
+                        <el-button type="primary" @click="getDetailData">{{
                             $t("publicText.query")
-                            }}</el-button>
+                        }}</el-button>
 
-                        <el-button type="waring" @click="">{{
+                        <el-button @click="resetGetForm2">{{
                             $t("publicText.reset")
-                            }}</el-button>
+                        }}</el-button>
                     </el-form-item>
                 </el-form>
             </div>
@@ -150,7 +150,13 @@ const tableHeight = ref(0);
 const getForm = ref({
     PackingContainerName: "",
     HSCodeName: "",
+    StartTime: "",
+    EndTime: ""
 });
+const getDetailForm=ref({
+      PackingContainerName: "",
+    HSCodeName: "",
+})
 const palletList = ref<any[]>();
 const tableData = ref<any[]>([]);
 const tableHeight2 = ref(0);
@@ -174,39 +180,43 @@ interface ListData {
     TotalNetWeight: number;
 }
 const listData = ref<ListData>({
-     ContainerName: '',
-    ES_CardAreaName:'',
+    ContainerName: '',
+    ES_CardAreaName: '',
     InnerBoxesTareWeight: 0,
-    OriginalStartDate:'',
+    OriginalStartDate: '',
     OuterBoxesNetWeight: 0,
     OuterBoxesTareWeight: 0,
     TotalBoxCount: 0,
     TotalGrossWeight: 0,
     TotalNetWeight: 0,
 });
-// watch(
-//     () => searchDate.value,
-//     (newVal: any, oldVal: any) => {
-//         if (newVal === null) {
-//             getForm.value.SchedulingStartDate = "";
-//             getForm.value.SchedulingEndDate = "";
-//             // getForm.value.PageNumber = 1
+watch(
+    () => searchDate.value,
+    (newVal: any, oldVal: any) => {
+        if (newVal === null) {
+            getForm.value.StartTime = "";
+            getForm.value.EndTime = "";
+            // getForm.value.PageNumber = 1
 
-//             return;
-//         }
-//         if (newVal !== oldVal) {
-//             getForm.value.SchedulingStartDate = newVal[0];
-//             getForm.value.SchedulingEndDate = newVal[1];
-//             // getForm.value.PageNumber = 1
-//         }
-//     }
-// );
+            return;
+        }
+        if (newVal !== oldVal) {
+            getForm.value.StartTime = newVal[0];
+            getForm.value.EndTime = newVal[1] + ' 23:59:59';
+            // getForm.value.PageNumber = 1
+        }
+    }
+);
 onBeforeMount(() => {
     getScreenHeight();
+    let end: string = setTodayDate();
+    let start: string = setLastDate();
+    searchDate.value = [start, end];
 });
 onMounted(() => {
     window.addEventListener("resize", getScreenHeight);
     getProductType();
+    getData()
 });
 onBeforeUnmount(() => {
     window.addEventListener("resize", getScreenHeight);
@@ -234,19 +244,29 @@ const getData = () => {
 };
 
 const cellClick = (val: any) => {
-    ContainerName.value = val.ContainerName;
+    getDetailForm.value .PackingContainerName= val.ContainerName;
     listData.value = val;
-    GetPackingHSCodeSummaryQuery({
-        PackingContainerName: val.ContainerName,
-        HSCodeName: productType.value,
-    }).then((res: any) => {
+   getDetailData()
+};
+const getDetailData=()=>{
+     GetPackingHSCodeSummaryQuery(getDetailForm.value).then((res: any) => {
         if (res.success) {
             tableData2.value = res.content;
         } else {
             tableData2.value = [];
         }
     });
-};
+}
+const resetGetForm = () => {
+    getForm.value.PackingContainerName = ''
+    tableData.value = []
+    tableData2.value = []
+}
+const resetGetForm2 = () => {
+    tableData2.value = []
+    getDetailForm.value.HSCodeName=''
+    // getDetailData()
+}
 const exportList = () => {
     exportTableToExcel({
         tableRef: listTableRef.value,
@@ -293,8 +313,8 @@ const addSummaryDataFunctional = (data: any) => {
     const titleObj = {
         ...createEmptyObjectFromTemplate(original),
         BreakBulkGrossWeight: t("listGeneration.totalBoxNum"),
-        TotalNetWeight: t("listGeneration.totalNetWeightw")+'(kg)',
-        TotalGrossWeight: t("listGeneration.totalGrossWeightw")+'(kg)',
+        TotalNetWeight: t("listGeneration.totalNetWeightw") + '(kg)',
+        TotalGrossWeight: t("listGeneration.totalGrossWeightw") + '(kg)',
     };
 
     const dataObj = {
@@ -316,7 +336,7 @@ const handleSizeChange = (val: any) => {
 };
 const handleCurrentChange = (val: any) => {
     pageObj.currentPage = val;
- 
+
 };
 const getScreenHeight = () => {
     nextTick(() => {

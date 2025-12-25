@@ -225,12 +225,15 @@ const getPrintList = () => {
 };
 const getSmallData = () => {
     SmallOuterBoxPrintQuery(getSmallFrom.value).then((res: any) => {
+        if(res.content==null)   tableData.value=[]
         tableData.value = res.content;
     });
 };
 const getBoxData = () => {
     SmallOuterBoxPrintQuery(getBoxFrom.value).then((res: any) => {
-        tableData.value = res.content;
+         if(res.content==null)   tableData2.value=[]
+        tableData2.value = res.content;
+       
     });
 };
 const tabChange = (tab: any, event: any) => {
@@ -240,7 +243,7 @@ const handleSmallReset = () => {
     getSmallFrom.value = {
         MfgOrderName: "",
         ContainerName: "",
-        ContainerLevelName: "",
+        ContainerLevelName: "SmallBox",
     };
     tableData.value = [];
 };
@@ -280,9 +283,9 @@ const handleBoxReset = () => {
     getBoxFrom.value = {
         MfgOrderName: "",
         ContainerName: "",
-        ContainerLevelName: "",
+        ContainerLevelName: "OuterBox",
     };
-    tableData.value = [];
+    tableData2.value = [];
 };
 const handleBoxPrint = () => {
     let dataList: any[] = [];

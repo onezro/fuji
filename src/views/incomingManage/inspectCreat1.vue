@@ -26,133 +26,66 @@
                     </el-form-item>
                 </el-form>
                 <div>
-                    <el-button type="primary" size="small" @click="handleCreat">
+                    <el-button type="warning" size="small" @click="handleCreat">
                         {{ $t("incomeCreat.creatInspectCode") }}
                     </el-button>
                 </div>
             </div>
-            <el-row :gutter="10">
-                <el-col :span="10">
-                    <el-table :data="tableData.slice(
-                        (pageObj.currentPage - 1) * pageObj.pageSize,
-                        pageObj.currentPage * pageObj.pageSize
-                    )
-                        " size="small" :style="{ width: '100%' }" ref="rawRef" :height="tableHeight" border fit
-                        highlight-current-row @cell-click="cellClick" :tooltip-effect="'dark'">
-                        <el-table-column type="index" align="center" fixed :label="$t('publicText.index')" width="50">
-                            <template #default="scope">
-                                <span>{{
-                                    scope.$index + pageObj.pageSize * (pageObj.currentPage - 1) + 1
-                                    }}</span>
-                            </template>
-                        </el-table-column>
-                        <el-table-column prop="IQCNumber" :label="$t('incomeCreat.creatInspect')" width="120" fixed>
-                            <template #default="scope">
-                                <span class="underline">{{
-                                    scope.row.IQCNumber
-                                    }}</span>
-                            </template>
-                        </el-table-column>
+            <el-table :data="tableData.slice(
+                (pageObj.currentPage - 1) * pageObj.pageSize,
+                pageObj.currentPage * pageObj.pageSize
+            )
+                " size="small" :style="{ width: '100%' }" ref="rawRef" :height="tableHeight" border fit
+                highlight-current-row @cell-click="cellClick">
+                <el-table-column type="index" align="center" fixed :label="$t('publicText.index')" width="50">
+                    <template #default="scope">
+                        <span>{{
+                            scope.$index + pageObj.pageSize * (pageObj.currentPage - 1) + 1
+                            }}</span>
+                    </template>
+                </el-table-column>
+                <el-table-column prop="IQCNumber" :label="$t('incomeCreat.creatInspect')">
+                    <template #default="scope">
+                        <span class="underline">{{
+                            scope.row.IQCNumber
+                            }}</span>
+                    </template>
+                </el-table-column>
+                <el-table-column prop="NotifyDate" :label="$t('incomeCreat.NotifyDate')" />
+                <el-table-column prop="Notifier" :label="$t('incomeCreat.NotifyPerson')" />
+                <el-table-column prop="NotifyDept" :label="$t('incomeCreat.NotifyDepartment')" />
+                <el-table-column prop="ArrivalDate" :label="$t('incomeCreat.incomeDate')" />
+                <el-table-column prop="IsAutomotive" :label="$t('incomeCreat.isCarProduct')" />
+                <el-table-column prop="SamplingStandards" :label="$t('incomeCreat.InspectStandard')" />
+                <el-table-column prop="StatusText" :label="$t('incomeCreat.Status')" />
+                <el-table-column prop="Status" :label="$t('incomeCreat.Status')" />
 
-                        <el-table-column prop="IsAutomotive" :label="$t('incomeCreat.isCarProduct')" width="100" />
-                        <!-- <el-table-column prop="SamplingStandards" :label="$t('incomeCreat.InspectStandard')" show-overflow-tooltip/> -->
-                        <el-table-column prop="StatusText" :label="$t('incomeCreat.Status')" width="70" />
-                        <!-- <el-table-column prop="Status" :label="$t('incomeCreat.Status')" />-->
-                        <!-- <el-table-column prop="NotifyDate" :label="$t('incomeCreat.NotifyDate')" /> -->
-                        <!-- <el-table-column prop="Notifier" :label="$t('incomeCreat.NotifyPerson')" /> -->
-                        <!-- <el-table-column prop="NotifyDept" :label="$t('incomeCreat.NotifyDepartment')"  width="100"/> -->
-                        <!-- <el-table-column prop="ArrivalDate" :label="$t('incomeCreat.incomeDate')" /> -->
-                        <el-table-column prop="CreateTime" :label="$t('incomeCreat.creatDate')" width="155" />
-                        <el-table-column :label="$t('publicText.operation')" width="100" fixed="right" align="center">
-                            <template #default="scope">
-                                <el-tooltip :content="$t('publicText.edit')" placement="top">
-                                    <el-button type="warning" icon="EditPen" size="small"
-                                        @click.stop="handleEdit(scope.row)"></el-button>
-                                </el-tooltip>
-                                <el-tooltip :content="$t('publicText.delete')" placement="top">
-                                    <el-button type="danger" icon="Delete" size="small"
-                                        @click.stop="handleDelete(scope.row)"></el-button>
-                                </el-tooltip>
-                            </template>
-                        </el-table-column>
-                        <template #empty>
-                            <div class="flex items-center justify-center h-100%">
-                                <el-empty />
-                            </div>
-                        </template>
-                    </el-table>
-                    <div class="mt-2">
-                        <el-pagination :size="'small'" background @size-change="handleSizeChange"
-                            @current-change="handleCurrentChange" :pager-count="5" :current-page="pageObj.currentPage"
-                            :page-size="pageObj.pageSize" :page-sizes="[30, 50, 100, 200, 300]"
-                            layout="total,sizes, prev, pager, next" :total="tableData.length">
-                        </el-pagination>
-                    </div>
-                </el-col>
-                <el-col :span="14">
-                    <div class="mb-2 flex ">
-                        <el-button type="primary" size="small" :disabled="detailForm.InspectionNo == ''"
-                            @click="addDetailVisible = true">
-                            {{ $t("publicText.add") + $t("incomeCreat.incomeDetail") }}
-                        </el-button>
-                    </div>
-                    <el-table :data="detailTableData" size="small" :style="{ width: '100%' }" ref="rawRef"
-                        :height="tableHeight" border fit  :tooltip-effect="'dark'">
-                        <el-table-column type="index" align="center" fixed :label="$t('publicText.index')" width="50">
-                            <template #default="scope">
-                                <span>{{
-                                    scope.$index + pageObj.pageSize * (pageObj.currentPage - 1) + 1
-                                    }}</span>
-                            </template>
-                        </el-table-column>
-                        <el-table-column prop="MaterialName" :label="$t('incomeCreat.materialName')" />
-                        <el-table-column prop="ModelSpec" :label="$t('incomeCreat.modelRules')" width="100" />
-                        <el-table-column prop="Supplier" :label="$t('incomeCreat.supplier')" />
-                        <el-table-column prop="OrderNo" :label="$t('incomeCreat.orderNumber')" />
-                        <el-table-column prop="LotNo" label="Lot No" />
-                        <el-table-column prop="TCode" label="T-Code" />
-                        <el-table-column prop="QuantityPerBox" :label="$t('incomeCreat.qtyIncomeMaterial')"
-                            width="100" />
-                        <el-table-column prop="SampledBoxes" :label="$t('incomeSheet.SampledBoxes')" />
-                        <el-table-column prop="SamplingStandards" :label="$t('incomeCreat.InspectStandard')"
-                            show-overflow-tooltip />
-                        <el-table-column prop="SupplierReportName" :label="$t('incomeCreat.supplierReport')"
-                            show-overflow-tooltip>
-
-                            <template #default="scope">
-                                <span v-if="scope.row.SupplierReportName" class="underline cursor-pointer text-cyan-800"
-                                    @click="openFile(scope.row.SupplierReportGuid)">
-
-                                    {{ scope.row.SupplierReportName }}
-                                </span>
-                            </template>
-                        </el-table-column>
-                        <el-table-column prop="StatusText" :label="$t('incomeCreat.Status')" />
-                        <!-- <el-table-column prop="Status" :label="$t('incomeCreat.Status')" /> -->
-                        <el-table-column prop="CreateTime" :label="$t('incomeCreat.creatDate')" width="155" />
-                        <el-table-column :label="$t('publicText.operation')" width="80" fixed="right" align="center">
-                            <template #default="scope">
-                                <el-tooltip :content="$t('publicText.edit')" placement="top">
-                                    <el-button type="warning" icon="EditPen" size="small"
-                                        @click.stop="handleEditDetail(scope.row)"></el-button>
-                                </el-tooltip>
-                                <!-- <el-tooltip :content="$t('publicText.delete')" placement="top">
+                <el-table-column prop="CreateTime" :label="$t('incomeCreat.creatDate')" width="150" />
+                <el-table-column :label="$t('publicText.operation')" width="120" fixed="right" align="center">
+                    <template #default="scope">
+                        <el-tooltip :content="$t('publicText.edit')" placement="top">
+                            <el-button type="primary" icon="EditPen" size="small"
+                                @click.stop="handleEdit(scope.row)"></el-button>
+                        </el-tooltip>
+                        <el-tooltip :content="$t('publicText.delete')" placement="top">
                             <el-button type="danger" icon="Delete" size="small"
-                                @click.stop="handleDeleteDetail(scope.row)"></el-button>
-                        </el-tooltip> -->
-                            </template>
-                        </el-table-column>
-                        <template #empty>
-                            <div class="flex items-center justify-center h-100%">
-                                <el-empty />
-                            </div>
-                        </template>
-                    </el-table>
-                </el-col>
-
-            </el-row>
-
-
+                                @click.stop="handleDelete(scope.row)"></el-button>
+                        </el-tooltip>
+                    </template>
+                </el-table-column>
+                <template #empty>
+                    <div class="flex items-center justify-center h-100%">
+                        <el-empty />
+                    </div>
+                </template>
+            </el-table>
+            <div class="mt-2">
+                <el-pagination :size="'small'" background @size-change="handleSizeChange"
+                    @current-change="handleCurrentChange" :pager-count="5" :current-page="pageObj.currentPage"
+                    :page-size="pageObj.pageSize" :page-sizes="[30, 50, 100, 200, 300]"
+                    layout="total,sizes, prev, pager, next" :total="tableData.length">
+                </el-pagination>
+            </div>
         </el-card>
         <el-dialog v-model="creatVisible" :title="$t('incomeCreat.creatInspectCode')" width="750px"
             :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" align-center
@@ -192,7 +125,7 @@
                 <div class="dialog-footer">
                     <el-button @click="handleClose">{{
                         $t("publicText.cancel")
-                    }}</el-button>
+                        }}</el-button>
                     <el-button type="primary" @click="handleConfirm">
                         {{ $t("publicText.confirm") }}
                     </el-button>
@@ -205,12 +138,12 @@
             <el-form ref="editCreatFormRef" :model="editCreateForm" label-width="auto" :inline="true">
                 <el-form-item :label="$t('incomeCreat.NotifyDepartment')" prop="NotifyDept">
                     <el-select v-model="editCreateForm.NotifyDept" placeholder="" style="width: 200px">
-                        <el-option v-for="n in notifyDeptList" :label="n.WorkCenterName" :value="n.WorkCenterName" :key="n.WorkCenterName"/>
+                        <el-option v-for="n in notifyDeptList" :label="n.WorkCenterName" :value="n.WorkCenterName" />
                     </el-select>
                 </el-form-item>
                 <el-form-item :label="$t('incomeCreat.NotifyPerson')" prop="Notifier">
                     <el-select v-model="editCreateForm.Notifier" placeholder="" style="width: 200px">
-                        <el-option v-for="n in notifierList" :label="n.FullName" :value="n.FullName" :key="n.FullName"/>
+                        <el-option v-for="n in notifierList" :label="n.FullName" :value="n.FullName" />
                     </el-select>
                 </el-form-item>
                 <el-form-item :label="$t('incomeCreat.incomeDate')" prop="ArrivalDate">
@@ -237,8 +170,8 @@
                 <div class="dialog-footer">
                     <el-button @click="handleEditClose">{{
                         $t("publicText.cancel")
-                    }}</el-button>
-                    <el-button type="primary" @click="handleEditConfirm" :disabled="editCreateForm.StatusText=='完成'">
+                        }}</el-button>
+                    <el-button type="primary" @click="handleEditConfirm">
                         {{ $t("publicText.confirm") }}
                     </el-button>
                 </div>
@@ -246,12 +179,65 @@
         </el-dialog>
 
         <el-dialog v-model="detailVisible" align-center title="来料检验单明细" width="85%" @close="detailVisible = false">
+            <div class="mb-2 flex justify-end">
+                <el-button type="warning" size="small" @click="addDetailVisible = true">
+                    {{ $t("publicText.add") + $t("incomeCreat.incomeDetail") }}
+                </el-button>
+            </div>
+            <el-table :data="detailTableData" size="small" :style="{ width: '100%' }" ref="rawRef" :height="450" border
+                fit>
+                <el-table-column type="index" align="center" fixed :label="$t('publicText.index')" width="50">
+                    <template #default="scope">
+                        <span>{{
+                            scope.$index + pageObj.pageSize * (pageObj.currentPage - 1) + 1
+                            }}</span>
+                    </template>
+                </el-table-column>
+                <el-table-column prop="MaterialName" :label="$t('incomeCreat.materialName')" />
+                <el-table-column prop="ModelSpec" :label="$t('incomeCreat.modelRules')" />
+                <el-table-column prop="Supplier" :label="$t('incomeCreat.supplier')" />
+                <el-table-column prop="OrderNo" :label="$t('incomeCreat.orderNumber')" />
+                <el-table-column prop="LotNo" label="Lot No" />
+                <el-table-column prop="TCode" label="T-Code" />
+                <el-table-column prop="QuantityPerBox" :label="$t('incomeCreat.qtyIncomeMaterial')" />
+                <el-table-column prop="SampledBoxes" :label="$t('incomeSheet.SampledBoxes')" />
+                <el-table-column prop="SamplingStandards" :label="$t('incomeCreat.InspectStandard')" />
+                <el-table-column prop="SupplierReportName" :label="$t('incomeCreat.supplierReport')">
 
+                    <template #default="scope">
+                        <span v-if="scope.row.SupplierReportName" class="underline cursor-pointer text-cyan-800"
+                            @click="openFile(scope.row.SupplierReportGuid)">
+
+                            {{ scope.row.SupplierReportName }}
+                        </span>
+                    </template>
+                </el-table-column>
+                <el-table-column prop="StatusText" :label="$t('incomeCreat.Status')" />
+                <el-table-column prop="Status" :label="$t('incomeCreat.Status')" />
+                <el-table-column prop="CreateTime" :label="$t('incomeCreat.creatDate')" />
+                <el-table-column :label="$t('publicText.operation')" width="120" fixed="right" align="center">
+                    <template #default="scope">
+                        <el-tooltip :content="$t('publicText.edit')" placement="top">
+                            <el-button type="primary" icon="EditPen" size="small"
+                                @click.stop="handleEditDetail(scope.row)"></el-button>
+                        </el-tooltip>
+                        <!-- <el-tooltip :content="$t('publicText.delete')" placement="top">
+                            <el-button type="danger" icon="Delete" size="small"
+                                @click.stop="handleDeleteDetail(scope.row)"></el-button>
+                        </el-tooltip> -->
+                    </template>
+                </el-table-column>
+                <template #empty>
+                    <div class="flex items-center justify-center h-100%">
+                        <el-empty />
+                    </div>
+                </template>
+            </el-table>
             <template #footer>
                 <div class="dialog-footer">
                     <el-button @click="detailVisible = false">{{
                         $t("publicText.close")
-                    }}</el-button>
+                        }}</el-button>
                 </div>
             </template>
         </el-dialog>
@@ -289,11 +275,10 @@
                     <el-input v-model="detailForm.QuantityPerBox" style="width: 200px" placeholder="" />
                 </el-form-item>
 
-                <el-form-item :label="$t('incomeCreat.supplierReport')" prop="supplierReport">
-                    <el-input v-model="detailForm.SupplierReportName" :disabled="true" style="width: 200px"
-                        placeholder="" />
+                <!-- <el-form-item :label="$t('incomeCreat.supplierReport')" prop="supplierReport">
+                    <el-input v-model="detailForm.SupplierReportName" style="width: 200px" placeholder="" />
 
-                </el-form-item>
+                </el-form-item> -->
                 <el-form-item label="上传供应商报告">
                     <el-upload action="#" multiple :limit="1" v-model:file-list="fileList" :auto-upload="false"
                         :on-change="file1UpChange" :on-remove="file1UpRemove" :before-upload="beforeUpload"
@@ -306,7 +291,7 @@
                 <div class="dialog-footer">
                     <el-button @click="handleAddDetailClose">{{
                         $t("publicText.cancel")
-                    }}</el-button>
+                        }}</el-button>
                     <el-button type="primary" @click="handleAddDetailConfirm">
                         {{ $t("publicText.confirm") }}
                     </el-button>
@@ -347,10 +332,9 @@
                     <el-input v-model="editdetailForm.QuantityPerBox" style="width: 200px" placeholder="" />
                 </el-form-item>
 
-                <el-form-item :label="$t('incomeCreat.supplierReport')" prop="supplierReport">
-                    <el-input v-model="editdetailForm.SupplierReportName" :disabled="true" style="width: 200px"
-                        placeholder="" />
-                </el-form-item>
+                <!-- <el-form-item :label="$t('incomeCreat.supplierReport')" prop="supplierReport">
+                    <el-input v-model="editdetailForm.SupplierReportName" style="width: 200px" placeholder="" />
+                </el-form-item> -->
                 <el-form-item label="上传供应商报告">
                     <el-upload action="#" multiple :limit="1" v-model:file-list="fileList" :auto-upload="false"
                         :on-change="file2UpChange" :on-remove="file2UpRemove" :before-upload="beforeUpload"
@@ -363,8 +347,8 @@
                 <div class="dialog-footer">
                     <el-button @click="handleEditDetailClose">{{
                         $t("publicText.cancel")
-                    }}</el-button>
-                    <el-button type="primary" @click="handleEditDetailConfirm" :disabled="editdetailForm.StatusText">
+                        }}</el-button>
+                    <el-button type="primary" @click="handleEditDetailConfirm">
                         {{ $t("publicText.confirm") }}
                     </el-button>
                 </div>
@@ -377,7 +361,7 @@
                 <div class="dialog-footer">
                     <el-button @click="handlePreviewClose">{{
                         $t("publicText.close")
-                    }}</el-button>
+                        }}</el-button>
                     <el-button type="primary" @click="handlePreviewDawnload">
                         {{ $t("publicText.dawnload") }}
                     </el-button>
@@ -474,7 +458,6 @@ const editCreateForm = ref({
     ApprovalResult: "",
     MaterialTypes: 0,
     ApprovalRemarks: "",
-    StatusText:'',
     Approver: "",
 });
 const editCreatFormRef = ref("");
@@ -525,7 +508,6 @@ const editdetailForm = ref({
     Property: "",
     Status: 0,
     DataStatus: 0,
-    StatusText:''
 });
 const fileList = ref<any[]>([]);
 const previewVisible = ref(false);
@@ -630,7 +612,7 @@ const handleEdit = (row: any) => {
         ArrivalDate: dayjs(row.ArrivalDate).format("YYYY-MM-DD"),
         NotifyDate: dayjs(row.NotifyDate).format("YYYY-MM-DD"),
     };
-    console.log(editCreateForm.value);
+    // console.log(editCreateForm.value);
 
     creatEditVisible.value = true;
 };
@@ -676,7 +658,7 @@ const cellClick = (row: any) => {
     editdetailForm.value.InspectionNo = row.IQCNumber;
     GetIQCDetailQuery({ InspectionNo: row.IQCNumber }).then((res: any) => {
         detailTableData.value = res.content;
-        // detailVisible.value = true;
+        detailVisible.value = true;
     });
 };
 const handleCreat = () => {
@@ -702,7 +684,7 @@ const handleConfirm = () => {
 const file1UpChange = (file: any, fileList1: any) => {
     if (file.raw) {
         console.log(file.raw);
-
+        
         convertToBase64(file.raw, 1)
     }
 };
@@ -739,7 +721,7 @@ const convertToBase64 = (file: any, index: any) => {
 
     reader.onload = (event: any) => {
         const fullBase64 = event.target.result
-
+        
         // 将 base64 数据赋值给 detailForm.Template_File
         if (index === 2) {
             editdetailForm.value.SupplierReportName = file.name
@@ -767,10 +749,10 @@ const convertToBase64 = (file: any, index: any) => {
 const openFile = (val: any) => {
     LabelPrintDownloadFtp(val).then((res: any) => {
 
-        if (!res.success) {
+        if(!res.success){
             ElMessage({
-                message: res.msg,
-                type: 'error'
+                message:res.msg,
+                type:'error'
             })
             return
         }
@@ -836,8 +818,6 @@ const handleEditDetail = (row: any) => {
         ...row,
         InspectionNo: row.IQCNumber
     };
-    // console.log( editdetailForm.value);
-    
     GetProductQuery(row.MaterialName).then((res: any) => {
         productList.value = res.content;
         // console.log(productList.value);
@@ -901,7 +881,7 @@ const handleEditDetailConfirm = () => {
             type: res.success ? "success" : "error",
         });
         if (res.success) {
-            editDetailVisible.value = false;
+            addDetailVisible.value = false;
             GetIQCDetailQuery({ InspectionNo: IQCNumber.value }).then((res: any) => {
                 detailTableData.value = res.content;
             });

@@ -21,7 +21,7 @@
                     <el-button type="warning" :disabled="selectList.length == 0" @click="handleGenerate">{{
                         $t("listGeneration.GeneratePackList") }}</el-button>
                     <el-button type="primary" :disabled="selectList.length == 0" @click="handlePreview">{{
-                        $t("publicText.preview") }}</el-button>
+                        $t("publicText.preview")+'(汇总)' }}</el-button>
                 </el-form-item>
             </el-form>
             <el-table :data="tableData.slice(
@@ -129,7 +129,7 @@ const { t } = useI18n();
 const listGenerRef = ref();
 const tableHeight = ref(0);
 const getForm = ref({
-    CardAreaName: "",
+    CardAreaName: "一楼卡板区域",
     OuterBoxContainerName: "",
     outerBoxLists: [],
 });
@@ -157,6 +157,7 @@ onBeforeMount(() => {
 onMounted(() => {
     window.addEventListener("resize", getScreenHeight);
     getPallet();
+    getData()
 });
 onBeforeUnmount(() => {
     window.addEventListener("resize", getScreenHeight);
@@ -252,7 +253,8 @@ const handleReset = () => {
         outerBoxLists: [],
     };
     listGenerRef.value.clearSelection();
-    // tableData.value = [];
+    tableData.value = [];
+     tableData2.value = [];
     // selectList.value = [];
     pageObj.currentPage = 1;
 
