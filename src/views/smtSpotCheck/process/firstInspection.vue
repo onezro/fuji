@@ -31,7 +31,7 @@
                     <el-button type="primary" size="small" @click="getData">
                         {{ $t("publicText.query") }}
                     </el-button>
-                    <el-button type="info" size="small">
+                    <el-button type="info" size="small" @click="resetFormData">
                         {{ $t("publicText.reset") }}
                     </el-button>
                     <el-button type="warning" size="small" @click="addVisible = true">
@@ -63,7 +63,7 @@
                 <el-table-column prop="ES_ProductType" :label="$t('processInspect.productType')" width="80" />
                 <el-table-column prop="ES_CustomerPO" :label="$t('processInspect.customerPO')" width="100" />
                 <el-table-column prop="ES_PartNo" :label="$t('processInspect.customerPN')" width="120" />
-                 <el-table-column prop="ES_SpecName" :label="'工序'" />
+                <el-table-column prop="ES_SpecName" :label="'工序'" />
                 <el-table-column prop="ES_LotNo" :label="$t('processInspect.LOtNO')" />
                 <el-table-column prop="FirstArticleInspectionStatus" :label="$t('processInspect.firstInspectStatus')"
                     width="80" />
@@ -71,10 +71,11 @@
                     width="80" />
                 <el-table-column prop="FinalInspectionStatus" :label="$t('processInspect.tailInspectStatus')"
                     width="80" />
-                    <el-table-column prop="ES_SpecificationNo" :label="$t('oqcInspection.SpecificationNo')">
+                <el-table-column prop="ES_SpecificationNo" :label="$t('oqcInspection.SpecificationNo')">
                     <template #default="{ row }">
-                        <span class="underline cursor-pointer text-cyan-800" @click="openFile(row.ES_SpecificationNo)">{{
-                            row.ES_SpecificationNo }}</span>
+                        <span class="underline cursor-pointer text-cyan-800"
+                            @click="openFile(row.ES_SpecificationNo)">{{
+                                row.ES_SpecificationNo }}</span>
                     </template>
                 </el-table-column>
                 <el-table-column prop="ES_FaUrl" :label="'FA'" width="80">
@@ -200,7 +201,7 @@
                         <el-table-column prop="SampleNum" :label="$t('incomeSheet.numberOfSample')" width="120">
                             <template #default="scope">
                                 <el-input-number v-model="scope.row.SampleNum" :min="1"
-                                    :disabled="scope.row.InspectionResult == 'OK'" style="width: 100%;" size="small"/>
+                                    :disabled="scope.row.InspectionResult == 'OK'" style="width: 100%;" size="small" />
                                 <!-- <el-input v-model="scope.row.SampleNum" size="small" type="number"
                                     :disabled="scope.row.InspectionResult == 'OK'"></el-input> -->
                                 <!-- <el-input-number v-model="scope.row.SampleNum" size="small" style="width: 100%;"
@@ -230,7 +231,7 @@
                     </el-table>
                 </el-tab-pane>
                 <el-tab-pane :label="'计量检验'" name="second">
-                     <div class="flex justify-end gap-2">
+                    <div class="flex justify-end gap-2">
                         <el-form-item class="mb-2">
                             <el-button :size="'small'" :type="'success'" icon="Download"
                                 @click="downloadTemp">导出模板</el-button>
@@ -271,7 +272,7 @@
                             <template #default="scope">
                                 <el-input-number v-model="scope.row.SampleNum" :min="1"
                                     @change="handleSampleSizeChange(scope.row)"
-                                    :disabled="scope.row.InspectionResult == 'OK'" style="width: 100%;"size="small"/>
+                                    :disabled="scope.row.InspectionResult == 'OK'" style="width: 100%;" size="small" />
                                 <!-- <el-input v-model="scope.row.SampleNum" size="small" type="number" min="1" max="10"
                                     @change="handleSampleSizeChange(scope.row)"
                                     :disabled="scope.row.InspectionResult == 'OK'"></el-input> -->
@@ -282,8 +283,7 @@
                                 {{ scope.row.DefectCount || calculateDefectCount(scope.row) }}
                             </template>
                         </el-table-column>
-                        <el-table-column prop="ObservedValue"  width="150"
-                            :label="$t('incomeSheet.MeasurementNumber')">
+                        <el-table-column prop="ObservedValue" width="150" :label="$t('incomeSheet.MeasurementNumber')">
                             <template #default="scope">
                                 <span>{{ scope.row.ObservedValue }}</span>
                                 <el-button type="primary" icon="Plus" :size="'small'"
@@ -541,7 +541,21 @@ onMounted(() => {
 onBeforeUnmount(() => {
     window.addEventListener("resize", getScreenHeight);
 });
-
+const resetFormData = () => {
+    getForm.value = {
+        InspectionNO: "",
+        InspectionType: "",
+        MfgorderName: "",
+        ProductName: "",
+        PartNo: "",
+        CustomerName: "",
+        LotNo: "",
+        ProductType: "",
+        DocumentStatus: "",
+        StartTime: "",
+        EndTime: "",
+    }
+}
 const getData = () => {
     GetInspectionQuery(getForm.value).then((res: any) => {
         tableData.value = res.content;
@@ -613,7 +627,7 @@ const handleUpload = (row: any) => {
 
 const openFile = (val: any) => {
     console.log(val);
-    
+
     FTPSearchAndDownloadSpecificationDocumentFile(val).then((res: any) => {
         if (res.success) {
             const base64Data = 'data:application/pdf;base64,' + res.content.FileData;
@@ -1063,7 +1077,7 @@ const handleEdit = (row: any, type: any) => {
                     CharaCteristicGrade: item.CHARACTERISTICGRADE,
                     ToolName: item.TOOLNAME,
                     InspectionBasis: item.INSPECTIONBASIS,
-                    SampleNum:parseInt(item.SAMPLENUM) ,
+                    SampleNum: parseInt(item.SAMPLENUM),
                     MeasurementType: item.MEASUREMENTTYPE,
                     DefectNum: item.DEFECTNUM,
                     ObservedValue: item.OBSERVEDVALUE,
@@ -1393,13 +1407,13 @@ const downloadTemp = () => {
             cell: { numFmt: "@" }, // 强制文本格式
         },
         t,
-         stringColumns: ['ObservedValue']
+        stringColumns: ['ObservedValue']
     });
 }
 const tempData = async () => {
     console.log(editForm.value.listItem);
 
-    let data = await editForm.value.listItem.filter((item:any)=> item.InspectionResult!=='OK')
+    let data = await editForm.value.listItem.filter((item: any) => item.InspectionResult !== 'OK')
     return data
 }
 const fileUpChange2 = async (file: any, fileList1: any) => {
@@ -1410,12 +1424,12 @@ const fileUpChange2 = async (file: any, fileList1: any) => {
     // const result = handleExcelUpload(file.raw)
     // // handleExcelUpload1(file.raw)
     // console.log(result);
-       const fileNameList=file.name.split('_')
+    const fileNameList = file.name.split('_')
     //   console.log(fileNameList,editdetailForm.value.IQCNumber);
-      if(fileNameList[0]!==editForm.value.InspectionNO){
-        ElMessage.error( '导入失败，请导入检验对应的Excel')
+    if (fileNameList[0] !== editForm.value.InspectionNO) {
+        ElMessage.error('导入失败，请导入检验对应的Excel')
         return
-      }
+    }
     try {
         const result = await handleExcelUpload(file.raw)
 
@@ -1428,7 +1442,7 @@ const fileUpChange2 = async (file: any, fileList1: any) => {
                 message: result.message,
                 duration: 3000
             })
-              fileList3.value = [];
+            fileList3.value = [];
             // 触发数据更新事件（如果需要传递给父组件）
             // emit('data-parsed', result.data)
         } else {
@@ -1437,9 +1451,9 @@ const fileUpChange2 = async (file: any, fileList1: any) => {
         }
     } catch (error: any) {
         ElMessage.error(`导入失败: ${error.message}`)
-          fileList3.value = [];
+        fileList3.value = [];
     } finally {
-  fileList3.value = [];
+        fileList3.value = [];
     }
 
 };
@@ -1464,27 +1478,31 @@ const beforeUpload2 = (file: any) => {
     return true;
 };
 
-const assignValuesMulti=(sourceData:any, targetData:any)=> {
+const assignValuesMulti = (sourceData: any, targetData: any) => {
     // 创建源数据的查找映射，提高查找效率
     const sourceMap = new Map();
-    
-    sourceData.forEach((item:any) => {
+
+    sourceData.forEach((item: any) => {
         const key = `${item.LineNos}_${item.ProjectName}`;
         sourceMap.set(key, item);
     });
-    
+
     // 遍历目标数组并赋值
-    targetData.forEach((targetItem:any) => {
+    targetData.forEach((targetItem: any) => {
         const key = `${targetItem.LineNos}_${targetItem.ProjectName}`;
         const sourceItem = sourceMap.get(key);
-        
+
         if (sourceItem) {
             targetItem.SampleNum = sourceItem.SampleNum;
             targetItem.ObservedValue = sourceItem.ObservedValue;
+            let valData = (sourceItem.ObservedValue).split(',')
+            if (targetItem.SampleNum < valData.length) {
+                targetItem.SampleNum = valData.length
+            }
             //   targetItem.ResulthandLing = sourceItem.ResulthandLing;
         }
     });
-    
+
     return targetData;
 }
 

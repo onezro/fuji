@@ -377,7 +377,9 @@ const fullScreen = () => {
 const operator = ref('')
 const operatorList = ref<any[]>([])
 const getNotifierList = () => {
-    GetEmployeeQuery({}).then((res: any) => {
+    GetEmployeeQuery({
+        EmployeeGroupName:'QC EmployeeGroup'
+    }).then((res: any) => {
         operatorList.value = res.content;
     });
 };

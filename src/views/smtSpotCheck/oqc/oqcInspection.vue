@@ -2116,6 +2116,9 @@ const assignValuesMulti = (sourceData: any, targetData: any) => {
             targetItem.MeasuredValue = sourceItem.ObservedValue;
             let valData = (sourceItem.ObservedValue).split(',')
             // console.log(valData);
+             if( targetItem.SampleSize<valData.length){
+                targetItem.SampleSize=valData.length
+            }
             valData.forEach((item: any, i: any) => {
                   if(i<=9){
                       targetItem[`MeasuredValue${i+1}`]=item

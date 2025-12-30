@@ -116,6 +116,12 @@ export const generateRoutesByServer1 = (routes: any) => {
         // multiTab: true,
         // multiInstance: isMultiInstance(route),
         // dynamicTitle: isMultiInstance(route)
+         // 标记为多标签页支持
+        multiTab: isMultiInstance(route),
+        // 动态标题支持
+        dynamicTitle: isMultiInstance(route)|| false,
+        // 支持参数传递
+        paramTitle: isMultiInstance(route)|| false,
       },
       component: route.component,
     };
@@ -143,6 +149,26 @@ export const generateRoutesByServer1 = (routes: any) => {
           : modules[`../views/${route.component}.vue`];
       // }
     }
+    //  if (multiInstanceMenus.includes(route.MenuName)) {
+    //   // 确保路径以 / 结尾
+    //   if (!data.path.endsWith('/')) {
+    //     data.path = data.path + '/';
+    //   }
+    //   // 添加动态ID参数
+    //   data.path = data.path + ':id?';
+      
+    //   // 配置props传递
+    //   data.props = (routeProps: any) => {
+    //     return {
+    //       id: routeProps.params.id,
+    //       query: routeProps.query,
+    //       params: routeProps.params
+    //     };
+    //   };
+    //   console.log(data);
+      
+    // }
+
     if (route.childMenu != null) {
       data.children = generateRoutesByServer1(route.childMenu);
     }

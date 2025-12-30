@@ -32,7 +32,7 @@
 </template>
 
 <script lang="ts" setup>
-import { defineProps, ref } from "vue";
+import { ref } from "vue";
 import type { RouteRecordRaw } from "vue-router";
 import { pathResolve } from "@/utils/routerHelper";
 // import { hasOneShowingChild } from '../helper'

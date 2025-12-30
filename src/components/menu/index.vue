@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { usePermissionStoreWithOut } from "@/stores/modules/permission";
-import { ref, unref, computed, onMounted ,defineProps ,defineEmits} from 'vue'
+import { ref, unref, computed, onMounted } from 'vue'
 import { useRouter } from "vue-router";
 import smenuItem from "./components/smenuItem.vue";
 import { pathResolve } from "@/utils/routerHelper";
