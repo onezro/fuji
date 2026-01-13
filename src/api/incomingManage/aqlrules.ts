@@ -78,3 +78,19 @@ export function GetProjectQuery(data: any) {
         data,
     });
 }
+
+export function GetProductTypeQuery(data: any) {
+    return request({
+        url: "/api/IQCController/GetProductTypeQuery",
+        method: "post",
+        data,
+    });
+}
+
+export function GetProductFamilyQuery(data: any) {
+    return request({
+        url: "/api/IQCController/GetProductFamilyQuery",
+        method: "post",
+        data,
+    });
+}

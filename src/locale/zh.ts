@@ -1,7 +1,4 @@
-import Aqlrules from "@/views/incomingManage/aqlrules.vue";
-import IqctestItem from "@/views/incomingManage/iqctestItem.vue";
-import OqcInspection from "@/views/smtSpotCheck/oqc/oqcInspection.vue";
-import { number } from "vue-types";
+
 
 const zh = {
   message: {
@@ -361,6 +358,7 @@ const zh = {
     customerPO: "客户PO",
     customerPN: "客户PN",
     LOtNO: "Lot No",
+    SpecName:'工序',
     status1: "待检验",
     status2: "检验中",
     status3: "完成",
@@ -375,7 +373,7 @@ const zh = {
     CreateTime: "创建时间",
     UpdateUser: "更新人",
     UpdateTime: "更新时间",
-    lookIQC:'查看IOC检验数据',
+    lookIQC:'查看IQC检验数据',
     materialSource: "物料产地",
     RemainingQty: "剩余数量",
     OrderQty: "工单数量",

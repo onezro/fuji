@@ -27,6 +27,12 @@
                 <el-form-item :label="$t('oqcInspection.LOtNO')" class="mb-2">
                     <el-input style="width: 200px" v-model="getForm.LotNo" placeholder="" clearable></el-input>
                 </el-form-item>
+                <el-form-item :label="$t('oqcInspection.SpecName')" class="mb-2">
+                    <el-select v-model="getForm.SpecName" placeholder="" clearable style="width: 200px">
+                        <el-option label="模切" value="模切" />
+                        <el-option label="裁切" value="裁切" />
+                    </el-select>
+                </el-form-item>
                 <el-form-item class="mb-2">
                     <el-button type="primary" size="small" @click="getData">
                         {{ $t("publicText.query") }}
@@ -58,13 +64,14 @@
                     </template>
                 </el-table-column>
                 <!-- <el-table-column prop="ES_InspectionNo" :label="$t('processInspect.inspectOrder')" width="180"/> -->
-                <el-table-column prop="ES_MfgorderName" :label="$t('processInspect.workeOrder')" width="80" />
-                <el-table-column prop="ES_ProductName" :label="$t('processInspect.productName')" width="150" />
+                <el-table-column prop="ES_MfgorderName" :label="$t('processInspect.workeOrder')" width="80" fixed />
+                <el-table-column prop="ES_ProductName" :label="$t('processInspect.productName')" width="150" fixed />
                 <el-table-column prop="ES_ProductType" :label="$t('processInspect.productType')" width="80" />
                 <el-table-column prop="ES_CustomerPO" :label="$t('processInspect.customerPO')" width="100" />
                 <el-table-column prop="ES_PartNo" :label="$t('processInspect.customerPN')" width="120" />
                 <el-table-column prop="ES_SpecName" :label="'工序'" />
                 <el-table-column prop="ES_LotNo" :label="$t('processInspect.LOtNO')" />
+                <el-table-column prop="ES_MaterialReQty" :label="'领料张数'" />
                 <el-table-column prop="FirstArticleInspectionStatus" :label="$t('processInspect.firstInspectStatus')"
                     width="80" />
                 <el-table-column prop="InProcessInspectionStatus" :label="$t('processInspect.patrolInspectStatus')"
@@ -333,7 +340,7 @@
             </template>
         </el-dialog>
         <el-dialog v-model="dialogVisible" :title="'输入测量值'" width="500px">
-            <el-form ref="formRef" label-width="auto" size="small">
+            <el-form ref="formRef" label-width="auto" size="small" @submit.native.prevent>
                 <el-form-item :label="'样本值' + i" prop="name" v-for="i in currentSampleSize" :key="i">
                     <el-input v-model="measurementValues[i - 1]" placeholder="请输入测量值" style="width: 200px" />
                 </el-form-item>
@@ -356,6 +363,11 @@
                         <el-button size="small" type="primary" icon="Upload"></el-button>
                     </el-upload>
                 </el-form-item>
+                <el-form-item label="CPK名称">
+                    <el-input v-model="deleteCPKForm.TemplateName" placeholder="" disabled style="width: 200px;" />
+                    <el-button :type="'danger'" @click="handleDeleteCPK" :disabled="deleteCPKForm.TemplateName == ''">{{
+                        t('publicText.delete') }}</el-button>
+                </el-form-item>
                 <el-form-item label="CPK文件">
                     <el-upload action="#" multiple :limit="1" v-model:file-list="fileList2" :auto-upload="false"
                         :on-change="file1UpChange2" :on-remove="file1UpRemove2" :before-upload="beforeUpload"
@@ -369,6 +381,20 @@
                     <el-button @click="handleUploadClose">取消</el-button>
                     <el-button type="primary" @click="handleUploadfirm">确定</el-button>
                 </span>
+            </template>
+        </el-dialog>
+        <el-dialog v-model="previewVisible" :title="previewTitle" width="800px" :append-to-body="true"
+            :close-on-click-modal="false" :close-on-press-escape="false" align-center>
+            <iframe :src="previewUrl" width="100%" height="550px" frameborder="0"></iframe>
+            <template #footer>
+                <div class="dialog-footer">
+                    <el-button @click="handlePreviewClose">{{
+                        $t("publicText.close")
+                    }}</el-button>
+                    <el-button type="primary" @click="handlePreviewDawnload">
+                        {{ $t("publicText.dawnload") }}
+                    </el-button>
+                </div>
             </template>
         </el-dialog>
     </div>
@@ -391,6 +417,7 @@ import {
     CPKUploadFtpServer,
     FACPKDownloadFtpServer,
     UploadFtpServer,
+    DelFtpServer
 } from "@/api/smtSpotCheck/processFisrt";
 import {
     GetProjectCategoryQuery,
@@ -421,6 +448,7 @@ import { ElNotification, ElMessageBox, ElMessage } from "element-plus";
 import { useI18n } from "vue-i18n";
 const { t } = useI18n();
 import { useUserStoreWithOut } from "@/stores/modules/user";
+import { de } from 'element-plus/es/locale/index.mjs';
 
 const userStore = useUserStoreWithOut();
 const getForm = ref({
@@ -435,6 +463,7 @@ const getForm = ref({
     DocumentStatus: "",
     StartTime: "",
     EndTime: "",
+    SpecName: '',
 });
 const searchDate = ref<any[]>([]);
 const tableHeight = ref(0);
@@ -505,6 +534,13 @@ const fileList3 = ref<any[]>([]);
 const previewVisible = ref(false);
 const previewUrl = ref("");
 const previewTitle = ref("");
+
+const deleteCPKForm = ref({
+    InspectionNO: "",
+    TemplateName: "",
+    FileType: "CPK",
+    TemplateFile: "",
+})
 watch(
     () => searchDate.value,
     (newVal: any, oldVal: any) => {
@@ -554,6 +590,7 @@ const resetFormData = () => {
         DocumentStatus: "",
         StartTime: "",
         EndTime: "",
+        SpecName: '',
     }
 }
 const getData = () => {
@@ -622,6 +659,8 @@ const fetchFinishAllData = async () => {
 const handleUpload = (row: any) => {
     uploadForm.value.InspectionNO = row.FirstArticleInspectionNo;
     uploadForm2.value.InspectionNO = row.FirstArticleInspectionNo;
+    deleteCPKForm.value.InspectionNO = row.FirstArticleInspectionNo
+    deleteCPKForm.value.TemplateName = row.ES_CPKUrl
     uploadVisible.value = true;
 };
 
@@ -748,6 +787,12 @@ const handleUploadClose = () => {
         TemplateFile: "",
     };
     fileList2.value = [];
+    deleteCPKForm.value = {
+        InspectionNO: "",
+        TemplateName: "",
+        FileType: "CPK",
+        TemplateFile: "",
+    }
     uploadVisible.value = false;
 };
 const handleUploadfirm = () => {
@@ -1301,7 +1346,66 @@ const formatMeasuredValues = (row: any) => {
     const values = row.ObservedValue.split(",");
     return values.join(",");
 };
+const handlePreviewClose = () => {
+    previewVisible.value = false
+    previewUrl.value = ""
+}
+const handlePreviewDawnload = () => {
+    downloadPDF(previewUrl.value, previewTitle.value)
+}
+const downloadPDF = (base64Data: any, fileName = '供应商报告.pdf') => {
+    try {
+        // 创建下载链接
+        const link = document.createElement('a')
 
+        // 设置下载属性
+        link.href = base64Data
+        link.download = fileName.endsWith('.pdf') ? fileName : `${fileName}.pdf`
+
+        // 添加到页面（需要添加到页面才能触发下载）
+        document.body.appendChild(link)
+
+        // 触发点击下载
+        link.click()
+
+        // 清理 DOM
+        document.body.removeChild(link)
+
+        ElMessage.success('文件下载成功')
+
+    } catch (error) {
+        console.error('下载失败:', error)
+        ElMessage.error('文件下载失败')
+    }
+}
+const handleDeleteCPK = () => {
+    ElMessageBox.confirm(`是否删除CPK文件？`, "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+    })
+        .then(() => {
+
+            DelFtpServer(deleteCPKForm.value).then((res: any) => {
+                ElMessage({
+                    title: t("publicText.success"),
+                    message: res.msg,
+                    type: res.success ? "success" : "error",
+                });
+                if (res.success) {
+                    getData();
+                    deleteCPKForm.value.TemplateName = ''
+                }
+
+            });
+        })
+        .catch(() => {
+            ElMessage({
+                type: "info",
+                message: "已取消删除",
+            });
+        });
+}
 const handletestClose = () => {
     testVisible.value = false;
 };

@@ -43,14 +43,14 @@
                             <template #default="scope">
                                 <span>{{
                                     scope.$index + pageObj.pageSize * (pageObj.currentPage - 1) + 1
-                                    }}</span>
+                                }}</span>
                             </template>
                         </el-table-column>
                         <el-table-column prop="IQCNumber" :label="$t('incomeCreat.creatInspect')" width="120" fixed>
                             <template #default="scope">
                                 <span class="underline">{{
                                     scope.row.IQCNumber
-                                    }}</span>
+                                }}</span>
                             </template>
                         </el-table-column>
 
@@ -63,7 +63,7 @@
                         <!-- <el-table-column prop="NotifyDept" :label="$t('incomeCreat.NotifyDepartment')"  width="100"/> -->
                         <!-- <el-table-column prop="ArrivalDate" :label="$t('incomeCreat.incomeDate')" /> -->
                         <el-table-column prop="CreateTime" :label="$t('incomeCreat.creatDate')" width="155" />
-                        <el-table-column :label="$t('publicText.operation')" width="100" fixed="right" align="center">
+                        <el-table-column :label="$t('publicText.operation')" width="120" fixed="right" align="center">
                             <template #default="scope">
                                 <el-tooltip :content="$t('publicText.edit')" placement="top">
                                     <el-button type="warning" icon="EditPen" size="small"
@@ -97,12 +97,12 @@
                         </el-button>
                     </div>
                     <el-table :data="detailTableData" size="small" :style="{ width: '100%' }" ref="rawRef"
-                        :height="tableHeight" border fit  :tooltip-effect="'dark'">
+                        :height="tableHeight" border fit :tooltip-effect="'dark'">
                         <el-table-column type="index" align="center" fixed :label="$t('publicText.index')" width="50">
                             <template #default="scope">
                                 <span>{{
                                     scope.$index + pageObj.pageSize * (pageObj.currentPage - 1) + 1
-                                    }}</span>
+                                }}</span>
                             </template>
                         </el-table-column>
                         <el-table-column prop="MaterialName" :label="$t('incomeCreat.materialName')" />
@@ -130,16 +130,16 @@
                         <el-table-column prop="StatusText" :label="$t('incomeCreat.Status')" />
                         <!-- <el-table-column prop="Status" :label="$t('incomeCreat.Status')" /> -->
                         <el-table-column prop="CreateTime" :label="$t('incomeCreat.creatDate')" width="155" />
-                        <el-table-column :label="$t('publicText.operation')" width="80" fixed="right" align="center">
+                        <el-table-column :label="$t('publicText.operation')" width="120" fixed="right" align="center">
                             <template #default="scope">
                                 <el-tooltip :content="$t('publicText.edit')" placement="top">
                                     <el-button type="warning" icon="EditPen" size="small"
                                         @click.stop="handleEditDetail(scope.row)"></el-button>
                                 </el-tooltip>
-                                <!-- <el-tooltip :content="$t('publicText.delete')" placement="top">
-                            <el-button type="danger" icon="Delete" size="small"
-                                @click.stop="handleDeleteDetail(scope.row)"></el-button>
-                        </el-tooltip> -->
+                                <el-tooltip :content="$t('publicText.delete')" placement="top">
+                                    <el-button type="danger" icon="Delete" size="small"
+                                        @click.stop="handleDeleteDetail(scope.row)"></el-button>
+                                </el-tooltip>
                             </template>
                         </el-table-column>
                         <template #empty>
@@ -192,7 +192,7 @@
                 <div class="dialog-footer">
                     <el-button @click="handleClose">{{
                         $t("publicText.cancel")
-                    }}</el-button>
+                        }}</el-button>
                     <el-button type="primary" @click="handleConfirm">
                         {{ $t("publicText.confirm") }}
                     </el-button>
@@ -205,12 +205,14 @@
             <el-form ref="editCreatFormRef" :model="editCreateForm" label-width="auto" :inline="true">
                 <el-form-item :label="$t('incomeCreat.NotifyDepartment')" prop="NotifyDept">
                     <el-select v-model="editCreateForm.NotifyDept" placeholder="" style="width: 200px">
-                        <el-option v-for="n in notifyDeptList" :label="n.WorkCenterName" :value="n.WorkCenterName" :key="n.WorkCenterName"/>
+                        <el-option v-for="n in notifyDeptList" :label="n.WorkCenterName" :value="n.WorkCenterName"
+                            :key="n.WorkCenterName" />
                     </el-select>
                 </el-form-item>
                 <el-form-item :label="$t('incomeCreat.NotifyPerson')" prop="Notifier">
                     <el-select v-model="editCreateForm.Notifier" placeholder="" style="width: 200px">
-                        <el-option v-for="n in notifierList" :label="n.FullName" :value="n.FullName" :key="n.FullName"/>
+                        <el-option v-for="n in notifierList" :label="n.FullName" :value="n.FullName"
+                            :key="n.FullName" />
                     </el-select>
                 </el-form-item>
                 <el-form-item :label="$t('incomeCreat.incomeDate')" prop="ArrivalDate">
@@ -237,8 +239,8 @@
                 <div class="dialog-footer">
                     <el-button @click="handleEditClose">{{
                         $t("publicText.cancel")
-                    }}</el-button>
-                    <el-button type="primary" @click="handleEditConfirm" :disabled="editCreateForm.StatusText=='完成'">
+                        }}</el-button>
+                    <el-button type="primary" @click="handleEditConfirm" :disabled="editCreateForm.StatusText == '完成'">
                         {{ $t("publicText.confirm") }}
                     </el-button>
                 </div>
@@ -251,7 +253,7 @@
                 <div class="dialog-footer">
                     <el-button @click="detailVisible = false">{{
                         $t("publicText.close")
-                    }}</el-button>
+                        }}</el-button>
                 </div>
             </template>
         </el-dialog>
@@ -306,7 +308,7 @@
                 <div class="dialog-footer">
                     <el-button @click="handleAddDetailClose">{{
                         $t("publicText.cancel")
-                    }}</el-button>
+                        }}</el-button>
                     <el-button type="primary" @click="handleAddDetailConfirm">
                         {{ $t("publicText.confirm") }}
                     </el-button>
@@ -363,7 +365,7 @@
                 <div class="dialog-footer">
                     <el-button @click="handleEditDetailClose">{{
                         $t("publicText.cancel")
-                    }}</el-button>
+                        }}</el-button>
                     <el-button type="primary" @click="handleEditDetailConfirm" :disabled="editdetailForm.StatusText">
                         {{ $t("publicText.confirm") }}
                     </el-button>
@@ -377,7 +379,7 @@
                 <div class="dialog-footer">
                     <el-button @click="handlePreviewClose">{{
                         $t("publicText.close")
-                    }}</el-button>
+                        }}</el-button>
                     <el-button type="primary" @click="handlePreviewDawnload">
                         {{ $t("publicText.dawnload") }}
                     </el-button>
@@ -424,8 +426,7 @@ import { ElNotification, ElMessageBox, ElMessage } from "element-plus";
 import { useI18n } from "vue-i18n";
 const { t } = useI18n();
 import { useUserStoreWithOut } from "@/stores/modules/user";
-import { messageProps } from "element-plus";
-
+import { el } from "element-plus/es/locale/index.mjs";
 const userStore = useUserStoreWithOut();
 const getForm = ref({
     InspectionNo: "",
@@ -474,7 +475,7 @@ const editCreateForm = ref({
     ApprovalResult: "",
     MaterialTypes: 0,
     ApprovalRemarks: "",
-    StatusText:'',
+    StatusText: '',
     Approver: "",
 });
 const editCreatFormRef = ref("");
@@ -525,7 +526,7 @@ const editdetailForm = ref({
     Property: "",
     Status: 0,
     DataStatus: 0,
-    StatusText:''
+    StatusText: ''
 });
 const fileList = ref<any[]>([]);
 const previewVisible = ref(false);
@@ -837,7 +838,7 @@ const handleEditDetail = (row: any) => {
         InspectionNo: row.IQCNumber
     };
     // console.log( editdetailForm.value);
-    
+
     GetProductQuery(row.MaterialName).then((res: any) => {
         productList.value = res.content;
         // console.log(productList.value);
@@ -854,7 +855,35 @@ const handleDeleteDetail = (row: any) => {
             type: "warning",
         }
     )
-        .then(() => { })
+        .then(() => {
+            let data = {
+                InspectionNo: row.IQCNumber,
+                IQC_DetailName: row.IQC_DetailName,
+                DataStatus: 1,
+            };
+            console.log(data);
+
+            AyscIQCDetailUpdate(data).then((res: any) => {
+                if (res.success) {
+                    ElMessage({
+                        title: t("message.tipTitle"),
+                        message: t("message.deleteSuccess"),
+                        type: "success",
+                    });
+                    GetIQCDetailQuery({ InspectionNo: IQCNumber.value }).then((res: any) => {
+                        detailTableData.value = res.content;
+                    });
+                } else {
+                    ElMessage({
+                        title: t("message.tipTitle"),
+                        message: res.msg,
+                        type: "error",
+                    });
+                    return;
+                }
+
+            });
+        })
         .catch(() => {
             // on cancel
             ElMessage({

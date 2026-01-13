@@ -221,3 +221,11 @@ export function GetVersion(){
         method: "post",
     });
 }
+
+export function CreateOpcenterEmp(data:any){
+    return request({
+        url: "/api/employee/CreateOpcenterEmp",
+        method: "post",
+        data
+    });
+}

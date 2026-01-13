@@ -52,14 +52,15 @@
                                 <span class="underline">{{ scope.row.IQCNumber }}</span>
                             </template>
                         </el-table-column>
-                        <!-- <el-table-column prop="NotifyDate" :label="$t('incomeCreat.NotifyDate')" />
-                <el-table-column prop="Notifier" :label="$t('incomeCreat.NotifyPerson')" />
-                <el-table-column prop="NotifyDept" :label="$t('incomeCreat.NotifyDepartment')" />
-                <el-table-column prop="ArrivalDate" :label="$t('incomeCreat.incomeDate')" /> -->
+                      
                         <el-table-column prop="IsAutomotive" :label="$t('incomeCreat.isCarProduct')" width="100" />
                         <el-table-column prop="StatusText" :label="$t('incomeCreat.Status')" width="80" />
                         <el-table-column prop="InspectionResult" :label="$t('incomeSheet.result')" width="80" />
                         <!-- <el-table-column prop="Status" :label="$t('incomeCreat.Status')" /> -->
+                           <!-- <el-table-column prop="NotifyDate" :label="$t('incomeCreat.NotifyDate')" />
+                <el-table-column prop="Notifier" :label="$t('incomeCreat.NotifyPerson')" />
+                <el-table-column prop="NotifyDept" :label="$t('incomeCreat.NotifyDepartment')" />
+                <el-table-column prop="ArrivalDate" :label="$t('incomeCreat.incomeDate')" /> -->
                         <!-- <el-table-column prop="SamplingStandards" :label="$t('incomeCreat.InspectStandard')" width="100"
                             show-overflow-tooltip /> -->
                         <el-table-column prop="CreateTime" :label="$t('incomeCreat.creatDate')" width="150" />
@@ -316,7 +317,7 @@
                         <el-table-column prop="numberOfDefect" :label="'结果'" width="150">
                             <template #default="scope">
                                 <el-select v-model="scope.row.Status" placeholder="" size="small">
-                                    <!-- <el-option label="待检验" :value="0" disabled /> -->
+                                    <el-option label="待检验" :value="0" disabled />
                                     <el-option label="合格" :value="1" />
                                     <el-option label="不合格" :value="2" />
                                     <el-option label="特采" :value="3" />
@@ -349,7 +350,7 @@
             </template>
         </el-dialog>
         <el-dialog v-model="dialogVisible" :title="'输入测量值'" width="500px">
-            <el-form ref="formRef" label-width="auto" size="small">
+            <el-form ref="formRef" label-width="auto" size="small" @submit.native.prevent>
                 <el-form-item :label="'样本值' + i" prop="name" v-for="i in currentSampleSize" :key="i">
                     <el-input v-model="measurementValues[i - 1]" placeholder="请输入测量值" style="width: 200px" />
                 </el-form-item>
@@ -1362,9 +1363,64 @@ const assignValuesMulti=(sourceData:any, targetData:any)=> {
                 }
               
             })
-            
+            getResultText(targetItem)
         }
     });
+     // 创建源数据的查找映射，提高查找效率
+    // const sourceMap = new Map();
+    
+    // sourceData.forEach((item: any) => {
+    //     const key = `${item.LineNos}_${item.ProjectName}`;
+    //     sourceMap.set(key, item);
+    // });
+    
+    // // 遍历目标数组并赋值
+    // targetData.forEach((targetItem: any) => {
+    //     const key = `${targetItem.LineNos}_${targetItem.ProjectName}`;
+    //     const sourceItem = sourceMap.get(key);
+        
+    //     if (sourceItem) {
+    //         // console.log(sourceItem.SampleNum);
+            
+    //         targetItem.SampleSize = sourceItem.SampleNum;
+    //         targetItem.MeasuredValue = sourceItem.ObservedValue;
+    //         let valData = (sourceItem.ObservedValue).split(',');
+    //         // console.log(valData);
+            
+    //         if (targetItem.SampleSize < valData.length) {
+    //             targetItem.SampleSize = valData.length;
+    //         }
+            
+    //         // 预设状态为2（符合要求）
+    //         let allValuesInRange = true;
+            
+    //         valData.forEach((item: any, i: any) => {
+    //             if (i <= 9) {
+    //                 targetItem[`MeasuredValue${i + 1}`] = item;
+                    
+    //                 // 检查MeasuredValue{i+1}是否在MinValue和MaxValue范围内
+    //                 const measuredValue = parseFloat(item);
+    //                 const minValue = parseFloat(targetItem.MinValue);
+    //                 const maxValue = parseFloat(targetItem.MaxValue);
+                    
+    //                 // 只有当所有值都有效且都在范围内时，才保持为2
+    //                 if (!isNaN(measuredValue) && !isNaN(minValue) && !isNaN(maxValue)) {
+    //                     if (measuredValue < minValue || measuredValue > maxValue) {
+    //                         allValuesInRange = false;
+    //                     }
+    //                 } else {
+    //                     // 如果解析失败，认为不在范围内
+    //                     allValuesInRange = false;
+    //                 }
+    //             }
+    //         });
+            
+    //         // 设置状态：1=不在范围内，2=在范围内
+    //         targetItem.Status = allValuesInRange ? 2 : 1;
+            
+    //         // console.log(tableData1.value);
+    //     }
+    // });
     
     return targetData;
 }

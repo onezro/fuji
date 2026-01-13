@@ -50,12 +50,17 @@
                     <el-button type="info" size="small">
                         {{ $t("publicText.reset") }}
                     </el-button>
-                    <el-button type="warning" size="small" @click="openAdd">
+                    <!-- <el-button type="warning" size="small" @click="openAdd">
                         {{ $t("publicText.add") }}
-                    </el-button>
+                    </el-button> -->
                     <!-- <el-button type="success" size="small" @click="testClick">
                         导出Excel
                     </el-button> -->
+                    <el-button type="warning" size="small" @click="handleOpenSplit"
+                        :disabled="selectionList.length !== 1">
+
+                        {{ '拆分' }}
+                    </el-button>
                 </el-form-item>
             </el-form>
             <el-table :data="tableData.slice(
@@ -63,12 +68,13 @@
                 pageObj.currentPage * pageObj.pageSize
             )
                 " size="small" :style="{ width: '100%' }" ref="rawRef" :height="tableHeight" border fit
-                highlight-current-row>
+                highlight-current-row @selection-change="handleSelectionChange">
+                <el-table-column type="selection" width="55" align="center" />
                 <el-table-column type="index" align="center" fixed :label="$t('publicText.index')" width="50">
                     <template #default="scope">
                         <span>{{
                             scope.$index + pageObj.pageSize * (pageObj.currentPage - 1) + 1
-                        }}</span>
+                            }}</span>
                     </template>
                 </el-table-column>
                 <el-table-column prop="OQCNumber" :label="$t('oqcInspection.OQCNumber')" width="200">
@@ -85,12 +91,12 @@
                 <el-table-column prop="Date" :label="$t('oqcInspection.Date')" width="100" />
                 <el-table-column prop="ShippingQty" :label="$t('oqcInspection.ShippingQty')" width="100" />
                 <el-table-column prop="QtyShiped" :label="$t('oqcInspection.QtyShiped')" width="100" />
-                <el-table-column prop="TotalEvaluation" :label="$t('oqcInspection.TotalEvaluation')"width="150" />
+                <el-table-column prop="TotalEvaluation" :label="$t('oqcInspection.TotalEvaluation')" width="150" />
                 <el-table-column prop="SpecificationNo" :label="$t('oqcInspection.SpecificationNo')" />
                 <el-table-column prop="OrderTypeName" :label="$t('oqcInspection.OrderTypeName')" width="100" />
-                <el-table-column prop="CreateUser" :label="$t('oqcInspection.CreateUser')" width="110"/>
+                <el-table-column prop="CreateUser" :label="$t('oqcInspection.CreateUser')" width="110" />
                 <el-table-column prop="CreateTime" :label="$t('oqcInspection.CreateTime')" width="150" />
-                <el-table-column prop="UpdateUser" :label="$t('oqcInspection.UpdateUser')" width="110"/>
+                <el-table-column prop="UpdateUser" :label="$t('oqcInspection.UpdateUser')" width="110" />
                 <el-table-column prop="UpdateTime" :label="$t('oqcInspection.UpdateTime')" width="150" />
                 <el-table-column :label="$t('publicText.operation')" width="70" fixed="right" align="center">
                     <template #default="scope">
@@ -130,14 +136,14 @@
                     <el-input v-model="addForm.OrderQty" placeholder="" style="width: 200px" type="number" disabled />
                 </el-form-item>
                 <el-form-item :label="$t('oqcInspection.ShippingQty')" prop="ShippingQty">
-                    <el-input-number v-model="addForm.ShippingQty" :min="0"  style="width: 200px"/>
+                    <el-input-number v-model="addForm.ShippingQty" :min="0" style="width: 200px" />
                     <!-- <el-input v-model="addForm.ShippingQty" placeholder="" style="width: 200px" type="number" /> -->
                 </el-form-item>
                 <el-form-item :label="$t('oqcInspection.RemainingQty')" prop="RemainingQty">
-                     <el-input-number v-model="addForm.RemainingQty" :min="0"  style="width: 200px"/>
+                    <el-input-number v-model="addForm.RemainingQty" :min="0" style="width: 200px" />
                     <!-- <el-input v-model="addForm.RemainingQty" placeholder="" style="width: 200px" type="number" /> -->
                 </el-form-item>
-                
+
                 <el-form-item :label="$t('oqcInspection.customerPO')" prop="PartNo">
                     <el-input v-model="addForm.PartNo" placeholder="" style="width: 200px" disabled />
                 </el-form-item>
@@ -167,16 +173,16 @@
             <template #footer>
                 <el-button @click="handleAddClose">{{
                     $t("publicText.close")
-                }}</el-button>
+                    }}</el-button>
                 <el-button @click="handleAddConfirm" type="primary">{{
                     $t("publicText.confirm")
-                }}</el-button>
+                    }}</el-button>
             </template>
         </el-dialog>
 
         <el-dialog v-model="inspectVisible" :title="'检验'" width="95%" :append-to-body="true"
             :close-on-click-modal="false" :close-on-press-escape="false" align-center @close="handleInspectClose">
-             <el-form ref="headerFormRef" :model="headerForm" label-width="auto" :inline="true" :size="'small'">
+            <el-form ref="headerFormRef" :model="headerForm" label-width="auto" :inline="true" :size="'small'">
                 <el-form-item :label="'OQC单号'" prop="OQCNumber">
                     <el-input v-model="headerForm.OQCNumber" placeholder="" style="width: 200px" :disabled="true" />
                 </el-form-item>
@@ -222,7 +228,7 @@
                 <el-form-item :label="$t('oqcInspection.Date')" prop="Date">
                     <el-input v-model="headerForm.Date" placeholder="" style="width: 200px" :disabled="true" />
                 </el-form-item>
-                  <el-form-item :label="'AC'" prop="AC">
+                <el-form-item :label="'AC'" prop="AC">
                     <el-input v-model="DetailInfoForm.AC" placeholder="" style="width: 200px" disabled />
                 </el-form-item>
                 <el-form-item :label="'RE'" prop="RE">
@@ -340,7 +346,8 @@
                         <el-table-column prop="MeasuredValue" :align="'center'"
                             :label="$t('incomeSheet.MeasurementNumber')">
                             <template #default="scope">
-                                <span  @click="openMeasurementDialog(scope.row, scope.$index)">{{ formatMeasuredValues(scope.row) }}</span>
+                                <span @click="openMeasurementDialog(scope.row, scope.$index)">{{
+                                    formatMeasuredValues(scope.row) }}</span>
                                 <!-- <el-button type="primary" icon="Plus" :size="'small'"
                                     @click="openMeasurementDialog(scope.row, scope.$index)" /> -->
                             </template>
@@ -490,7 +497,7 @@
                 <div class="dialog-footer">
                     <el-button @click="handleInspectClose">{{
                         $t("publicText.close")
-                    }}</el-button>
+                        }}</el-button>
                     <!-- <el-button type="warning" @click="handleInspectZCConfirm" :disabled="isDisable">
                         {{ "暂存" }}
                     </el-button>
@@ -533,8 +540,54 @@
 
                 <el-button @click="handleAppClose">{{
                     $t("publicText.cancel")
-                }}</el-button>
+                    }}</el-button>
                 <el-button type="primary" @click="handleAppConfirm">
+                    {{ $t("publicText.confirm") }}
+                </el-button>
+            </template>
+        </el-dialog>
+         <el-dialog v-model="splitVisible" title="拆分" width="80%" :append-to-body="true" :close-on-click-modal="false"
+            :close-on-press-escape="false" align-center @close="handleCloseSplit">
+            <el-form ref="appFormRef" :model="splitForm" label-width="auto" :inline="true">
+                 <el-form-item label="OQC单号" prop="OQCNumber">
+                    <el-input  v-model="splitForm.OQCNumber" disabled style="width: 200px" />
+                </el-form-item>
+                 <el-form-item label="工单号" prop="MfgOrder">
+                    <el-input  v-model="splitForm.MfgOrder" disabled  style="width: 200px" />
+                </el-form-item>
+                 <el-form-item label="产品分类" prop="ProductType">
+                    <el-input  v-model="splitForm.ProductType" disabled  style="width: 200px" />
+                </el-form-item>
+                 <el-form-item label="产品名称" prop="ProductName">
+                    <el-input  v-model="splitForm.ProductName" disabled  style="width: 200px" />
+                </el-form-item>
+                
+                 <el-form-item label="发货数量" prop="OrderQty">
+                    <el-input  v-model="splitForm.OrderQty" disabled  style="width: 200px" />
+                </el-form-item>
+                <el-table :data="splitForm.oQCSpitDetails" border stripe style="width: 100%" size="small" :height="350">
+                    <el-table-column prop="LineNo" label="序号" width="55" />
+                    <el-table-column prop="SplitQty" label="发货数量" >
+                        <template #default="scope">
+                            <el-input-number v-model="scope.row.SplitQty" :min="1" :max="splitForm.OrderQty" style="width: 200px" />
+                        </template>
+                    </el-table-column>
+                    <el-table-column :label="$t('publicText.operation')" width="150" fixed="right" align="center">
+                    <template #default="{ row, $index }">
+                        <el-button v-if="isLastSplitForm($index)" :size="'small'" :type="'primary'" icon="Plus"
+                            @click="addSplitTable"></el-button>
+                        <el-button :size="'small'" :type="'danger'" icon="Delete" :disabled="$index<=1"
+                            @click="deleteSplitTable(row)"></el-button>
+                    </template>
+                </el-table-column>
+                </el-table>
+            </el-form>
+            <template #footer>
+
+                <el-button @click="handleCloseSplit">{{
+                    $t("publicText.cancel")
+                    }}</el-button>
+                <el-button type="primary" @click="handleConfirmSplit">
                     {{ $t("publicText.confirm") }}
                 </el-button>
             </template>
@@ -553,6 +606,7 @@ import {
     DownloadAndFillOQCFile,
     DownloadAndFillCOCFile,
     QueryOQCCorrelationIQCModelSpec,
+    OQCOrderSplitting
 } from "@/api/smtSpotCheck/oqc";
 import {
     ref,
@@ -580,7 +634,7 @@ const addForm = ref({
     MfgOrderName: "",
     OrderQty: 0,
     ShippingQty: 0,
-    RemainingQty:0,
+    RemainingQty: 0,
     PartNo: "",
     LotNo: "",
     TotalEvaluation: "",
@@ -589,10 +643,10 @@ const addForm = ref({
     ProductType: "",
     CustomerPN: "",
     MaterialSource: "",
-    
+
     Date: "",
     DataStatus: 0,
-    OperatorUser: userStore.getUserInfo2!==''?userStore.getUserInfo2:userStore.getUserInfo,
+    OperatorUser: userStore.getUserInfo2 !== '' ? userStore.getUserInfo2 : userStore.getUserInfo,
     OperationType: "Add",
 });
 const addVisible = ref(false);
@@ -743,7 +797,19 @@ const MethodList = ref([
     }
 ])
 const OQCName = ref("");
+const selectionList = ref<any[]>([]);
+const splitVisible = ref(false);
+const splitForm = ref<any>({
+    OQCName: "",
+    OQCNumber: "",
+    ProductName: "",
+    ProductType:'',
+    MfgOrder: "",
+    OrderQty: 0,
+    Operator: '',
+    oQCSpitDetails: []
 
+})
 watch(
     () => searchDate.value,
     (newVal: any, oldVal: any) => {
@@ -775,6 +841,11 @@ const acceptValue = computed(() => {
     const reject = Number(DetailInfoForm.value.Reject) || 0;
     DetailInfoForm.value.Accept = SampleSize - reject;
     return SampleSize - reject;
+})
+const isLastSplitForm = computed(() => {
+    return (index: number) => {
+        return index === splitForm.value.oQCSpitDetails.length - 1
+    }
 })
 
 onBeforeMount(() => {
@@ -829,7 +900,7 @@ const handleAddClose = () => {
         MfgOrderName: "",
         OrderQty: 0,
         ShippingQty: 0,
-         RemainingQty:0,
+        RemainingQty: 0,
         PartNo: "",
         LotNo: "",
         TotalEvaluation: "",
@@ -840,7 +911,7 @@ const handleAddClose = () => {
         MaterialSource: "",
         Date: "",
         DataStatus: 0,
-        OperatorUser: userStore.getUserInfo2!==''?userStore.getUserInfo2:userStore.getUserInfo,
+        OperatorUser: userStore.getUserInfo2 !== '' ? userStore.getUserInfo2 : userStore.getUserInfo,
         OperationType: "Add",
     };
 };
@@ -1002,28 +1073,28 @@ const handleInspectClose = () => {
     inspectVisible.value = false;
 };
 
-const addCharactTable = () => {
-    CharactTable.value.push({
-        OQCCharacteristicsName: "",
-        OQCCharacteristicsDesc: "",
-        MeasurementLocation: "",
-        MeasurementMethod: "",
-    });
-};
-const deleteCharactTable = (val: any) => {
-    const index = CharactTable.value.indexOf(val);
-    if (index > -1) {
-        CharactTable.value.splice(index, 1);
-    }
-    if (CharactTable.value.length === 0) {
-        CharactTable.value.push({
-            OQCCharacteristicsName: "",
-            OQCCharacteristicsDesc: "",
-            MeasurementLocation: "",
-            MeasurementMethod: "",
-        });
-    }
-};
+// const addCharactTable = () => {
+//     CharactTable.value.push({
+//         OQCCharacteristicsName: "",
+//         OQCCharacteristicsDesc: "",
+//         MeasurementLocation: "",
+//         MeasurementMethod: "",
+//     });
+// };
+// const deleteCharactTable = (val: any) => {
+//     const index = CharactTable.value.indexOf(val);
+//     if (index > -1) {
+//         CharactTable.value.splice(index, 1);
+//     }
+//     if (CharactTable.value.length === 0) {
+//         CharactTable.value.push({
+//             OQCCharacteristicsName: "",
+//             OQCCharacteristicsDesc: "",
+//             MeasurementLocation: "",
+//             MeasurementMethod: "",
+//         });
+//     }
+// };
 
 const dataProcessing = () => {
     // 数据处理逻辑
@@ -1086,7 +1157,7 @@ const dataProcessing = () => {
         CustomerPN: headerForm.value.CustomerPN,
         Date: headerForm.value.Date,
         DataStatus: 0,
-        OperatorUser: userStore.getUserInfo2!==''?userStore.getUserInfo2:userStore.getUserInfo,
+        OperatorUser: userStore.getUserInfo2 !== '' ? userStore.getUserInfo2 : userStore.getUserInfo,
         ApprovalStatus: "",
         ApprovalRemarks: "",
         InspectionStatus: "",
@@ -1152,7 +1223,7 @@ const handleAppClose = () => {
 }
 const handleAppConfirm = () => {
     let data = dataProcessing()
-    data.OperatorUser = userStore.getUserInfo2!==''?userStore.getUserInfo2:userStore.getUserInfo
+    data.OperatorUser = userStore.getUserInfo2 !== '' ? userStore.getUserInfo2 : userStore.getUserInfo
     data.OperationType = "Approve"
     data.ApprovalStatus = appForm.value.ApprovalStatus
     data.ApprovalRemarks = appForm.value.ApprovalRemarks
@@ -1326,140 +1397,107 @@ const formatMeasuredValues = (row: any) => {
     }
     return values.join(", ");
 };
-
-const handleLook = (row: any) => {
-    lookVisible.value = true;
-};
-const handletestClose = () => {
-    testVisible.value = false;
-};
-const handleZCConfirm = () => {
-    let data = tableData1.value.map((item: any) => {
-        return {
-            IQCDetailId: item.IQC_DetailName,
-            IQC_InspectionDetailsName: item.IQC_InspectionDetailName,
-            SampleSize: parseInt(item.SampleSize),
-            DefectCount: parseInt(item.DefectCount),
-            DefectDescription: "",
-            MeasuredValue1: item.MeasuredValue1 || "",
-            MeasuredValue2: item.MeasuredValue2 || "",
-            MeasuredValue3: item.MeasuredValue3 || "",
-            MeasuredValue4: item.MeasuredValue4 || "",
-            MeasuredValue5: item.MeasuredValue5 || "",
-            MeasuredValue6: item.MeasuredValue6 || "",
-            MeasuredValue7: item.MeasuredValue7 || "",
-            MeasuredValue8: item.MeasuredValue8 || "",
-            MeasuredValue9: item.MeasuredValue9 || "",
-            MeasuredValue10: item.MeasuredValue10 || "",
-            Inspector: userStore.getUserInfo2!==''?userStore.getUserInfo2:userStore.getUserInfo,
-            Status: 0,
-            DataStatus: 0,
-        };
+const handleSelectionChange = (val: any) => {
+    selectionList.value = val;
+    // console.log(selectionList.value);
+    
+}
+const handleOpenSplit = () => {
+    splitForm.value.OQCName = selectionList.value[0].OQCName;
+    splitForm.value.OQCNumber = selectionList.value[0].OQCNumber;
+    splitForm.value.ProductName = selectionList.value[0].ProductName;
+    splitForm.value.ProductType = selectionList.value[0].ProductType;
+    splitForm.value.MfgOrder = selectionList.value[0].MfgOrder;
+    splitForm.value.OrderQty = selectionList.value[0].ShippingQty;
+    splitForm.value.Operator = userStore.getUserInfo2 !== '' ? userStore.getUserInfo2 : userStore.getUserInfo;
+    splitForm.value.oQCSpitDetails = [
+        {
+            LineNo: 1,
+            SplitQty: 0
+        },
+        {
+            LineNo: 2,
+            SplitQty: 0
+        },
+    ]
+    splitVisible.value = true;
+}
+const addSplitTable = () => {
+    const newLineNo = splitForm.value.oQCSpitDetails.length + 1;
+    splitForm.value.oQCSpitDetails.push({
+        LineNo: newLineNo,
+        SplitQty: 0
     });
-
-    tableData2.value.forEach((item: any) => {
-        data.push({
-            IQCDetailId: item.IQC_DetailName,
-            IQC_InspectionDetailsName: item.IQC_InspectionDetailName,
-            SampleSize: parseInt(item.SampleSize),
-            DefectCount: parseInt(item.DefectCount),
-            DefectDescription: item.DefectDescription,
-            MeasuredValue1: "",
-            MeasuredValue2: "",
-            MeasuredValue3: "",
-            MeasuredValue4: "",
-            MeasuredValue5: "",
-            MeasuredValue6: "",
-            MeasuredValue7: "",
-            MeasuredValue8: "",
-            MeasuredValue9: "",
-            MeasuredValue10: "",
-            Inspector: userStore.getUserInfo2!==''?userStore.getUserInfo2:userStore.getUserInfo,
-            Status: 0,
-            DataStatus: 0,
+}
+const deleteSplitTable = (row: any) => {
+    const index = splitForm.value.oQCSpitDetails.indexOf(row);
+    if (index > -1) {
+        splitForm.value.oQCSpitDetails.splice(index, 1);
+    }
+    // 重新设置行号
+    splitForm.value.oQCSpitDetails.forEach((item: any, idx: number) => {
+        item.LineNo = idx + 1;
+    });
+    if (splitForm.value.oQCSpitDetails.length === 0) {
+        splitForm.value.oQCSpitDetails.push({
+            LineNo: 1,
+            SplitQty: 0
         });
-    });
-    // console.log( data);
-    // AyscIQCInspectionInterface(data).then((res: any) => {
-    //     ElNotification({
-    //         title: t("message.tipTitle"),
-    //         message: res.msg,
-    //         type: res.success ? "success" : "error",
-    //     });
-    //     testVisible.value = false;
-    //     getData()
-    // });
-};
-const handletestConfirm = () => {
-    let data = tableData1.value.map((item: any) => {
-        return {
-            IQCDetailId: item.IQC_DetailName,
-            IQC_InspectionDetailsName: item.IQC_InspectionDetailName,
-            SampleSize: parseInt(item.SampleSize),
-            DefectCount: parseInt(item.DefectCount),
-            DefectDescription: "",
-            MeasuredValue1: item.MeasuredValue1 || "",
-            MeasuredValue2: item.MeasuredValue2 || "",
-            MeasuredValue3: item.MeasuredValue3 || "",
-            MeasuredValue4: item.MeasuredValue4 || "",
-            MeasuredValue5: item.MeasuredValue5 || "",
-            MeasuredValue6: item.MeasuredValue6 || "",
-            MeasuredValue7: item.MeasuredValue7 || "",
-            MeasuredValue8: item.MeasuredValue8 || "",
-            MeasuredValue9: item.MeasuredValue9 || "",
-            MeasuredValue10: item.MeasuredValue10 || "",
-            Inspector: userStore.getUserInfo2!==''?userStore.getUserInfo2:userStore.getUserInfo,
-            Status: item.Status == "合格" ? 1 : 2,
-            DataStatus: 0,
-        };
-    });
-    let isEixt = data.findIndex((item: any) => {
-        return item.Status !== 1;
-    });
+    }
+}
+const handleCloseSplit = () => {
 
-    if (isEixt !== -1) {
-        ElNotification({
-            title: t("message.tipTitle"),
-            message: "计量结果，不通过！请检查",
+    
+    splitForm.value = {
+        OQCName: "",
+        OQCNumber: "",
+        MfgOrder: "",
+        ProductName: "",
+        ProductType:"",
+        OrderQty: 0,
+        Operator: '',
+        oQCSpitDetails: []
+    }
+    splitVisible.value = false;
+
+}
+const handleConfirmSplit = () => {
+    // 提交逻辑
+    console.log(splitForm.value);
+    const totalSplitQty = splitForm.value.oQCSpitDetails.reduce((sum:any, item:any) => {
+        return sum + (Number(item.SplitQty) || 0);
+    }, 0);
+    if (totalSplitQty > splitForm.value.OrderQty) {
+        ElMessage({
+            message: '拆分已超过订单数量', // 请使用你的国际化翻译
             type: "error",
         });
-
         return;
     }
-    tableData2.value.forEach((item: any) => {
-        data.push({
-            IQCDetailId: item.IQC_DetailName,
-            IQC_InspectionDetailsName: item.IQC_InspectionDetailName,
-            SampleSize: parseInt(item.SampleSize),
-            DefectCount: parseInt(item.DefectCount),
-            DefectDescription: item.DefectDescription,
-            MeasuredValue1: "",
-            MeasuredValue2: "",
-            MeasuredValue3: "",
-            MeasuredValue4: "",
-            MeasuredValue5: "",
-            MeasuredValue6: "",
-            MeasuredValue7: "",
-            MeasuredValue8: "",
-            MeasuredValue9: "",
-            MeasuredValue10: "",
-            Inspector: userStore.getUserInfo2!==''?userStore.getUserInfo2:userStore.getUserInfo,
-            Status: item.DefectCount == 0 ? 1 : 2,
-            DataStatus: 0,
+    OQCOrderSplitting(splitForm.value).then((res: any) => {
+        ElMessage({
+            title: t("message.tipTitle"),
+            message: res.msg,
+            type: res.success ? "success" : "error",
         });
+        if (!res.success) {
+            return;
+        }
+        splitForm.value = {
+            OQCName: "",
+            OQCNumber: "",
+            MfgOrder: "",
+            ProductName: "",
+            ProductType:'',
+            OrderQty: 0,
+            Operator: '',
+            oQCSpitDetails: []
+        }
+        splitVisible.value = false;
+        getData();
     });
-    // console.log(data);
-
-    // AyscIQCInspectionInterface(data).then((res: any) => {
-    //     ElNotification({
-    //         title: t("message.tipTitle"),
-    //         message: res.msg,
-    //         type: res.success ? "success" : "error",
-    //     });
-    //     testVisible.value = false;
-    //     getData()
-    // });
 };
+
 const handleSizeChange = (val: any) => {
     pageObj.pageSize = val;
 };

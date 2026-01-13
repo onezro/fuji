@@ -177,5 +177,13 @@ export function QueryResource(data: any) {
         }
     });
 }
+//拆分
+export function OQCOrderSplitting(data: any) {
+    return request({
+        url: "/api/OQCController/OQCOrderSplitting",
+        method: "post",
+       data
+    });
+}
 
 

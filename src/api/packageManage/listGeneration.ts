@@ -1,4 +1,5 @@
 import request from "@/request/packageRequest";
+import norequest from "@/request/packageNoRequest";
 //获取卡板
 export function GetCardAreaQuery(data: any) {
     return request({
@@ -17,7 +18,7 @@ export function GetHSCodeQuery(data: any) {
 }
 //获取预览，托盘，外箱
 export function GetPackingCardAreaSerachDetail(data: any) {
-    return request({
+    return norequest({
         url: "/api/PackingController/GetPackingCardAreaSerachDetail",
         method: "post",
         data,

@@ -95,3 +95,11 @@ export function FACPKDownloadFtpServer(data: any) {
         params:data
     });
 }
+
+export function DelFtpServer(data: any) {
+    return request({
+        url: "/api/Inspection/DelFtpServer",
+        method: "post",
+        data,
+    });
+}

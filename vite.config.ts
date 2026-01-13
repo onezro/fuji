@@ -3,22 +3,20 @@ import { fileURLToPath, URL } from 'node:url'
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import vueJsx from '@vitejs/plugin-vue-jsx'
-// import axios from "axios";
-
-// const api = window.ipConfing.baseUrl
-
-// let api=''
-// axios.get('../../public/config.json').then(res=>
-//   api=res.data.apiUrl
-// )
-
-// https://vitejs.dev/config/
 export default defineConfig({
   css: {
     preprocessorOptions: {
       scss: {
         api: 'modern-compiler'
       }
+    }
+  },
+    build: {
+    rollupOptions: {
+      external: [
+        // 添加以下行
+        /@fullcalendar\/.*/
+      ]
     }
   },
   plugins: [

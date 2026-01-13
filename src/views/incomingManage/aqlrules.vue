@@ -7,12 +7,25 @@
                 </div>
                 <el-form ref="formRef" :model="getForm" label-width="auto" :inline="true" :size="'small'"
                     @submit.native.prevent>
+                    <el-form-item label="类型" prop="ProductTypeName" class="mb-2">
+                        <el-select v-model="getForm.ProductTypeName" @change="getData" placeholder="请选择" clearable filterable size="small" style="width: 200px;">
+                            <el-option :label="p.ProductTypeName" :value="p.ProductTypeName" :key="p.ProductTypeId"
+                                v-for="p in produstTypeList" />
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="家族" prop="ProductFamilyName" class="mb-2">
+                        <el-select v-model="getForm.ProductFamilyName" @change="getData" placeholder="请选择"clearable filterable size="small" style="width: 200px;">
+                            <el-option :label="p.ProductFamilyName" :value="p.ProductFamilyName" :key="p.ProductFamilyId"
+                                v-for="p in familyList" />
+                        </el-select>
+                    </el-form-item>
                     <el-form-item label="方案名称" prop="InspectionMasterName" class="mb-2">
                         <el-input v-model="getForm.InspectionMasterName" placeholder="" clearable @clear="getData"
                             @keyup.enter.native="getData" style="width: 200px;" />
                     </el-form-item>
                     <el-form-item class="mb-2">
                         <el-button :type="'primary'" @click="getData">查询</el-button>
+                          <el-button :type="'info'" @click="resetGetForm">重置</el-button>
                     </el-form-item>
 
                 </el-form>
@@ -196,7 +209,7 @@
         <el-dialog :title="$t('publicText.edit')" v-model="editVisible" width="85%" @close="editCancel">
             <el-form :model="editForm" ref="editFormRef" label-width="auto" :inline="false">
                 <el-form-item :label="$t('aqlrules.partNumber')" prop="partNumber">
-                     <!-- <el-select-v2 v-model="editForm.InspectionMasterName" filterable :options="productList"
+                    <!-- <el-select-v2 v-model="editForm.InspectionMasterName" filterable :options="productList"
                         placeholder="" :props="{ value: 'productname', label: 'product' }" style="width: 100%" /> -->
                     <el-input v-model="editForm.InspectionMasterName" placeholder="请输入" disabled />
                     <!-- <el-select v-model="editForm.InspectionMasterName" placeholder="请选择" filterable :disabled="true">
@@ -315,6 +328,8 @@ import {
     GetInspectionDetailQuery,
     AyscInspectionMaster,
     AyscDelInspectionDetail,
+    GetProductTypeQuery,
+    GetProductFamilyQuery
 } from "@/api/incomingManage/aqlrules";
 import {
     ref,
@@ -333,6 +348,8 @@ import { useI18n } from "vue-i18n";
 const { t } = useI18n();
 const getForm = ref({
     InspectionMasterName: "",
+    ProductTypeName: '',
+    ProductFamilyName: ''
 });
 const tableHeight = ref(0);
 const tableData = ref([]);
@@ -421,12 +438,8 @@ const addTabList = ref([
     }
 ])
 const activeName2 = ref('IQC')
-const editIQCTable = ref([])
-const editFirstTable = ref([])
-const editRouTable = ref([])
-const editFinshTable = ref([])
-const editOQCTable = ref([])
-
+const produstTypeList=ref<any[]>([])
+const familyList=ref<any[]>([])
 const isLastDetail1 = computed(() => {
     return (index: number) => {
         return index === addTypeTable.value.length - 1
@@ -450,6 +463,8 @@ onBeforeMount(() => {
     getCategory();
     GetResource();
     getProject();
+    getProductTypeData()
+    getProductFamilyData()
 });
 onMounted(() => {
     window.addEventListener("resize", getScreenHeight);
@@ -460,6 +475,14 @@ onBeforeUnmount(() => {
     window.addEventListener("resize", getScreenHeight);
 });
 
+const resetGetForm=()=>{
+    getForm.value={
+        InspectionMasterName: "",
+    ProductTypeName: '',
+    ProductFamilyName: ''
+    }
+    getData()
+}
 const getData = () => {
     GetInspectionMasterQuery(getForm.value).then((res: any) => {
         tableData.value = res.content;
@@ -490,6 +513,16 @@ const getProject = () => {
         projectList.value = res.content;
     });
 };
+const getProductTypeData=()=>{
+    GetProductTypeQuery({}).then((res:any)=>{
+         produstTypeList.value = res.content;
+    })
+}
+const getProductFamilyData=()=>{
+    GetProductFamilyQuery({}).then((res:any)=>{
+        familyList.value= res.content
+    })
+}
 const openAdd = () => {
 
     activeName.value = 'IQC'
@@ -693,7 +726,7 @@ const editInspectionDetails = () => {
     });
 };
 const deleteDetail = (val: any, filteredIndex: any) => {
-    
+
     if (val.InspectionDetailName == '') {
         // editForm.value.iQC_InspectionDetails.splice(index, 1)
         const currentInspectionType = activeName2.value;

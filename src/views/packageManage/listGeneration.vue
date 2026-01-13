@@ -44,7 +44,7 @@
                 <el-table-column prop="CustomerName" :label="$t('listGeneration.customer')" />
                 <el-table-column prop="ES_CustomerProduct" :label="$t('listGeneration.productName')" width="150" />
                 <el-table-column prop="ES_CustomerPO" :label="$t('listGeneration.productPO')" width="150" />
-                <el-table-column prop="ProductName" :label="$t('listGeneration.productPN')" />
+                <el-table-column prop="ProductName" :label="$t('listGeneration.productPN')" width="200"/>
                 <el-table-column prop="ES_LotNumber" :label="$t('listGeneration.lotNo')" />
                 <el-table-column prop="Qty" :label="$t('listGeneration.productionQty')" />
                 <el-table-column prop="Qty2" :label="$t('listGeneration.orderNum')" />
@@ -142,6 +142,7 @@ const pageObj = reactive({
     pageSize: 50,
 });
 const selectList = ref<any[]>([]);
+const refreshTimer=ref()
 watch(
     () => getForm.value.CardAreaName,
     (newVal, oldVal) => {
@@ -153,15 +154,39 @@ watch(
 );
 onBeforeMount(() => {
     getScreenHeight();
+     getData()
 });
 onMounted(() => {
     window.addEventListener("resize", getScreenHeight);
     getPallet();
-    getData()
+     // 启动10秒定时刷新
+    startAutoRefresh();
 });
+
 onBeforeUnmount(() => {
-    window.addEventListener("resize", getScreenHeight);
+    window.removeEventListener("resize", getScreenHeight);
+    // 清除定时器
+    stopAutoRefresh();
 });
+
+// 启动自动刷新
+const startAutoRefresh = () => {
+    if (refreshTimer.value) {
+        clearInterval(refreshTimer.value);
+    }
+    // 每10秒刷新一次
+    refreshTimer.value = setInterval(() => {
+        getData();
+    }, 10000);
+};
+
+// 停止自动刷新
+const stopAutoRefresh = () => {
+    if (refreshTimer.value) {
+        clearInterval(refreshTimer.value);
+        refreshTimer.value = null;
+    }
+};
 const getData = () => {
     GetPackingCardAreaSerachDetail(getForm.value).then((res: any) => {
         if (res.success) {

@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import {
     GetEmployeeQuery,
-
 } from "@/api/incomingManage/iqcApi";
 import { computed, onMounted, unref, ref, watch, onActivated, onBeforeMount, reactive } from 'vue'
 import { useTagsViewStore } from '@/stores/modules/tagsView'
@@ -24,7 +23,6 @@ import { filterBreadcrumb } from "@/components/bread/helper";
 import { filter, treeToList } from "@/utils/tree";
 import { updatePassword, GetVersion } from "@/api/permiss"
 import { ElNotification, ElMessage, ElMessageBox } from "element-plus";
-
 
 const visitedViews = computed(() => tagsViewStore.getVisitedViews)
 const routers = computed(() => permissionStore.getRouters)
@@ -128,7 +126,7 @@ onMounted(() => {
     addTags()
     //
     getNotifierList()
-    userStore.setUserInfo2(localStorage.getItem('OPERATOR') || '');
+    userStore.setUserInfo2(sessionStorage.getItem('OPERATOR') || '');
     // console.log(userStore.getUserInfo2);
     
     operator.value = userStore.getUserInfo2
@@ -386,7 +384,7 @@ const getNotifierList = () => {
 const changeOperator = (val: any) => {
     // console.log(val);
     userStore.setUserInfo2(val);
-    localStorage.setItem("OPERATOR", val);
+    sessionStorage.setItem("OPERATOR", val);
 }
 </script>
 <template>
@@ -445,7 +443,7 @@ const changeOperator = (val: any) => {
                                 </el-icon>
                             </el-tooltip>
                             <div v-for="(v, i) in treeToList(unref(levelList))" :key="v.name">{{
-                                textArr[i]
+                                textArr[Number(i)]
                             }}<span class="text-[1.1rem] text-[#006487] underline">&nbsp;{{ v.meta.title
                                     }}&nbsp;</span>
                             </div>

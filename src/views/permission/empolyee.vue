@@ -16,16 +16,19 @@
         </div>
       </template>
       <el-scrollbar class="h-[calc(100vh-160px)]">
-        <el-tree style="max-width: 600px" highlight-current :data="organTree" :expand-on-click-node="false" :props="{
-          children: 'children',
-          label: 'OrganizationName',
-        }" @node-click="handleNodeClick" />
+        <el-tree style="max-width: 600px" highlight-current :data="organTree" :default-expand-all="true"
+          :expand-on-click-node="false" :props="{
+            children: 'children',
+            label: 'OrganizationName',
+          }" @node-click="handleNodeClick"  />
       </el-scrollbar>
     </el-card>
 
     <el-card shadow="always" :body-style="{ padding: '8px 8px 0 8px' }" class="flex-1">
       <div class="mb-2 flex justify-between">
-        <div></div>
+        <div>
+          <el-button type="primary" @click="handleAdd" :disabled="addEmployeeForm.OrganizationID ==''">新增</el-button>
+        </div>
         <div>
           <el-input v-model="searchName" clearable placeholder="请输入">
             <template #append>
@@ -44,13 +47,16 @@
         </el-table-column>
         <el-table-column label="组织" prop="OrganizationName" :min-width="170">
         </el-table-column>
-        <el-table-column fixed="right" label="操作" width="120" align="center">
+        <el-table-column fixed="right" label="操作" width="155" align="center">
           <template #default="scope">
             <el-tooltip content="编辑" placement="top">
               <el-button type="primary" icon="EditPen" size="small" @click="handleEdit(scope.row)" />
             </el-tooltip>
             <el-tooltip content="密码重置" placement="top">
-              <el-button type="danger" icon="RefreshLeft" size="small" @click="handleRest(scope.row)" />
+              <el-button type="warning" icon="RefreshLeft" size="small" @click="handleRest(scope.row)" />
+            </el-tooltip>
+            <el-tooltip content="删除" placement="top">
+              <el-button type="danger" icon="Delete" size="small" @click="handleEmployeeDelete(scope.row)" />
             </el-tooltip>
           </template>
         </el-table-column>
@@ -69,7 +75,8 @@
           <el-input v-model="roleName" disabled></el-input>
         </el-form-item>
         <el-form-item label="当前角色" prop="role">
-          <el-tag class="mb-2" :key="tag.RoleID" v-for="tag in hasRole" closable :disable-transitions="false" @close="handleClose(tag)">
+          <el-tag class="mb-2" :key="tag.RoleID" v-for="tag in hasRole" closable :disable-transitions="false"
+            @close="handleClose(tag)">
             {{ tag.RoleName }}
           </el-tag>
         </el-form-item>
@@ -80,7 +87,7 @@
           </el-select>
         </el-form-item> -->
         <el-form-item label="角色" prop="roleIdArr">
-          <el-select v-model="form.roleIdArr" multiple >
+          <el-select v-model="form.roleIdArr" multiple>
             <el-option v-for="item in noRole" :key="item.value" :label="item.lable" :value="item.value">
             </el-option>
           </el-select>
@@ -135,6 +142,24 @@
         </span>
       </template>
     </el-dialog>
+    <el-dialog :append-to-body="true" :close-on-click-modal="false" title="添加人员" v-model="addEmployeeVisible"
+      width="400px" @close="addEmployeeCancel()">
+      <el-form :model="addEmployeeForm" ref="addEmployeeFormRef" :rules="addEmployeeRules" label-width="auto">
+        <el-form-item label="员工账号" prop="EmployeeName">
+          <el-input v-model="addEmployeeForm.EmployeeName" placeholder="请输入员工账号" clearable></el-input>
+        </el-form-item>
+        <el-form-item label="员工姓名" prop="FullName">
+          <el-input v-model="addEmployeeForm.FullName" placeholder="请输入员工姓名" clearable></el-input>
+        </el-form-item>
+      </el-form>
+
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="addEmployeeCancel()">取消</el-button>
+          <el-button type="primary" @click="addEmployeeSubmit()">确定</el-button>
+        </span>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -151,6 +176,7 @@ import {
   addEmployee,
   getOrganization,
   ResetPwd,
+  CreateOpcenterEmp
 } from "@/api/permiss";
 import { ElMessage, ElMessageBox, ElNotification } from "element-plus";
 import {
@@ -213,7 +239,7 @@ const form = ref({
   employeeName: "",
   id: 0,
   roleId: "",
-  roleIdArr:[],
+  roleIdArr: [],
   IsDelete: "",
   CreateBy: userStore.getUserInfo,
   CreateDate: "",
@@ -263,6 +289,18 @@ const rules = reactive<any>({
     { required: true, validator: equalToPassword, trigger: "blur" },
   ],
 });
+const addEmployeeRules = reactive<any>({
+  EmployeeName: [{ required: true, message: "请输入员工账号", trigger: "blur" }],
+  FullName: [{ required: true, message: "请输入员工姓名", trigger: "blur" }],
+});
+const addEmployeeVisible = ref(false);
+const addEmployeeFormRef = ref();
+const addEmployeeForm = ref({
+  EmployeeName: "",
+  FullName: "",
+  IsOnline: "Y",
+  OrganizationID: ""
+})
 onBeforeMount(() => {
   getScreenHeight();
 });
@@ -297,6 +335,7 @@ const table1 = (newdata: any) => {
 };
 
 const noRole = computed(() => {
+
   const data = optionArr.value.filter(
     (item: any) => !hasRole.value.some((ele) => ele.RoleID == item.value)
   );
@@ -339,7 +378,14 @@ const OrganData = (organizations: any) => {
 
 const handleNodeClick = (data: any) => {
   // console.log(data)
+   if(data.ParentOrganizationId==null){
+    addEmployeeForm.value.OrganizationID=""
+getData()
+    
+      return
+  }
   tableData1.value = table1(data.OrganizationId);
+  addEmployeeForm.value.OrganizationID = data.OrganizationId
 };
 const refreshData = () => {
   isLoding.value = "is-loading";
@@ -359,7 +405,7 @@ const getRoleMeun = () => {
     // const dataText = JSON.parse(data.content);
     optionArr.value = data.content.map((item: any) => {
       return {
-        value: item.id,
+        value: item.ID,
         lable: item.RoleName,
       };
     });
@@ -389,8 +435,8 @@ const getHasRole = () => {
   findEmployeeRoles(form.value.employeeName).then((data: any) => {
     if (data.code == 100200) {
       //  console.log(data);
-      if(data.content==null){
-        hasRole.value=[]
+      if (data.content == null) {
+        hasRole.value = []
         return
       }
       hasRole.value = data.content;
@@ -468,12 +514,12 @@ const handleEdit = (row: any) => {
 const addCancel = () => {
   addVisible.value = false;
 };
-const removeTag=(val:any)=>{
-console.log(val);
+const removeTag = (val: any) => {
+  console.log(val);
 
 }
 const onSubmit = () => {
-  form.value.roleId= form.value.roleIdArr.join(",")
+  form.value.roleId = form.value.roleIdArr.join(",")
   if (
     form.value.roleId == "" ||
     form.value.roleId == undefined ||
@@ -484,14 +530,14 @@ const onSubmit = () => {
   } else {
     // console.log(form.value);
 
-    addEmployeeRole(form.value).then((res:any) => {
+    addEmployeeRole(form.value).then((res: any) => {
       // getData();
-      if(res.success){
+      if (res.success) {
         ElNotification({
-            title: "提示",
-            message: res.msg,
-            type: "success",
-          });
+          title: "提示",
+          message: res.msg,
+          type: "success",
+        });
       }
       addVisible.value = false;
       formRef.value.resetFields();
@@ -615,6 +661,85 @@ const handleDelete = (row: any) => {
       //   });
     });
 };
+const handleAdd = () => {
+  addEmployeeVisible.value = true;
+};
+const addEmployeeCancel = () => {
+  addEmployeeVisible.value = false;
+  addEmployeeFormRef.value.resetFields();
+
+};
+const addEmployeeSubmit = () => {
+  // addEmployeeForm.value.OrganizationID = organTree.value[0]?.OrganizationId || ""
+  addEmployeeFormRef.value.validate((valid: any) => {
+    if (valid) {
+      CreateOpcenterEmp(addEmployeeForm.value).then((res: any) => {
+        if (res.code == 100200) {
+          getData();
+          addEmployeeFormRef.value.resetFields();
+          addEmployeeVisible.value = false;
+          ElMessage({
+            title: "提示",
+            message: "添加成功",
+            type: "success",
+          });
+        } else {
+          ElMessage({
+            title: "提示",
+            message: res.msg,
+            type: "error",
+          });
+        }
+      });
+    } else {
+      console.log("error submit!!");
+      return false;
+    }
+  });
+}
+const handleEmployeeDelete = (row: any) => {
+  ElMessageBox.confirm("确定删除", "确认操作", {
+    confirmButtonText: "确定",
+    cancelButtonText: "取消",
+    type: "warning",
+  }).then(() => {
+    CreateOpcenterEmp({ EmployeeName: row.employeeName, IsOnline: "N" }).then((res: any) => {
+      if (res.code == 100200) {
+       
+        getData();
+      
+        ElMessage({
+          title: "删除成功",
+          message: "删除成功",
+          type: "success",
+        });
+      } else {
+        ElMessage({
+          title: "删除失败",
+          message: res.msg,
+          type: "error",
+        });
+      }
+    });
+  }).catch(() => {
+    ElMessage({
+      type: "info",
+      message: "取消操作",
+    });
+  });
+};
+const handleNodeChange=(val:any)=>{
+  // console.log(val,val.ParentOrganizationId);
+  
+  if(val.ParentOrganizationId==null){
+    addEmployeeForm.value.OrganizationID=""
+    console.log(addEmployeeForm.value);
+    
+    getData()
+  }
+ 
+}
+
 const handleSizeChange = (val: any) => {
   currentPage.value = 1;
   pageSize.value = val;

@@ -42,6 +42,12 @@
                 <el-form-item :label="$t('oqcInspection.LOtNO')" class="mb-2">
                     <el-input style="width: 180px" v-model="getForm.LotNo" placeholder="" clearable></el-input>
                 </el-form-item>
+                <el-form-item :label="$t('oqcInspection.SpecName')" class="mb-2">
+                    <el-select v-model="getForm.SpecName" placeholder="" clearable style="width: 200px">
+                        <el-option label="模切" value="模切" />
+                        <el-option label="裁切" value="裁切" />
+                    </el-select>
+                </el-form-item>
 
                 <el-form-item class="mb-2">
                     <el-button type="primary" size="small" @click="getData">
@@ -64,7 +70,7 @@
                     <template #default="scope">
                         <span>{{
                             scope.$index + pageObj.pageSize * (pageObj.currentPage - 1) + 1
-                            }}</span>
+                        }}</span>
                     </template>
                 </el-table-column>
                 <el-table-column prop="OQCNumber" :label="$t('oqcInspection.OQCNumber')" width="200">
@@ -76,6 +82,7 @@
                 <el-table-column prop="CustomerPO" :label="$t('oqcInspection.customerPO')" width="130" />
                 <el-table-column prop="CustomerPN" :label="$t('oqcInspection.customerPN')" width="130" />
                 <el-table-column prop="LotNo" :label="$t('oqcInspection.LOtNO')" />
+                <el-table-column prop="SpecName" :label="$t('oqcInspection.SpecName')" />
                 <el-table-column prop="InspectionStatus" :label="$t('oqcInspection.inspectionStatus')" />
                 <el-table-column prop="ApprovalStatus" :label="$t('oqcInspection.ApprovalStatus')" />
                 <el-table-column prop="SpecificationNo" :label="$t('oqcInspection.SpecificationNo')">
@@ -87,12 +94,12 @@
                 <!-- <el-table-column prop="Date" :label="$t('oqcInspection.Date')" width="100" /> -->
                 <el-table-column prop="ShippingQty" :label="$t('oqcInspection.ShippingQty')" width="100" />
                 <el-table-column prop="QtyShiped" :label="$t('oqcInspection.QtyShiped')" width="100" />
-                <el-table-column prop="TotalEvaluation" :label="$t('oqcInspection.TotalEvaluation')"  width="120"/>
+                <el-table-column prop="TotalEvaluation" :label="$t('oqcInspection.TotalEvaluation')" width="120" />
 
                 <el-table-column prop="OrderTypeName" :label="$t('oqcInspection.OrderTypeName')" width="100" />
-                <el-table-column prop="CreateUser" :label="$t('oqcInspection.CreateUser')"  width="120"/>
+                <el-table-column prop="CreateUser" :label="$t('oqcInspection.CreateUser')" width="120" />
                 <el-table-column prop="CreateTime" :label="$t('oqcInspection.CreateTime')" width="150" />
-                <el-table-column prop="UpdateUser" :label="$t('oqcInspection.UpdateUser')" width="120"/>
+                <el-table-column prop="UpdateUser" :label="$t('oqcInspection.UpdateUser')" width="120" />
                 <el-table-column prop="UpdateTime" :label="$t('oqcInspection.UpdateTime')" width="150" />
                 <!-- <el-table-column prop="SpecificationNo" :label="$t('oqcInspection.SpecificationNo')" /> -->
                 <el-table-column :label="$t('publicText.operation')" width="180" fixed="right" align="center">
@@ -131,12 +138,7 @@
 
         <el-dialog v-model="inspectVisible" :title="'检验'" width="95%" :append-to-body="true"
             :close-on-click-modal="false" :close-on-press-escape="false" align-center @close="handleInspectClose">
-            <div class="flex items-center justify-end">
-                <el-tooltip :content="'生产调控，原料出仓，生产过程，包装，过程检验，生产备注'" placement="top">
-                    <el-button :type="'primary'" :size="'small'" @click="getProductControl">其他信息</el-button>
-                </el-tooltip>
 
-            </div>
             <el-form ref="headerFormRef" :model="headerForm" label-width="auto" :inline="true" :size="'small'">
                 <el-form-item :label="'OQC单号'" prop="OQCNumber">
                     <el-input v-model="headerForm.OQCNumber" placeholder="" style="width: 200px" :disabled="true" />
@@ -220,7 +222,13 @@
                     </template>
                 </el-table-column>
             </el-table>
-
+            <div class="p-2">
+                <el-tooltip :content="'生产调控，原料出仓，生产过程，包装，过程检验，生产备注'" placement="top">
+                    <el-button :type="'primary'" :size="'small'" @click="getProductControl">其他信息</el-button>
+                </el-tooltip>
+                <el-button :type="'warning'" :size="'small'" :disabled="SpecificationNo == '' || SpecificationNo == null"
+                    @click="openFile(SpecificationNo)">规格书查看</el-button>
+            </div>
             <el-tabs v-model="activeName" type="border-card">
                 <el-tab-pane :label="'计数检验'" name="first">
                     <el-table :data="CountTable" border stripe style="width: 100%" size="small" :height="300">
@@ -304,8 +312,8 @@
                         </el-table-column>
                         <el-table-column prop="SampleSize" :label="$t('incomeSheet.numberOfSample')" width="120">
                             <template #default="scope">
-                                <el-input-number v-model="scope.row.SampleSize" :min="1"
-                                     style="width: 100%;" size="small"  @change="handleSampleSizeChange(scope.row)"/>
+                                <el-input-number v-model="scope.row.SampleSize" :min="1" style="width: 100%;"
+                                    size="small" @change="handleSampleSizeChange(scope.row)" />
                                 <!-- <el-input v-model="scope.row.SampleSize" size="small" type="number" min="1" max="10"
                                     @change="handleSampleSizeChange(scope.row)"></el-input> -->
                             </template>
@@ -316,8 +324,7 @@
                                 <!-- <el-input v-model="scope.row.DefectCount" size="small" :disabled="scope.row.StatusText!==''"></el-input> -->
                             </template>
                         </el-table-column>
-                        <el-table-column prop="MeasuredValue" 
-                            :label="$t('incomeSheet.MeasurementNumber')" width="150">
+                        <el-table-column prop="MeasuredValue" :label="$t('incomeSheet.MeasurementNumber')" width="150">
                             <template #default="scope">
                                 <span>{{ formatMeasuredValues(scope.row) }}</span>
                                 <el-button type="primary" icon="Plus" :size="'small'"
@@ -426,7 +433,7 @@
                     <el-input v-model="DetailInfoForm.RE" placeholder="" style="width: 150px" disabled />
                 </el-form-item> -->
             </el-form>
-            <el-table :data="CharactTable" border stripe style="width: 100%" size="small" :height="200">
+            <!-- <el-table :data="CharactTable" border stripe style="width: 100%" size="small" :height="200">
                 <el-table-column prop="OQCCharacteristicsName" :label="$t('oqcInspection.characteristicName')">
                     <template #default="scope">
                         <el-input v-model="scope.row.OQCCharacteristicsName" size="small"></el-input>
@@ -446,7 +453,7 @@
                     </template>
                 </el-table-column>
 
-            </el-table>
+            </el-table> -->
             <el-form class="mt-2" ref="DetailInfoFormRef" :model="DetailInfoForm" label-width="auto" :inline="true"
                 :size="'small'">
                 <el-form-item :label="$t('oqcInspection.measurementLocation')" prop="MeasurementLocation">
@@ -466,28 +473,30 @@
                 </el-form-item>
             </el-form>
             <template #footer>
-                <div class="dialog-footer">
-                    <el-button @click="handleInspectClose">{{
+                <div class="flex justify-between">
+                    <!-- <el-button @click="handleInspectClose">{{
                         $t("publicText.close")
-                        }}</el-button>
-                    <el-button type="warning" @click="handleInspectZCConfirm"
-                        :disabled="headerForm.InspectionStatus == '检验完成'">
-                        {{ "暂存" }}
-                    </el-button>
-                    <el-button type="primary" @click="handleInspectConfirm"
-                        :disabled="headerForm.InspectionStatus == '检验完成'">
-                        {{ $t("publicText.confirm") }}
-                    </el-button>
-                    <el-button @click="handleApproval" :type="'success'"
-                        :disabled="!(headerForm.InspectionStatus == '检验完成' && headerForm.ApprovalStatus == '创建')">{{
-                            $t('publicText.approval')
-                        }}</el-button>
+                        }}</el-button> -->
+                    <div> <el-button type="warning" @click="handleInspectZCConfirm"
+                            :disabled="headerForm.InspectionStatus == '检验完成'">
+                            {{ "暂存" }}
+                        </el-button></div>
+                    <div><el-button type="primary" @click="handleInspectConfirm"
+                            :disabled="headerForm.InspectionStatus == '检验完成'">
+                            {{ $t("publicText.submit") }}
+                        </el-button>
+                        <el-button @click="handleApproval" :type="'success'"
+                            :disabled="!(headerForm.InspectionStatus == '检验完成' && headerForm.ApprovalStatus == '创建')">{{
+                                $t('publicText.approval')
+                            }}</el-button>
+                    </div>
+
                 </div>
             </template>
         </el-dialog>
 
         <el-dialog v-model="dialogVisible" :title="'输入测量值'" width="500px">
-            <el-form ref="formRef" label-width="auto" size="small">
+            <el-form ref="formRef" label-width="auto" size="small" @submit.native.prevent>
                 <el-form-item :label="'样本值' + i" prop="name" v-for="i in currentSampleSize" :key="i">
                     <el-input v-model="measurementValues[i - 1]" placeholder="请输入测量值" style="width: 200px" />
                 </el-form-item>
@@ -518,7 +527,7 @@
 
                 <el-button @click="handleAppClose">{{
                     $t("publicText.cancel")
-                    }}</el-button>
+                }}</el-button>
                 <el-button type="primary" @click="handleAppConfirm">
                     {{ $t("publicText.confirm") }}
                 </el-button>
@@ -531,7 +540,7 @@
                 <div class="dialog-footer">
                     <el-button @click="handlePreviewClose">{{
                         $t("publicText.close")
-                        }}</el-button>
+                    }}</el-button>
                     <el-button type="primary" @click="handlePreviewDawnload">
                         {{ $t("publicText.dawnload") }}
                     </el-button>
@@ -595,7 +604,7 @@
                 <div class="dialog-footer">
                     <el-button @click="handleIQCCharactClose">{{
                         $t("publicText.close")
-                        }}</el-button>
+                    }}</el-button>
 
                 </div>
             </template>
@@ -727,7 +736,7 @@
                         <el-table-column prop="ShippingQty" :label="'送检数量'" />
                         <el-table-column prop="UnitOfMeasure" :label="'单位'" width="130" />
                         <el-table-column prop="FormattedDate" :label="'送检时间'" />
-                        <el-table-column prop="" :label="'送检人工号'" width="130" />
+                        <el-table-column prop="SubmitterNo" :label="'送检人工号'" width="130" />
                         <el-table-column prop="Submitter" :label="'送检人'" />
 
                     </el-table>
@@ -737,7 +746,7 @@
                 <div class="dialog-footer">
                     <el-button @click="handleOtherClose">{{
                         $t("publicText.close")
-                        }}</el-button>
+                    }}</el-button>
 
                 </div>
             </template>
@@ -964,6 +973,7 @@ const ManufactureTable = ref<any[]>([])
 const oqcInspectionRef = ref()
 const tempMeasureRef = ref()
 const fileList3 = ref<any[]>([]);
+const SpecificationNo = ref('')
 watch(
     () => searchDate.value,
     (newVal: any, oldVal: any) => {
@@ -1433,6 +1443,7 @@ const getIqcDetailData = () => {
 
 const handleEdit = (row: any) => {
     OQCName.value = row.OQCName;
+    SpecificationNo.value = row.SpecificationNo;
     getInspectDetilData()
     inspectVisible.value = true;
 };
@@ -2042,12 +2053,12 @@ const fileUpChange2 = async (file: any, fileList1: any) => {
     // const result = handleExcelUpload(file.raw)
     // // handleExcelUpload1(file.raw)
     // console.log(result);
-       const fileNameList=file.name.split('_')
+    const fileNameList = file.name.split('_')
     //   console.log(fileNameList,editdetailForm.value.IQCNumber);
-      if(fileNameList[0]!== headerForm.value.OQCNumber){
-        ElMessage.error( '导入失败，请导入检验对应的Excel')
+    if (fileNameList[0] !== headerForm.value.OQCNumber) {
+        ElMessage.error('导入失败，请导入检验对应的Excel')
         return
-      }
+    }
     try {
         const result = await handleExcelUpload(file.raw)
 
@@ -2116,12 +2127,12 @@ const assignValuesMulti = (sourceData: any, targetData: any) => {
             targetItem.MeasuredValue = sourceItem.ObservedValue;
             let valData = (sourceItem.ObservedValue).split(',')
             // console.log(valData);
-             if( targetItem.SampleSize<valData.length){
-                targetItem.SampleSize=valData.length
+            if (targetItem.SampleSize < valData.length) {
+                targetItem.SampleSize = valData.length
             }
             valData.forEach((item: any, i: any) => {
-                  if(i<=9){
-                      targetItem[`MeasuredValue${i+1}`]=item
+                if (i <= 9) {
+                    targetItem[`MeasuredValue${i + 1}`] = item
                 }
             })
 
