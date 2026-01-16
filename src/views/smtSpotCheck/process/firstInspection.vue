@@ -55,18 +55,20 @@
                 (pageObj.currentPage - 1) * pageObj.pageSize,
                 pageObj.currentPage * pageObj.pageSize
             )
-                " size="small" :style="{ width: '100%' }" ref="firstInspectRef" :height="tableHeight" border fit>
+                " size="small" :style="{ width: '100%' }"  ref="firstInspectRef" :height="tableHeight" border fit :row-class-name="tableRowClassName">
                 <el-table-column type="index" align="center" fixed :label="$t('publicText.index')" width="50">
                     <template #default="scope">
                         <span>{{
                             scope.$index + pageObj.pageSize * (pageObj.currentPage - 1) + 1
-                            }}</span>
+                        }}</span>
                     </template>
                 </el-table-column>
                 <!-- <el-table-column prop="ES_InspectionNo" :label="$t('processInspect.inspectOrder')" width="180"/> -->
                 <el-table-column prop="ES_MfgorderName" :label="$t('processInspect.workeOrder')" width="80" fixed />
-                <el-table-column prop="ES_ProductName" :label="$t('processInspect.productName')" width="150" fixed />
+                 <el-table-column prop="PriorityCodeName" :label="$t('batchCreation.Priority')" width="60" :align="'center'"/>
+                <el-table-column prop="ES_ProductName" :label="$t('processInspect.productName')" :min-width="flexColumnWidth('产品名称', 'ES_ProductName')"  />
                 <el-table-column prop="ES_ProductType" :label="$t('processInspect.productType')" width="80" />
+                <el-table-column prop="ES_CustomerName" :label="$t('processInspect.customerName')" width="100" />
                 <el-table-column prop="ES_CustomerPO" :label="$t('processInspect.customerPO')" width="100" />
                 <el-table-column prop="ES_PartNo" :label="$t('processInspect.customerPN')" width="120" />
                 <el-table-column prop="ES_SpecName" :label="'工序'" />
@@ -85,17 +87,23 @@
                                 row.ES_SpecificationNo }}</span>
                     </template>
                 </el-table-column>
-                <el-table-column prop="ES_FaUrl" :label="'FA'" width="80">
+                <el-table-column prop="ES_FaUrl" :label="'FA'" :min-width="flexColumnWidth('FA', 'ES_FaUrl')">
                     <template #default="scope">
                         <span class="underline cursor-pointer text-cyan-800"
                             @click="isDownload(scope.row.ES_FaUrl, 'FA')">{{ scope.row.ES_FaUrl }}</span>
                     </template>
                 </el-table-column>
-                <el-table-column prop="ES_CPKUrl" :label="'CPK'" width="80">
+                <el-table-column prop="ES_CPKUrl" :label="'CPK'" :min-width="flexColumnWidth('CPK', 'ES_CPKUrl')">
                     <template #default="scope">
                         <span class="underline cursor-pointer text-cyan-800"
                             @click="isDownload(scope.row.ES_CPKUrl, 'CPK')">{{ scope.row.ES_CPKUrl }}</span>
                     </template>
+                </el-table-column>
+                <el-table-column prop="ES_CPKMinL" :label="'CPK长'" width="80">
+                </el-table-column>
+                <el-table-column prop="ES_CPKMinW" :label="'CPK宽'" width="80">
+                </el-table-column>
+                <el-table-column prop="ES_CPKMinThk" :label="'CPK厚度'" width="80">
                 </el-table-column>
                 <el-table-column prop="ES_CreateDate" :label="$t('processInspect.creatTime')" width="150" />
                 <el-table-column :label="$t('publicText.operation')" width="250" fixed="right" align="center">
@@ -145,7 +153,7 @@
                 <div class="dialog-footer">
                     <el-button @click="handleAddClose">{{
                         $t("publicText.cancel")
-                        }}</el-button>
+                    }}</el-button>
                     <el-button type="primary" @click="handleAddConfirm">
                         {{ $t("publicText.confirm") }}
                     </el-button>
@@ -265,7 +273,13 @@
                         </el-table-column>
                         <el-table-column prop="TargetValue" :label="$t('aqlrules.TargetValue')">
                         </el-table-column>
-
+                        <el-table-column prop="CPKMinL" :label="'CPK长'" v-if="editForm.InspectionType == '首检'">
+                        </el-table-column>
+                        <el-table-column prop="CPKMinW" :label="'CPK宽'" v-if="editForm.InspectionType == '首检'">
+                        </el-table-column>
+                        <el-table-column prop="CPKMinThk" :label="'CPK厚度'"
+                            v-if="editForm.InspectionType == '首检'">
+                        </el-table-column>
                         <el-table-column prop="MinValue" :label="$t('aqlrules.MinValue')">
                         </el-table-column>
                         <el-table-column prop="MaxValue" :label="$t('aqlrules.MaxValue')">
@@ -327,7 +341,7 @@
                 <div class="dialog-footer">
                     <el-button @click="handleEditClose">{{
                         $t("publicText.close")
-                        }}</el-button>
+                    }}</el-button>
                     <el-button type="warning" @click="handleEditZQConfirm"
                         :disabled="(editForm.InspectionType == '首检' && editForm.FirstArticleInspectionStatus == '检验完成')">
                         {{ "暂存" }}
@@ -390,7 +404,7 @@
                 <div class="dialog-footer">
                     <el-button @click="handlePreviewClose">{{
                         $t("publicText.close")
-                    }}</el-button>
+                        }}</el-button>
                     <el-button type="primary" @click="handlePreviewDawnload">
                         {{ $t("publicText.dawnload") }}
                     </el-button>
@@ -448,8 +462,6 @@ import { ElNotification, ElMessageBox, ElMessage } from "element-plus";
 import { useI18n } from "vue-i18n";
 const { t } = useI18n();
 import { useUserStoreWithOut } from "@/stores/modules/user";
-import { de } from 'element-plus/es/locale/index.mjs';
-
 const userStore = useUserStoreWithOut();
 const getForm = ref({
     InspectionNO: "",
@@ -496,6 +508,7 @@ const editForm = ref<any>({
     PartNo: "",
     CustomerName: "",
     LotNo: "",
+
     MaterialReQty: "",
     DocumentStatus: "待检验",
     ProductType: "",
@@ -577,6 +590,12 @@ onMounted(() => {
 onBeforeUnmount(() => {
     window.addEventListener("resize", getScreenHeight);
 });
+const tableRowClassName = (val: any) => {
+    let row = val.row;
+    if (row.PriorityCodeName==1) {
+        return "danger-row-invent";
+    }
+};
 const resetFormData = () => {
     getForm.value = {
         InspectionNO: "",
@@ -946,6 +965,9 @@ const handleEditZQConfirm = () => {
             InspectionBy: userStore.getUserInfo2 !== '' ? userStore.getUserInfo2 : userStore.getUserInfo,
             InspectionUpdateBy: userStore.getUserInfo2 !== '' ? userStore.getUserInfo2 : userStore.getUserInfo,
             ResulthandLing: item.ResulthandLing,
+            CPKMinL: item.CPKMinL,
+            CPKMinW: item.CPKMinW,
+            CPKMinThk: item.CPKMinThk,
         };
     });
     editForm.value.countItem.forEach((item: any) => {
@@ -1023,6 +1045,9 @@ const handleEditConfirm = () => {
             InspectionBy: userStore.getUserInfo2 !== '' ? userStore.getUserInfo2 : userStore.getUserInfo,
             InspectionUpdateBy: userStore.getUserInfo2 !== '' ? userStore.getUserInfo2 : userStore.getUserInfo,
             ResulthandLing: item.ResulthandLing,
+            CPKMinL: item.CPKMinL,
+            CPKMinW: item.CPKMinW,
+            CPKMinThk: item.CPKMinThk,
         };
     });
 
@@ -1051,6 +1076,9 @@ const handleEditConfirm = () => {
             InspectionBy: userStore.getUserInfo2 !== '' ? userStore.getUserInfo2 : userStore.getUserInfo,
             InspectionUpdateBy: userStore.getUserInfo2 !== '' ? userStore.getUserInfo2 : userStore.getUserInfo,
             ResulthandLing: item.ResulthandLing,
+            CPKMinL: item.CPKMinL,
+            CPKMinW: item.CPKMinW,
+            CPKMinThk: item.CPKMinThk,
         });
     });
     console.log(data);
@@ -1135,6 +1163,9 @@ const handleEdit = (row: any, type: any) => {
                     InspectionUpdateBy: userStore.getUserInfo2 !== '' ? userStore.getUserInfo2 : userStore.getUserInfo,
                     InspectionDate: "",
                     ResulthandLing: item.RESULTHANDLING,
+                    CPKMinL: item.CPKMinL,
+                    CPKMinW: item.CPKMinW,
+                    CPKMinThk: item.CPKMinThk,
                 };
             })
             .sort((a: any, b: any) => a.LineNos - b.LineNos);
@@ -1385,8 +1416,10 @@ const handleDeleteCPK = () => {
         type: "warning",
     })
         .then(() => {
-
-            DelFtpServer(deleteCPKForm.value).then((res: any) => {
+            let data = [
+                deleteCPKForm.value
+            ]
+            DelFtpServer(data).then((res: any) => {
                 ElMessage({
                     title: t("publicText.success"),
                     message: res.msg,
@@ -1609,7 +1642,39 @@ const assignValuesMulti = (sourceData: any, targetData: any) => {
 
     return targetData;
 }
+const flexColumnWidth = (label: any, prop: any) => {
+    const arr = tableData?.value.map((x: { [x: string]: any }) => x[prop]);
+    arr.push(label); // 把每列的表头也加进去算
+    return getMaxLength(arr) + 25 + "px";
+};
 
+const getMaxLength = (arr: any) => {
+    return arr.reduce((acc: any, item: any) => {
+        if (item) {
+            const calcLen = getTextWidth(item);
+
+            if (acc < calcLen) {
+                acc = calcLen;
+            }
+        }
+        return acc;
+    }, 0);
+};
+const getTextWidth = (str: string) => {
+    let width = 0;
+    const html = document.createElement("span");
+    html.style.cssText = `padding: 0; margin: 0; border: 0; line-height: 1; font-size: ${13}px; font-family: Arial, sans-serif;`;
+    html.innerText = str; // 去除字符串前后的空白字符
+    document.body?.appendChild(html);
+
+    const spanElement = html; // 无需再次查询，直接使用创建的元素
+    if (spanElement) {
+        width = spanElement.offsetWidth;
+        spanElement.remove();
+    }
+    // console.log(width);
+    return width;
+};
 </script>
 <style scoped>
 .el-pagination {
@@ -1745,5 +1810,14 @@ const assignValuesMulti = (sourceData: any, targetData: any) => {
 .info-box-title {
     font-weight: bold;
     margin-bottom: 5px;
+}
+</style>
+<style>
+.el-table .danger-row-invent {
+    --el-table-tr-bg-color: var(--el-color-danger-light-7);
+}
+
+.el-table .success-row-invent {
+    --el-table-tr-bg-color: var(--el-color-success-light-5);
 }
 </style>

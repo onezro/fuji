@@ -57,3 +57,12 @@ export function PackingRemoveOuterBoxSubmit(data: any) {
     });
 }
 
+export function DownloadPackingListReportAsync(data: any) {
+    return request({
+        url: "/api/PackingController/DownloadPackingListReportAsync",
+        method: "post",
+        params:data
+    });
+}
+
+

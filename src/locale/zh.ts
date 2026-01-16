@@ -376,7 +376,7 @@ const zh = {
     lookIQC:'查看IQC检验数据',
     materialSource: "物料产地",
     RemainingQty: "剩余数量",
-    OrderQty: "工单数量",
+    OrderQty: "订单数量",
     instrumentName: "检验仪器名称",
     instrumenStatus: "检验仪器确认",
     SamplingPlan: "抽样方案",

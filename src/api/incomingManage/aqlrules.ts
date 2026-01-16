@@ -94,3 +94,11 @@ export function GetProductFamilyQuery(data: any) {
         data,
     });
 }
+
+export function GetCustomerQuery(data: any) {
+    return request({
+        url: "/api/IQCController/GetCustomerQuery",
+        method: "post",
+        data,
+    });
+}

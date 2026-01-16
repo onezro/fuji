@@ -38,3 +38,4 @@ declare module '@/api/asyApi'
 declare module 'file-saver'
 declare module "@/utils/useDraw"
 declare module "screenfull"
+declare module 'auto-layout-col'

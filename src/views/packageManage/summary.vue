@@ -114,14 +114,20 @@
                 </template>
             </el-table>
         </el-card>
+           <!-- <el-dialog v-model="previewVisible" :title="'预览'" width="95%" :append-to-body="true"
+            :close-on-click-modal="false" :close-on-press-escape="false" align-center >
+                <VueOfficeExcel :src="excelSrc"></VueOfficeExcel>
+        </el-dialog> -->
     </div>
 </template>
 
 <script setup lang="ts">
+// import VueOfficeExcel from '@vue-office/excel';
 import {
     GetHSCodeQuery,
     GetPackingSerachReport,
     GetPackingHSCodeSummaryQuery,
+    DownloadPackingListReportAsync
 } from "@/api/packageManage/listGeneration";
 import {
     ref,
@@ -141,8 +147,11 @@ import {
 } from "@/utils/dataMenu";
 import dayjs from "dayjs";
 import { exportTableToExcel } from "@/utils/exportExcel";
+import { ElNotification, ElMessageBox, ElMessage } from "element-plus";
 import { useI18n } from "vue-i18n";
 const { t } = useI18n();
+import { useUserStoreWithOut } from "@/stores/modules/user";
+const userStore = useUserStoreWithOut();
 const listTableRef = ref();
 const listDeilTableRef = ref();
 const searchDate = ref<any[]>([]);
@@ -190,6 +199,12 @@ const listData = ref<ListData>({
     TotalGrossWeight: 0,
     TotalNetWeight: 0,
 });
+const previewVisible = ref(false);
+const  previewForm=ref({
+    PackingName:'',
+    UserName:userStore.getUserInfo
+}) 
+const excelSrc=ref('')
 watch(
     () => searchDate.value,
     (newVal: any, oldVal: any) => {
@@ -246,6 +261,7 @@ const getData = () => {
 const cellClick = (val: any) => {
     getDetailForm.value .PackingContainerName= val.ContainerName;
     listData.value = val;
+    previewForm.value.PackingName=val.ContainerName
    getDetailData()
 };
 const getDetailData=()=>{
@@ -267,30 +283,97 @@ const resetGetForm2 = () => {
     getDetailForm.value.HSCodeName=''
     // getDetailData()
 }
-const exportList = () => {
-    exportTableToExcel({
-        tableRef: listTableRef.value,
-        fetchAllData: fetchAllData,
-        fileName: `${getForm.value.PackingContainerName}_${dayjs().format(
-            "YYYYMMDDHHmmss"
-        )}`,
-        styles: {
-            headerBgColor: "", // 灰色表头
-            headerFont: {
-                color: { argb: "" }, // 红色文字
-                bold: false,
-                size: 12,
-            }, // 白色文字
-            cell: { numFmt: "@" }, // 强制文本格式
-        },
-        t,
-    });
+interface IQCFile {
+    FileData: string; // Base64 数据
+    FileName: string;
+}
+
+interface DownloadResponse {
+    content: IQCFile[];
+    success: boolean;
+    message?: string;
+}
+const exportList =  async() => {
+    // DownloadPackingListReportAsync(previewForm.value).then((res:any)=>{
+    //     if(res.success){
+    //         excelSrc.value= `data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,${res.content[0].FileData}`
+    //         previewVisible.value=true
+    //     }
+    // })
+    try {
+        const resAny: any = await DownloadPackingListReportAsync(previewForm.value);
+        console.log(resAny);
+
+        const payload: DownloadResponse = resAny && resAny.data ? resAny.data : resAny;
+
+        if (!payload.success || !payload.content || payload.content.length === 0) {
+            ElMessage.warning('没有找到可下载的文件');
+            return;
+        }
+
+        const files = payload.content;
+
+        // if (files.length > 1) {
+        //     await downloadAsZip(files);
+        //     return;
+        // }
+
+        // 单个文件直接下载
+        const file = files[0];
+        await downloadSingleFile(file);
+
+    } catch (error) {
+        console.error('下载失败:', error);
+        ElMessage.error('文件下载失败');
+    }
+};
+
+const downloadSingleFile = async (file: any) => {
+    try {
+        // 确保 Base64 数据格式正确
+        let base64Data = file.FileData;
+
+        // 如果 Base64 数据不包含 data URL 前缀，添加它
+        if (!base64Data.startsWith('data:')) {
+            base64Data = `data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,${base64Data}`;
+        }
+
+        // 使用更可靠的下载方式
+        const response = await fetch(base64Data);
+        const blob = await response.blob();
+
+        // 创建下载链接
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+
+        // 设置文件名，确保有 .xlsx 扩展名
+        let fileName = file.FileName;
+        if (!fileName.toLowerCase().endsWith('.xlsx')) {
+            fileName = `${fileName}.xlsx`;
+        }
+
+        link.href = url;
+        link.download = fileName;
+        link.style.display = 'none';
+
+        document.body.appendChild(link);
+        link.click();
+
+        // 清理
+        setTimeout(() => {
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(url);
+        }, 100);
+
+        ElMessage.success('文件下载成功');
+
+    } catch (error) {
+        console.error('文件下载失败:', error);
+        ElMessage.error('文件下载失败');
+    }
 };
 const fetchAllData = async () => {
-    let data = await GetPackingHSCodeSummaryQuery({
-        PackingContainerName: ContainerName.value,
-        HSCodeName: productType.value,
-    }).then((res: any) => {
+    let data = await GetPackingHSCodeSummaryQuery(getDetailForm.value).then((res: any) => {
         return res.content;
     });
     return addSummaryDataFunctional(data);

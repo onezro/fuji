@@ -13,8 +13,14 @@
                         v-model="searchDate" value-format="YYYY-MM-DD" type="daterange" range-separator="-" size="small"
                         style="width: 200px" :clearable="false" :disabled-date="disabledDate" />
                 </el-form-item>
+                 <el-form-item :label="$t('oqcInspection.SpecName')" class="mb-2">
+                    <el-select v-model="getForm.SpecName" placeholder="" @change="getData" clearable style="width: 200px">
+                        <el-option label="模切" value="模切" />
+                        <el-option label="裁切" value="裁切" />
+                    </el-select>
+                </el-form-item>
                 <el-form-item :label="$t('oqcInspection.inspectionStatus')" class="mb-2">
-                    <el-select v-model="getForm.InspectionStatus" placeholder="" style="width: 180px" clearable>
+                    <el-select v-model="getForm.InspectionStatus" placeholder=""  @change="getData" style="width: 180px" clearable>
                         <el-option :label="'全部'" :value="''">
                         </el-option>
                         <el-option :label="'待检验'" :value="1">
@@ -23,31 +29,33 @@
                         </el-option>
                     </el-select>
                 </el-form-item>
-
-                <el-form-item :label="$t('oqcInspection.productCategory')" class="mb-2">
+                 <el-form-item label="产品类型" prop="ProductType" class="mb-2">
+                        <el-select v-model="getForm.ProductType" @change="getData" placeholder="请选择" clearable filterable size="small" style="width: 200px;">
+                            <el-option :label="p.ProductTypeName"  :value="p.ProductTypeName" :key="p.ProductTypeId"
+                                v-for="p in produstTypeList" />
+                        </el-select>
+                    </el-form-item>
+                <!-- <el-form-item :label="$t('oqcInspection.productCategory')" class="mb-2">
                     <el-input style="width: 180px" v-model="getForm.ProductType" placeholder="" clearable></el-input>
+                </el-form-item> -->
+                       <el-form-item :label="$t('oqcInspection.customerName')" class="mb-2">
+                    <el-input style="width: 180px" v-model="getForm.ToCustomerName" placeholder="" clearable></el-input>
                 </el-form-item>
                 <el-form-item :label="$t('oqcInspection.productName')" class="mb-2">
                     <el-input style="width: 180px" v-model="getForm.ProductName" placeholder="" clearable></el-input>
                 </el-form-item>
-                <el-form-item :label="$t('oqcInspection.customerName')" class="mb-2">
-                    <el-input style="width: 180px" v-model="getForm.ToCustomerName" placeholder="" clearable></el-input>
-                </el-form-item>
+         
                 <el-form-item :label="$t('oqcInspection.customerPO')" class="mb-2">
                     <el-input style="width: 200px" v-model="getForm.PartNo" placeholder="" clearable></el-input>
                 </el-form-item>
+                   <el-form-item :label="$t('oqcInspection.LOtNO')" class="mb-2">
+                    <el-input style="width: 180px" v-model="getForm.LotNo" placeholder="" clearable></el-input>
+                </el-form-item>
+               
                 <el-form-item :label="$t('oqcInspection.customerPN')" class="mb-2">
                     <el-input style="width: 180px" v-model="getForm.CustomerPN" placeholder="" clearable></el-input>
                 </el-form-item>
-                <el-form-item :label="$t('oqcInspection.LOtNO')" class="mb-2">
-                    <el-input style="width: 180px" v-model="getForm.LotNo" placeholder="" clearable></el-input>
-                </el-form-item>
-                <el-form-item :label="$t('oqcInspection.SpecName')" class="mb-2">
-                    <el-select v-model="getForm.SpecName" placeholder="" clearable style="width: 200px">
-                        <el-option label="模切" value="模切" />
-                        <el-option label="裁切" value="裁切" />
-                    </el-select>
-                </el-form-item>
+             
 
                 <el-form-item class="mb-2">
                     <el-button type="primary" size="small" @click="getData">
@@ -61,23 +69,25 @@
                     </el-button>
                 </el-form-item>
             </el-form>
-            <el-table ref="oqcInspectionRef" :data="tableData.slice(
+            <el-table fit ref="oqcInspectionRef" :data="tableData.slice(
                 (pageObj.currentPage - 1) * pageObj.pageSize,
                 pageObj.currentPage * pageObj.pageSize
             )
-                " size="small" :style="{ width: '100%' }" :height="tableHeight" border fit highlight-current-row>
+                " size="small" :style="{ width: '100%' }" :height="tableHeight" border highlight-current-row :row-class-name="tableRowClassName">
                 <el-table-column type="index" align="center" fixed :label="$t('publicText.index')" width="50">
                     <template #default="scope">
                         <span>{{
                             scope.$index + pageObj.pageSize * (pageObj.currentPage - 1) + 1
-                        }}</span>
+                            }}</span>
                     </template>
                 </el-table-column>
                 <el-table-column prop="OQCNumber" :label="$t('oqcInspection.OQCNumber')" width="200">
                 </el-table-column>
+                 <el-table-column prop="PriorityCodeName" :label="$t('batchCreation.Priority')" width="60" :align="'center'"/>
                 <el-table-column prop="MfgOrder" :label="$t('oqcInspection.workerOrder')" />
                 <el-table-column prop="Customer" :label="$t('oqcInspection.customerName')" />
-                <el-table-column prop="ProductName" :label="$t('oqcInspection.productName')" width="130" />
+                <el-table-column prop="ProductName" :label="$t('oqcInspection.productName')"
+                    :min-width="flexColumnWidth('产品名称', 'ProductName')" />
                 <el-table-column prop="ProductType" :label="$t('oqcInspection.productCategory')" />
                 <el-table-column prop="CustomerPO" :label="$t('oqcInspection.customerPO')" width="130" />
                 <el-table-column prop="CustomerPN" :label="$t('oqcInspection.customerPN')" width="130" />
@@ -91,11 +101,10 @@
                             row.SpecificationNo }}</span>
                     </template>
                 </el-table-column>
-                <!-- <el-table-column prop="Date" :label="$t('oqcInspection.Date')" width="100" /> -->
+                <el-table-column prop="OrderQty" :label="'订单总数量'" width="100" />
                 <el-table-column prop="ShippingQty" :label="$t('oqcInspection.ShippingQty')" width="100" />
                 <el-table-column prop="QtyShiped" :label="$t('oqcInspection.QtyShiped')" width="100" />
                 <el-table-column prop="TotalEvaluation" :label="$t('oqcInspection.TotalEvaluation')" width="120" />
-
                 <el-table-column prop="OrderTypeName" :label="$t('oqcInspection.OrderTypeName')" width="100" />
                 <el-table-column prop="CreateUser" :label="$t('oqcInspection.CreateUser')" width="120" />
                 <el-table-column prop="CreateTime" :label="$t('oqcInspection.CreateTime')" width="150" />
@@ -169,12 +178,12 @@
                 <el-form-item :label="$t('oqcInspection.ShippingQty')" prop="QtyShiped">
                     <el-input v-model="headerForm.ShippingQty" placeholder="" style="width: 200px" :disabled="true" />
                 </el-form-item>
-                <el-form-item :label="$t('oqcInspection.QtyShiped')" prop="QtyShiped">
+                <!-- <el-form-item :label="$t('oqcInspection.QtyShiped')" prop="QtyShiped">
                     <el-input v-model="headerForm.QtyShiped" placeholder="" style="width: 200px" :disabled="true" />
                 </el-form-item>
                 <el-form-item :label="$t('oqcInspection.RemainingQty')" prop="RemainingQty">
                     <el-input v-model="headerForm.RemainingQty" placeholder="" style="width: 200px" :disabled="true" />
-                </el-form-item>
+                </el-form-item> -->
                 <el-form-item :label="$t('oqcInspection.OrderQty')" prop="OrderQty">
                     <el-input v-model="headerForm.OrderQty" placeholder="" style="width: 200px" :disabled="true" />
                 </el-form-item>
@@ -222,11 +231,19 @@
                     </template>
                 </el-table-column>
             </el-table>
+            <el-form class="mt-2" ref="DetailInfoFormRef" :model="DetailInfoForm" label-width="auto" 
+                :size="'small'" >
+                
+                <el-form-item :label="'检验备注'" prop="OQCRemark">
+                    <el-input v-model="DetailInfoForm.OQCRemark" placeholder="" style="width: 100%"  />
+                </el-form-item>
+            </el-form>
             <div class="p-2">
                 <el-tooltip :content="'生产调控，原料出仓，生产过程，包装，过程检验，生产备注'" placement="top">
                     <el-button :type="'primary'" :size="'small'" @click="getProductControl">其他信息</el-button>
                 </el-tooltip>
-                <el-button :type="'warning'" :size="'small'" :disabled="SpecificationNo == '' || SpecificationNo == null"
+                <el-button :type="'warning'" :size="'small'"
+                    :disabled="SpecificationNo == '' || SpecificationNo == null"
                     @click="openFile(SpecificationNo)">规格书查看</el-button>
             </div>
             <el-tabs v-model="activeName" type="border-card">
@@ -367,7 +384,11 @@
                     <!-- <el-input v-model="DetailInfoForm.SamplingPlan" placeholder="" style="width: 150px" /> -->
                 </el-form-item>
                 <el-form-item :label="$t('oqcInspection.TechnicalRequirements')" prop="TechnicalRequirements">
-                    <el-input v-model="DetailInfoForm.TechnicalRequirements" placeholder="" style="width: 150px" />
+                    <el-select v-model="DetailInfoForm.TechnicalRequirements" placeholder="" style="width: 150px">
+                        <el-option v-for="item in TechnicalRequireList" :key="item.value" :label="item.label"
+                            :value="item.value">
+                        </el-option></el-select>
+                    <!-- <el-input v-model="DetailInfoForm.TechnicalRequirements" placeholder="" style="width: 150px" /> -->
                 </el-form-item>
                 <el-form-item :label="$t('oqcInspection.Severity')" prop="Severity">
                     <el-select v-model="DetailInfoForm.Severity" placeholder="" style="width: 150px">
@@ -385,26 +406,26 @@
                 </el-form-item>
                 <el-form-item :label="$t('oqcInspection.SampleSize')" prop="SampleSize">
                     <!-- <el-input v-model="DetailInfoForm.SampleSize" placeholder="" type="number" style="width: 150px" /> -->
-                    <el-input-number v-model="DetailInfoForm.SampleSize" :min="0" style="width: 150px" />
+                    <el-input-number v-model="DetailInfoForm.SampleSize" disabled :min="0" style="width: 150px" />
                 </el-form-item>
-                <el-form-item :label="$t('oqcInspection.PinHole')" prop="PinHole">
-                    <el-select v-model="DetailInfoForm.PinHole" placeholder="" style="width: 150px" disabled>
+                <el-form-item   :class="{'ng-status': DetailInfoForm.PinHole === 1}" :label="$t('oqcInspection.PinHole')" prop="PinHole">
+                    <el-select :class="{'ng-select': DetailInfoForm.PinHole === 1}" v-model="DetailInfoForm.PinHole"  placeholder="" style="width: 150px" disabled>
                         <el-option label="OK" :value="0" />
                         <el-option label="NG" :value="1" />
                     </el-select>
                 </el-form-item>
-                <el-form-item :label="$t('oqcInspection.Dirt')" prop="Dirt">
-                    <el-select v-model="DetailInfoForm.Dirt" placeholder="" style="width: 150px" disabled>
+                <el-form-item  :class="{'ng-status': DetailInfoForm.Dirt === 1}" :label="$t('oqcInspection.Dirt')" prop="Dirt">
+                    <el-select :class="{'ng-select': DetailInfoForm.Dirt === 1}" v-model="DetailInfoForm.Dirt" placeholder="" style="width: 150px" disabled>
                         <el-option label="OK" :value="0" />
                         <el-option label="NG" :value="1" /></el-select>
                 </el-form-item>
-                <el-form-item :label="$t('oqcInspection.Flaw')" prop="Flaw">
-                    <el-select v-model="DetailInfoForm.Flaw" placeholder="" style="width: 150px" disabled>
+                <el-form-item :class="{'ng-status': DetailInfoForm.Flaw === 1}" :label="$t('oqcInspection.Flaw')" prop="Flaw">
+                    <el-select  :class="{'ng-select': DetailInfoForm.Flaw === 1}" v-model="DetailInfoForm.Flaw" placeholder="" style="width: 150px" disabled>
                         <el-option label="OK" :value="0" />
                         <el-option label="NG" :value="1" /></el-select>
                 </el-form-item>
-                <el-form-item :label="$t('oqcInspection.Result')" prop="Result">
-                    <el-select v-model="DetailInfoForm.Result" placeholder="" style="width: 150px" disabled>
+                <el-form-item :class="{'ng-status': DetailInfoForm.Flaw === 1}" :label="$t('oqcInspection.Result')" prop="Result">
+                    <el-select  :class="{'ng-select': DetailInfoForm.Result === 1}" v-model="DetailInfoForm.Result" placeholder="" style="width: 150px" disabled>
                         <el-option label="OK" :value="0" />
                         <el-option label="NG" :value="1" /></el-select>
                 </el-form-item>
@@ -477,11 +498,17 @@
                     <!-- <el-button @click="handleInspectClose">{{
                         $t("publicText.close")
                         }}</el-button> -->
-                    <div> <el-button type="warning" @click="handleInspectZCConfirm"
+                    <div>
+                        <el-button type="warning" @click="handleInspectZCConfirm"
                             :disabled="headerForm.InspectionStatus == '检验完成'">
                             {{ "暂存" }}
-                        </el-button></div>
-                    <div><el-button type="primary" @click="handleInspectConfirm"
+                        </el-button>
+                    </div>
+                    <div>
+                        <el-button @click="handlePreviewOQCReport" :type="'info'">
+                            {{ '预览OQC报告' }}
+                        </el-button>
+                        <el-button type="primary" @click="handleInspectConfirm"
                             :disabled="headerForm.InspectionStatus == '检验完成'">
                             {{ $t("publicText.submit") }}
                         </el-button>
@@ -527,7 +554,7 @@
 
                 <el-button @click="handleAppClose">{{
                     $t("publicText.cancel")
-                }}</el-button>
+                    }}</el-button>
                 <el-button type="primary" @click="handleAppConfirm">
                     {{ $t("publicText.confirm") }}
                 </el-button>
@@ -540,7 +567,7 @@
                 <div class="dialog-footer">
                     <el-button @click="handlePreviewClose">{{
                         $t("publicText.close")
-                    }}</el-button>
+                        }}</el-button>
                     <el-button type="primary" @click="handlePreviewDawnload">
                         {{ $t("publicText.dawnload") }}
                     </el-button>
@@ -604,7 +631,7 @@
                 <div class="dialog-footer">
                     <el-button @click="handleIQCCharactClose">{{
                         $t("publicText.close")
-                    }}</el-button>
+                        }}</el-button>
 
                 </div>
             </template>
@@ -615,6 +642,7 @@
                 <el-tab-pane label="生产调控" name="first">
                     <el-table :data="ProControlTable" border stripe style="width: 100%" size="small" :height="350">
                         <el-table-column prop="MfgOrder" :label="$t('oqcInspection.workerOrder')" />
+                         <el-table-column prop="Description" :label="'生产备注'" />
                         <el-table-column prop="MfgOrderPO" :label="'工单PO'" />
                         <el-table-column prop="Quantity" :label="'生产数量'" />
                         <el-table-column prop="OrderQty" :label="'工单数量'" />
@@ -731,7 +759,7 @@
                 <el-tab-pane label="生产备注" name="six">
                     <el-table :data="ManufactureTable" border stripe style="width: 100%" size="small" :height="350">
                         <el-table-column prop="MfgOrder" :label="$t('oqcInspection.workerOrder')" />
-                        <el-table-column prop="ApprovalRemarks" :label="'备注'" />
+                        <!-- <el-table-column prop="ApprovalRemarks" :label="'备注'" /> -->
                         <el-table-column prop="LotNumber" :label="'出货批号'" />
                         <el-table-column prop="ShippingQty" :label="'送检数量'" />
                         <el-table-column prop="UnitOfMeasure" :label="'单位'" width="130" />
@@ -746,6 +774,18 @@
                 <div class="dialog-footer">
                     <el-button @click="handleOtherClose">{{
                         $t("publicText.close")
+                        }}</el-button>
+
+                </div>
+            </template>
+        </el-dialog>
+        <el-dialog v-model="previewOQCVisible" :title="'预览OQC报告'" width="80%" :append-to-body="true"
+            :close-on-click-modal="false" :close-on-press-escape="false" align-center>
+            <VueOfficeExcel :src="excelSrc" style="width: 100%;"></VueOfficeExcel>
+            <template #footer>
+                <div class="dialog-footer">
+                    <el-button @click="previewOQCVisible = false">{{
+                        $t("publicText.close")
                     }}</el-button>
 
                 </div>
@@ -755,6 +795,7 @@
 </template>
 
 <script setup lang="ts">
+import VueOfficeExcel from '@vue-office/excel';
 import {
     QueryOQCDocumentNumbersByCriteria,
     QueryOQCNewWorkOrderDetailsByWorkOrder,
@@ -775,6 +816,10 @@ import {
     QueryManufacturingNotesHistory,
     QueryResource
 } from "@/api/smtSpotCheck/oqc";
+import {
+   
+    GetProductTypeQuery
+} from "@/api/incomingManage/aqlrules";
 import {
     GetIQCInspectionDetailQuery
 } from "@/api/incomingManage/iqcApi";
@@ -805,6 +850,7 @@ import { exportTableToExcel1 } from "@/utils/exportExcel1";
 import { handleExcelUpload } from "@/utils/analysisExcel"
 import { saveAs } from "file-saver";
 import JSZip from 'jszip';
+// import {flexColumnWidth} from '@/utils/getTableWidth'
 const userStore = useUserStoreWithOut();
 const getForm = ref({
     OQCName: "",
@@ -834,12 +880,16 @@ const aqlLevelList = ref<any[]>([]);
 const seriousList = ref<any[]>([
     { label: "一般", value: "一般" },
     { label: "正常", value: "正常" },
-    { label: "严重", value: "正常" },
+    { label: "严重", value: "严重" },
 ]);
 const testLevelList = ref<any[]>([
     { label: "一般", value: "一般" },
     { label: "正常", value: "正常" },
 ]);
+const TechnicalRequireList = ref<any[]>([
+    { label: "SIP-01E", value: "SIP-01E" },
+    { label: "SIP-010", value: "SIP-010" }
+])
 const activeName = ref("first");
 const detailTableData = ref<any[]>([]);
 const detailVisible = ref(false);
@@ -900,7 +950,8 @@ const DetailInfoForm = ref({
     AC: 0,
     RE: 0,
     MeasurementLocation: "",
-    MeasurementMethod: ""
+    MeasurementMethod: "",
+    OQCRemark: ''
 });
 const CharactTable = ref<any[]>([
     {
@@ -974,6 +1025,9 @@ const oqcInspectionRef = ref()
 const tempMeasureRef = ref()
 const fileList3 = ref<any[]>([]);
 const SpecificationNo = ref('')
+const previewOQCVisible = ref(false)
+const excelSrc = ref('')
+const produstTypeList=ref<any[]>([])
 watch(
     () => searchDate.value,
     (newVal: any, oldVal: any) => {
@@ -1039,6 +1093,7 @@ onBeforeMount(() => {
     getScreenHeight();
     GetAQLLevelQueryData()
     GetResourceQueryData()
+    getProductTypeData()
     let end: string = setTodayDate();
     let start: string = setLastDate();
     searchDate.value = [start, end];
@@ -1050,6 +1105,12 @@ onMounted(() => {
 onBeforeUnmount(() => {
     window.addEventListener("resize", getScreenHeight);
 });
+const tableRowClassName = (val: any) => {
+    let row = val.row;
+    if (row.PriorityCodeName==1) {
+        return "danger-row-invent";
+    }
+};
 const testClick = () => {
     router.push({
         path: "/incomingManage/inspectSheet/1",
@@ -1062,6 +1123,12 @@ const getData = () => {
         tableData.value = res.content;
     });
 };
+//获取产品类别
+const getProductTypeData=()=>{
+    GetProductTypeQuery({}).then((res:any)=>{
+         produstTypeList.value = res.content;
+    })
+}
 //获取检验方案
 const GetAQLLevelQueryData = () => {
     GetAQLLevelQuery({}).then((res: any) => {
@@ -1475,23 +1542,24 @@ const getInspectDetilData = () => {
             DetailInfoForm.value = {
                 SamplingPlan: data.OQCDetailInfo[0].samplingPlan,
                 TechnicalRequirements: 'SIP-01E',
-                Severity: data.OQCDetailInfo[0].severityLevel,
-                InspectionLevel: data.OQCDetailInfo[0].inspectionLevel,
-                SampleSize: data.OQCDetailInfo[0].oqcSampleSize,
+                Severity: data.OQCDetailInfo[0].severityLevel == null ? '正常' : data.OQCDetailInfo[0].severityLevel,
+                InspectionLevel: data.OQCDetailInfo[0].inspectionLevel == null ? '一般' : data.OQCDetailInfo[0].inspectionLevel,
+                SampleSize: data.OQCDetailInfo[0].oqcSampleSize == null ? 10 : data.OQCDetailInfo[0].oqcSampleSize,
                 PinHole: data.OQCDetailInfo[0].pinHoleFlag,
                 Dirt: data.OQCDetailInfo[0].dirtFlag,
                 Flaw: data.OQCDetailInfo[0].flawFlag,
                 Result: data.OQCDetailInfo[0].finalResult,
-                PinHoleDefectCount: data.OQCDetailInfo[0].pinHoleDefectCount,
-                DirtDefectCount: data.OQCDetailInfo[0].dirtDefectCount,
-                FlawDefectCount: data.OQCDetailInfo[0].flawDefectCount,
-                ResultDefectCount: data.OQCDetailInfo[0].resultDefectCount,
+                PinHoleDefectCount: data.OQCDetailInfo[0].pinHoleDefectCount == null ? 0 : data.OQCDetailInfo[0].pinHoleDefectCount,
+                DirtDefectCount: data.OQCDetailInfo[0].dirtDefectCount == null ? 0 : data.OQCDetailInfo[0].dirtDefectCount,
+                FlawDefectCount: data.OQCDetailInfo[0].flawDefectCount == null ? 0 : data.OQCDetailInfo[0].flawDefectCount,
+                ResultDefectCount: data.OQCDetailInfo[0].resultDefectCount == null ? 0 : data.OQCDetailInfo[0].resultDefectCount,
                 Reject: data.OQCDetailInfo[0].isRejected,
                 Accept: data.OQCDetailInfo[0].isAccepted,
                 AC: data.OQCDetailInfo[0].AC,
                 RE: data.OQCDetailInfo[0].RE,
                 MeasurementLocation: data.OQCDetailInfo[0].measurementLocation,
-                MeasurementMethod: data.OQCDetailInfo[0].measurementMethod
+                MeasurementMethod: data.OQCDetailInfo[0].measurementMethod,
+                OQCRemark: data.OQCDetailInfo[0].OQCRemark
             };
             MeasurValur.value = data.OQCDetailInfo[0].measurementMethod ? data.OQCDetailInfo[0].measurementMethod.split(',') : []
             if (data.OQCInstrumentDetails.length == 0) {
@@ -1535,7 +1603,7 @@ const getInspectDetilData = () => {
                 InspectionToolName: item.inspectionToolName,
                 uomname: item.uomname,
                 InspectionBasis: item.inspectionBasis,
-                SampleSize: item.sampleSize,
+                SampleSize: item.sampleSize==null?10:item.sampleSize,
                 DefectCount: item.defectCount,
                 MeasuredValue1: item.measuredValue1,
                 MeasuredValue2: item.measuredValue2,
@@ -1723,6 +1791,22 @@ const calculateTotalEvaluation = (val: any) => {
     } else {
         return ""; // 默认空白
     }
+}
+const handlePreviewOQCReport = () => {
+    DownloadAndFillOQCFile
+        (OQCName.value).then((res: any) => {
+            if (res.success) {
+                excelSrc.value = `data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,${res.content.FileData}`
+                previewOQCVisible.value = true
+            } else {
+                excelSrc.value = ''
+                ElMessage({
+                    title: t("message.tipTitle"),
+                    message: res.msg,
+                    type: "error",
+                });
+            }
+        })
 }
 const handleInspectZCConfirm = () => {
     // 暂存逻辑
@@ -2141,6 +2225,39 @@ const assignValuesMulti = (sourceData: any, targetData: any) => {
 
     return targetData;
 }
+const flexColumnWidth = (label: any, prop: any) => {
+    const arr = tableData?.value.map((x: { [x: string]: any }) => x[prop]);
+    arr.push(label); // 把每列的表头也加进去算
+    return getMaxLength(arr) + 25 + "px";
+};
+
+const getMaxLength = (arr: any) => {
+    return arr.reduce((acc: any, item: any) => {
+        if (item) {
+            const calcLen = getTextWidth(item);
+
+            if (acc < calcLen) {
+                acc = calcLen;
+            }
+        }
+        return acc;
+    }, 0);
+};
+const getTextWidth = (str: string) => {
+    let width = 0;
+    const html = document.createElement("span");
+    html.style.cssText = `padding: 0; margin: 0; border: 0; line-height: 1; font-size: ${13}px; font-family: Arial, sans-serif;`;
+    html.innerText = str; // 去除字符串前后的空白字符
+    document.body?.appendChild(html);
+
+    const spanElement = html; // 无需再次查询，直接使用创建的元素
+    if (spanElement) {
+        width = spanElement.offsetWidth;
+        spanElement.remove();
+    }
+    // console.log(width);
+    return width;
+};
 </script>
 <style scoped>
 .el-pagination {
@@ -2159,6 +2276,21 @@ const assignValuesMulti = (sourceData: any, targetData: any) => {
 
 .right {
     flex: 1;
+}
+/* NG状态样式 */
+:deep(.ng-status .el-form-item__label) {
+    color: #f56c6c !important;
+    font-weight: bold;
+}
+
+:deep(.ng-select .el-input__wrapper) {
+    background-color: #fef0f0 !important;
+    border-color: #f56c6c !important;
+}
+
+:deep(.ng-select .el-input__inner) {
+    color: #f56c6c !important;
+    font-weight: bold;
 }
 </style>
 
@@ -2276,5 +2408,14 @@ const assignValuesMulti = (sourceData: any, targetData: any) => {
 .info-box-title {
     font-weight: bold;
     margin-bottom: 5px;
+}
+</style>
+<style>
+.el-table .danger-row-invent {
+    --el-table-tr-bg-color: var(--el-color-danger-light-7);
+}
+
+.el-table .success-row-invent {
+    --el-table-tr-bg-color: var(--el-color-success-light-5);
 }
 </style>

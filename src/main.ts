@@ -26,10 +26,12 @@ import 'vxe-table/lib/style.css'
 
 import i18n from "./locale/index";
 import DataVVue3 from '@kjgl77/datav-vue3'
+// import { useTableAutoWidth } from 'auto-layout-col'
 
 const app = createApp(App)
 // app.directive(ClickOutside)
 // app.use(AFTableColumn)
+// useTableAutoWidth(app)
 app.use(VXETable)
 app.use(DataVVue3)
 app.use(ElementPlus, {locale:zhCN,size: ''})

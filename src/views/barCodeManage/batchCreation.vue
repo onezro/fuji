@@ -63,8 +63,8 @@
                 pageObj.currentPage * pageObj.pageSize
             )
                 " size="small" :style="{ width: '100%' }" :height="tableHeight" :tooltip-effect="'light'" border fit
-                highlight-current-row @cell-click="cellClick" ref="multipleTableRef"
-                @selection-change="handleSelectionChange">
+                highlight-current-row ref="multipleTableRef"
+                @selection-change="handleSelectionChange" :row-class-name="tableRowClassName">
                 <el-table-column type="selection" width="55" align="center" />
                 <el-table-column type="index" align="center" fixed :label="$t('publicText.index')" width="50">
                     <template #default="scope">
@@ -75,11 +75,11 @@
                 </el-table-column>
                 <el-table-column prop="MfgOrderName" :label="$t('batchCreation.OrderCode')">
                     <template #default="scope">
-                        <span class="underline">{{ scope.row.MfgOrderName }}</span>
+                        <span class="underline  cursor-pointer text-cyan-800" @click="cellClick(scope.row)">{{ scope.row.MfgOrderName }}</span>
                     </template>
                 </el-table-column>
-                <el-table-column prop="PriorityCodeName" :label="$t('batchCreation.Priority')" width="80" />
-                <el-table-column prop="ProductName" :label="$t('batchCreation.OrderProduct')" width="150" />
+                <el-table-column prop="PriorityCodeName" :label="$t('batchCreation.Priority')" width="60" :align="'center'"/>
+                <el-table-column prop="ProductName" :label="$t('batchCreation.OrderProduct')" :min-width="flexColumnWidth($t('batchCreation.OrderProduct'), 'ProductName')"/>
                 <el-table-column prop="Description" :label="$t('batchCreation.ProductDsc')" width="100"
                     :show-overflow-tooltip="true" />
                 <el-table-column prop="Qty" :label="$t('batchCreation.OrderNumber')" />
@@ -89,6 +89,12 @@
                 <el-table-column prop="OrderTypeName" :label="$t('batchCreation.orderType')" />
                 <el-table-column prop="ES_CustomerPO" :label="$t('batchCreation.purchaseOrderNumber')" width="120" />
                 <el-table-column prop="CustomerName" :label="$t('batchCreation.customer')" />
+                    <el-table-column prop="SpecificationNo" :label="$t('oqcInspection.SpecificationNo')">
+                    <template #default="{ row }">
+                        <span class="underline cursor-pointer text-cyan-800" @click="openFile(row.SpecificationNo)">{{
+                            row.SpecificationNo }}</span>
+                    </template>
+                </el-table-column>
                 <el-table-column prop="ES_SchedulingDate" :label="$t('publicText.time')" width="150" />
                 <template #empty>
                     <div class="flex items-center justify-center h-100%">
@@ -158,10 +164,29 @@
                 </span>
             </template>
         </el-dialog>
+           <el-dialog v-model="previewVisible" :title="previewTitle" width="800px" :append-to-body="true"
+            :close-on-click-modal="false" :close-on-press-escape="false" align-center>
+            <iframe :src="previewUrl" width="100%" height="550px" frameborder="0"></iframe>
+            <template #footer>
+                <div class="dialog-footer">
+                    <el-button @click="handlePreviewClose">{{
+                        $t("publicText.close")
+                        }}</el-button>
+                    <el-button type="primary" @click="handlePreviewDawnload">
+                        {{ $t("publicText.dawnload") }}
+                    </el-button>
+                </div>
+            </template>
+        </el-dialog>
     </div>
 </template>
 
 <script setup lang="ts">
+    import {
+ 
+    FTPSearchAndDownloadSpecificationDocumentFile
+ 
+} from "@/api/smtSpotCheck/oqc";
 import {
     getOrderTypeQuery,
     getOrderStatusQuery,
@@ -189,7 +214,7 @@ import {
     setLastDate,
     disabledDate,
 } from "@/utils/dataMenu";
-import { ElNotification } from "element-plus";
+import { ElNotification, ElMessageBox, ElMessage } from "element-plus";
 import { useI18n } from 'vue-i18n';
 const { t } = useI18n();
 const multipleTableRef = ref()
@@ -219,7 +244,7 @@ interface BatchPrintForm {
     mfgOrderStartLists: any[]
 }
 const batchPrintForm = ref<BatchPrintForm>({
-    PackagingType: 0,
+    PackagingType: 2,
     PrinterName: "",
     mfgOrderStartLists: []
 })
@@ -241,6 +266,9 @@ const resetPrintForm = ref<ResetPrintForm>({
     PrintTemplate: "",
     reprintContianerLists: []
 })
+const previewVisible = ref(false);
+const previewUrl = ref("");
+const previewTitle = ref("");
 const rules = reactive({
     Printer: [
         {
@@ -294,6 +322,12 @@ onMounted(() => {
 onBeforeUnmount(() => {
     window.addEventListener("resize", getScreenHeight);
 });
+const tableRowClassName = (val: any) => {
+    let row = val.row;
+    if (row.PriorityCodeName==1) {
+        return "danger-row-invent";
+    }
+};
 //获取工单类型
 const getOrderType = () => {
     getOrderTypeQuery({}).then((res: any) => {
@@ -428,6 +462,59 @@ const closePrint = () => {
     // resetPrintForm.value.Printer = ''
       
 }
+const openFile = (val: any) => {
+    FTPSearchAndDownloadSpecificationDocumentFile(val).then((res: any) => {
+        if (res.success) {
+            const base64Data = 'data:application/pdf;base64,' + res.content.FileData;
+            previewUrl.value = base64Data
+            previewTitle.value = res.content.FileName
+            previewVisible.value = true
+        } else {
+            ElMessage({
+                title: t("message.tipTitle"),
+                message: res.msg,
+                type: "error",
+            });
+            // ElNotification({
+            //          title: t("message.tipTitle"),
+            //     message: res.msg,
+            //     type: "error",
+            // })
+        }
+    })
+}
+const handlePreviewClose = () => {
+    previewVisible.value = false
+    previewUrl.value = ""
+}
+const handlePreviewDawnload = () => {
+    downloadPDF(previewUrl.value, previewTitle.value)
+}
+const downloadPDF = (base64Data: any, fileName: any) => {
+    try {
+        // 创建下载链接
+        const link = document.createElement('a')
+
+        // 设置下载属性
+        link.href = base64Data
+        link.download = fileName.endsWith('.pdf') ? fileName : `${fileName}.pdf`
+
+        // 添加到页面（需要添加到页面才能触发下载）
+        document.body.appendChild(link)
+
+        // 触发点击下载
+        link.click()
+
+        // 清理 DOM
+        document.body.removeChild(link)
+
+        ElMessage.success('文件下载成功')
+
+    } catch (error) {
+        console.error('下载失败:', error)
+        ElMessage.error('文件下载失败')
+    }
+}
 const handleSelectionChange = (val: any) => {
     // console.log(val);
     selectList.value = val
@@ -452,10 +539,52 @@ const getScreenHeight = () => {
         tableHeight.value = window.innerHeight - 215;
     });
 };
+const flexColumnWidth = (label: any, prop: any) => {
+    const arr = tableData?.value.map((x: { [x: string]: any }) => x[prop]);
+    arr.push(label); // 把每列的表头也加进去算
+    return getMaxLength(arr) + 25 + "px";
+};
+
+const getMaxLength = (arr: any) => {
+    return arr.reduce((acc: any, item: any) => {
+        if (item) {
+            const calcLen = getTextWidth(item);
+
+            if (acc < calcLen) {
+                acc = calcLen;
+            }
+        }
+        return acc;
+    }, 0);
+};
+const getTextWidth = (str: string) => {
+    let width = 0;
+    const html = document.createElement("span");
+    html.style.cssText = `padding: 0; margin: 0; border: 0; line-height: 1; font-size: ${13}px; font-family: Arial, sans-serif;`;
+    html.innerText = str; // 去除字符串前后的空白字符
+    document.body?.appendChild(html);
+
+    const spanElement = html; // 无需再次查询，直接使用创建的元素
+    if (spanElement) {
+        width = spanElement.offsetWidth;
+        spanElement.remove();
+    }
+    // console.log(width);
+    return width;
+};
 </script>
 
 <style scoped>
 .el-pagination {
     justify-content: center;
+}
+</style>
+<style>
+.el-table .danger-row-invent {
+    --el-table-tr-bg-color: var(--el-color-danger-light-7);
+}
+
+.el-table .success-row-invent {
+    --el-table-tr-bg-color: var(--el-color-success-light-5);
 }
 </style>

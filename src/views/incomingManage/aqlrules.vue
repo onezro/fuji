@@ -7,7 +7,13 @@
                 </div>
                 <el-form ref="formRef" :model="getForm" label-width="auto" :inline="true" :size="'small'"
                     @submit.native.prevent>
-                    <el-form-item label="类型" prop="ProductTypeName" class="mb-2">
+                     <el-form-item label="客户" prop="CustomerName" class="mb-2">
+                        <el-select v-model="getForm.CustomerName" @change="getData" placeholder="请选择" clearable filterable size="small" style="width: 200px;">
+                            <el-option :label="p.CustomerName" :value="p.CustomerName" :key="p.CustomerId"
+                                v-for="p in customerList" />
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="产品类型" prop="ProductTypeName" class="mb-2">
                         <el-select v-model="getForm.ProductTypeName" @change="getData" placeholder="请选择" clearable filterable size="small" style="width: 200px;">
                             <el-option :label="p.ProductTypeName" :value="p.ProductTypeName" :key="p.ProductTypeId"
                                 v-for="p in produstTypeList" />
@@ -44,8 +50,8 @@
                         }}</span>
                     </template>
                 </el-table-column>
-
                 <el-table-column prop="ES_INSPECTION_MASTERName" :label="'方案名称'" />
+                <el-table-column prop="CustomerName" :label="'客户'"  width="120"/>
                 <el-table-column prop="Description" :label="'方案描述'" :show-overflow-tooltip="true" />
                 <el-table-column prop="ProductTypeName" :label="'类型'" width="120" />
                 <el-table-column prop="ProductFamilyName" :label="'家族'" width="120" />
@@ -329,7 +335,8 @@ import {
     AyscInspectionMaster,
     AyscDelInspectionDetail,
     GetProductTypeQuery,
-    GetProductFamilyQuery
+    GetProductFamilyQuery,
+    GetCustomerQuery
 } from "@/api/incomingManage/aqlrules";
 import {
     ref,
@@ -349,7 +356,8 @@ const { t } = useI18n();
 const getForm = ref({
     InspectionMasterName: "",
     ProductTypeName: '',
-    ProductFamilyName: ''
+    ProductFamilyName: '',
+    CustomerName: ''
 });
 const tableHeight = ref(0);
 const tableData = ref([]);
@@ -440,6 +448,7 @@ const addTabList = ref([
 const activeName2 = ref('IQC')
 const produstTypeList=ref<any[]>([])
 const familyList=ref<any[]>([])
+const customerList=ref<any[]>([])
 const isLastDetail1 = computed(() => {
     return (index: number) => {
         return index === addTypeTable.value.length - 1
@@ -465,6 +474,7 @@ onBeforeMount(() => {
     getProject();
     getProductTypeData()
     getProductFamilyData()
+    getCustomerData()
 });
 onMounted(() => {
     window.addEventListener("resize", getScreenHeight);
@@ -479,7 +489,8 @@ const resetGetForm=()=>{
     getForm.value={
         InspectionMasterName: "",
     ProductTypeName: '',
-    ProductFamilyName: ''
+    ProductFamilyName: '',
+    CustomerName:''
     }
     getData()
 }
@@ -488,6 +499,11 @@ const getData = () => {
         tableData.value = res.content;
     });
 };
+const getCustomerData=()=>{
+    GetCustomerQuery({}).then((res:any)=>{
+        customerList.value= res.content
+    })
+}
 const getProduct = () => {
     GetProductQuery({}).then((res: any) => {
         productList.value = res.content;

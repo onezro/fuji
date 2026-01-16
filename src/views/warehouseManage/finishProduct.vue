@@ -7,25 +7,25 @@
                         @keyup.enter.native="getData" />
                 </el-form-item>
                 <el-form-item :label="$t('finishProduct.boxOrderNum')" class="mb-2" prop="PackingBoxContainerName">
-                    <el-input v-model.trim="getForm.PackingBoxContainerName" clearable style="width: 300px" placeholder=""
-                        @keyup.enter.native="getData" />
+                    <el-input v-model.trim="getForm.PackingBoxContainerName" clearable style="width: 300px"
+                        placeholder="" @keyup.enter.native="getData" />
                 </el-form-item>
                 <el-form-item class="mb-2">
                     <el-button type="primary" @click="getData">{{
                         $t("publicText.query")
-                        }}</el-button>
+                    }}</el-button>
                     <el-button type="" @click="handleReset">{{
                         $t("publicText.reset")
-                        }}</el-button>
+                    }}</el-button>
 
                 </el-form-item>
             </el-form>
             <el-table :data="tableData" size="small" :style="{ width: '100%' }" :height="tableHeight" border stripe>
                 <el-table-column type="index" align="center" fixed :label="$t('publicText.index')" width="50">
                 </el-table-column>
-                <el-table-column prop="OutBoxContainerName" :label="$t('finishProduct.boxCode')" width="200"/>
-                <el-table-column prop="PackingContainerName" :label="$t('finishProduct.boxOrderNum')" width="200"/>
-                <el-table-column prop="MfgOrderName" :label="$t('finishProduct.order')" width="100"/>
+                <el-table-column prop="OutBoxContainerName" :label="$t('finishProduct.boxCode')" width="200" />
+                <el-table-column prop="PackingContainerName" :label="$t('finishProduct.boxOrderNum')" width="200" />
+                <el-table-column prop="MfgOrderName" :label="$t('finishProduct.order')" width="100" />
                 <el-table-column prop="OutBoxProductDescription" :label="$t('finishProduct.productMsg')" />
                 <el-table-column prop="OutBoxQty" :label="$t('finishProduct.number')" width="100" />
 
@@ -38,10 +38,10 @@
             <div class="mt-2 mb-1 flex justify-end">
                 <el-button type="" :disabled="tableData.length == 0" @click="handleClean">{{
                     $t("publicText.reset")
-                    }}</el-button>
+                }}</el-button>
                 <el-button type="primary" :disabled="tableData.length == 0" @click="dialogVisible = true">{{
                     $t("publicText.submit") + $t("publicText.inStorage")
-                    }}</el-button>
+                }}</el-button>
             </div>
         </el-card>
         <el-dialog v-model="dialogVisible" :title="$t('finishProduct.materialPos')" width="300" @close="handleClose">
@@ -108,8 +108,9 @@ const getData = () => {
     if (getForm.value.OuterBoxContainerName != '' || getForm.value.PackingBoxContainerName != '') {
         GetCompletedInventoryQuery(getForm.value).then((res: any) => {
             if (res.success) {
-                tableData.value = res.content
+                tableData.value = res.content == null ? [] : res.content
             } else {
+                tableData.value = []
                 ElNotification({
                     title: t('message.tipTitle'),
                     message: res.msg,
