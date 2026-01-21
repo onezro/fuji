@@ -263,7 +263,7 @@ const isLoding = ref("");
     getFocus();
   });
   onBeforeUnmount(() => {
-    window.addEventListener("resize", getScreenHeight);
+    window.removeEventListener("resize", getScreenHeight);
   });
   
   //获取光标

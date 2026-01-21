@@ -216,7 +216,7 @@ onMounted(() => {
     getPrintList();
 });
 onBeforeUnmount(() => {
-    window.addEventListener("resize", getScreenHeight);
+    window.removeEventListener("resize", getScreenHeight);
 });
 const getPrintList = () => {
     getPrintQuery({}).then((res: any) => {

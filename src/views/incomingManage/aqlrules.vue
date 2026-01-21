@@ -2,36 +2,44 @@
     <div class="p-2">
         <el-card shadow="always" :body-style="{ padding: '8px' }">
             <div class="flex justify-between">
-                <div>
+                <!-- <div>
                     <el-button type="primary" size="small" @click="openAdd">添加</el-button>
-                </div>
-                <el-form ref="formRef" :model="getForm" label-width="auto" :inline="true" :size="'small'"
+                </div> -->
+                <el-form ref="formRef" :model="getForm"  :inline="true" :size="'small'"
                     @submit.native.prevent>
-                     <el-form-item label="客户" prop="CustomerName" class="mb-2">
-                        <el-select v-model="getForm.CustomerName" @change="getData" placeholder="请选择" clearable filterable size="small" style="width: 200px;">
+                    <el-form-item label="客户" prop="CustomerName" class="mb-2">
+                        <el-select v-model="getForm.CustomerName" @change="getData" placeholder="请选择" clearable
+                            filterable size="small" style="width: 180px;">
                             <el-option :label="p.CustomerName" :value="p.CustomerName" :key="p.CustomerId"
                                 v-for="p in customerList" />
                         </el-select>
                     </el-form-item>
                     <el-form-item label="产品类型" prop="ProductTypeName" class="mb-2">
-                        <el-select v-model="getForm.ProductTypeName" @change="getData" placeholder="请选择" clearable filterable size="small" style="width: 200px;">
+                        <el-select v-model="getForm.ProductTypeName" @change="getData" placeholder="请选择" clearable
+                            filterable size="small" style="width: 180px;">
                             <el-option :label="p.ProductTypeName" :value="p.ProductTypeName" :key="p.ProductTypeId"
                                 v-for="p in produstTypeList" />
                         </el-select>
                     </el-form-item>
-                    <el-form-item label="家族" prop="ProductFamilyName" class="mb-2">
-                        <el-select v-model="getForm.ProductFamilyName" @change="getData" placeholder="请选择"clearable filterable size="small" style="width: 200px;">
-                            <el-option :label="p.ProductFamilyName" :value="p.ProductFamilyName" :key="p.ProductFamilyId"
-                                v-for="p in familyList" />
+                    <el-form-item label="型号" prop="ProductFamilyName" class="mb-2">
+                        <el-select v-model="getForm.ProductFamilyName" @change="getData" placeholder="请选择" clearable
+                            filterable size="small" style="width: 180px;">
+                            <el-option :label="p.ProductFamilyName" :value="p.ProductFamilyName"
+                                :key="p.ProductFamilyId" v-for="p in familyList" />
                         </el-select>
                     </el-form-item>
                     <el-form-item label="方案名称" prop="InspectionMasterName" class="mb-2">
                         <el-input v-model="getForm.InspectionMasterName" placeholder="" clearable @clear="getData"
-                            @keyup.enter.native="getData" style="width: 200px;" />
+                            @keyup.enter.native="getData" style="width: 180px;" />
+                    </el-form-item>
+                    <el-form-item label="方案描述" prop="MASTERDescription" class="mb-2">
+                        <el-input v-model="getForm.MASTERDescription" placeholder="" clearable @clear="getData"
+                            @keyup.enter.native="getData" style="width: 180px;" />
                     </el-form-item>
                     <el-form-item class="mb-2">
                         <el-button :type="'primary'" @click="getData">查询</el-button>
-                          <el-button :type="'info'" @click="resetGetForm">重置</el-button>
+                        <el-button :type="'info'" @click="resetGetForm">重置</el-button>
+                        <el-button type="warning" size="small" @click="openAdd">添加</el-button>
                     </el-form-item>
 
                 </el-form>
@@ -47,48 +55,54 @@
                     <template #default="scope">
                         <span>{{
                             scope.$index + pageObj.pageSize * (pageObj.currentPage - 1) + 1
-                        }}</span>
+                            }}</span>
                     </template>
                 </el-table-column>
-                <el-table-column prop="ES_INSPECTION_MASTERName" :label="'方案名称'" />
-                <el-table-column prop="CustomerName" :label="'客户'"  width="120"/>
-                <el-table-column prop="Description" :label="'方案描述'" :show-overflow-tooltip="true" />
-                <el-table-column prop="ProductTypeName" :label="'类型'" width="120" />
-                <el-table-column prop="ProductFamilyName" :label="'家族'" width="120" />
-                <el-table-column prop="IQC_Status" :label="'IQC'" width="120" :align="'center'">
+                <el-table-column prop="ES_INSPECTION_MASTERName" :label="'方案名称'" :min-width="getColumnWidth('ES_INSPECTION_MASTERName')"/>
+                  <el-table-column prop="MASTERDescription" :label="'方案描述'"  :min-width="getColumnWidth('MASTERDescription')"/>
+                <el-table-column prop="CustomerName" :label="'客户'"  :min-width="getColumnWidth('CustomerName')" />
+                <el-table-column prop="Description" :label="'产品描述'"  :min-width="getColumnWidth('Description')"/>
+                <el-table-column prop="ProductTypeName" :label="'类型'" :min-width="getColumnWidth('ProductTypeName')" />
+                <el-table-column prop="ProductFamilyName" :label="'型号'"  :min-width="getColumnWidth('ProductFamilyName')" />
+                <el-table-column prop="IQC_Status" :label="'IQC'" :align="'center'" :min-width="getColumnWidth('IQC_Status')">
                     <template #default="{ row }">
                         <el-tag :type="row.IQC_Status == '未维护' ? 'info' : 'success'">{{ row.IQC_Status }}</el-tag>
                     </template>
                 </el-table-column>
-                <el-table-column prop="First_Inspection_Status" :label="'首检'" width="120" :align="'center'">
+                <el-table-column prop="First_Inspection_Status" :label="'首检'" width="100" :align="'center'">
                     <template #default="{ row }">
                         <el-tag :type="row.First_Inspection_Status == '未维护' ? 'info' : 'success'">{{
                             row.First_Inspection_Status }}</el-tag>
                     </template>
                 </el-table-column>
-                <el-table-column prop="Routine_Inspection_Status" :label="'巡检'" width="120" :align="'center'">
+                <el-table-column prop="Routine_Inspection_Status" :label="'巡检'" width="100" :align="'center'">
                     <template #default="{ row }">
                         <el-tag :type="row.Routine_Inspection_Status == '未维护' ? 'info' : 'success'">{{
                             row.Routine_Inspection_Status }}</el-tag>
                     </template>
                 </el-table-column>
-                <el-table-column prop="Final_Inspection_Status" :label="'尾检'" width="120" :align="'center'">
+                <el-table-column prop="Final_Inspection_Status" :label="'尾检'" width="100" :align="'center'">
                     <template #default="{ row }">
                         <el-tag :type="row.Final_Inspection_Status == '未维护' ? 'info' : 'success'">{{
                             row.Final_Inspection_Status }}</el-tag>
                     </template>
                 </el-table-column>
-                <el-table-column prop="OQC_Status" :label="'OQC'" width="120" :align="'center'">
+                <el-table-column prop="OQC_Status" :label="'OQC'" width="100" :align="'center'">
                     <template #default="{ row }">
                         <el-tag :type="row.OQC_Status == '未维护' ? 'info' : 'success'">{{ row.OQC_Status }}</el-tag>
                     </template>
                 </el-table-column>
-                <el-table-column :label="$t('publicText.operation')" :fixed="'right'" width="100">
+                <el-table-column :label="$t('publicText.operation')" :fixed="'right'" width="120">
                     <template #default="{ row }">
+                        <el-tooltip :content="'复制'" placement="top">
+                            <el-button type="warning" icon="CopyDocument" size="small"
+                                @click.prevent="handleCopy(row)">
+                            </el-button>
+                        </el-tooltip>
                         <el-tooltip :content="'详情'" placement="top">
                             <el-button size="small" type="primary" icon="Tickets" @click="handleEdit(row)">
-
-                            </el-button></el-tooltip>
+                            </el-button>
+                        </el-tooltip>
                         <!-- <el-button size="small" type="danger" @click="handleDelete(row)">
                             {{ $t("publicText.delete") }}
                         </el-button> -->
@@ -108,7 +122,8 @@
                 </el-pagination>
             </div>
         </el-card>
-        <el-dialog :title="$t('publicText.add')" v-model="addVisible" width="80%" @close="addCancel">
+        <el-dialog :title="$t('publicText.add')" v-model="addVisible" width="80%" @close="addCancel"  :append-to-body="true" :close-on-click-modal="false"
+            :close-on-press-escape="false" align-center>
             <el-form :model="addForm" ref="addFormRef" label-width="auto" :inline="false">
                 <el-form-item :label="$t('aqlrules.partNumber')" prop="partNumber">
                     <!-- <el-select v-model="addForm.InspectionMasterName" placeholder="请选择" filterable>
@@ -127,6 +142,7 @@
                     @tab-change="tabChange">
                     <el-tab-pane v-for="a in addTabList" :label="a.label" :name="a.value" :key="a.label">
                         <el-table :data="addTypeTable" style="width: 100%" :height="320" size="small" border stripe>
+                            <el-table-column type="index" align="center" fixed :label="$t('publicText.index')" width="50"/>
                             <el-table-column prop="InspectionType" :label="$t('aqlrules.ProjectCategoryName')">
                                 <template #default="scope">
 
@@ -209,10 +225,11 @@
                 <el-button @click="addCancel">{{ $t("publicText.cancel") }}</el-button>
                 <el-button type="primary" @click="addSubmit">{{
                     $t("publicText.confirm")
-                }}</el-button>
+                    }}</el-button>
             </template>
         </el-dialog>
-        <el-dialog :title="$t('publicText.edit')" v-model="editVisible" width="85%" @close="editCancel">
+        <el-dialog :title="$t('publicText.edit')" v-model="editVisible" width="85%" @close="editCancel"  :append-to-body="true" :close-on-click-modal="false"
+            :close-on-press-escape="false" align-center>
             <el-form :model="editForm" ref="editFormRef" label-width="auto" :inline="false">
                 <el-form-item :label="$t('aqlrules.partNumber')" prop="partNumber">
                     <!-- <el-select-v2 v-model="editForm.InspectionMasterName" filterable :options="productList"
@@ -233,6 +250,7 @@
                 @tab-change="tabChange2">
                 <el-tab-pane v-for="a in addTabList" :label="a.label" :name="a.value" :key="a.label">
                     <el-table :data="editTypeTable" style="width: 100%" :height="300" size="small" border stripe>
+                         <el-table-column type="index" align="center" fixed :label="$t('publicText.index')" width="50"/>
                         <el-table-column prop="InspectionType" :label="$t('aqlrules.ProjectCategoryName')">
                             <template #default="scope">
                                 <!-- <el-input v-model="scope.row.InspectionType" size="small"></el-input> -->
@@ -317,9 +335,105 @@
                 <el-button @click="editCancel">{{ $t("publicText.cancel") }}</el-button>
                 <el-button type="primary" @click="editSubmit">{{
                     $t("publicText.confirm")
-                }}</el-button>
+                    }}</el-button>
             </template>
         </el-dialog>
+         <el-dialog :title="'复制'" v-model="copyVisible" width="85%" @close="copyCancel"  :append-to-body="true" :close-on-click-modal="false"
+            :close-on-press-escape="false" align-center>
+            <el-form :model="copyForm" ref="copyFormRef" label-width="auto" :inline="false">
+                <el-form-item :label="$t('aqlrules.partNumber')" prop="InspectionMasterName">
+                    <!-- <el-input v-model="copyForm.InspectionMasterName" placeholder=""  /> -->
+                      <el-select-v2 v-model="copyForm.InspectionMasterName" filterable :options="productList"
+                        placeholder="" :props="{ value: 'productname', label: 'product' }" style="width: 100%" />
+                </el-form-item>
+              
+            </el-form>
+            <el-tabs :tab-position="'left'" v-model="activeName2" style="height: 350px" type="border-card"
+                @tab-change="tabChange3">
+                <el-tab-pane v-for="a in addTabList" :label="a.label" :name="a.value" :key="a.label">
+                    <el-table :data="copyTypeTable" style="width: 100%" :height="300" size="small" border stripe>
+                         <el-table-column type="index" align="center" fixed :label="$t('publicText.index')" width="50"/>
+                        <el-table-column prop="InspectionType" :label="$t('aqlrules.ProjectCategoryName')">
+                            <template #default="scope">
+                                <!-- <el-input v-model="scope.row.InspectionType" size="small"></el-input> -->
+                                <el-select v-model="scope.row.ProjectCategoryName" placeholder="请选择" filterable
+                                    size="small">
+                                    <el-option :label="p.ProjectCategoryName" :value="p.ProjectCategoryName"
+                                        v-for="p in categoryList" />
+                                </el-select>
+                            </template>
+                        </el-table-column>
+                        <el-table-column prop="ProjectName" :label="$t('aqlrules.ProjectName')">
+                            <template #default="scope">
+                                <el-select v-model="scope.row.ProjectName" placeholder="请选择" filterable size="small">
+                                    <el-option :label="p.ProjectName" :value="p.ProjectName" v-for="p in projectList" />
+                                </el-select>
+                            </template>
+                        </el-table-column>
+                        <el-table-column prop="InspectionType" :label="'操作类型'">
+                            <template #default="scope">
+                                <el-select v-model="scope.row.MeasurementType" placeholder="请选择" filterable
+                                    size="small">
+                                    <el-option :label="'计数'" :value="'计数'" />
+                                    <el-option :label="'计量'" :value="'计量'" />
+                                </el-select>
+                            </template>
+                        </el-table-column>
+                        <el-table-column prop="CharaCteristicGrade" :label="$t('aqlrules.CharaCteristicGrade')">
+                            <template #default="scope">
+                                <el-input v-model="scope.row.CharaCteristicGrade" size="small"></el-input>
+                            </template>
+                        </el-table-column>
+                        <el-table-column prop="TargetValue" :label="$t('aqlrules.TargetValue')">
+                            <template #default="scope">
+                                <el-input v-model="scope.row.TargetValue" size="small"></el-input>
+                            </template>
+                        </el-table-column>
+
+                        <el-table-column prop="MinValue" :label="$t('aqlrules.MinValue')">
+                            <template #default="scope">
+                                <el-input v-model="scope.row.MinValue" size="small"></el-input>
+                            </template>
+                        </el-table-column>
+                        <el-table-column prop="MaxValue" :label="$t('aqlrules.MaxValue')">
+                            <template #default="scope">
+                                <el-input v-model="scope.row.MaxValue" size="small"></el-input>
+                            </template>
+                        </el-table-column>
+                        <el-table-column prop="ToolName" :label="$t('aqlrules.ToolName')">
+                            <template #default="scope">
+                                <!-- <el-input v-model="scope.row.ToolName"></el-input> -->
+                                <el-select v-model="scope.row.ToolName" placeholder="请选择" filterable size="small">
+                                    <el-option :label="p.ResourceName" :value="p.ResourceName"
+                                        v-for="p in resourceList" />
+                                </el-select>
+                            </template>
+                        </el-table-column>
+                        <el-table-column prop="InspectionBasis" :label="$t('aqlrules.InspectionBasis')">
+                            <template #default="scope">
+                                <el-input v-model="scope.row.InspectionBasis" size="small"></el-input>
+                            </template>
+                        </el-table-column>
+                        <el-table-column :label="$t('publicText.operation')" width="120">
+                            <template #default="{ row, $index }">
+                                <el-button v-if="isLastDetail3($index)" icon="Plus" size="small" type="primary"
+                                    @click="copyInspectionDetails"></el-button>
+                                <el-button icon="Delete" size="small" type="danger"
+                                    @click="copyInspectionDelete($index)"></el-button>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                </el-tab-pane>
+            </el-tabs>
+
+            <template #footer>
+                <el-button @click="copyCancel">{{ $t("publicText.cancel") }}</el-button>
+                <el-button type="primary" @click="copySubmit">{{
+                    $t("publicText.confirm")
+                    }}</el-button>
+            </template>
+        </el-dialog>
+
     </div>
 </template>
 
@@ -348,6 +462,7 @@ import {
     onBeforeMount,
     onBeforeUnmount,
 } from "vue";
+import { calculateColumnsWidth, clearTextWidthCache } from '@/utils/tableminWidth'
 import { ElNotification, ElMessage, ElMessageBox } from "element-plus";
 import { useUserStoreWithOut } from "@/stores/modules/user";
 const userStore = useUserStoreWithOut();
@@ -357,7 +472,8 @@ const getForm = ref({
     InspectionMasterName: "",
     ProductTypeName: '',
     ProductFamilyName: '',
-    CustomerName: ''
+    CustomerName: '',
+    MASTERDescription:''
 });
 const tableHeight = ref(0);
 const tableData = ref([]);
@@ -446,9 +562,33 @@ const addTabList = ref([
     }
 ])
 const activeName2 = ref('IQC')
-const produstTypeList=ref<any[]>([])
-const familyList=ref<any[]>([])
-const customerList=ref<any[]>([])
+const produstTypeList = ref<any[]>([])
+const familyList = ref<any[]>([])
+const customerList = ref<any[]>([])
+const copyVisible = ref(false);
+const copyFormRef = ref();
+const copyForm=ref({
+    InspectionMasterName: "",
+    DBType: "Add",
+    InspectionType: '',
+    iQC_InspectionDetails: [
+        {
+            InspectionDetailName: "",
+            ProjectCategoryName: "",
+            ProjectName: "",
+            TargetValue: "",
+            MinValue: "",
+            MaxValue: "",
+            CharaCteristicGrade: "",
+            ToolName: "",
+            InspectionBasis: "",
+            InspectionType: "IQC",
+            MeasurementType: "",
+            CreateUser: userStore.getUserInfo,
+            UpdateUser: "",
+        },
+    ],
+})
 const isLastDetail1 = computed(() => {
     return (index: number) => {
         return index === addTypeTable.value.length - 1
@@ -459,12 +599,22 @@ const isLastDetail2 = computed(() => {
         return index === editTypeTable.value.length - 1
     }
 })
+const isLastDetail3 = computed(() => {
+    return (index: number) => {
+        return index === copyTypeTable.value.length - 1
+    }
+})
 const addTypeTable = computed(() => {
     return addForm.value.iQC_InspectionDetails.filter((item: any) => item.InspectionType == activeName.value)
 })
 const editTypeTable = computed(() => {
     return editForm.value.iQC_InspectionDetails.filter((item: any) => item.InspectionType == activeName2.value)
 })
+const copyTypeTable = computed(() => {
+    return copyForm.value.iQC_InspectionDetails.filter((item: any) => item.InspectionType == activeName2.value)
+})
+
+
 onBeforeMount(() => {
     getScreenHeight();
     getProduct();
@@ -482,15 +632,17 @@ onMounted(() => {
 
 });
 onBeforeUnmount(() => {
-    window.addEventListener("resize", getScreenHeight);
+    window.removeEventListener("resize", getScreenHeight);
+    clearTextWidthCache()
 });
 
-const resetGetForm=()=>{
-    getForm.value={
+const resetGetForm = () => {
+    getForm.value = {
         InspectionMasterName: "",
-    ProductTypeName: '',
-    ProductFamilyName: '',
-    CustomerName:''
+        ProductTypeName: '',
+        ProductFamilyName: '',
+        CustomerName: '',
+        MASTERDescription:''
     }
     getData()
 }
@@ -499,9 +651,9 @@ const getData = () => {
         tableData.value = res.content;
     });
 };
-const getCustomerData=()=>{
-    GetCustomerQuery({}).then((res:any)=>{
-        customerList.value= res.content
+const getCustomerData = () => {
+    GetCustomerQuery({}).then((res: any) => {
+        customerList.value = res.content
     })
 }
 const getProduct = () => {
@@ -529,14 +681,14 @@ const getProject = () => {
         projectList.value = res.content;
     });
 };
-const getProductTypeData=()=>{
-    GetProductTypeQuery({}).then((res:any)=>{
-         produstTypeList.value = res.content;
+const getProductTypeData = () => {
+    GetProductTypeQuery({}).then((res: any) => {
+        produstTypeList.value = res.content;
     })
 }
-const getProductFamilyData=()=>{
-    GetProductFamilyQuery({}).then((res:any)=>{
-        familyList.value= res.content
+const getProductFamilyData = () => {
+    GetProductFamilyQuery({}).then((res: any) => {
+        familyList.value = res.content
     })
 }
 const openAdd = () => {
@@ -680,12 +832,13 @@ const tabChange2 = (val: any) => {
     }
 }
 const handleEdit = (val: any) => {
-    editVisible.value = true;
+    activeName.value = 'IQC'
     editForm.value.InspectionMasterName = val.ES_INSPECTION_MASTERName;
     editForm.value.DBType = "Update";
     getDetailForm.value.InspectionMasterName = val.ES_INSPECTION_MASTERName;
     getDetailForm.value.InspectionType = ''
     getDetailData()
+     editVisible.value = true;
 };
 const getDetailData = () => {
     GetInspectionDetailQuery(getDetailForm.value).then((res: any) => {
@@ -789,33 +942,6 @@ const deleteDetail = (val: any, filteredIndex: any) => {
                     type: res.success ? "success" : "error",
                 });
                 getDetailData()
-                // getData();
-                // GetInspectionDetailQuery({
-                //     InspectionMasterName: editForm.value.InspectionMasterName,
-                //     InspectionType: '',
-                // }).then((res: any) => {
-                //     editForm.value.iQC_InspectionDetails = res.content;
-                //     if (editForm.value.iQC_InspectionDetails.length == 0) {
-                //         // editVisible.value = false;
-                //         editForm.value.iQC_InspectionDetails = [
-                //             {
-                //                 InspectionDetailName: "",
-                //                 ProjectCategoryName: "",
-                //                 ProjectName: "",
-                //                 TargetValue: "",
-                //                 MinValue: "",
-                //                 MaxValue: "",
-                //                 CharaCteristicGrade: "",
-                //                 ToolName: "",
-                //                 InspectionBasis: "",
-                //                 InspectionType: "",
-                //                 MeasurementType: "",
-                //                 CreateUser: "",
-                //                 UpdateUser: userStore.getUserInfo,
-                //             },
-                //         ];
-                //     }
-                // });
             });
         })
         .catch(() => {
@@ -859,17 +985,6 @@ const editCancel = () => {
     activeName2.value = 'IQC'
 };
 const editSubmit = () => {
-    // const hasEmptyCategory = (editForm.value.iQC_InspectionDetails as any[]).some(
-    //     (d: any) => !d.ProjectCategoryName || d.ProjectCategoryName === ""
-    // );
-    // if (hasEmptyCategory) {
-    //     ElMessage({
-    //         title: t("message.tipTitle"),
-    //         message: t("aqlrules.InspectionDetails") + t("publicText.isEmpty"),
-    //         type: "error",
-    //     });
-    //     return;
-    // }
     const filteredDetails = editForm.value.iQC_InspectionDetails.filter(
         (item: any) => item.ProjectCategoryName && item.ProjectCategoryName.trim() !== ""
     );
@@ -891,6 +1006,139 @@ const editSubmit = () => {
         getData();
     });
 };
+const handleCopy = (val: any) => {
+
+    activeName.value = 'IQC'
+    copyForm.value.InspectionMasterName = val.ES_INSPECTION_MASTERName;
+    copyForm.value.DBType = "Add";
+    getDetailForm.value.InspectionMasterName = val.ES_INSPECTION_MASTERName;
+    getDetailForm.value.InspectionType = ''
+    GetInspectionDetailQuery(getDetailForm.value).then((res: any) => {
+        copyForm.value.iQC_InspectionDetails = res.content;
+        if (activeName2.value == 'IQC') {
+            const exists = copyForm.value.iQC_InspectionDetails.some(
+                (item: any) => item.InspectionType === 'IQC'
+            );
+            if (!exists) {
+                copyForm.value.iQC_InspectionDetails.push(
+                    createInspectionDetail('IQC')
+                );
+            }
+        }
+        if (copyForm.value.iQC_InspectionDetails.length == 0) {
+            // copyVisible.value = false;
+            copyForm.value.iQC_InspectionDetails = [
+                {
+                    InspectionDetailName: "",
+                    ProjectCategoryName: "",
+                    ProjectName: "",
+                    TargetValue: "",
+                    MinValue: "",
+                    MaxValue: "",
+                    CharaCteristicGrade: "",
+                    ToolName: "",
+                    InspectionBasis: "",
+                    InspectionType: activeName2.value,
+                    MeasurementType: "",
+                    CreateUser: "",
+                    UpdateUser: userStore.getUserInfo,
+                },
+            ];
+        }
+         copyVisible.value = true;
+    });
+}
+const copyInspectionDetails = () => {
+    copyForm.value.iQC_InspectionDetails.push({
+        InspectionDetailName: "",
+        ProjectCategoryName: "",
+        ProjectName: "",
+        TargetValue: "",
+        MinValue: "",
+        MaxValue: "",
+        CharaCteristicGrade: "",
+        ToolName: "",
+        InspectionBasis: "",
+        InspectionType: activeName.value,
+        MeasurementType: "",
+        CreateUser: "",
+        UpdateUser: "",
+    });
+};
+const copyInspectionDelete = (filteredIndex: any) => {
+    const currentInspectionType = activeName.value;
+
+    // 方法1：使用reduce计算原始索引
+    const originalIndex = copyForm.value.iQC_InspectionDetails.reduce((count, item, index) => {
+        if (item.InspectionType === currentInspectionType) {
+            if (count.count === filteredIndex && count.result === -1) {
+                count.result = index;
+            }
+            count.count++;
+        }
+        return count;
+    }, { count: 0, result: -1 }).result;
+
+    if (originalIndex !== -1) {
+        copyForm.value.iQC_InspectionDetails.splice(originalIndex, 1);
+    }
+}
+const tabChange3 = (val: any) => {
+    const inspectionType = val || 'IQC';
+    const exists = copyForm.value.iQC_InspectionDetails.some(
+        (item: any) => item.InspectionType === inspectionType
+    );
+    if (!exists) {
+        copyForm.value.iQC_InspectionDetails.push(
+            createInspectionDetail(inspectionType)
+        );
+    }
+}
+const copyCancel= () => {
+    copyFormRef.value.resetFields();
+    copyVisible.value = false;
+    copyForm.value.InspectionMasterName = "";
+    copyForm.value.DBType = "Add";
+    copyForm.value.InspectionType = ''
+    copyForm.value.iQC_InspectionDetails = [
+    ];
+    activeName2.value = 'IQC'
+};
+const copySubmit = () => {
+    copyForm.value.DBType = "Add";
+
+    const filteredDetails = copyForm.value.iQC_InspectionDetails.filter(
+        (item: any) => item.ProjectCategoryName && item.ProjectCategoryName.trim() !== ""
+    );
+
+    // 如果过滤后数组为空，可以给出提示
+    if (filteredDetails.length === 0) {
+        ElMessage({
+            title: t("publicText.tipTitle"),
+            message: "请至少填写一个有效的检查项目",
+            type: "warning",
+        });
+        return; // 停止执行
+    }
+    copyForm.value.iQC_InspectionDetails = filteredDetails.map((item: any) => {
+        return {
+            ...item,
+            // InspectionType: addForm.value.InspectionType,
+            CreateUser: userStore.getUserInfo2 !== '' ? userStore.getUserInfo2 : userStore.getUserInfo,
+        }
+    })
+    // console.log(addForm.value);
+
+    AyscInspectionMaster(copyForm.value).then((res: any) => {
+        ElMessage({
+            title: t("publicText.tipTitle"),
+            message: res.msg,
+            type: res.success ? "success" : "error",
+        });
+        copyCancel();
+        getData();
+    });
+};
 const handleSizeChange = (val: any) => {
     pageObj.pageSize = val;
 };
@@ -899,8 +1147,35 @@ const handleCurrentChange = (val: any) => {
 };
 const getScreenHeight = () => {
     nextTick(() => {
-        tableHeight.value = window.innerHeight - 180;
+        tableHeight.value = window.innerHeight - 220;
     });
+};
+// 使用计算属性缓存列宽计算结果
+const columnWidths = computed(() => {
+    const columns = [
+        { label: '方案名称', prop: 'ES_INSPECTION_MASTERName' },
+                { label: '方案描述', prop: 'MASTERDescription' },
+          { label: '客户', prop: 'CustomerName' },
+          { label: '产品描述', prop: 'Description' },
+        { label: '产品类型', prop: 'ProductTypeName' },
+        { label: '家族', prop: 'ProductFamilyName' },
+        { label: 'IQC', prop: 'IQC_Status' },
+        
+        // { label: 'FA', prop: 'ES_FaUrl' },
+        // { label: 'CPK', prop: 'ES_CPKUrl' },
+        // 添加其他需要自适应宽度的列
+    ];
+
+    // 批量计算列宽
+    return calculateColumnsWidth(columns, tableData.value, {
+        padding: 25,
+        fontSize: 13
+    });
+});
+
+// 在模板中使用
+const getColumnWidth = (prop: string) => {
+    return columnWidths.value[prop] || 'auto';
 };
 </script>
 <style scoped>

@@ -320,7 +320,7 @@ onMounted(() => {
 
 });
 onBeforeUnmount(() => {
-    window.addEventListener("resize", getScreenHeight);
+    window.removeEventListener("resize", getScreenHeight);
 });
 const tableRowClassName = (val: any) => {
     let row = val.row;

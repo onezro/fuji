@@ -88,7 +88,7 @@
                     </el-radio-group>
                 </el-form-item>
             </el-form>
-            < <template #footer>
+            <template #footer>
                 <el-button @click="handleAddClose">{{ $t("publicText.cancel") }}</el-button>
                 <el-button type="primary" @click="handleAddConfirm">{{ $t("publicText.confirm") }}</el-button>
 </template>
@@ -186,7 +186,7 @@ onMounted(() => {
     getGetUomData()
 });
 onBeforeUnmount(() => {
-    window.addEventListener("resize", getScreenHeight);
+    window.removeEventListener("resize", getScreenHeight);
 });
 const getData = () => {
     GetProjectQuery(getForm.value).then((res: any) => {

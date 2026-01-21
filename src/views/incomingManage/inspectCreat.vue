@@ -97,7 +97,7 @@
                         </el-button>
                     </div>
                     <el-table :data="detailTableData" size="small" :style="{ width: '100%' }" ref="rawRef"
-                        :height="tableHeight" border fit :tooltip-effect="'dark'">
+                        :height="tableHeight" border fit :tooltip-effect="'dark'" :row-class-name="tableDetailRowClassName">
                         <el-table-column type="index" align="center" fixed :label="$t('publicText.index')" width="50">
                             <template #default="scope">
                                 <span>{{
@@ -106,7 +106,7 @@
                             </template>
                         </el-table-column>
                         <el-table-column prop="MaterialName" :label="$t('incomeCreat.materialName')" />
-                        <el-table-column prop="ModelSpec" :label="$t('incomeCreat.modelRules')" width="100" />
+                        <el-table-column prop="ModelSpec" :label="$t('incomeCreat.modelRules')" :min-width="getColumnWidth('ModelSpec')" />
                         <el-table-column prop="Supplier" :label="$t('incomeCreat.supplier')" />
                         <el-table-column prop="OrderNo" :label="$t('incomeCreat.orderNumber')" />
                         <el-table-column prop="LotNo" label="Lot No" />
@@ -117,7 +117,7 @@
                         <el-table-column prop="SamplingStandards" :label="$t('incomeCreat.InspectStandard')"
                             show-overflow-tooltip />
                         <el-table-column prop="SupplierReportName" :label="$t('incomeCreat.supplierReport')"
-                            show-overflow-tooltip>
+                            :min-width="getColumnWidth('SupplierReportName')">
 
                             <template #default="scope">
                                 <span v-if="scope.row.SupplierReportName" class="underline cursor-pointer text-cyan-800"
@@ -415,6 +415,7 @@ import {
     onBeforeUnmount,
     nextTick,
     reactive,
+    computed
 } from "vue";
 import {
     shortcuts,
@@ -426,7 +427,7 @@ import { ElNotification, ElMessageBox, ElMessage } from "element-plus";
 import { useI18n } from "vue-i18n";
 const { t } = useI18n();
 import { useUserStoreWithOut } from "@/stores/modules/user";
-import { el } from "element-plus/es/locale/index.mjs";
+import { calculateColumnsWidth, clearTextWidthCache } from '@/utils/tableminWidth'
 const userStore = useUserStoreWithOut();
 const getForm = ref({
     InspectionNo: "",
@@ -568,9 +569,15 @@ onMounted(() => {
     getData();
 });
 onBeforeUnmount(() => {
-    window.addEventListener("resize", getScreenHeight);
+    window.removeEventListener("resize", getScreenHeight);
+    clearTextWidthCache()
 });
-
+const tableDetailRowClassName = (val: any) => {
+    let row = val.row;
+    if (row.StatusText == '完成') {
+        return "success-row-invent";
+    }
+};
 const getData = () => {
     GetIQCHeaderQuery(getForm.value).then((res: any) => {
         tableData.value = res.content;
@@ -951,6 +958,26 @@ const getScreenHeight = () => {
         tableHeight.value = window.innerHeight - 180;
     });
 };
+// 使用计算属性缓存列宽计算结果
+const columnWidths = computed(() => {
+    const columns = [
+        { label: '型号规制', prop: 'ModelSpec' },
+       { label: '供应商报告', prop: 'SupplierReportName' },  
+        // 添加其他需要自适应宽度的列
+    ];
+
+    // 批量计算列宽
+    return calculateColumnsWidth(columns, detailTableData.value, {
+        padding: 25,
+        fontSize: 13
+    });
+});
+
+// 在模板中使用
+const getColumnWidth = (prop: string) => {
+    return columnWidths.value[prop] || 'auto';
+};
+
 </script>
 <style scoped>
 .el-pagination {
@@ -958,3 +985,13 @@ const getScreenHeight = () => {
 }
 </style>
 <style lang="scss" scoped></style>
+<style>
+.el-table .danger-row-invent {
+    --el-table-tr-bg-color: var(--el-color-danger-light-7);
+}
+
+.el-table .success-row-invent {
+    --el-table-tr-bg-color: var(--el-color-success-light-7);
+}
+</style>
+

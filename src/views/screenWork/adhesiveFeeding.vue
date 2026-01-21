@@ -379,7 +379,7 @@
     window.addEventListener("resize", getScreenHeight);
   });
   onBeforeUnmount(() => {
-    window.addEventListener("resize", getScreenHeight);
+    window.removeEventListener("resize", getScreenHeight);
   });
   const formText = (data: string) => {
     let key = data as keyof typeof form;

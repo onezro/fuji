@@ -43,6 +43,8 @@
         </el-table-column>
         <el-table-column label="员工姓名" prop="fullName" min-width="100">
         </el-table-column>
+         <el-table-column label="邮箱" prop="email" :min-width="flexColumnWidth('邮箱', 'email')">
+        </el-table-column>
         <el-table-column label="职称" prop="title" :min-width="flexColumnWidth('职称', 'title')">
         </el-table-column>
         <el-table-column label="组织" prop="OrganizationName" :min-width="170">
@@ -150,6 +152,9 @@
         </el-form-item>
         <el-form-item label="员工姓名" prop="FullName">
           <el-input v-model="addEmployeeForm.FullName" placeholder="请输入员工姓名" clearable></el-input>
+        </el-form-item>
+        <el-form-item label="邮箱" prop="email">
+          <el-input v-model="addEmployeeForm.email" placeholder="请输入邮箱" clearable></el-input>
         </el-form-item>
       </el-form>
 
@@ -299,7 +304,8 @@ const addEmployeeForm = ref({
   EmployeeName: "",
   FullName: "",
   IsOnline: "Y",
-  OrganizationID: ""
+  OrganizationID: "",
+  email: "",
 })
 onBeforeMount(() => {
   getScreenHeight();
@@ -311,7 +317,7 @@ onMounted(() => {
   getRoleMeun();
 });
 onBeforeUnmount(() => {
-  window.addEventListener("resize", getScreenHeight);
+  window.removeEventListener("resize", getScreenHeight);
 });
 
 watch(

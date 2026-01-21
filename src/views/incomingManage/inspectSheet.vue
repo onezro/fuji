@@ -94,7 +94,7 @@
                 </el-col>
                 <el-col :span="14">
                     <el-table :data="detailTableData" size="small" :style="{ width: '100%' }" ref="rawRef"
-                        :height="tableHeight" border fit :tooltip-effect="'dark'">
+                        :height="tableHeight" border fit :tooltip-effect="'dark'" :row-class-name="tableDetailRowClassName">
                         <el-table-column type="index" align="center" fixed :label="$t('publicText.index')" width="50">
                             <template #default="scope">
                                 <span>{{
@@ -103,23 +103,18 @@
                             </template>
                         </el-table-column>
                         <el-table-column prop="MaterialName" :label="$t('incomeCreat.materialName')" />
-                        <el-table-column prop="ModelSpec" :label="$t('incomeCreat.modelRules')" width="100" />
+                        <el-table-column prop="ModelSpec" :label="$t('incomeCreat.modelRules')" :min-width="getColumnWidth('ModelSpec')" />
                         <el-table-column prop="Supplier" :label="$t('incomeCreat.supplier')" />
                         <el-table-column prop="OrderNo" :label="$t('incomeCreat.orderNumber')" />
-                        <el-table-column prop="LotNo" label="Lot No" />
-                        <el-table-column prop="TCode" label="T-Code" />
+                        <el-table-column prop="LotNo" label="Lot No" :min-width="getColumnWidth('LotNo')" />
+                        <el-table-column prop="TCode" label="T-Code" :min-width="getColumnWidth('TCode')" />
                         <el-table-column prop="QuantityPerBox" :label="$t('incomeCreat.qtyIncomeMaterial')"
                             width="100" />
-                        <el-table-column prop="SampledBoxes" :label="$t('incomeSheet.SampledBoxes')" width="120">
-                            <!-- <template #default="scope">
-                                <el-input-number v-model="scope.row.SampledBoxes" :size="'small'" :min="1"
-                                    style="width: 100px" :disabled="scope.row.AC !== null" />
-                            </template> -->
-                        </el-table-column>
+                        <el-table-column prop="SampledBoxes" :label="$t('incomeSheet.SampledBoxes')" />
                         <el-table-column prop="SamplingStandards" :label="$t('incomeCreat.InspectStandard')"
                             show-overflow-tooltip />
                         <el-table-column prop="SupplierReportName" :label="$t('incomeCreat.supplierReport')"
-                            show-overflow-tooltip>
+                            :min-width="getColumnWidth('SupplierReportName')">
                             <template #default="scope">
                                 <span v-if="scope.row.SupplierReportName" class="underline cursor-pointer text-cyan-800"
                                     @click="openFile(scope.row.SupplierReportGuid)">
@@ -187,22 +182,10 @@
                 <el-form-item :label="'RE'" prop="RE">
                     <el-input v-model="editdetailForm.RE" placeholder="" disabled style="width: 200px;" />
                 </el-form-item>
-                  <!-- <el-form-item>
-                    <el-button :type="'success'" icon="Download" @click="downloadTemp">导出模板</el-button>
-
-
-                </el-form-item>
-                <el-form-item>
-                    <el-upload action="#" multiple :limit="1" v-model:file-list="fileList3" :auto-upload="false"
-                        :on-change="fileUpChange2" :on-remove="fileUpRemove2" :before-upload="beforeUpload2"
-                        accept=".xlsx" :show-file-list="false">
-                        <el-button :type="'warning'" icon="Upload">导入数据</el-button>
-                    </el-upload>
-                </el-form-item> -->
             </el-form>
             <el-tabs v-model="activeName" type="border-card">
                 <el-tab-pane :label="'计数检验'" name="first">
-                    <el-table :data="tableData2" border stripe style="width: 100%" size="small" :height="400">
+                    <el-table :data="tableData2" border stripe style="width: 100%" size="small" :height="400" :row-class-name="tableDetailRowClassName2">
                         <el-table-column prop="ProjectCategoryName" :label="$t('aqlrules.ProjectCategoryName')">
                         </el-table-column>
                         <el-table-column prop="ProjectName" :label="$t('aqlrules.ProjectName')">
@@ -211,7 +194,7 @@
                         </el-table-column> -->
                         <el-table-column prop="CharacteristicGrade" :label="$t('aqlrules.CharaCteristicGrade')">
                         </el-table-column>
-                        <el-table-column prop="InspectionToolName" :label="$t('aqlrules.ToolName')">
+                        <el-table-column prop="InspectionToolName" :label="$t('aqlrules.ToolName')" :min-width="getColumnWidth2('InspectionToolName')">
                         </el-table-column>
                         <el-table-column prop="InspectionBasis" :label="$t('aqlrules.InspectionBasis')">
                         </el-table-column>
@@ -258,7 +241,7 @@
                             </el-upload>
                         </el-form-item>
                     </div>
-                    <el-table ref="tempMeasureRef" :data="tableData1" border stripe style="width: 100%" size="small" :height="400">
+                    <el-table ref="tempMeasureRef" :data="tableData1" border stripe style="width: 100%" size="small" :height="400" :row-class-name="tableDetailRowClassName1">
                          <el-table-column prop="LineNos" :label="'检验序列'" :align="'center'" :fixed="'left'" width="80"></el-table-column>
                         <el-table-column prop="ProjectCategoryName" :label="$t('aqlrules.ProjectCategoryName')">
                         </el-table-column>
@@ -270,12 +253,12 @@
                         </el-table-column>
                         <el-table-column prop="TargetValue" :label="$t('aqlrules.TargetValue')">
                         </el-table-column>
-
+                         <el-table-column prop="MaxValue" :label="$t('aqlrules.MaxValue')">
+                        </el-table-column> 
                         <el-table-column prop="MinValue" :label="$t('aqlrules.MinValue')">
                         </el-table-column>
-                        <el-table-column prop="MaxValue" :label="$t('aqlrules.MaxValue')">
-                        </el-table-column>
-                        <el-table-column prop="InspectionToolName" :label="$t('aqlrules.ToolName')">
+                       
+                        <el-table-column prop="InspectionToolName" :label="$t('aqlrules.ToolName')" :min-width="getColumnWidth2('InspectionToolName')">
                         </el-table-column>
                         <el-table-column prop="uomname" :label="$t('aqlrules.uomname')">
                         </el-table-column>
@@ -338,7 +321,7 @@
             <template #footer>
                 <div class="dialog-footer">
                     <el-button @click="handletestClose">{{
-                        $t("publicText.cancel")
+                        $t("publicText.close")
                     }}</el-button>
                     <el-button type="warning" @click="handleZCConfirm" :disabled="isDisable">
                         {{ '暂存' }}
@@ -359,6 +342,7 @@
             <template #footer>
                 <span class="dialog-footer">
                     <el-button @click="dialogVisible = false">取消</el-button>
+                    <el-button type="info" @click="resetMeasurement">重置</el-button>
                     <el-button type="primary" @click="saveMeasurements">保存</el-button>
                 </span>
             </template>
@@ -459,6 +443,7 @@ import {
     onBeforeUnmount,
     nextTick,
     reactive,
+    computed
 } from "vue";
 import {
     shortcuts,
@@ -466,13 +451,12 @@ import {
     setLastDate,
     disabledDate,
 } from "@/utils/dataMenu";
+import { calculateColumnsWidth, clearTextWidthCache } from '@/utils/tableminWidth'
 import { ElNotification, ElMessageBox, ElMessage } from "element-plus";
 import { useI18n } from "vue-i18n";
 const { t } = useI18n();
 import { useUserStoreWithOut } from "@/stores/modules/user";
 import router from "@/router";
-import { log } from "node:console";
-
 const userStore = useUserStoreWithOut();
 const getForm = ref({
     InspectionNo: "",
@@ -559,8 +543,26 @@ onMounted(() => {
     getData();
 });
 onBeforeUnmount(() => {
-    window.addEventListener("resize", getScreenHeight);
+    window.removeEventListener("resize", getScreenHeight);
 });
+const tableDetailRowClassName = (val: any) => {
+    let row = val.row;
+    if (row.StatusText == '完成') {
+        return "success-row-invent";
+    }
+};
+const tableDetailRowClassName1 = (val: any) => {
+    let row = val.row;
+    if (row.Status == 2) {
+        return "danger-row-invent";
+    }
+};
+const tableDetailRowClassName2 = (val: any) => {
+    let row = val.row;
+    if (row.DefectCount > 0) {
+        return "danger-row-invent";
+    }
+};
 const testClick = () => {
     router.push({
         path: '/incomingManage/inspectSheet/1',
@@ -833,7 +835,12 @@ const openMeasurementDialog = (row: any, index: any) => {
 
     dialogVisible.value = true;
 };
-
+const resetMeasurement= () => {
+    measurementValues.value = [];
+    for (let i = 0; i < currentSampleSize.value; i++) {
+        measurementValues.value.push("");
+    }
+};
 const saveMeasurements = () => {
     for (let i = 0; i < currentSampleSize.value; i++) {
         currentRow.value[`MeasuredValue${i + 1}`] = measurementValues.value[i];
@@ -1366,65 +1373,50 @@ const assignValuesMulti=(sourceData:any, targetData:any)=> {
             getResultText(targetItem)
         }
     });
-     // 创建源数据的查找映射，提高查找效率
-    // const sourceMap = new Map();
-    
-    // sourceData.forEach((item: any) => {
-    //     const key = `${item.LineNos}_${item.ProjectName}`;
-    //     sourceMap.set(key, item);
-    // });
-    
-    // // 遍历目标数组并赋值
-    // targetData.forEach((targetItem: any) => {
-    //     const key = `${targetItem.LineNos}_${targetItem.ProjectName}`;
-    //     const sourceItem = sourceMap.get(key);
-        
-    //     if (sourceItem) {
-    //         // console.log(sourceItem.SampleNum);
-            
-    //         targetItem.SampleSize = sourceItem.SampleNum;
-    //         targetItem.MeasuredValue = sourceItem.ObservedValue;
-    //         let valData = (sourceItem.ObservedValue).split(',');
-    //         // console.log(valData);
-            
-    //         if (targetItem.SampleSize < valData.length) {
-    //             targetItem.SampleSize = valData.length;
-    //         }
-            
-    //         // 预设状态为2（符合要求）
-    //         let allValuesInRange = true;
-            
-    //         valData.forEach((item: any, i: any) => {
-    //             if (i <= 9) {
-    //                 targetItem[`MeasuredValue${i + 1}`] = item;
-                    
-    //                 // 检查MeasuredValue{i+1}是否在MinValue和MaxValue范围内
-    //                 const measuredValue = parseFloat(item);
-    //                 const minValue = parseFloat(targetItem.MinValue);
-    //                 const maxValue = parseFloat(targetItem.MaxValue);
-                    
-    //                 // 只有当所有值都有效且都在范围内时，才保持为2
-    //                 if (!isNaN(measuredValue) && !isNaN(minValue) && !isNaN(maxValue)) {
-    //                     if (measuredValue < minValue || measuredValue > maxValue) {
-    //                         allValuesInRange = false;
-    //                     }
-    //                 } else {
-    //                     // 如果解析失败，认为不在范围内
-    //                     allValuesInRange = false;
-    //                 }
-    //             }
-    //         });
-            
-    //         // 设置状态：1=不在范围内，2=在范围内
-    //         targetItem.Status = allValuesInRange ? 2 : 1;
-            
-    //         // console.log(tableData1.value);
-    //     }
-    // });
     
     return targetData;
 }
+// 使用计算属性缓存列宽计算结果
+const columnWidths = computed(() => {
+    const columns = [
+        { label: '型号规制', prop: 'ModelSpec' },
+       { label: '供应商报告', prop: 'SupplierReportName' },
+       { label: 'T-Code', prop: 'TCode' },  
+       { label: 'LotNo', prop: 'LotNo' },
 
+        // 添加其他需要自适应宽度的列
+    ];
+
+    // 批量计算列宽
+    return calculateColumnsWidth(columns, detailTableData.value, {
+        padding: 25,
+        fontSize: 13
+    });
+});
+
+// 在模板中使用
+const getColumnWidth = (prop: string) => {
+    return columnWidths.value[prop] || 'auto';
+};
+const columnWidths2 = computed(() => {
+  const columns = [
+    { label: '检验工具', prop: 'InspectionToolName' },
+    // { label: 'FA', prop: 'ES_FaUrl' },
+    // { label: 'CPK', prop: 'ES_CPKUrl' },
+    // 添加其他需要自适应宽度的列
+  ];
+  
+  // 批量计算列宽
+  return calculateColumnsWidth(columns, tableData1.value, {
+    padding: 25,
+    fontSize: 13
+  });
+});
+
+// 在模板中使用
+const getColumnWidth2 = (prop: string) => {
+  return columnWidths2.value[prop] || 'auto';
+};
 </script>
 <style scoped>
 .el-pagination {
@@ -1562,3 +1554,13 @@ const assignValuesMulti=(sourceData:any, targetData:any)=> {
     margin-bottom: 5px;
 }
 </style>
+<style>
+.el-table .danger-row-invent {
+    --el-table-tr-bg-color: var(--el-color-danger-light-7);
+}
+
+.el-table .success-row-invent {
+    --el-table-tr-bg-color: var(--el-color-success-light-7);
+}
+</style>
+

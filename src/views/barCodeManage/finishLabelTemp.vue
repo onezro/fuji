@@ -688,7 +688,7 @@ onMounted(() => {
     // getMesData();
 });
 onBeforeUnmount(() => {
-    window.addEventListener("resize", getScreenHeight);
+    window.removeEventListener("resize", getScreenHeight);
 });
 
 const getData = () => {

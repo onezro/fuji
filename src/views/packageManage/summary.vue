@@ -90,9 +90,9 @@
                 <el-table-column type="index" align="center" fixed :label="$t('publicText.index')" width="50">
                 </el-table-column>
                 <el-table-column prop="CustomerName" :label="$t('listGeneration.customer')" />
-                <el-table-column prop="ES_CustomerProduct" :label="$t('listGeneration.productName')" width="120" />
+                <el-table-column prop="ES_CustomerProduct" :label="$t('listGeneration.productName')"  :min-width="getColumnWidth('ES_CustomerProduct')"/>
                 <el-table-column prop="ES_CustomerPO" :label="$t('listGeneration.productPO')" width="120" />
-                <el-table-column prop="ProductName" :label="$t('listGeneration.productPN')" width="120" />
+                <el-table-column prop="ProductName" :label="$t('listGeneration.productPN')" :min-width="getColumnWidth('ProductName')"  />
                 <el-table-column prop="ES_LotNumber" :label="$t('listGeneration.lotNo')" />
                 <el-table-column prop="Qty" :label="$t('listGeneration.productionQty')" />
                 <el-table-column prop="Qty2" :label="$t('listGeneration.orderNum')" />
@@ -148,6 +148,7 @@ import {
 import dayjs from "dayjs";
 import { exportTableToExcel } from "@/utils/exportExcel";
 import { ElNotification, ElMessageBox, ElMessage } from "element-plus";
+import { calculateColumnsWidth, clearTextWidthCache } from '@/utils/tableminWidth'
 import { useI18n } from "vue-i18n";
 const { t } = useI18n();
 import { useUserStoreWithOut } from "@/stores/modules/user";
@@ -234,7 +235,8 @@ onMounted(() => {
     getData()
 });
 onBeforeUnmount(() => {
-    window.addEventListener("resize", getScreenHeight);
+    window.removeEventListener("resize", getScreenHeight);
+    clearTextWidthCache()
 });
 const getProductType = () => {
     GetHSCodeQuery({}).then((res: any) => {
@@ -427,6 +429,27 @@ const getScreenHeight = () => {
         tableHeight2.value = (window.innerHeight - 210) * 0.4;
     });
 };
+const columnWidths = computed(() => {
+    const columns = [
+        { label: '产品PN', prop: 'ProductName' },
+        { label: '产品名称', prop: 'ES_CustomerProduct' },
+        // { label: 'FA', prop: 'ES_FaUrl' },
+        // { label: 'CPK', prop: 'ES_CPKUrl' },
+        // 添加其他需要自适应宽度的列
+    ];
+
+    // 批量计算列宽
+    return calculateColumnsWidth(columns, tableData2.value, {
+        padding: 25,
+        fontSize: 13
+    });
+});
+
+// 在模板中使用
+const getColumnWidth = (prop: string) => {
+    return columnWidths.value[prop] || 'auto';
+};
+
 </script>
 <style scoped>
 .el-pagination {
