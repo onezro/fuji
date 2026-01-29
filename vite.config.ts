@@ -1,73 +1,72 @@
-import { fileURLToPath, URL } from 'node:url'
+import { fileURLToPath, URL } from "node:url";
 
-import { defineConfig } from 'vite'
-import vue from '@vitejs/plugin-vue'
-import vueJsx from '@vitejs/plugin-vue-jsx'
-import {resolve} from 'path'
+import { defineConfig } from "vite";
+import vue from "@vitejs/plugin-vue";
+import vueJsx from "@vitejs/plugin-vue-jsx";
+import { resolve } from "path";
 export default defineConfig({
   css: {
     preprocessorOptions: {
       scss: {
-        api: 'modern-compiler'
-      }
-    }
+        api: "modern-compiler",
+      },
+    },
   },
-    build: {
+  build: {
     rollupOptions: {
       external: [
         // 添加以下行
-        /@fullcalendar\/.*/
-      ]
-    }
+        /@fullcalendar\/.*/,
+      ],
+    },
   },
-  plugins: [
-    vue(),
-    vueJsx(),
-
-  ],
+  plugins: [vue(), vueJsx()],
   resolve: {
     alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url)),
-       '@vue-office/excel': resolve(__dirname, 'node_modules/@vue-office/excel/lib/v3/index.js')
-    }
+      "@": fileURLToPath(new URL("./src", import.meta.url)),
+      "@vue-office/excel": resolve(
+        __dirname,
+        "node_modules/@vue-office/excel/lib/v3/index.js",
+      )
+    },
   },
   server: {
     proxy: {
-      '/controlApi': { 
-        target: 'http://192.168.1.237:12024',
+      "/controlApi": {
+        target: "http://192.168.1.237:12024",
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/controlApi/, '') 
+        rewrite: (path) => path.replace(/^\/controlApi/, ""),
       },
-      '/smtApi': {
-        target: 'http://192.168.1.237:12026',
+      "/smtApi": {
+        target: "http://192.168.1.237:12026",
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/smtApi/, '') 
+        rewrite: (path) => path.replace(/^\/smtApi/, ""),
       },
-      '/dipApi': {
-        target: 'http://192.168.1.237:12022',
+      "/dipApi": {
+        target: "http://192.168.1.237:12022",
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/dipApi/, '') 
+        rewrite: (path) => path.replace(/^\/dipApi/, ""),
       },
-      '/packApi': {
-        target: 'http://192.168.1.237:12023',
+      "/packApi": {
+        target: "http://192.168.1.237:12023",
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/packApi/, '') 
+        rewrite: (path) => path.replace(/^\/packApi/, ""),
       },
-      '/scrApi': {
-        target: 'http://192.168.1.237:12025',
+      "/scrApi": {
+        target: "http://192.168.1.237:12025",
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/scrApi/, '') 
+        rewrite: (path) => path.replace(/^\/scrApi/, ""),
       },
-      '/asyApi': {
-        target: 'http://192.168.1.237:12021',
+      "/asyApi": {
+        target: "http://192.168.1.237:12021",
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/asyApi/, '') 
+        rewrite: (path) => path.replace(/^\/asyApi/, ""),
       },
-     '/reportApi': {
-      target: 'http://192.168.1.237:12014',
-      changeOrigin: true,
-      rewrite: (path) => path.replace(/^\/reportApi/, '') 
+      "/reportApi": {
+        target: "http://192.168.1.237:12014",
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/reportApi/, ""),
+      },
     },
-    }
-  }
-})
+  },
+});

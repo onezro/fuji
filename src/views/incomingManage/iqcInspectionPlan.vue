@@ -7,10 +7,10 @@
                         {{ $t("publicText.add") }}
                     </el-button>
                 </div>
-                <el-form ref="formRef" :model="getForm" :inline="true" label-width="auto" size="small">
+                <el-form ref="formRef" :model="getForm" :inline="true" label-width="auto" size="small" @submit.native.prevent>
                     <el-form-item :label="$t('iqcProjectCate.ProjectCategoryName')" class="mb-2">
-                        <el-input style="width: 140px" v-model="getForm.ProjectName" placeholder=""
-                            clearable></el-input>
+                        <el-input style="width: 200px" v-model="getForm.ProjectCategoryName" placeholder=""
+                            clearable @keyup.enter.native="getData"></el-input>
                     </el-form-item>
 
                     <el-form-item class="mb-2">
@@ -116,8 +116,8 @@ import { useUserStoreWithOut } from "@/stores/modules/user";
 
 const userStore = useUserStoreWithOut();
 const getForm = ref({
-    ProjectName: "",
-    Status: 0,
+   "ProjectCategoryName": "",
+  "Description": ""
 });
 const uomData = ref<any[]>([]);
 const pageObj = reactive({

@@ -3,6 +3,7 @@ import { ElNotification } from "element-plus";
 import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
 import dayjs from "dayjs";
+
 // 类型定义
 interface ColumnConfig {
   label: string;
@@ -10,6 +11,36 @@ interface ColumnConfig {
   align?: string;
 }
 
+// 类型定义扩展
+interface FieldMapping {
+  lineNos?: string;
+  projectCategoryName?: string;
+  projectName?: string;
+  charaCteristicGrade?: string;
+  targetValue?: string;
+  maxValue?: string;
+  minValue?: string;
+  toolName?: string;
+  inspectionBasis?: string;
+  sampleNum?: string;
+  defectNum?: string;
+  measuredValue1?: string;
+  measuredValue2?: string;
+  measuredValue3?: string;
+  measuredValue4?: string;
+  measuredValue5?: string;
+  measuredValue6?: string;
+  measuredValue7?: string;
+  measuredValue8?: string;
+  measuredValue9?: string;
+  measuredValue10?: string;
+  observedValueSum?: string;
+  averageNum?: string;
+  inspectionResult?: string;
+  resulthandLing?: string;
+}
+
+// 更新 ExportTableOptions 类型
 interface ExportTableOptions {
   tableRef: {
     columns: ColumnConfig[];
@@ -22,19 +53,12 @@ interface ExportTableOptions {
     headerBgColor?: string;
   };
   t: (key: string) => string;
-  // 新增参数：指定哪些列的值为字符串格式（避免科学计数法等问题）
-  stringColumns?:
-    | string[]
-    | {
-        // 列属性名
-        columns: string[];
-        // 自定义字符串前缀，如单引号开头
-        prefix?: string;
-      };
-  // 新增参数：自定义数据处理函数（接收数据和列数组）
+  stringColumns?: string[] | { columns: string[]; prefix?: string };
   dataFormatter?: (data: any[], columns: ColumnConfig[]) => any[];
-  // 新增参数：是否导出所有数据（包括隐藏列）
   exportAllColumns?: boolean;
+  splitMeasurementColumns?: boolean;
+  // 新增字段映射配置
+  fieldMapping?: FieldMapping;
 }
 
 // 对齐方式映射
@@ -72,7 +96,48 @@ function formatCellAsString(value: any, prefix?: string): any {
   return prefix ? prefix + String(value) : String(value);
 }
 
-// 导出函数
+// 处理测量值拆分
+function processMeasurementData(data: any[]): {
+  processedData: any[];
+  measurementColumns: ColumnConfig[];
+} {
+  // 创建测量值列配置
+  const measurementColumns: ColumnConfig[] = [];
+  for (let i = 1; i <= 10; i++) {
+    measurementColumns.push({
+      label: `测量值${i}`,
+      property: `MeasuredValue${i}`,
+      align: "center",
+    });
+  }
+
+  // 处理数据
+  const processedData = data.map((item) => {
+    const newItem = { ...item };
+
+    // 如果原始数据中有 MeasuredValue 字段（合并的测量值），则拆分它
+    if (item.MeasuredValue && typeof item.MeasuredValue === "string") {
+      const values = item.MeasuredValue.split(/[\s,]+/).filter(Boolean);
+      for (let i = 1; i <= 10; i++) {
+        newItem[`MeasuredValue${i}`] = values[i - 1] || "";
+      }
+    }
+
+    // 如果原始数据中已经有 MeasuredValue1 到 MeasuredValue10，则保留它们
+    for (let i = 1; i <= 10; i++) {
+      const key = `MeasuredValue${i}`;
+      if (item[key] !== undefined && newItem[key] === undefined) {
+        newItem[key] = item[key];
+      }
+    }
+
+    return newItem;
+  });
+
+  return { processedData, measurementColumns };
+}
+
+// 导出函数（横向表格格式 - 保持原样）
 export async function exportTableToExcel1(options: ExportTableOptions) {
   const {
     tableRef,
@@ -83,14 +148,23 @@ export async function exportTableToExcel1(options: ExportTableOptions) {
     stringColumns,
     dataFormatter,
     exportAllColumns = false,
+    splitMeasurementColumns = false, // 新增参数，默认为false
   } = options;
 
   try {
     // 1. 获取全部数据
     let allData = await fetchAllData();
 
+    // 处理测量值拆分
+    let measurementColumns: ColumnConfig[] = [];
+    if (splitMeasurementColumns) {
+      const result = processMeasurementData(allData);
+      allData = result.processedData;
+      measurementColumns = result.measurementColumns;
+    }
+
     // 2. 过滤并处理表头
-    const columns = tableRef.columns
+    let baseColumns = tableRef.columns
       .filter((col) => {
         if (exportAllColumns) {
           // 导出所有列
@@ -117,6 +191,39 @@ export async function exportTableToExcel1(options: ExportTableOptions) {
             ? stringColumns.prefix
             : undefined,
       }));
+
+    // 如果启用了测量值拆分，则替换测量值列
+    let columns = [...baseColumns];
+    if (splitMeasurementColumns) {
+      // 查找测量值列的索引
+      const measurementIndex = columns.findIndex(
+        (col) =>
+          col.label.includes("测量值") ||
+          col.prop === "MeasuredValue" ||
+          col.label === "$t('incomeSheet.MeasurementNumber')",
+      );
+
+      if (measurementIndex !== -1) {
+        // 移除原来的测量值列
+        columns.splice(measurementIndex, 1);
+        // 插入10个测量值列
+        measurementColumns.forEach((measurementCol, index) => {
+          columns.splice(measurementIndex + index, 0, {
+            label: measurementCol.label,
+            prop: measurementCol.property,
+            align: measurementCol.align || "center",
+            isStringColumn: Array.isArray(stringColumns)
+              ? stringColumns.includes(measurementCol.property)
+              : stringColumns?.columns?.includes(measurementCol.property) ||
+                false,
+            stringPrefix:
+              stringColumns && !Array.isArray(stringColumns)
+                ? stringColumns.prefix
+                : undefined,
+          });
+        });
+      }
+    }
 
     // 3. 自定义数据处理
     if (dataFormatter && typeof dataFormatter === "function") {
@@ -243,9 +350,349 @@ export async function exportTableToExcel1(options: ExportTableOptions) {
   }
 }
 
-// 新增：导出为CSV格式（如果需要）
+// 新增：为计量检验表定制的导出函数（横向格式）
+export async function exportMeasureTableToExcel(options: ExportTableOptions) {
+  return exportTableToExcel1({
+    ...options,
+    splitMeasurementColumns: true,
+    stringColumns: options.stringColumns || [
+      "MeasuredValue1",
+      "MeasuredValue2",
+      "MeasuredValue3",
+      "MeasuredValue4",
+      "MeasuredValue5",
+      "MeasuredValue6",
+      "MeasuredValue7",
+      "MeasuredValue8",
+      "MeasuredValue9",
+      "MeasuredValue10",
+    ],
+  });
+}
+
+// 新增：纵向格式导出函数（根据新建 XLSX 工作表.xlsx格式）
+export async function exportTableToExcelVertical(
+  options: ExportTableOptions & {
+    // 每个sheet显示一条记录
+    perSheet?: boolean;
+    // 指定要导出的字段顺序，如果不指定则使用tableRef.columns
+    verticalFields?: Array<{ label: string; property: string }>;
+  },
+) {
+  const {
+    tableRef,
+    fetchAllData,
+    fileName = "export",
+    styles = {},
+    t,
+    stringColumns,
+    dataFormatter,
+    splitMeasurementColumns = false,
+    perSheet = false, // 是否每个sheet显示一条记录
+    verticalFields, // 纵向字段配置
+  } = options;
+
+  try {
+    // 1. 获取全部数据
+    let allData = await fetchAllData();
+
+    // 处理测量值拆分
+    let measurementColumns: ColumnConfig[] = [];
+    if (splitMeasurementColumns) {
+      const result = processMeasurementData(allData);
+      allData = result.processedData;
+      measurementColumns = result.measurementColumns;
+    }
+
+    // 2. 自定义数据处理
+    if (dataFormatter && typeof dataFormatter === "function") {
+      allData = dataFormatter(allData, tableRef.columns);
+    }
+
+    // 3. 确定要导出的字段
+    let exportFields = verticalFields;
+    if (!exportFields) {
+      // 如果没有指定verticalFields，则使用tableRef.columns
+      exportFields = tableRef.columns
+        .filter((col) => col.label !== undefined && col.property !== undefined)
+        .map((col) => ({
+          label: col.label,
+          property: col.property,
+        }));
+    }
+
+    // 如果启用了测量值拆分，则调整字段
+    if (splitMeasurementColumns && measurementColumns.length > 0) {
+      // 查找测量值字段的索引
+      const measurementIndex = exportFields.findIndex(
+        (field) =>
+          field.label.includes("测量值") || field.property === "MeasuredValue",
+      );
+
+      if (measurementIndex !== -1) {
+        // 移除原来的测量值字段
+        exportFields.splice(measurementIndex, 1);
+        // 插入10个测量值字段
+        measurementColumns.forEach((measurementCol, index) => {
+          exportFields!.splice(measurementIndex + index, 0, {
+            label: measurementCol.label,
+            property: measurementCol.property,
+          });
+        });
+      }
+    }
+
+    // 4. 创建 Workbook
+    const workbook = new ExcelJS.Workbook();
+
+    if (perSheet && allData.length > 0) {
+      // 每个sheet显示一条记录（保持原有逻辑不变）
+      allData.forEach((record, index) => {
+        const worksheet = workbook.addWorksheet(`记录${index + 1}`);
+
+        // 添加数据行（纵向）
+        exportFields!.forEach((field, rowIndex) => {
+          const row = worksheet.addRow([field.label, ""]);
+
+          // 获取单元格值
+          let cellValue = field.property
+            .split(".")
+            .reduce((obj: any, key: any) => {
+              if (obj && typeof obj === "object") return obj[key];
+              return "";
+            }, record);
+
+          // 应用字符串格式处理
+          const isStringColumn = Array.isArray(stringColumns)
+            ? stringColumns.includes(field.property)
+            : stringColumns?.columns?.includes(field.property) || false;
+
+          if (isStringColumn) {
+            cellValue = formatCellAsString(
+              cellValue,
+              stringColumns && !Array.isArray(stringColumns)
+                ? stringColumns.prefix
+                : undefined,
+            );
+          }
+
+          // 设置值
+          row.getCell(2).value = cellValue;
+
+          // 设置样式
+          const cell = row.getCell(1);
+          Object.assign(cell, {
+            font: { bold: true, ...(styles.headerFont || {}) },
+            fill: {
+              type: "pattern",
+              pattern: "solid",
+              fgColor: { argb: styles.headerBgColor || "FFD3D3D3" },
+            },
+          });
+        });
+
+        // 设置列宽
+        worksheet.columns = [{ width: 15 }, { width: 30 }];
+      });
+    } else {
+      // === 修改部分开始：所有记录在一个sheet中，按照第一个Excel文件格式（横向排列记录） ===
+      const worksheet = workbook.addWorksheet("Sheet1");
+
+      // 构建表格数据：左边是标题列，右边是各条记录的数据列
+
+      // 第一行：表头
+      const headerRow = worksheet.addRow([
+        "检验序列",
+        ...allData.map((item, index) => item.LineNos),
+      ]);
+
+      // 设置表头样式
+      headerRow.eachCell((cell, colNumber) => {
+        Object.assign(cell, {
+          font: { bold: true, ...(styles.headerFont || {}) },
+          fill: {
+            type: "pattern",
+            pattern: "solid",
+            fgColor: { argb: styles.headerBgColor || "FFD3D3D3" },
+          },
+        });
+      });
+
+      // 后续行：每个字段对应一行
+      exportFields!.forEach((field, fieldIndex) => {
+        // 如果是"检验序列"字段，跳过，因为已经在表头中显示了
+        if (field.label === "检验序列") {
+          return;
+        }
+
+        const rowData = [field.label];
+
+        // 为每条记录获取该字段的值
+        allData.forEach((record) => {
+          // 获取单元格值
+          let cellValue = field.property
+            .split(".")
+            .reduce((obj: any, key: any) => {
+              if (obj && typeof obj === "object") return obj[key];
+              return "";
+            }, record);
+
+          // 应用字符串格式处理
+          const isStringColumn = Array.isArray(stringColumns)
+            ? stringColumns.includes(field.property)
+            : stringColumns?.columns?.includes(field.property) || false;
+
+          if (isStringColumn) {
+            cellValue = formatCellAsString(
+              cellValue,
+              stringColumns && !Array.isArray(stringColumns)
+                ? stringColumns.prefix
+                : undefined,
+            );
+          }
+
+          rowData.push(cellValue);
+        });
+
+        const row = worksheet.addRow(rowData);
+
+        // 设置标题列样式（第一列）
+        const titleCell = row.getCell(1);
+        Object.assign(titleCell, {
+          font: { bold: true },
+          fill: {
+            type: "pattern",
+            pattern: "solid",
+            fgColor: { argb: "FFF2F2F2" },
+          },
+        });
+      });
+
+      // 设置列宽
+      const columnWidths = [20]; // 第一列（标题列）的宽度
+      for (let i = 0; i < allData.length; i++) {
+        columnWidths.push(15); // 每条记录列的宽度
+      }
+
+      worksheet.columns = columnWidths.map((width) => ({ width }));
+      // === 修改部分结束 ===
+    }
+
+    // 5. 导出文件
+    const buffer = await workbook.xlsx.writeBuffer();
+    const blob = new Blob([buffer], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    });
+    saveAs(blob, `${fileName}_${dayjs().format("YYYYMMDDHHmmss")}.xlsx`);
+
+    return {
+      success: true,
+      fileName: `${fileName}.xlsx`,
+      rowCount: allData.length,
+    };
+  } catch (error) {
+    console.error("[Excel Export Vertical Error]", error);
+    ElNotification.error({
+      title: t("message.error"),
+      message: t("message.exportFailure"),
+    });
+    throw new Error(t("message.exportFailure"));
+  }
+}
+
+// 新增：专门用于计量检验表的纵向导出函数
+export async function exportMeasureTableToExcelVertical(
+  options: ExportTableOptions & {
+    perSheet?: boolean;
+  },
+) {
+  // 默认字段映射（第一种情况）
+  const defaultFieldMapping: FieldMapping = {
+    lineNos: "LineNos",
+    projectCategoryName: "ProjectCategoryName",
+    projectName: "ProjectName",
+    charaCteristicGrade: "CharaCteristicGrade",
+    targetValue: "TargetValue",
+    maxValue: "MaxValue",
+    minValue: "MinValue",
+    toolName: "ToolName",
+    inspectionBasis: "InspectionBasis",
+    sampleNum: "SampleNum",
+    defectNum: "DefectNum",
+    measuredValue1: "MeasuredValue1",
+    measuredValue2: "MeasuredValue2",
+    measuredValue3: "MeasuredValue3",
+    measuredValue4: "MeasuredValue4",
+    measuredValue5: "MeasuredValue5",
+    measuredValue6: "MeasuredValue6",
+    measuredValue7: "MeasuredValue7",
+    measuredValue8: "MeasuredValue8",
+    measuredValue9: "MeasuredValue9",
+    measuredValue10: "MeasuredValue10",
+    observedValueSum: "ObservedValueSum",
+    averageNum: "AverageNum",
+    inspectionResult: "InspectionResult",
+    resulthandLing: "ResulthandLing",
+  };
+
+  // 合并用户自定义字段映射
+  const fieldMapping = { ...defaultFieldMapping, ...options.fieldMapping };
+
+  // 基于字段映射生成 verticalFields
+  const measureVerticalFields = [
+    { label: "检验序列", property: fieldMapping.lineNos! },
+    { label: "检验类别", property: fieldMapping.projectCategoryName! },
+    { label: "检验名称", property: fieldMapping.projectName! },
+    { label: "特性分级", property: fieldMapping.charaCteristicGrade! },
+    { label: "目标值", property: fieldMapping.targetValue! },
+    { label: "最大值", property: fieldMapping.maxValue! },
+    { label: "最小值", property: fieldMapping.minValue! },
+    { label: "检验工具", property: fieldMapping.toolName! },
+    { label: "检验依据", property: fieldMapping.inspectionBasis! },
+    { label: "样品数", property: fieldMapping.sampleNum! },
+    { label: "缺陷数", property: fieldMapping.defectNum! },
+    { label: "测量值1", property: fieldMapping.measuredValue1! },
+    { label: "测量值2", property: fieldMapping.measuredValue2! },
+    { label: "测量值3", property: fieldMapping.measuredValue3! },
+    { label: "测量值4", property: fieldMapping.measuredValue4! },
+    { label: "测量值5", property: fieldMapping.measuredValue5! },
+    { label: "测量值6", property: fieldMapping.measuredValue6! },
+    { label: "测量值7", property: fieldMapping.measuredValue7! },
+    { label: "测量值8", property: fieldMapping.measuredValue8! },
+    { label: "测量值9", property: fieldMapping.measuredValue9! },
+    { label: "测量值10", property: fieldMapping.measuredValue10! },
+    { label: "总和", property: fieldMapping.observedValueSum! },
+    { label: "平均数", property: fieldMapping.averageNum! },
+    { label: "结果", property: fieldMapping.inspectionResult! },
+    { label: "不良处理结果", property: fieldMapping.resulthandLing! },
+  ];
+
+  // 根据字段映射生成 stringColumns
+  const stringColumns = [
+    fieldMapping.measuredValue1,
+    fieldMapping.measuredValue2,
+    fieldMapping.measuredValue3,
+    fieldMapping.measuredValue4,
+    fieldMapping.measuredValue5,
+    fieldMapping.measuredValue6,
+    fieldMapping.measuredValue7,
+    fieldMapping.measuredValue8,
+    fieldMapping.measuredValue9,
+    fieldMapping.measuredValue10,
+  ].filter(Boolean) as string[];
+
+  return exportTableToExcelVertical({
+    ...options,
+    splitMeasurementColumns: false,
+    verticalFields: measureVerticalFields,
+    stringColumns: options.stringColumns || stringColumns,
+    perSheet: options.perSheet || false,
+  });
+}
+
+// 导出为CSV格式（如果需要）
 export async function exportTableToCSV(
-  options: Omit<ExportTableOptions, "styles">
+  options: Omit<ExportTableOptions, "styles">,
 ) {
   const {
     tableRef,
@@ -265,7 +712,7 @@ export async function exportTableToCSV(
         (col) =>
           col.label !== t("publicText.index") &&
           col.label !== t("publicText.operation") &&
-          col.label !== undefined
+          col.label !== undefined,
       )
       .map((col) => ({
         label: col.label,

@@ -2,7 +2,7 @@
     <div class="p-2">
         <el-card :body-style="{ padding: '8px' }">
             <el-form ref="formRef" :model="getForm" :inline="true" label-width="auto" size="small">
-             
+
 
                 <el-form-item :label="$t('oqcInspection.creatTime')" class="mb-2"><el-date-picker :shortcuts="shortcuts"
                         v-model="searchDate" value-format="YYYY-MM-DD" type="daterange" range-separator="-" size="small"
@@ -53,7 +53,7 @@
                 <el-form-item :label="$t('oqcInspection.customerPN')" class="mb-2">
                     <el-input style="width: 190px" v-model="getForm.CustomerPN" placeholder="" clearable></el-input>
                 </el-form-item>
-                   <el-form-item :label="$t('oqcInspection.OQCNumber')" class="mb-2">
+                <el-form-item :label="$t('oqcInspection.OQCNumber')" class="mb-2">
                     <el-input style="width: 190px" v-model="getForm.OQCNumber" placeholder="" clearable></el-input>
                 </el-form-item>
                 <el-form-item :label="$t('oqcInspection.workerOrder')" class="mb-2">
@@ -94,34 +94,43 @@
                         }}</span>
                     </template>
                 </el-table-column>
-                <el-table-column prop="OQCNumber" :label="$t('oqcInspection.OQCNumber')" width="200">
-                </el-table-column>
+                    <el-table-column prop="PriorityCodeName" :label="$t('batchCreation.Priority')" width="60"
+                    :align="'center'" />
                 <el-table-column prop="MfgOrder" :label="$t('oqcInspection.workerOrder')" />
-                <el-table-column prop="Customer" :label="$t('oqcInspection.customerName')" />
+                <el-table-column prop="Customer" :label="$t('oqcInspection.customerName')"
+                    :min-width="getColumnWidth('Customer')" />
                 <el-table-column prop="ProductName" :label="$t('oqcInspection.productName')"
                     :min-width="getColumnWidth('ProductName')" />
-                <el-table-column prop="ProductType" :label="$t('oqcInspection.productCategory')" />
-                <el-table-column prop="CustomerPO" :label="$t('oqcInspection.customerPO')" width="130" />
-                <el-table-column prop="CustomerPN" :label="$t('oqcInspection.customerPN')" width="130" />
-                <el-table-column prop="LotNo" :label="$t('oqcInspection.LOtNO')" />
-                <el-table-column prop="InspectionStatus" :label="$t('oqcInspection.inspectionStatus')" />
-                <el-table-column prop="ApprovalStatus" :label="$t('oqcInspection.ApprovalStatus')" />
-                <el-table-column prop="Date" :label="$t('oqcInspection.Date')" width="100" />
-                <el-table-column prop="ShippingQty" :label="'生产数量'" width="100" />
-                <!-- <el-table-column prop="QtyShiped" :label="$t('oqcInspection.QtyShiped')" width="100" /> -->
-                <el-table-column prop="TotalEvaluation" :label="$t('oqcInspection.TotalEvaluation')" width="150" />
+                <el-table-column prop="CustomerPO" :label="$t('oqcInspection.customerPO')"
+                    :min-width="getColumnWidth('CustomerPO')" />
+                <el-table-column prop="CustomerPN" :label="$t('oqcInspection.customerPN')"
+                    :min-width="getColumnWidth('CustomerPN')" />
                 <el-table-column prop="SpecificationNo" :label="$t('oqcInspection.SpecificationNo')">
                     <template #default="{ row }">
                         <span class="underline cursor-pointer text-cyan-800" @click="openFile(row.SpecificationNo)">{{
                             row.SpecificationNo }}</span>
                     </template>
                 </el-table-column>
+                <el-table-column prop="LotNo" :label="$t('oqcInspection.LOtNO')" />
+                <el-table-column prop="LotNumber" :label="'原料批次'" :min-width="getColumnWidth('LotNumber')" />
+                <el-table-column prop="InspectionStatus" :label="$t('oqcInspection.inspectionStatus')" />
+                <el-table-column prop="ApprovalStatus" :label="$t('oqcInspection.ApprovalStatus')" />
+                <el-table-column prop="OrderQty" :label="'订单总数量'" width="100" />
+                <el-table-column prop="ShippingQty" :label="'生产数量'" width="100" />
+                 <el-table-column prop="Date" :label="$t('oqcInspection.Date')" width="100" />
+                <el-table-column prop="SpecName" :label="$t('oqcInspection.SpecName')" />
+                <el-table-column prop="ProductType" :label="$t('oqcInspection.productCategory')" />
+                <el-table-column prop="OQCNumber" :label="$t('oqcInspection.OQCNumber')" width="200">
+                </el-table-column>
+                <!-- <el-table-column prop="QtyShiped" :label="$t('oqcInspection.QtyShiped')" width="100" /> -->
+                <el-table-column prop="TotalEvaluation" :label="$t('oqcInspection.TotalEvaluation')" width="120" />
                 <el-table-column prop="OrderTypeName" :label="$t('oqcInspection.OrderTypeName')" width="100" />
-                <el-table-column prop="CreateUser" :label="$t('oqcInspection.CreateUser')" width="110" />
+                <el-table-column prop="CreateUser" :label="$t('oqcInspection.CreateUser')" width="120" />
                 <el-table-column prop="CreateTime" :label="$t('oqcInspection.CreateTime')" width="150" />
-                <el-table-column prop="UpdateUser" :label="$t('oqcInspection.UpdateUser')" width="110" />
+                <el-table-column prop="UpdateUser" :label="$t('oqcInspection.UpdateUser')" width="120" />
                 <el-table-column prop="UpdateTime" :label="$t('oqcInspection.UpdateTime')" width="150" />
-                <el-table-column prop="MfgorderTime" :label="'最后修改时间'" width="150" />
+                <el-table-column prop="MfgorderTime" :label="'工单最后修改时间'" :min-width="getColumnWidth('MfgorderTime')" />
+                
                 <el-table-column :label="$t('publicText.operation')" width="70" fixed="right" align="center">
                     <template #default="scope">
                         <el-tooltip :content="$t('publicText.look')" placement="top">
@@ -295,7 +304,8 @@
                     <el-table :data="CountTable" border stripe style="width: 100%" size="small" :height="300">
                         <el-table-column prop="ProjectCategoryName" :label="$t('aqlrules.ProjectCategoryName')">
                         </el-table-column>
-                        <el-table-column prop="ProjectName" :label="$t('aqlrules.ProjectName')">
+                        <el-table-column prop="ProjectName" :label="$t('aqlrules.ProjectName')"
+                            :min-width="getColumnWidth2('ProjectName')">
                         </el-table-column>
                         <!-- <el-table-column prop="InspectionType" :label="$t('aqlrules.DBType')">
                         </el-table-column> -->
@@ -304,7 +314,8 @@
                         <el-table-column prop="InspectionToolName" :label="$t('aqlrules.ToolName')"
                             :min-width="getColumnWidth2('InspectionToolName')">
                         </el-table-column>
-                        <el-table-column prop="InspectionBasis" :label="$t('aqlrules.InspectionBasis')">
+                        <el-table-column prop="InspectionBasis" :label="$t('aqlrules.InspectionBasis')"
+                            :min-width="getColumnWidth2('InspectionBasis')">
                         </el-table-column>
                         <el-table-column prop="SampleSize" :label="$t('incomeSheet.numberOfSample')">
                             <template #default="scope">
@@ -338,7 +349,8 @@
                     <el-table :data="MeasurTable" border stripe style="width: 100%" size="small" :height="300">
                         <el-table-column prop="ProjectCategoryName" :label="$t('aqlrules.ProjectCategoryName')">
                         </el-table-column>
-                        <el-table-column prop="ProjectName" :label="$t('aqlrules.ProjectName')">
+                        <el-table-column prop="ProjectName" :label="$t('aqlrules.ProjectName')"
+                            :min-width="getColumnWidth2('ProjectName')">
                         </el-table-column>
                         <!-- <el-table-column prop="InspectionType" :label="$t('aqlrules.DBType')">
                         </el-table-column> -->
@@ -356,7 +368,8 @@
                         </el-table-column>
                         <el-table-column prop="uomname" :label="$t('aqlrules.uomname')">
                         </el-table-column>
-                        <el-table-column prop="InspectionBasis" :label="$t('aqlrules.InspectionBasis')">
+                        <el-table-column prop="InspectionBasis" :label="$t('aqlrules.InspectionBasis')"
+                            :min-width="getColumnWidth2('InspectionBasis')">
                         </el-table-column>
                         <el-table-column prop="SampleSize" :label="$t('incomeSheet.numberOfSample')">
                             <template #default="scope">
@@ -745,7 +758,7 @@ const headerForm = ref({
     SpecificationNo: "",
     ApprovalStatus: "",
     InspectionStatus: "",
-    IsCarProduct:'',
+    IsCarProduct: '',
 });
 
 const eqTable = ref([{
@@ -900,7 +913,7 @@ onBeforeUnmount(() => {
 
 const tableRowClassName = (val: any) => {
     let row = val.row;
-    if (row.PriorityCodeName == 1) {
+    if (row.StatusFlag == 1) {
         return "danger-row-invent";
     }
 };
@@ -1033,7 +1046,7 @@ const getInspectDetilData = () => {
                 SpecificationNo: data.OQCHead[0].SpecificationNo,
                 ApprovalStatus: data.OQCHead[0].ApprovalStatus,
                 InspectionStatus: data.OQCHead[0].InspectionStatus,
-                 IsCarProduct: data.OQCHead[0].ProductType=='汽车产品'? '是' : '否'
+                IsCarProduct: data.OQCHead[0].ProductType == '汽车产品' ? '是' : '否'
             };
             DetailInfoForm.value = {
                 SamplingPlan: data.OQCDetailInfo[0].samplingPlan,
@@ -1642,6 +1655,11 @@ const headerRowStyle = (row: any) => {
 const columnWidths = computed(() => {
     const columns = [
         { label: '产品名称', prop: 'ProductName' },
+        { label: '工单最后修改时间', prop: 'MfgorderTime' },
+        { label: '原料批次', prop: 'LotNumber' },
+        { label: '客户PN', prop: 'CustomerPN' },
+        { label: '客户PO', prop: 'CustomerPO' },
+        { label: '客户名称', prop: 'Customer' },
         // { label: 'FA', prop: 'ES_FaUrl' },
         // { label: 'CPK', prop: 'ES_CPKUrl' },
         // 添加其他需要自适应宽度的列
@@ -1662,6 +1680,8 @@ const getColumnWidth = (prop: string) => {
 const columnWidths2 = computed(() => {
     const columns = [
         { label: '检验工具', prop: 'InspectionToolName' },
+        { label: '检验依据', prop: 'InspectionBasis' },
+        { label: '项目名称', prop: 'ProjectName' },
         // { label: 'FA', prop: 'ES_FaUrl' },
         // { label: 'CPK', prop: 'ES_CPKUrl' },
         // 添加其他需要自适应宽度的列

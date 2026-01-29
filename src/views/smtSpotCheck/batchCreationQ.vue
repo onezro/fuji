@@ -35,7 +35,7 @@
                     <el-button type="primary" @click="getData">{{ $t('publicText.query') }}</el-button>
                     <el-button type="" @click="resetData">{{ $t('publicText.reset') }}</el-button>
                 </el-form-item>
-                <el-form-item class="mb-2">
+                <!-- <el-form-item class="mb-2">
                     <el-radio-group v-model="batchPrintForm.PackagingType">
                         <el-radio :value="0">{{ $t('batchCreation.AccordingSmallBox') }}</el-radio>
                         <el-radio :value="1">{{ $t('batchCreation.AccordingBox') }}</el-radio>
@@ -53,7 +53,7 @@
                     <el-button type="warning" :disabled="selectList.length == 0" size="small" @click="submitPrint">{{
                         $t('batchCreation.ProduceBatchPrint')
                     }}</el-button>
-                </el-form-item>
+                </el-form-item> -->
             </el-form>
             <div>
 
@@ -64,8 +64,8 @@
             )
                 " size="small" :style="{ width: '100%' }" :height="tableHeight" :tooltip-effect="'light'" border fit
                 highlight-current-row ref="multipleTableRef"
-                @selection-change="handleSelectionChange" :row-class-name="tableRowClassName">
-                <el-table-column type="selection" width="55" align="center" />
+                 :row-class-name="tableRowClassName">
+                <!-- <el-table-column type="selection" width="55" align="center" /> -->
                 <el-table-column type="index" align="center" fixed :label="$t('publicText.index')" width="50">
                     <template #default="scope">
                         <span>{{
@@ -73,7 +73,7 @@
                         }}</span>
                     </template>
                 </el-table-column>
-                <el-table-column prop="MfgOrderName" :label="$t('batchCreation.OrderCode')">
+                <el-table-column prop="MfgOrderName" fixed :label="$t('batchCreation.OrderCode')">
                     <template #default="scope">
                         <span class="underline  cursor-pointer text-cyan-800" @click="cellClick(scope.row)">{{ scope.row.MfgOrderName }}</span>
                     </template>
@@ -159,8 +159,8 @@
             <template #footer>
                 <span class="dialog-footer">
                     <el-button @click="closePrint">{{ $t('publicText.close') }}</el-button>
-                    <el-button type="primary" :disabled="resetList.length == 0" @click="resetPrint"> {{
-                        $t('batchCreation.Reprint') }} </el-button>
+                    <!-- <el-button type="primary" :disabled="resetList.length == 0" @click="resetPrint"> {{
+                        $t('batchCreation.Reprint') }} </el-button> -->
                 </span>
             </template>
         </el-dialog>

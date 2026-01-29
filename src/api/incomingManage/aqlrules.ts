@@ -102,3 +102,11 @@ export function GetCustomerQuery(data: any) {
         data,
     });
 }
+
+export function GetProductInfoQuery(data: any) {
+    return request({
+        url: "/api/IQCController/GetProductInfoQuery",
+        method: "post",
+        data,
+    });
+}

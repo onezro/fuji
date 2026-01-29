@@ -39,9 +39,10 @@
                     <el-input style="width: 190px" v-model="getForm.CustomerName" placeholder="" clearable
                         @keyup.enter.native="getData"></el-input>
                 </el-form-item>
-                <!-- <el-form-item :label="$t('oqcInspection.customerPO')" class="mb-2">
-                    <el-input style="width: 200px" v-model="getForm." placeholder="" clearable></el-input>
-                </el-form-item> -->
+                <el-form-item :label="$t('oqcInspection.customerPO')" class="mb-2">
+                    <el-input style="width: 200px" v-model="getForm.CustomerPO" placeholder="" clearable
+                        @keyup.enter.native="getData"></el-input>
+                </el-form-item>
                 <el-form-item :label="$t('oqcInspection.customerPN')" class="mb-2">
                     <el-input style="width: 190px" v-model="getForm.PartNo" placeholder="" clearable
                         @keyup.enter.native="getData"></el-input>
@@ -82,29 +83,37 @@
                     <template #default="scope">
                         <span>{{
                             scope.$index + pageObj.pageSize * (pageObj.currentPage - 1) + 1
-                        }}</span>
+                            }}</span>
                     </template>
                 </el-table-column>
-
+                <el-table-column prop="PriorityCodeName" :label="$t('batchCreation.Priority')" width="60" fixed
+                    :align="'center'" />
                 <el-table-column prop="ES_MfgorderName" :label="$t('processInspect.workeOrder')" width="80" fixed>
                     <template #default="{ row }">
                         <span class="underline cursor-pointer text-cyan-800" @click="openOrder(row.ES_MfgorderName)">{{
                             row.ES_MfgorderName }}</span>
                     </template>
                 </el-table-column>
-                <el-table-column prop="PriorityCodeName" :label="$t('batchCreation.Priority')" width="60"
-                    :align="'center'" />
-                <el-table-column prop="ES_CustomerName" :label="$t('processInspect.customerName')" width="100"
-                    :align="'center'" />
+                <el-table-column prop="ES_CustomerName" :label="$t('processInspect.customerName')"
+                    :min-width="getColumnWidth('ES_CustomerName')" :align="'center'" fixed />
                 <el-table-column prop="ES_ProductName" :label="$t('processInspect.productName')"
-                    :min-width="getColumnWidth('ES_ProductName')" />
-                <el-table-column prop="ES_ProductType" :label="$t('processInspect.productType')" width="80" />
+                    :min-width="getColumnWidth('ES_ProductName')" fixed />
+                <el-table-column prop="ES_CustomerPO" :label="$t('processInspect.customerPO')"
+                    :min-width="getColumnWidth('ES_CustomerPO')" />
+                <el-table-column prop="ES_PartNo" :label="$t('processInspect.customerPN')"
+                    :min-width="getColumnWidth('ES_PartNo')" />
+                <el-table-column prop="ES_SpecificationNo" :label="$t('oqcInspection.SpecificationNo')"
+                    :min-width="getColumnWidth('ES_SpecificationNo')">
+                    <template #default="{ row }">
+                        <span class="underline cursor-pointer text-cyan-800"
+                            @click="openFile(row.ES_SpecificationNo)">{{
+                                row.ES_SpecificationNo }}</span>
+                    </template>
+                </el-table-column>
 
-                <el-table-column prop="ES_CustomerPO" :label="$t('processInspect.customerPO')" width="100" />
-                <el-table-column prop="ES_PartNo" :label="$t('processInspect.customerPN')" width="120" />
-
-                <el-table-column prop="ES_LotNo" :label="$t('processInspect.LOtNO')" />
-                <el-table-column prop="ES_SpecName" :label="'工序'" />
+                <el-table-column prop="ES_LotNo" :label="$t('processInspect.LOtNO')"
+                    :min-width="getColumnWidth('ES_LotNo')" />
+                <el-table-column prop="LotNumber" :label="'原料批次'" :min-width="getColumnWidth('LotNumber')" />
                 <el-table-column prop="ES_MaterialReQty" :label="'领料张数'" />
                 <el-table-column prop="FirstArticleInspectionStatus" :label="$t('processInspect.firstInspectStatus')"
                     width="80" />
@@ -112,13 +121,7 @@
                     width="80" />
                 <el-table-column prop="FinalInspectionStatus" :label="$t('processInspect.tailInspectStatus')"
                     width="80" />
-                <el-table-column prop="ES_SpecificationNo" :label="$t('oqcInspection.SpecificationNo')">
-                    <template #default="{ row }">
-                        <span class="underline cursor-pointer text-cyan-800"
-                            @click="openFile(row.ES_SpecificationNo)">{{
-                                row.ES_SpecificationNo }}</span>
-                    </template>
-                </el-table-column>
+
                 <el-table-column prop="ES_FaUrl" :label="'FA'" :min-width="getColumnWidth('ES_FaUrl')">
                     <template #default="scope">
                         <span class="underline cursor-pointer text-cyan-800"
@@ -137,20 +140,24 @@
                 </el-table-column>
                 <el-table-column prop="ES_CPKMinThk" :label="'CPK厚度'" width="80">
                 </el-table-column>
+                <el-table-column prop="ES_SpecName" :label="'工序'" />
+                <el-table-column prop="ES_ProductType" :label="$t('processInspect.productType')" width="80" />
                 <el-table-column prop="ES_CreateDate" :label="$t('processInspect.creatTime')" width="150" />
                 <el-table-column :label="$t('publicText.operation')" width="250" fixed="right" align="center">
                     <template #default="scope">
                         <el-tooltip :content="'首检'" placement="top">
                             <el-button type="primary" icon="EditPen" size="small"
-                                @click.stop="handleEdit(scope.row, '首检')">首</el-button>
+                                @click.stop="handleEdit(scope.row, '首检')"
+                                :disabled="scope.row.FirstArticleInspectionNo == null">首</el-button>
                         </el-tooltip>
                         <el-tooltip :content="'巡检'" placement="top">
                             <el-button type="warning" icon="EditPen" size="small"
-                                @click.stop="handleEdit(scope.row, '巡检')">巡</el-button>
+                                @click.stop="handleEdit(scope.row, '巡检')"
+                                :disabled="scope.row.InProcessInspectionNo == null">巡</el-button>
                         </el-tooltip>
                         <el-tooltip :content="'尾检'" placement="top">
-                            <el-button type="info" icon="EditPen" size="small"
-                                @click.stop="handleEdit(scope.row, '尾检')">尾</el-button>
+                            <el-button type="info" icon="EditPen" size="small" @click.stop="handleEdit(scope.row, '尾检')"
+                                :disabled="scope.row.FinalInspectionNo == null">尾</el-button>
                         </el-tooltip>
                         <el-tooltip :content="'上传FA/CPK文件'" placement="top">
                             <el-button type="success" icon="Upload" size="small"
@@ -185,15 +192,15 @@
                 <div class="dialog-footer">
                     <el-button @click="handleAddClose">{{
                         $t("publicText.cancel")
-                    }}</el-button>
+                        }}</el-button>
                     <el-button type="primary" @click="handleAddConfirm">
                         {{ $t("publicText.confirm") }}
                     </el-button>
                 </div>
             </template>
         </el-dialog>
-        <el-dialog v-model="editVisible" :title="title" width="80%" draggable :append-to-body="true"
-            :close-on-click-modal="false" :close-on-press-escape="false" align-center @close="handleEditClose">
+        <el-dialog v-model="editVisible" :title="title" width="80%" :append-to-body="true" :close-on-click-modal="false"
+            :close-on-press-escape="false" align-center @close="handleEditClose">
             <el-form ref="editFormRef" :model="editForm" label-width="auto" :inline="true" :size="'small'">
                 <el-form-item :label="$t('processInspect.inspectOrder')" prop="InspectionNO">
                     <el-input v-model="editForm.InspectionNO" placeholder="请输入" disabled />
@@ -216,14 +223,15 @@
             </el-form>
             <el-tabs v-model="activeName" type="border-card">
                 <el-tab-pane :label="'计数检验'" name="first">
-                    <el-table :data="editForm.countItem" style="width: 100%" :height="350" size="small" border stripe
+                    <el-table :data="editForm.countItem" style="width: 100%" :height="350" size="small" border
                         :span-method="objectSpanMethod2" :tooltip-effect="'dark'"
                         :row-class-name="tableDetailRowClassName2">
                         <el-table-column prop="LineNos" :label="'检验序列'" :align="'center'" :fixed="'left'" width="80">
                         </el-table-column>
                         <el-table-column prop="ProjectCategoryName" :label="$t('aqlrules.ProjectCategoryName')">
                         </el-table-column>
-                        <el-table-column prop="ProjectName" :label="$t('aqlrules.ProjectName')">
+                        <el-table-column prop="ProjectName" :label="$t('aqlrules.ProjectName')"
+                            :min-width="getColumnWidth2('ProjectName')">
                         </el-table-column>
                         <el-table-column prop="TargetValue" :label="$t('aqlrules.TargetValue')">
                         </el-table-column>
@@ -282,13 +290,14 @@
                         </el-form-item>
                     </div>
                     <el-table ref="tempMeasureRef" :data="editForm.listItem" style="width: 100%" :height="300"
-                        size="small" border stripe :span-method="objectSpanMethod" :tooltip-effect="'dark'"
+                        size="small" border :span-method="objectSpanMethod" :tooltip-effect="'dark'"
                         :row-class-name="tableDetailRowClassName">
                         <el-table-column prop="LineNos" :label="'检验序列'" :align="'center'" :fixed="'left'" width="80">
                         </el-table-column>
                         <el-table-column prop="ProjectCategoryName" :label="$t('aqlrules.ProjectCategoryName')">
                         </el-table-column>
-                        <el-table-column prop="ProjectName" :label="$t('aqlrules.ProjectName')">
+                        <el-table-column prop="ProjectName" :label="$t('aqlrules.ProjectName')"
+                            :min-width="getColumnWidth2('ProjectName')">
                         </el-table-column>
                         <!-- <el-table-column prop="InspectionType" :label="$t('aqlrules.DBType')">
                         </el-table-column> -->
@@ -296,12 +305,7 @@
                         </el-table-column>
                         <el-table-column prop="TargetValue" :label="$t('aqlrules.TargetValue')">
                         </el-table-column>
-                        <el-table-column prop="CPKMinL" :label="'CPK长'" v-if="editForm.InspectionType == '首检'">
-                        </el-table-column>
-                        <el-table-column prop="CPKMinW" :label="'CPK宽'" v-if="editForm.InspectionType == '首检'">
-                        </el-table-column>
-                        <el-table-column prop="CPKMinThk" :label="'CPK厚度'" v-if="editForm.InspectionType == '首检'">
-                        </el-table-column>
+
                         <el-table-column prop="MaxValue" :label="$t('aqlrules.MaxValue')">
                         </el-table-column>
                         <el-table-column prop="MinValue" :label="$t('aqlrules.MinValue')">
@@ -358,29 +362,40 @@
                                     :disabled="scope.row.InspectionResult == 'OK'"></el-input>
                             </template>
                         </el-table-column>
+                        <el-table-column prop="CPKMinL" :label="'CPK长'" v-if="editForm.InspectionType == '首检'">
+                        </el-table-column>
+                        <el-table-column prop="CPKMinW" :label="'CPK宽'" v-if="editForm.InspectionType == '首检'">
+                        </el-table-column>
+                        <el-table-column prop="CPKMinThk" :label="'CPK厚度'" v-if="editForm.InspectionType == '首检'">
+                        </el-table-column>
                     </el-table>
                 </el-tab-pane>
             </el-tabs>
             <template #footer>
-                <div class="dialog-footer">
-                    <el-button @click="handleEditClose">{{
+                <div class="flex justify-between">
+                    <div>
+                        <el-button type="primary" @click="handleEditConfirm"
+                            :disabled="(editForm.InspectionType == '首检' && editForm.FirstArticleInspectionStatus == '完成')">
+                            {{ "提交" }}
+                        </el-button>
+                    </div>
+                    <div> <el-button @click="handleEditClose">{{
                         $t("publicText.close")
-                    }}</el-button>
-                    <el-button type="warning" @click="handleEditZQConfirm"
-                        :disabled="(editForm.InspectionType == '首检' && editForm.FirstArticleInspectionStatus == '检验完成')">
-                        {{ "暂存" }}
-                    </el-button>
-                    <el-button type="primary" @click="handleEditConfirm"
-                        :disabled="(editForm.InspectionType == '首检' && editForm.FirstArticleInspectionStatus == '检验完成')">
-                        {{ "提交" }}
-                    </el-button>
+                            }}</el-button>
+                        <el-button type="warning" @click="handleEditZQConfirm"
+                            :disabled="(editForm.InspectionType == '首检' && editForm.FirstArticleInspectionStatus == '完成')">
+                            {{ "暂存" }}
+                        </el-button>
+                    </div>
+
+
                 </div>
             </template>
         </el-dialog>
         <el-dialog v-model="dialogVisible" :title="'输入测量值'" width="500px">
             <el-form ref="formRef" label-width="auto" size="small" @submit.native.prevent>
                 <el-form-item :label="'样本值' + i" prop="name" v-for="i in currentSampleSize" :key="i">
-                    <el-input v-model="measurementValues[i - 1]" placeholder="请输入测量值" style="width: 200px" />
+                    <el-input :ref="(el:any) => setInputRef(el, i)" @keyup.enter.native="handleEnterInput($event, i)" v-model="measurementValues[i - 1]" placeholder="请输入测量值" style="width: 200px" />
                 </el-form-item>
             </el-form>
 
@@ -398,7 +413,7 @@
                 <template #header>
                     <div class="flex justify-between items-center ">
                         <div class="flex items-center gap-2">
-                            <el-icon  :size="18" color="#409eff">
+                            <el-icon :size="18" color="#409eff">
                                 <Document />
                             </el-icon>
                             <span class="text-lg font-extrabold">FA文件</span>
@@ -417,19 +432,19 @@
                 </template>
 
                 <!-- 当前文件信息 -->
-                <div v-if="deleteFAForm.TemplateName" class="current-file mb-3">
+                <div v-if="uploadForm.TemplateName" class="current-file mb-3">
                     <div class="flex items-center">
                         <el-icon :size="28" color="#409eff">
                             <Document />
                         </el-icon>
                         <div class="flex-1">
-                            <div class="file-name">{{ deleteFAForm.TemplateName }}</div>
+                            <div class="file-name">{{ uploadForm.TemplateName }}</div>
                         </div>
                     </div>
                 </div>
 
                 <!-- 上传区域 -->
-                <div class="upload-area" >
+                <div class="upload-area">
                     <el-upload action="#" :limit="1" v-model:file-list="fileList" :auto-upload="false"
                         :on-change="file1UpChange" :on-remove="file1UpRemove" :before-upload="beforeUpload"
                         accept=".xlsx" :show-file-list="false" ref="upload1">
@@ -450,9 +465,9 @@
             </el-card>
             <el-card :body-style="{ padding: '8px' }">
                 <template #header>
-                     <div class="flex justify-between items-center ">
+                    <div class="flex justify-between items-center ">
                         <div class="flex items-center gap-2">
-                            <el-icon  :size="18" color="#409eff">
+                            <el-icon :size="18" color="#409eff">
                                 <Document />
                             </el-icon>
                             <span class="text-lg font-extrabold">CPK文件</span>
@@ -461,7 +476,7 @@
                             </el-tag>
                         </div>
                         <el-button v-if="deleteCPKForm.TemplateName" type="danger" size="small" plain
-                            @click="handleDeleteCPK" >
+                            @click="handleDeleteCPK">
                             <el-icon>
                                 <Delete />
                             </el-icon>
@@ -471,13 +486,13 @@
                 </template>
 
                 <!-- 当前文件信息 -->
-                <div v-if="deleteCPKForm.TemplateName" class="current-file mb-3">
-                <div class="flex items-center">
+                <div v-if="uploadForm2.TemplateName" class="current-file mb-3">
+                    <div class="flex items-center">
                         <el-icon :size="28" color="#409eff">
                             <Document />
                         </el-icon>
                         <div class="flex-1">
-                            <div class="file-name">{{ deleteCPKForm.TemplateName }}</div>
+                            <div class="file-name">{{ uploadForm2.TemplateName }}</div>
                         </div>
                     </div>
                 </div>
@@ -535,14 +550,14 @@
                 </span>
             </template>
         </el-dialog>
-        <el-dialog v-model="previewVisible" :title="previewTitle" width="800px" :append-to-body="true"
+        <el-dialog v-model="previewVisible" :title="previewTitle" width="80%" :append-to-body="true"
             :close-on-click-modal="false" :close-on-press-escape="false" align-center>
-            <iframe :src="previewUrl" width="100%" height="550px" frameborder="0"></iframe>
+            <iframe :src="previewUrl" width="100%" height="650px" frameborder="0"></iframe>
             <template #footer>
                 <div class="dialog-footer">
                     <el-button @click="handlePreviewClose">{{
                         $t("publicText.close")
-                        }}</el-button>
+                    }}</el-button>
                     <el-button type="primary" @click="handlePreviewDawnload">
                         {{ $t("publicText.dawnload") }}
                     </el-button>
@@ -557,7 +572,7 @@
                         <el-table-column prop="MfgOrder" :label="$t('oqcInspection.workerOrder')" />
                         <el-table-column prop="Description" :label="'生产备注'"
                             :min-width="getColumnWidth3('Description')" />
-                        <el-table-column prop="MfgOrderPO" :label="'工单PO'" />
+                        <el-table-column prop="MfgOrderPO" :label="'工单PO'" :min-width="getColumnWidth3('MfgOrderPO')" />
                         <el-table-column prop="Quantity" :label="'生产数量'" />
                         <el-table-column prop="OrderQty" :label="'工单数量'" />
                         <el-table-column prop="ProductName" :label="$t('oqcInspection.productName')"
@@ -676,7 +691,7 @@
                 <el-tab-pane label="生产备注" name="six">
                     <el-table :data="ManufactureTable" border stripe style="width: 100%" size="small" :height="350">
                         <el-table-column prop="MfgOrder" :label="$t('oqcInspection.workerOrder')" />
-                        <!-- <el-table-column prop="ApprovalRemarks" :label="'备注'" /> -->
+                        <el-table-column prop="DataValue" :label="'备注'" :min-width="getColumnWidth5('DataValue')" />
                         <el-table-column prop="LotNumber" :label="'出货批号'" />
                         <el-table-column prop="ShippingQty" :label="'送检数量'" />
                         <el-table-column prop="UnitOfMeasure" :label="'单位'" width="130" />
@@ -691,7 +706,7 @@
                 <div class="dialog-footer">
                     <el-button @click="handleOtherClose">{{
                         $t("publicText.close")
-                        }}</el-button>
+                    }}</el-button>
 
                 </div>
             </template>
@@ -703,9 +718,9 @@
 import ExcelJS from 'exceljs';
 import JSZip from "jszip";
 import dayjs from "dayjs";
-import { exportTableToExcel1 } from "@/utils/exportExcel1";
 import { exportTableToExcel } from "@/utils/exportExcel";
-import { handleExcelUpload } from "@/utils/analysisExcel"
+import { exportTableToExcel1, exportMeasureTableToExcel, exportMeasureTableToExcelVertical } from "@/utils/exportExcel1";
+import { handleSplitExcelUpload, handleExcelUploadEnhanced } from "@/utils/analysisExcel"
 import { saveAs } from "file-saver";
 import {
     GetInspectionQuery,
@@ -757,6 +772,7 @@ import { ElNotification, ElMessageBox, ElMessage } from "element-plus";
 import { useI18n } from "vue-i18n";
 const { t } = useI18n();
 import { useUserStoreWithOut } from "@/stores/modules/user";
+
 const userStore = useUserStoreWithOut();
 const getForm = ref({
     InspectionNO: "",
@@ -764,6 +780,7 @@ const getForm = ref({
     MfgorderName: "",
     ProductName: "",
     PartNo: "",
+    CustomerPO: '',
     CustomerName: "",
     LotNo: "",
     ProductType: "",
@@ -865,6 +882,7 @@ const FinishedProTable = ref<any[]>([])
 const ProStageTable = ref<any[]>([])
 const ManufactureTable = ref<any[]>([])
 const MfgOrderName = ref('')
+const inputRefs = ref<any[]>([])
 watch(
     () => searchDate.value,
     (newVal: any, oldVal: any) => {
@@ -905,7 +923,7 @@ onBeforeUnmount(() => {
 });
 const tableRowClassName = (val: any) => {
     let row = val.row;
-    if (row.PriorityCodeName == 1) {
+    if (row.StatusFlag == 1) {
         return "danger-row-invent";
     }
 };
@@ -928,6 +946,7 @@ const resetFormData = () => {
         MfgorderName: "",
         ProductName: "",
         PartNo: "",
+        CustomerPO: '',
         CustomerName: "",
         LotNo: "",
         ProductType: "",
@@ -1019,6 +1038,8 @@ const fetchFinishAllData = async () => {
 const handleUpload = (row: any) => {
     uploadForm.value.InspectionNO = row.FirstArticleInspectionNo;
     uploadForm2.value.InspectionNO = row.FirstArticleInspectionNo;
+    uploadForm.value.TemplateName = row.ES_FaUrl == null ? '' : row.ES_FaUrl
+    uploadForm2.value.TemplateName = row.ES_CPKUrl == null ? '' : row.ES_CPKUrl
     deleteCPKForm.value.InspectionNO = row.FirstArticleInspectionNo
     deleteCPKForm.value.TemplateName = row.ES_CPKUrl == null ? '' : row.ES_CPKUrl
     deleteFAForm.value.InspectionNO = row.FirstArticleInspectionNo
@@ -1129,6 +1150,7 @@ const convertToBase64 = (file: any, index: any) => {
                 /^data:application\/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,/,
                 ""
             );
+
         }
     };
 
@@ -1425,7 +1447,7 @@ const handleEditConfirm = () => {
             AverageNum: item.AverageNum,
             DefectDec: item.DefectDec,
             SpecialCause: item.SpecialCause,
-            InspectionResult: item.SampleNum !== 0 && (item.DefectNum == 0 || item.DefectNum == '') ? "OK" : "NG",
+            InspectionResult: item.SampleNum !== 0 && (item.DefectNum == 0 || item.DefectNum == '' || item.DefectNum == null) ? "OK" : "NG",
             InspectionDate: "",
             InspectionBy: userStore.getUserInfo2 !== '' ? userStore.getUserInfo2 : userStore.getUserInfo,
             InspectionUpdateBy: userStore.getUserInfo2 !== '' ? userStore.getUserInfo2 : userStore.getUserInfo,
@@ -1559,7 +1581,7 @@ const handleEdit = (row: any, type: any) => {
                     InspectionBasis: item.INSPECTIONBASIS,
                     SampleNum: item.SAMPLENUM == null || item.SAMPLENUM == '' ? '1' : item.SAMPLENUM,
                     MeasurementType: item.MEASUREMENTTYPE,
-                    DefectNum: item.DEFECTNUM,
+                    DefectNum: item.DEFECTNUM == null || item.DEFECTNUM == '' ? '0' : item.DEFECTNUM,
                     ObservedValue: item.OBSERVEDVALUE,
                     ObservedValueSum: item.OBSERVEDVALUESUM,
                     AverageNum: item.AVERAGENUM,
@@ -1794,6 +1816,8 @@ const handleDeleteFA = () => {
                     type: res.success ? "success" : "error",
                 });
                 if (res.success) {
+                    deleteFAForm.value.TemplateName = ''
+                    uploadForm.value.TemplateName = ''
                     getData();
                 }
 
@@ -1825,6 +1849,7 @@ const handleDeleteCPK = () => {
                 if (res.success) {
                     getData();
                     deleteCPKForm.value.TemplateName = ''
+                    uploadForm2.value.TemplateName = ""
                 }
 
             });
@@ -1975,7 +2000,22 @@ const downloadAsZip = async (files: IQCFile[]) => {
     }
 };
 const downloadTemp = () => {
-    exportTableToExcel1({
+    // exportMeasureTableToExcel({
+    //     tableRef: tempMeasureRef.value,
+    //     fetchAllData: tempData,
+    //     fileName: editForm.value.InspectionNO,
+    //     styles: {
+    //         headerBgColor: "", // 灰色表头
+    //         headerFont: {
+    //             color: { argb: "" }, // 红色文字
+    //             bold: false,
+    //             size: 12,
+    //         }, // 白色文字
+    //         cell: { numFmt: "@" }, // 强制文本格式
+    //     },
+    //     t,
+    // });
+    exportMeasureTableToExcelVertical({
         tableRef: tempMeasureRef.value,
         fetchAllData: tempData,
         fileName: editForm.value.InspectionNO,
@@ -1989,13 +2029,33 @@ const downloadTemp = () => {
             cell: { numFmt: "@" }, // 强制文本格式
         },
         t,
-        stringColumns: ['ObservedValue']
-    });
+        splitMeasurementColumns:false
+    })
 }
 const tempData = async () => {
     console.log(editForm.value.listItem);
 
-    let data = await editForm.value.listItem.filter((item: any) => item.InspectionResult !== 'OK')
+    const data = await Promise.all(
+        editForm.value.listItem.map((item: any) => {
+            const dataValues = item.ObservedValue?.split(',') || [];
+
+            // 使用 reduce 动态创建 MeasuredValue 字段
+            const measuredValues = dataValues.slice(0, 10).reduce((acc: any, value: any, index: any) => {
+                acc[`MeasuredValue${index + 1}`] = value.trim();
+                return acc;
+            }, {});
+
+            // 确保有 10 个字段
+            for (let i = dataValues.length; i < 10; i++) {
+                measuredValues[`MeasuredValue${i + 1}`] = '';
+            }
+
+            return {
+                ...item,
+                ...measuredValues
+            };
+        })
+    );
     return data
 }
 const fileUpChange2 = async (file: any, fileList1: any) => {
@@ -2013,7 +2073,7 @@ const fileUpChange2 = async (file: any, fileList1: any) => {
         return
     }
     try {
-        const result = await handleExcelUpload(file.raw)
+        const result = await handleExcelUploadEnhanced(file.raw, { forceFormat: 'auto' })
 
         if (result.success) {
             // parsedData.value = result.data
@@ -2077,7 +2137,10 @@ const assignValuesMulti = (sourceData: any, targetData: any) => {
         if (sourceItem) {
             targetItem.SampleNum = sourceItem.SampleNum;
             targetItem.ObservedValue = sourceItem.ObservedValue;
+            console.log(targetItem.MeasuredValue);
             let valData = (sourceItem.ObservedValue).split(',')
+            console.log(valData);
+
             if (targetItem.SampleNum < valData.length) {
                 targetItem.SampleNum = valData.length
             }
@@ -2091,8 +2154,14 @@ const assignValuesMulti = (sourceData: any, targetData: any) => {
 const columnWidths = computed(() => {
     const columns = [
         { label: '产品名称', prop: 'ES_ProductName' },
+        { label: '客户名称', prop: 'ES_CustomerName' },
         { label: 'FA', prop: 'ES_FaUrl' },
         { label: 'CPK', prop: 'ES_CPKUrl' },
+        { label: '原料批次', prop: 'LotNumber' },
+        { label: '客户PN', prop: 'ES_PartNo' },
+        { label: '客户PO', prop: 'ES_CustomerPO' },
+        { label: 'LotNo', prop: 'ES_LotNo' },
+
         // 添加其他需要自适应宽度的列
     ];
 
@@ -2112,6 +2181,7 @@ const columnWidths2 = computed(() => {
     const columns = [
         { label: '检验工具', prop: 'ToolName' },
         { label: '检验依据', prop: 'InspectionBasis' },
+        { label: '项目名称', prop: 'ProjectName' },
         // { label: 'FA', prop: 'ES_FaUrl' },
         // { label: 'CPK', prop: 'ES_CPKUrl' },
         // 添加其他需要自适应宽度的列
@@ -2132,7 +2202,8 @@ const columnWidths3 = computed(() => {
     const columns = [
         { label: '生产备注', prop: 'Description' },
         { label: '产品名称', prop: 'ProductName' },
-        { label: '产品描述', prop: 'ProductDescription' }
+        { label: '产品描述', prop: 'ProductDescription' },
+        { label: '工单PO', prop: 'MfgOrderPO' }
     ];
 
     // 批量计算列宽
@@ -2162,6 +2233,43 @@ const columnWidths4 = computed(() => {
 const getColumnWidth4 = (prop: string) => {
     return columnWidths4.value[prop] || 'auto';
 };
+const columnWidths5 = computed(() => {
+    const columns = [
+        { label: '备注', prop: 'DataValue' },
+
+    ];
+
+    // 批量计算列宽
+    return calculateColumnsWidth(columns, ManufactureTable.value, {
+        padding: 25,
+        fontSize: 13
+    });
+});
+
+// 在模板中使用
+const getColumnWidth5 = (prop: string) => {
+    return columnWidths5.value[prop] || 'auto';
+};
+ const setInputRef = (el:any, index:any) => {
+    if (el) {
+      inputRefs.value[index - 1] = el
+    }
+  }
+const handleEnterInput=(e:any,currentIndex:any)=>{
+    e.preventDefault()
+    console.log(currentIndex);
+    
+     if (currentIndex < currentSampleSize.value) {
+    // 使用 nextTick 确保 DOM 已更新
+    nextTick(() => {
+          console.log(currentIndex);
+      const nextInput = inputRefs.value[currentIndex]
+      if (nextInput) {
+        nextInput.focus()
+      }
+    })
+  }
+}
 // const flexColumnWidth = (label: any, prop: any) => {
 //     const arr = tableData?.value.map((x: { [x: string]: any }) => x[prop]);
 //     arr.push(label); // 把每列的表头也加进去算
@@ -2331,91 +2439,93 @@ const getColumnWidth4 = (prop: string) => {
     font-weight: bold;
     margin-bottom: 5px;
 }
+
 /* 上传区域 */
 .current-file {
-  padding: 12px;
-  background: linear-gradient(135deg, #f6f9ff 0%, #f0f7ff 100%);
-  border-radius: 8px;
-  border: 1px solid #e4e7ed;
+    padding: 12px;
+    background: linear-gradient(135deg, #f6f9ff 0%, #f0f7ff 100%);
+    border-radius: 8px;
+    border: 1px solid #e4e7ed;
 }
+
 .upload-area {
-  border: 2px dashed #dcdfe6;
-  border-radius: 8px;
-  padding: 32px 20px;
-  text-align: center;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  background-color: #fafafa;
+    border: 2px dashed #dcdfe6;
+    border-radius: 8px;
+    padding: 32px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background-color: #fafafa;
 }
 
 .upload-area:hover {
-  border-color: #409eff;
-  background-color: #f0f7ff;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(64, 158, 255, 0.1);
+    border-color: #409eff;
+    background-color: #f0f7ff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(64, 158, 255, 0.1);
 }
 
 .upload-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
 }
 
 .upload-icon-wrapper {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  background-color: #f0f7ff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.3s ease;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: #f0f7ff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
 }
 
 .upload-area:hover .upload-icon-wrapper {
-  background-color: #e6f3ff;
-  transform: scale(1.05);
+    background-color: #e6f3ff;
+    transform: scale(1.05);
 }
 
 .upload-icon {
-  color: #a0cfff;
-  font-size: 28px;
+    color: #a0cfff;
+    font-size: 28px;
 }
 
 .upload-area:hover .upload-icon {
-  color: #409eff;
+    color: #409eff;
 }
 
 .upload-text {
-  color: #606266;
+    color: #606266;
 }
 
 .upload-main-text {
-  font-size: 14px;
-  font-weight: 500;
-  margin-bottom: 4px;
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 4px;
 }
 
 .upload-hint {
-  font-size: 12px;
-  color: #909399;
+    font-size: 12px;
+    color: #909399;
 }
 
 /* 操作提示 */
 .action-hint {
-  margin-top: 20px;
+    margin-top: 20px;
 }
 
 .hint-content {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .hint-count {
-  font-weight: 600;
-  color: #409eff;
+    font-weight: 600;
+    color: #409eff;
 }
 </style>
 <style>

@@ -19,7 +19,7 @@
                     <el-table :data="ProControlTable" border stripe style="width: 100%" size="small" :height="tableHeight">
                         <el-table-column prop="MfgOrder" :label="$t('oqcInspection.workerOrder')" />
                         <el-table-column prop="Description" :label="'生产备注'" :min-width="getColumnWidth3('Description')"/>
-                        <el-table-column prop="MfgOrderPO" :label="'工单PO'" />
+                        <el-table-column prop="MfgOrderPO" :label="'工单PO'" :min-width="getColumnWidth3('MfgOrderPO')" />
                         <el-table-column prop="Quantity" :label="'生产数量'" />
                         <el-table-column prop="OrderQty" :label="'工单数量'" />
                         <el-table-column prop="ProductName" :label="$t('oqcInspection.productName')" :min-width="getColumnWidth3('ProductName')" />
@@ -135,7 +135,7 @@
                 <el-tab-pane label="生产备注" name="six">
                     <el-table :data="ManufactureTable" border stripe style="width: 100%" size="small" :height="tableHeight">
                         <el-table-column prop="MfgOrder" :label="$t('oqcInspection.workerOrder')" />
-                        <!-- <el-table-column prop="ApprovalRemarks" :label="'备注'" /> -->
+                         <el-table-column prop="DataValue" :label="'备注'"  :min-width="getColumnWidth5('DataValue')" />
                         <el-table-column prop="LotNumber" :label="'出货批号'" />
                         <el-table-column prop="ShippingQty" :label="'送检数量'" />
                         <el-table-column prop="UnitOfMeasure" :label="'单位'" width="130" />
@@ -255,7 +255,8 @@ const columnWidths3 = computed(() => {
     const columns = [
         { label: '生产备注', prop: 'Description' },
         { label: '产品名称', prop: 'ProductName' },
-        { label: '产品描述', prop: 'ProductDescription' }
+        { label: '产品描述', prop: 'ProductDescription' },
+        { label: '工单PO', prop: 'MfgOrderPO' }
     ];
 
     // 批量计算列宽
@@ -285,6 +286,23 @@ const columnWidths4= computed(() => {
 const getColumnWidth4= (prop: string) => {
     return columnWidths4.value[prop] || 'auto';
 };
+const columnWidths5 = computed(() => {
+    const columns = [
+        { label: '备注', prop: 'DataValue' },
+       
+    ];
+
+    // 批量计算列宽
+    return calculateColumnsWidth(columns, ManufactureTable.value, {
+        padding: 25,
+        fontSize: 13
+    });
+});
+
+// 在模板中使用
+const getColumnWidth5 = (prop: string) => {
+    return columnWidths5.value[prop] || 'auto';
+}; 
 </script>
 
 <style lang="scss" scoped>
