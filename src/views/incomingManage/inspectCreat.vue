@@ -43,14 +43,16 @@
                             <template #default="scope">
                                 <span>{{
                                     scope.$index + pageObj.pageSize * (pageObj.currentPage - 1) + 1
-                                }}</span>
+                                    }}</span>
                             </template>
                         </el-table-column>
+                        <el-table-column prop="PriorityCodeName" :label="$t('batchCreation.Priority')" width="60"
+                            :align="'center'" fixed />
                         <el-table-column prop="IQCNumber" :label="$t('incomeCreat.creatInspect')" width="120" fixed>
                             <template #default="scope">
                                 <span class="underline">{{
                                     scope.row.IQCNumber
-                                }}</span>
+                                    }}</span>
                             </template>
                         </el-table-column>
 
@@ -97,16 +99,18 @@
                         </el-button>
                     </div>
                     <el-table :data="detailTableData" size="small" :style="{ width: '100%' }" ref="rawRef"
-                        :height="tableHeight" border fit :tooltip-effect="'dark'" :row-class-name="tableDetailRowClassName">
+                        :height="tableHeight" border fit :tooltip-effect="'dark'"
+                        :row-class-name="tableDetailRowClassName">
                         <el-table-column type="index" align="center" fixed :label="$t('publicText.index')" width="50">
                             <template #default="scope">
                                 <span>{{
                                     scope.$index + pageObj.pageSize * (pageObj.currentPage - 1) + 1
-                                }}</span>
+                                    }}</span>
                             </template>
                         </el-table-column>
-                        <el-table-column prop="MaterialName" :label="$t('incomeCreat.materialName')" />
-                        <el-table-column prop="ModelSpec" :label="$t('incomeCreat.modelRules')" :min-width="getColumnWidth('ModelSpec')" />
+                         <el-table-column prop="ModelSpec" :label="$t('incomeCreat.modelRules')"
+                            :min-width="getColumnWidth('ModelSpec')" fixed/>
+                        <el-table-column prop="MaterialName" :label="$t('incomeCreat.materialName')" fixed/>
                         <el-table-column prop="Supplier" :label="$t('incomeCreat.supplier')" />
                         <el-table-column prop="OrderNo" :label="$t('incomeCreat.orderNumber')" />
                         <el-table-column prop="LotNo" label="Lot No" />
@@ -187,12 +191,18 @@
                         <el-option v-for="n in incomeUnitList" :label="n.IncomingUnit" :value="n.IncomingUnit" />
                     </el-select>
                 </el-form-item>
+                <el-form-item :label="'优先级'" prop="PriorityCode">
+                    <el-select v-model="creatForm.PriorityCode" placeholder="" style="width: 200px">
+                        <el-option v-for="n in priorityList" :label="n.PriorityCodeName" :value="n.PriorityCodeName"
+                            :key="n.PriorityCodeId" />
+                    </el-select>
+                </el-form-item>
             </el-form>
             <template #footer>
                 <div class="dialog-footer">
                     <el-button @click="handleClose">{{
                         $t("publicText.cancel")
-                        }}</el-button>
+                    }}</el-button>
                     <el-button type="primary" @click="handleConfirm">
                         {{ $t("publicText.confirm") }}
                     </el-button>
@@ -234,12 +244,18 @@
                         <el-option v-for="n in incomeUnitList" :label="n.IncomingUnit" :value="n.IncomingUnit" />
                     </el-select>
                 </el-form-item>
+                <el-form-item :label="'优先级'" prop="PriorityCode">
+                    <el-select v-model="editCreateForm.PriorityCode" placeholder="" style="width: 200px">
+                        <el-option v-for="n in priorityList" :label="n.PriorityCodeName" :value="n.PriorityCodeName"
+                            :key="n.PriorityCodeId" />
+                    </el-select>
+                </el-form-item>
             </el-form>
             <template #footer>
                 <div class="dialog-footer">
                     <el-button @click="handleEditClose">{{
                         $t("publicText.cancel")
-                        }}</el-button>
+                    }}</el-button>
                     <el-button type="primary" @click="handleEditConfirm" :disabled="editCreateForm.StatusText == '完成'">
                         {{ $t("publicText.confirm") }}
                     </el-button>
@@ -253,45 +269,52 @@
                 <div class="dialog-footer">
                     <el-button @click="detailVisible = false">{{
                         $t("publicText.close")
-                        }}</el-button>
+                    }}</el-button>
                 </div>
             </template>
         </el-dialog>
-        <el-dialog v-model="addDetailVisible" :title="$t('incomeCreat.incomeDetail')" width="750px"
+        <el-dialog v-model="addDetailVisible" :title="$t('incomeCreat.incomeDetail')" width="800px"
             :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" align-center
             @close="handleAddDetailClose">
-            <el-form ref="detailFormRef" :model="detailForm" label-width="auto" :inline="true">
-                <el-form-item :label="$t('incomeCreat.materialName')" prop="materialName">
+            <el-form ref="detailFormRef" :model="detailForm" label-width="auto" :inline="true" :rules="detailRules">
+                <el-form-item :label="$t('incomeCreat.materialName')" prop="MaterialName">
                     <el-select v-model="detailForm.MaterialName" placeholder="" style="width: 200px" filterable
                         @change="changeData">
                         <el-option v-for="n in materialNameList" :label="n.ProductFamilyName"
                             :value="n.ProductFamilyName" />
                     </el-select>
                 </el-form-item>
-                <el-form-item :label="$t('incomeCreat.modelRules')" prop="modelRules">
+                <el-form-item :label="$t('incomeCreat.modelRules')" prop="ModelSpec">
                     <el-select v-model="detailForm.ModelSpec" placeholder="" style="width: 200px" filterable>
                         <el-option v-for="n in productList" :label="n.productname" :value="n.productname" />
                     </el-select>
                 </el-form-item>
-                <el-form-item :label="$t('incomeCreat.supplier')" prop="supplier">
+                <el-form-item :label="$t('incomeCreat.supplier')" prop="Supplier">
                     <el-select v-model="detailForm.Supplier" placeholder="" style="width: 200px">
                         <el-option v-for="n in vendorList" :label="n.Vendorname" :value="n.Vendorname" />
                     </el-select>
                 </el-form-item>
-                <el-form-item :label="$t('incomeCreat.orderNumber')" prop="orderNumber">
+                <el-form-item :label="$t('incomeCreat.orderNumber')" prop="OrderNo">
                     <el-input v-model="detailForm.OrderNo" style="width: 200px" placeholder="" />
                 </el-form-item>
-                <el-form-item label="Lot No" prop="lotno">
+                <el-form-item label="LotNo" prop="LotNo">
                     <el-input v-model="detailForm.LotNo" style="width: 200px" placeholder="" />
                 </el-form-item>
-                <el-form-item label="T-Code" prop="T-Code">
+                <el-form-item label="T-Code" prop="TCode">
                     <el-input v-model="detailForm.TCode" style="width: 200px" placeholder="" />
                 </el-form-item>
-                <el-form-item :label="$t('incomeCreat.qtyIncomeMaterial')" prop="qtyIncomeMaterial">
+                <!-- <el-form-item :label="$t('incomeCreat.qtyIncomeMaterial')" prop="QuantityPerBox">
                     <el-input v-model="detailForm.QuantityPerBox" style="width: 200px" placeholder="" />
+                </el-form-item> -->
+                <el-form-item :label="$t('incomeCreat.qtyIncomeMaterial')" prop="quantity">
+                    <div class="flex items-center">
+                        <el-input-number v-model="detailForm.quantity" style="width: 120px" :min="1" placeholder="数量" />
+                        <span class="mx-1">PCS</span>
+                        <el-input-number v-model="detailForm.boxCount" style="width: 120px" :min="1" placeholder="箱数" />
+                        <span class="ml-1">箱</span>
+                    </div>
                 </el-form-item>
-
-                <el-form-item :label="$t('incomeCreat.supplierReport')" prop="supplierReport">
+                <el-form-item :label="$t('incomeCreat.supplierReport')" prop="SupplierReportName">
                     <el-input v-model="detailForm.SupplierReportName" :disabled="true" style="width: 200px"
                         placeholder="" />
 
@@ -308,7 +331,7 @@
                 <div class="dialog-footer">
                     <el-button @click="handleAddDetailClose">{{
                         $t("publicText.cancel")
-                        }}</el-button>
+                    }}</el-button>
                     <el-button type="primary" @click="handleAddDetailConfirm">
                         {{ $t("publicText.confirm") }}
                     </el-button>
@@ -316,40 +339,48 @@
             </template>
         </el-dialog>
         <el-dialog v-model="editDetailVisible" :title="$t('publicText.edit') + $t('incomeCreat.incomeDetail')"
-            width="750px" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false"
+            width="800px" :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false"
             align-center @close="handleEditDetailClose">
-            <el-form ref="editdetailFormRef" :model="editdetailForm" label-width="auto" :inline="true">
-                <el-form-item :label="$t('incomeCreat.materialName')" prop="materialName">
+            <el-form ref="editdetailFormRef" :model="editdetailForm" label-width="auto" :inline="true"
+                :rules="detailRules">
+                <el-form-item :label="$t('incomeCreat.materialName')" prop="MaterialName">
                     <el-select v-model="editdetailForm.MaterialName" placeholder="" style="width: 200px"
                         @change="changeData" disabled>
                         <el-option v-for="n in materialNameList" :label="n.ProductFamilyName"
                             :value="n.ProductFamilyName" />
                     </el-select>
                 </el-form-item>
-                <el-form-item :label="$t('incomeCreat.modelRules')" prop="modelRules">
+                <el-form-item :label="$t('incomeCreat.modelRules')" prop="ModelSpec">
                     <el-select v-model="editdetailForm.ModelSpec" placeholder="" style="width: 200px" disabled>
                         <el-option v-for="n in productList" :label="n.productname" :value="n.productname" />
                     </el-select>
                 </el-form-item>
-                <el-form-item :label="$t('incomeCreat.supplier')" prop="supplier">
+                <el-form-item :label="$t('incomeCreat.supplier')" prop="Supplier">
                     <el-select v-model="editdetailForm.Supplier" placeholder="" style="width: 200px">
                         <el-option v-for="n in vendorList" :label="n.Vendorname" :value="n.Vendorname" />
                     </el-select>
                 </el-form-item>
-                <el-form-item :label="$t('incomeCreat.orderNumber')" prop="orderNumber">
+                <el-form-item :label="$t('incomeCreat.orderNumber')" prop="OrderNo">
                     <el-input v-model="editdetailForm.OrderNo" style="width: 200px" placeholder="" />
                 </el-form-item>
-                <el-form-item label="Lot No" prop="lotno">
+                <el-form-item label="LotNo" prop="LotNo">
                     <el-input v-model="editdetailForm.LotNo" style="width: 200px" placeholder="" />
                 </el-form-item>
-                <el-form-item label="T-Code" prop="T-Code">
+                <el-form-item label="T-Code" prop="TCode">
                     <el-input v-model="editdetailForm.TCode" style="width: 200px" placeholder="" />
                 </el-form-item>
-                <el-form-item :label="$t('incomeCreat.qtyIncomeMaterial')" prop="qtyIncomeMaterial">
+                <!-- <el-form-item :label="$t('incomeCreat.qtyIncomeMaterial')" prop="QuantityPerBox">
                     <el-input v-model="editdetailForm.QuantityPerBox" style="width: 200px" placeholder="" />
+                </el-form-item> -->
+                  <el-form-item :label="$t('incomeCreat.qtyIncomeMaterial')" prop="quantity">
+                    <div class="flex items-center">
+                        <el-input-number v-model="editdetailForm.quantity" style="width: 120px" :min="1" placeholder="数量" />
+                        <span class="mx-1">PCS</span>
+                        <el-input-number v-model="editdetailForm.boxCount" style="width: 120px" :min="1" placeholder="箱数" />
+                        <span class="ml-1">箱</span>
+                    </div>
                 </el-form-item>
-
-                <el-form-item :label="$t('incomeCreat.supplierReport')" prop="supplierReport">
+                <el-form-item :label="$t('incomeCreat.supplierReport')" prop="SupplierReportName">
                     <el-input v-model="editdetailForm.SupplierReportName" :disabled="true" style="width: 200px"
                         placeholder="" />
                 </el-form-item>
@@ -365,7 +396,7 @@
                 <div class="dialog-footer">
                     <el-button @click="handleEditDetailClose">{{
                         $t("publicText.cancel")
-                        }}</el-button>
+                    }}</el-button>
                     <el-button type="primary" @click="handleEditDetailConfirm" :disabled="editdetailForm.StatusText">
                         {{ $t("publicText.confirm") }}
                     </el-button>
@@ -379,7 +410,7 @@
                 <div class="dialog-footer">
                     <el-button @click="handlePreviewClose">{{
                         $t("publicText.close")
-                        }}</el-button>
+                    }}</el-button>
                     <el-button type="primary" @click="handlePreviewDawnload">
                         {{ $t("publicText.dawnload") }}
                     </el-button>
@@ -404,7 +435,8 @@ import {
     GetIQCDetailQuery,
     AyscIQCDetailAdd,
     AyscIQCDetailUpdate,
-    LabelPrintDownloadFtp
+    LabelPrintDownloadFtp,
+    GetPriorityCodeQuery
 } from "@/api/incomingManage/iqcApi";
 import dayjs from "dayjs";
 import {
@@ -455,6 +487,7 @@ const creatForm = ref({
     SamplingStandards: "",
     IncomingUnit: "",
     Approver: "",
+    PriorityCode: ''
 });
 const creatFormRef = ref("");
 const creatEditVisible = ref(false);
@@ -478,6 +511,7 @@ const editCreateForm = ref({
     ApprovalRemarks: "",
     StatusText: '',
     Approver: "",
+    PriorityCode: ''
 });
 const editCreatFormRef = ref("");
 const materialNameList = ref<any[]>([]);
@@ -487,7 +521,7 @@ const aqlLevelList = ref<any[]>([]);
 const detailVisible = ref(false);
 const detailTableData = ref([]);
 const addDetailVisible = ref(false);
-const detailFormRef = ref("");
+const detailFormRef = ref();
 const detailForm = ref({
     InspectionNo: "",
     MaterialName: "",
@@ -500,9 +534,11 @@ const detailForm = ref({
     SupplierReportGuid: "",
     SupplierReportName: "",
     Template_File: "",
+    quantity: "",        // 添加：数量
+    boxCount: "",        // 添加：箱数
 });
 const editDetailVisible = ref(false);
-const editdetailFormRef = ref("");
+const editdetailFormRef = ref();
 const editdetailForm = ref({
     InspectionNo: "",
     IQC_DetailName: "",
@@ -527,13 +563,47 @@ const editdetailForm = ref({
     Property: "",
     Status: 0,
     DataStatus: 0,
-    StatusText: ''
+    StatusText: '',
+    quantity: "",        // 添加：数量
+    boxCount: "",        // 添加：箱数
 });
 const fileList = ref<any[]>([]);
 const previewVisible = ref(false);
 const previewUrl = ref("");
 const previewTitle = ref("");
 const IQCNumber = ref("");
+const priorityList = ref<any[]>([])
+const detailRules = reactive({
+    LotNo: [
+        {
+            required: true,
+            message: 'LotNo不能为空',
+            trigger: 'change',
+        },
+
+    ],
+    // QuantityPerBox: [
+    //     {
+    //         required: true,
+    //         message: '来料数量不能为空',
+    //         trigger: 'change',
+    //     },
+    // ],
+     quantity: [  // 修改验证规则
+        {
+            required: true,
+            message: '数量不能为空',
+            trigger: 'change',
+        }
+    ],
+    boxCount: [  // 新增验证规则
+        {
+            required: true,
+            message: '箱数不能为空',
+            trigger: 'change',
+        }
+    ],
+})
 watch(
     () => searchDate.value,
     (newVal: any, oldVal: any) => {
@@ -562,6 +632,7 @@ onBeforeMount(() => {
     getProductFamilyData();
     GetVendorQueryData();
     getAQLLevelData();
+    getPriorityCodeData()
 });
 onMounted(() => {
     window.addEventListener("resize", getScreenHeight);
@@ -625,15 +696,22 @@ const getAQLLevelData = () => {
 };
 
 const changeData = (val: any) => {
-    console.log(val);
+    // console.log(val);
     GetProductQuery(val).then((res: any) => {
         productList.value = res.content;
         console.log(productList.value);
     });
 };
+//获取优先级
+const getPriorityCodeData = () => {
+    GetPriorityCodeQuery({}).then((res: any) => {
+        priorityList.value = res.content
+    })
+}
 const handleEdit = (row: any) => {
     editCreateForm.value = {
         ...row,
+        PriorityCode: row.PriorityCodeName,
         InspectionNo: row.IQCNumber,
         ArrivalDate: dayjs(row.ArrivalDate).format("YYYY-MM-DD"),
         NotifyDate: dayjs(row.NotifyDate).format("YYYY-MM-DD"),
@@ -691,6 +769,17 @@ const handleCreat = () => {
     creatVisible.value = true;
 };
 const handleClose = () => {
+    creatForm.value = {
+        NotifyDept: "",
+        Notifier: "",
+        ArrivalDate: "",
+        NotifyDate: "",
+        IsAutomotive: 0,
+        SamplingStandards: "",
+        IncomingUnit: "",
+        Approver: "",
+        PriorityCode: ''
+    }
     creatVisible.value = false;
 };
 const handleConfirm = () => {
@@ -701,7 +790,8 @@ const handleConfirm = () => {
             message: res.msg,
             type: res.success ? "success" : "error",
         });
-        creatVisible.value = false;
+        // creatVisible.value = false;
+        handleClose()
         getData();
     });
 };
@@ -840,10 +930,18 @@ const handleEditConfirm = () => {
 };
 
 const handleEditDetail = (row: any) => {
+    const parsed = parseQuantityPerBox(row.QuantityPerBox);
+    
     editdetailForm.value = {
         ...row,
-        InspectionNo: row.IQCNumber
+        InspectionNo: row.IQCNumber,
+        quantity: parsed.quantity,     // 回填数量
+        boxCount: parsed.boxCount      // 回填箱数
     };
+    // editdetailForm.value = {
+    //     ...row,
+    //     InspectionNo: row.IQCNumber
+    // };
     // console.log( editdetailForm.value);
 
     GetProductQuery(row.MaterialName).then((res: any) => {
@@ -900,52 +998,123 @@ const handleDeleteDetail = (row: any) => {
             });
         });
 };
+// 合并数量和箱数为QuantityPerBox格式
+const mergeQuantityPerBox = (quantity:any, boxCount:any) => {
+    return `${quantity}PCS/${boxCount}箱`;
+};
+
+// 解析QuantityPerBox为数量和箱数
+const parseQuantityPerBox = (quantityPerBox:any) => {
+    if (!quantityPerBox) return { quantity: '', boxCount: '' };
+    
+    const match = quantityPerBox.match(/^(\d+)PCS\/(\d+)箱$/);
+    if (match) {
+        return {
+            quantity: match[1],
+            boxCount: match[2]
+        };
+    }
+    return { quantity: '', boxCount: '' };
+};
 const handleAddDetailClose = () => {
     addDetailVisible.value = false;
+     detailForm.value={
+            InspectionNo: "",
+    MaterialName: "",
+    ModelSpec: "",
+    Supplier: "",
+    OrderNo: "",
+    LotNo: "",
+    TCode: "",
+    QuantityPerBox: "",
+    SupplierReportGuid: "",
+    SupplierReportName: "",
+    Template_File: "",
+    quantity: "",        // 添加：数量
+    boxCount: "",        // 添加：箱数
+     }
     fileList.value = []
 };
 const handleAddDetailConfirm = () => {
-    AyscIQCDetailAdd(detailForm.value).then((res: any) => {
-        ElMessage({
-            title: t("message.tipTitle"),
-            message: res.msg,
-            type: res.success ? "success" : "error",
-        });
-        if (res.success) {
-            addDetailVisible.value = false;
-            GetIQCDetailQuery({ InspectionNo: IQCNumber.value }).then((res: any) => {
-                detailTableData.value = res.content;
+    detailFormRef.value.validate((valid: any) => {
+        if (valid) {
+            let data={
+                ...detailForm.value,
+                QuantityPerBox: mergeQuantityPerBox(detailForm.value.quantity, detailForm.value.boxCount)
+            }
+            AyscIQCDetailAdd(data).then((res: any) => {
+                ElMessage({
+                    title: t("message.tipTitle"),
+                    message: res.msg,
+                    type: res.success ? "success" : "error",
+                });
+                if (res.success) {
+                    addDetailVisible.value = false;
+                     detailForm.value={
+            InspectionNo: "",
+    MaterialName: "",
+    ModelSpec: "",
+    Supplier: "",
+    OrderNo: "",
+    LotNo: "",
+    TCode: "",
+    QuantityPerBox: "",
+    SupplierReportGuid: "",
+    SupplierReportName: "",
+    Template_File: "",
+    quantity: "",        // 添加：数量
+    boxCount: "",        // 添加：箱数
+     }
+                    GetIQCDetailQuery({ InspectionNo: IQCNumber.value }).then((res: any) => {
+                        detailTableData.value = res.content;
+                    });
+                } else {
+                    return;
+                }
+
+                // getData();
             });
         } else {
-            return;
+            console.log('error submit!')
         }
+    })
 
-        // getData();
-    });
+
 };
 const handleEditDetailClose = () => {
     editDetailVisible.value = false;
     fileList.value = []
 };
 const handleEditDetailConfirm = () => {
-    console.log(editdetailForm.value);
-
-    AyscIQCDetailUpdate(editdetailForm.value).then((res: any) => {
-        ElMessage({
-            title: t("message.tipTitle"),
-            message: res.msg,
-            type: res.success ? "success" : "error",
-        });
-        if (res.success) {
-            editDetailVisible.value = false;
-            GetIQCDetailQuery({ InspectionNo: IQCNumber.value }).then((res: any) => {
-                detailTableData.value = res.content;
+    // console.log(editdetailForm.value);
+    editdetailFormRef.value.validate((valid: any) => {
+        if (valid) {
+            let data={
+                ...editdetailForm.value,
+                 QuantityPerBox: mergeQuantityPerBox(editdetailForm.value.quantity, editdetailForm.value.boxCount)
+            }
+            AyscIQCDetailUpdate(data).then((res: any) => {
+                ElMessage({
+                    title: t("message.tipTitle"),
+                    message: res.msg,
+                    type: res.success ? "success" : "error",
+                });
+                if (res.success) {
+                    editDetailVisible.value = false;
+                    GetIQCDetailQuery({ InspectionNo: IQCNumber.value }).then((res: any) => {
+                        detailTableData.value = res.content;
+                    });
+                } else {
+                    return;
+                }
+                getData();
             });
         } else {
-            return;
+
         }
-        getData();
-    });
+    })
+
+
 };
 const handleSizeChange = (val: any) => {
     pageObj.pageSize = val;
@@ -962,7 +1131,7 @@ const getScreenHeight = () => {
 const columnWidths = computed(() => {
     const columns = [
         { label: '型号规制', prop: 'ModelSpec' },
-       { label: '供应商报告', prop: 'SupplierReportName' },  
+        { label: '供应商报告', prop: 'SupplierReportName' },
         // 添加其他需要自适应宽度的列
     ];
 
@@ -994,4 +1163,3 @@ const getColumnWidth = (prop: string) => {
     --el-table-tr-bg-color: var(--el-color-success-light-7);
 }
 </style>
-

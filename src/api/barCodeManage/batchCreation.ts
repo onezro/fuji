@@ -74,3 +74,11 @@ export function ReprintMfgOrderContainer(data: any) {
     });
 }
 
+// 获取工艺流程
+export function getWorkflowQuery(data: any) {
+    return request({
+        url: "/api/ModelingDataQuery/getWorkflowQuery",
+        method: "post",
+        data,
+    });
+}

@@ -1,7 +1,7 @@
 <template>
     <div class="p-2">
         <el-card shadow="always" :body-style="{ padding: '8px' }">
-            <el-form ref="formRef" :inline="true" size="small">
+            <el-form ref="formRef" :inline="true" size="small" >
                 <el-form-item :label="$t('batchCreation.scheduling')" class="mb-2">
                     <!-- <el-date-picker :shortcuts="shortcuts" v-model="searchDate" value-format="YYYY-MM-DD HH:mm:ss"
                         type="datetimerange" range-separator="-" size="small" style="width: 330px" :clearable="false"
@@ -11,22 +11,28 @@
                 </el-form-item>
 
                 <el-form-item :label="$t('batchCreation.purchaseOrderNumber')" class="mb-2">
-                    <el-input style="width: 140px" v-model="getForm.CustomerPO" placeholder="" clearable></el-input>
+                    <el-input style="width: 200px" v-model="getForm.CustomerPO" placeholder="" clearable></el-input>
                 </el-form-item>
                 <el-form-item :label="$t('batchCreation.orderType')" class="mb-2">
-                    <el-select v-model="getForm.OrderType" placeholder="" filterable style="width: 140px" clearable>
+                    <el-select v-model="getForm.OrderType" placeholder="" filterable style="width: 200px" clearable>
                         <el-option v-for="p in orderTypeList" :label="p.OrderTypeName" :value="p.OrderTypeName"
                             :key="p.OrderTypeId" />
                     </el-select>
                 </el-form-item>
                 <el-form-item :label="$t('batchCreation.orderStatus')" class="mb-2">
-                    <el-select v-model="getForm.OrderStatus" placeholder="" filterable style="width: 140px" clearable>
+                    <el-select v-model="getForm.OrderStatus" placeholder="" filterable style="width: 200px" clearable>
                         <el-option v-for="p in orderStatusList" :label="p.OrderStatusName" :value="p.OrderStatusName"
                             :key="p.OrderStatusId" />
                     </el-select>
                 </el-form-item>
+                <el-form-item :label="'工艺流程'" class="mb-2">
+                    <el-select v-model="getForm.WorkflowName" placeholder="" filterable style="width: 200px" clearable>
+                        <el-option v-for="p in workflowList" :label="p.WorkflowName" :value="p.WorkflowName"
+                            :key="p.WorkflowName" />
+                    </el-select>
+                </el-form-item>
                 <el-form-item :label="$t('batchCreation.customer')" class="mb-2">
-                    <el-select v-model="getForm.Customer" placeholder="" filterable style="width: 140px" clearable>
+                    <el-select v-model="getForm.Customer" placeholder="" filterable style="width: 200px" clearable>
                         <el-option v-for="p in customerList" :label="p.CustomerName" :value="p.CustomerName"
                             :key="p.CustomerId" />
                     </el-select>
@@ -88,7 +94,7 @@
                 <el-table-column prop="OrderStatusName" :label="$t('batchCreation.orderStatus')" />
                 <el-table-column prop="OrderTypeName" :label="$t('batchCreation.orderType')" />
                 <el-table-column prop="ES_CustomerPO" :label="$t('batchCreation.purchaseOrderNumber')" width="120" />
-                <el-table-column prop="CustomerName" :label="$t('batchCreation.customer')" />
+              <el-table-column prop="CustomerName" :label="$t('batchCreation.customer')"  :min-width="flexColumnWidth($t('batchCreation.customer'), 'CustomerName')"/>
                     <el-table-column prop="SpecificationNo" :label="$t('oqcInspection.SpecificationNo')">
                     <template #default="{ row }">
                         <span class="underline cursor-pointer text-cyan-800" @click="openFile(row.SpecificationNo)">{{
@@ -196,7 +202,8 @@ import {
     getPrintQuery,
     getPrintTemplateQuery,
     AddMfgOrderContainer,
-    ReprintMfgOrderContainer
+    ReprintMfgOrderContainer,
+    getWorkflowQuery
 } from "@/api/barCodeManage/batchCreation";
 import {
     ref,
@@ -227,6 +234,7 @@ const getForm = ref({
     OrderType: "",
     OrderStatus: "",
     Customer: "",
+      WorkflowName: ''
 });
 const searchDate = ref<any[]>([]);
 const orderTypeList = ref<any[]>([]);
@@ -269,6 +277,7 @@ const resetPrintForm = ref<ResetPrintForm>({
 const previewVisible = ref(false);
 const previewUrl = ref("");
 const previewTitle = ref("");
+const workflowList = ref<any>([])
 const rules = reactive({
     Printer: [
         {
@@ -317,15 +326,21 @@ onMounted(() => {
     getCustomer();
     getPrint()
     getPrintTemp()
-
+    getWorkFlowData()
 });
 onBeforeUnmount(() => {
     window.removeEventListener("resize", getScreenHeight);
 });
 const tableRowClassName = (val: any) => {
     let row = val.row;
-    if (row.PriorityCodeName==1) {
-        return "danger-row-invent";
+    if (row.PriorityCodeName == 1&&row.OrderStatusName!=='完工入库') {
+        return "bulelist-1";
+    }else if(row.PriorityCodeName == 2&&row.OrderStatusName!=='完工入库'){
+      return "bulelist-2";
+    }else if(row.PriorityCodeName == 3&&row.OrderStatusName!=='完工入库'){
+       return "bulelist-3";
+    }else{
+        return "";
     }
 };
 //获取工单类型
@@ -356,6 +371,12 @@ const getPrint = () => {
         printList.value = res.content;
     });
 }
+//获取工艺流程
+const getWorkFlowData = () => {
+    getWorkflowQuery({}).then((res: any) => {
+        workflowList.value = res.content
+    })
+}
 const getPrintTemp = () => {
     getPrintTemplateQuery({}).then((res: any) => {
         printTemplate.value = res.content;
@@ -374,6 +395,7 @@ const resetData = () => {
         OrderType: "",
         OrderStatus: "",
         Customer: "",
+          WorkflowName: ''
     };
     searchDate.value = [];
     tableData.value = [];
@@ -586,5 +608,15 @@ const getTextWidth = (str: string) => {
 
 .el-table .success-row-invent {
     --el-table-tr-bg-color: var(--el-color-success-light-5);
+}
+.el-table .bulelist-1{
+    --el-table-tr-bg-color:#79bbff
+}
+.el-table .bulelist-2{
+    --el-table-tr-bg-color:#a0cfff
+   
+}
+.el-table .bulelist-3{
+    --el-table-tr-bg-color:#c6e2ff
 }
 </style>

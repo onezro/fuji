@@ -31,8 +31,8 @@ export function GetProductQuery(data: any) {
     return request({
         url: "/api/IQCController/GetProductQuery",
         method: "post",
-        params:{
-            ProductFamilyName:data
+        params: {
+            ProductFamilyName: data
         }
     });
 }
@@ -149,8 +149,8 @@ export function LabelPrintDownloadFtp(data: any) {
     return request({
         url: "/api/IQCController/LabelPrintDownloadFtp",
         method: "post",
-        params:{
-            fileName:data
+        params: {
+            fileName: data
         }
     });
 }
@@ -159,8 +159,8 @@ export function DownloadIQCReportAsync(data: any) {
     return request({
         url: "/api/IQCController/DownloadIQCReportAsync",
         method: "post",
-        params:{
-            IQCName:data
+        params: {
+            IQCName: data
         }
     });
 }
@@ -169,6 +169,33 @@ export function AyscIQCTemporaryStorage(data: any) {
     return request({
         url: "/api/IQCController/AyscIQCTemporaryStorage",
         method: "post",
-       data
+        data
+    });
+}
+//物料行审批
+export function AsynIQCMaterialApproval(data: any) {
+    return request({
+        url: "/api/IQCController/AsynIQCMaterialApproval",
+        method: "post",
+        data
+    });
+}
+
+
+export function GetPriorityCodeQuery(data: any) {
+    return request({
+        url: "/api/IQCController/GetPriorityCodeQuery",
+        method: "post",
+        data
+    });
+}
+
+export function IQCModeSpecLabel(data: any) {
+    return request({
+        url: "/api/IQCController/IQCModeSpecLabel",
+        method: "post",
+        params: {
+            IQCDetailName: data
+        }
     });
 }

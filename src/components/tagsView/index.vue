@@ -420,7 +420,7 @@ const changeOperator = (val: any) => {
                             class="h-full flex items-center">
                             <el-form-item :label="'操作人'" prop="Notifier" class="mb-0">
                                 <el-select v-model="operator" placeholder="" style="width: 150px"
-                                    @change="changeOperator">
+                                    @change="changeOperator" clearable @clear="changeOperator('')">
                                     <el-option v-for="n in operatorList" :label="n.FullName" :value="n.EmployeeName" />
                                 </el-select>
                             </el-form-item>

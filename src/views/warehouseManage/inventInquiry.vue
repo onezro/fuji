@@ -513,7 +513,7 @@ const columnWidths = computed(() => {
     ];
 
     // 批量计算列宽
-    return calculateColumnsWidth(columns, tableData2.value, {
+    return calculateColumnsWidth(columns, tableData.value, {
         padding: 25,
         fontSize: 13
     });

@@ -47,17 +47,17 @@
                     <el-button type="info" size="small" @click="resetGetForm">
                         {{ $t("publicText.reset") }}
                     </el-button>
-                    <el-button type="warning" size="small" :disabled="selectionList.length === 0"
+                    <!-- <el-button type="warning" size="small" :disabled="selectionList.length === 0"
                         @click="handleSelectionData">
                         {{ $t("publicText.approval") }}
-                    </el-button>
+                    </el-button> -->
                     <el-button type="success" :disabled="tableData.length == 0" size="small" @click="exportTable">
                         导出Excel
                     </el-button>
                 </el-form-item>
             </el-form>
             <el-row :gutter="10">
-                <el-col :span="10">
+                <el-col :span="8">
                     <el-table :data="tableData.slice(
                         (pageObj.currentPage - 1) * pageObj.pageSize,
                         pageObj.currentPage * pageObj.pageSize,
@@ -65,7 +65,7 @@
                         " size="small" :style="{ width: '100%' }" ref="inspectionSheetRef" :height="tableHeight" border
                         fit highlight-current-row @selection-change="handleSelectionChange" @cell-click="cellClick"
                         :tooltip-effect="'dark'">
-                        <el-table-column type="selection" width="55" align="center" />
+                        <!-- <el-table-column type="selection" width="55" align="center" /> -->
                         <el-table-column type="index" align="center" fixed :label="$t('publicText.index')" width="50">
                             <template #default="scope">
                                 <span>{{
@@ -75,6 +75,8 @@
                                 }}</span>
                             </template>
                         </el-table-column>
+                        <el-table-column prop="PriorityCodeName" :label="$t('batchCreation.Priority')" width="60"
+                            :align="'center'" fixed />
                         <el-table-column prop="IQCNumber" :label="$t('incomeCreat.creatInspect')" width="120" fixed>
                             <template #default="scope">
                                 <span class="underline">{{ scope.row.IQCNumber }}</span>
@@ -121,7 +123,7 @@
                         </el-pagination>
                     </div>
                 </el-col>
-                <el-col :span="14">
+                <el-col :span="16">
                     <el-table :data="detailTableData" size="small" :style="{ width: '100%' }" ref="rawRef"
                         :height="tableHeight" border fit :tooltip-effect="'dark'"
                         :row-class-name="tableDetailRowClassName">
@@ -134,9 +136,11 @@
                                 }}</span>
                             </template>
                         </el-table-column>
-                        <el-table-column prop="MaterialName" :label="$t('incomeCreat.materialName')" />
+                        <el-table-column prop="ApprovalTime" :label="'审批时间'" width="150" fixed />
+
                         <el-table-column prop="ModelSpec" :label="$t('incomeCreat.modelRules')"
-                            :min-width="getColumnWidth('ModelSpec')" />
+                            :min-width="getColumnWidth('ModelSpec')"  fixed/>
+                        <el-table-column prop="MaterialName" :label="$t('incomeCreat.materialName')" fixed />
                         <el-table-column prop="Supplier" :label="$t('incomeCreat.supplier')" />
                         <el-table-column prop="OrderNo" :label="$t('incomeCreat.orderNumber')" />
                         <el-table-column prop="LotNo" label="Lot No" :min-width="getColumnWidth('LotNo')" />
@@ -185,7 +189,7 @@
                 <div class="dialog-footer">
                     <el-button @click="detailVisible = false">{{
                         $t("publicText.close")
-                    }}</el-button>
+                        }}</el-button>
                 </div>
             </template>
         </el-dialog>
@@ -320,7 +324,7 @@
                             <template #default="scope">
                                 <span @click="openMeasurementDialog(scope.row, scope.$index)">{{
                                     formatMeasuredValues(scope.row)
-                                }}</span>
+                                    }}</span>
                                 <el-button type="primary" icon="Plus" :size="'small'"
                                     @click="openMeasurementDialog(scope.row, scope.$index)" />
                             </template>
@@ -363,11 +367,17 @@
                         <el-button type="primary" @click="handletestConfirm" :disabled="isDisable">
                             {{ "提交" }}
                         </el-button>
+                        <el-button type="warning" :disabled="isApproval" @click="handleSelectionData">
+                            {{ $t("publicText.approval") }}
+                        </el-button>
+                        <el-button type="success" @click="handlePrint">
+                            {{ '标签生成' }}
+                        </el-button>
                     </div>
                     <div>
                         <el-button @click="handletestClose">{{
                             $t("publicText.close")
-                        }}</el-button>
+                            }}</el-button>
                         <el-button @click="handlePreviewIQCReport" :type="'info'" :disabled="!isDisable">
                             {{ "预览IQC报告" }}
                         </el-button>
@@ -381,7 +391,8 @@
         <el-dialog v-model="dialogVisible" :title="'输入测量值'" width="500px">
             <el-form ref="formRef" label-width="auto" size="small" @submit.native.prevent>
                 <el-form-item :label="'样本值' + i" prop="name" v-for="i in currentSampleSize" :key="i">
-                    <el-input :ref="(el:any) => setInputRef(el, i)" @keyup.enter.native="handleEnterInput($event, i)" v-model="measurementValues[i - 1]" placeholder="请输入测量值" style="width: 200px" />
+                    <el-input :ref="(el: any) => setInputRef(el, i)" @keyup.enter.native="handleEnterInput($event, i)"
+                        v-model="measurementValues[i - 1]" placeholder="请输入测量值" style="width: 200px" />
                 </el-form-item>
             </el-form>
 
@@ -400,7 +411,7 @@
                 <div class="dialog-footer">
                     <el-button @click="handlePreviewClose">{{
                         $t("publicText.close")
-                    }}</el-button>
+                        }}</el-button>
                     <el-button type="primary" @click="handlePreviewDawnload">
                         {{ $t("publicText.dawnload") }}
                     </el-button>
@@ -423,7 +434,7 @@
             <template #footer>
                 <el-button @click="handleAppClose">{{
                     $t("publicText.cancel")
-                }}</el-button>
+                    }}</el-button>
                 <el-button type="primary" @click="handleAppConfirm">
                     {{ $t("publicText.confirm") }}
                 </el-button>
@@ -439,7 +450,7 @@
             <template #footer>
                 <el-button @click="handleBoxsClose">{{
                     $t("publicText.cancel")
-                }}</el-button>
+                    }}</el-button>
                 <el-button type="primary" @click="handleBoxsConfirm">
                     {{ $t("publicText.confirm") }}
                 </el-button>
@@ -455,7 +466,7 @@
                 <div class="dialog-footer">
                     <el-button @click="previewIQCVisible = false">{{
                         $t("publicText.close")
-                    }}</el-button>
+                        }}</el-button>
                 </div>
             </template>
         </el-dialog>
@@ -465,32 +476,23 @@
 <script setup lang="ts">
 import VueOfficeExcel from "@vue-office/excel";
 import {
-    GetWorkCenterQuery,
-    GetEmployeeQuery,
-    GetIncomingUnitQuery,
-    GetProductFamilyQuery,
     GetIQCHeaderQuery,
-    AyscIQCAdd,
-    AyscIQCUpdate,
-    GetProductQuery,
-    GetVendorQuery,
-    GetAQLLevelQuery,
     GetIQCDetailQuery,
-    AyscIQCDetailAdd,
     AyscIQCDetailUpdate,
     GetIQCInspectionDetailQuery,
     AyscIQCInspectionInterface,
     LabelPrintDownloadFtp,
-    AyscIQCApproval,
     DownloadIQCReportAsync,
     AyscIQCTemporaryStorage,
+    AsynIQCMaterialApproval,
+    IQCModeSpecLabel
 } from "@/api/incomingManage/iqcApi";
 import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
 import JSZip from "jszip";
 import { exportTableToExcel } from "@/utils/exportExcel";
-import { exportTableToExcel1, exportMeasureTableToExcel, exportMeasureTableToExcelVertical } from "@/utils/exportExcel1";
-import { handleSplitExcelUpload, handleExcelUploadEnhanced } from "@/utils/analysisExcel"
+import { exportMeasureTableToExcelVertical } from "@/utils/exportExcel1";
+import { handleExcelUploadEnhanced } from "@/utils/analysisExcel"
 import dayjs from "dayjs";
 import {
     ref,
@@ -572,6 +574,7 @@ const appForm = ref({
     ApprovalResult: "",
     ApprovalRemarks: "",
 });
+const isApproval = ref(false)
 const inspectionSheetRef = ref();
 const boxVisible = ref(false);
 const boxsForm = ref({
@@ -659,6 +662,7 @@ const testClick = () => {
     });
 };
 const getData = () => {
+    detailTableData.value = []
     GetIQCHeaderQuery(getForm.value).then((res: any) => {
         tableData.value = res.content;
     });
@@ -733,19 +737,29 @@ const handleAppClose = () => {
     appVisible.value = false;
 };
 const handleAppConfirm = () => {
-    let data = [];
-    data = selectionList.value.map((item: any) => {
-        return {
-            InspectionNo: item.IQCNumber,
-            ApprovalResult: appForm.value.ApprovalResult,
-            ApprovalRemarks: appForm.value.ApprovalRemarks,
-            Approver:
-                userStore.getUserInfo2 !== ""
-                    ? userStore.getUserInfo2
-                    : userStore.getUserInfo,
-        };
-    });
-    AyscIQCApproval(data).then((res: any) => {
+    // let data = [];
+    // data = selectionList.value.map((item: any) => {
+    //     return {
+    //         InspectionNo: item.IQCNumber,
+    //         ApprovalResult: appForm.value.ApprovalResult,
+    //         ApprovalRemarks: appForm.value.ApprovalRemarks,
+    //         Approver:
+    //             userStore.getUserInfo2 !== ""
+    //                 ? userStore.getUserInfo2
+    //                 : userStore.getUserInfo,
+    //     };
+    // });
+    let data = {
+        InspectionNo: IQCNumber.value,
+        IQCDetailName: IQC_DetailName.value,
+        ApprovalResult: appForm.value.ApprovalResult,
+        ApprovalRemarks: appForm.value.ApprovalRemarks,
+        Approver:
+            userStore.getUserInfo2 !== ""
+                ? userStore.getUserInfo2
+                : userStore.getUserInfo,
+    }
+    AsynIQCMaterialApproval(data).then((res: any) => {
         ElMessage({
             title: t("message.tipTitle"),
             message: res.msg,
@@ -756,9 +770,30 @@ const handleAppConfirm = () => {
             ApprovalResult: "",
             ApprovalRemarks: "",
         };
+        getDetailData(IQC_DetailName.value)
         getData();
     });
 };
+const handlePrint = () => {
+    IQCModeSpecLabel(IQC_DetailName.value).then((res: any) => {
+        // ElMessage({
+        //     message: res.msg,
+        //     type: res.success?'success':'error',
+        // })
+        if (res.success) {
+            downloadSingleFile(res.content);
+        } else {
+            ElMessage({
+                message: res.msg,
+                type: 'error',
+            })
+        }
+    })
+    // ElMessage({
+    //     message: '功能未开放',
+    //     type: "info",
+    // })
+}
 const openFile = (val: any) => {
     LabelPrintDownloadFtp(val).then((res: any) => {
         if (!res.success) {
@@ -1138,7 +1173,7 @@ const handleEdit = (row: any) => {
     } else {
         isDisable.value = true;
     }
-
+    isApproval.value = row.ApprovalResult == '待审批' ? false : true
     // if (row.AC == null) {
     //     AyscIQCDetailUpdate({
     //         "InspectionNo": row.IQCNumber,
@@ -1331,7 +1366,7 @@ const handletestConfirm = () => {
             message: res.msg,
             type: res.success ? "success" : "error",
         });
-        testVisible.value = false;
+        // testVisible.value = false;
         getDetailData(IQC_DetailName.value);
         getData();
     });
@@ -1546,25 +1581,25 @@ const columnWidths2 = computed(() => {
 const getColumnWidth2 = (prop: string) => {
     return columnWidths2.value[prop] || "auto";
 };
- const setInputRef = (el:any, index:any) => {
+const setInputRef = (el: any, index: any) => {
     if (el) {
-      inputRefs.value[index - 1] = el
+        inputRefs.value[index - 1] = el
     }
-  }
-const handleEnterInput=(e:any,currentIndex:any)=>{
+}
+const handleEnterInput = (e: any, currentIndex: any) => {
     e.preventDefault()
     console.log(currentIndex);
-    
-     if (currentIndex < currentSampleSize.value) {
-    // 使用 nextTick 确保 DOM 已更新
-    nextTick(() => {
-          console.log(currentIndex);
-      const nextInput = inputRefs.value[currentIndex]
-      if (nextInput) {
-        nextInput.focus()
-      }
-    })
-  }
+
+    if (currentIndex < currentSampleSize.value) {
+        // 使用 nextTick 确保 DOM 已更新
+        nextTick(() => {
+            console.log(currentIndex);
+            const nextInput = inputRefs.value[currentIndex]
+            if (nextInput) {
+                nextInput.focus()
+            }
+        })
+    }
 }
 </script>
 <style scoped>

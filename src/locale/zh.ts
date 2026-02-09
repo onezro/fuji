@@ -174,7 +174,7 @@ const zh = {
   inventInquiry: {
     rawMaterialInvent: "原材料库存",
     finishGoodsInvent: "成品库存",
-    isCar: "汽车源材料",
+    isCar: "汽车原材料",
     materialName: "物料名称",
     incomingBatch: "来料批次",
     materialSource: "物料来源",
@@ -378,7 +378,7 @@ const zh = {
     RemainingQty: "剩余数量",
     OrderQty: "订单数量",
     instrumentName: "检验仪器名称",
-    instrumenStatus: "检验仪器确认",
+    instrumenStatus: "确认",
     SamplingPlan: "抽样方案",
     TechnicalRequirements: "技术要求",
     Severity: "严重程度",

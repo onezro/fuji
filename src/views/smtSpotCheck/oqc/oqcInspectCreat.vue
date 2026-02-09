@@ -683,7 +683,6 @@ const addForm = ref({
     ProductType: "",
     CustomerPN: "",
     MaterialSource: "",
-
     Date: "",
     DataStatus: 0,
     OperatorUser: userStore.getUserInfo2 !== '' ? userStore.getUserInfo2 : userStore.getUserInfo,

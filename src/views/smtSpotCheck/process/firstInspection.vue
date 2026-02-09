@@ -83,7 +83,7 @@
                     <template #default="scope">
                         <span>{{
                             scope.$index + pageObj.pageSize * (pageObj.currentPage - 1) + 1
-                            }}</span>
+                        }}</span>
                     </template>
                 </el-table-column>
                 <el-table-column prop="PriorityCodeName" :label="$t('batchCreation.Priority')" width="60" fixed
@@ -192,7 +192,7 @@
                 <div class="dialog-footer">
                     <el-button @click="handleAddClose">{{
                         $t("publicText.cancel")
-                        }}</el-button>
+                    }}</el-button>
                     <el-button type="primary" @click="handleAddConfirm">
                         {{ $t("publicText.confirm") }}
                     </el-button>
@@ -395,7 +395,8 @@
         <el-dialog v-model="dialogVisible" :title="'输入测量值'" width="500px">
             <el-form ref="formRef" label-width="auto" size="small" @submit.native.prevent>
                 <el-form-item :label="'样本值' + i" prop="name" v-for="i in currentSampleSize" :key="i">
-                    <el-input :ref="(el:any) => setInputRef(el, i)" @keyup.enter.native="handleEnterInput($event, i)" v-model="measurementValues[i - 1]" placeholder="请输入测量值" style="width: 200px" />
+                    <el-input :ref="(el: any) => setInputRef(el, i)" @keyup.enter.native="handleEnterInput($event, i)"
+                        v-model="measurementValues[i - 1]" placeholder="请输入测量值" style="width: 200px" />
                 </el-form-item>
             </el-form>
 
@@ -557,7 +558,7 @@
                 <div class="dialog-footer">
                     <el-button @click="handlePreviewClose">{{
                         $t("publicText.close")
-                    }}</el-button>
+                        }}</el-button>
                     <el-button type="primary" @click="handlePreviewDawnload">
                         {{ $t("publicText.dawnload") }}
                     </el-button>
@@ -706,7 +707,7 @@
                 <div class="dialog-footer">
                     <el-button @click="handleOtherClose">{{
                         $t("publicText.close")
-                    }}</el-button>
+                        }}</el-button>
 
                 </div>
             </template>
@@ -719,8 +720,8 @@ import ExcelJS from 'exceljs';
 import JSZip from "jszip";
 import dayjs from "dayjs";
 import { exportTableToExcel } from "@/utils/exportExcel";
-import { exportTableToExcel1, exportMeasureTableToExcel, exportMeasureTableToExcelVertical } from "@/utils/exportExcel1";
-import { handleSplitExcelUpload, handleExcelUploadEnhanced } from "@/utils/analysisExcel"
+import { exportMeasureTableToExcelVertical, exportInspectionToExcelVertical } from "@/utils/exportExcel1";
+import { handleSplitExcelUpload, handleExcelUploadEnhanced,handleExcelUploadAllFormats } from "@/utils/analysisExcel"
 import { saveAs } from "file-saver";
 import {
     GetInspectionQuery,
@@ -772,6 +773,7 @@ import { ElNotification, ElMessageBox, ElMessage } from "element-plus";
 import { useI18n } from "vue-i18n";
 const { t } = useI18n();
 import { useUserStoreWithOut } from "@/stores/modules/user";
+import { log } from 'console';
 
 const userStore = useUserStoreWithOut();
 const getForm = ref({
@@ -2000,40 +2002,36 @@ const downloadAsZip = async (files: IQCFile[]) => {
     }
 };
 const downloadTemp = () => {
-    // exportMeasureTableToExcel({
-    //     tableRef: tempMeasureRef.value,
-    //     fetchAllData: tempData,
-    //     fileName: editForm.value.InspectionNO,
-    //     styles: {
-    //         headerBgColor: "", // 灰色表头
-    //         headerFont: {
-    //             color: { argb: "" }, // 红色文字
-    //             bold: false,
-    //             size: 12,
-    //         }, // 白色文字
-    //         cell: { numFmt: "@" }, // 强制文本格式
-    //     },
-    //     t,
-    // });
-    exportMeasureTableToExcelVertical({
-        tableRef: tempMeasureRef.value,
-        fetchAllData: tempData,
-        fileName: editForm.value.InspectionNO,
-        styles: {
-            headerBgColor: "", // 灰色表头
-            headerFont: {
-                color: { argb: "" }, // 红色文字
-                bold: false,
-                size: 12,
-            }, // 白色文字
-            cell: { numFmt: "@" }, // 强制文本格式
-        },
-        t,
-        splitMeasurementColumns:false
-    })
+    if (editForm.value.InspectionType == '巡检') {
+        exportInspectionToExcelVertical({
+            tableRef: tempMeasureRef.value,
+            fetchAllData: tempData,
+            fileName: editForm.value.InspectionNO,
+            t,
+            maxLineNosCount: 100,
+        })
+    } else {
+        exportMeasureTableToExcelVertical({
+            tableRef: tempMeasureRef.value,
+            fetchAllData: tempData,
+            fileName: editForm.value.InspectionNO,
+            styles: {
+                headerBgColor: "", // 灰色表头
+                headerFont: {
+                    color: { argb: "" }, // 红色文字
+                    bold: false,
+                    size: 12,
+                }, // 白色文字
+                cell: { numFmt: "@" }, // 强制文本格式
+            },
+            t,
+            splitMeasurementColumns: false
+        })
+    }
+
 }
 const tempData = async () => {
-    console.log(editForm.value.listItem);
+    // console.log(editForm.value.listItem);
 
     const data = await Promise.all(
         editForm.value.listItem.map((item: any) => {
@@ -2073,7 +2071,12 @@ const fileUpChange2 = async (file: any, fileList1: any) => {
         return
     }
     try {
-        const result = await handleExcelUploadEnhanced(file.raw, { forceFormat: 'auto' })
+        let result:any={}
+        if (editForm.value.InspectionType == '巡检') {
+             result = await handleExcelUploadAllFormats(file.raw, { forceFormat: 'auto' })
+        }else{
+            result = await handleExcelUploadEnhanced(file.raw, { forceFormat: 'auto' })
+        }
 
         if (result.success) {
             // parsedData.value = result.data
@@ -2250,25 +2253,25 @@ const columnWidths5 = computed(() => {
 const getColumnWidth5 = (prop: string) => {
     return columnWidths5.value[prop] || 'auto';
 };
- const setInputRef = (el:any, index:any) => {
+const setInputRef = (el: any, index: any) => {
     if (el) {
-      inputRefs.value[index - 1] = el
+        inputRefs.value[index - 1] = el
     }
-  }
-const handleEnterInput=(e:any,currentIndex:any)=>{
+}
+const handleEnterInput = (e: any, currentIndex: any) => {
     e.preventDefault()
     console.log(currentIndex);
-    
-     if (currentIndex < currentSampleSize.value) {
-    // 使用 nextTick 确保 DOM 已更新
-    nextTick(() => {
-          console.log(currentIndex);
-      const nextInput = inputRefs.value[currentIndex]
-      if (nextInput) {
-        nextInput.focus()
-      }
-    })
-  }
+
+    if (currentIndex < currentSampleSize.value) {
+        // 使用 nextTick 确保 DOM 已更新
+        nextTick(() => {
+            console.log(currentIndex);
+            const nextInput = inputRefs.value[currentIndex]
+            if (nextInput) {
+                nextInput.focus()
+            }
+        })
+    }
 }
 // const flexColumnWidth = (label: any, prop: any) => {
 //     const arr = tableData?.value.map((x: { [x: string]: any }) => x[prop]);

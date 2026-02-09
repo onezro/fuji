@@ -769,3 +769,348 @@ export async function exportTableToCSV(
     throw error;
   }
 }
+
+// 在 exportExcel1.ts 文件末尾添加以下函数
+
+/**
+ * 特殊格式导出 - 计量检验表纵向格式（按照模板格式）
+ * 模板格式：第一行是"检验名称"，下面是各检验项目的名称
+ * 每个检验项目一列，每个LineNos一行检验序列值
+ */
+export async function exportInspectionToExcelVertical(
+  options: ExportTableOptions & {
+    // 字段映射配置
+    fieldMapping?: FieldMapping;
+    // 最大检验序列数
+    maxLineNosCount?: number;
+  },
+) {
+  const {
+    fetchAllData,
+    fileName = "export",
+    styles = {},
+    t,
+    dataFormatter,
+    maxLineNosCount = 10, // 默认最多10个检验序列
+    fieldMapping,
+  } = options;
+
+  try {
+    // 1. 获取全部数据
+    let allData = await fetchAllData();
+
+    // 2. 自定义数据处理
+    if (dataFormatter && typeof dataFormatter === "function") {
+      allData = dataFormatter(allData, []);
+    }
+
+    // 3. 创建 Workbook
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet("Sheet1");
+
+    // 4. 获取所有唯一的 ProjectName（检验项目），并保持原有顺序
+    const projectNameMap = new Map<string, {
+      name: string;
+      order: number;
+    }>();
+    
+    allData.forEach((item, index) => {
+      if (item.ProjectName) {
+        const projectName = item.ProjectName.toString();
+        if (!projectNameMap.has(projectName)) {
+          projectNameMap.set(projectName, {
+            name: projectName,
+            order: projectNameMap.size
+          });
+        }
+      }
+    });
+    
+    // 转换为数组并保持顺序
+    const projectNames = Array.from(projectNameMap.values())
+      .sort((a, b) => a.order - b.order)
+      .map(item => item.name);
+
+    // 5. 获取所有唯一的 LineNos（检验序列号）
+    const lineNosSet = new Set<string>();
+    allData.forEach(item => {
+      if (item.LineNos) {
+        lineNosSet.add(item.LineNos.toString());
+      }
+    });
+    const lineNosList = Array.from(lineNosSet)
+      .sort((a, b) => parseInt(a) - parseInt(b))
+      // .slice(0, maxLineNosCount);//最大值
+
+    // 6. 构建表头行（第一行："检验名称"）
+    const headerRow = ["检验名称"]; // 第一列是标题"检验名称"
+    
+    // 添加每个检验项目的名称
+    projectNames.forEach(projectName => {
+      headerRow.push(projectName);
+    });
+    
+    worksheet.addRow(headerRow);
+
+    // 设置第一行样式
+    const firstRow = worksheet.getRow(1);
+    firstRow.eachCell((cell, colNumber) => {
+      Object.assign(cell, {
+        font: { bold: true, ...(styles.headerFont || {}) },
+        fill: {
+          type: "pattern",
+          pattern: "solid",
+          fgColor: { argb: styles.headerBgColor || "FFD3D3D3" },
+        },
+      });
+    });
+
+    // 7. 构建其他固定数据行
+    
+    // 检验类别行
+    addFieldRowWithTitle(worksheet, "检验类别", projectNames, allData, "ProjectCategoryName", fieldMapping?.projectCategoryName);
+    
+    // 特性分级行
+    addFieldRowWithTitle(worksheet, "特性分级", projectNames, allData, "CharaCteristicGrade", fieldMapping?.charaCteristicGrade);
+    
+    // 目标值行
+    addFieldRowWithTitle(worksheet, "目标值", projectNames, allData, "TargetValue", fieldMapping?.targetValue);
+    
+    // 最大值行
+    addFieldRowWithTitle(worksheet, "最大值", projectNames, allData, "MaxValue", fieldMapping?.maxValue);
+    
+    // 最小值行
+    addFieldRowWithTitle(worksheet, "最小值", projectNames, allData, "MinValue", fieldMapping?.minValue);
+    
+    // 检验工具行
+    addFieldRowWithTitle(worksheet, "检验工具", projectNames, allData, "ToolName", fieldMapping?.toolName);
+    
+    // 检验依据行
+    addFieldRowWithTitle(worksheet, "检验依据", projectNames, allData, "InspectionBasis", fieldMapping?.inspectionBasis);
+    
+    // 样品数行
+    addFieldRowWithTitle(worksheet, "样品数", projectNames, allData, "SampleNum", fieldMapping?.sampleNum);
+    
+    // 缺陷数行
+    addFieldRowWithTitle(worksheet, "缺陷数", projectNames, allData, "DefectNum", fieldMapping?.defectNum);
+
+    // 8. 添加检验序列值行（根据 LineNos 的数量动态生成）
+    lineNosList.forEach(lineNo => {
+      const rowTitle = `检验序列${lineNo}值`;
+      const rowData = [rowTitle]; // 第一列是行标题
+      
+      projectNames.forEach(projectName => {
+        // 查找对应 ProjectName 和 LineNos 的数据
+        const item = allData.find(data => {
+          const dataProjectName = data.ProjectName?.toString();
+          const dataLineNos = data.LineNos?.toString();
+          return dataProjectName === projectName && dataLineNos === lineNo;
+        });
+        
+        let cellValue = "";
+        if (item) {
+          // 使用字段映射或默认字段
+          const observedValueKey = fieldMapping?.measuredValue1 
+            ? fieldMapping.measuredValue1.replace(/MeasuredValue\d+/, "ObservedValue")
+            : "ObservedValue";
+          
+          cellValue = item[observedValueKey] || item.ObservedValue || "";
+        }
+        
+        rowData.push(cellValue);
+      });
+      
+      const row = worksheet.addRow(rowData);
+      
+      // 设置行标题样式（第一列）
+      const titleCell = row.getCell(1);
+      Object.assign(titleCell, {
+        font: { bold: true, italic: true },
+        fill: {
+          type: "pattern",
+          pattern: "solid",
+          fgColor: { argb: "FFF8F8F8" },
+        },
+      });
+    });
+
+    // 9. 如果实际 LineNos 数量不足 maxLineNosCount，补全空行
+    // for (let i = lineNosList.length; i < maxLineNosCount; i++) {
+    //   const rowTitle = `检验序列${i + 1}值`;
+    //   const rowData = [rowTitle];
+      
+    //   // 填充空数据
+    //   for (let j = 0; j < projectNames.length; j++) {
+    //     rowData.push("");
+    //   }
+      
+    //   const row = worksheet.addRow(rowData);
+      
+    //   // 设置行标题样式（第一列）
+    //   const titleCell = row.getCell(1);
+    //   Object.assign(titleCell, {
+    //     font: { bold: true, italic: true },
+    //     fill: {
+    //       type: "pattern",
+    //       pattern: "solid",
+    //       fgColor: { argb: "FFF8F8F8" },
+    //     },
+    //   });
+    // }
+
+    // 10. 设置列宽
+    const columnWidths = [15]; // 第一列（行标题列）的宽度
+    for (let i = 0; i < projectNames.length; i++) {
+      // 根据项目名称长度调整列宽
+      const projectNameLength = projectNames[i]?.length || 10;
+      columnWidths.push(Math.max(15, projectNameLength + 2));
+    }
+    
+    worksheet.columns = columnWidths.map((width) => ({ width }));
+
+    // 11. 导出文件
+    const buffer = await workbook.xlsx.writeBuffer();
+    const blob = new Blob([buffer], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    });
+    saveAs(blob, `${fileName}_${dayjs().format("YYYYMMDDHHmmss")}.xlsx`);
+    
+    return {
+      success: true,
+      fileName: `${fileName}.xlsx`,
+      rowCount: allData.length,
+      projectCount: projectNames.length,
+      lineNosCount: lineNosList.length,
+    };
+  } catch (error) {
+    console.error("[Excel Inspection Export Vertical Error]", error);
+    ElNotification.error({
+      title: t("message.error"),
+      message: t("message.exportFailure"),
+    });
+    throw new Error(t("message.exportFailure"));
+  }
+}
+
+/**
+ * 添加带标题的字段行到工作表
+ */
+function addFieldRowWithTitle(
+  worksheet: ExcelJS.Worksheet,
+  rowTitle: string,
+  projectNames: string[],
+  allData: any[],
+  fieldKey: string,
+  mappedKey?: string
+) {
+  const rowData = [rowTitle]; // 第一列为行标题
+  
+  projectNames.forEach(projectName => {
+    // 查找对应 ProjectName 的数据（取第一条）
+    const item = allData.find(data => {
+      const dataProjectName = data.ProjectName?.toString();
+      return dataProjectName === projectName;
+    });
+    
+    let cellValue: any = "";
+    if (item) {
+      // 使用映射的key或原始key
+      const actualKey = mappedKey || fieldKey;
+      cellValue = item[actualKey] ?? "";
+      
+      // 特殊处理：样品数和缺陷数可能是数字
+      if (fieldKey === "SampleNum" || fieldKey === "DefectNum") {
+        if (typeof cellValue === "number") {
+          cellValue = String(cellValue);
+        }
+      }
+      
+      // 处理 null 或 undefined
+      if (cellValue === null || cellValue === undefined) {
+        cellValue = "";
+      }
+    }
+    
+    rowData.push(cellValue);
+  });
+  
+  const row = worksheet.addRow(rowData);
+  
+  // 设置行标题样式（第一列）
+  const titleCell = row.getCell(1);
+  Object.assign(titleCell, {
+    font: { bold: true },
+    fill: {
+      type: "pattern",
+      pattern: "solid",
+      fgColor: { argb: "FFF2F2F2" },
+    },
+  });
+}
+
+/**
+ * 简化的计量检验表导出函数（使用默认配置）
+ */
+export async function exportMeasureInspectionToExcel(
+  options: ExportTableOptions & {
+    maxLineNosCount?: number;
+  },
+) {
+  // 默认字段映射
+  const defaultFieldMapping: FieldMapping = {
+    lineNos: "LineNos",
+    projectCategoryName: "ProjectCategoryName",
+    projectName: "ProjectName",
+    charaCteristicGrade: "CharaCteristicGrade",
+    targetValue: "TargetValue",
+    maxValue: "MaxValue",
+    minValue: "MinValue",
+    toolName: "ToolName",
+    inspectionBasis: "InspectionBasis",
+    sampleNum: "SampleNum",
+    defectNum: "DefectNum",
+    measuredValue1: "ObservedValue",
+  };
+
+  return exportInspectionToExcelVertical({
+    ...options,
+    fieldMapping: { ...defaultFieldMapping, ...options.fieldMapping },
+    maxLineNosCount: options.maxLineNosCount || 10,
+  });
+}
+
+/**
+ * 根据实际数据智能导出的函数
+ */
+export async function exportInspectionDataToExcel(
+  options: {
+    data: any[]; // 直接传入数据
+    fileName?: string;
+    t: (key: string) => string;
+    fieldMapping?: FieldMapping;
+    maxLineNosCount?: number;
+  }
+) {
+  const {
+    data,
+    fileName = "计量检验表",
+    t,
+    fieldMapping,
+    maxLineNosCount = 10,
+  } = options;
+
+  // 创建一个虚拟的 ExportTableOptions
+  const exportOptions: ExportTableOptions & { 
+    fieldMapping?: FieldMapping; 
+    maxLineNosCount?: number;
+  } = {
+    tableRef: { columns: [] },
+    fetchAllData: async () => data,
+    fileName,
+    t,
+    fieldMapping,
+    maxLineNosCount,
+  };
+
+  return exportInspectionToExcelVertical(exportOptions);
+}

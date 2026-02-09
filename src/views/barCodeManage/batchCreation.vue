@@ -1,7 +1,7 @@
 <template>
     <div class="p-2">
         <el-card shadow="always" :body-style="{ padding: '8px' }">
-            <el-form ref="formRef" :inline="true" size="small">
+            <el-form ref="formRef" :inline="true" size="small" label-width="auto">
                 <el-form-item :label="$t('batchCreation.scheduling')" class="mb-2">
                     <!-- <el-date-picker :shortcuts="shortcuts" v-model="searchDate" value-format="YYYY-MM-DD HH:mm:ss"
                         type="datetimerange" range-separator="-" size="small" style="width: 330px" :clearable="false"
@@ -11,22 +11,28 @@
                 </el-form-item>
 
                 <el-form-item :label="$t('batchCreation.purchaseOrderNumber')" class="mb-2">
-                    <el-input style="width: 140px" v-model="getForm.CustomerPO" placeholder="" clearable></el-input>
+                    <el-input style="width: 200px" v-model="getForm.CustomerPO" placeholder="" clearable></el-input>
                 </el-form-item>
                 <el-form-item :label="$t('batchCreation.orderType')" class="mb-2">
-                    <el-select v-model="getForm.OrderType" placeholder="" filterable style="width: 140px" clearable>
+                    <el-select v-model="getForm.OrderType" placeholder="" filterable style="width: 200px" clearable>
                         <el-option v-for="p in orderTypeList" :label="p.OrderTypeName" :value="p.OrderTypeName"
                             :key="p.OrderTypeId" />
                     </el-select>
                 </el-form-item>
                 <el-form-item :label="$t('batchCreation.orderStatus')" class="mb-2">
-                    <el-select v-model="getForm.OrderStatus" placeholder="" filterable style="width: 140px" clearable>
+                    <el-select v-model="getForm.OrderStatus" placeholder="" filterable style="width: 200px" clearable>
                         <el-option v-for="p in orderStatusList" :label="p.OrderStatusName" :value="p.OrderStatusName"
                             :key="p.OrderStatusId" />
                     </el-select>
                 </el-form-item>
+                <el-form-item :label="'工艺流程'" class="mb-2">
+                    <el-select v-model="getForm.WorkflowName" placeholder="" filterable style="width: 200px" clearable>
+                        <el-option v-for="p in workflowList" :label="p.WorkflowName" :value="p.WorkflowName"
+                            :key="p.WorkflowName" />
+                    </el-select>
+                </el-form-item>
                 <el-form-item :label="$t('batchCreation.customer')" class="mb-2">
-                    <el-select v-model="getForm.Customer" placeholder="" filterable style="width: 140px" clearable>
+                    <el-select v-model="getForm.Customer" placeholder="" filterable style="width: 200px" clearable>
                         <el-option v-for="p in customerList" :label="p.CustomerName" :value="p.CustomerName"
                             :key="p.CustomerId" />
                     </el-select>
@@ -35,14 +41,11 @@
                     <el-button type="primary" @click="getData">{{ $t('publicText.query') }}</el-button>
                     <el-button type="" @click="resetData">{{ $t('publicText.reset') }}</el-button>
                 </el-form-item>
-                <el-form-item class="mb-2">
-                    <el-radio-group v-model="batchPrintForm.PackagingType">
-                        <el-radio :value="0">{{ $t('batchCreation.AccordingSmallBox') }}</el-radio>
-                        <el-radio :value="1">{{ $t('batchCreation.AccordingBox') }}</el-radio>
-                        <el-radio :value="2">{{ $t('batchCreation.AccordingOrder') }}</el-radio>
-                    </el-radio-group>
-                </el-form-item>
-                 <el-form-item :label="$t('batchCreation.Printer')"  prop="Printer" class="mb-2">
+
+
+            </el-form>
+            <el-form ref="formRef" :inline="true" size="small" label-width="92px">
+                <el-form-item :label="$t('batchCreation.Printer')" prop="Printer" class="mb-2">
                     <el-select v-model="batchPrintForm.PrinterName" placeholder="" filterable style="width: 200px"
                         clearable>
                         <el-option v-for="p in printList" :label="p.PrintQueueName" :value="p.PrintQueueName"
@@ -50,9 +53,17 @@
                     </el-select>
                 </el-form-item>
                 <el-form-item class="mb-2">
+                    <el-radio-group v-model="batchPrintForm.PackagingType">
+                        <el-radio :value="0">{{ $t('batchCreation.AccordingSmallBox') }}</el-radio>
+                        <el-radio :value="1">{{ $t('batchCreation.AccordingBox') }}</el-radio>
+                        <el-radio :value="2">{{ $t('batchCreation.AccordingOrder') }}</el-radio>
+                    </el-radio-group>
+                </el-form-item>
+                
+                <el-form-item class="mb-2">
                     <el-button type="warning" :disabled="selectList.length == 0" size="small" @click="submitPrint">{{
                         $t('batchCreation.ProduceBatchPrint')
-                    }}</el-button>
+                        }}</el-button>
                 </el-form-item>
             </el-form>
             <div>
@@ -63,33 +74,38 @@
                 pageObj.currentPage * pageObj.pageSize
             )
                 " size="small" :style="{ width: '100%' }" :height="tableHeight" :tooltip-effect="'light'" border fit
-                highlight-current-row ref="multipleTableRef"
-                @selection-change="handleSelectionChange" :row-class-name="tableRowClassName">
+                highlight-current-row ref="multipleTableRef" @selection-change="handleSelectionChange"
+                :row-class-name="tableRowClassName">
                 <el-table-column type="selection" width="55" align="center" />
                 <el-table-column type="index" align="center" fixed :label="$t('publicText.index')" width="50">
                     <template #default="scope">
                         <span>{{
                             scope.$index + pageObj.pageSize * (pageObj.currentPage - 1) + 1
-                        }}</span>
+                            }}</span>
                     </template>
                 </el-table-column>
-                <el-table-column prop="MfgOrderName" :label="$t('batchCreation.OrderCode')">
+                <el-table-column prop="MfgOrderName" fixed :label="$t('batchCreation.OrderCode')">
                     <template #default="scope">
-                        <span class="underline  cursor-pointer text-cyan-800" @click="cellClick(scope.row)">{{ scope.row.MfgOrderName }}</span>
+                        <span class="underline  cursor-pointer text-cyan-800" @click="cellClick(scope.row)">{{
+                            scope.row.MfgOrderName }}</span>
                     </template>
                 </el-table-column>
-                <el-table-column prop="PriorityCodeName" :label="$t('batchCreation.Priority')" width="60" :align="'center'"/>
-                <el-table-column prop="ProductName" :label="$t('batchCreation.OrderProduct')" :min-width="flexColumnWidth($t('batchCreation.OrderProduct'), 'ProductName')"/>
+                <el-table-column prop="PriorityCodeName" fixed :label="$t('batchCreation.Priority')" width="60"
+                    :align="'center'" />
+                <el-table-column prop="ProductName" fixed :label="$t('batchCreation.OrderProduct')"
+                    :min-width="flexColumnWidth($t('batchCreation.OrderProduct'), 'ProductName')" />
                 <el-table-column prop="Description" :label="$t('batchCreation.ProductDsc')" width="100"
                     :show-overflow-tooltip="true" />
-                <el-table-column prop="Qty" :label="$t('batchCreation.OrderNumber')" />
+                <el-table-column prop="Qty" :label="'生产数量'" />
+                <el-table-column prop="Qty2" :label="'订单数量'" />
                 <el-table-column prop="UOMName" :label="$t('batchCreation.OrderUnit')" />
                 <el-table-column prop="WorkflowName" :label="$t('batchCreation.ProcessFlow')" />
                 <el-table-column prop="OrderStatusName" :label="$t('batchCreation.orderStatus')" />
                 <el-table-column prop="OrderTypeName" :label="$t('batchCreation.orderType')" />
                 <el-table-column prop="ES_CustomerPO" :label="$t('batchCreation.purchaseOrderNumber')" width="120" />
-                <el-table-column prop="CustomerName" :label="$t('batchCreation.customer')" />
-                    <el-table-column prop="SpecificationNo" :label="$t('oqcInspection.SpecificationNo')">
+                <el-table-column prop="CustomerName" :label="$t('batchCreation.customer')"
+                    :min-width="flexColumnWidth($t('batchCreation.customer'), 'CustomerName')" />
+                <el-table-column prop="SpecificationNo" :label="$t('oqcInspection.SpecificationNo')">
                     <template #default="{ row }">
                         <span class="underline cursor-pointer text-cyan-800" @click="openFile(row.SpecificationNo)">{{
                             row.SpecificationNo }}</span>
@@ -116,7 +132,7 @@
             <el-form ref="resetFormRef" :inline="true" :model="resetPrintForm" :rules="rules">
 
 
-                <el-form-item :label="$t('batchCreation.Printer')"  prop="Printer">
+                <el-form-item :label="$t('batchCreation.Printer')" prop="Printer">
                     <el-select v-model="resetPrintForm.Printer" placeholder="" filterable style="width: 200px"
                         clearable>
                         <el-option v-for="p in printList" :label="p.PrintQueueName" :value="p.PrintQueueName"
@@ -164,14 +180,14 @@
                 </span>
             </template>
         </el-dialog>
-           <el-dialog v-model="previewVisible" :title="previewTitle" width="80%" :append-to-body="true"
+        <el-dialog v-model="previewVisible" :title="previewTitle" width="80%" :append-to-body="true"
             :close-on-click-modal="false" :close-on-press-escape="false" align-center>
             <iframe :src="previewUrl" width="100%" height="650px" frameborder="0"></iframe>
             <template #footer>
                 <div class="dialog-footer">
                     <el-button @click="handlePreviewClose">{{
                         $t("publicText.close")
-                        }}</el-button>
+                    }}</el-button>
                     <el-button type="primary" @click="handlePreviewDawnload">
                         {{ $t("publicText.dawnload") }}
                     </el-button>
@@ -182,10 +198,10 @@
 </template>
 
 <script setup lang="ts">
-    import {
- 
+import {
+
     FTPSearchAndDownloadSpecificationDocumentFile
- 
+
 } from "@/api/smtSpotCheck/oqc";
 import {
     getOrderTypeQuery,
@@ -196,7 +212,8 @@ import {
     getPrintQuery,
     getPrintTemplateQuery,
     AddMfgOrderContainer,
-    ReprintMfgOrderContainer
+    ReprintMfgOrderContainer,
+    getWorkflowQuery
 } from "@/api/barCodeManage/batchCreation";
 import {
     ref,
@@ -227,6 +244,7 @@ const getForm = ref({
     OrderType: "",
     OrderStatus: "",
     Customer: "",
+    WorkflowName: ''
 });
 const searchDate = ref<any[]>([]);
 const orderTypeList = ref<any[]>([]);
@@ -269,6 +287,7 @@ const resetPrintForm = ref<ResetPrintForm>({
 const previewVisible = ref(false);
 const previewUrl = ref("");
 const previewTitle = ref("");
+const workflowList = ref<any>([])
 const rules = reactive({
     Printer: [
         {
@@ -317,6 +336,7 @@ onMounted(() => {
     getCustomer();
     getPrint()
     getPrintTemp()
+    getWorkFlowData()
 
 });
 onBeforeUnmount(() => {
@@ -324,8 +344,14 @@ onBeforeUnmount(() => {
 });
 const tableRowClassName = (val: any) => {
     let row = val.row;
-    if (row.PriorityCodeName==1) {
-        return "danger-row-invent";
+    if (row.PriorityCodeName == 1 && row.OrderStatusName !== '完工入库') {
+        return "bulelist-1";
+    } else if (row.PriorityCodeName == 2 && row.OrderStatusName !== '完工入库') {
+        return "bulelist-2";
+    } else if (row.PriorityCodeName == 3 && row.OrderStatusName !== '完工入库') {
+        return "bulelist-3";
+    } else {
+        return "";
     }
 };
 //获取工单类型
@@ -356,6 +382,12 @@ const getPrint = () => {
         printList.value = res.content;
     });
 }
+//获取工艺流程
+const getWorkFlowData = () => {
+    getWorkflowQuery({}).then((res: any) => {
+        workflowList.value = res.content
+    })
+}
 const getPrintTemp = () => {
     getPrintTemplateQuery({}).then((res: any) => {
         printTemplate.value = res.content;
@@ -374,6 +406,7 @@ const resetData = () => {
         OrderType: "",
         OrderStatus: "",
         Customer: "",
+        WorkflowName: ''
     };
     searchDate.value = [];
     tableData.value = [];
@@ -460,7 +493,7 @@ const closePrint = () => {
     printVisible.value = false
     // resetPrintForm.value.PrintTemplate = ''
     // resetPrintForm.value.Printer = ''
-      
+
 }
 const openFile = (val: any) => {
     FTPSearchAndDownloadSpecificationDocumentFile(val).then((res: any) => {
@@ -523,20 +556,20 @@ const handleSelectionChange1 = (val: any) => {
     resetList.value = val
 }
 const handleSizeChange = (val: any) => {
-    pageObj.value.pageSize=val
-   
+    pageObj.value.pageSize = val
+
     // getForm.value.PageNumber = 1;
     // getForm.value.PageSize = val;
     // getData();
 };
 const handleCurrentChange = (val: any) => {
-     pageObj.value.currentPage=val
+    pageObj.value.currentPage = val
     // getForm.value.PageNumber = val;
     // getData();
 };
 const getScreenHeight = () => {
     nextTick(() => {
-        tableHeight.value = window.innerHeight - 215;
+        tableHeight.value = window.innerHeight - 245;
     });
 };
 const flexColumnWidth = (label: any, prop: any) => {
@@ -586,5 +619,17 @@ const getTextWidth = (str: string) => {
 
 .el-table .success-row-invent {
     --el-table-tr-bg-color: var(--el-color-success-light-5);
+}
+
+.el-table .bulelist-1 {
+    --el-table-tr-bg-color: #79bbff
+}
+
+.el-table .bulelist-2 {
+    --el-table-tr-bg-color: #a0cfff
+}
+
+.el-table .bulelist-3 {
+    --el-table-tr-bg-color: #c6e2ff
 }
 </style>
