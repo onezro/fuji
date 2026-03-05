@@ -773,7 +773,6 @@ import { ElNotification, ElMessageBox, ElMessage } from "element-plus";
 import { useI18n } from "vue-i18n";
 const { t } = useI18n();
 import { useUserStoreWithOut } from "@/stores/modules/user";
-import { log } from 'console';
 
 const userStore = useUserStoreWithOut();
 const getForm = ref({

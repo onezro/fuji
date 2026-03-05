@@ -58,10 +58,10 @@
                         <el-form-item class="mb-2">
                             <el-button type="primary" @click="getRawData">{{
                                 $t("publicText.query")
-                                }}</el-button>
+                            }}</el-button>
                             <el-button type="" @click="handleRawReset">{{
                                 $t("publicText.reset")
-                                }}</el-button>
+                            }}</el-button>
                             <el-button type="success" size="small" :disabled="tableData.length == 0"
                                 @click="exportList">{{ $t("publicText.export") }}</el-button>
                         </el-form-item>
@@ -86,15 +86,22 @@
                                 }}</span>
                             </template>
                         </el-table-column>
-                        <el-table-column prop="ProductName" :label="$t('inventInquiry.materialName')" :min-width="getColumnWidth('ProductName')" />
-                        <el-table-column prop="CustomerLotNumber" :label="$t('inventInquiry.incomingBatch')" :min-width="getColumnWidth('CustomerLotNumber')" />
-                        <el-table-column prop="MaterialSource" :label="$t('inventInquiry.materialSource')" :min-width="getColumnWidth('MaterialSource')"/>
-                        <el-table-column prop="ProductFamilyName" :label="$t('inventInquiry.materialType')" :min-width="getColumnWidth('ProductFamilyName')" />
-                        <el-table-column prop="ContainerName" :label="$t('inventInquiry.materialID')" :min-width="getColumnWidth('ContainerName')" />
+                        <el-table-column prop="ProductName" :label="$t('inventInquiry.materialName')"
+                            :min-width="getColumnWidth('ProductName')" />
+                        <el-table-column prop="CustomerLotNumber" :label="$t('inventInquiry.incomingBatch')"
+                            :min-width="getColumnWidth('CustomerLotNumber')" />
+                        <el-table-column prop="MaterialSource" :label="$t('inventInquiry.materialSource')"
+                            :min-width="getColumnWidth('MaterialSource')" />
+                        <el-table-column prop="ProductFamilyName" :label="$t('inventInquiry.materialType')"
+                            :min-width="getColumnWidth('ProductFamilyName')" />
+                        <el-table-column prop="ContainerName" :label="$t('inventInquiry.materialID')"
+                            :min-width="getColumnWidth('ContainerName')" />
                         <el-table-column prop="TotalInventoryByProductBase"
-                            :label="$t('inventInquiry.CurrentInventory')" :min-width="getColumnWidth('TotalInventoryByProductBase')" />
-                        <el-table-column prop="TotalOutboundQty" :label="$t('inventInquiry.TotalOutboundQty')" :min-width="getColumnWidth('TotalOutboundQty')" />
-                        <el-table-column prop="OriginalStartDate" :label="$t('inventInquiry.entryTime')" width="150"/>
+                            :label="$t('inventInquiry.CurrentInventory')"
+                            :min-width="getColumnWidth('TotalInventoryByProductBase')" />
+                        <el-table-column prop="TotalOutboundQty" :label="$t('inventInquiry.TotalOutboundQty')"
+                            :min-width="getColumnWidth('TotalOutboundQty')" />
+                        <el-table-column prop="OriginalStartDate" :label="$t('inventInquiry.entryTime')" width="150" />
                         <template #empty>
                             <div class="flex items-center justify-center h-100%">
                                 <el-empty />
@@ -156,13 +163,22 @@
                             </el-select>
 
                         </el-form-item>
+                        <el-form-item :label="'类型'" class="mb-2" prop="entryTime">
+                            <el-select v-model="getFinishForm.Type" placeholder="" style="width: 200px">
+                                <el-option :label="'成品入库'" :value="'成品入库'">
+                                </el-option>
+                                <el-option :label="'成品出库'" :value="'成品出库'">
+                                </el-option>
+                            </el-select>
+
+                        </el-form-item>
                         <el-form-item class="mb-2">
                             <el-button type="primary" @click="getFinishData">{{
                                 $t("publicText.query")
-                                }}</el-button>
+                            }}</el-button>
                             <el-button type="" @click="handleFinishReset">{{
                                 $t("publicText.reset")
-                                }}</el-button>
+                            }}</el-button>
                             <el-button type="success" size="small" :disabled="tableData2.length == 0"
                                 @click="exportFinishList">{{
                                     $t("publicText.export") }}</el-button>
@@ -184,15 +200,20 @@
                                 }}</span>
                             </template>
                         </el-table-column>
-                        <el-table-column prop="ProductName" :label="$t('inventInquiry.productName')" :min-width="getColumnWidth2('ProductName')" />
+                        <el-table-column prop="ProductName" :label="$t('inventInquiry.productName')"
+                            :min-width="getColumnWidth2('ProductName')" />
                         <el-table-column prop="MfgOrderName" :label="$t('inventInquiry.order')" />
-                        <el-table-column prop="CustomerPO" :label="$t('inventInquiry.customerPO')" :min-width="getColumnWidth2('CustomerPO')" />
-                        <el-table-column prop="CustomerProduct" :label="$t('inventInquiry.customerPN')" :min-width="getColumnWidth2('CustomerProduct')" />
+                        <el-table-column prop="CustomerPO" :label="$t('inventInquiry.customerPO')"
+                            :min-width="getColumnWidth2('CustomerPO')" />
+                        <el-table-column prop="CustomerProduct" :label="$t('inventInquiry.customerPN')"
+                            :min-width="getColumnWidth2('CustomerProduct')" />
                         <el-table-column prop="ProductionQty" :label="$t('inventInquiry.productQty')" width="100" />
                         <el-table-column prop="MfgOrderQty" :label="$t('inventInquiry.orderQty')" width="100" />
 
-                        <el-table-column prop="BoxOuterContainerName" :label="$t('inventInquiry.boxNumber')" :min-width="getColumnWidth2('BoxOuterContainerName')" />
-                        <el-table-column prop="PackingContainerName" :label="$t('inventInquiry.boxOrderNum')" :min-width="getColumnWidth2('PackingContainerName')" />
+                        <el-table-column prop="BoxOuterContainerName" :label="$t('inventInquiry.boxNumber')"
+                            :min-width="getColumnWidth2('BoxOuterContainerName')" />
+                        <el-table-column prop="PackingContainerName" :label="$t('inventInquiry.boxOrderNum')"
+                            :min-width="getColumnWidth2('PackingContainerName')" />
                         <el-table-column prop="BoxOuterQty" :label="$t('inventInquiry.boxNum')" width="100" />
                         <el-table-column prop="materialPos" :label="$t('inventInquiry.materialPos')" />
                         <el-table-column prop="ProductCode" :label="$t('inventInquiry.ProductCode')" width="100" />
@@ -201,6 +222,8 @@
                         <el-table-column prop="specificationID" :label="$t('inventInquiry.specificationID')" />
                         <el-table-column prop="isCar" :label="$t('inventInquiry.isCar')" width="100" />
                         <el-table-column prop="MoveStdDate" :label="$t('inventInquiry.entryTime')" width="150" />
+                        <el-table-column prop="ShippedBy" :label="'出库人'" :min-width="getColumnWidth2('ShippedBy')" />
+                        <el-table-column prop="ShippedTime" :label="'出库时间'" width="150" />
                         <template #empty>
                             <div class="flex items-center justify-center h-100%">
                                 <el-empty />
@@ -289,6 +312,7 @@ const getFinishForm = ref({
     IsItAnAutomotiveProduct: '',
     StartDate: "",
     EndDate: "",
+    Type: ''
 });
 const searchFinishDate = ref<any[]>([]);
 
@@ -446,8 +470,12 @@ const handleFinishReset = () => {
         IsItAnAutomotiveProduct: '',
         StartDate: "",
         EndDate: "",
+        Type: ''
     };
     searchFinishDate.value = [];
+    tableData2.value = [];
+    getFinishData();
+
 };
 const exportFinishList = () => {
     exportTableToExcel({
@@ -527,9 +555,10 @@ const columnWidths2 = computed(() => {
     const columns = [
         { label: '产品名称', prop: 'ProductName' },
         { label: '客户PO', prop: 'CustomerPO' },
-        { label: '客户PN', prop: 'CustomerPN' },
+        { label: '客户PN', prop: 'CustomerProduct' },
         { label: '箱号', prop: 'BoxOuterContainerName' },
         { label: '装箱单号', prop: 'PackingContainerName' },
+        { label: '出库人', prop: 'ShippedBy' },
         // 添加其他需要自适应宽度的列
     ];
 

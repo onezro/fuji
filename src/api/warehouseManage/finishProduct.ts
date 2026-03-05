@@ -15,3 +15,21 @@ export function SubmitForCompletionAndWarehousing(data: any) {
         data,
     });
 }
+
+//获取出库
+export function GetFinishedQuery(data: any) {
+    return request({
+        url: "/api/FinishedController/GetFinishedQuery",
+        method: "post",
+        data,
+    });
+}
+
+//提交出库
+export function SubmitForFinished(data: any) {
+    return request({
+        url: "/api/FinishedController/SubmitForFinished",
+        method: "post",
+        data,
+    });
+}
