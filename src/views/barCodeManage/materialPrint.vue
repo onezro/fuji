@@ -6,7 +6,7 @@
                     <el-form-item label="时间" class="mb-2">
                         <el-date-picker :shortcuts="shortcuts" v-model="searchDate" value-format="YYYY-MM-DD"
                             type="daterange" range-separator="-" size="small" style="width: 200px" :clearable="false"
-                            :disabled-date="disabledDate" />
+                              />
                     </el-form-item>
                     <el-form-item label="物料条码" class="mb-2">
                         <el-input style="width: 150px" v-model="getForm.ContainerName" placeholder="" clearable

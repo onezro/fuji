@@ -128,7 +128,7 @@
                 </el-pagination>
             </div>
         </el-card>
-        <el-dialog :title="$t('publicText.add')" v-model="addVisible" width="80%" @close="addCancel"
+        <el-dialog :title="$t('publicText.add')" v-model="addVisible" width="90%" @close="addCancel"
             :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" align-center>
             <el-form :model="addForm" ref="addFormRef" label-width="auto" :inline="false">
                 <el-form-item :label="'材料产品名称'" prop="partNumber">
@@ -150,7 +150,8 @@
                         <el-table :data="addTypeTable" style="width: 100%" :height="320" size="small" border stripe>
                             <el-table-column type="index" align="center" fixed :label="$t('publicText.index')"
                                 width="50" />
-                            <el-table-column prop="InspectionType" :label="$t('aqlrules.ProjectCategoryName')" min-width="200">
+                            <el-table-column prop="InspectionType" :label="$t('aqlrules.ProjectCategoryName')"
+                                min-width="150">
                                 <template #default="scope">
 
                                     <el-select v-model="scope.row.ProjectCategoryName" placeholder="请选择" filterable
@@ -160,16 +161,16 @@
                                     </el-select>
                                 </template>
                             </el-table-column>
-                            <el-table-column prop="ProjectName" :label="$t('aqlrules.ProjectName')" min-width="200">
+                            <el-table-column prop="ProjectName" :label="$t('aqlrules.ProjectName')" min-width="150">
                                 <template #default="scope">
-                                    <el-select v-model="scope.row.ProjectName" placeholder="请选择" filterable
-                                        size="small" style="width: 100%;">
+                                    <el-select v-model="scope.row.ProjectName" placeholder="请选择" filterable size="small"
+                                        style="width: 100%;">
                                         <el-option :label="p.ProjectName" :value="p.ProjectName"
                                             v-for="p in projectList" />
                                     </el-select>
                                 </template>
                             </el-table-column>
-                            <el-table-column prop="InspectionType" :label="'操作类型'" min-width="200">
+                            <el-table-column prop="InspectionType" :label="'操作类型'" min-width="100">
                                 <template #default="scope">
                                     <el-select v-model="scope.row.MeasurementType" placeholder="请选择" filterable
                                         size="small" style="width: 100%;">
@@ -199,10 +200,17 @@
                                     <el-input v-model="scope.row.MaxValue" size="small"></el-input>
                                 </template>
                             </el-table-column>
-                            <el-table-column prop="ToolName" :label="$t('aqlrules.ToolName')"min-width="200">
+                            <el-table-column prop="DecimalPlaces" :label="$t('aqlrules.DecimalPlaces')" width="120">
+                                <template #default="scope">
+                                    <el-input-number v-model="scope.row.DecimalPlaces" :min="0" :size="'small'"
+                                        style="width: 100%" />
+                                </template>
+                            </el-table-column>
+                            <el-table-column prop="ToolName" :label="$t('aqlrules.ToolName')" min-width="200">
                                 <template #default="scope">
                                     <!-- <el-input v-model="scope.row.ToolName"></el-input> -->
-                                    <el-select v-model="scope.row.ToolName" placeholder="请选择" filterable size="small" style="width: 100%;">
+                                    <el-select v-model="scope.row.ToolName" placeholder="请选择" filterable size="small"
+                                        style="width: 100%;">
                                         <el-option :label="p.ResourceName" :value="p.ResourceName"
                                             v-for="p in resourceList" />
                                     </el-select>
@@ -235,7 +243,7 @@
                     }}</el-button>
             </template>
         </el-dialog>
-        <el-dialog :title="$t('publicText.edit')" v-model="editVisible" width="85%" @close="editCancel"
+        <el-dialog :title="$t('publicText.edit')" v-model="editVisible" width="90%" @close="editCancel"
             :append-to-body="true" :close-on-click-modal="false" :close-on-press-escape="false" align-center>
             <el-form :model="editForm" ref="editFormRef" label-width="auto" :inline="false">
                 <el-form-item :label="'材料产品名称'" prop="partNumber">
@@ -258,7 +266,8 @@
                 <el-tab-pane v-for="a in addTabList" :label="a.label" :name="a.value" :key="a.label">
                     <el-table :data="editTypeTable" style="width: 100%" :height="300" size="small" border stripe>
                         <el-table-column type="index" align="center" fixed :label="$t('publicText.index')" width="50" />
-                        <el-table-column prop="InspectionType" :label="$t('aqlrules.ProjectCategoryName')" min-width="200">
+                        <el-table-column prop="InspectionType" :label="$t('aqlrules.ProjectCategoryName')"
+                            min-width="150">
                             <template #default="scope">
                                 <!-- <el-input v-model="scope.row.InspectionType" size="small"></el-input> -->
                                 <el-select v-model="scope.row.ProjectCategoryName" placeholder="请选择" filterable
@@ -268,9 +277,10 @@
                                 </el-select>
                             </template>
                         </el-table-column>
-                        <el-table-column prop="ProjectName" :label="$t('aqlrules.ProjectName')"  min-width="200">
+                        <el-table-column prop="ProjectName" :label="$t('aqlrules.ProjectName')" min-width="150">
                             <template #default="scope">
-                                <el-select v-model="scope.row.ProjectName" placeholder="请选择" filterable size="small" style="width: 100%;">
+                                <el-select v-model="scope.row.ProjectName" placeholder="请选择" filterable size="small"
+                                    style="width: 100%;">
                                     <el-option :label="p.ProjectName" :value="p.ProjectName" v-for="p in projectList" />
                                 </el-select>
                             </template>
@@ -282,10 +292,10 @@
                         </el-select>
                     </template>
                 </el-table-column> -->
-                        <el-table-column prop="InspectionType" :label="'操作类型'" min-width="200">
+                        <el-table-column prop="InspectionType" :label="'操作类型'" min-width="100">
                             <template #default="scope">
-                                <el-select v-model="scope.row.MeasurementType" placeholder="请选择" filterable
-                                    size="small" style="width: 100%;">
+                                <el-select v-model="scope.row.MeasurementType" placeholder="请选择" filterable size="small"
+                                    style="width: 100%;">
                                     <el-option :label="'计数'" :value="'计数'" />
                                     <el-option :label="'计量'" :value="'计量'" />
                                 </el-select>
@@ -312,10 +322,17 @@
                                 <el-input v-model="scope.row.MaxValue" size="small"></el-input>
                             </template>
                         </el-table-column>
-                        <el-table-column prop="ToolName" :label="$t('aqlrules.ToolName')"  min-width="200">
+                        <el-table-column prop="DecimalPlaces" :label="$t('aqlrules.DecimalPlaces')" width="120">
+                            <template #default="scope">
+                                <el-input-number v-model="scope.row.DecimalPlaces" :min="0" :size="'small'"
+                                    style="width: 100%" />
+                            </template>
+                        </el-table-column>
+                        <el-table-column prop="ToolName" :label="$t('aqlrules.ToolName')" min-width="200">
                             <template #default="scope">
                                 <!-- <el-input v-model="scope.row.ToolName"></el-input> -->
-                                <el-select v-model="scope.row.ToolName" placeholder="请选择" filterable size="small" style="width: 100%;">
+                                <el-select v-model="scope.row.ToolName" placeholder="请选择" filterable size="small"
+                                    style="width: 100%;">
                                     <el-option :label="p.ResourceName" :value="p.ResourceName"
                                         v-for="p in resourceList" />
                                 </el-select>
@@ -345,10 +362,10 @@
                     }}</el-button>
             </template>
         </el-dialog>
-        <el-dialog :title="'复制'" v-model="copyVisible" width="85%" @close="copyCancel" :append-to-body="true"
+        <el-dialog :title="'复制'" v-model="copyVisible" width="90%" @close="copyCancel" :append-to-body="true"
             :close-on-click-modal="false" :close-on-press-escape="false" align-center>
             <el-form :model="copyForm" ref="copyFormRef" label-width="auto" :inline="false">
-                <el-form-item :label="'材料产品名称'" prop="InspectionMasterName" >
+                <el-form-item :label="'材料产品名称'" prop="InspectionMasterName">
                     <!-- <el-input v-model="copyForm.InspectionMasterName" placeholder=""  /> -->
                     <el-select-v2 v-model="copyForm.InspectionMasterName" filterable :options="productList"
                         placeholder="" :props="{ value: 'productname', label: 'product' }" style="width: 100%" />
@@ -360,7 +377,8 @@
                 <el-tab-pane v-for="a in addTabList" :label="a.label" :name="a.value" :key="a.label">
                     <el-table :data="copyTypeTable" style="width: 100%" :height="300" size="small" border stripe>
                         <el-table-column type="index" align="center" fixed :label="$t('publicText.index')" width="50" />
-                        <el-table-column prop="InspectionType" :label="$t('aqlrules.ProjectCategoryName')" min-width="200">
+                        <el-table-column prop="InspectionType" :label="$t('aqlrules.ProjectCategoryName')"
+                            min-width="150">
                             <template #default="scope">
                                 <!-- <el-input v-model="scope.row.InspectionType" size="small"></el-input> -->
                                 <el-select v-model="scope.row.ProjectCategoryName" placeholder="请选择" filterable
@@ -370,17 +388,18 @@
                                 </el-select>
                             </template>
                         </el-table-column>
-                        <el-table-column prop="ProjectName" :label="$t('aqlrules.ProjectName')"  min-width="200">
+                        <el-table-column prop="ProjectName" :label="$t('aqlrules.ProjectName')" min-width="150">
                             <template #default="scope">
-                                <el-select v-model="scope.row.ProjectName" placeholder="请选择" filterable size="small" style="width: 100%">
+                                <el-select v-model="scope.row.ProjectName" placeholder="请选择" filterable size="small"
+                                    style="width: 100%">
                                     <el-option :label="p.ProjectName" :value="p.ProjectName" v-for="p in projectList" />
                                 </el-select>
                             </template>
                         </el-table-column>
-                        <el-table-column prop="InspectionType" :label="'操作类型'"  min-width="200">
+                        <el-table-column prop="InspectionType" :label="'操作类型'" min-width="100">
                             <template #default="scope">
-                                <el-select v-model="scope.row.MeasurementType" placeholder="请选择" filterable
-                                    size="small" style="width: 100%">
+                                <el-select v-model="scope.row.MeasurementType" placeholder="请选择" filterable size="small"
+                                    style="width: 100%">
                                     <el-option :label="'计数'" :value="'计数'" />
                                     <el-option :label="'计量'" :value="'计量'" />
                                 </el-select>
@@ -407,10 +426,17 @@
                                 <el-input v-model="scope.row.MaxValue" size="small"></el-input>
                             </template>
                         </el-table-column>
+                        <el-table-column prop="DecimalPlaces" :label="$t('aqlrules.DecimalPlaces')" width="120">
+                            <template #default="scope">
+                                <el-input-number v-model="scope.row.DecimalPlaces" :min="0" :size="'small'"
+                                    style="width: 100%" />
+                            </template>
+                        </el-table-column>
                         <el-table-column prop="ToolName" :label="$t('aqlrules.ToolName')" min-width="200">
                             <template #default="scope">
                                 <!-- <el-input v-model="scope.row.ToolName"></el-input> -->
-                                <el-select v-model="scope.row.ToolName" placeholder="请选择" filterable size="small" style="width: 100%">
+                                <el-select v-model="scope.row.ToolName" placeholder="请选择" filterable size="small"
+                                    style="width: 100%">
                                     <el-option :label="p.ResourceName" :value="p.ResourceName"
                                         v-for="p in resourceList" />
                                 </el-select>
@@ -514,6 +540,7 @@ const addForm = ref({
             MeasurementType: "",
             CreateUser: userStore.getUserInfo,
             UpdateUser: "",
+            DecimalPlaces: 0
         },
     ],
 });
@@ -537,6 +564,7 @@ const editForm = ref({
             MeasurementType: "",
             CreateUser: "",
             UpdateUser: userStore.getUserInfo,
+            DecimalPlaces: 0
         },
     ],
 });
@@ -593,6 +621,7 @@ const copyForm = ref({
             MeasurementType: "",
             CreateUser: userStore.getUserInfo,
             UpdateUser: "",
+             DecimalPlaces: 0
         },
     ],
 })
@@ -654,6 +683,7 @@ const resetGetForm = () => {
     getData()
 }
 const getData = () => {
+    pageObj.currentPage = 1;
     GetInspectionMasterQuery(getForm.value).then((res: any) => {
         tableData.value = res.content;
     });
@@ -715,6 +745,7 @@ const openAdd = () => {
         MeasurementType: "",
         CreateUser: "",
         UpdateUser: "",
+        DecimalPlaces: 0
     }
     addVisible.value = true;
 };
@@ -744,6 +775,7 @@ const createInspectionDetail = (val: any) => {
         MeasurementType: "",
         CreateUser: "",
         UpdateUser: "",
+        DecimalPlaces: 0
     }
 }
 const addCancel = () => {
@@ -770,6 +802,7 @@ const addInspectionDetails = () => {
         MeasurementType: "",
         CreateUser: "",
         UpdateUser: "",
+        DecimalPlaces: 0
     });
 };
 const addInspectionDelete = (filteredIndex: any) => {
@@ -877,6 +910,7 @@ const getDetailData = () => {
                     MeasurementType: "",
                     CreateUser: "",
                     UpdateUser: userStore.getUserInfo,
+                    DecimalPlaces: 0
                 },
             ];
         }
@@ -899,6 +933,7 @@ const editInspectionDetails = () => {
         MeasurementType: "",
         CreateUser: "",
         UpdateUser: userStore.getUserInfo,
+        DecimalPlaces: 0
     });
 };
 const deleteDetail = (val: any, filteredIndex: any) => {
@@ -1049,6 +1084,7 @@ const handleCopy = (val: any) => {
                     MeasurementType: "",
                     CreateUser: "",
                     UpdateUser: userStore.getUserInfo,
+                     DecimalPlaces: 0
                 },
             ];
         }
@@ -1070,6 +1106,7 @@ const copyInspectionDetails = () => {
         MeasurementType: "",
         CreateUser: "",
         UpdateUser: "",
+         DecimalPlaces: 0
     });
 };
 const copyInspectionDelete = (filteredIndex: any) => {

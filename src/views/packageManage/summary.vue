@@ -22,19 +22,32 @@
                             $t("publicText.reset")
                         }}</el-button>
                     </el-form-item>
+                     <el-form-item :label="$t('batchCreation.Printer')" prop="Printer" class="mb-2">
+                    <el-select v-model="PrinterName" placeholder="" filterable style="width: 200px"
+                        clearable>
+                        <el-option v-for="p in printList" :label="p.PrintQueueName" :value="p.PrintQueueName"
+                            :key="p.PrintQueueId" />
+                    </el-select>
+                </el-form-item>
+                  <el-form-item class="mb-2">
+                    <el-button type="warning" :disabled="selectList.length !== 1" size="small" @click="submitPrint">{{
+                        $t('publicText.print')
+                        }}</el-button>
+                </el-form-item>
                 </el-form>
                 <el-form-item class="mb-2">
                     <el-button type="success" size="small" :disabled="tableData2.length == 0" @click="exportList">{{
                         $t("publicText.export") }}</el-button>
                 </el-form-item>
+
             </div>
             <el-table :data="tableData.slice(
                 (pageObj.currentPage - 1) * pageObj.pageSize,
                 pageObj.currentPage * pageObj.pageSize
             )
                 " size="small" :style="{ width: '100%' }" :height="tableHeight" :tooltip-effect="'light'" border fit
-                highlight-current-row @cell-click="cellClick">
-                <!-- <el-table-column type="selection" width="55" align="center" /> -->
+                highlight-current-row @cell-click="cellClick" @selection-change="handleSelectionChange" >
+                <el-table-column type="selection" width="55" align="center" />
                 <el-table-column type="index" align="center" fixed :label="$t('publicText.index')" width="50">
                     <template #default="scope">
                         <span>{{
@@ -127,7 +140,8 @@ import {
     GetHSCodeQuery,
     GetPackingSerachReport,
     GetPackingHSCodeSummaryQuery,
-    DownloadPackingListReportAsync
+    DownloadPackingListReportAsync,
+    BoxPackingPrint
 } from "@/api/packageManage/listGeneration";
 import {
     ref,
@@ -145,6 +159,9 @@ import {
     setLastDate,
     disabledDate,
 } from "@/utils/dataMenu";
+import {
+    getPrintQuery
+} from "@/api/barCodeManage/batchCreation";
 import dayjs from "dayjs";
 import { exportTableToExcel } from "@/utils/exportExcel";
 import { ElNotification, ElMessageBox, ElMessage } from "element-plus";
@@ -206,6 +223,8 @@ const  previewForm=ref({
     UserName:userStore.getUserInfo
 }) 
 const excelSrc=ref('')
+const printList = ref<any[]>([])
+const PrinterName = ref('')
 watch(
     () => searchDate.value,
     (newVal: any, oldVal: any) => {
@@ -217,7 +236,7 @@ watch(
             return;
         }
         if (newVal !== oldVal) {
-            getForm.value.StartTime = newVal[0];
+            getForm.value.StartTime = newVal[0] + ' 00:00:00';
             getForm.value.EndTime = newVal[1] + ' 23:59:59';
             // getForm.value.PageNumber = 1
         }
@@ -233,6 +252,7 @@ onMounted(() => {
     window.addEventListener("resize", getScreenHeight);
     getProductType();
     getData()
+    getPrint()
 });
 onBeforeUnmount(() => {
     window.removeEventListener("resize", getScreenHeight);
@@ -243,7 +263,14 @@ const getProductType = () => {
         palletList.value = res.content;
     });
 };
+//获取打印机
+const getPrint = () => {
+    getPrintQuery({}).then((res: any) => {
+        printList.value = res.content;
+    });
+}
 const getData = () => {
+    pageObj.currentPage = 1;
     GetPackingSerachReport(getForm.value).then((res: any) => {
         if (res.success) {
             tableData.value = res.content.map((item: any) => {
@@ -413,6 +440,32 @@ const addSummaryDataFunctional = (data: any) => {
 };
 const handleSelectionChange = (val: any) => {
     selectList.value = val;
+};
+const submitPrint = () => {
+    if (PrinterName.value === '') {
+        ElMessage.warning('请选择打印机');
+        return;
+    }
+  
+    let data={
+        BoxPackingPrint:selectList.value[0].ContainerName,
+        CardAreaName:selectList.value[0].ES_CardAreaName,
+        Number:selectList.value[0].TotalBoxCount,
+        Printer:PrinterName.value
+    }
+    BoxPackingPrint(data).then((res:any)=>{
+        if(res.success){
+            ElMessage({
+                type:'success',
+                message:res.msg
+            })
+        }else{
+            ElMessage({
+                type:'error',
+                message:res.msg
+            })
+        }
+    })
 };
 const handleSizeChange = (val: any) => {
     pageObj.pageSize = val;

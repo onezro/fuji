@@ -525,7 +525,7 @@ watch(
             return;
         }
         if (newVal !== oldVal) {
-            getForm.value.StartTime = newVal[0];
+            getForm.value.StartTime = newVal[0] + ' 00:00:00';
             getForm.value.EndTime = newVal[1] + ' 23:59:59';
             // getForm.value.PageNumber = 1
         }
@@ -553,6 +553,7 @@ onBeforeUnmount(() => {
 });
 
 const getData = () => {
+    pageObj.currentPage = 1;
     GetIQCHeaderQuery(getForm.value).then((res: any) => {
         tableData.value = res.content;
     });

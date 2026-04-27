@@ -5,7 +5,7 @@
                 <el-form-item :label="$t('batchCreation.scheduling')" class="mb-2">
                     <!-- <el-date-picker :shortcuts="shortcuts" v-model="searchDate" value-format="YYYY-MM-DD HH:mm:ss"
                         type="datetimerange" range-separator="-" size="small" style="width: 330px" :clearable="false"
-                        :disabled-date="disabledDate" /> -->
+                          /> -->
                     <el-date-picker :shortcuts="shortcuts" v-model="searchDate" value-format="YYYY-MM-DD"
                         type="daterange" range-separator="-" size="small" style="width: 200px" :clearable="false" />
                 </el-form-item>
@@ -44,7 +44,7 @@
 
 
             </el-form>
-            <el-form ref="formRef" :inline="true" size="small" label-width="92px">
+            <el-form ref="formRef" :inline="true" size="small" label-width="60px">
                 <el-form-item :label="$t('batchCreation.Printer')" prop="Printer" class="mb-2">
                     <el-select v-model="batchPrintForm.PrinterName" placeholder="" filterable style="width: 200px"
                         clearable>
@@ -59,7 +59,7 @@
                         <el-radio :value="2">{{ $t('batchCreation.AccordingOrder') }}</el-radio>
                     </el-radio-group>
                 </el-form-item>
-                
+
                 <el-form-item class="mb-2">
                     <el-button type="warning" :disabled="selectList.length == 0" size="small" @click="submitPrint">{{
                         $t('batchCreation.ProduceBatchPrint')
@@ -73,8 +73,8 @@
                 (pageObj.currentPage - 1) * pageObj.pageSize,
                 pageObj.currentPage * pageObj.pageSize
             )
-                " size="small" :style="{ width: '100%' }" :height="tableHeight" :tooltip-effect="'light'" border fit
-                highlight-current-row ref="multipleTableRef" @selection-change="handleSelectionChange"
+                " size="small" :style="{ width: '100%' }" :height="tableHeight"  border fit
+              ref="multipleTableRef" @selection-change="handleSelectionChange"
                 :row-class-name="tableRowClassName">
                 <el-table-column type="selection" width="55" align="center" />
                 <el-table-column type="index" align="center" fixed :label="$t('publicText.index')" width="50">
@@ -93,18 +93,25 @@
                 <el-table-column prop="PriorityCodeName" fixed :label="$t('batchCreation.Priority')" width="60"
                     :align="'center'" />
                 <el-table-column prop="ProductName" fixed :label="$t('batchCreation.OrderProduct')"
-                    :min-width="flexColumnWidth($t('batchCreation.OrderProduct'), 'ProductName')" />
-                <el-table-column prop="Description" :label="$t('batchCreation.ProductDsc')" width="100"
+                    :min-width="getColumnWidth('ProductName')" />
+                <el-table-column prop="Description" :label="$t('batchCreation.ProductDsc')" width="150"
                     :show-overflow-tooltip="true" />
+
+                <el-table-column prop="MfgOrderNotes"  :label="$t('batchCreation.MfgOrderNotes')"
+                    :min-width="getColumnWidth('MfgOrderNotes')" />
                 <el-table-column prop="Qty" :label="'生产数量'" />
                 <el-table-column prop="Qty2" :label="'订单数量'" />
                 <el-table-column prop="UOMName" :label="$t('batchCreation.OrderUnit')" />
-                <el-table-column prop="WorkflowName" :label="$t('batchCreation.ProcessFlow')" />
-                <el-table-column prop="OrderStatusName" :label="$t('batchCreation.orderStatus')" />
-                <el-table-column prop="OrderTypeName" :label="$t('batchCreation.orderType')" />
-                <el-table-column prop="ES_CustomerPO" :label="$t('batchCreation.purchaseOrderNumber')" width="120" />
+                <el-table-column prop="WorkflowName" :label="$t('batchCreation.ProcessFlow')"  :min-width="getColumnWidth('WorkflowName')" />
+                <el-table-column prop="OrderStatusName" :label="$t('batchCreation.orderStatus')" :min-width="getColumnWidth('OrderStatusName')"/>
+                <el-table-column prop="OrderTypeName" :label="$t('batchCreation.orderType')"  :min-width="getColumnWidth('OrderTypeName')"/>
                 <el-table-column prop="CustomerName" :label="$t('batchCreation.customer')"
-                    :min-width="flexColumnWidth($t('batchCreation.customer'), 'CustomerName')" />
+                    :min-width="getColumnWidth('CustomerName')" />
+                <el-table-column prop="ES_CustomerPO" :label="$t('batchCreation.purchaseOrderNumber')"
+                    :min-width="getColumnWidth('ES_CustomerPO')" />
+                          <el-table-column prop="FPPO" :label="'FP-PO'"
+                    :min-width="getColumnWidth('FPPO')" />
+                <el-table-column prop="PN" :label="'PN'" :min-width="getColumnWidth('PN')" />
                 <el-table-column prop="SpecificationNo" :label="$t('oqcInspection.SpecificationNo')">
                     <template #default="{ row }">
                         <span class="underline cursor-pointer text-cyan-800" @click="openFile(row.SpecificationNo)">{{
@@ -199,9 +206,7 @@
 
 <script setup lang="ts">
 import {
-
     FTPSearchAndDownloadSpecificationDocumentFile
-
 } from "@/api/smtSpotCheck/oqc";
 import {
     getOrderTypeQuery,
@@ -232,6 +237,9 @@ import {
     disabledDate,
 } from "@/utils/dataMenu";
 import { ElNotification, ElMessageBox, ElMessage } from "element-plus";
+import {
+    calculateColumnsWidth,
+} from "@/utils/tableminWidth";
 import { useI18n } from 'vue-i18n';
 const { t } = useI18n();
 const multipleTableRef = ref()
@@ -316,8 +324,8 @@ watch(
             return;
         }
         if (newVal !== oldVal) {
-            getForm.value.SchedulingStartDate = newVal[0];
-            getForm.value.SchedulingEndDate = newVal[1];
+             getForm.value.SchedulingStartDate = newVal[0] + ' 00:00:00';
+           getForm.value.SchedulingEndDate = newVal[1] + ' 23:59:59';
             // getForm.value.PageNumber = 1
         }
     }
@@ -394,6 +402,7 @@ const getPrintTemp = () => {
     });
 }
 const getData = () => {
+    pageObj.value.currentPage = 1
     getMfgOrderInformationQuery(getForm.value).then((res: any) => {
         tableData.value = res.content;
     });
@@ -572,39 +581,33 @@ const getScreenHeight = () => {
         tableHeight.value = window.innerHeight - 245;
     });
 };
-const flexColumnWidth = (label: any, prop: any) => {
-    const arr = tableData?.value.map((x: { [x: string]: any }) => x[prop]);
-    arr.push(label); // 把每列的表头也加进去算
-    return getMaxLength(arr) + 25 + "px";
+const columnWidths = computed(() => {
+    const columns = [
+        { label: "工单编码", prop: "ProductName" },
+        { label: "NOTE", prop: "MfgOrderNotes" },
+        { label: "客户", prop: "CustomerName" },
+        { label: "PN", prop: "PN" },
+        { label: "purchaseOrderNumber", prop: "ES_CustomerPO" },
+        { label: "工艺流程", prop: "WorkflowName" },
+        { label: "工单状态", prop: "OrderStatusName" },
+        { label: "工单类型", prop: "OrderTypeName" },
+        { label: "FP-PO", prop: "FPPO" }
+
+        // 添加其他需要自适应宽度的列
+    ];
+
+    // 批量计算列宽
+    return calculateColumnsWidth(columns, tableData.value, {
+        padding: 25,
+        fontSize: 13,
+    });
+});
+
+// 在模板中使用
+const getColumnWidth = (prop: string) => {
+    return columnWidths.value[prop] || "auto";
 };
 
-const getMaxLength = (arr: any) => {
-    return arr.reduce((acc: any, item: any) => {
-        if (item) {
-            const calcLen = getTextWidth(item);
-
-            if (acc < calcLen) {
-                acc = calcLen;
-            }
-        }
-        return acc;
-    }, 0);
-};
-const getTextWidth = (str: string) => {
-    let width = 0;
-    const html = document.createElement("span");
-    html.style.cssText = `padding: 0; margin: 0; border: 0; line-height: 1; font-size: ${13}px; font-family: Arial, sans-serif;`;
-    html.innerText = str; // 去除字符串前后的空白字符
-    document.body?.appendChild(html);
-
-    const spanElement = html; // 无需再次查询，直接使用创建的元素
-    if (spanElement) {
-        width = spanElement.offsetWidth;
-        spanElement.remove();
-    }
-    // console.log(width);
-    return width;
-};
 </script>
 
 <style scoped>

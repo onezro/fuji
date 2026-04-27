@@ -83,7 +83,7 @@
                     <template #default="scope">
                         <span>{{
                             scope.$index + pageObj.pageSize * (pageObj.currentPage - 1) + 1
-                        }}</span>
+                            }}</span>
                     </template>
                 </el-table-column>
                 <el-table-column prop="PriorityCodeName" :label="$t('batchCreation.Priority')" width="60" fixed
@@ -192,14 +192,14 @@
                 <div class="dialog-footer">
                     <el-button @click="handleAddClose">{{
                         $t("publicText.cancel")
-                    }}</el-button>
+                        }}</el-button>
                     <el-button type="primary" @click="handleAddConfirm">
                         {{ $t("publicText.confirm") }}
                     </el-button>
                 </div>
             </template>
         </el-dialog>
-        <el-dialog v-model="editVisible" :title="title" width="80%" :append-to-body="true" :close-on-click-modal="false"
+        <el-dialog v-model="editVisible" :title="title" width="90%" :append-to-body="true" :close-on-click-modal="false"
             :close-on-press-escape="false" align-center @close="handleEditClose">
             <el-form ref="editFormRef" :model="editForm" label-width="auto" :inline="true" :size="'small'">
                 <el-form-item :label="$t('processInspect.inspectOrder')" prop="InspectionNO">
@@ -223,7 +223,7 @@
             </el-form>
             <el-tabs v-model="activeName" type="border-card">
                 <el-tab-pane :label="'计数检验'" name="first">
-                    <el-table :data="editForm.countItem" style="width: 100%" :height="350" size="small" border
+                    <el-table :data="editForm.countItem" style="width: 100%" :height="400" size="small" border
                         :span-method="objectSpanMethod2" :tooltip-effect="'dark'"
                         :row-class-name="tableDetailRowClassName2">
                         <el-table-column prop="LineNos" :label="'检验序列'" :align="'center'" :fixed="'left'" width="80">
@@ -289,7 +289,7 @@
                             </el-upload>
                         </el-form-item>
                     </div>
-                    <el-table ref="tempMeasureRef" :data="editForm.listItem" style="width: 100%" :height="300"
+                    <el-table ref="tempMeasureRef" :data="editForm.listItem" style="width: 100%" :height="400"
                         size="small" border :span-method="objectSpanMethod" :tooltip-effect="'dark'"
                         :row-class-name="tableDetailRowClassName">
                         <el-table-column prop="LineNos" :label="'检验序列'" :align="'center'" :fixed="'left'" width="80">
@@ -310,7 +310,8 @@
                         </el-table-column>
                         <el-table-column prop="MinValue" :label="$t('aqlrules.MinValue')">
                         </el-table-column>
-
+                        <el-table-column prop="DecimalPlaces" :label="$t('aqlrules.DecimalPlaces')" :min-width="getColumnWidth2('DecimalPlaces')"
+                            :align="'center'" />
                         <el-table-column prop="ToolName" :label="$t('aqlrules.ToolName')"
                             :min-width="getColumnWidth2('ToolName')">
                         </el-table-column>
@@ -351,9 +352,14 @@
                                 <span>{{ calculateAverage(scope.row) }}</span>
                             </template>
                         </el-table-column>
-                        <el-table-column prop="numberOfDefect" :label="'结果'">
+                        <el-table-column prop="numberOfDefect" :label="'结果'" width="100">
                             <template #default="scope">
-                                {{ getResultText2(scope.row) }}
+                                <!-- {{ getResultText2(scope.row) }} -->
+                                <el-select v-model="scope.row.Status" placeholder="" style="width: 80px"
+                                    :size="'small'">
+                                    <el-option label="合格" value="OK" />
+                                    <el-option label="不合格" value="NG" />
+                                </el-select>
                             </template>
                         </el-table-column>
                         <el-table-column prop="ResulthandLing" :label="'不良处理结果'" width="150">
@@ -394,9 +400,20 @@
         </el-dialog>
         <el-dialog v-model="dialogVisible" :title="'输入测量值'" width="500px">
             <el-form ref="formRef" label-width="auto" size="small" @submit.native.prevent>
-                <el-form-item :label="'样本值' + i" prop="name" v-for="i in currentSampleSize" :key="i">
+                <!-- <el-form-item :label="'样本值' + i" prop="name" v-for="i in currentSampleSize" :key="i">
                     <el-input :ref="(el: any) => setInputRef(el, i)" @keyup.enter.native="handleEnterInput($event, i)"
                         v-model="measurementValues[i - 1]" placeholder="请输入测量值" style="width: 200px" />
+                </el-form-item> -->
+                <el-form-item v-for="i in currentSampleSize" :key="i"
+                    :class="{ 'has-error': isValueOutOfRange(i - 1) }">
+                    <template #label>
+                        <span :class="{ 'label-error': isValueOutOfRange(i - 1) }">
+                            样本值{{ i }}
+                        </span>
+                    </template>
+                    <el-input :ref="(el: any) => setInputRef(el, i)" @keyup.enter.native="handleEnterInput($event, i)"
+                        v-model="measurementValues[i - 1]" placeholder="请输入测量值" style="width: 200px"
+                        :class="{ 'input-error': isValueOutOfRange(i - 1) }" @blur="handleBlur(i - 1)" />
                 </el-form-item>
             </el-form>
 
@@ -558,7 +575,7 @@
                 <div class="dialog-footer">
                     <el-button @click="handlePreviewClose">{{
                         $t("publicText.close")
-                        }}</el-button>
+                    }}</el-button>
                     <el-button type="primary" @click="handlePreviewDawnload">
                         {{ $t("publicText.dawnload") }}
                     </el-button>
@@ -707,7 +724,7 @@
                 <div class="dialog-footer">
                     <el-button @click="handleOtherClose">{{
                         $t("publicText.close")
-                        }}</el-button>
+                    }}</el-button>
 
                 </div>
             </template>
@@ -721,7 +738,7 @@ import JSZip from "jszip";
 import dayjs from "dayjs";
 import { exportTableToExcel } from "@/utils/exportExcel";
 import { exportMeasureTableToExcelVertical, exportInspectionToExcelVertical } from "@/utils/exportExcel1";
-import { handleSplitExcelUpload, handleExcelUploadEnhanced,handleExcelUploadAllFormats } from "@/utils/analysisExcel"
+import { handleSplitExcelUpload, handleExcelUploadEnhanced, handleExcelUploadAllFormats } from "@/utils/analysisExcel"
 import { saveAs } from "file-saver";
 import {
     GetInspectionQuery,
@@ -884,6 +901,63 @@ const ProStageTable = ref<any[]>([])
 const ManufactureTable = ref<any[]>([])
 const MfgOrderName = ref('')
 const inputRefs = ref<any[]>([])
+
+
+const precision = ref(0);
+
+// 截断数字（保留指定小数位数）
+const truncateNumber = (num: number, decimalPlaces: number): number => {
+  if (isNaN(num) || decimalPlaces < 0) return num;
+  const factor = Math.pow(10, decimalPlaces);
+  return Math.trunc(num * factor) / factor;
+};
+
+// 将值转为指定精度的字符串
+const truncateDecimal = (value: number | string, decimalPlaces: number): string => {
+  const numValue = parseFloat(String(value));
+  if (isNaN(numValue)) return '';
+  if (decimalPlaces === 0) {
+    return Math.trunc(numValue).toString();
+  }
+  const factor = Math.pow(10, decimalPlaces);
+  const truncated = Math.trunc(numValue * factor) / factor;
+  return truncated.toFixed(decimalPlaces);
+};
+
+// 判断值是否超出 Min/Max 范围
+const isValueOutOfRange = (index: number): boolean => {
+  const row = currentRow.value;
+  if (!row) return false;
+  const value = measurementValues.value[index];
+  if (value === '' || value === null || value === undefined) return false;
+  const numValue = parseFloat(value);
+  if (isNaN(numValue)) return false;
+
+  const minValue = parseFloat(row.MinValue);
+  const maxValue = parseFloat(row.MaxValue);
+
+  const minValid = !isNaN(minValue);
+  const maxValid = !isNaN(maxValue);
+
+  if (!minValid && !maxValid) return false; // 无范围限制
+
+  if (minValid && numValue < minValue) return true;
+  if (maxValid && numValue > maxValue) return true;
+  return false;
+};
+
+// 失去焦点时按 DecimalPlaces 截断并格式化
+const handleBlur = (index: number) => {
+  const value = measurementValues.value[index];
+  if (value === '' || value === null || value === undefined) return;
+  const numValue = parseFloat(value);
+  if (isNaN(numValue)) {
+    measurementValues.value[index] = '';
+    return;
+  }
+  const decimalPlaces = Number(currentRow.value?.DecimalPlaces) || 0;
+  measurementValues.value[index] = truncateDecimal(numValue, decimalPlaces);
+};
 watch(
     () => searchDate.value,
     (newVal: any, oldVal: any) => {
@@ -895,7 +969,7 @@ watch(
             return;
         }
         if (newVal !== oldVal) {
-            getForm.value.StartTime = newVal[0];
+            getForm.value.StartTime = newVal[0] + ' 00:00:00';
             getForm.value.EndTime = newVal[1] + ' 23:59:59';
             // getForm.value.PageNumber = 1
         }
@@ -1247,24 +1321,43 @@ const handleAddConfirm = () => {
 const resetMeasurement = () => {
     measurementValues.value = measurementValues.value.map(() => "");
 }
+// const saveMeasurements = () => {
+//     if (currentRowIndex.value === null) return;
+
+//     const row = editForm.value.listItem[currentRowIndex.value];
+
+//     // 过滤空值并连接为字符串
+//     const validValues = measurementValues.value
+//         .filter((v) => v !== "" && v !== null && v !== undefined)
+//         .map((v) => v.toString().trim());
+
+//     row.ObservedValue = validValues.join(",");
+
+//     // 重新计算相关数值
+//     //   calculateRowValues(row)
+//     getResultText2(row);
+//     dialogVisible.value = false;
+//     measurementValues.value = [];
+//     currentRowIndex.value = null;
+// };
 const saveMeasurements = () => {
-    if (currentRowIndex.value === null) return;
+  if (currentRowIndex.value === null) return;
 
-    const row = editForm.value.listItem[currentRowIndex.value];
+  // 先对所有值进行 blur 格式化
+  for (let i = 0; i < currentSampleSize.value; i++) {
+    handleBlur(i);
+  }
 
-    // 过滤空值并连接为字符串
-    const validValues = measurementValues.value
-        .filter((v) => v !== "" && v !== null && v !== undefined)
-        .map((v) => v.toString().trim());
+  const row = editForm.value.listItem[currentRowIndex.value];
+  const validValues = measurementValues.value
+    .filter((v: any) => v !== "" && v !== null && v !== undefined)
+    .map((v: any) => v.toString().trim());
 
-    row.ObservedValue = validValues.join(",");
-
-    // 重新计算相关数值
-    //   calculateRowValues(row)
-
-    dialogVisible.value = false;
-    measurementValues.value = [];
-    currentRowIndex.value = null;
+  row.ObservedValue = validValues.join(",");
+  getResultText2(row);   // 重新计算状态
+  dialogVisible.value = false;
+  measurementValues.value = [];
+  currentRowIndex.value = null;
 };
 const objectSpanMethod = ({ row, column, rowIndex, columnIndex }: any) => {
     if (columnIndex === 0) {
@@ -1326,6 +1419,7 @@ const handleEditZQConfirm = () => {
             TargetValue: item.TargetValue,
             MaxValue: item.MaxValue,
             MinValue: item.MinValue,
+            DecimalPlaces: item.DecimalPlaces,
             CharaCteristicGrade: item.CharaCteristicGrade,
             ToolName: item.ToolName,
             InspectionBasis: item.InspectionBasis,
@@ -1372,6 +1466,7 @@ const handleEditZQConfirm = () => {
             InspectionBy: userStore.getUserInfo2 !== '' ? userStore.getUserInfo2 : userStore.getUserInfo,
             InspectionUpdateBy: userStore.getUserInfo2 !== '' ? userStore.getUserInfo2 : userStore.getUserInfo,
             ResulthandLing: item.ResulthandLing,
+            DecimalPlaces: item.DecimalPlaces,
         });
     });
 
@@ -1406,6 +1501,7 @@ const handleEditConfirm = () => {
             TargetValue: item.TargetValue,
             MaxValue: item.MaxValue,
             MinValue: item.MinValue,
+            DecimalPlaces: item.DecimalPlaces,
             CharaCteristicGrade: item.CharaCteristicGrade,
             ToolName: item.ToolName,
             InspectionBasis: item.InspectionBasis,
@@ -1437,6 +1533,7 @@ const handleEditConfirm = () => {
             TargetValue: item.TargetValue,
             MaxValue: item.MaxValue,
             MinValue: item.MinValue,
+            DecimalPlaces: item.DecimalPlaces,
             CharaCteristicGrade: item.CharaCteristicGrade,
             ToolName: item.ToolName,
             InspectionBasis: item.InspectionBasis,
@@ -1516,6 +1613,7 @@ const handleEdit = (row: any, type: any) => {
         editForm.value.listItem = res.content
             .filter((item: any) => item && item.MEASUREMENTTYPE === "计量")
             .map((item: any) => {
+
                 return {
                     LineNos: item.LINENOS,
                     MfgorderName: "",
@@ -1524,6 +1622,7 @@ const handleEdit = (row: any, type: any) => {
                     TargetValue: item.TARGETVALUE,
                     MaxValue: item.MAXVALUE,
                     MinValue: item.MINVALUE,
+                    DecimalPlaces: item.DecimalPlaces,
                     CharaCteristicGrade: item.CHARACTERISTICGRADE,
                     ToolName: item.TOOLNAME,
                     InspectionBasis: item.INSPECTIONBASIS,
@@ -1535,7 +1634,7 @@ const handleEdit = (row: any, type: any) => {
                     AverageNum: item.AVERAGENUM,
                     DefectDec: item.DEFECTDEC,
                     SpecialCause: item.SPECIALCAUSE,
-                    InspectionResult: item.INSPECTIONRESULT,
+                    InspectionResult: item.Status,
                     InspectionBy: userStore.getUserInfo2 !== '' ? userStore.getUserInfo2 : userStore.getUserInfo,
                     InspectionUpdateBy: userStore.getUserInfo2 !== '' ? userStore.getUserInfo2 : userStore.getUserInfo,
                     InspectionDate: "",
@@ -1544,6 +1643,9 @@ const handleEdit = (row: any, type: any) => {
                     CPKMinW: item.CPKMinW,
                     CPKMinThk: item.CPKMinThk,
                 };
+            }).map((v: any) => {
+                getResultText2(v);
+                return v
             })
             .sort((a: any, b: any) => a.LineNos - b.LineNos);
 
@@ -1577,6 +1679,7 @@ const handleEdit = (row: any, type: any) => {
                     TargetValue: item.TARGETVALUE,
                     MaxValue: item.MAXVALUE,
                     MinValue: item.MINVALUE,
+                    DecimalPlaces: item.DecimalPlaces,
                     CharaCteristicGrade: item.CHARACTERISTICGRADE,
                     ToolName: item.TOOLNAME,
                     InspectionBasis: item.INSPECTIONBASIS,
@@ -1620,25 +1723,51 @@ const handleEdit = (row: any, type: any) => {
         // console.log(editForm.value);
     });
 };
-const openMeasurementDialog = (row: any, index: any) => {
-    currentRow.value = row;
-    currentRowIndex.value = index;
-    currentSampleSize.value = parseInt(row.SampleNum) || 1;
-    measurementValues.value = [];
-    // for (let i = 0; i < currentSampleSize.value; i++) {
-    //     measurementValues.value.push(row[`MeasuredValue${i + 1}`] || "");
-    // }
-    // 如果已有测量值，解析到数组中
-    if (row.ObservedValue) {
-        measurementValues.value = row.ObservedValue.split(",").map((v: any) =>
-            v.trim()
-        );
-    } else {
-        // 根据样件数初始化数组
-        measurementValues.value = Array(currentSampleSize.value).fill("");
-    }
+// const openMeasurementDialog = (row: any, index: any) => {
+//     currentRow.value = row;
+//     currentRowIndex.value = index;
+//     currentSampleSize.value = parseInt(row.SampleNum) || 1;
+//     measurementValues.value = [];
+//     // for (let i = 0; i < currentSampleSize.value; i++) {
+//     //     measurementValues.value.push(row[`MeasuredValue${i + 1}`] || "");
+//     // }
+//     // 如果已有测量值，解析到数组中
+//     if (row.ObservedValue) {
+//         measurementValues.value = row.ObservedValue.split(",").map((v: any) =>
+//             v.trim()
+//         );
+//     } else {
+//         // 根据样件数初始化数组
+//         measurementValues.value = Array(currentSampleSize.value).fill("");
+//     }
 
-    dialogVisible.value = true;
+//     dialogVisible.value = true;
+// };
+const openMeasurementDialog = (row: any, index: any) => {
+  currentRow.value = row;
+  currentRowIndex.value = index;
+  currentSampleSize.value = parseInt(row.SampleNum) || 1;
+  precision.value = Number(row.DecimalPlaces) || 0;           // 改为 DecimalPlaces
+
+  measurementValues.value = [];
+  if (row.ObservedValue) {
+    measurementValues.value = row.ObservedValue.split(",").map((v: any) => v.trim());
+  } else {
+    measurementValues.value = Array(currentSampleSize.value).fill("");
+  }
+
+  dialogVisible.value = true;
+  nextTick(() => {
+    setTimeout(() => {
+      const inputRefsArray = inputRefs.value as unknown as HTMLInputElement[];
+      if (inputRefsArray.length > 0) {
+        const nextInput = inputRefsArray[0];
+        if (nextInput) {
+          nextInput.focus();
+        }
+      }
+    }, 100);
+  });
 };
 const getResultText = (row: any) => {
     const defectCount = calculateDefectCount(row);
@@ -1723,38 +1852,41 @@ const calculateDefectCount = (row: any) => {
 };
 
 const calculateSum = (row: any) => {
-    if (!row.ObservedValue) {
-        row.ObservedValueSum = "0";
-        return "0";
-    }
+  if (!row.ObservedValue) {
+    row.ObservedValueSum = "0";
+    return "0";
+  }
+  const values = row.ObservedValue.split(",")
+    .map((v: any) => parseFloat(v.trim()))
+    .filter((v: any) => !isNaN(v));
 
-    const values = row.ObservedValue.split(",")
-        .map((v: any) => parseFloat(v.trim()))
-        .filter((v: any) => !isNaN(v));
-
-    const sum = values.reduce((total: any, current: any) => total + current, 0);
-    row.ObservedValueSum = sum.toFixed(2);
-    return sum.toFixed(2);
+  const sum = values.reduce((total: number, current: number) => total + current, 0);
+  const decimalPlaces = Number(row.DecimalPlaces) || 0;
+  const truncatedSum = truncateNumber(sum, decimalPlaces);
+  row.ObservedValueSum = truncatedSum.toFixed(decimalPlaces);
+  return truncatedSum.toFixed(decimalPlaces);
 };
+
 const calculateAverage = (row: any) => {
-    if (!row.ObservedValue) {
-        row.AverageNum = "0";
-        return "0";
-    }
+  if (!row.ObservedValue) {
+    row.AverageNum = "0";
+    return "0";
+  }
+  const values = row.ObservedValue.split(",")
+    .map((v: any) => parseFloat(v.trim()))
+    .filter((v: any) => !isNaN(v));
 
-    const values = row.ObservedValue.split(",")
-        .map((v: any) => parseFloat(v.trim()))
-        .filter((v: any) => !isNaN(v));
+  if (values.length === 0) {
+    row.AverageNum = "0";
+    return "0";
+  }
 
-    if (values.length === 0) {
-        row.AverageNum = "0";
-        return "0";
-    }
-
-    const sum = values.reduce((total: any, current: any) => total + current, 0);
-    const avg = sum / values.length;
-    row.AverageNum = avg.toFixed(2);
-    return avg.toFixed(2);
+  const sum = values.reduce((total: number, current: number) => total + current, 0);
+  const avg = sum / values.length;
+  const decimalPlaces = Number(row.DecimalPlaces) || 0;
+  const truncatedAvg = truncateNumber(avg, decimalPlaces);
+  row.AverageNum = truncatedAvg.toFixed(decimalPlaces);
+  return truncatedAvg.toFixed(decimalPlaces);
 };
 const formatMeasuredValues = (row: any) => {
     // const values = [];
@@ -2070,10 +2202,10 @@ const fileUpChange2 = async (file: any, fileList1: any) => {
         return
     }
     try {
-        let result:any={}
+        let result: any = {}
         if (editForm.value.InspectionType == '巡检') {
-             result = await handleExcelUploadAllFormats(file.raw, { forceFormat: 'auto' })
-        }else{
+            result = await handleExcelUploadAllFormats(file.raw, { forceFormat: 'auto' })
+        } else {
             result = await handleExcelUploadEnhanced(file.raw, { forceFormat: 'auto' })
         }
 
@@ -2122,36 +2254,70 @@ const beforeUpload2 = (file: any) => {
     return true;
 };
 
+// const assignValuesMulti = (sourceData: any, targetData: any) => {
+//     // 创建源数据的查找映射，提高查找效率
+//     const sourceMap = new Map();
+
+//     sourceData.forEach((item: any) => {
+//         const key = `${item.LineNos}_${item.ProjectName}`;
+//         sourceMap.set(key, item);
+//     });
+
+//     // 遍历目标数组并赋值
+//     targetData.forEach((targetItem: any) => {
+//         const key = `${targetItem.LineNos}_${targetItem.ProjectName}`;
+//         const sourceItem = sourceMap.get(key);
+
+//         if (sourceItem) {
+//             targetItem.SampleNum = sourceItem.SampleNum;
+//             targetItem.ObservedValue = sourceItem.ObservedValue;
+//             console.log(targetItem.MeasuredValue);
+//             let valData = (sourceItem.ObservedValue).split(',')
+//             console.log(valData);
+
+//             if (targetItem.SampleNum < valData.length) {
+//                 targetItem.SampleNum = valData.length
+//             }
+//             getResultText2(targetItem);
+//             //   targetItem.ResulthandLing = sourceItem.ResulthandLing;
+//         }
+//     });
+
+//     return targetData;
+// }
 const assignValuesMulti = (sourceData: any, targetData: any) => {
-    // 创建源数据的查找映射，提高查找效率
-    const sourceMap = new Map();
+  const sourceMap = new Map();
+  sourceData.forEach((item: any) => {
+    const key = `${item.LineNos}_${item.ProjectName}`;
+    sourceMap.set(key, item);
+  });
 
-    sourceData.forEach((item: any) => {
-        const key = `${item.LineNos}_${item.ProjectName}`;
-        sourceMap.set(key, item);
-    });
+  targetData.forEach((targetItem: any) => {
+    const key = `${targetItem.LineNos}_${targetItem.ProjectName}`;
+    const sourceItem = sourceMap.get(key);
 
-    // 遍历目标数组并赋值
-    targetData.forEach((targetItem: any) => {
-        const key = `${targetItem.LineNos}_${targetItem.ProjectName}`;
-        const sourceItem = sourceMap.get(key);
+    if (sourceItem) {
+      targetItem.SampleNum = sourceItem.SampleNum;
+      targetItem.ObservedValue = sourceItem.ObservedValue;
+      let valData = (sourceItem.ObservedValue || "").split(",");
 
-        if (sourceItem) {
-            targetItem.SampleNum = sourceItem.SampleNum;
-            targetItem.ObservedValue = sourceItem.ObservedValue;
-            console.log(targetItem.MeasuredValue);
-            let valData = (sourceItem.ObservedValue).split(',')
-            console.log(valData);
+      if (targetItem.SampleNum < valData.length) {
+        targetItem.SampleNum = valData.length;
+      }
 
-            if (targetItem.SampleNum < valData.length) {
-                targetItem.SampleNum = valData.length
-            }
-            //   targetItem.ResulthandLing = sourceItem.ResulthandLing;
-        }
-    });
+      const decimalPlaces = Number(targetItem.DecimalPlaces) || 0;
 
-    return targetData;
-}
+      // 如果存在测量值，逐个按精度截断
+      if (valData.length > 0 && valData[0] !== "") {
+        valData = valData.map((v: string) => truncateDecimal(v.trim(), decimalPlaces));
+        targetItem.ObservedValue = valData.join(",");
+      }
+
+      getResultText2(targetItem);
+    }
+  });
+  return targetData;
+};
 // 使用计算属性缓存列宽计算结果
 const columnWidths = computed(() => {
     const columns = [
@@ -2184,6 +2350,7 @@ const columnWidths2 = computed(() => {
         { label: '检验工具', prop: 'ToolName' },
         { label: '检验依据', prop: 'InspectionBasis' },
         { label: '项目名称', prop: 'ProjectName' },
+         {label:'小数位数',prop:'DecimalPlaces'}
         // { label: 'FA', prop: 'ES_FaUrl' },
         // { label: 'CPK', prop: 'ES_CPKUrl' },
         // 添加其他需要自适应宽度的列
@@ -2528,6 +2695,23 @@ const handleEnterInput = (e: any, currentIndex: any) => {
 .hint-count {
     font-weight: 600;
     color: #409eff;
+}
+.label-error {
+  color: #f56c6c;
+  font-weight: bold;
+}
+
+.has-error :deep(.el-form-item__label) {
+  color: #f56c6c;
+}
+
+:deep(.input-error .el-input__wrapper) {
+  border-color: #f56c6c !important;
+  box-shadow: 0 0 0 1px #f56c6c inset !important;
+}
+
+:deep(.input-error .el-input__inner) {
+  color: #f56c6c;
 }
 </style>
 <style>

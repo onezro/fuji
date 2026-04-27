@@ -57,6 +57,7 @@ const zh = {
     approval: "审批",
     isEmpty: "不能为空",
     dawnload: "下载",
+    print:'打印'
   },
   login: {
     loginTitle: "登录",
@@ -91,7 +92,7 @@ const zh = {
     orderType: "工单类型",
     orderStatus: "工单状态",
     customer: "客户",
-    purchaseOrderNumber: "FP PO采购单号",
+    purchaseOrderNumber: "客户PO",
     AccordingSmallBox: "按小盒",
     AccordingBox: "按箱",
     AccordingOrder: "按工单",
@@ -112,6 +113,8 @@ const zh = {
     CurrentStatus: "当前状态",
     ProduceBatchPrint: "生成并打印",
     Reprint: "重印",
+    MfgOrderNotes:'Note',
+    
   },
   packageManage: {
     boxDisassembly: "装箱单包装拆解",
@@ -154,8 +157,8 @@ const zh = {
     totalNumTrunk: "尾箱箱数",
     packType: "包装箱型",
     totalBoxNum: "总箱数",
-    totalNetWeightw: "总净重",
-    totalGrossWeightw: "总毛重",
+    totalNetWeightw: "总净重(kg)",
+    totalGrossWeightw: "总毛重(kg)",
     packOrder: "装箱单编号",
     packTime: "装箱时间",
     productType: "产品类型",
@@ -174,7 +177,7 @@ const zh = {
   inventInquiry: {
     rawMaterialInvent: "原材料库存",
     finishGoodsInvent: "成品库存",
-    isCar: "汽车原材料",
+    isCar: "汽车产品",
     materialName: "物料名称",
     incomingBatch: "来料批次",
     materialSource: "物料来源",
@@ -200,6 +203,7 @@ const zh = {
     ProductCode: "产品编码",
     customerName: "客户名称",
     specificationID: "规格书ID",
+    specifications:'规格'
   },
   aqlrules: {
     partNumber: "产品",
@@ -212,6 +216,7 @@ const zh = {
     TargetValue: "目标值",
     MaxValue: "最大值",
     MinValue: "最小值",
+    DecimalPlaces:'小数位数',
     uomname: "单位",
     ToolName: "检验工具",
     InspectionBasis: "检验依据",
@@ -239,7 +244,7 @@ const zh = {
     NotifyPerson: "通知人",
     NotifyDepartment: "检验通知部门",
     MaterialArrivalDate: "来料日期",
-    isCarProduct: "是否汽车产品",
+    isCarProduct: "汽车产品",
     InspectStandard: "检验标准",
     Status: "状态",
     creatDate: "创建时间",
@@ -261,7 +266,7 @@ const zh = {
     NotifyPerson: "通知人",
     NotifyDepartment: "检验通知部门",
     MaterialArrivalDate: "来料日期",
-    isCarProduct: "是否汽车产品",
+    isCarProduct: "汽车产品",
     InspectStandard: "检验标准",
     Status: "状态",
     creatDate: "创建时间",

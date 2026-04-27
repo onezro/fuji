@@ -82,25 +82,12 @@
                                 <span class="underline">{{ scope.row.IQCNumber }}</span>
                             </template>
                         </el-table-column>
-
-                        <el-table-column prop="IsAutomotive" :label="$t('incomeCreat.isCarProduct')" width="100" />
                         <el-table-column prop="ArrivalDate" :label="'来料日期'" width="120" />
                         <el-table-column prop="StatusText" :label="$t('incomeCreat.Status')" width="80" />
                         <el-table-column prop="InspectionResult" :label="$t('incomeSheet.result')" width="80" />
-                        <!-- <el-table-column prop="Status" :label="$t('incomeCreat.Status')" /> -->
-                        <!-- <el-table-column prop="NotifyDate" :label="$t('incomeCreat.NotifyDate')" />
-                <el-table-column prop="Notifier" :label="$t('incomeCreat.NotifyPerson')" />
-                <el-table-column prop="NotifyDept" :label="$t('incomeCreat.NotifyDepartment')" />
-                <el-table-column prop="ArrivalDate" :label="$t('incomeCreat.incomeDate')" /> -->
-                        <!-- <el-table-column prop="SamplingStandards" :label="$t('incomeCreat.InspectStandard')" width="100"
-                            show-overflow-tooltip /> -->
                         <el-table-column prop="CreateTime" :label="$t('incomeCreat.creatDate')" width="150" />
                         <el-table-column :label="$t('publicText.operation')" width="60" fixed="right" align="center">
                             <template #default="scope">
-                                <!-- <el-tooltip :content="$t('publicText.check')" placement="top">
-                                    <el-button type="primary" icon="EditPen" size="small"
-                                        @click.stop="cellClick(scope.row)"></el-button>
-                                </el-tooltip> -->
                                 <el-tooltip :content="$t('publicText.dawnload') + $t('incomeSheet.incomeReport')
                                     " placement="top">
                                     <el-button type="success" icon="Download" size="small"
@@ -139,9 +126,12 @@
                         <el-table-column prop="ApprovalTime" :label="'审批时间'" width="150" fixed />
 
                         <el-table-column prop="ModelSpec" :label="$t('incomeCreat.modelRules')"
-                            :min-width="getColumnWidth('ModelSpec')"  fixed/>
-                        <el-table-column prop="MaterialName" :label="$t('incomeCreat.materialName')" fixed />
+                            :min-width="getColumnWidth('ModelSpec')" fixed />
+                        <el-table-column prop="MaterialName" :label="$t('incomeCreat.materialName')"
+                            :min-width="getColumnWidth('MaterialName')" fixed />
+
                         <el-table-column prop="Supplier" :label="$t('incomeCreat.supplier')" />
+                        <el-table-column prop="IsAutomotive" :label="$t('incomeCreat.isCarProduct')" width="100" />
                         <el-table-column prop="OrderNo" :label="$t('incomeCreat.orderNumber')" />
                         <el-table-column prop="LotNo" label="Lot No" :min-width="getColumnWidth('LotNo')" />
                         <el-table-column prop="TCode" label="T-Code" :min-width="getColumnWidth('TCode')" />
@@ -189,12 +179,12 @@
                 <div class="dialog-footer">
                     <el-button @click="detailVisible = false">{{
                         $t("publicText.close")
-                        }}</el-button>
+                    }}</el-button>
                 </div>
             </template>
         </el-dialog>
 
-        <el-dialog v-model="testVisible" :title="'进料检验'" width="85%" :append-to-body="true"
+        <el-dialog v-model="testVisible" :title="'进料检验'" width="90%" :append-to-body="true"
             :close-on-click-modal="false" :close-on-press-escape="false" align-center @close="handletestClose">
             <!-- <el-button type="primary" @click="exportToExcel">导出Excel</el-button> -->
             <el-form ref="formRef" :model="editdetailForm" label-width="auto" :inline="true" :size="'small'">
@@ -298,6 +288,9 @@
                         </el-table-column>
                         <el-table-column prop="MinValue" :label="$t('aqlrules.MinValue')">
                         </el-table-column>
+                        <el-table-column prop="DecimalPlaces" :label="$t('aqlrules.DecimalPlaces')" :min-width="getColumnWidth2('DecimalPlaces')"
+                            :align="'center'">
+                        </el-table-column>
                         <el-table-column prop="InspectionToolName" :label="$t('aqlrules.ToolName')"
                             :min-width="getColumnWidth2('InspectionToolName')">
                         </el-table-column>
@@ -324,7 +317,7 @@
                             <template #default="scope">
                                 <span @click="openMeasurementDialog(scope.row, scope.$index)">{{
                                     formatMeasuredValues(scope.row)
-                                    }}</span>
+                                }}</span>
                                 <el-button type="primary" icon="Plus" :size="'small'"
                                     @click="openMeasurementDialog(scope.row, scope.$index)" />
                             </template>
@@ -377,7 +370,7 @@
                     <div>
                         <el-button @click="handletestClose">{{
                             $t("publicText.close")
-                            }}</el-button>
+                        }}</el-button>
                         <el-button @click="handlePreviewIQCReport" :type="'info'" :disabled="!isDisable">
                             {{ "预览IQC报告" }}
                         </el-button>
@@ -390,9 +383,20 @@
         </el-dialog>
         <el-dialog v-model="dialogVisible" :title="'输入测量值'" width="500px">
             <el-form ref="formRef" label-width="auto" size="small" @submit.native.prevent>
-                <el-form-item :label="'样本值' + i" prop="name" v-for="i in currentSampleSize" :key="i">
+                <!-- <el-form-item :label="'样本值' + i" prop="name" v-for="i in currentSampleSize" :key="i">
                     <el-input :ref="(el: any) => setInputRef(el, i)" @keyup.enter.native="handleEnterInput($event, i)"
                         v-model="measurementValues[i - 1]" placeholder="请输入测量值" style="width: 200px" />
+                </el-form-item> -->
+                <el-form-item v-for="i in currentSampleSize" :key="i"
+                    :class="{ 'has-error': isValueOutOfRange(i - 1) }">
+                    <template #label>
+                        <span :class="{ 'label-error': isValueOutOfRange(i - 1) }">
+                            样本值{{ i }}
+                        </span>
+                    </template>
+                    <el-input :ref="(el: any) => setInputRef(el, i)" @keyup.enter.native="handleEnterInput($event, i)"
+                        v-model="measurementValues[i - 1]" placeholder="请输入测量值" style="width: 200px"
+                        :class="{ 'input-error': isValueOutOfRange(i - 1) }" @blur="handleBlur(i - 1)" />
                 </el-form-item>
             </el-form>
 
@@ -411,7 +415,7 @@
                 <div class="dialog-footer">
                     <el-button @click="handlePreviewClose">{{
                         $t("publicText.close")
-                        }}</el-button>
+                    }}</el-button>
                     <el-button type="primary" @click="handlePreviewDawnload">
                         {{ $t("publicText.dawnload") }}
                     </el-button>
@@ -434,7 +438,7 @@
             <template #footer>
                 <el-button @click="handleAppClose">{{
                     $t("publicText.cancel")
-                    }}</el-button>
+                }}</el-button>
                 <el-button type="primary" @click="handleAppConfirm">
                     {{ $t("publicText.confirm") }}
                 </el-button>
@@ -450,7 +454,7 @@
             <template #footer>
                 <el-button @click="handleBoxsClose">{{
                     $t("publicText.cancel")
-                    }}</el-button>
+                }}</el-button>
                 <el-button type="primary" @click="handleBoxsConfirm">
                     {{ $t("publicText.confirm") }}
                 </el-button>
@@ -466,7 +470,7 @@
                 <div class="dialog-footer">
                     <el-button @click="previewIQCVisible = false">{{
                         $t("publicText.close")
-                        }}</el-button>
+                    }}</el-button>
                 </div>
             </template>
         </el-dialog>
@@ -598,7 +602,7 @@ watch(
             return;
         }
         if (newVal !== oldVal) {
-            getForm.value.StartTime = newVal[0];
+            getForm.value.StartTime = newVal[0] + ' 00:00:00';
             getForm.value.EndTime = newVal[1] + " 23:59:59";
             // getForm.value.PageNumber = 1
         }
@@ -616,13 +620,68 @@ watch(
             return;
         }
         if (newVal !== oldVal) {
-            getForm.value.ArrivalStartDate = newVal[0];
+            getForm.value.ArrivalStartDate = newVal[0] + ' 00:00:00';
             getForm.value.ArrivalEndDate = newVal[1] + " 23:59:59";
             // getForm.value.PageNumber = 1
         }
     },
 );
 
+const precision = ref(0);
+
+// 截断数字（保留指定小数位数）
+const truncateNumber = (num: number, decimalPlaces: number): number => {
+  if (isNaN(num) || decimalPlaces < 0) return num;
+  const factor = Math.pow(10, decimalPlaces);
+  return Math.trunc(num * factor) / factor;
+};
+
+// 将值转为指定精度的字符串
+const truncateDecimal = (value: number | string, decimalPlaces: number): string => {
+  const numValue = parseFloat(String(value));
+  if (isNaN(numValue)) return '';
+  if (decimalPlaces === 0) {
+    return Math.trunc(numValue).toString();
+  }
+  const factor = Math.pow(10, decimalPlaces);
+  const truncated = Math.trunc(numValue * factor) / factor;
+  return truncated.toFixed(decimalPlaces);
+};
+
+// 判断值是否超出规格上下限
+const isValueOutOfRange = (index: number): boolean => {
+  const row = currentRow.value;
+  if (!row) return false;
+  const value = measurementValues.value[index];
+  if (value === '' || value === null || value === undefined) return false;
+  const numValue = parseFloat(value);
+  if (isNaN(numValue)) return false;
+
+  const minValue = parseFloat(row.MinValue);
+  const maxValue = parseFloat(row.MaxValue);
+
+  const minValid = !isNaN(minValue);
+  const maxValid = !isNaN(maxValue);
+
+  if (!minValid && !maxValid) return false; // 无范围限制
+
+  if (minValid && numValue < minValue) return true;
+  if (maxValid && numValue > maxValue) return true;
+  return false;
+};
+
+// 失去焦点时按 DecimalPlaces 截断格式
+const handleBlur = (index: number) => {
+  const value = measurementValues.value[index];
+  if (value === '' || value === null || value === undefined) return;
+  const numValue = parseFloat(value);
+  if (isNaN(numValue)) {
+    measurementValues.value[index] = '';
+    return;
+  }
+  const decimalPlaces = Number(currentRow.value?.DecimalPlaces) || 0;
+  measurementValues.value[index] = truncateDecimal(numValue, decimalPlaces);
+};
 
 onBeforeMount(() => {
     getScreenHeight();
@@ -663,6 +722,7 @@ const testClick = () => {
 };
 const getData = () => {
     detailTableData.value = []
+    pageObj.currentPage = 1
     GetIQCHeaderQuery(getForm.value).then((res: any) => {
         tableData.value = res.content;
     });
@@ -770,7 +830,7 @@ const handleAppConfirm = () => {
             ApprovalResult: "",
             ApprovalRemarks: "",
         };
-        getDetailData(IQC_DetailName.value)
+        getDetailData(IQC_DetailName.value, '')
         getData();
     });
 };
@@ -948,16 +1008,40 @@ const downloadAsZip = async (files: IQCFile[]) => {
     }
 };
 
-const openMeasurementDialog = (row: any, index: any) => {
-    currentRow.value = row;
-    currentRowIndex.value = index;
-    currentSampleSize.value = parseInt(row.SampleSize) || 0;
-    measurementValues.value = [];
-    for (let i = 0; i < currentSampleSize.value; i++) {
-        measurementValues.value.push(row[`MeasuredValue${i + 1}`] || "");
-    }
+// const openMeasurementDialog = (row: any, index: any) => {
+//     currentRow.value = row;
+//     currentRowIndex.value = index;
+//     currentSampleSize.value = parseInt(row.SampleSize) || 0;
+//     measurementValues.value = [];
+//     for (let i = 0; i < currentSampleSize.value; i++) {
+//         measurementValues.value.push(row[`MeasuredValue${i + 1}`] || "");
+//     }
 
-    dialogVisible.value = true;
+//     dialogVisible.value = true;
+// };
+const openMeasurementDialog = (row: any, index: any) => {
+  currentRow.value = row;
+  currentRowIndex.value = index;
+  currentSampleSize.value = parseInt(row.SampleSize) || 0;
+  precision.value = Number(row.DecimalPlaces) || 0;  // 改为 DecimalPlaces
+
+  measurementValues.value = [];
+  for (let i = 0; i < currentSampleSize.value; i++) {
+    measurementValues.value.push(row[`MeasuredValue${i + 1}`] || "");
+  }
+
+  dialogVisible.value = true;
+  nextTick(() => {
+    setTimeout(() => {
+      const inputRefsArray = inputRefs.value as unknown as HTMLInputElement[];
+      if (inputRefsArray.length > 0) {
+        const nextInput = inputRefsArray[0];
+        if (nextInput) {
+          nextInput.focus();
+        }
+      }
+    }, 100);
+  });
 };
 const resetMeasurement = () => {
     measurementValues.value = [];
@@ -965,12 +1049,22 @@ const resetMeasurement = () => {
         measurementValues.value.push("");
     }
 };
+// const saveMeasurements = () => {
+//     for (let i = 0; i < currentSampleSize.value; i++) {
+//         currentRow.value[`MeasuredValue${i + 1}`] = measurementValues.value[i];
+//     }
+//     getResultText(currentRow.value);
+//     dialogVisible.value = false;
+// };
 const saveMeasurements = () => {
-    for (let i = 0; i < currentSampleSize.value; i++) {
-        currentRow.value[`MeasuredValue${i + 1}`] = measurementValues.value[i];
-    }
-    getResultText(currentRow.value);
-    dialogVisible.value = false;
+  for (let i = 0; i < currentSampleSize.value; i++) {
+    handleBlur(i);
+  }
+  for (let i = 0; i < currentSampleSize.value; i++) {
+    currentRow.value[`MeasuredValue${i + 1}`] = measurementValues.value[i];
+  }
+  getResultText(currentRow.value);
+  dialogVisible.value = false;
 };
 
 const calculateDefectCount = (row: any) => {
@@ -1009,16 +1103,19 @@ const calculateDefectCount = (row: any) => {
     return defectCount;
 };
 const getResultText = (row: any) => {
-    // 获取MinValue和MaxValue的数值
+    // 解析最小值与最大值
     const minValue = parseFloat(row.MinValue);
     const maxValue = parseFloat(row.MaxValue);
 
-    // 检查MinValue和MaxValue是否有效
-    if (isNaN(minValue) || isNaN(maxValue)) {
+    const minValid = !isNaN(minValue);
+    const maxValid = !isNaN(maxValue);
+
+    // 如果两者都无效，则范围无效
+    if (!minValid && !maxValid) {
         return "范围无效";
     }
 
-    // 检查所有测量值
+    // 遍历所有测量值
     for (let i = 1; i <= 10; i++) {
         const value = row[`MeasuredValue${i}`];
 
@@ -1027,14 +1124,17 @@ const getResultText = (row: any) => {
             continue;
         }
 
-        // 转换为数字
         const numValue = parseFloat(value);
         if (isNaN(numValue)) {
-            return "数据异常"; // 如果有非数字值，返回异常
+            return "数据异常"; // 存在非数字测量值
         }
 
-        // 检查是否在范围内
-        if (numValue < minValue || numValue > maxValue) {
+        // 根据有效边界进行检查
+        if (minValid && numValue < minValue) {
+            row.Status = 2; // 不合格状态码
+            return "不合格";
+        }
+        if (maxValid && numValue > maxValue) {
             row.Status = 2;
             return "不合格";
         }
@@ -1045,10 +1145,17 @@ const getResultText = (row: any) => {
         (i) =>
             row[`MeasuredValue${i}`] !== null &&
             row[`MeasuredValue${i}`] !== undefined &&
-            row[`MeasuredValue${i}`] !== "",
+            row[`MeasuredValue${i}`] !== ""
     );
-    row.Status = hasValues ? 1 : "无数据";
-    return hasValues ? "不合格" : "无数据";
+
+    if (!hasValues) {
+        row.Status = "无数据";
+        return "无数据";
+    }
+
+    // 所有测量值均合格
+    row.Status = 1; // 合格状态码
+    return "合格";
 };
 const handleSampleSizeChange = (row: any) => {
     const newSize = parseInt(row.SampleSize) || 0;
@@ -1058,74 +1165,43 @@ const handleSampleSizeChange = (row: any) => {
     }
 };
 const calculateSum = (row: any) => {
-    // let sum = 0;
-    // for (let i = 1; i <= 10; i++) {
-    //     const value = row[`MeasuredValue${i}`];
-    //     if (value !== null && value !== undefined && value !== "") {
-    //         sum += Number(value);
-    //     }
-    // }
-    // row.Sum=sum;
-    // return sum;
-    let sum = 0;
-    for (let i = 1; i <= 10; i++) {
-        const value = row[`MeasuredValue${i}`];
-        if (value !== null && value !== undefined && value !== "") {
-            // 使用 parseFloat 而不是 Number
-            const numValue = parseFloat(value);
-            if (!isNaN(numValue)) {
-                sum += numValue;
-            }
-        }
+  let sum = 0;
+  for (let i = 1; i <= 10; i++) {
+    const value = row[`MeasuredValue${i}`];
+    if (value !== null && value !== undefined && value !== '') {
+      const numValue = parseFloat(value);
+      if (!isNaN(numValue)) {
+        sum += numValue;
+      }
     }
-    // 使用 toFixed 处理精度问题
-    row.Sum = parseFloat(sum.toFixed(2));
-    return row.Sum;
+  }
+  const decimalPlaces = Number(row.DecimalPlaces) || 0;
+  const truncatedSum = truncateNumber(sum, decimalPlaces);
+  row.Sum = truncatedSum;
+  return truncatedSum.toFixed(decimalPlaces);
 };
+
 const calculateAverage = (row: any) => {
-    // let sum = 0;
-    // let count = 0;
-    // for (let i = 1; i <= 10; i++) {
-    //     const value = row[`MeasuredValue${i}`];
-    //     if (value !== null && value !== undefined && value !== "") {
-    //         sum += Number(value);
-    //         count++;
-    //     }
-    // }
-    // row.Average=(count > 0 ? (sum / count).toFixed(2) : 0);
-    // return count > 0 ? (sum / count).toFixed(2) : 0;
-    let integerSum = 0; // 存储乘以100后的整数和
-    let count = 0;
-
-    for (let i = 1; i <= 10; i++) {
-        const value = row[`MeasuredValue${i}`];
-
-        // 跳过空值
-        if (value == null || value === "") continue;
-
-        // 使用一元加运算符转换并乘以100转为整数
-        const num = +value;
-
-        // 检查是否为有效数字
-        if (!isNaN(num) && isFinite(num)) {
-            integerSum += Math.round(num * 100); // 乘以100并四舍五入
-            count++;
-        }
+  let sum = 0;
+  let count = 0;
+  for (let i = 1; i <= 10; i++) {
+    const value = row[`MeasuredValue${i}`];
+    if (value !== null && value !== undefined && value !== '') {
+      const numValue = parseFloat(value);
+      if (!isNaN(numValue)) {
+        sum += numValue;
+        count++;
+      }
     }
-
-    let average = 0;
-
-    if (count > 0) {
-        // 计算平均值（整数运算）
-        average = integerSum / count;
-        // 除以100转回小数，再四舍五入到2位小数
-        average = Math.round(average) / 100;
-    }
-
-    // 格式化为字符串，保留2位小数
-    const result = average.toFixed(2);
-    row.Average = result;
-    return result;
+  }
+  let avg = 0;
+  if (count > 0) {
+    avg = sum / count;
+  }
+  const decimalPlaces = Number(row.DecimalPlaces) || 0;
+  const truncatedAvg = truncateNumber(avg, decimalPlaces);
+  row.Average = truncatedAvg;
+  return truncatedAvg.toFixed(decimalPlaces);
 };
 const formatMeasuredValues = (row: any) => {
     const values = [];
@@ -1191,22 +1267,29 @@ const handleEdit = (row: any) => {
     editdetailForm.value = { ...row };
     // }
     IQC_DetailName.value = row.IQC_DetailName;
-    getDetailData(row.IQC_DetailName);
+    getDetailData(row.IQC_DetailName, row.SampledBoxes);
     testVisible.value = true;
 };
-const getDetailData = (val: any) => {
+const getDetailData = (val: any, boxNum: any) => {
     GetIQCInspectionDetailQuery({ IQC_DetailName: val }).then((res: any) => {
         tableData1.value = res.content
             .filter((item: any) => item && item.MeasurementType === "计量")
             .map((m: any, i: any) => {
+                getResultText(m)
                 return {
                     ...m,
                     LineNos: i + 1,
+                    SampleSize: m.SampleSize == 0 ? boxNum : m.SampleSize
                 };
             });
         tableData2.value = res.content.filter(
             (item: any) => item && item.MeasurementType === "计数",
-        );
+        ).map((v: any) => {
+            return {
+                ...v,
+                SampleSize: v.SampleSize == 0 ? boxNum : v.SampleSize
+            }
+        })
 
         if (tableData1.value.length === 0) {
             isDisable.value = true;
@@ -1222,6 +1305,7 @@ const handletestClose = () => {
 };
 const handleZCConfirm = () => {
     let data = tableData1.value.map((item: any) => {
+        getResultText(item)
         return {
             IQCDetailId: item.IQC_DetailName,
             IQC_InspectionDetailsName: item.IQC_InspectionDetailName,
@@ -1238,6 +1322,7 @@ const handleZCConfirm = () => {
             MeasuredValue8: item.MeasuredValue8 || "",
             MeasuredValue9: item.MeasuredValue9 || "",
             MeasuredValue10: item.MeasuredValue10 || "",
+            DecimalPlaces: item.DecimalPlaces || 0,
             Sum: parseFloat(item.Sum) || 0,
             Average: parseFloat(item.Average) || 0,
             Inspector:
@@ -1267,6 +1352,7 @@ const handleZCConfirm = () => {
             MeasuredValue8: "",
             MeasuredValue9: "",
             MeasuredValue10: "",
+            DecimalPlaces: item.DecimalPlaces || 0,
             Sum: parseFloat(item.Sum) || 0,
             Average: parseFloat(item.Average) || 0,
             Inspector:
@@ -1290,6 +1376,7 @@ const handleZCConfirm = () => {
 };
 const handletestConfirm = () => {
     let data = tableData1.value.map((item: any) => {
+        getResultText(item)
         return {
             IQCDetailId: item.IQC_DetailName,
             IQC_InspectionDetailsName: item.IQC_InspectionDetailName,
@@ -1306,6 +1393,7 @@ const handletestConfirm = () => {
             MeasuredValue8: item.MeasuredValue8 || "",
             MeasuredValue9: item.MeasuredValue9 || "",
             MeasuredValue10: item.MeasuredValue10 || "",
+            DecimalPlaces: item.DecimalPlaces || 0,
             Sum: parseFloat(item.Sum) || 0,
             Average: parseFloat(item.Average) || 0,
             Inspector:
@@ -1347,6 +1435,7 @@ const handletestConfirm = () => {
             MeasuredValue8: "",
             MeasuredValue9: "",
             MeasuredValue10: "",
+            DecimalPlaces: item.DecimalPlaces || 0,
             Sum: parseFloat(item.Sum) || 0,
             Average: parseFloat(item.Average) || 0,
             Inspector:
@@ -1367,7 +1456,7 @@ const handletestConfirm = () => {
             type: res.success ? "success" : "error",
         });
         // testVisible.value = false;
-        getDetailData(IQC_DetailName.value);
+        getDetailData(IQC_DetailName.value, '');
         getData();
     });
 };
@@ -1486,42 +1575,81 @@ const beforeUpload2 = (file: any) => {
     return true;
 };
 
+// const assignValuesMulti = (sourceData: any, targetData: any) => {
+//     // 创建源数据的查找映射，提高查找效率
+//     const sourceMap = new Map();
+
+//     sourceData.forEach((item: any) => {
+//         const key = `${item.LineNos}_${item.ProjectName}`;
+//         sourceMap.set(key, item);
+//     });
+
+//     // 遍历目标数组并赋值
+//     targetData.forEach((targetItem: any) => {
+//         const key = `${targetItem.LineNos}_${targetItem.ProjectName}`;
+//         const sourceItem = sourceMap.get(key);
+
+//         if (sourceItem) {
+//             // console.log(sourceItem.SampleNum);
+
+//             targetItem.SampleSize = sourceItem.SampleNum;
+//             targetItem.MeasuredValue = sourceItem.ObservedValue;
+//             console.log(targetItem.MeasuredValue);
+
+//             let valData = sourceItem.ObservedValue.split(",");
+//             console.log(valData);
+//             if (targetItem.SampleSize < valData.length) {
+//                 targetItem.SampleSize = valData.length;
+//             }
+//             valData.forEach((item: any, i: any) => {
+//                 if (i <= 9) {
+//                     targetItem[`MeasuredValue${i + 1}`] = item;
+//                 }
+//             });
+//             getResultText(targetItem);
+//         }
+//     });
+
+//     return targetData;
+// };
 const assignValuesMulti = (sourceData: any, targetData: any) => {
-    // 创建源数据的查找映射，提高查找效率
-    const sourceMap = new Map();
+  const sourceMap = new Map();
+  sourceData.forEach((item: any) => {
+    const key = `${item.LineNos}_${item.ProjectName}`;
+    sourceMap.set(key, item);
+  });
 
-    sourceData.forEach((item: any) => {
-        const key = `${item.LineNos}_${item.ProjectName}`;
-        sourceMap.set(key, item);
-    });
+  targetData.forEach((targetItem: any) => {
+    const key = `${targetItem.LineNos}_${targetItem.ProjectName}`;
+    const sourceItem = sourceMap.get(key);
 
-    // 遍历目标数组并赋值
-    targetData.forEach((targetItem: any) => {
-        const key = `${targetItem.LineNos}_${targetItem.ProjectName}`;
-        const sourceItem = sourceMap.get(key);
+    if (sourceItem) {
+      targetItem.SampleSize = sourceItem.SampleNum;
+      targetItem.MeasuredValue = sourceItem.ObservedValue;
+      let valData = sourceItem.ObservedValue.split(",");
 
-        if (sourceItem) {
-            // console.log(sourceItem.SampleNum);
+      if (targetItem.SampleSize < valData.length) {
+        targetItem.SampleSize = valData.length;
+      }
 
-            targetItem.SampleSize = sourceItem.SampleNum;
-            targetItem.MeasuredValue = sourceItem.ObservedValue;
-            console.log(targetItem.MeasuredValue);
+      // 初始化所有 MeasuredValue 为空
+      for (let i = 0; i < 10; i++) {
+        targetItem[`MeasuredValue${i + 1}`] = "";
+      }
 
-            let valData = sourceItem.ObservedValue.split(",");
-            console.log(valData);
-            if (targetItem.SampleSize < valData.length) {
-                targetItem.SampleSize = valData.length;
-            }
-            valData.forEach((item: any, i: any) => {
-                if (i <= 9) {
-                    targetItem[`MeasuredValue${i + 1}`] = item;
-                }
-            });
-            getResultText(targetItem);
-        }
-    });
+      const decimalPlaces = Number(targetItem.DecimalPlaces) || 0;
 
-    return targetData;
+      if (valData.length > 0 && valData[0] !== "") {
+        valData.forEach((item: any, i: number) => {
+          if (i <= 9) {
+            targetItem[`MeasuredValue${i + 1}`] = truncateDecimal(item, decimalPlaces);
+          }
+        });
+      }
+      getResultText(targetItem);
+    }
+  });
+  return targetData;
 };
 const handlePreviewIQCReport = () => {
     DownloadIQCReportAsync(IQCNumber.value).then((res: any) => {
@@ -1541,10 +1669,12 @@ const handlePreviewIQCReport = () => {
 // 使用计算属性缓存列宽计算结果
 const columnWidths = computed(() => {
     const columns = [
+
         { label: "型号规制", prop: "ModelSpec" },
         { label: "供应商报告", prop: "SupplierReportName" },
         { label: "T-Code", prop: "TCode" },
         { label: "LotNo", prop: "LotNo" },
+        { label: "材料名称", prop: "MaterialName" },
 
         // 添加其他需要自适应宽度的列
     ];
@@ -1565,6 +1695,7 @@ const columnWidths2 = computed(() => {
         { label: "检验工具", prop: "InspectionToolName" },
         { label: "检验依据", prop: "InspectionBasis" },
         { label: "项目名称", prop: "ProjectName" },
+         {label:'小数位数',prop:'DecimalPlaces'}
         // { label: 'FA', prop: 'ES_FaUrl' },
         // { label: 'CPK', prop: 'ES_CPKUrl' },
         // 添加其他需要自适应宽度的列
@@ -1736,6 +1867,23 @@ const handleEnterInput = (e: any, currentIndex: any) => {
 .info-box-title {
     font-weight: bold;
     margin-bottom: 5px;
+}
+.label-error {
+  color: #f56c6c;
+  font-weight: bold;
+}
+
+.has-error :deep(.el-form-item__label) {
+  color: #f56c6c;
+}
+
+:deep(.input-error .el-input__wrapper) {
+  border-color: #f56c6c !important;
+  box-shadow: 0 0 0 1px #f56c6c inset !important;
+}
+
+:deep(.input-error .el-input__inner) {
+  color: #f56c6c;
 }
 </style>
 <style>

@@ -5,7 +5,7 @@
                 <el-form-item :label="$t('batchCreation.scheduling')" class="mb-2">
                     <!-- <el-date-picker :shortcuts="shortcuts" v-model="searchDate" value-format="YYYY-MM-DD HH:mm:ss"
                         type="datetimerange" range-separator="-" size="small" style="width: 330px" :clearable="false"
-                        :disabled-date="disabledDate" /> -->
+                          /> -->
                     <el-date-picker :shortcuts="shortcuts" v-model="searchDate" value-format="YYYY-MM-DD"
                         type="daterange" range-separator="-" size="small" style="width: 200px" :clearable="false" />
                 </el-form-item>
@@ -306,8 +306,8 @@ watch(
             return;
         }
         if (newVal !== oldVal) {
-            getForm.value.SchedulingStartDate = newVal[0];
-            getForm.value.SchedulingEndDate = newVal[1];
+             getForm.value.SchedulingStartDate = newVal[0] + ' 00:00:00';
+           getForm.value.SchedulingEndDate = newVal[1] + ' 23:59:59';
             // getForm.value.PageNumber = 1
         }
     }
@@ -383,6 +383,7 @@ const getPrintTemp = () => {
     });
 }
 const getData = () => {
+    pageObj.value.currentPage=1
     getMfgOrderInformationQuery(getForm.value).then((res: any) => {
         tableData.value = res.content;
     });

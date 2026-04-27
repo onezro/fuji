@@ -4,92 +4,42 @@
       <div ref="headerRef">
         <el-form ref="formRef" :inline="true" size="small">
           <el-form-item label="时间" class="mb-2">
-            <el-date-picker
-              :shortcuts="shortcuts"
-              v-model="searchDate"
-              value-format="YYYY-MM-DD"
-              type="daterange"
-              range-separator="-"
-              size="small"
-              style="width: 200px"
-              :disabled-date="disabledDate"
-              :clearable="false"
-              @change="changeForm"
-            />
+            <el-date-picker :shortcuts="shortcuts" v-model="searchDate" value-format="YYYY-MM-DD" type="daterange"
+              range-separator="-" size="small" style="width: 200px"   :clearable="false"
+              @change="changeForm" />
           </el-form-item>
           <el-form-item label="生产计划号" class="mb-2">
-            <el-input
-              style="width: 130px"
-              v-model="getForm.MfgOrderName"
-              placeholder=""
-              clearable
-              @keyup.enter.native="changeForm"
-              @clear="changeForm"
-            ></el-input>
+            <el-input style="width: 130px" v-model="getForm.MfgOrderName" placeholder="" clearable
+              @keyup.enter.native="changeForm" @clear="changeForm"></el-input>
           </el-form-item>
           <el-form-item label="拼板号" class="mb-2">
-            <el-input
-              style="width: 130px"
-              v-model="getForm.PanelID"
-              placeholder=""
-              clearable
-              @keyup.enter.native="changeForm"
-               @clear="changeForm"
-            ></el-input>
+            <el-input style="width: 130px" v-model="getForm.PanelID" placeholder="" clearable
+              @keyup.enter.native="changeForm" @clear="changeForm"></el-input>
           </el-form-item>
           <el-form-item label="PCB条码" class="mb-2">
-            <el-input
-              style="width: 130px"
-              v-model="getForm.SN"
-              placeholder=""
-              clearable
- @clear="changeForm"
-              @keyup.enter.native="changeForm"
-            ></el-input>
+            <el-input style="width: 130px" v-model="getForm.SN" placeholder="" clearable @clear="changeForm"
+              @keyup.enter.native="changeForm"></el-input>
           </el-form-item>
           <el-form-item label="物料条码" class="mb-2">
-            <el-input
-              style="width: 130px"
-              v-model="getForm.MaterialBatchNo"
-              placeholder=""
-              clearable
-               @clear="changeForm"
-              @keyup.enter.native="changeForm"
-            ></el-input>
+            <el-input style="width: 130px" v-model="getForm.MaterialBatchNo" placeholder="" clearable
+              @clear="changeForm" @keyup.enter.native="changeForm"></el-input>
           </el-form-item>
           <el-form-item label="物料批次号" class="mb-2">
-            <el-input
-              style="width: 130px"
-              v-model="getForm.VendorLotNumber"
-              placeholder=""
-              clearable
-               @clear="changeForm"
-              @keyup.enter.native="changeForm"
-            ></el-input>
+            <el-input style="width: 130px" v-model="getForm.VendorLotNumber" placeholder="" clearable
+              @clear="changeForm" @keyup.enter.native="changeForm"></el-input>
           </el-form-item>
 
           <el-form-item class="mb-2">
-            <el-button type="primary" @click="changeForm"
-              >查询</el-button
-            >
+            <el-button type="primary" @click="changeForm">查询</el-button>
           </el-form-item>
           <!-- <el-form-item  class="mb-2">
                        
                     </el-form-item> -->
         </el-form>
       </div>
-      <table-tem
-      :show-index="true"
-        size="small"
-        :tableData="tableData"
-        :tableHeight="tableHeight"
-        :columnData="columnData"
-        :page-size="getForm.PageSize"
-        :current-page="getForm.PageNumber"
-        @handleSizeChange="handleSizeChange"
-        @handleCurrentChange="handleCurrentChange"
-        :total="total1"
-      >
+      <table-tem :show-index="true" size="small" :tableData="tableData" :tableHeight="tableHeight"
+        :columnData="columnData" :page-size="getForm.PageSize" :current-page="getForm.PageNumber"
+        @handleSizeChange="handleSizeChange" @handleCurrentChange="handleCurrentChange" :total="total1">
       </table-tem>
     </el-card>
   </div>
@@ -291,7 +241,7 @@ watch(
       return;
     }
     if (newVal !== oldVal) {
-      getForm.value.StartTime = newVal[0];
+      getForm.value.StartTime = newVal[0] + ' 00:00:00';
       getForm.value.EndTime = newVal[1];
       pageObj.value.currentPage = 1;
       detailData.value = [];
@@ -323,9 +273,9 @@ const changeForm = () => {
 const getData = () => {
   OrderSNQuery(getForm.value).then((res: any) => {
     if (res.success) {
-      if(res.content==null){
-        total1.value=0
-        tableData.value=[]
+      if (res.content == null) {
+        total1.value = 0
+        tableData.value = []
         return
       }
       total1.value = res.total;
@@ -336,11 +286,11 @@ const getData = () => {
 const handleSizeChange = (val: any) => {
   getForm.value.PageNumber = 1;
   getForm.value.PageSize = val;
-    getData();
+  getData();
 };
 const handleCurrentChange = (val: any) => {
   getForm.value.PageNumber = val;
-    getData();
+  getData();
 };
 const handleSizeChange1 = (val: any) => {
   getDetailForm.value.currentPage = 1;

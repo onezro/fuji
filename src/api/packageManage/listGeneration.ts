@@ -65,4 +65,11 @@ export function DownloadPackingListReportAsync(data: any) {
     });
 }
 
+export function BoxPackingPrint(data: any) {
+    return request({
+        url: "/api/PackingController/BoxPackingPrint",
+        method: "post",
+        params:data
+    });
+}
 

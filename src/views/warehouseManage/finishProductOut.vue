@@ -19,8 +19,7 @@
                         }}</el-button>
                 </el-form-item>
             </el-form>
-            <el-table :data="tableData" size="small" :style="{ width: '100%' }" @selection-change="handleSelectionChange" :height="tableHeight" border stripe>
-                  <el-table-column type="selection" width="55" align="center" />
+            <el-table :data="tableData" size="small" :style="{ width: '100%' }"  :height="tableHeight" border stripe>
                 <el-table-column type="index" align="center" fixed :label="$t('publicText.index')" width="50">
                 </el-table-column>
                 <el-table-column prop="OutBoxContainerName" :label="$t('finishProduct.boxCode')"
@@ -48,7 +47,7 @@
             <div class="mt-2 mb-1 flex justify-end">
                 <el-button type="" :disabled="tableData.length == 0" @click="handleClean">{{ $t("publicText.reset")
                     }}</el-button>
-                <el-button type="primary" :disabled="selectionList.length == 0||tableData.length == 0" @click="handleSubmit">{{
+                <el-button type="primary" :disabled="tableData.length == 0" @click="handleSubmit">{{
                     $t("publicText.submit")
                     +'出库' }}</el-button>
             </div>
@@ -130,12 +129,7 @@ const getData = () => {
         return;
     }
 };
-//获取存放位置
-const getMaterialPos = () => {
-    getWarehouseStorageLocationQuery({}).then((res: any) => {
-        posRawList.value = res.content;
-    });
-};
+
 const handleReset = () => {
     formRef.value.resetFields();
     tableData.value = [];
@@ -156,7 +150,7 @@ const handleSubmit = () => {
         type: "warning",
     })
         .then(() => {
-            let data = selectionList.value.map((item: any) => {
+            let data = tableData.value.map((item: any) => {
                 return {
                     OuterBoxContainerName: item.OutBoxContainerName,
                     PackingBoxContainerName: item.PackingContainerName,
@@ -170,8 +164,8 @@ const handleSubmit = () => {
                         message: res.msg,
                         type: "success",
                     });
-                    selectionList.value = [];
-                    getData();
+                    tableData.value = [];
+                    // getData();
                 } else {
                     ElNotification({
                         title: t("message.tipTitle"),

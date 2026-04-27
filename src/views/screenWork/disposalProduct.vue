@@ -24,7 +24,7 @@
              
               <el-form-item label="时间">
                 <el-date-picker :shortcuts="shortcuts" v-model="searchDate" value-format="YYYY-MM-DD" type="daterange"
-                  range-separator="-" :disabled-date="disabledDate" :clearable="true" />
+                  range-separator="-"   :clearable="true" />
               </el-form-item>
             </el-form>
             <div class="flex justify-end">

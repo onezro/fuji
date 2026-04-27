@@ -270,7 +270,7 @@
           <el-input v-model="setForm.ResultData" style="width: 300px"  type="textarea" placeholder="" :rows="4"/>
         </el-form-item>
         <el-form-item label="下次校准日期" prop="NextCalibrationDate">
-          <el-date-picker v-model="setForm.NextCalibrationDate" value-format="YYYY-MM-DD" :disabled-date="disabledDate"
+          <el-date-picker v-model="setForm.NextCalibrationDate" value-format="YYYY-MM-DD"  
             style="width: 300px" type="date" placeholder="" />
         </el-form-item>
         <el-form-item label="备注" prop="Remark">

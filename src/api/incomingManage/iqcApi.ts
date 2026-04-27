@@ -26,6 +26,14 @@ export function GetIncomingUnitQuery(data: any) {
         data,
     });
 }
+//优先级
+export function GetPriorityCodeQuery(data: any) {
+    return request({
+        url: "/api/IQCController/GetPriorityCodeQuery",
+        method: "post",
+        data
+    });
+}
 //
 export function GetProductQuery(data: any) {
     return request({
@@ -182,13 +190,7 @@ export function AsynIQCMaterialApproval(data: any) {
 }
 
 
-export function GetPriorityCodeQuery(data: any) {
-    return request({
-        url: "/api/IQCController/GetPriorityCodeQuery",
-        method: "post",
-        data
-    });
-}
+
 
 export function IQCModeSpecLabel(data: any) {
     return request({

@@ -5,7 +5,7 @@
                 <!-- <div>
                     <el-button type="primary" size="small" @click="openAdd">添加</el-button>
                 </div> -->
-                <el-form ref="formRef" :model="getForm" :inline="true" :size="'small'" @submit.native.prevent>
+                <el-form ref="formRef" :model="getForm" :inline="true" :size="'small'" label-width="auto"  @submit.native.prevent >
                     <el-form-item label="客户" prop="CustomerName" class="mb-2">
                         <el-select v-model="getForm.CustomerName" @change="getData" placeholder="请选择" clearable
                             filterable size="small" style="width: 180px">
@@ -35,7 +35,13 @@
                         <el-input v-model="getForm.ProductDec" placeholder="" clearable @clear="getData"
                             @keyup.enter.native="getData" style="width: 180px" />
                     </el-form-item>
-
+                     <el-form-item label="是否维护检验方案" prop="ProductTypeName" class="mb-2">
+                        <el-select v-model="getForm.INSPECTIONMASTER" @change="getData" placeholder="请选择" clearable
+                            filterable size="small" style="width: 180px">
+                            <el-option :label="'是'" :value="'是'" />
+                             <el-option :label="'否'" :value="'否'" />
+                        </el-select>
+                    </el-form-item>
                     <el-form-item class="mb-2">
                         <el-button :type="'primary'" @click="getData">查询</el-button>
                         <el-button :type="'info'" @click="resetGetForm">重置</el-button>
@@ -76,6 +82,13 @@
                        
                     </template>
                 </el-table-column> -->
+                <el-table-column prop="INSPECTIONMASTER" :label="'是否维护检验方案'" :align="'center'"
+                    :min-width="getColumnWidth('INSPECTIONMASTER')" >
+                     <template #default="{ row }">
+                        <el-tag :type="row.INSPECTIONMASTER == '否' ? 'info' : 'success'">{{
+                            row.INSPECTIONMASTER }}</el-tag>
+                    </template>
+                </el-table-column>
                 <template #empty>
                     <div class="flex items-center justify-center h-100%">
                         <el-empty />
@@ -442,6 +455,7 @@ const getForm = ref({
     ProductTypeName: "",
     ProductFamilyName: "",
     CustomerName: "",
+    INSPECTIONMASTER:''
 });
 const tableHeight = ref(0);
 const tableData = ref([]);
@@ -615,6 +629,7 @@ const resetGetForm = () => {
         ProductTypeName: "",
         ProductFamilyName: "",
         CustomerName: "",
+      INSPECTIONMASTER:''
     };
     getData();
 };
@@ -1147,6 +1162,7 @@ const columnWidths = computed(() => {
         { label: "客户", prop: "CustomerName" },
         { label: "产品类型", prop: "ProductTypeName" },
         { label: "型号", prop: "ProductFamilyName" },
+         { label: "是否维护检验方案", prop: "INSPECTIONMASTER" },
 
         // { label: 'FA', prop: 'ES_FaUrl' },
         // { label: 'CPK', prop: 'ES_CPKUrl' },

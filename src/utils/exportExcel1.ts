@@ -369,13 +369,34 @@ export async function exportMeasureTableToExcel(options: ExportTableOptions) {
     ],
   });
 }
+/**
+ * 获取需要设置为文本格式的列索引（1-based）
+ * @param columns 字段配置列表
+ * @param stringColumns 需要文本格式的字段名数组或配置对象
+ * @returns 列索引数组
+ */
+function getStringColumnIndices(
+  columns: Array<{ label: string; property: string }>,
+  stringColumns?: string[] | { columns: string[]; prefix?: string },
+): number[] {
+  if (!stringColumns) return [];
+  // 统一转为字符串数组
+  const colNames = Array.isArray(stringColumns)
+    ? stringColumns
+    : stringColumns.columns;
+  if (!colNames.length) return [];
 
+  return columns.reduce((indices, col, idx) => {
+    if (colNames.includes(col.property)) {
+      indices.push(idx + 1); // Excel列索引从1开始
+    }
+    return indices;
+  }, [] as number[]);
+}
 // 新增：纵向格式导出函数（根据新建 XLSX 工作表.xlsx格式）
 export async function exportTableToExcelVertical(
   options: ExportTableOptions & {
-    // 每个sheet显示一条记录
     perSheet?: boolean;
-    // 指定要导出的字段顺序，如果不指定则使用tableRef.columns
     verticalFields?: Array<{ label: string; property: string }>;
   },
 ) {
@@ -388,51 +409,36 @@ export async function exportTableToExcelVertical(
     stringColumns,
     dataFormatter,
     splitMeasurementColumns = false,
-    perSheet = false, // 是否每个sheet显示一条记录
-    verticalFields, // 纵向字段配置
+    perSheet = false,
+    verticalFields,
   } = options;
 
   try {
-    // 1. 获取全部数据
     let allData = await fetchAllData();
-
-    // 处理测量值拆分
     let measurementColumns: ColumnConfig[] = [];
     if (splitMeasurementColumns) {
       const result = processMeasurementData(allData);
       allData = result.processedData;
       measurementColumns = result.measurementColumns;
     }
-
-    // 2. 自定义数据处理
     if (dataFormatter && typeof dataFormatter === "function") {
       allData = dataFormatter(allData, tableRef.columns);
     }
 
-    // 3. 确定要导出的字段
     let exportFields = verticalFields;
     if (!exportFields) {
-      // 如果没有指定verticalFields，则使用tableRef.columns
       exportFields = tableRef.columns
         .filter((col) => col.label !== undefined && col.property !== undefined)
-        .map((col) => ({
-          label: col.label,
-          property: col.property,
-        }));
+        .map((col) => ({ label: col.label, property: col.property }));
     }
 
-    // 如果启用了测量值拆分，则调整字段
     if (splitMeasurementColumns && measurementColumns.length > 0) {
-      // 查找测量值字段的索引
       const measurementIndex = exportFields.findIndex(
         (field) =>
           field.label.includes("测量值") || field.property === "MeasuredValue",
       );
-
       if (measurementIndex !== -1) {
-        // 移除原来的测量值字段
         exportFields.splice(measurementIndex, 1);
-        // 插入10个测量值字段
         measurementColumns.forEach((measurementCol, index) => {
           exportFields!.splice(measurementIndex + index, 0, {
             label: measurementCol.label,
@@ -442,31 +448,25 @@ export async function exportTableToExcelVertical(
       }
     }
 
-    // 4. 创建 Workbook
     const workbook = new ExcelJS.Workbook();
 
+    // 辅助：判断是否为测量值行
+    const isMeasurementRow = (label: string) => /^测量值[1-9]|测量值10$/.test(label);
+
     if (perSheet && allData.length > 0) {
-      // 每个sheet显示一条记录（保持原有逻辑不变）
       allData.forEach((record, index) => {
         const worksheet = workbook.addWorksheet(`记录${index + 1}`);
-
-        // 添加数据行（纵向）
         exportFields!.forEach((field, rowIndex) => {
           const row = worksheet.addRow([field.label, ""]);
-
-          // 获取单元格值
           let cellValue = field.property
             .split(".")
             .reduce((obj: any, key: any) => {
               if (obj && typeof obj === "object") return obj[key];
               return "";
             }, record);
-
-          // 应用字符串格式处理
           const isStringColumn = Array.isArray(stringColumns)
             ? stringColumns.includes(field.property)
             : stringColumns?.columns?.includes(field.property) || false;
-
           if (isStringColumn) {
             cellValue = formatCellAsString(
               cellValue,
@@ -475,11 +475,7 @@ export async function exportTableToExcelVertical(
                 : undefined,
             );
           }
-
-          // 设置值
           row.getCell(2).value = cellValue;
-
-          // 设置样式
           const cell = row.getCell(1);
           Object.assign(cell, {
             font: { bold: true, ...(styles.headerFont || {}) },
@@ -491,22 +487,27 @@ export async function exportTableToExcelVertical(
           });
         });
 
-        // 设置列宽
+        // 设置测量值列的文本格式
+        if (stringColumns) {
+          for (let rowNum = 2; rowNum <= worksheet.rowCount; rowNum++) {
+            const row = worksheet.getRow(rowNum);
+            const label = row.getCell(1).value?.toString() || "";
+            if (isMeasurementRow(label)) {
+              const cell = row.getCell(2);
+              cell.numFmt = "@";
+              if (typeof cell.value === "number") cell.value = cell.value.toString();
+            }
+          }
+        }
+
         worksheet.columns = [{ width: 15 }, { width: 30 }];
       });
     } else {
-      // === 修改部分开始：所有记录在一个sheet中，按照第一个Excel文件格式（横向排列记录） ===
       const worksheet = workbook.addWorksheet("Sheet1");
-
-      // 构建表格数据：左边是标题列，右边是各条记录的数据列
-
-      // 第一行：表头
       const headerRow = worksheet.addRow([
         "检验序列",
         ...allData.map((item, index) => item.LineNos),
       ]);
-
-      // 设置表头样式
       headerRow.eachCell((cell, colNumber) => {
         Object.assign(cell, {
           font: { bold: true, ...(styles.headerFont || {}) },
@@ -518,30 +519,19 @@ export async function exportTableToExcelVertical(
         });
       });
 
-      // 后续行：每个字段对应一行
       exportFields!.forEach((field, fieldIndex) => {
-        // 如果是"检验序列"字段，跳过，因为已经在表头中显示了
-        if (field.label === "检验序列") {
-          return;
-        }
-
+        if (field.label === "检验序列") return;
         const rowData = [field.label];
-
-        // 为每条记录获取该字段的值
         allData.forEach((record) => {
-          // 获取单元格值
           let cellValue = field.property
             .split(".")
             .reduce((obj: any, key: any) => {
               if (obj && typeof obj === "object") return obj[key];
               return "";
             }, record);
-
-          // 应用字符串格式处理
           const isStringColumn = Array.isArray(stringColumns)
             ? stringColumns.includes(field.property)
             : stringColumns?.columns?.includes(field.property) || false;
-
           if (isStringColumn) {
             cellValue = formatCellAsString(
               cellValue,
@@ -550,13 +540,9 @@ export async function exportTableToExcelVertical(
                 : undefined,
             );
           }
-
           rowData.push(cellValue);
         });
-
         const row = worksheet.addRow(rowData);
-
-        // 设置标题列样式（第一列）
         const titleCell = row.getCell(1);
         Object.assign(titleCell, {
           font: { bold: true },
@@ -569,16 +555,26 @@ export async function exportTableToExcelVertical(
       });
 
       // 设置列宽
-      const columnWidths = [20]; // 第一列（标题列）的宽度
-      for (let i = 0; i < allData.length; i++) {
-        columnWidths.push(15); // 每条记录列的宽度
-      }
-
+      const columnWidths = [20];
+      for (let i = 0; i < allData.length; i++) columnWidths.push(15);
       worksheet.columns = columnWidths.map((width) => ({ width }));
-      // === 修改部分结束 ===
+
+      // 设置测量值行的所有数据列为文本格式
+      if (stringColumns) {
+        for (let rowNum = 2; rowNum <= worksheet.rowCount; rowNum++) {
+          const row = worksheet.getRow(rowNum);
+          const label = row.getCell(1).value?.toString() || "";
+          if (isMeasurementRow(label)) {
+            for (let colNum = 2; colNum <= worksheet.columnCount; colNum++) {
+              const cell = row.getCell(colNum);
+              cell.numFmt = "@";
+              if (typeof cell.value === "number") cell.value = cell.value.toString();
+            }
+          }
+        }
+      }
     }
 
-    // 5. 导出文件
     const buffer = await workbook.xlsx.writeBuffer();
     const blob = new Blob([buffer], {
       type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -809,47 +805,51 @@ export async function exportInspectionToExcelVertical(
     const worksheet = workbook.addWorksheet("Sheet1");
 
     // 4. 获取所有唯一的 ProjectName（检验项目），并保持原有顺序
-    const projectNameMap = new Map<string, {
-      name: string;
-      order: number;
-    }>();
-    
+    const projectNameMap = new Map<
+      string,
+      {
+        name: string;
+        order: number;
+      }
+    >();
+
     allData.forEach((item, index) => {
       if (item.ProjectName) {
         const projectName = item.ProjectName.toString();
         if (!projectNameMap.has(projectName)) {
           projectNameMap.set(projectName, {
             name: projectName,
-            order: projectNameMap.size
+            order: projectNameMap.size,
           });
         }
       }
     });
-    
+
     // 转换为数组并保持顺序
     const projectNames = Array.from(projectNameMap.values())
       .sort((a, b) => a.order - b.order)
-      .map(item => item.name);
+      .map((item) => item.name);
 
     // 5. 获取所有唯一的 LineNos（检验序列号）
     const lineNosSet = new Set<string>();
-    allData.forEach(item => {
+    allData.forEach((item) => {
       if (item.LineNos) {
         lineNosSet.add(item.LineNos.toString());
       }
     });
-    const lineNosList = Array.from(lineNosSet)
-      .sort((a, b) => parseInt(a) - parseInt(b))
-      // .slice(0, maxLineNosCount);//最大值
+    const lineNosList = Array.from(lineNosSet).sort(
+      (a, b) => parseInt(a) - parseInt(b),
+    );
+    // .slice(0, maxLineNosCount);//最大值
 
     // 6. 构建表头行（第一行："检验名称"）
     const headerRow = ["检验名称"]; // 第一列是标题"检验名称"
-    
+
     // 添加每个检验项目的名称
-    projectNames.forEach(projectName => {
+    projectNames.forEach((projectName) => {
       headerRow.push(projectName);
     });
-    
+
     worksheet.addRow(headerRow);
 
     // 设置第一行样式
@@ -866,62 +866,128 @@ export async function exportInspectionToExcelVertical(
     });
 
     // 7. 构建其他固定数据行
-    
+
     // 检验类别行
-    addFieldRowWithTitle(worksheet, "检验类别", projectNames, allData, "ProjectCategoryName", fieldMapping?.projectCategoryName);
-    
+    addFieldRowWithTitle(
+      worksheet,
+      "检验类别",
+      projectNames,
+      allData,
+      "ProjectCategoryName",
+      fieldMapping?.projectCategoryName,
+    );
+
     // 特性分级行
-    addFieldRowWithTitle(worksheet, "特性分级", projectNames, allData, "CharaCteristicGrade", fieldMapping?.charaCteristicGrade);
-    
+    addFieldRowWithTitle(
+      worksheet,
+      "特性分级",
+      projectNames,
+      allData,
+      "CharaCteristicGrade",
+      fieldMapping?.charaCteristicGrade,
+    );
+
     // 目标值行
-    addFieldRowWithTitle(worksheet, "目标值", projectNames, allData, "TargetValue", fieldMapping?.targetValue);
-    
+    addFieldRowWithTitle(
+      worksheet,
+      "目标值",
+      projectNames,
+      allData,
+      "TargetValue",
+      fieldMapping?.targetValue,
+    );
+
     // 最大值行
-    addFieldRowWithTitle(worksheet, "最大值", projectNames, allData, "MaxValue", fieldMapping?.maxValue);
-    
+    addFieldRowWithTitle(
+      worksheet,
+      "最大值",
+      projectNames,
+      allData,
+      "MaxValue",
+      fieldMapping?.maxValue,
+    );
+
     // 最小值行
-    addFieldRowWithTitle(worksheet, "最小值", projectNames, allData, "MinValue", fieldMapping?.minValue);
-    
+    addFieldRowWithTitle(
+      worksheet,
+      "最小值",
+      projectNames,
+      allData,
+      "MinValue",
+      fieldMapping?.minValue,
+    );
+
     // 检验工具行
-    addFieldRowWithTitle(worksheet, "检验工具", projectNames, allData, "ToolName", fieldMapping?.toolName);
-    
+    addFieldRowWithTitle(
+      worksheet,
+      "检验工具",
+      projectNames,
+      allData,
+      "ToolName",
+      fieldMapping?.toolName,
+    );
+
     // 检验依据行
-    addFieldRowWithTitle(worksheet, "检验依据", projectNames, allData, "InspectionBasis", fieldMapping?.inspectionBasis);
-    
+    addFieldRowWithTitle(
+      worksheet,
+      "检验依据",
+      projectNames,
+      allData,
+      "InspectionBasis",
+      fieldMapping?.inspectionBasis,
+    );
+
     // 样品数行
-    addFieldRowWithTitle(worksheet, "样品数", projectNames, allData, "SampleNum", fieldMapping?.sampleNum);
-    
+    addFieldRowWithTitle(
+      worksheet,
+      "样品数",
+      projectNames,
+      allData,
+      "SampleNum",
+      fieldMapping?.sampleNum,
+    );
+
     // 缺陷数行
-    addFieldRowWithTitle(worksheet, "缺陷数", projectNames, allData, "DefectNum", fieldMapping?.defectNum);
+    addFieldRowWithTitle(
+      worksheet,
+      "缺陷数",
+      projectNames,
+      allData,
+      "DefectNum",
+      fieldMapping?.defectNum,
+    );
 
     // 8. 添加检验序列值行（根据 LineNos 的数量动态生成）
-    lineNosList.forEach(lineNo => {
+    lineNosList.forEach((lineNo) => {
       const rowTitle = `检验序列${lineNo}值`;
       const rowData = [rowTitle]; // 第一列是行标题
-      
-      projectNames.forEach(projectName => {
+
+      projectNames.forEach((projectName) => {
         // 查找对应 ProjectName 和 LineNos 的数据
-        const item = allData.find(data => {
+        const item = allData.find((data) => {
           const dataProjectName = data.ProjectName?.toString();
           const dataLineNos = data.LineNos?.toString();
           return dataProjectName === projectName && dataLineNos === lineNo;
         });
-        
+
         let cellValue = "";
         if (item) {
           // 使用字段映射或默认字段
-          const observedValueKey = fieldMapping?.measuredValue1 
-            ? fieldMapping.measuredValue1.replace(/MeasuredValue\d+/, "ObservedValue")
+          const observedValueKey = fieldMapping?.measuredValue1
+            ? fieldMapping.measuredValue1.replace(
+                /MeasuredValue\d+/,
+                "ObservedValue",
+              )
             : "ObservedValue";
-          
+
           cellValue = item[observedValueKey] || item.ObservedValue || "";
         }
-        
+
         rowData.push(cellValue);
       });
-      
+
       const row = worksheet.addRow(rowData);
-      
+
       // 设置行标题样式（第一列）
       const titleCell = row.getCell(1);
       Object.assign(titleCell, {
@@ -938,14 +1004,14 @@ export async function exportInspectionToExcelVertical(
     // for (let i = lineNosList.length; i < maxLineNosCount; i++) {
     //   const rowTitle = `检验序列${i + 1}值`;
     //   const rowData = [rowTitle];
-      
+
     //   // 填充空数据
     //   for (let j = 0; j < projectNames.length; j++) {
     //     rowData.push("");
     //   }
-      
+
     //   const row = worksheet.addRow(rowData);
-      
+
     //   // 设置行标题样式（第一列）
     //   const titleCell = row.getCell(1);
     //   Object.assign(titleCell, {
@@ -965,7 +1031,7 @@ export async function exportInspectionToExcelVertical(
       const projectNameLength = projectNames[i]?.length || 10;
       columnWidths.push(Math.max(15, projectNameLength + 2));
     }
-    
+
     worksheet.columns = columnWidths.map((width) => ({ width }));
 
     // 11. 导出文件
@@ -974,7 +1040,7 @@ export async function exportInspectionToExcelVertical(
       type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     });
     saveAs(blob, `${fileName}_${dayjs().format("YYYYMMDDHHmmss")}.xlsx`);
-    
+
     return {
       success: true,
       fileName: `${fileName}.xlsx`,
@@ -1001,41 +1067,41 @@ function addFieldRowWithTitle(
   projectNames: string[],
   allData: any[],
   fieldKey: string,
-  mappedKey?: string
+  mappedKey?: string,
 ) {
   const rowData = [rowTitle]; // 第一列为行标题
-  
-  projectNames.forEach(projectName => {
+
+  projectNames.forEach((projectName) => {
     // 查找对应 ProjectName 的数据（取第一条）
-    const item = allData.find(data => {
+    const item = allData.find((data) => {
       const dataProjectName = data.ProjectName?.toString();
       return dataProjectName === projectName;
     });
-    
+
     let cellValue: any = "";
     if (item) {
       // 使用映射的key或原始key
       const actualKey = mappedKey || fieldKey;
       cellValue = item[actualKey] ?? "";
-      
+
       // 特殊处理：样品数和缺陷数可能是数字
       if (fieldKey === "SampleNum" || fieldKey === "DefectNum") {
         if (typeof cellValue === "number") {
           cellValue = String(cellValue);
         }
       }
-      
+
       // 处理 null 或 undefined
       if (cellValue === null || cellValue === undefined) {
         cellValue = "";
       }
     }
-    
+
     rowData.push(cellValue);
   });
-  
+
   const row = worksheet.addRow(rowData);
-  
+
   // 设置行标题样式（第一列）
   const titleCell = row.getCell(1);
   Object.assign(titleCell, {
@@ -1082,15 +1148,13 @@ export async function exportMeasureInspectionToExcel(
 /**
  * 根据实际数据智能导出的函数
  */
-export async function exportInspectionDataToExcel(
-  options: {
-    data: any[]; // 直接传入数据
-    fileName?: string;
-    t: (key: string) => string;
-    fieldMapping?: FieldMapping;
-    maxLineNosCount?: number;
-  }
-) {
+export async function exportInspectionDataToExcel(options: {
+  data: any[]; // 直接传入数据
+  fileName?: string;
+  t: (key: string) => string;
+  fieldMapping?: FieldMapping;
+  maxLineNosCount?: number;
+}) {
   const {
     data,
     fileName = "计量检验表",
@@ -1100,8 +1164,8 @@ export async function exportInspectionDataToExcel(
   } = options;
 
   // 创建一个虚拟的 ExportTableOptions
-  const exportOptions: ExportTableOptions & { 
-    fieldMapping?: FieldMapping; 
+  const exportOptions: ExportTableOptions & {
+    fieldMapping?: FieldMapping;
     maxLineNosCount?: number;
   } = {
     tableRef: { columns: [] },

@@ -5,7 +5,7 @@
                 <el-form ref="formRef" :inline="true" size="small">
                     <el-form-item label="时间" class="mb-2">
                         <el-date-picker :shortcuts="shortcuts" v-model="searchDate" value-format="YYYY-MM-DD"
-                            type="daterange" range-separator="-" size="small" style="width: 200px" :clearable="false" :disabled-date="disabledDate" />
+                            type="daterange" range-separator="-" size="small" style="width: 200px" :clearable="false"   />
                     </el-form-item>
                     <el-form-item label="条码类型" class="mb-2">
                         <el-select v-model="getForm.ReprintType" placeholder="" style="width: 150px" @change="changeForm" clearable>

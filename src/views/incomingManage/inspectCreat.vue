@@ -43,7 +43,7 @@
                             <template #default="scope">
                                 <span>{{
                                     scope.$index + pageObj.pageSize * (pageObj.currentPage - 1) + 1
-                                    }}</span>
+                                }}</span>
                             </template>
                         </el-table-column>
                         <el-table-column prop="PriorityCodeName" :label="$t('batchCreation.Priority')" width="60"
@@ -52,12 +52,9 @@
                             <template #default="scope">
                                 <span class="underline">{{
                                     scope.row.IQCNumber
-                                    }}</span>
+                                }}</span>
                             </template>
                         </el-table-column>
-
-                        <el-table-column prop="IsAutomotive" :label="$t('incomeCreat.isCarProduct')" width="100" />
-                        <!-- <el-table-column prop="SamplingStandards" :label="$t('incomeCreat.InspectStandard')" show-overflow-tooltip/> -->
                         <el-table-column prop="StatusText" :label="$t('incomeCreat.Status')" width="70" />
                         <!-- <el-table-column prop="Status" :label="$t('incomeCreat.Status')" />-->
                         <!-- <el-table-column prop="NotifyDate" :label="$t('incomeCreat.NotifyDate')" /> -->
@@ -105,16 +102,19 @@
                             <template #default="scope">
                                 <span>{{
                                     scope.$index + pageObj.pageSize * (pageObj.currentPage - 1) + 1
-                                    }}</span>
+                                }}</span>
                             </template>
                         </el-table-column>
-                         <el-table-column prop="ModelSpec" :label="$t('incomeCreat.modelRules')"
-                            :min-width="getColumnWidth('ModelSpec')" fixed/>
-                        <el-table-column prop="MaterialName" :label="$t('incomeCreat.materialName')" fixed/>
+                        <el-table-column prop="ModelSpec" :label="$t('incomeCreat.modelRules')"
+                            :min-width="getColumnWidth('ModelSpec')" fixed />
+                        <el-table-column prop="MaterialName" :label="$t('incomeCreat.materialName')"
+                            :min-width="getColumnWidth('MaterialName')" fixed />
+
                         <el-table-column prop="Supplier" :label="$t('incomeCreat.supplier')" />
+                        <el-table-column prop="IsAutomotive" :label="$t('incomeCreat.isCarProduct')" width="100" />
                         <el-table-column prop="OrderNo" :label="$t('incomeCreat.orderNumber')" />
-                        <el-table-column prop="LotNo" label="Lot No" />
-                        <el-table-column prop="TCode" label="T-Code" />
+                        <el-table-column prop="LotNo" label="Lot No" :min-width="getColumnWidth('LotNo')" />
+                        <el-table-column prop="TCode" label="T-Code" :min-width="getColumnWidth('TCode')" />
                         <el-table-column prop="QuantityPerBox" :label="$t('incomeCreat.qtyIncomeMaterial')"
                             width="100" />
                         <el-table-column prop="SampledBoxes" :label="$t('incomeSheet.SampledBoxes')" />
@@ -122,18 +122,16 @@
                             show-overflow-tooltip />
                         <el-table-column prop="SupplierReportName" :label="$t('incomeCreat.supplierReport')"
                             :min-width="getColumnWidth('SupplierReportName')">
-
                             <template #default="scope">
                                 <span v-if="scope.row.SupplierReportName" class="underline cursor-pointer text-cyan-800"
                                     @click="openFile(scope.row.SupplierReportGuid)">
-
                                     {{ scope.row.SupplierReportName }}
                                 </span>
                             </template>
                         </el-table-column>
                         <el-table-column prop="StatusText" :label="$t('incomeCreat.Status')" />
                         <!-- <el-table-column prop="Status" :label="$t('incomeCreat.Status')" /> -->
-                        <el-table-column prop="CreateTime" :label="$t('incomeCreat.creatDate')" width="155" />
+                        <el-table-column prop="CreateTime" :label="$t('incomeCreat.creatDate')" width="150" />
                         <el-table-column :label="$t('publicText.operation')" width="120" fixed="right" align="center">
                             <template #default="scope">
                                 <el-tooltip :content="$t('publicText.edit')" placement="top">
@@ -202,7 +200,7 @@
                 <div class="dialog-footer">
                     <el-button @click="handleClose">{{
                         $t("publicText.cancel")
-                    }}</el-button>
+                        }}</el-button>
                     <el-button type="primary" @click="handleConfirm">
                         {{ $t("publicText.confirm") }}
                     </el-button>
@@ -255,7 +253,7 @@
                 <div class="dialog-footer">
                     <el-button @click="handleEditClose">{{
                         $t("publicText.cancel")
-                    }}</el-button>
+                        }}</el-button>
                     <el-button type="primary" @click="handleEditConfirm" :disabled="editCreateForm.StatusText == '完成'">
                         {{ $t("publicText.confirm") }}
                     </el-button>
@@ -269,7 +267,7 @@
                 <div class="dialog-footer">
                     <el-button @click="detailVisible = false">{{
                         $t("publicText.close")
-                    }}</el-button>
+                        }}</el-button>
                 </div>
             </template>
         </el-dialog>
@@ -331,7 +329,7 @@
                 <div class="dialog-footer">
                     <el-button @click="handleAddDetailClose">{{
                         $t("publicText.cancel")
-                    }}</el-button>
+                        }}</el-button>
                     <el-button type="primary" @click="handleAddDetailConfirm">
                         {{ $t("publicText.confirm") }}
                     </el-button>
@@ -372,11 +370,13 @@
                 <!-- <el-form-item :label="$t('incomeCreat.qtyIncomeMaterial')" prop="QuantityPerBox">
                     <el-input v-model="editdetailForm.QuantityPerBox" style="width: 200px" placeholder="" />
                 </el-form-item> -->
-                  <el-form-item :label="$t('incomeCreat.qtyIncomeMaterial')" prop="quantity">
+                <el-form-item :label="$t('incomeCreat.qtyIncomeMaterial')" prop="quantity">
                     <div class="flex items-center">
-                        <el-input-number v-model="editdetailForm.quantity" style="width: 120px" :min="1" placeholder="数量" />
+                        <el-input-number v-model="editdetailForm.quantity" style="width: 120px" :min="1"
+                            placeholder="数量" />
                         <span class="mx-1">PCS</span>
-                        <el-input-number v-model="editdetailForm.boxCount" style="width: 120px" :min="1" placeholder="箱数" />
+                        <el-input-number v-model="editdetailForm.boxCount" style="width: 120px" :min="1"
+                            placeholder="箱数" />
                         <span class="ml-1">箱</span>
                     </div>
                 </el-form-item>
@@ -396,7 +396,7 @@
                 <div class="dialog-footer">
                     <el-button @click="handleEditDetailClose">{{
                         $t("publicText.cancel")
-                    }}</el-button>
+                        }}</el-button>
                     <el-button type="primary" @click="handleEditDetailConfirm" :disabled="editdetailForm.StatusText">
                         {{ $t("publicText.confirm") }}
                     </el-button>
@@ -410,7 +410,7 @@
                 <div class="dialog-footer">
                     <el-button @click="handlePreviewClose">{{
                         $t("publicText.close")
-                    }}</el-button>
+                        }}</el-button>
                     <el-button type="primary" @click="handlePreviewDawnload">
                         {{ $t("publicText.dawnload") }}
                     </el-button>
@@ -589,7 +589,7 @@ const detailRules = reactive({
     //         trigger: 'change',
     //     },
     // ],
-     quantity: [  // 修改验证规则
+    quantity: [  // 修改验证规则
         {
             required: true,
             message: '数量不能为空',
@@ -615,7 +615,7 @@ watch(
             return;
         }
         if (newVal !== oldVal) {
-            getForm.value.StartTime = newVal[0];
+            getForm.value.StartTime = newVal[0] + ' 00:00:00';
             getForm.value.EndTime = newVal[1] + ' 23:59:59';
             // getForm.value.PageNumber = 1
         }
@@ -650,7 +650,11 @@ const tableDetailRowClassName = (val: any) => {
     }
 };
 const getData = () => {
+     tableData.value=[]
+     detailTableData.value=[]
+     pageObj.currentPage = 1;
     GetIQCHeaderQuery(getForm.value).then((res: any) => {
+        
         tableData.value = res.content;
     });
 };
@@ -931,7 +935,7 @@ const handleEditConfirm = () => {
 
 const handleEditDetail = (row: any) => {
     const parsed = parseQuantityPerBox(row.QuantityPerBox);
-    
+
     editdetailForm.value = {
         ...row,
         InspectionNo: row.IQCNumber,
@@ -999,14 +1003,14 @@ const handleDeleteDetail = (row: any) => {
         });
 };
 // 合并数量和箱数为QuantityPerBox格式
-const mergeQuantityPerBox = (quantity:any, boxCount:any) => {
+const mergeQuantityPerBox = (quantity: any, boxCount: any) => {
     return `${quantity}PCS/${boxCount}箱`;
 };
 
 // 解析QuantityPerBox为数量和箱数
-const parseQuantityPerBox = (quantityPerBox:any) => {
+const parseQuantityPerBox = (quantityPerBox: any) => {
     if (!quantityPerBox) return { quantity: '', boxCount: '' };
-    
+
     const match = quantityPerBox.match(/^(\d+)PCS\/(\d+)箱$/);
     if (match) {
         return {
@@ -1018,27 +1022,27 @@ const parseQuantityPerBox = (quantityPerBox:any) => {
 };
 const handleAddDetailClose = () => {
     addDetailVisible.value = false;
-     detailForm.value={
-            InspectionNo: "",
-    MaterialName: "",
-    ModelSpec: "",
-    Supplier: "",
-    OrderNo: "",
-    LotNo: "",
-    TCode: "",
-    QuantityPerBox: "",
-    SupplierReportGuid: "",
-    SupplierReportName: "",
-    Template_File: "",
-    quantity: "",        // 添加：数量
-    boxCount: "",        // 添加：箱数
-     }
+    detailForm.value = {
+        InspectionNo: "",
+        MaterialName: "",
+        ModelSpec: "",
+        Supplier: "",
+        OrderNo: "",
+        LotNo: "",
+        TCode: "",
+        QuantityPerBox: "",
+        SupplierReportGuid: "",
+        SupplierReportName: "",
+        Template_File: "",
+        quantity: "",        // 添加：数量
+        boxCount: "",        // 添加：箱数
+    }
     fileList.value = []
 };
 const handleAddDetailConfirm = () => {
     detailFormRef.value.validate((valid: any) => {
         if (valid) {
-            let data={
+            let data = {
                 ...detailForm.value,
                 QuantityPerBox: mergeQuantityPerBox(detailForm.value.quantity, detailForm.value.boxCount)
             }
@@ -1050,21 +1054,21 @@ const handleAddDetailConfirm = () => {
                 });
                 if (res.success) {
                     addDetailVisible.value = false;
-                     detailForm.value={
-            InspectionNo: "",
-    MaterialName: "",
-    ModelSpec: "",
-    Supplier: "",
-    OrderNo: "",
-    LotNo: "",
-    TCode: "",
-    QuantityPerBox: "",
-    SupplierReportGuid: "",
-    SupplierReportName: "",
-    Template_File: "",
-    quantity: "",        // 添加：数量
-    boxCount: "",        // 添加：箱数
-     }
+                    detailForm.value = {
+                        InspectionNo: "",
+                        MaterialName: "",
+                        ModelSpec: "",
+                        Supplier: "",
+                        OrderNo: "",
+                        LotNo: "",
+                        TCode: "",
+                        QuantityPerBox: "",
+                        SupplierReportGuid: "",
+                        SupplierReportName: "",
+                        Template_File: "",
+                        quantity: "",        // 添加：数量
+                        boxCount: "",        // 添加：箱数
+                    }
                     GetIQCDetailQuery({ InspectionNo: IQCNumber.value }).then((res: any) => {
                         detailTableData.value = res.content;
                     });
@@ -1089,9 +1093,9 @@ const handleEditDetailConfirm = () => {
     // console.log(editdetailForm.value);
     editdetailFormRef.value.validate((valid: any) => {
         if (valid) {
-            let data={
+            let data = {
                 ...editdetailForm.value,
-                 QuantityPerBox: mergeQuantityPerBox(editdetailForm.value.quantity, editdetailForm.value.boxCount)
+                QuantityPerBox: mergeQuantityPerBox(editdetailForm.value.quantity, editdetailForm.value.boxCount)
             }
             AyscIQCDetailUpdate(data).then((res: any) => {
                 ElMessage({
@@ -1130,8 +1134,12 @@ const getScreenHeight = () => {
 // 使用计算属性缓存列宽计算结果
 const columnWidths = computed(() => {
     const columns = [
-        { label: '型号规制', prop: 'ModelSpec' },
-        { label: '供应商报告', prop: 'SupplierReportName' },
+        { label: "型号规制", prop: "ModelSpec" },
+        { label: "供应商报告", prop: "SupplierReportName" },
+        { label: "T-Code", prop: "TCode" },
+        { label: "LotNo", prop: "LotNo" },
+        { label: "材料名称", prop: "MaterialName" },
+        { label: "供应商", prop: "Supplier" },
         // 添加其他需要自适应宽度的列
     ];
 

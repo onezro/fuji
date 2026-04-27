@@ -12,6 +12,13 @@
                     <el-input v-model.trim="getForm.OuterBoxContainerName" ref="inputPackRef" style="width: 300px"
                         placeholder="" @keyup.enter.native="getIsBox" />
                 </el-form-item>
+                 <el-form-item :label="$t('batchCreation.Printer')" prop="Printer" class="mb-2">
+                    <el-select v-model="PrinterName" placeholder="" filterable style="width: 200px"
+                        clearable>
+                        <el-option v-for="p in printList" :label="p.PrintQueueName" :value="p.PrintQueueName"
+                            :key="p.PrintQueueId" />
+                    </el-select>
+                </el-form-item>
                 <el-form-item class="mb-2">
                     <el-button type="" @click="handleReset">{{
                         $t("publicText.reset")
@@ -106,6 +113,9 @@
 
 <script setup lang="ts">
 import {
+    getPrintQuery
+} from "@/api/barCodeManage/batchCreation";
+import {
     GetCardAreaQuery,
     GetPackingCardAreaSerachDetail,
     PackingAdd,
@@ -121,7 +131,7 @@ import {
     onBeforeMount,
     onBeforeUnmount,
 } from "vue";
-import { ElNotification, ElMessageBox } from "element-plus";
+import { ElNotification, ElMessageBox ,ElMessage} from "element-plus";
 import dayjs from "dayjs";
 import { useI18n } from "vue-i18n";
 
@@ -143,6 +153,8 @@ const pageObj = reactive({
 });
 const selectList = ref<any[]>([]);
 const refreshTimer=ref()
+const printList = ref<any[]>([])
+const PrinterName = ref('')
 watch(
     () => getForm.value.CardAreaName,
     (newVal, oldVal) => {
@@ -161,6 +173,7 @@ onMounted(() => {
     getPallet();
      // 启动10秒定时刷新
     startAutoRefresh();
+    getPrint()
 });
 
 onBeforeUnmount(() => {
@@ -168,7 +181,12 @@ onBeforeUnmount(() => {
     // 清除定时器
     stopAutoRefresh();
 });
-
+//获取打印机
+const getPrint = () => {
+    getPrintQuery({}).then((res: any) => {
+        printList.value = res.content;
+    });
+}
 // 启动自动刷新
 const startAutoRefresh = () => {
     if (refreshTimer.value) {
@@ -188,6 +206,7 @@ const stopAutoRefresh = () => {
     }
 };
 const getData = () => {
+    pageObj.currentPage = 1;
     GetPackingCardAreaSerachDetail(getForm.value).then((res: any) => {
         if (res.success) {
             tableData.value = res.content.map((item: any) => {
@@ -347,12 +366,17 @@ const handleDelete = () => {
 };
 interface PackForm {
     CardAreaName: string;
+    PrinterName:string;
     packingOuterBoxContainers: Array<any>;
 }
 const handleGenerate = () => {
+    if (PrinterName.value === '') {
+        ElMessage.warning('请选择打印机');
+        return;
+    }
     let data: PackForm = {
         CardAreaName: getForm.value.CardAreaName,
-
+        PrinterName:PrinterName.value,
         packingOuterBoxContainers: [],
     };
     data.packingOuterBoxContainers = selectList.value.map((item: any) => {

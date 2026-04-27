@@ -27,84 +27,106 @@
                         {{ $t("publicText.reset") }}
                     </el-button>
 
-
-                    <el-button type="success" size="small" @click="createScrap">
+                  
+                    <el-button type="success" size="small" @click="createScrap" >
                         创建报废单
                     </el-button>
-                    <!-- <el-button type="warning" size="small" :disabled="selectionList.length === 0||selectionList.length!==1||tableData2.length===0"
+                      <el-button type="warning" size="small" :disabled="selectionList.length === 0||selectionList.length!==1||tableData2.length===0"
                         @click="handleSelectionData">
                         {{ $t("publicText.approval") }}
-                    </el-button> -->
+                    </el-button>
                 </el-form-item>
             </el-form>
-            <el-table :data="tableData.slice(
-                (pageObj.currentPage - 1) * pageObj.pageSize,
-                pageObj.currentPage * pageObj.pageSize,
-            )
-                " size="small" :style="{ width: '100%' }" ref="inspectionSheetRef" :height="tableHeight" border fit
-                highlight-current-row :tooltip-effect="'dark'">
-                <el-table-column type="index" align="center" fixed :label="$t('publicText.index')" width="50">
-                    <template #default="scope">
-                        <span>{{
-                            scope.$index +
-                            pageObj.pageSize * (pageObj.currentPage - 1) +
-                            1
-                        }}</span>
-                    </template>
-                </el-table-column>
+            <el-row :gutter="10">
+                <el-col :span="10">
+                    <el-table :data="tableData.slice(
+                        (pageObj.currentPage - 1) * pageObj.pageSize,
+                        pageObj.currentPage * pageObj.pageSize,
+                    )
+                        " size="small" :style="{ width: '100%' }" ref="inspectionSheetRef" :height="tableHeight" border
+                        fit highlight-current-row @selection-change="handleSelectionChange" :tooltip-effect="'dark'"
+                        @row-click="getDetailData">
+                        <el-table-column type="selection" width="55" align="center" />
+                        <el-table-column type="index" align="center" fixed :label="$t('publicText.index')" width="50">
+                            <template #default="scope">
+                                <span>{{
+                                    scope.$index +
+                                    pageObj.pageSize * (pageObj.currentPage - 1) +
+                                    1
+                                }}</span>
+                            </template>
+                        </el-table-column>
 
-                <el-table-column prop="ScrapName" :label="'报废单号'" fixed :min-width="getColumnWidth1('ScrapName')">
-                    <!-- <template #default="scope">
+                        <el-table-column prop="ScrapName" :label="'报废单号'" fixed width="100">
+                            <!-- <template #default="scope">
                                 <span class="underline" @click="getDetailData(scope.row)">{{
                                     scope.row.ScrapName
                                     }}</span>
                             </template> -->
-                </el-table-column>
-                <el-table-column prop="Remark" :label="'备注'" :min-width="getColumnWidth1('Remark')" />
-                <el-table-column prop="Result" :label="'结果'" :min-width="getColumnWidth1('Result')" />
+                        </el-table-column>
+                        <el-table-column prop="Remark" :label="'备注'" width="150" />
+                        <el-table-column prop="Result" :label="'结果'" width="100" />
 
-                <!-- <el-table-column prop="Status" :label="'状态'" width="100">
+                        <!-- <el-table-column prop="Status" :label="'状态'" width="100">
                             <template #default="scope">
                                 <span v-if="scope.row.Status === 0">{{'创建' }}</span>
                                 <span v-else-if="scope.row.Status === 1">{{'批准' }}</span>
                                 <span v-else>{{ scope.row.Status }}</span>
                             </template>
                         </el-table-column> -->
-                <el-table-column prop="ApproveUserName" :label="'批准人'"
-                    :min-width="getColumnWidth1('ApproveUserName')" />
-                <el-table-column prop="ConfirmUserName" :label="'确认人'"
-                    :min-width="getColumnWidth1('ConfirmUserName')" />
-                <el-table-column prop="CreateUserName" :label="'创建人'" :min-width="getColumnWidth1('CreateUserName')" />
-                <el-table-column prop="CreateTime" :label="'创建时间'" :min-width="getColumnWidth1('CreateTime')" />
-                <el-table-column :label="$t('publicText.operation')" width="130" fixed="right" align="center">
-                    <template #default="scope">
-                        <el-tooltip :content="$t('publicText.detail')" placement="top">
-                            <el-button type="warning" icon="Document" size="small"
-                                @click.stop="getDetailData(scope.row)" ></el-button>
-                        </el-tooltip>
-                        <el-tooltip :content="$t('publicText.dawnload') + '报告'
-                            " placement="top">
-                            <el-button type="success" icon="Download" size="small"
-                                @click.stop="handleDownload(scope.row)" :disabled="scope.row.Status == 0"></el-button>
-                        </el-tooltip>
-
-                    </template>
-                </el-table-column>
-                <template #empty>
-                    <div class="flex items-center justify-center h-100%">
-                        <el-empty />
+                        <el-table-column prop="ApproveUserName" :label="'批准人'" width="100" />
+                        <el-table-column prop="ConfirmUserName" :label="'确认人'" width="100" />
+                        <el-table-column prop="CreateUserName" :label="'创建人'" width="100" />
+                        <el-table-column prop="CreateTime" :label="'创建时间'" width="150" />
+                        <el-table-column :label="$t('publicText.operation')" width="60" fixed="right" align="center">
+                            <template #default="scope">
+                                <el-tooltip :content="$t('publicText.dawnload') + '报告'
+                                    " placement="top">
+                                    <el-button type="success" icon="Download" size="small"
+                                        @click.stop="handleDownload(scope.row)"></el-button>
+                                </el-tooltip>
+                            </template>
+                        </el-table-column>
+                        <template #empty>
+                            <div class="flex items-center justify-center h-100%">
+                                <el-empty />
+                            </div>
+                        </template>
+                    </el-table>
+                    <div class="mt-2">
+                        <el-pagination :size="'small'" background @size-change="handleSizeChange"
+                            @current-change="handleCurrentChange" :pager-count="5" :current-page="pageObj.currentPage"
+                            :page-size="pageObj.pageSize" :page-sizes="[30, 50, 100, 200, 300]"
+                            layout="total,sizes, prev, pager, next" :total="tableData.length">
+                        </el-pagination>
                     </div>
-                </template>
-            </el-table>
-            <div class="mt-2">
-                <el-pagination :size="'small'" background @size-change="handleSizeChange"
-                    @current-change="handleCurrentChange" :pager-count="5" :current-page="pageObj.currentPage"
-                    :page-size="pageObj.pageSize" :page-sizes="[30, 50, 100, 200, 300]"
-                    layout="total,sizes, prev, pager, next" :total="tableData.length">
-                </el-pagination>
-            </div>
-
-
+                </el-col>
+                <el-col :span="14">
+                    <el-table :data="tableData2" size="small" :style="{ width: '100%' }" ref="inspectionSheetRef"
+                        :height="tableHeight" border fit :tooltip-effect="'dark'">
+                        <el-table-column type="index" align="center" fixed :label="$t('publicText.index')" width="50">
+                        </el-table-column>
+                        <el-table-column prop="Container" :label="'条码'" fixed width="150">
+                        </el-table-column>
+                        <el-table-column prop="Material" :label="'物料'" width="150" />
+                        <el-table-column prop="LotNumber" :label="'批号'" width="100" />
+                        <el-table-column prop="AttachmentName" :label="'附件名称'" width="150">
+                            <template #default="scope">
+                                <span class="underline cursor-pointer text-cyan-800"
+                                    @click="openFile(scope.row.AttachmentId)">{{ scope.row.AttachmentName }}</span>
+                            </template>
+                        </el-table-column>
+                        <el-table-column prop="Uom" :label="'单位'" width="80" />
+                        <el-table-column prop="Qty" :label="'数量'" width="80" />
+                        <el-table-column prop="ScrapReason" :label="'报废原因'" width="150" />
+                        <template #empty>
+                            <div class="flex items-center justify-center h-100%">
+                                <el-empty />
+                            </div>
+                        </template>
+                    </el-table>
+                </el-col>
+            </el-row>
         </el-card>
         <el-dialog v-model="previewVisible" :title="previewTitle" width="80%" :append-to-body="true"
             :close-on-click-modal="false" :close-on-press-escape="false" align-center>
@@ -148,22 +170,20 @@
                     <el-table-column type="selection" width="55" align="center" />
                     <el-table-column type="index" align="center" fixed :label="$t('publicText.index')" width="50">
                     </el-table-column>
-                    <el-table-column prop="ProductFamilyName" :label="'物料类别'" fixed
-                        :min-width="getColumnWidth3('ProductFamilyName')">
+                    <el-table-column prop="ProductFamilyName" :label="'物料类别'" fixed>
                     </el-table-column>
-                    <el-table-column prop="MaterialSource" :label="'来源'" fixed
-                        :min-width="getColumnWidth3('MaterialSource')">
+                    <el-table-column prop="MaterialSource" :label="'来源'" fixed>
                     </el-table-column>
-                    <el-table-column prop="ProductName" :label="'物料名称'" :min-width="getColumnWidth3('ProductName')" />
-                    <el-table-column prop="SpecName" :label="'工序'" :min-width="getColumnWidth3('SpecName')">
+                    <el-table-column prop="ProductName" :label="'物料名称'" width="150" />
+                    <el-table-column prop="SpecName" :label="'工序'" width="100">
                     </el-table-column>
-                    <el-table-column prop="LotNumber" :label="'批号'" :min-width="getColumnWidth3('LotNumber')" />
-                    <el-table-column prop="ContainerName" :label="'规格'" :min-width="getColumnWidth3('ContainerName')">
+                    <el-table-column prop="LotNumber" :label="'批号'" width="100" />
+                    <el-table-column prop="ContainerName" :label="'规格'" width="150">
                     </el-table-column>
-                    <el-table-column prop="Location" :label="'库位'" :min-width="getColumnWidth3('Location')">
+                    <el-table-column prop="Location" :label="'库位'" width="150">
                     </el-table-column>
-                    <el-table-column prop="Qty" :label="'数量'" :min-width="getColumnWidth3('Qty')" />
-                    <el-table-column prop="UOMName" :label="'单位'" :min-width="getColumnWidth3('UOMName')" />
+                    <el-table-column prop="Qty" :label="'数量'" width="80" />
+                    <el-table-column prop="UOMName" :label="'单位'" width="80" />
                 </el-table>
             </el-form>
             <template #footer>
@@ -183,15 +203,15 @@
                 ref="inspectionSheetRef" :height="300" border fit :tooltip-effect="'dark'">
                 <el-table-column type="index" align="center" fixed :label="$t('publicText.index')" width="50">
                 </el-table-column>
-                <!-- <el-table-column prop="MaterialDetailName" :label="'物料类别'" fixed :min-width="getColumnWidth2('MaterialDetailName')">
-                </el-table-column> -->
-                <el-table-column prop="Material" :label="'物料名称'" :min-width="getColumnWidth4('Material')" />
-                <el-table-column prop="Container" :label="'规格'" :min-width="getColumnWidth4('Container')">
+                <el-table-column prop="MaterialDetailName" :label="'物料类别'" fixed>
                 </el-table-column>
-                <el-table-column prop="LotNumber" :label="'批号'" :min-width="getColumnWidth4('LotNumber')" />
-                <el-table-column prop="UomName" :label="'单位'" :min-width="getColumnWidth4('UomName')" />
-             
-                <el-table-column prop="Qty1" :label="'数量'" :min-width="getColumnWidth4('Qty1')">
+                <el-table-column prop="Material" :label="'物料名称'" width="150" />
+                <el-table-column prop="Container" :label="'规格'" width="150">
+                </el-table-column>
+                <el-table-column prop="LotNumber" :label="'批号'" width="100" />
+                <el-table-column prop="UomName" :label="'单位'" width="80" />
+                <el-table-column prop="AttachmentName" :label="'附件名称'" width="80" />
+                 <el-table-column prop="Qty1" :label="'数量'" width="80">
 
                 </el-table-column>
                 <el-table-column prop="Qty" :label="'报废数量'" width="130">
@@ -204,7 +224,6 @@
                         <el-input v-model="row.ScrapReason" placeholder="请输入报废原因" size="small" />
                     </template>
                 </el-table-column>
-                   <el-table-column prop="AttachmentName" :label="'附件名称'" :min-width="getColumnWidth4('AttachmentName')" />
                 <el-table-column :label="$t('publicText.operation')" width="60" fixed="right" align="center">
                     <template #default="scope">
                         <el-tooltip :content="'上传附件'" placement="top">
@@ -252,42 +271,6 @@
                 </el-button>
             </template>
         </el-dialog>
-        <el-dialog v-model="scrapDetailVisible" title="审批" width="80%" :append-to-body="true"
-            :close-on-click-modal="false" :close-on-press-escape="false" align-center>
-            <el-table :data="tableData2" size="small" :style="{ width: '100%' }" ref="inspectionSheetRef" :height="350"
-                border fit :tooltip-effect="'dark'">
-                <el-table-column type="index" align="center" fixed :label="$t('publicText.index')" width="50">
-                </el-table-column>
-                <el-table-column prop="Container" :label="'条码'" fixed :min-width="getColumnWidth2('Container')">
-                </el-table-column>
-                <el-table-column prop="Material" :label="'物料'" :min-width="getColumnWidth2('Material')" />
-                <el-table-column prop="LotNumber" :label="'批号'" :min-width="getColumnWidth2('LotNumber')" />
-                <el-table-column prop="AttachmentName" :label="'附件名称'" :min-width="getColumnWidth2('AttachmentName')">
-                    <template #default="scope">
-                        <span class="underline cursor-pointer text-cyan-800"
-                            @click="openFile(scope.row.AttachmentId)">{{ scope.row.AttachmentName }}</span>
-                    </template>
-                </el-table-column>
-                <el-table-column prop="Uom" :label="'单位'" :min-width="getColumnWidth2('Uom')" />
-                <el-table-column prop="Qty" :label="'数量'" :min-width="getColumnWidth2('Qty')" />
-                <el-table-column prop="ScrapReason" :label="'报废原因'" :min-width="getColumnWidth2('ScrapReason')" />
-                <template #empty>
-                    <div class="flex items-center justify-center h-100%">
-                        <el-empty />
-                    </div>
-                </template>
-            </el-table>
-            <template #footer>
-                <div class="dialog-footer">
-                    <el-button @click="handleScrapDetailClose">{{
-                        $t("publicText.close")
-                    }}</el-button>
-                    <el-button type="primary" @click="handleSelectionData" :disabled="tableData2.length === 0||scrapStatus===1">
-                        {{ '审批' }}
-                    </el-button>
-                </div>
-            </template>
-        </el-dialog>
     </div>
 </template>
 
@@ -304,7 +287,6 @@ import {
     GetProductFamilyQuery,
     GetProductQuery
 } from "@/api/incomingManage/iqcApi";
-import { calculateColumnsWidth, clearTextWidthCache } from '@/utils/tableminWidth'
 import {
     shortcuts,
     setTodayDate,
@@ -345,6 +327,19 @@ const tableData2 = ref([
 const selectionList = ref<any[]>([]);
 
 const spiltList = ref([
+    // {
+    //     ProductFamilyName: "导热胶",
+    //     Qty: 124074,
+    //     LotNumber: "260102",
+    //     ContainerName: "GR130A-00-30GY 300X200",
+    //     Location: "香港-L01",
+    //     ValidityPeriod: null,
+    //     ProductName: "GR130A-00-50GY(300X200)",
+    //     SpecName: "原材料库位",
+    //     IsAutomotiveProduct: false,
+    //     MaterialSource: "其他",
+    //     UOMName: "PCS",
+    // },
 ]);
 const previewVisible = ref(false);
 const previewUrl = ref("");
@@ -375,7 +370,6 @@ const createScrapForm = ref({
             Container: "",
             Material: "",
             LotNumber: "",
-            Qty1: 0,
             Qty: 0,
             UomName: "",
             ScrapReason: "",
@@ -392,9 +386,6 @@ const appForm = ref({
     ApprovalResult: "",
     ApprovalRemarks: "",
 });
-const scrapDetailVisible = ref(false);
-const scrapNameValue = ref("");
-const scrapStatus = ref(0);
 watch(
     () => searchDate.value,
     (newVal: any, oldVal: any) => {
@@ -437,6 +428,7 @@ const resetGetForm = () => {
     };
 };
 const getData = () => {
+    tableData2.value = [];
     ScrapQuery(getForm.value).then((res: any) => {
         if (res.success) {
             tableData.value = res.content;
@@ -457,16 +449,12 @@ const handleSelectionChange = (val: any) => {
 const handleSelectionData = () => {
     appVisible.value = true;
 };
-const handleScrapDetailClose = () => {
-    scrapDetailVisible.value = false;
-    tableData2.value = [];
-}
 const handleAppClose = () => {
     appVisible.value = false;
 };
 const handleAppConfirm = () => {
     let data = {
-        ScrapName: scrapNameValue.value,
+        ScrapName: selectionList.value[0].ScrapName,
         // DataStatus: 0,
         Status: 1,
         Remark: appForm.value.ApprovalRemarks,
@@ -475,7 +463,7 @@ const handleAppConfirm = () => {
         ConfirmUserName: userStore.getUserInfo,
         scrapMaterials: [
             {
-                ScrapName: '',
+                ScrapName:'',
                 MaterialDetailName: "",
                 Container: "",
                 Material: "",
@@ -510,7 +498,6 @@ const handleAppConfirm = () => {
                 type: "success",
             });
             appVisible.value = false;
-            scrapDetailVisible.value = false;
             selectionList.value = [];
             getData();
         } else {
@@ -523,12 +510,9 @@ const handleAppConfirm = () => {
     })
 }
 const getDetailData = (val: any) => {
-    scrapNameValue.value = val.ScrapName;
-    scrapStatus.value = val.Status;
     ScrapMateialDetailQuery({ ScrapName: val.ScrapName }).then((res: any) => {
         if (res.success) {
             tableData2.value = res.content;
-            scrapDetailVisible.value = true;
         } else {
             tableData2.value = [];
             ElMessage({
@@ -591,7 +575,7 @@ const handleSelectionSpiltChange = (val: any) => {
 }
 const handleCreateChoice = () => {
     createScrapForm.value.scrapMaterials = spiltSelectionList.value.map((item: any) => ({
-        MaterialDetailName: "",
+        MaterialDetailName:"",
         Container: item.ContainerName,
         Material: item.ProductName,
         LotNumber: item.LotNumber,
@@ -658,22 +642,7 @@ const handleScrapClose = () => {
 }
 const handleCreateScrap = () => {
     console.log(createScrapForm.value);
- // 校验每个物料的报废数量和报废原因
-  const materials = createScrapForm.value.scrapMaterials;
-    for (let i = 0; i < materials.length; i++) {
-        const item = materials[i];
-        const qty = Number(item.Qty);
-        // 检查数量是否有效
-        if (isNaN(qty) || qty < 1 || qty > item.Qty1) {
-            ElMessage.error(`第 ${i + 1} 行物料的报废数量必须介于 1 和 ${item.Qty1} 之间`);
-            return;
-        }
-        // 检查报废原因是否填写
-        if (!item.ScrapReason || item.ScrapReason.trim() === '') {
-            ElMessage.error(`第 ${i + 1} 行物料的报废原因不能为空`);
-            return;
-        }
-    }
+
     ScrapExecution(createScrapForm.value).then((res: any) => {
         if (res.success) {
             ElMessage({
@@ -831,114 +800,11 @@ const handleSizeChange = (val: any) => {
 const handleCurrentChange = (val: any) => {
     pageObj.currentPage = val;
 };
-const columnWidths1 = computed(() => {
-    const columns = [
-        { label: '报废单号', prop: 'ScrapName' },
-        { label: '备注', prop: 'Remark' },
-        { label: '结果', prop: 'Result' },
-        { label: '批准人', prop: 'ApproveUserName' },
-        { label: '确认人', prop: 'ConfirmUserName' },
-        { label: '创建人', prop: 'CreateUserName' },
-        { label: '创建时间', prop: 'CreateTime' },
-
-    ];
-
-    // 批量计算列宽
-    return calculateColumnsWidth(columns, tableData.value, {
-        padding: 25,
-        fontSize: 13
-    });
-});
-
-// 在模板中使用
-const getColumnWidth1 = (prop: string) => {
-    return columnWidths1.value[prop] || 'auto';
-};
-
-// 使用计算属性缓存列宽计算结果
-const columnWidths2 = computed(() => {
-    const columns = [
-        { label: '条码', prop: 'Container' },
-        { label: '物料', prop: 'Material' },
-        { label: '批号', prop: 'LotNumber' },
-        { label: '附件名称', prop: 'AttachmentName' },
-        { label: '单位', prop: 'Uom' },
-        { label: '数量', prop: 'Qty' },
-        { label: '报废原因', prop: 'ScrapReason' },
-        // 添加其他需要自适应宽度的列
-    ];
-
-    // 批量计算列宽
-    return calculateColumnsWidth(columns, tableData2.value, {
-        padding: 25,
-        fontSize: 13
-    });
-});
-
-// 在模板中使用
-const getColumnWidth2 = (prop: string) => {
-    return columnWidths2.value[prop] || 'auto';
-};
-const columnWidths3 = computed(() => {
-    const columns = [
-        { label: '物料类别', prop: 'ProductFamilyName' },
-        { label: '来源', prop: 'MaterialSource' },
-        { label: '物料名称', prop: 'ProductName' },
-        { label: '工序', prop: 'SpecName' },
-        { label: '批号', prop: 'LotNumber' },
-        { label: '规格', prop: 'ContainerName' },
-        { label: '库位', prop: 'Location' },
-        { label: '数量', prop: 'Qty' },
-        { label: '单位', prop: 'UOMName' },
-
-        // 添加其他需要自适应宽度的列
-    ];
-
-    // 批量计算列宽
-    return calculateColumnsWidth(columns, spiltList.value, {
-        padding: 25,
-        fontSize: 13
-    });
-});
-
-// 在模板中使用
-const getColumnWidth3 = (prop: string) => {
-    return columnWidths3.value[prop] || 'auto';
-};
-const columnWidths4 = computed(() => {
-    const columns = [
-        { label: '物料名称', prop: 'Material' },
-        { label: '规格', prop: 'Container' },
-        { label: '批号', prop: 'LotNumber' },
-        { label: '单位', prop: 'UomName' },
-        { label: '附件名称', prop: 'AttachmentName' },
-        { label: '数量', prop: 'Qty1' },
-
-
-        // 添加其他需要自适应宽度的列
-    ];
-
-    // 批量计算列宽
-    return calculateColumnsWidth(columns, createScrapForm.value.scrapMaterials, {
-        padding: 25,
-        fontSize: 13
-    });
-});
-
-// 在模板中使用
-const getColumnWidth4 = (prop: string) => {
-    return columnWidths4.value[prop] || 'auto';
-};
 const getScreenHeight = () => {
     nextTick(() => {
-        tableHeight.value = window.innerHeight - 180;
+        tableHeight.value = window.innerHeight - 250;
     });
 };
 </script>
 
 <style lang="scss" scoped></style>
-<style scoped>
-.el-pagination {
-    justify-content: center;
-}
-</style>

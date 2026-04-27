@@ -4,7 +4,7 @@
             <el-form ref="formRef" :model="getForm" :inline="true" label-width="auto" size="small">
                 <el-form-item :label="$t('oqcInspection.creatTime')" class="mb-2"><el-date-picker :shortcuts="shortcuts"
                         v-model="searchDate" value-format="YYYY-MM-DD" type="daterange" range-separator="-" size="small"
-                        style="width: 190px" :clearable="false" :disabled-date="disabledDate" />
+                        style="width: 190px" :clearable="false" />
                 </el-form-item>
                 <el-form-item :label="$t('oqcInspection.SpecName')" class="mb-2">
                     <el-select v-model="getForm.SpecName" placeholder="" @change="getData" clearable
@@ -78,7 +78,7 @@
                     <template #default="scope">
                         <span>{{
                             scope.$index + pageObj.pageSize * (pageObj.currentPage - 1) + 1
-                        }}</span>
+                            }}</span>
                     </template>
                 </el-table-column>
                 <el-table-column prop="PriorityCodeName" :label="$t('batchCreation.Priority')" width="60"
@@ -234,8 +234,6 @@
                     </el-form>
                 </el-col>
                 <el-col :span="9">
-
-
                     <el-table :data="eqTable" border stripe style="width: 100%" size="small" :height="105">
                         <el-table-column prop="ResourceName" :label="$t('oqcInspection.instrumentName')">
                             <template #default="{ row }">
@@ -266,8 +264,6 @@
                     </el-table>
                 </el-col>
             </el-row>
-
-
 
             <!-- </div> -->
 
@@ -431,17 +427,19 @@
                         <el-table-column prop="InspectionBasis" :label="$t('aqlrules.InspectionBasis')"
                             :min-width="getColumnWidth2('InspectionBasis')">
                         </el-table-column>
-                        <el-table-column prop="SampleSize" :label="$t('incomeSheet.numberOfSample')">
+                        <el-table-column prop="SampleSize" :label="$t('incomeSheet.numberOfSample')" width="120">
                             <template #default="scope">
                                 <!-- <el-input v-model="scope.row.SampleSize" size="small" type="number"></el-input> -->
-                                <el-input-number v-model="scope.row.SampleSize" :min="0" size="small" />
+                                <el-input-number v-model="scope.row.SampleSize" :min="0" size="small"
+                                    style="width: 100%" />
                             </template>
                         </el-table-column>
-                        <el-table-column prop="DefectCount" :label="$t('incomeSheet.numberOfDefect')">
+                        <el-table-column prop="DefectCount" :label="$t('incomeSheet.numberOfDefect')" width="120">
                             <template #default="scope">
                                 <!-- {{ scope.row.DefectCount || calculateDefectCount(scope.row) }} -->
                                 <!-- <el-input v-model="scope.row.DefectCount" size="small"  type="number"></el-input> -->
-                                <el-input-number v-model="scope.row.DefectCount" :min="0" size="small" />
+                                <el-input-number v-model="scope.row.DefectCount" :min="0" size="small"
+                                    style="width: 100%" />
                             </template>
                         </el-table-column>
                         <el-table-column prop="DefectDescription" :label="'缺陷描述'">
@@ -496,7 +494,8 @@
                         </el-table-column>
                         <el-table-column prop="MinValue" :label="$t('aqlrules.MinValue')">
                         </el-table-column>
-
+                        <el-table-column prop="DecimalPlaces" :label="$t('aqlrules.DecimalPlaces')" :min-width="getColumnWidth2('DecimalPlaces')":align="'center'">
+                        </el-table-column>
                         <el-table-column prop="InspectionToolName" :label="$t('aqlrules.ToolName')"
                             :min-width="getColumnWidth2('InspectionToolName')">
                         </el-table-column>
@@ -537,11 +536,16 @@
                                 <span>{{ calculateAverage(scope.row) }}</span>
                             </template>
                         </el-table-column>
-                        <el-table-column prop="numberOfDefect" :label="'结果'">
+                        <el-table-column prop="numberOfDefect" :label="'结果'" width="100">
                             <template #default="scope">
-                                <span v-if="scope.row.ProjectCategoryName != '特性'">{{
+                                <!-- <span v-if="scope.row.ProjectCategoryName != '特性'">{{
                                     getResultText(scope.row)
-                                }}</span>
+                                }}</span> -->
+                                <el-select v-model="scope.row.Status" placeholder="" style="width: 80px" :size="'small'"
+                                    v-if="scope.row.ProjectCategoryName != '特性'">
+                                    <el-option label="合格" :value="1" />
+                                    <el-option label="不合格" :value="0" />
+                                </el-select>
                             </template>
                         </el-table-column>
                         <el-table-column prop="UnqualifiedHandlingResults" :label="'不良处理结果'" width="180">
@@ -613,9 +617,9 @@
                             {{ "暂存" }}
                         </el-button>
                         <el-button @click="handleApproval" :type="'success'" :disabled="!(
-                            headerForm.InspectionStatus == '检验完成' &&
-                            headerForm.ApprovalStatus == '创建'
-                        )
+                                headerForm.InspectionStatus == '检验完成' &&
+                                headerForm.ApprovalStatus == '创建'
+                            )
                             ">{{ $t("publicText.approval") }}</el-button>
                     </div>
                 </div>
@@ -624,12 +628,21 @@
 
         <el-dialog v-model="dialogVisible" :title="'输入测量值'" width="500px">
             <el-form ref="formRef" label-width="auto" size="small" @submit.native.prevent>
-                <el-form-item :label="'样本值' + i" prop="name" v-for="i in currentSampleSize" :key="i">
+                <!-- <el-form-item :label="'样本值' + i" prop="name" v-for="i in currentSampleSize" :key="i">
                     <el-input :ref="(el: any) => setInputRef(el, i)" @keyup.enter.native="handleEnterInput($event, i)"
                         v-model="measurementValues[i - 1]" placeholder="请输入测量值" style="width: 200px"
                         @blur="handleBlur(i - 1)" />
-                    <!-- <el-input-number :ref="(el: any) => setInputRef(el, i)" @keyup.enter.native="handleEnterInput($event, i)"
-                        v-model="measurementValues[i - 1]" placeholder="请输入测量值" style="width: 200px" :precision="precision" /> -->
+                </el-form-item> -->
+                <el-form-item v-for="i in currentSampleSize" :key="i"
+                    :class="{ 'has-error': isValueOutOfRange(i - 1) }">
+                    <template #label>
+                        <span :class="{ 'label-error': isValueOutOfRange(i - 1) }">
+                            样本值{{ i }}
+                        </span>
+                    </template>
+                    <el-input :ref="(el: any) => setInputRef(el, i)" @keyup.enter.native="handleEnterInput($event, i)"
+                        v-model="measurementValues[i - 1]" placeholder="请输入测量值" style="width: 200px"
+                        :class="{ 'input-error': isValueOutOfRange(i - 1) }" @blur="handleBlur(i - 1)" />
                 </el-form-item>
             </el-form>
 
@@ -657,7 +670,7 @@
             <template #footer>
                 <el-button @click="handleAppClose">{{
                     $t("publicText.cancel")
-                }}</el-button>
+                    }}</el-button>
                 <el-button type="primary" @click="handleAppConfirm">
                     {{ $t("publicText.confirm") }}
                 </el-button>
@@ -670,7 +683,7 @@
                 <div class="dialog-footer">
                     <el-button @click="handlePreviewClose">{{
                         $t("publicText.close")
-                    }}</el-button>
+                        }}</el-button>
                     <el-button type="primary" @click="handlePreviewDawnload">
                         {{ $t("publicText.dawnload") }}
                     </el-button>
@@ -738,7 +751,7 @@
                 <div class="dialog-footer">
                     <el-button @click="handleIQCCharactClose">{{
                         $t("publicText.close")
-                    }}</el-button>
+                        }}</el-button>
                 </div>
             </template>
         </el-dialog>
@@ -882,21 +895,22 @@
                 <div class="dialog-footer">
                     <el-button @click="handleOtherClose">{{
                         $t("publicText.close")
-                    }}</el-button>
+                        }}</el-button>
                 </div>
             </template>
         </el-dialog>
-        <el-dialog v-model="previewOQCVisible" :title="'预览OQC报告'" width="90%" :append-to-body="true"
+        <el-dialog v-model="previewOQCVisible" :title="'预览OQC报告'" width="100%" :append-to-body="true"
             :close-on-click-modal="false" :close-on-press-escape="false" align-center>
-            <div style="height: 650px; overflow: auto">
-                <VueOfficeExcel :src="excelSrc" style="width: 100%; height: 100%"></VueOfficeExcel>
+            <div style="height: calc(100vh - 200px); overflow: auto; padding: 0; margin: 0;">
+                <excelPreview :base64String="excelSrc" />
+                <!-- <VueOfficeExcel :src="excelSrc" style="width: 100%; height: 100%"></VueOfficeExcel> -->
             </div>
 
             <template #footer>
                 <div class="dialog-footer">
                     <el-button @click="previewOQCVisible = false">{{
                         $t("publicText.close")
-                    }}</el-button>
+                        }}</el-button>
                 </div>
             </template>
         </el-dialog>
@@ -905,7 +919,7 @@
 
 <script setup lang="ts">
 import VueOfficeExcel from "@vue-office/excel";
-
+import excelPreview from "@/components/excelPreview/index.vue";
 import {
     QueryOQCDocumentNumbersByCriteria,
     QueryOQCNewWorkOrderDetailsByWorkOrder,
@@ -951,19 +965,14 @@ import { useUserStoreWithOut } from "@/stores/modules/user";
 import dayjs from "dayjs";
 import router from "@/router";
 import { exportTableToExcel } from "@/utils/exportExcel";
-import {
-    exportMeasureTableToExcelVertical,
-} from "@/utils/exportExcel1";
-import {
-    handleExcelUploadEnhanced,
-} from "@/utils/analysisExcel";
+import { exportMeasureTableToExcelVertical } from "@/utils/exportExcel1";
+import { handleExcelUploadEnhanced } from "@/utils/analysisExcel";
 import { saveAs } from "file-saver";
 import JSZip from "jszip";
 import {
     calculateColumnsWidth,
     clearTextWidthCache,
 } from "@/utils/tableminWidth";
-import { log } from "console";
 const userStore = useUserStoreWithOut();
 const getForm = ref({
     OQCName: "",
@@ -985,7 +994,7 @@ const getForm = ref({
 const searchDate = ref<any[]>([]);
 const tableHeight = ref(0);
 const tableData = ref([]);
-const pageObj = reactive({
+const pageObj = ref({
     currentPage: 1,
     pageSize: 50,
 });
@@ -1180,7 +1189,7 @@ const iqcForm = ref({
     LotNumber: "",
     ProductName: "",
 });
-const precision = ref(0)
+const precision = ref(0);
 watch(
     () => searchDate.value,
     (newVal: any, oldVal: any) => {
@@ -1192,7 +1201,7 @@ watch(
             return;
         }
         if (newVal !== oldVal) {
-            getForm.value.StartTime = newVal[0];
+            getForm.value.StartTime = newVal[0] + " 00:00:00";
             getForm.value.EndTime = newVal[1] + " 23:59:59";
             // getForm.value.PageNumber = 1
         }
@@ -1329,6 +1338,7 @@ const resetForm = () => {
 };
 //
 const getData = () => {
+    pageObj.value.currentPage = 1;
     QueryOQCDocumentNumbersByCriteria(getForm.value).then((res: any) => {
         tableData.value = res.content;
     });
@@ -1856,39 +1866,81 @@ const getInspectDetilData = () => {
             }));
         }
 
+        // MeasurTable.value = data.OQCInspectionDetails.filter(
+        //     (item: any) => item.measurementType == "计量",
+        // ).map((item: any, i: any) => ({
+        //     LineNos: i + 1,
+        //     Inspectiondetail: item.inspectionItemName,
+        //     ProjectCategoryName: item.projectCategoryName,
+        //     ProjectName: item.projectName,
+        //     CharacteristicGrade: item.characteristicGrade,
+        //     TargetValue: item.targetValue,
+        //     MinValue: item.minValue,
+        //     MaxValue: item.maxValue,
+        //     InspectionToolName: item.inspectionToolName,
+        //     uomname: item.uomname,
+        //     InspectionBasis: item.inspectionBasis,
+        //     SampleSize:
+        //         item.sampleSize == null
+        //             ? item.projectCategoryName == "特性"
+        //                 ? "1"
+        //                 : "10"
+        //             : item.sampleSize,
+        //     DefectCount: item.defectCount,
+        //     MeasuredValue1: item.measuredValue1,
+        //     MeasuredValue2: item.measuredValue2,
+        //     MeasuredValue3: item.measuredValue3,
+        //     MeasuredValue4: item.measuredValue4,
+        //     MeasuredValue5: item.measuredValue5,
+        //     MeasuredValue6: item.measuredValue6,
+        //     MeasuredValue7: item.measuredValue7,
+        //     MeasuredValue8: item.measuredValue8,
+        //     MeasuredValue9: item.measuredValue9,
+        //     MeasuredValue10: item.measuredValue10,
+        //     UnqualifiedHandlingResults: item.UnqualifiedHandlingResults
+        // }));
         MeasurTable.value = data.OQCInspectionDetails.filter(
             (item: any) => item.measurementType == "计量",
-        ).map((item: any, i: any) => ({
-            LineNos: i + 1,
-            Inspectiondetail: item.inspectionItemName,
-            ProjectCategoryName: item.projectCategoryName,
-            ProjectName: item.projectName,
-            CharacteristicGrade: item.characteristicGrade,
-            TargetValue: item.targetValue,
-            MinValue: item.minValue,
-            MaxValue: item.maxValue,
-            InspectionToolName: item.inspectionToolName,
-            uomname: item.uomname,
-            InspectionBasis: item.inspectionBasis,
-            SampleSize:
-                item.sampleSize == null
-                    ? item.projectCategoryName == "特性"
-                        ? "1"
-                        : "10"
-                    : item.sampleSize,
-            DefectCount: item.defectCount,
-            MeasuredValue1: item.measuredValue1,
-            MeasuredValue2: item.measuredValue2,
-            MeasuredValue3: item.measuredValue3,
-            MeasuredValue4: item.measuredValue4,
-            MeasuredValue5: item.measuredValue5,
-            MeasuredValue6: item.measuredValue6,
-            MeasuredValue7: item.measuredValue7,
-            MeasuredValue8: item.measuredValue8,
-            MeasuredValue9: item.measuredValue9,
-            MeasuredValue10: item.measuredValue10,
-            UnqualifiedHandlingResults: item.UnqualifiedHandlingResults,
-        }));
+        )
+            .map((item: any, i: any) => {
+                return {
+                    LineNos: i + 1,
+                    Inspectiondetail: item.inspectionItemName,
+                    ProjectCategoryName: item.projectCategoryName,
+                    ProjectName: item.projectName,
+                    CharacteristicGrade: item.characteristicGrade,
+                    TargetValue: item.targetValue,
+                    MinValue: item.minValue,
+                    MaxValue: item.maxValue,
+                    InspectionToolName: item.inspectionToolName,
+                    uomname: item.uomname,
+                    InspectionBasis: item.inspectionBasis,
+                    SampleSize:
+                        item.sampleSize == null
+                            ? item.projectCategoryName == "特性"
+                                ? "1"
+                                : "10"
+                            : item.sampleSize,
+                    DefectCount: item.defectCount,
+                    MeasuredValue1: item.measuredValue1,
+                    MeasuredValue2: item.measuredValue2,
+                    MeasuredValue3: item.measuredValue3,
+                    MeasuredValue4: item.measuredValue4,
+                    MeasuredValue5: item.measuredValue5,
+                    MeasuredValue6: item.measuredValue6,
+                    MeasuredValue7: item.measuredValue7,
+                    MeasuredValue8: item.measuredValue8,
+                    MeasuredValue9: item.measuredValue9,
+                    MeasuredValue10: item.measuredValue10,
+                    // Status:item.Status,
+                    UnqualifiedHandlingResults: item.UnqualifiedHandlingResults,
+                    DecimalPlaces: item.DecimalPlaces || 0,
+                };
+            })
+            .map((v: any) => {
+                getResultText(v);
+                return v;
+            });
         CountTable.value = data.OQCInspectionDetails.filter(
             (item: any) => item.measurementType == "计数",
         ).map((item: any, i: any) => ({
@@ -1900,6 +1952,7 @@ const getInspectDetilData = () => {
             TargetValue: item.targetValue,
             MinValue: item.minValue,
             MaxValue: item.maxValue,
+            DecimalPlaces: item.DecimalPlaces || 0,
             InspectionToolName: item.inspectionToolName,
             uomname: item.uomname,
             InspectionBasis: item.inspectionBasis,
@@ -2203,9 +2256,8 @@ const handleApproval = (row: any) => {
     // });
 };
 const openMeasurementDialog = (row: any, index: any) => {
-    let parts = row.MinValue.split('.');
-    precision.value = parts.length > 1 ? parts[1].length : 0;
-    // console.log("Precision:", precision.value);
+    // 修改点：直接使用 DecimalPlaces 设置精度
+    precision.value = Number(row.DecimalPlaces) || 0;
 
     currentRow.value = row;
     currentRowIndex.value = index;
@@ -2217,7 +2269,6 @@ const openMeasurementDialog = (row: any, index: any) => {
 
     dialogVisible.value = true;
     nextTick(() => {
-        // console.log(currentIndex);
         setTimeout(() => {
             const inputRefsArray = inputRefs.value as unknown as HTMLInputElement[];
             if (inputRefsArray.length > 0) {
@@ -2227,10 +2278,6 @@ const openMeasurementDialog = (row: any, index: any) => {
                 }
             }
         }, 100);
-        // const nextInput = inputRefs.value[0];
-        // if (nextInput) {
-        //     nextInput.focus();
-        // }
     });
 };
 const resetMeasurement = () => {
@@ -2242,12 +2289,12 @@ const resetMeasurement = () => {
 // 处理失去焦点事件，确保格式正确
 const handleBlur = (index: number) => {
     const value = measurementValues.value[index];
-    if (value === '' || value === null || value === undefined) return;
+    if (value === "" || value === null || value === undefined) return;
 
     // 确保是有效的数字格式
     const numValue = parseFloat(value);
     if (isNaN(numValue)) {
-        measurementValues.value[index] = '';
+        measurementValues.value[index] = "";
         return;
     }
 
@@ -2278,7 +2325,7 @@ const saveMeasurements = () => {
     for (let i = 0; i < currentSampleSize.value; i++) {
         currentRow.value[`MeasuredValue${i + 1}`] = measurementValues.value[i];
     }
-
+    getResultText(currentRow.value);
     dialogVisible.value = false;
 };
 
@@ -2323,7 +2370,7 @@ const getResultText = (row: any) => {
 
     // 辅助函数：安全转换为数字
     const safeParseFloat = (value: any): number | null => {
-        if (value === null || value === undefined || value === '') {
+        if (value === null || value === undefined || value === "") {
             return null;
         }
         const num = parseFloat(value);
@@ -2334,7 +2381,7 @@ const getResultText = (row: any) => {
     const hasValidMeasurements = () => {
         for (let i = 1; i <= NUM_MEASUREMENTS; i++) {
             const value = row[`MeasuredValue${i}`];
-            if (value !== null && value !== undefined && value !== '') {
+            if (value !== null && value !== undefined && value !== "") {
                 return true;
             }
         }
@@ -2347,8 +2394,8 @@ const getResultText = (row: any) => {
 
     // 处理无测量值的情况
     if (!hasValidMeasurements()) {
-        row.Status = '无数据';
-        return '无数据';
+        row.Status = "无数据";
+        return "无数据";
     }
 
     // 根据项目类别采用不同的判断逻辑
@@ -2440,77 +2487,58 @@ const handleSampleSizeChange = (row: any) => {
         row[`MeasuredValue${i + 1}`] = null;
     }
 };
-const calculateSum = (row: any) => {
-    // let sum = 0;
-    // for (let i = 1; i <= 10; i++) {
-    //     const value = row[`MeasuredValue${i}`];
-    //     if (value !== null && value !== undefined && value !== "") {
-    //         console.log(value);
 
-    //         sum +=value
-    //     }
-    // }
-    // row.Sum = sum;
-    // return sum;
+
+// 辅助函数：截断数字（返回数字，保留原始精度）
+const truncateNumber = (num: number, precision: number): number => {
+    if (isNaN(num) || precision < 0) return num;
+    const factor = Math.pow(10, precision);
+    return Math.trunc(num * factor) / factor;
+};
+
+// 修改后的 calculateSum
+// 修改后的 calculateSum
+const calculateSum = (row: any) => {
     let sum = 0;
     for (let i = 1; i <= 10; i++) {
         const value = row[`MeasuredValue${i}`];
         if (value !== null && value !== undefined && value !== "") {
-            // 使用 parseFloat 而不是 Number
             const numValue = parseFloat(value);
             if (!isNaN(numValue)) {
                 sum += numValue;
             }
         }
     }
-    // 使用 toFixed 处理精度问题
-    row.Sum = parseFloat(sum.toFixed(2));
-    return row.Sum;
+    // 修改点：使用 DecimalPlaces
+    const precision = Number(row.DecimalPlaces) || 0;
+    const truncatedSum = truncateNumber(sum, precision);
+    row.Sum = truncatedSum;
+    return truncatedSum.toFixed(precision);
 };
-const calculateAverage = (row: any) => {
-    // let sum = 0;
-    // let count = 0;
-    // for (let i = 1; i <= 10; i++) {
-    //     const value = row[`MeasuredValue${i}`];
-    //     if (value !== null && value !== undefined && value !== "") {
-    //         sum += Number(value)
-    //         count++;
-    //     }
-    // }
-    // row.Average = count > 0 ? (sum / count).toFixed(2) : 0;
-    // return count > 0 ? (sum / count).toFixed(2) : 0;
-    let integerSum = 0; // 存储乘以100后的整数和
-    let count = 0;
 
+// 修改后的 calculateAverage
+const calculateAverage = (row: any) => {
+    let sum = 0;
+    let count = 0;
     for (let i = 1; i <= 10; i++) {
         const value = row[`MeasuredValue${i}`];
-
-        // 跳过空值
-        if (value == null || value === "") continue;
-
-        // 使用一元加运算符转换并乘以100转为整数
-        const num = +value;
-
-        // 检查是否为有效数字
-        if (!isNaN(num) && isFinite(num)) {
-            integerSum += Math.round(num * 100); // 乘以100并四舍五入
-            count++;
+        if (value !== null && value !== undefined && value !== "") {
+            const numValue = parseFloat(value);
+            if (!isNaN(numValue)) {
+                sum += numValue;
+                count++;
+            }
         }
     }
-
-    let average = 0;
-
+    let avg = 0;
     if (count > 0) {
-        // 计算平均值（整数运算）
-        average = integerSum / count;
-        // 除以100转回小数，再四舍五入到2位小数
-        average = Math.round(average) / 100;
+        avg = sum / count;
     }
-
-    // 格式化为字符串，保留2位小数
-    const result = average.toFixed(2);
-    row.Average = result;
-    return result;
+    // 修改点：使用 DecimalPlaces
+    const precision = Number(row.DecimalPlaces) || 0;
+    const truncatedAvg = truncateNumber(avg, precision);
+    row.Average = truncatedAvg;
+    return truncatedAvg.toFixed(precision);
 };
 const formatMeasuredValues = (row: any) => {
     const values = [];
@@ -2520,15 +2548,15 @@ const formatMeasuredValues = (row: any) => {
             values.push(value);
         }
     }
-    row.MeasuredValue = values.join(", ");
-    return values.join(", ");
+    row.MeasuredValue = values.join(",");
+    return values.join(",");
 };
 
 const handleSizeChange = (val: any) => {
-    pageObj.pageSize = val;
+    pageObj.value.pageSize = val;
 };
 const handleCurrentChange = (val: any) => {
-    pageObj.currentPage = val;
+    pageObj.value.currentPage = val;
 };
 const getScreenHeight = () => {
     nextTick(() => {
@@ -2539,37 +2567,6 @@ const headerRowStyle = (row: any) => {
     console.log(row);
 };
 const downloadTemp = () => {
-    // exportTableToExcel1({
-    //     tableRef: tempMeasureRef.value,
-    //     fetchAllData: tempData,
-    //     fileName: headerForm.value.OQCNumber,
-    //     styles: {
-    //         headerBgColor: "", // 灰色表头
-    //         headerFont: {
-    //             color: { argb: "" }, // 红色文字
-    //             bold: false,
-    //             size: 12,
-    //         }, // 白色文字
-    //         cell: { numFmt: "@" }, // 强制文本格式
-    //     },
-    //     t,
-    //     stringColumns: ['MeasuredValue']
-    // });
-    // exportMeasureTableToExcel({
-    //     tableRef: tempMeasureRef.value,
-    //     fetchAllData: tempData,
-    //     fileName: headerForm.value.OQCNumber,
-    //     styles: {
-    //         headerBgColor: "", // 灰色表头
-    //         headerFont: {
-    //             color: { argb: "" }, // 红色文字
-    //             bold: false,
-    //             size: 12,
-    //         }, // 白色文字
-    //         cell: { numFmt: "@" }, // 强制文本格式
-    //     },
-    //     t,
-    // })
     exportMeasureTableToExcelVertical({
         tableRef: tempMeasureRef.value,
         fetchAllData: tempData,
@@ -2661,15 +2658,12 @@ const beforeUpload2 = (file: any) => {
 };
 
 const assignValuesMulti = (sourceData: any, targetData: any) => {
-    // 创建源数据的查找映射，提高查找效率
     const sourceMap = new Map();
-
     sourceData.forEach((item: any) => {
         const key = `${item.LineNos}_${item.ProjectName}`;
         sourceMap.set(key, item);
     });
 
-    // 遍历目标数组并赋值
     targetData.forEach((targetItem: any) => {
         const key = `${targetItem.LineNos}_${targetItem.ProjectName}`;
         const sourceItem = sourceMap.get(key);
@@ -2683,13 +2677,13 @@ const assignValuesMulti = (sourceData: any, targetData: any) => {
                 targetItem.SampleSize = valData.length;
             }
 
-            // 无论是否有值，都先初始化所有 MeasuredValue1-10 为空字符串
+            // 初始化所有测量值为空
             for (let i = 0; i < 10; i++) {
                 targetItem[`MeasuredValue${i + 1}`] = "";
             }
-            let parts = targetItem.MinValue.split('.');
-            let precision = parts.length > 1 ? parts[1].length : 0;
-            // 只有当 valData[0] 不为空时，才填充实际值
+            // 修改点：使用 DecimalPlaces 控制精度
+            const precision = Number(targetItem.DecimalPlaces) || 0;
+
             if (valData[0] !== "") {
                 valData.forEach((item: any, i: any) => {
                     if (i <= 9) {
@@ -2697,22 +2691,47 @@ const assignValuesMulti = (sourceData: any, targetData: any) => {
                     }
                 });
             }
+            getResultText(targetItem);
         }
     });
-
     return targetData;
 };
 const truncateDecimal = (value: number | string, precision: number): string => {
     const numValue = parseFloat(String(value));
-    if (isNaN(numValue)) return '';
+    if (isNaN(numValue)) return "";
 
-    if (precision === 0) {
-        return Math.trunc(numValue).toString();
+    // 转为字符串，并用科学计数法处理极小/极大值（可选）
+    const str = numValue.toString();
+    const dotIndex = str.indexOf(".");
+
+    if (dotIndex === -1) {
+        // 无小数部分，直接补零
+        return precision === 0 ? str : str + "." + "0".repeat(precision);
     }
 
-    const factor = Math.pow(10, precision);
-    const truncated = Math.trunc(numValue * factor) / factor;
-    return truncated.toFixed(precision);
+    const integerPart = str.slice(0, dotIndex);
+    const decimalPart = str.slice(dotIndex + 1);
+
+    if (precision === 0) {
+        return integerPart;
+    }
+
+    const truncatedDecimal = decimalPart.slice(0, precision);
+    const padding = "0".repeat(Math.max(0, precision - truncatedDecimal.length));
+
+    return `${integerPart}.${truncatedDecimal}${padding}`;
+    // const numValue = parseFloat(String(value));
+    // if (isNaN(numValue)) return '';
+
+    // if (precision === 0) {
+    //     return Math.trunc(numValue).toString();
+    // }
+
+    // const factor = Math.pow(10, precision);
+    // const truncated = Math.trunc(numValue * factor) / factor;
+    // console.log( truncated.toFixed(precision));
+
+    // return truncated.toFixed(precision);
 };
 // 使用计算属性缓存列宽计算结果
 const columnWidths = computed(() => {
@@ -2810,6 +2829,7 @@ const columnWidths6 = computed(() => {
         { label: "检验工具", prop: "InspectionToolName" },
         { label: "检验依据", prop: "InspectionBasis" },
         { label: "项目名称", prop: "ProjectName" },
+        {label:'小数位数',prop:'DecimalPlaces'}
     ];
 
     // 批量计算列宽
@@ -2876,6 +2896,37 @@ const handleEnterInput = (e: any, currentIndex: any) => {
 //     // console.log(width);
 //     return width;
 // };
+const isValueOutOfRange = (index: number): boolean => {
+    const row = currentRow.value;
+    if (!row) return false;
+    const value = measurementValues.value[index];
+    // 空值不标记为错误
+    if (value === "" || value === null || value === undefined) return false;
+
+    const numValue = parseFloat(value);
+    if (isNaN(numValue)) return false;
+
+    const minValue = parseFloat(row.MinValue);
+    const maxValue = parseFloat(row.MaxValue);
+
+    // 特性类的特殊判断逻辑（与 getResultText 保持一致）
+    if (row.ProjectCategoryName === "特性") {
+        if (!isNaN(minValue) && isNaN(maxValue)) {
+            return numValue < minValue;
+        }
+        if (isNaN(minValue) && !isNaN(maxValue)) {
+            return numValue > maxValue;
+        }
+        if (!isNaN(minValue) && !isNaN(maxValue)) {
+            return numValue < minValue || numValue > maxValue;
+        }
+        return false; // 无有效范围
+    } else {
+        // 非特性类：需要 min/max 都有效
+        if (isNaN(minValue) || isNaN(maxValue)) return false;
+        return numValue < minValue || numValue > maxValue;
+    }
+};
 </script>
 <style scoped>
 .el-pagination {
@@ -3046,6 +3097,25 @@ const handleEnterInput = (e: any, currentIndex: any) => {
 .info-box-title {
     font-weight: bold;
     margin-bottom: 5px;
+}
+.label-error {
+  color: #f56c6c;
+  font-weight: bold;
+}
+
+/* 保证 el-form-item 的 label 在 has-error 时也变红 */
+.has-error :deep(.el-form-item__label) {
+  color: #f56c6c;
+}
+
+/* 输入框边框和文字变红 */
+:deep(.input-error .el-input__wrapper) {
+  border-color: #f56c6c !important;
+  box-shadow: 0 0 0 1px #f56c6c inset !important;
+}
+
+:deep(.input-error .el-input__inner) {
+  color: #f56c6c;
 }
 </style>
 <style>

@@ -58,10 +58,10 @@
                         <el-form-item class="mb-2">
                             <el-button type="primary" @click="getRawData">{{
                                 $t("publicText.query")
-                            }}</el-button>
+                                }}</el-button>
                             <el-button type="" @click="handleRawReset">{{
                                 $t("publicText.reset")
-                            }}</el-button>
+                                }}</el-button>
                             <el-button type="success" size="small" :disabled="tableData.length == 0"
                                 @click="exportList">{{ $t("publicText.export") }}</el-button>
                         </el-form-item>
@@ -96,6 +96,8 @@
                             :min-width="getColumnWidth('ProductFamilyName')" />
                         <el-table-column prop="ContainerName" :label="$t('inventInquiry.materialID')"
                             :min-width="getColumnWidth('ContainerName')" />
+                        <el-table-column prop="Specifications" :label="$t('inventInquiry.specifications')"
+                            :min-width="getColumnWidth('Specifications')" />
                         <el-table-column prop="TotalInventoryByProductBase"
                             :label="$t('inventInquiry.CurrentInventory')"
                             :min-width="getColumnWidth('TotalInventoryByProductBase')" />
@@ -175,10 +177,10 @@
                         <el-form-item class="mb-2">
                             <el-button type="primary" @click="getFinishData">{{
                                 $t("publicText.query")
-                            }}</el-button>
+                                }}</el-button>
                             <el-button type="" @click="handleFinishReset">{{
                                 $t("publicText.reset")
-                            }}</el-button>
+                                }}</el-button>
                             <el-button type="success" size="small" :disabled="tableData2.length == 0"
                                 @click="exportFinishList">{{
                                     $t("publicText.export") }}</el-button>
@@ -387,7 +389,11 @@ const getMaterialPos = () => {
     });
 };
 const getRawData = () => {
+    pageObj.currentPage=1
     GetRawMaterialInventoryQuery(getRawForm.value).then((res: any) => {
+         if(!res.success){
+            tableData.value = [];
+        }
         tableData.value = res.content.map((item: any) => {
             item.OriginalStartDate = dayjs(item.OriginalStartDate).format(
                 "YYYY-MM-DD HH:mm:ss"
@@ -451,7 +457,11 @@ const fetchRowAllData = async () => {
     return data;
 };
 const getFinishData = () => {
+    pageObj2.currentPage=1
     GetFinishedProductInventoryQuery(getFinishForm.value).then((res: any) => {
+        if(!res.success){
+            tableData2.value = [];
+        }
         tableData2.value = res.content.map((item: any) => {
             item.MoveStdDate = dayjs(item.MoveStdDate).format("YYYY-MM-DD HH:mm:ss");
             return item;
@@ -537,6 +547,8 @@ const columnWidths = computed(() => {
         { label: '材料ID', prop: 'ContainerName' },
         { label: '当前库存', prop: 'TotalInventoryByProductBase' },
         { label: '已出库数量', prop: 'TotalOutboundQty' },
+        { label: '规格', prop: 'Specifications' },
+
         // 添加其他需要自适应宽度的列
     ];
 

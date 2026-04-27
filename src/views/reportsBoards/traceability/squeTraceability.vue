@@ -12,7 +12,7 @@
               range-separator="-"
               size="small"
               style="width: 200px"
-              :disabled-date="disabledDate"
+               
               :clearable="false"
             />
           </el-form-item>
@@ -323,7 +323,7 @@ watch(
       return;
     }
     if (newVal !== oldVal) {
-      getForm.value.StartTime = newVal[0];
+      getForm.value.StartTime = newVal[0] + ' 00:00:00';
       getForm.value.EndTime = newVal[1];
       getForm.value.currentPage = 1;
       detailData.value = [];

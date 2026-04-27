@@ -6,7 +6,7 @@
 
                 <el-form-item :label="$t('oqcInspection.creatTime')" class="mb-2"><el-date-picker :shortcuts="shortcuts"
                         v-model="searchDate" value-format="YYYY-MM-DD" type="daterange" range-separator="-" size="small"
-                        style="width: 190px" :clearable="false" :disabled-date="disabledDate" />
+                        style="width: 190px" :clearable="false"   />
                 </el-form-item>
                 <el-form-item :label="$t('oqcInspection.SpecName')" class="mb-2">
                     <el-select v-model="getForm.SpecName" placeholder="" @change="getData" clearable
@@ -867,7 +867,7 @@ watch(
             return;
         }
         if (newVal !== oldVal) {
-            getForm.value.StartTime = newVal[0];
+            getForm.value.StartTime = newVal[0] + ' 00:00:00';
             getForm.value.EndTime = newVal[1] + ' 23:59:59';
             // getForm.value.PageNumber = 1
         }
@@ -940,6 +940,7 @@ const resetForm = () => {
     // getData();
 }
 const getData = () => {
+    pageObj.currentPage=1
     QueryOQCDocumentNumbersByCriteria(getForm.value).then((res: any) => {
         tableData.value = res.content;
     });
