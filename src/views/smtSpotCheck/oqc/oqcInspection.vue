@@ -78,7 +78,7 @@
                     <template #default="scope">
                         <span>{{
                             scope.$index + pageObj.pageSize * (pageObj.currentPage - 1) + 1
-                            }}</span>
+                        }}</span>
                     </template>
                 </el-table-column>
                 <el-table-column prop="PriorityCodeName" :label="$t('batchCreation.Priority')" width="60"
@@ -494,7 +494,8 @@
                         </el-table-column>
                         <el-table-column prop="MinValue" :label="$t('aqlrules.MinValue')">
                         </el-table-column>
-                        <el-table-column prop="DecimalPlaces" :label="$t('aqlrules.DecimalPlaces')" :min-width="getColumnWidth2('DecimalPlaces')":align="'center'">
+                        <el-table-column prop="DecimalPlaces" :label="$t('aqlrules.DecimalPlaces')"
+                            :min-width="getColumnWidth2('DecimalPlaces')" :align="'center'">
                         </el-table-column>
                         <el-table-column prop="InspectionToolName" :label="$t('aqlrules.ToolName')"
                             :min-width="getColumnWidth2('InspectionToolName')">
@@ -617,9 +618,9 @@
                             {{ "暂存" }}
                         </el-button>
                         <el-button @click="handleApproval" :type="'success'" :disabled="!(
-                                headerForm.InspectionStatus == '检验完成' &&
-                                headerForm.ApprovalStatus == '创建'
-                            )
+                            headerForm.InspectionStatus == '检验完成' &&
+                            headerForm.ApprovalStatus == '创建'
+                        )
                             ">{{ $t("publicText.approval") }}</el-button>
                     </div>
                 </div>
@@ -670,7 +671,7 @@
             <template #footer>
                 <el-button @click="handleAppClose">{{
                     $t("publicText.cancel")
-                    }}</el-button>
+                }}</el-button>
                 <el-button type="primary" @click="handleAppConfirm">
                     {{ $t("publicText.confirm") }}
                 </el-button>
@@ -683,7 +684,7 @@
                 <div class="dialog-footer">
                     <el-button @click="handlePreviewClose">{{
                         $t("publicText.close")
-                        }}</el-button>
+                    }}</el-button>
                     <el-button type="primary" @click="handlePreviewDawnload">
                         {{ $t("publicText.dawnload") }}
                     </el-button>
@@ -751,7 +752,7 @@
                 <div class="dialog-footer">
                     <el-button @click="handleIQCCharactClose">{{
                         $t("publicText.close")
-                        }}</el-button>
+                    }}</el-button>
                 </div>
             </template>
         </el-dialog>
@@ -895,7 +896,7 @@
                 <div class="dialog-footer">
                     <el-button @click="handleOtherClose">{{
                         $t("publicText.close")
-                        }}</el-button>
+                    }}</el-button>
                 </div>
             </template>
         </el-dialog>
@@ -910,7 +911,7 @@
                 <div class="dialog-footer">
                     <el-button @click="previewOQCVisible = false">{{
                         $t("publicText.close")
-                        }}</el-button>
+                    }}</el-button>
                 </div>
             </template>
         </el-dialog>
@@ -1865,40 +1866,6 @@ const getInspectDetilData = () => {
                 OQCCharacteristicsDesc: item.characteristicDesc,
             }));
         }
-
-        // MeasurTable.value = data.OQCInspectionDetails.filter(
-        //     (item: any) => item.measurementType == "计量",
-        // ).map((item: any, i: any) => ({
-        //     LineNos: i + 1,
-        //     Inspectiondetail: item.inspectionItemName,
-        //     ProjectCategoryName: item.projectCategoryName,
-        //     ProjectName: item.projectName,
-        //     CharacteristicGrade: item.characteristicGrade,
-        //     TargetValue: item.targetValue,
-        //     MinValue: item.minValue,
-        //     MaxValue: item.maxValue,
-        //     InspectionToolName: item.inspectionToolName,
-        //     uomname: item.uomname,
-        //     InspectionBasis: item.inspectionBasis,
-        //     SampleSize:
-        //         item.sampleSize == null
-        //             ? item.projectCategoryName == "特性"
-        //                 ? "1"
-        //                 : "10"
-        //             : item.sampleSize,
-        //     DefectCount: item.defectCount,
-        //     MeasuredValue1: item.measuredValue1,
-        //     MeasuredValue2: item.measuredValue2,
-        //     MeasuredValue3: item.measuredValue3,
-        //     MeasuredValue4: item.measuredValue4,
-        //     MeasuredValue5: item.measuredValue5,
-        //     MeasuredValue6: item.measuredValue6,
-        //     MeasuredValue7: item.measuredValue7,
-        //     MeasuredValue8: item.measuredValue8,
-        //     MeasuredValue9: item.measuredValue9,
-        //     MeasuredValue10: item.measuredValue10,
-        //     UnqualifiedHandlingResults: item.UnqualifiedHandlingResults
-        // }));
         MeasurTable.value = data.OQCInspectionDetails.filter(
             (item: any) => item.measurementType == "计量",
         )
@@ -2289,25 +2256,16 @@ const resetMeasurement = () => {
 // 处理失去焦点事件，确保格式正确
 const handleBlur = (index: number) => {
     const value = measurementValues.value[index];
-    if (value === "" || value === null || value === undefined) return;
+    if (value === '' || value === null || value === undefined) return;
 
-    // 确保是有效的数字格式
     const numValue = parseFloat(value);
     if (isNaN(numValue)) {
-        measurementValues.value[index] = "";
+        measurementValues.value[index] = '';
         return;
     }
 
-    // 处理截断逻辑
-    if (precision.value === 0) {
-        // 精度为0，取整
-        measurementValues.value[index] = Math.trunc(numValue).toString();
-    } else {
-        // 精度大于0，截断小数部分
-        const factor = Math.pow(10, precision.value);
-        const truncated = Math.trunc(numValue * factor) / factor;
-        measurementValues.value[index] = truncated.toFixed(precision.value);
-    }
+    // 使用新函数截断
+    measurementValues.value[index] = truncateDecimal(numValue, precision.value);
 };
 // const saveMeasurements = () => {
 //     for (let i = 0; i < currentSampleSize.value; i++) {
@@ -2490,10 +2448,16 @@ const handleSampleSizeChange = (row: any) => {
 
 
 // 辅助函数：截断数字（返回数字，保留原始精度）
+// const truncateNumber = (num: number, precision: number): number => {
+//     if (isNaN(num) || precision < 0) return num;
+//     const factor = Math.pow(10, precision);
+//     return Math.trunc(num * factor) / factor;
+// };
 const truncateNumber = (num: number, precision: number): number => {
     if (isNaN(num) || precision < 0) return num;
     const factor = Math.pow(10, precision);
-    return Math.trunc(num * factor) / factor;
+    // 加 1e-12 补偿浮点误差，再截断
+    return Math.floor(num * factor + 1e-12) / factor;
 };
 
 // 修改后的 calculateSum
@@ -2696,42 +2660,29 @@ const assignValuesMulti = (sourceData: any, targetData: any) => {
     });
     return targetData;
 };
-const truncateDecimal = (value: number | string, precision: number): string => {
-    const numValue = parseFloat(String(value));
-    if (isNaN(numValue)) return "";
+const truncateDecimal = (value: any, precision: number) => {
+    if (value === undefined || value === null) return '';
 
-    // 转为字符串，并用科学计数法处理极小/极大值（可选）
-    const str = numValue.toString();
-    const dotIndex = str.indexOf(".");
+    // 转为字符串并去除首尾空格
+    let str = String(value).trim();
+    if (str === '') return '';
 
-    if (dotIndex === -1) {
-        // 无小数部分，直接补零
-        return precision === 0 ? str : str + "." + "0".repeat(precision);
+    // 处理科学计数法（如 1.23e-4）
+    if (/[eE]/.test(str)) {
+        const numeric = parseFloat(str);
+        if (isNaN(numeric)) return str;
+        // 转为普通十进制字符串，固定20位小数保证精度
+        str = numeric.toFixed(20).replace(/\.?0+$/, '');
     }
 
-    const integerPart = str.slice(0, dotIndex);
-    const decimalPart = str.slice(dotIndex + 1);
+    // 分离整数和小数部分
+    let [intPart, decPart = ''] = str.split('.');
+    if (precision === 0) return intPart;
 
-    if (precision === 0) {
-        return integerPart;
-    }
-
-    const truncatedDecimal = decimalPart.slice(0, precision);
-    const padding = "0".repeat(Math.max(0, precision - truncatedDecimal.length));
-
-    return `${integerPart}.${truncatedDecimal}${padding}`;
-    // const numValue = parseFloat(String(value));
-    // if (isNaN(numValue)) return '';
-
-    // if (precision === 0) {
-    //     return Math.trunc(numValue).toString();
-    // }
-
-    // const factor = Math.pow(10, precision);
-    // const truncated = Math.trunc(numValue * factor) / factor;
-    // console.log( truncated.toFixed(precision));
-
-    // return truncated.toFixed(precision);
+    // 截断小数部分到指定长度，不足补零
+    const truncatedDec = decPart.slice(0, precision);
+    const padding = '0'.repeat(Math.max(0, precision - truncatedDec.length));
+    return `${intPart}.${truncatedDec}${padding}`;
 };
 // 使用计算属性缓存列宽计算结果
 const columnWidths = computed(() => {
@@ -2829,7 +2780,7 @@ const columnWidths6 = computed(() => {
         { label: "检验工具", prop: "InspectionToolName" },
         { label: "检验依据", prop: "InspectionBasis" },
         { label: "项目名称", prop: "ProjectName" },
-        {label:'小数位数',prop:'DecimalPlaces'}
+        { label: '小数位数', prop: 'DecimalPlaces' }
     ];
 
     // 批量计算列宽
@@ -3098,24 +3049,25 @@ const isValueOutOfRange = (index: number): boolean => {
     font-weight: bold;
     margin-bottom: 5px;
 }
+
 .label-error {
-  color: #f56c6c;
-  font-weight: bold;
+    color: #f56c6c;
+    font-weight: bold;
 }
 
 /* 保证 el-form-item 的 label 在 has-error 时也变红 */
 .has-error :deep(.el-form-item__label) {
-  color: #f56c6c;
+    color: #f56c6c;
 }
 
 /* 输入框边框和文字变红 */
 :deep(.input-error .el-input__wrapper) {
-  border-color: #f56c6c !important;
-  box-shadow: 0 0 0 1px #f56c6c inset !important;
+    border-color: #f56c6c !important;
+    box-shadow: 0 0 0 1px #f56c6c inset !important;
 }
 
 :deep(.input-error .el-input__inner) {
-  color: #f56c6c;
+    color: #f56c6c;
 }
 </style>
 <style>

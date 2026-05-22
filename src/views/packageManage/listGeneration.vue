@@ -45,6 +45,7 @@
                         }}</span>
                     </template>
                 </el-table-column>
+                 <el-table-column prop="MfgOrderName" :label="$t('listGeneration.MfgOrderName')" width="100" />
                 <el-table-column prop="ContainerName" :label="$t('listGeneration.boxCode')" width="150" />
                 <el-table-column prop="ES_HsCodeName" :label="$t('listGeneration.type')" />
                 <el-table-column prop="OriginalStartDate" :label="$t('listGeneration.packCompleTime')" width="150" />

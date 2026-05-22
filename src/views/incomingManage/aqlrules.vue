@@ -143,11 +143,17 @@
                         <el-option :label="p.InspectionType" :value="p.InspectionType" v-for="p in typetList" />
                     </el-select>
                 </el-form-item> -->
+                   </el-form>
+                <div style="display: flex; height: 350px;">
+                    <el-tabs :tab-position="'left'" v-model="activeName" style="height: 350px" type="border-card"
+                        @tab-change="tabChange">
 
-                <el-tabs :tab-position="'left'" v-model="activeName" style="height: 350px" type="border-card"
-                    @tab-change="tabChange">
-                    <el-tab-pane v-for="a in addTabList" :label="a.label" :name="a.value" :key="a.label">
-                        <el-table :data="addTypeTable" style="width: 100%" :height="320" size="small" border stripe>
+                        <el-tab-pane v-for="a in addTabList" :label="a.label" :name="a.value" :key="a.label">
+
+                        </el-tab-pane>
+                    </el-tabs>
+                    <div style="flex: 1; overflow: hidden;">
+                        <el-table :data="addTypeTable" style="width: 100%" :height="350" size="small" border stripe>
                             <el-table-column type="index" align="center" fixed :label="$t('publicText.index')"
                                 width="50" />
                             <el-table-column prop="InspectionType" :label="$t('aqlrules.ProjectCategoryName')"
@@ -231,11 +237,9 @@
                                 </template>
                             </el-table-column>
                         </el-table>
-                    </el-tab-pane>
-                </el-tabs>
-
-
-            </el-form>
+                    </div>
+                </div>
+         
             <template #footer>
                 <el-button @click="addCancel">{{ $t("publicText.cancel") }}</el-button>
                 <el-button type="primary" @click="addSubmit">{{
@@ -261,10 +265,13 @@
                     </el-select>
                 </el-form-item> -->
             </el-form>
-            <el-tabs :tab-position="'left'" v-model="activeName2" style="height: 350px" type="border-card"
-                @tab-change="tabChange2">
-                <el-tab-pane v-for="a in addTabList" :label="a.label" :name="a.value" :key="a.label">
-                    <el-table :data="editTypeTable" style="width: 100%" :height="300" size="small" border stripe>
+            <div style="display: flex; height: 350px;">
+                <el-tabs :tab-position="'left'" v-model="activeName2" type="border-card" @tab-change="tabChange2">
+                    <el-tab-pane v-for="a in addTabList" :label="a.label" :name="a.value" :key="a.label">
+                    </el-tab-pane>
+                </el-tabs>
+                <div style="flex: 1; overflow: hidden;">
+                    <el-table :data="editTypeTable" style="width: 100%" :height="350" size="small" border stripe>
                         <el-table-column type="index" align="center" fixed :label="$t('publicText.index')" width="50" />
                         <el-table-column prop="InspectionType" :label="$t('aqlrules.ProjectCategoryName')"
                             min-width="150">
@@ -352,9 +359,8 @@
                             </template>
                         </el-table-column>
                     </el-table>
-                </el-tab-pane>
-            </el-tabs>
-
+                </div>
+            </div>
             <template #footer>
                 <el-button @click="editCancel">{{ $t("publicText.cancel") }}</el-button>
                 <el-button type="primary" @click="editSubmit">{{
@@ -372,10 +378,18 @@
                 </el-form-item>
 
             </el-form>
-            <el-tabs :tab-position="'left'" v-model="activeName2" style="height: 350px" type="border-card"
-                @tab-change="tabChange3">
-                <el-tab-pane v-for="a in addTabList" :label="a.label" :name="a.value" :key="a.label">
-                    <el-table :data="copyTypeTable" style="width: 100%" :height="300" size="small" border stripe>
+            <div style="display: flex; height: 350px;">
+                <el-tabs :tab-position="'left'" v-model="activeName3" style="height: 350px" type="border-card"
+                    @tab-change="tabChange3" >
+
+                    <el-tab-pane v-for="a in addTabList" :label="a.label" :name="a.value" :key="a.label">
+
+
+
+                    </el-tab-pane>
+                </el-tabs>
+                <div style="flex: 1; overflow: hidden;">
+                    <el-table :data="copyTypeTable" style="width: 100%" :height="350" size="small" border stripe>
                         <el-table-column type="index" align="center" fixed :label="$t('publicText.index')" width="50" />
                         <el-table-column prop="InspectionType" :label="$t('aqlrules.ProjectCategoryName')"
                             min-width="150">
@@ -456,9 +470,8 @@
                             </template>
                         </el-table-column>
                     </el-table>
-                </el-tab-pane>
-            </el-tabs>
-
+                </div>
+            </div>
             <template #footer>
                 <el-button @click="copyCancel">{{ $t("publicText.cancel") }}</el-button>
                 <el-button type="primary" @click="copySubmit">{{
@@ -540,7 +553,7 @@ const addForm = ref({
             MeasurementType: "",
             CreateUser: userStore.getUserInfo,
             UpdateUser: "",
-            DecimalPlaces: 0
+            DecimalPlaces: 2
         },
     ],
 });
@@ -564,7 +577,7 @@ const editForm = ref({
             MeasurementType: "",
             CreateUser: "",
             UpdateUser: userStore.getUserInfo,
-            DecimalPlaces: 0
+            DecimalPlaces: 2
         },
     ],
 });
@@ -600,6 +613,7 @@ const activeName2 = ref('IQC')
 const produstTypeList = ref<any[]>([])
 const familyList = ref<any[]>([])
 const customerList = ref<any[]>([])
+const activeName3 = ref('IQC')
 const copyVisible = ref(false);
 const copyFormRef = ref();
 const copyForm = ref({
@@ -621,7 +635,7 @@ const copyForm = ref({
             MeasurementType: "",
             CreateUser: userStore.getUserInfo,
             UpdateUser: "",
-             DecimalPlaces: 0
+            DecimalPlaces: 2
         },
     ],
 })
@@ -646,8 +660,11 @@ const addTypeTable = computed(() => {
 const editTypeTable = computed(() => {
     return editForm.value.iQC_InspectionDetails.filter((item: any) => item.InspectionType == activeName2.value)
 })
+// 复制 Dialog 的过滤计算属性
 const copyTypeTable = computed(() => {
-    return copyForm.value.iQC_InspectionDetails.filter((item: any) => item.InspectionType == activeName2.value)
+    return copyForm.value.iQC_InspectionDetails.filter(
+        (item: any) => item.InspectionType == activeName3.value  // 改为 activeName3
+    )
 })
 
 
@@ -745,7 +762,7 @@ const openAdd = () => {
         MeasurementType: "",
         CreateUser: "",
         UpdateUser: "",
-        DecimalPlaces: 0
+        DecimalPlaces: 2
     }
     addVisible.value = true;
 };
@@ -775,7 +792,7 @@ const createInspectionDetail = (val: any) => {
         MeasurementType: "",
         CreateUser: "",
         UpdateUser: "",
-        DecimalPlaces: 0
+        DecimalPlaces: 2
     }
 }
 const addCancel = () => {
@@ -802,7 +819,7 @@ const addInspectionDetails = () => {
         MeasurementType: "",
         CreateUser: "",
         UpdateUser: "",
-        DecimalPlaces: 0
+        DecimalPlaces: 2
     });
 };
 const addInspectionDelete = (filteredIndex: any) => {
@@ -910,7 +927,7 @@ const getDetailData = () => {
                     MeasurementType: "",
                     CreateUser: "",
                     UpdateUser: userStore.getUserInfo,
-                    DecimalPlaces: 0
+                    DecimalPlaces: 2
                 },
             ];
         }
@@ -933,7 +950,7 @@ const editInspectionDetails = () => {
         MeasurementType: "",
         CreateUser: "",
         UpdateUser: userStore.getUserInfo,
-        DecimalPlaces: 0
+        DecimalPlaces: 2
     });
 };
 const deleteDetail = (val: any, filteredIndex: any) => {
@@ -1050,7 +1067,7 @@ const editSubmit = () => {
 };
 const handleCopy = (val: any) => {
 
-    activeName.value = 'IQC'
+    activeName3.value = 'IQC'
     copyForm.value.InspectionMasterName = val.ES_INSPECTION_MASTERName;
     copyForm.value.DBType = "Add";
     getDetailForm.value.InspectionMasterName = val.ES_INSPECTION_MASTERName;
@@ -1084,7 +1101,7 @@ const handleCopy = (val: any) => {
                     MeasurementType: "",
                     CreateUser: "",
                     UpdateUser: userStore.getUserInfo,
-                     DecimalPlaces: 0
+                    DecimalPlaces: 2
                 },
             ];
         }
@@ -1106,7 +1123,7 @@ const copyInspectionDetails = () => {
         MeasurementType: "",
         CreateUser: "",
         UpdateUser: "",
-         DecimalPlaces: 0
+        DecimalPlaces: 2
     });
 };
 const copyInspectionDelete = (filteredIndex: any) => {
@@ -1146,7 +1163,7 @@ const copyCancel = () => {
     copyForm.value.InspectionType = ''
     copyForm.value.iQC_InspectionDetails = [
     ];
-    activeName2.value = 'IQC'
+    activeName3.value = 'IQC'
 };
 const copySubmit = () => {
     copyForm.value.DBType = "Add";

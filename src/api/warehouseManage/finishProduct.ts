@@ -7,6 +7,14 @@ export function GetCompletedInventoryQuery(data: any) {
         data,
     });
 }
+//获取数据
+export function GetCompletedInventoryNewQuery(data: any) {
+    return request({
+        url: "/api/CompletionAndWarehouseController/GetCompletedInventoryNewQuery",
+        method: "post",
+        data,
+    });
+}
 //提交入库
 export function SubmitForCompletionAndWarehousing(data: any) {
     return request({
@@ -20,6 +28,13 @@ export function SubmitForCompletionAndWarehousing(data: any) {
 export function GetFinishedQuery(data: any) {
     return request({
         url: "/api/FinishedController/GetFinishedQuery",
+        method: "post",
+        data,
+    });
+}
+export function GetFinishedNewQuery(data: any) {
+    return request({
+        url: "/api/FinishedController/GetFinishedNewQuery",
         method: "post",
         data,
     });

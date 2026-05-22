@@ -202,8 +202,10 @@
                                 }}</span>
                             </template>
                         </el-table-column>
+                         <el-table-column prop="Location" :label="$t('inventInquiry.Location')"
+                            :min-width="getColumnWidth2('Location')"  />
                         <el-table-column prop="ProductName" :label="$t('inventInquiry.productName')"
-                            :min-width="getColumnWidth2('ProductName')" />
+                            :min-width="getColumnWidth2('ProductName')"  />
                         <el-table-column prop="MfgOrderName" :label="$t('inventInquiry.order')" />
                         <el-table-column prop="CustomerPO" :label="$t('inventInquiry.customerPO')"
                             :min-width="getColumnWidth2('CustomerPO')" />
@@ -571,6 +573,7 @@ const columnWidths2 = computed(() => {
         { label: '箱号', prop: 'BoxOuterContainerName' },
         { label: '装箱单号', prop: 'PackingContainerName' },
         { label: '出库人', prop: 'ShippedBy' },
+        {label:'位置',prop:'Location'}
         // 添加其他需要自适应宽度的列
     ];
 

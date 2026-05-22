@@ -451,7 +451,8 @@ export async function exportTableToExcelVertical(
     const workbook = new ExcelJS.Workbook();
 
     // 辅助：判断是否为测量值行
-    const isMeasurementRow = (label: string) => /^测量值[1-9]|测量值10$/.test(label);
+    const isMeasurementRow = (label: string) =>
+      /^测量值[1-9]|测量值10$/.test(label);
 
     if (perSheet && allData.length > 0) {
       allData.forEach((record, index) => {
@@ -495,7 +496,8 @@ export async function exportTableToExcelVertical(
             if (isMeasurementRow(label)) {
               const cell = row.getCell(2);
               cell.numFmt = "@";
-              if (typeof cell.value === "number") cell.value = cell.value.toString();
+              if (typeof cell.value === "number")
+                cell.value = cell.value.toString();
             }
           }
         }
@@ -568,7 +570,8 @@ export async function exportTableToExcelVertical(
             for (let colNum = 2; colNum <= worksheet.columnCount; colNum++) {
               const cell = row.getCell(colNum);
               cell.numFmt = "@";
-              if (typeof cell.value === "number") cell.value = cell.value.toString();
+              if (typeof cell.value === "number")
+                cell.value = cell.value.toString();
             }
           }
         }
@@ -615,6 +618,10 @@ export async function exportMeasureTableToExcelVertical(
     inspectionBasis: "InspectionBasis",
     sampleNum: "SampleNum",
     defectNum: "DefectNum",
+    observedValueSum: "ObservedValueSum",
+    averageNum: "AverageNum",
+    inspectionResult: "InspectionResult",
+    resulthandLing: "ResulthandLing",
     measuredValue1: "MeasuredValue1",
     measuredValue2: "MeasuredValue2",
     measuredValue3: "MeasuredValue3",
@@ -625,10 +632,6 @@ export async function exportMeasureTableToExcelVertical(
     measuredValue8: "MeasuredValue8",
     measuredValue9: "MeasuredValue9",
     measuredValue10: "MeasuredValue10",
-    observedValueSum: "ObservedValueSum",
-    averageNum: "AverageNum",
-    inspectionResult: "InspectionResult",
-    resulthandLing: "ResulthandLing",
   };
 
   // 合并用户自定义字段映射
@@ -647,6 +650,10 @@ export async function exportMeasureTableToExcelVertical(
     { label: "检验依据", property: fieldMapping.inspectionBasis! },
     { label: "样品数", property: fieldMapping.sampleNum! },
     { label: "缺陷数", property: fieldMapping.defectNum! },
+       { label: "总和", property: fieldMapping.observedValueSum! },
+    { label: "平均数", property: fieldMapping.averageNum! },
+    { label: "结果", property: fieldMapping.inspectionResult! },
+    { label: "不良处理结果", property: fieldMapping.resulthandLing! },
     { label: "测量值1", property: fieldMapping.measuredValue1! },
     { label: "测量值2", property: fieldMapping.measuredValue2! },
     { label: "测量值3", property: fieldMapping.measuredValue3! },
@@ -657,10 +664,7 @@ export async function exportMeasureTableToExcelVertical(
     { label: "测量值8", property: fieldMapping.measuredValue8! },
     { label: "测量值9", property: fieldMapping.measuredValue9! },
     { label: "测量值10", property: fieldMapping.measuredValue10! },
-    { label: "总和", property: fieldMapping.observedValueSum! },
-    { label: "平均数", property: fieldMapping.averageNum! },
-    { label: "结果", property: fieldMapping.inspectionResult! },
-    { label: "不良处理结果", property: fieldMapping.resulthandLing! },
+ 
   ];
 
   // 根据字段映射生成 stringColumns

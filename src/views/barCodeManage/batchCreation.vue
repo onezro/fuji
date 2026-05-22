@@ -242,6 +242,8 @@ import {
 } from "@/utils/tableminWidth";
 import { useI18n } from 'vue-i18n';
 const { t } = useI18n();
+import { useUserStoreWithOut } from "@/stores/modules/user";
+const userStore = useUserStoreWithOut();
 const multipleTableRef = ref()
 const barchRef = ref()
 const resetFormRef = ref()
@@ -267,11 +269,13 @@ const pageObj = ref({
 interface BatchPrintForm {
     PackagingType: number,
     PrinterName: string,
+    OperatorName: string,
     mfgOrderStartLists: any[]
 }
 const batchPrintForm = ref<BatchPrintForm>({
     PackagingType: 2,
     PrinterName: "",
+    OperatorName: userStore.getUserInfo,
     mfgOrderStartLists: []
 })
 const selectList = ref<any[]>([])

@@ -40,3 +40,5 @@ declare module "@/utils/useDraw"
 declare module "screenfull"
 declare module 'auto-layout-col'
 declare module 'luckyexcel'
+declare module '@/utils/iqcExcel.ts'
+declare module '@/hooks/useExport.ts'

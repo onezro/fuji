@@ -201,3 +201,12 @@ export function IQCModeSpecLabel(data: any) {
         }
     });
 }
+
+
+export function IQCExport(data: any) {
+    return request({
+        url: "/api/IQCController/IQCExport",
+        method: "post",
+        params:data
+    });
+}

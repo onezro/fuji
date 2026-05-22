@@ -118,32 +118,32 @@ const barHeight = ref(520)
 const chart = ref()
 const refreshing = ref(false)
 
-onMounted(()=>{
+onMounted(() => {
     initChart();
-        startRefreshing();
+    startRefreshing();
 })
-const  initChart=()=> {
-            const chartDom = document.getElementById("capacityChart");
-            chart.value = echarts.init(chartDom);
-            chart.value.setOption(option.value);
-            // myChart.resize();
-        }
-const getData=()=>{
-    
+const initChart = () => {
+    const chartDom = document.getElementById("capacityChart");
+    chart.value = echarts.init(chartDom);
+    chart.value.setOption(option.value);
+    // myChart.resize();
 }
-const startRefreshing=()=>{
-     stopRefreshing(); // 确保只有一个定时器运行
-            refreshing.value = true;
-        timer.value = setInterval(() => {
-            getData();
-            }, 60000);
+const getData = () => {
+
 }
-const stopRefreshing=()=>{
-         if (timer.value) {
-                clearInterval(timer.value);
-                timer.value = null;
-            }
-            refreshing.value = false;
+const startRefreshing = () => {
+    stopRefreshing(); // 确保只有一个定时器运行
+    refreshing.value = true;
+    timer.value = setInterval(() => {
+        getData();
+    }, 60000);
+}
+const stopRefreshing = () => {
+    if (timer.value) {
+        clearInterval(timer.value);
+        timer.value = null;
+    }
+    refreshing.value = false;
 }
 
 </script>

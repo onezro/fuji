@@ -165,6 +165,7 @@ const zh = {
     msgLessThan: "当前箱数小于",
     msgExceed: "当前箱数大于",
     msgEquals: "当前箱数是",
+    MfgOrderName:'工单'
   },
   finishProduct: {
     boxCode: "箱号",
@@ -173,6 +174,8 @@ const zh = {
     productMsg: "产品信息",
     number: "数量",
     materialPos: "存放位置",
+    LotNumber:'批次号',
+    OriginalStartDate:'包装时间'
   },
   inventInquiry: {
     rawMaterialInvent: "原材料库存",
@@ -203,7 +206,8 @@ const zh = {
     ProductCode: "产品编码",
     customerName: "客户名称",
     specificationID: "规格书ID",
-    specifications:'规格'
+    specifications:'规格',
+    Location:'位置'
   },
   aqlrules: {
     partNumber: "产品",

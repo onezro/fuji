@@ -1,30 +1,35 @@
 <template>
     <div class="p-2">
-         <el-card :body-style="{ padding: '8px' }">
-            <el-form ref="formRef" :model="MfgOrderName" label-width="auto" :size="'small'" 
-              :inline="true" @submit.native.prevent> 
+        <el-card :body-style="{ padding: '8px' }">
+            <el-form ref="formRef" :model="MfgOrderName" label-width="auto" :size="'small'" :inline="true"
+                @submit.native.prevent>
                 <el-form-item label="工单号" prop="MfgOrderName">
-                    <el-input v-model="MfgOrderName" style="width: 190px" placeholder="请输入工单号"  @keyup.enter.native="getData"/>
-                  
+                    <el-input v-model="MfgOrderName" style="width: 190px" placeholder="请输入工单号"
+                        @keyup.enter.native="getData" />
+
                 </el-form-item>
-                  <el-form-item>
-                     <el-button type="primary" @click="getData">查询</el-button>
-                       <el-button type="info" @click="resetForm">重置</el-button>
-                  </el-form-item>
-                 
+                <el-form-item>
+                    <el-button type="primary" @click="getData">查询</el-button>
+                    <el-button type="info" @click="resetForm">重置</el-button>
+                </el-form-item>
+
 
             </el-form>
-             <el-tabs v-model="activeConName" @tab-change="handleClick" type="border-card">
+            <el-tabs v-model="activeConName" @tab-change="handleClick" type="border-card">
                 <el-tab-pane label="生产调控" name="first">
-                    <el-table :data="ProControlTable" border stripe style="width: 100%" size="small" :height="tableHeight">
+                    <el-table :data="ProControlTable" border stripe style="width: 100%" size="small"
+                        :height="tableHeight">
                         <el-table-column prop="MfgOrder" :label="$t('oqcInspection.workerOrder')" />
-                        <el-table-column prop="Description" :label="'生产备注'" :min-width="getColumnWidth3('Description')"/>
+                        <el-table-column prop="Description" :label="'生产备注'"
+                            :min-width="getColumnWidth3('Description')" />
                         <el-table-column prop="MfgOrderPO" :label="'工单PO'" :min-width="getColumnWidth3('MfgOrderPO')" />
                         <el-table-column prop="Quantity" :label="'生产数量'" />
                         <el-table-column prop="OrderQty" :label="'工单数量'" />
-                        <el-table-column prop="ProductName" :label="$t('oqcInspection.productName')" :min-width="getColumnWidth3('ProductName')" />
+                        <el-table-column prop="ProductName" :label="$t('oqcInspection.productName')"
+                            :min-width="getColumnWidth3('ProductName')" />
                         <el-table-column prop="ProductType" :label="$t('oqcInspection.productCategory')" />
-                        <el-table-column prop="ProductDescription" :label="'产品描述'" :min-width="getColumnWidth3('ProductDescription')" />
+                        <el-table-column prop="ProductDescription" :label="'产品描述'"
+                            :min-width="getColumnWidth3('ProductDescription')" />
                         <el-table-column prop="CustomerName" :label="$t('oqcInspection.customerName')" />
                         <el-table-column prop="CustomerPO" :label="$t('oqcInspection.customerPO')" width="130" />
                         <el-table-column prop="CustomerPN" :label="$t('oqcInspection.customerPN')" width="130" />
@@ -38,29 +43,32 @@
                     </el-table>
                 </el-tab-pane>
                 <el-tab-pane label="物料出仓" name="second">
-                    <el-table :data="MaterialDisTable" border stripe style="width: 100%" size="small" :height="tableHeight">
+                    <el-table :data="MaterialDisTable" border stripe style="width: 100%" size="small"
+                        :height="tableHeight">
                         <el-table-column prop="MfgOrderName" :label="$t('oqcInspection.workerOrder')" />
-                        <el-table-column prop="MfgOrderPO" :label="'产品分类'" />
-                        <el-table-column prop="ProductName" :label="'原料名称'" :min-width="getColumnWidth4('ProductName')"/>
+                        <el-table-column prop="ProductTypeName" :label="'产品分类'" />
+                        <el-table-column prop="ProductName" :label="'原料名称'"
+                            :min-width="getColumnWidth4('ProductName')" />
                         <el-table-column prop="MaterialSpecifications" :label="'原料规格'" />
                         <el-table-column prop="MaterialLot" :label="'原料批号'" width="130" />
                         <el-table-column prop="QtyRequired" :label="'申领数量'" />
-                        <el-table-column prop="BatchLot" :label="'生产批号'" width="130" />
-                        <el-table-column prop="MOSignForConfirmUserName" :label="'MO签收确认'"  width="130"/>
-                        <el-table-column prop="MOSignForConfirmDate" :label="'MO签收确认时间'" width="130" />
-                        <el-table-column prop="WareHouseConfirmUserName" :label="'仓管确认'" width="130" />
-                        <el-table-column prop="WareHouseConfirmDate" :label="'仓管确认时间'" width="130" />
-                        <el-table-column prop="LabelProductionConfirmUserName" :label="'标签制作确认'" width="130" />
-                        <el-table-column prop="LabelSignForConfirmDate" :label="'标签制作确认时间'" width="150" />
-                        <el-table-column prop="LabelSignForConfirmUserName" :label="'标签签收确认'" width="150" />
-                        <el-table-column prop="LabelSignForConfirmDate" :label="'标签签收确认时间'" width="150" />
-                        <el-table-column prop="CuttingQty" :label="'开料数量'" width="150" />
-                        <el-table-column prop="MaterialReceiverName" :label="'领料人'" width="150" />
-                        <el-table-column prop="MaterialRequisitionDate" :label="'领料时间'" width="150" />
+                        <el-table-column prop="LotNumber" :label="'生产批号'" width="130" />
+                        <el-table-column prop="momusername" :label="'MO签收确认'" width="130" />
+                        <el-table-column prop="momdate" :label="'MO签收确认时间'" width="130" />
+                        <el-table-column prop="MaterialReceiver" :label="'仓管确认'" width="130" />
+                        <el-table-column prop="MaterialCollectionTime" :label="'仓管确认时间'" width="130" />
+                        <el-table-column prop="labelUpdateBy" :label="'标签制作确认'" width="130" />
+                        <el-table-column prop="labelUpdateDate" :label="'标签制作确认时间'" width="150" />
+                        <el-table-column prop="labelUpdateBy" :label="'标签签收确认'" width="150" />
+                        <el-table-column prop="labelUpdateDate" :label="'标签签收确认时间'" width="150" />
+                        <el-table-column prop="ActualPickingQuantity" :label="'开料数量'" width="150" />
+                        <el-table-column prop="MaterialReceiver" :label="'领料人'" width="150" />
+                        <el-table-column prop="MaterialCollectionTime" :label="'领料时间'" width="150" />
                     </el-table>
                 </el-tab-pane>
                 <el-tab-pane label="生产过程" name="third">
-                    <el-table :data="ProLineRealTable" border stripe style="width: 100%" size="small" :height="tableHeight">
+                    <el-table :data="ProLineRealTable" border stripe style="width: 100%" size="small"
+                        :height="tableHeight">
                         <el-table-column prop="MfgOrderName" :label="$t('oqcInspection.workerOrder')" />
                         <el-table-column prop="ResourceName" :label="'设备编号'" />
                         <el-table-column prop="ProductName" :label="'模具编号'" />
@@ -73,36 +81,39 @@
                         <el-table-column prop="FullName" :label="'姓名'" width="130" />
                     </el-table></el-tab-pane>
                 <el-tab-pane label="包装数据" name="fourth">
-                    <el-table :data="FinishedProTable" border stripe style="width: 100%" size="small" :height="tableHeight">
-                        <el-table-column prop="MfgOrderName" :label="$t('oqcInspection.workerOrder')" />
-                        <el-table-column prop="count_records" :label="'整箱数量'" />
-                        <el-table-column prop="avg_NumberOfBoxes" :label="'整箱箱数'" />
-                        <el-table-column prop="MaterialSpecifications" :label="'尾箱数量'" />
-                        <el-table-column prop="MaterialLot" :label="'尾箱箱数'" width="130" />
-                        <el-table-column prop="QtyRequired" :label="'整包数量'" />
-                        <el-table-column prop="BatchLot" :label="'整包包数'" width="130" />
-                        <el-table-column prop="MOSignForConfirmUserName" :label="'尾箱：包/箱'" width="130" />
-                        <el-table-column prop="MOSignForConfirmDate" :label="'整箱净重kg'" width="130" />
-                        <el-table-column prop="WareHouseConfirmUserName" :label="'整箱毛重kg'" width="130" />
-                        <el-table-column prop="BoxModlName" :label="'整箱外箱型'" width="100" />
-                        <el-table-column prop="LabelProductionConfirmUserName" :label="'尾箱净重kg'" width="130" />
-                        <el-table-column prop="LabelSignForConfirmDate" :label="'尾箱毛重kg'" width="150" />
-                        <el-table-column prop="LabelSignForConfirmUserName" :label="'尾箱外箱型'" width="150" />
-                        <el-table-column prop="total_gross_weight" :label="'整包净重kg'" width="150" />
-                        <el-table-column prop="total_net_weight" :label="'整包毛重kg'" width="150" />
-                        <el-table-column prop="MaterialReceiverName" :label="'尾包数量'" width="150" />
-                        <el-table-column prop="MaterialRequisitionDate" :label="'尾包包数'" width="150" />
-                        <el-table-column prop="MaterialReceiverName" :label="'尾包净重kg'" width="150" />
-                        <el-table-column prop="MaterialRequisitionDate" :label="'尾包毛重kg'" width="150" />
-                        <el-table-column prop="MaterialReceiverName" :label="'工号'" width="150" />
-                        <el-table-column prop="MaterialRequisitionDate" :label="'姓名'" width="150" />
+                    <el-table :data="FinishedProTable" border stripe style="width: 100%" size="small"
+                        :height="tableHeight">
+                        <el-table-column prop="order_name" label="工单号" fixed />
+
+                        <el-table-column prop="full_box_qty" label="整箱数量" />
+                        <el-table-column prop="full_box_count" label="整箱箱数" />
+                        <el-table-column prop="last_box_qty" label="尾箱数量" />
+                        <el-table-column prop="last_box_count" label="尾箱箱数" width="100" />
+                        <el-table-column prop="full_small_qty" label="整包数量" />
+                        <el-table-column prop="full_small_count" label="整包包数" width="100" />
+                        <el-table-column prop="last_small_qty" label="尾包数量" width="100" />
+                        <el-table-column prop="last_small_count" label="尾包包数" width="100" />
+                        <el-table-column prop="full_box_net_weight_kg" label="整箱净重(kg)" width="100" />
+                        <el-table-column prop="full_box_gross_weight_kg" label="整箱毛重(kg)" width="100" />
+                        <el-table-column prop="full_box_model_name" label="整箱外箱型" width="100" />
+                        <el-table-column prop="last_box_net_weight_kg" label="尾箱净重(kg)" width="100" />
+                        <el-table-column prop="last_box_gross_weight_kg" label="尾箱毛重(kg)" width="100" />
+                        <el-table-column prop="last_box_model_name" label="尾箱外箱型" width="100" />
+                        <el-table-column prop="full_small_net_weight_kg" label="整包净重(kg)" width="100" />
+                        <el-table-column prop="full_small_gross_weight_kg" label="整包毛重(kg)" width="100" />
+                        <el-table-column prop="last_small_net_weight_kg" label="尾包净重(kg)" width="100" />
+                        <el-table-column prop="last_small_gross_weight_kg" label="尾包毛重(kg)" width="100" />
+                        <el-table-column prop="tail_ratio_small_to_outer" label="尾数(包/箱)" width="100" />
+                        <el-table-column prop="packer_no_name" label="工号/姓名" width="100" />
                     </el-table>
                 </el-tab-pane>
                 <el-tab-pane label="过程检验" name="five">
-                    <el-table :data="ProStageTable" border stripe style="width: 100%" size="small" :height="tableHeight">
+                    <el-table :data="ProStageTable" border stripe style="width: 100%" size="small"
+                        :height="tableHeight">
                         <el-table-column prop="order_no" :label="$t('oqcInspection.workerOrder')" />
                         <el-table-column prop="pass_rate_percent" label="合格率" />
-                        <el-table-column prop="total_qty" label="总数量" />
+                        <el-table-column prop="total_qty" label="工单数量" />
+                        <el-table-column prop="TotalProductionQuantity" label="生产总数量" />
                         <el-table-column prop="good_qty" label="良品数" />
                         <el-table-column prop="defect_qty" label="不良品数" />
                         <el-table-column prop="current_balance" label="本次结余" />
@@ -133,9 +144,10 @@
                     </el-table>
                 </el-tab-pane>
                 <el-tab-pane label="生产备注" name="six">
-                    <el-table :data="ManufactureTable" border stripe style="width: 100%" size="small" :height="tableHeight">
+                    <el-table :data="ManufactureTable" border stripe style="width: 100%" size="small"
+                        :height="tableHeight">
                         <el-table-column prop="MfgOrder" :label="$t('oqcInspection.workerOrder')" />
-                         <el-table-column prop="DataValue" :label="'备注'"  :min-width="getColumnWidth5('DataValue')" />
+                        <el-table-column prop="DataValue" :label="'备注'" :min-width="getColumnWidth5('DataValue')" />
                         <el-table-column prop="LotNumber" :label="'出货批号'" />
                         <el-table-column prop="ShippingQty" :label="'送检数量'" />
                         <el-table-column prop="UnitOfMeasure" :label="'单位'" width="130" />
@@ -146,12 +158,12 @@
                     </el-table>
                 </el-tab-pane>
             </el-tabs>
-         </el-card>
+        </el-card>
     </div>
 </template>
 
 <script setup lang="ts">
-    import {
+import {
     QueryProductionControlParameters,
     QueryMaterialDispatchDetails,
     QueryProductionLineRealTimeData,
@@ -178,16 +190,16 @@ const ProLineRealTable = ref<any[]>([])
 const FinishedProTable = ref<any[]>([])
 const ProStageTable = ref<any[]>([])
 const ManufactureTable = ref<any[]>([])
-const MfgOrderName=ref('')
+const MfgOrderName = ref('')
 const tableHeight = ref(0);
 
 onBeforeMount(() => {
     getScreenHeight();
-  
+
 });
 onMounted(() => {
     window.addEventListener("resize", getScreenHeight);
-   
+
 });
 onBeforeUnmount(() => {
     window.removeEventListener("resize", getScreenHeight);
@@ -205,14 +217,14 @@ const resetForm = () => {
 
 }
 const getData = () => {
-    if(!MfgOrderName.value) {
+    if (!MfgOrderName.value) {
         ElMessage.warning('请输入工单号')
         return
     }
     handleClick(activeConName.value)
 }
 const handleClick = (val: any) => {
-    if(!MfgOrderName.value) {
+    if (!MfgOrderName.value) {
         ElMessage.warning('请输入工单号')
         return
     }
@@ -270,7 +282,7 @@ const columnWidths3 = computed(() => {
 const getColumnWidth3 = (prop: string) => {
     return columnWidths3.value[prop] || 'auto';
 };
-const columnWidths4= computed(() => {
+const columnWidths4 = computed(() => {
     const columns = [
         { label: '原材料名称', prop: 'ProductName' },
     ];
@@ -283,13 +295,13 @@ const columnWidths4= computed(() => {
 });
 
 // 在模板中使用
-const getColumnWidth4= (prop: string) => {
+const getColumnWidth4 = (prop: string) => {
     return columnWidths4.value[prop] || 'auto';
 };
 const columnWidths5 = computed(() => {
     const columns = [
         { label: '备注', prop: 'DataValue' },
-       
+
     ];
 
     // 批量计算列宽
@@ -305,6 +317,4 @@ const getColumnWidth5 = (prop: string) => {
 }; 
 </script>
 
-<style lang="scss" scoped>
-
-</style>
+<style lang="scss" scoped></style>

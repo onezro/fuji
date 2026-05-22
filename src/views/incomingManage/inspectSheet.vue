@@ -51,7 +51,7 @@
                         @click="handleSelectionData">
                         {{ $t("publicText.approval") }}
                     </el-button> -->
-                    <el-button type="success" :disabled="tableData.length == 0" size="small" @click="exportTable">
+                    <el-button type="success" :disabled="selectionList.length !== 1" size="small" @click="exportTable">
                         导出Excel
                     </el-button>
                 </el-form-item>
@@ -65,7 +65,7 @@
                         " size="small" :style="{ width: '100%' }" ref="inspectionSheetRef" :height="tableHeight" border
                         fit highlight-current-row @selection-change="handleSelectionChange" @cell-click="cellClick"
                         :tooltip-effect="'dark'">
-                        <!-- <el-table-column type="selection" width="55" align="center" /> -->
+                        <el-table-column type="selection" width="55" align="center" />
                         <el-table-column type="index" align="center" fixed :label="$t('publicText.index')" width="50">
                             <template #default="scope">
                                 <span>{{
@@ -179,7 +179,7 @@
                 <div class="dialog-footer">
                     <el-button @click="detailVisible = false">{{
                         $t("publicText.close")
-                    }}</el-button>
+                        }}</el-button>
                 </div>
             </template>
         </el-dialog>
@@ -288,8 +288,8 @@
                         </el-table-column>
                         <el-table-column prop="MinValue" :label="$t('aqlrules.MinValue')">
                         </el-table-column>
-                        <el-table-column prop="DecimalPlaces" :label="$t('aqlrules.DecimalPlaces')" :min-width="getColumnWidth2('DecimalPlaces')"
-                            :align="'center'">
+                        <el-table-column prop="DecimalPlaces" :label="$t('aqlrules.DecimalPlaces')"
+                            :min-width="getColumnWidth2('DecimalPlaces')" :align="'center'">
                         </el-table-column>
                         <el-table-column prop="InspectionToolName" :label="$t('aqlrules.ToolName')"
                             :min-width="getColumnWidth2('InspectionToolName')">
@@ -317,7 +317,7 @@
                             <template #default="scope">
                                 <span @click="openMeasurementDialog(scope.row, scope.$index)">{{
                                     formatMeasuredValues(scope.row)
-                                }}</span>
+                                    }}</span>
                                 <el-button type="primary" icon="Plus" :size="'small'"
                                     @click="openMeasurementDialog(scope.row, scope.$index)" />
                             </template>
@@ -370,8 +370,8 @@
                     <div>
                         <el-button @click="handletestClose">{{
                             $t("publicText.close")
-                        }}</el-button>
-                        <el-button @click="handlePreviewIQCReport" :type="'info'" :disabled="!isDisable">
+                            }}</el-button>
+                        <el-button @click="handlePreviewIQCReport" :type="'info'">
                             {{ "预览IQC报告" }}
                         </el-button>
                         <el-button type="warning" @click="handleZCConfirm" :disabled="isDisable">
@@ -415,7 +415,7 @@
                 <div class="dialog-footer">
                     <el-button @click="handlePreviewClose">{{
                         $t("publicText.close")
-                    }}</el-button>
+                        }}</el-button>
                     <el-button type="primary" @click="handlePreviewDawnload">
                         {{ $t("publicText.dawnload") }}
                     </el-button>
@@ -438,7 +438,7 @@
             <template #footer>
                 <el-button @click="handleAppClose">{{
                     $t("publicText.cancel")
-                }}</el-button>
+                    }}</el-button>
                 <el-button type="primary" @click="handleAppConfirm">
                     {{ $t("publicText.confirm") }}
                 </el-button>
@@ -454,23 +454,24 @@
             <template #footer>
                 <el-button @click="handleBoxsClose">{{
                     $t("publicText.cancel")
-                }}</el-button>
+                    }}</el-button>
                 <el-button type="primary" @click="handleBoxsConfirm">
                     {{ $t("publicText.confirm") }}
                 </el-button>
             </template>
         </el-dialog>
-        <el-dialog v-model="previewIQCVisible" :title="'预览IQC报告'" width="80%" :append-to-body="true"
+        <el-dialog v-model="previewIQCVisible" :title="'预览IQC报告'" width="100%" :append-to-body="true"
             :close-on-click-modal="false" :close-on-press-escape="false" align-center>
-            <div style="height: 600px; overflow: auto">
-                <VueOfficeExcel :src="excelSrc" style="width: 100%"></VueOfficeExcel>
+            <div style="height: calc(100vh - 200px); overflow: auto; padding: 0; margin: 0;">
+                <excelPreview :base64String="excelSrc" />
+                <!-- <VueOfficeExcel :src="excelSrc" style="width: 100%; height: 100%"></VueOfficeExcel> -->
             </div>
 
             <template #footer>
                 <div class="dialog-footer">
                     <el-button @click="previewIQCVisible = false">{{
                         $t("publicText.close")
-                    }}</el-button>
+                        }}</el-button>
                 </div>
             </template>
         </el-dialog>
@@ -478,7 +479,9 @@
 </template>
 
 <script setup lang="ts">
+import { exportIQCToExcel } from '@/utils/iqcExcel.ts'
 import VueOfficeExcel from "@vue-office/excel";
+import excelPreview from "@/components/excelPreview/index.vue";
 import {
     GetIQCHeaderQuery,
     GetIQCDetailQuery,
@@ -489,7 +492,8 @@ import {
     DownloadIQCReportAsync,
     AyscIQCTemporaryStorage,
     AsynIQCMaterialApproval,
-    IQCModeSpecLabel
+    IQCModeSpecLabel,
+    IQCExport
 } from "@/api/incomingManage/iqcApi";
 import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
@@ -549,6 +553,7 @@ const detailTableData = ref<any[]>([]);
 const detailVisible = ref(false);
 const testVisible = ref(false);
 const isDisable = ref(false);
+const isDisable1 = ref(false)
 const tableData1 = ref<any[]>([]);
 const tableData2 = ref<any[]>([]);
 const dialogVisible = ref(false);
@@ -571,7 +576,7 @@ const lookVisible = ref(false);
 const previewVisible = ref(false);
 const previewUrl = ref("");
 const previewTitle = ref("");
-const selectionList = ref([]);
+const selectionList = ref<any>([]);
 const appVisible = ref(false);
 const appFormRef = ref();
 const appForm = ref({
@@ -630,57 +635,92 @@ watch(
 const precision = ref(0);
 
 // 截断数字（保留指定小数位数）
-const truncateNumber = (num: number, decimalPlaces: number): number => {
-  if (isNaN(num) || decimalPlaces < 0) return num;
-  const factor = Math.pow(10, decimalPlaces);
-  return Math.trunc(num * factor) / factor;
-};
+// const truncateNumber = (num: number, decimalPlaces: number): number => {
+//     if (isNaN(num) || decimalPlaces < 0) return num;
+//     const factor = Math.pow(10, decimalPlaces);
+//     return Math.trunc(num * factor) / factor;
+// };
 
-// 将值转为指定精度的字符串
+// // 将值转为指定精度的字符串
+// const truncateDecimal = (value: number | string, decimalPlaces: number): string => {
+//     const numValue = parseFloat(String(value));
+//     if (isNaN(numValue)) return '';
+//     if (decimalPlaces === 0) {
+//         return Math.trunc(numValue).toString();
+//     }
+//     const factor = Math.pow(10, decimalPlaces);
+//     const truncated = Math.trunc(numValue * factor) / factor;
+//     return truncated.toFixed(decimalPlaces);
+// };
+const truncateNumber = (num: number, decimalPlaces: number): number => {
+    if (isNaN(num) || decimalPlaces < 0) return num;
+    const factor = Math.pow(10, decimalPlaces);
+    return Math.floor(num * factor + 1e-12) / factor;
+};
 const truncateDecimal = (value: number | string, decimalPlaces: number): string => {
-  const numValue = parseFloat(String(value));
-  if (isNaN(numValue)) return '';
-  if (decimalPlaces === 0) {
-    return Math.trunc(numValue).toString();
-  }
-  const factor = Math.pow(10, decimalPlaces);
-  const truncated = Math.trunc(numValue * factor) / factor;
-  return truncated.toFixed(decimalPlaces);
+    if (value === undefined || value === null) return '';
+    let str = String(value).trim();
+    if (str === '') return '';
+
+    // 处理科学计数法
+    if (/[eE]/.test(str)) {
+        const numeric = parseFloat(str);
+        if (isNaN(numeric)) return str;
+        str = numeric.toFixed(20).replace(/\.?0+$/, '');
+    }
+
+    let [intPart, decPart = ''] = str.split('.');
+    if (decimalPlaces === 0) return intPart;
+
+    const truncatedDec = decPart.slice(0, decimalPlaces);
+    const padding = '0'.repeat(Math.max(0, decimalPlaces - truncatedDec.length));
+    return `${intPart}.${truncatedDec}${padding}`;
 };
 
 // 判断值是否超出规格上下限
 const isValueOutOfRange = (index: number): boolean => {
-  const row = currentRow.value;
-  if (!row) return false;
-  const value = measurementValues.value[index];
-  if (value === '' || value === null || value === undefined) return false;
-  const numValue = parseFloat(value);
-  if (isNaN(numValue)) return false;
+    const row = currentRow.value;
+    if (!row) return false;
+    const value = measurementValues.value[index];
+    if (value === '' || value === null || value === undefined) return false;
+    const numValue = parseFloat(value);
+    if (isNaN(numValue)) return false;
 
-  const minValue = parseFloat(row.MinValue);
-  const maxValue = parseFloat(row.MaxValue);
+    const minValue = parseFloat(row.MinValue);
+    const maxValue = parseFloat(row.MaxValue);
 
-  const minValid = !isNaN(minValue);
-  const maxValid = !isNaN(maxValue);
+    const minValid = !isNaN(minValue);
+    const maxValid = !isNaN(maxValue);
 
-  if (!minValid && !maxValid) return false; // 无范围限制
+    if (!minValid && !maxValid) return false; // 无范围限制
 
-  if (minValid && numValue < minValue) return true;
-  if (maxValid && numValue > maxValue) return true;
-  return false;
+    if (minValid && numValue < minValue) return true;
+    if (maxValid && numValue > maxValue) return true;
+    return false;
 };
 
 // 失去焦点时按 DecimalPlaces 截断格式
+// const handleBlur = (index: number) => {
+//     const value = measurementValues.value[index];
+//     if (value === '' || value === null || value === undefined) return;
+//     const numValue = parseFloat(value);
+//     if (isNaN(numValue)) {
+//         measurementValues.value[index] = '';
+//         return;
+//     }
+//     const decimalPlaces = Number(currentRow.value?.DecimalPlaces) || 0;
+//     measurementValues.value[index] = truncateDecimal(numValue, decimalPlaces);
+// };
 const handleBlur = (index: number) => {
-  const value = measurementValues.value[index];
-  if (value === '' || value === null || value === undefined) return;
-  const numValue = parseFloat(value);
-  if (isNaN(numValue)) {
-    measurementValues.value[index] = '';
-    return;
-  }
-  const decimalPlaces = Number(currentRow.value?.DecimalPlaces) || 0;
-  measurementValues.value[index] = truncateDecimal(numValue, decimalPlaces);
+    const value = measurementValues.value[index];
+    if (value === '' || value === null || value === undefined) return;
+    const numValue = parseFloat(value);
+    if (isNaN(numValue)) {
+        measurementValues.value[index] = '';
+        return;
+    }
+    const decimalPlaces = Number(currentRow.value?.DecimalPlaces) || 0;
+    measurementValues.value[index] = truncateDecimal(numValue, decimalPlaces);
 };
 
 onBeforeMount(() => {
@@ -728,22 +768,39 @@ const getData = () => {
     });
 };
 
-const exportTable = () => {
-    exportTableToExcel({
-        tableRef: inspectionSheetRef.value,
-        fetchAllData: fetchFinishAllData,
-        fileName: `${"IQC-进料检验"}_${dayjs().format("YYYYMMDDHHmmss")}`,
-        styles: {
-            headerBgColor: "", // 灰色表头
-            headerFont: {
-                color: { argb: "" }, // 红色文字
-                bold: false,
-                size: 12,
-            }, // 白色文字
-            cell: { numFmt: "@" }, // 强制文本格式
-        },
-        t,
-    });
+const exportTable = async () => {
+    let data = {
+        InspectionNo: selectionList.value[0].IQCNumber
+    }
+    IQCExport(data).then(async (res: any) => {
+        try {
+            await exportIQCToExcel(res.content);
+            ElMessage.success({
+                message: '导出成功'
+            })
+        } catch (error) {
+            ElMessage.error({
+                message: '导出失败'
+            })
+            console.error('导出失败:', error);
+        }
+    })
+
+    // exportTableToExcel({
+    //     tableRef: inspectionSheetRef.value,
+    //     fetchAllData: fetchFinishAllData,
+    //     fileName: `${"IQC-进料检验"}_${dayjs().format("YYYYMMDDHHmmss")}`,
+    //     styles: {
+    //         headerBgColor: "", // 灰色表头
+    //         headerFont: {
+    //             color: { argb: "" }, // 红色文字
+    //             bold: false,
+    //             size: 12,
+    //         }, // 白色文字
+    //         cell: { numFmt: "@" }, // 强制文本格式
+    //     },
+    //     t,
+    // });
 };
 const fetchFinishAllData = async () => {
     let data = await GetIQCHeaderQuery(getForm.value).then((res: any) => {
@@ -1020,28 +1077,28 @@ const downloadAsZip = async (files: IQCFile[]) => {
 //     dialogVisible.value = true;
 // };
 const openMeasurementDialog = (row: any, index: any) => {
-  currentRow.value = row;
-  currentRowIndex.value = index;
-  currentSampleSize.value = parseInt(row.SampleSize) || 0;
-  precision.value = Number(row.DecimalPlaces) || 0;  // 改为 DecimalPlaces
+    currentRow.value = row;
+    currentRowIndex.value = index;
+    currentSampleSize.value = parseInt(row.SampleSize) || 0;
+    precision.value = Number(row.DecimalPlaces) || 0;  // 改为 DecimalPlaces
 
-  measurementValues.value = [];
-  for (let i = 0; i < currentSampleSize.value; i++) {
-    measurementValues.value.push(row[`MeasuredValue${i + 1}`] || "");
-  }
+    measurementValues.value = [];
+    for (let i = 0; i < currentSampleSize.value; i++) {
+        measurementValues.value.push(row[`MeasuredValue${i + 1}`] || "");
+    }
 
-  dialogVisible.value = true;
-  nextTick(() => {
-    setTimeout(() => {
-      const inputRefsArray = inputRefs.value as unknown as HTMLInputElement[];
-      if (inputRefsArray.length > 0) {
-        const nextInput = inputRefsArray[0];
-        if (nextInput) {
-          nextInput.focus();
-        }
-      }
-    }, 100);
-  });
+    dialogVisible.value = true;
+    nextTick(() => {
+        setTimeout(() => {
+            const inputRefsArray = inputRefs.value as unknown as HTMLInputElement[];
+            if (inputRefsArray.length > 0) {
+                const nextInput = inputRefsArray[0];
+                if (nextInput) {
+                    nextInput.focus();
+                }
+            }
+        }, 100);
+    });
 };
 const resetMeasurement = () => {
     measurementValues.value = [];
@@ -1057,14 +1114,14 @@ const resetMeasurement = () => {
 //     dialogVisible.value = false;
 // };
 const saveMeasurements = () => {
-  for (let i = 0; i < currentSampleSize.value; i++) {
-    handleBlur(i);
-  }
-  for (let i = 0; i < currentSampleSize.value; i++) {
-    currentRow.value[`MeasuredValue${i + 1}`] = measurementValues.value[i];
-  }
-  getResultText(currentRow.value);
-  dialogVisible.value = false;
+    for (let i = 0; i < currentSampleSize.value; i++) {
+        handleBlur(i);
+    }
+    for (let i = 0; i < currentSampleSize.value; i++) {
+        currentRow.value[`MeasuredValue${i + 1}`] = measurementValues.value[i];
+    }
+    getResultText(currentRow.value);
+    dialogVisible.value = false;
 };
 
 const calculateDefectCount = (row: any) => {
@@ -1165,43 +1222,43 @@ const handleSampleSizeChange = (row: any) => {
     }
 };
 const calculateSum = (row: any) => {
-  let sum = 0;
-  for (let i = 1; i <= 10; i++) {
-    const value = row[`MeasuredValue${i}`];
-    if (value !== null && value !== undefined && value !== '') {
-      const numValue = parseFloat(value);
-      if (!isNaN(numValue)) {
-        sum += numValue;
-      }
+    let sum = 0;
+    for (let i = 1; i <= 10; i++) {
+        const value = row[`MeasuredValue${i}`];
+        if (value !== null && value !== undefined && value !== '') {
+            const numValue = parseFloat(value);
+            if (!isNaN(numValue)) {
+                sum += numValue;
+            }
+        }
     }
-  }
-  const decimalPlaces = Number(row.DecimalPlaces) || 0;
-  const truncatedSum = truncateNumber(sum, decimalPlaces);
-  row.Sum = truncatedSum;
-  return truncatedSum.toFixed(decimalPlaces);
+    const decimalPlaces = Number(row.DecimalPlaces) || 0;
+    const truncatedSum = truncateNumber(sum, decimalPlaces);
+    row.Sum = truncatedSum;
+    return truncatedSum.toFixed(decimalPlaces);
 };
 
 const calculateAverage = (row: any) => {
-  let sum = 0;
-  let count = 0;
-  for (let i = 1; i <= 10; i++) {
-    const value = row[`MeasuredValue${i}`];
-    if (value !== null && value !== undefined && value !== '') {
-      const numValue = parseFloat(value);
-      if (!isNaN(numValue)) {
-        sum += numValue;
-        count++;
-      }
+    let sum = 0;
+    let count = 0;
+    for (let i = 1; i <= 10; i++) {
+        const value = row[`MeasuredValue${i}`];
+        if (value !== null && value !== undefined && value !== '') {
+            const numValue = parseFloat(value);
+            if (!isNaN(numValue)) {
+                sum += numValue;
+                count++;
+            }
+        }
     }
-  }
-  let avg = 0;
-  if (count > 0) {
-    avg = sum / count;
-  }
-  const decimalPlaces = Number(row.DecimalPlaces) || 0;
-  const truncatedAvg = truncateNumber(avg, decimalPlaces);
-  row.Average = truncatedAvg;
-  return truncatedAvg.toFixed(decimalPlaces);
+    let avg = 0;
+    if (count > 0) {
+        avg = sum / count;
+    }
+    const decimalPlaces = Number(row.DecimalPlaces) || 0;
+    const truncatedAvg = truncateNumber(avg, decimalPlaces);
+    row.Average = truncatedAvg;
+    return truncatedAvg.toFixed(decimalPlaces);
 };
 const formatMeasuredValues = (row: any) => {
     const values = [];
@@ -1248,6 +1305,11 @@ const handleEdit = (row: any) => {
         isDisable.value = false;
     } else {
         isDisable.value = true;
+    }
+    if (row.Status == "创建") {
+        isDisable1.value = false;
+    } else {
+        isDisable1.value = true;
     }
     isApproval.value = row.ApprovalResult == '待审批' ? false : true
     // if (row.AC == null) {
@@ -1613,43 +1675,42 @@ const beforeUpload2 = (file: any) => {
 //     return targetData;
 // };
 const assignValuesMulti = (sourceData: any, targetData: any) => {
-  const sourceMap = new Map();
-  sourceData.forEach((item: any) => {
-    const key = `${item.LineNos}_${item.ProjectName}`;
-    sourceMap.set(key, item);
-  });
+    const sourceMap = new Map();
+    sourceData.forEach((item: any) => {
+        const key = `${item.LineNos}_${item.ProjectName}`;
+        sourceMap.set(key, item);
+    });
 
-  targetData.forEach((targetItem: any) => {
-    const key = `${targetItem.LineNos}_${targetItem.ProjectName}`;
-    const sourceItem = sourceMap.get(key);
+    targetData.forEach((targetItem: any) => {
+        const key = `${targetItem.LineNos}_${targetItem.ProjectName}`;
+        const sourceItem = sourceMap.get(key);
 
-    if (sourceItem) {
-      targetItem.SampleSize = sourceItem.SampleNum;
-      targetItem.MeasuredValue = sourceItem.ObservedValue;
-      let valData = sourceItem.ObservedValue.split(",");
+        if (sourceItem) {
+            targetItem.SampleSize = sourceItem.SampleNum;
+            targetItem.MeasuredValue = sourceItem.ObservedValue;
+            let valData = sourceItem.ObservedValue.split(",");
 
-      if (targetItem.SampleSize < valData.length) {
-        targetItem.SampleSize = valData.length;
-      }
+            if (targetItem.SampleSize < valData.length) {
+                targetItem.SampleSize = valData.length;
+            }
 
-      // 初始化所有 MeasuredValue 为空
-      for (let i = 0; i < 10; i++) {
-        targetItem[`MeasuredValue${i + 1}`] = "";
-      }
+            // 初始化所有 MeasuredValue 为空
+            for (let i = 0; i < 10; i++) {
+                targetItem[`MeasuredValue${i + 1}`] = "";
+            }
 
-      const decimalPlaces = Number(targetItem.DecimalPlaces) || 0;
-
-      if (valData.length > 0 && valData[0] !== "") {
-        valData.forEach((item: any, i: number) => {
-          if (i <= 9) {
-            targetItem[`MeasuredValue${i + 1}`] = truncateDecimal(item, decimalPlaces);
-          }
-        });
-      }
-      getResultText(targetItem);
-    }
-  });
-  return targetData;
+            const decimalPlaces = Number(targetItem.DecimalPlaces) || 0;
+            if (valData.length > 0 && valData[0] !== '') {
+                valData.forEach((item: any, i: number) => {
+                    if (i <= 9) {
+                        targetItem[`MeasuredValue${i + 1}`] = truncateDecimal(item, decimalPlaces);
+                    }
+                });
+            }
+            getResultText(targetItem);
+        }
+    });
+    return targetData;
 };
 const handlePreviewIQCReport = () => {
     DownloadIQCReportAsync(IQCNumber.value).then((res: any) => {
@@ -1695,7 +1756,7 @@ const columnWidths2 = computed(() => {
         { label: "检验工具", prop: "InspectionToolName" },
         { label: "检验依据", prop: "InspectionBasis" },
         { label: "项目名称", prop: "ProjectName" },
-         {label:'小数位数',prop:'DecimalPlaces'}
+        { label: '小数位数', prop: 'DecimalPlaces' }
         // { label: 'FA', prop: 'ES_FaUrl' },
         // { label: 'CPK', prop: 'ES_CPKUrl' },
         // 添加其他需要自适应宽度的列
@@ -1868,22 +1929,23 @@ const handleEnterInput = (e: any, currentIndex: any) => {
     font-weight: bold;
     margin-bottom: 5px;
 }
+
 .label-error {
-  color: #f56c6c;
-  font-weight: bold;
+    color: #f56c6c;
+    font-weight: bold;
 }
 
 .has-error :deep(.el-form-item__label) {
-  color: #f56c6c;
+    color: #f56c6c;
 }
 
 :deep(.input-error .el-input__wrapper) {
-  border-color: #f56c6c !important;
-  box-shadow: 0 0 0 1px #f56c6c inset !important;
+    border-color: #f56c6c !important;
+    box-shadow: 0 0 0 1px #f56c6c inset !important;
 }
 
 :deep(.input-error .el-input__inner) {
-  color: #f56c6c;
+    color: #f56c6c;
 }
 </style>
 <style>

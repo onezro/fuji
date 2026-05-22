@@ -397,7 +397,7 @@
                     <el-button @click="handleEditDetailClose">{{
                         $t("publicText.cancel")
                         }}</el-button>
-                    <el-button type="primary" @click="handleEditDetailConfirm" :disabled="editdetailForm.StatusText">
+                    <el-button type="primary" @click="handleEditDetailConfirm" :disabled="editdetailForm.Status!=='创建'">
                         {{ $t("publicText.confirm") }}
                     </el-button>
                 </div>
@@ -561,7 +561,7 @@ const editdetailForm = ref({
     Appearance: "",
     Specification: "",
     Property: "",
-    Status: 0,
+    Status: '',
     DataStatus: 0,
     StatusText: '',
     quantity: "",        // 添加：数量
